@@ -2,7 +2,7 @@
 /**
  * Секция "Почему мы?"
  */
-$whyme_title = get_field('whyme_title', get_the_ID()) ?: 'почему мы?';
+$whyme_title = get_field('whyme_title', get_the_ID()) ?: 'почему мы вооще?';
 $whyme_items = get_field('whyme_items', get_the_ID());
 ?>
 
