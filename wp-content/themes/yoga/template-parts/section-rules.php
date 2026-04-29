@@ -1,4 +1,4 @@
-<section class="section-rules" id="section-rules">
+﻿<section class="section-rules" id="section-rules">
 	<div class="container">
         <div class="row">
 			<div class="rules">

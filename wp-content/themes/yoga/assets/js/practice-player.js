@@ -1,4 +1,4 @@
-// practice-player.js - Доработанная версия
+﻿// practice-player.js - Доработанная версия
 function initializePracticeSystem() {
     // Проверяем что Plyr загружен
     if (typeof Plyr === 'undefined') {
