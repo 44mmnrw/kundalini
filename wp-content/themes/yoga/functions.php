@@ -2,6 +2,33 @@
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
+
+	// Fallback, если ACF временно отключен: не даем теме падать на вызовах ACF-функций.
+	if (!function_exists('get_field')) {
+		function get_field($selector, $post_id = false, $format_value = true) {
+			return null;
+		}
+	}
+	if (!function_exists('the_field')) {
+		function the_field($selector, $post_id = false, $format_value = true) {
+			echo '';
+		}
+	}
+	if (!function_exists('have_rows')) {
+		function have_rows($selector, $post_id = false) {
+			return false;
+		}
+	}
+	if (!function_exists('the_row')) {
+		function the_row() {
+			return null;
+		}
+	}
+	if (!function_exists('the_sub_field')) {
+		function the_sub_field($selector, $format_value = true) {
+			echo '';
+		}
+	}
 	// Регистрация меню
 	function my_theme_setup() {
 		register_nav_menus( array(
@@ -662,17 +689,17 @@ function handle_comment_delete() {
 	function register_faq_question_cpt() {
 		register_post_type('faq_question', array(
         'labels' => array(
-		'name' => '??????? FAQ',
-		'singular_name' => '??????',
-		'menu_name' => '??????? FAQ',
-		'add_new' => '???????? ??????',
-		'add_new_item' => '???????? ????? ??????',
-		'edit_item' => '????????????? ??????',
-		'new_item' => '????? ??????',
-		'view_item' => '??????????? ??????',
-		'search_items' => '????? ????????',
-		'not_found' => '??????? ?? ???????',
-		'not_found_in_trash' => '??????? ? ??????? ?? ???????'
+		'name' => 'Вопросы FAQ',
+		'singular_name' => 'Вопрос',
+		'menu_name' => 'Вопросы FAQ',
+		'add_new' => 'Добавить вопрос',
+		'add_new_item' => 'Добавить новый вопрос',
+		'edit_item' => 'Редактировать вопрос',
+		'new_item' => 'Новый вопрос',
+		'view_item' => 'Просмотреть вопрос',
+		'search_items' => 'Поиск вопросов',
+		'not_found' => 'Вопросы не найдены',
+		'not_found_in_trash' => 'Вопросы в корзине не найдены'
         ),
         'public' => false,
         'show_ui' => true,
@@ -1381,6 +1408,7 @@ function handle_comment_delete() {
 	// Шорткод для истории заказов и подписок
 	function subscription_settings_shortcode() {
 		if (!is_user_logged_in()) return '';
+		if (!function_exists('wc_get_orders')) return '';
 		
 		$user_id = get_current_user_id();
 		$orders = wc_get_orders(array(
@@ -1717,17 +1745,17 @@ function handle_comment_delete() {
         'menu_icon' => 'dashicons-format-chat',
         'supports' => array('title', 'editor'),
         'labels' => array(
-		'name' => '??????? FAQ',
-		'singular_name' => '??????',
-		'menu_name' => '??????? FAQ',
-		'add_new' => '???????? ??????',
-		'add_new_item' => '???????? ????? ??????',
-		'edit_item' => '????????????? ??????',
-		'new_item' => '????? ??????',
-		'view_item' => '??????????? ??????',
-		'search_items' => '????? ????????',
-		'not_found' => '??????? ?? ???????',
-		'not_found_in_trash' => '??????? ? ??????? ?? ???????'
+		'name' => 'Вопросы FAQ',
+		'singular_name' => 'Вопрос',
+		'menu_name' => 'Вопросы FAQ',
+		'add_new' => 'Добавить вопрос',
+		'add_new_item' => 'Добавить новый вопрос',
+		'edit_item' => 'Редактировать вопрос',
+		'new_item' => 'Новый вопрос',
+		'view_item' => 'Просмотреть вопрос',
+		'search_items' => 'Поиск вопросов',
+		'not_found' => 'Вопросы не найдены',
+		'not_found_in_trash' => 'Вопросы в корзине не найдены'
         )
 		);
 		
@@ -1852,6 +1880,7 @@ function handle_comment_delete() {
 	// Функция для получения истории заказов
 	function get_user_orders_history() {
 		if (!is_user_logged_in()) return array();
+		if (!function_exists('wc_get_orders')) return array();
 		
 		$user_id = get_current_user_id();
 		$orders = wc_get_orders(array(
@@ -2683,6 +2712,7 @@ function handle_comment_delete() {
 		}
 		
 		if (!$user_id) return false;
+		if (!function_exists('wc_get_orders')) return false;
 		
 		$orders = wc_get_orders(array(
         'customer_id' => $user_id,
