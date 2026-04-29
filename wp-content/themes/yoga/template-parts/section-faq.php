@@ -1,4 +1,4 @@
-<section class="section-faq" id="section-faq">
+﻿<section class="section-faq" id="section-faq">
     <div class="container">
         <div class="row">
             <div class="faq">

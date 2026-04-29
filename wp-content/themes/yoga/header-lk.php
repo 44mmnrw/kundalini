@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	/**
 		* Header for Личный кабинет template
 	*/

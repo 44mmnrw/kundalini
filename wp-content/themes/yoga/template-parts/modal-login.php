@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Login Modal Template — вход и регистрация по почте
  */

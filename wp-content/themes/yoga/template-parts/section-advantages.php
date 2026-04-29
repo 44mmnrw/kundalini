@@ -1,4 +1,4 @@
-<!-- Секция преимуществ -->
+﻿<!-- Секция преимуществ -->
 <section class="section-advantages" id="section-advantages">
 	<div class="container">
 		<div class="row">

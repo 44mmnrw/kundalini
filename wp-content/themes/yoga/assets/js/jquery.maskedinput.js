@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Minified by jsDelivr using UglifyJS v3.4.4.
  * Original file: /npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.js
  * 

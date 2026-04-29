@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	// Получаем родительскую рубрику "blog"
 	$blog_category = get_category_by_slug('blog');
 	$radio_items = array();

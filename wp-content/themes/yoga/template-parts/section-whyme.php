@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Секция "Почему мы?"
  */
@@ -25,7 +25,7 @@ $whyme_items = get_field('whyme_items', get_the_ID());
                         $item_text = $item['item_text'] ?? '';
                         $item_animation = $item['item_animation'] ?? 'wow rollIn';
                     ?>
-                    <p>test</p>                   
+                                       
                     <div class="whyme-item <?php echo esc_attr($item_class); ?> <?php echo esc_attr($item_animation); ?> delay-200ms slow">
                         <?php if ($item_bg) : ?>
                             <img src="<?php echo esc_url($item_bg); ?>" alt="" class="whyme-item__bg">
