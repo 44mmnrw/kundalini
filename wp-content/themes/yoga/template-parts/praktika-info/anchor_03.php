@@ -1,0 +1,28 @@
+<span class="praktika-menu-anchor" id="<?php echo esc_attr($section['anchor_id']); ?>"></span>
+<h3 class="<?php echo esc_attr($section['title_class']); ?>">
+	<?php echo esc_html($section['title']); ?>
+</h3>
+
+<p><?php echo esc_html($section['intro_text']); ?></p>
+
+<div class="praktika-quote">
+	<?php echo apply_filters('the_content', $section['quote_text']); ?>
+	<span class="praktika-quote__author">
+		<?php echo esc_html($section['quote_author']); ?>
+	</span>
+</div>
+
+<p><?php echo esc_html($section['before_list_text']); ?></p>
+
+<ul>
+    <?php 
+		$habits = explode("\n", $section['habits_text']);
+		foreach ($habits as $habit) : 
+        $habit = trim($habit);
+	if (!empty($habit)) : ?>
+	<li><?php echo esc_html($habit); ?></li>
+	<?php endif;
+	endforeach; ?>
+</ul>
+
+<p><?php echo esc_html($section['conclusion_text']); ?></p>
