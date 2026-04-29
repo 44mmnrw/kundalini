@@ -6735,13 +6735,14 @@ display: block !important;
 
 .personal-status {
   position: relative;
-  padding-top: 7px;
+  padding-top: 30px;
   padding-bottom: 7px;
   padding-left: 43px;
   padding-right: 15px;
   background: rgba(145, 83, 225, 0.07);
   border-radius: 100px;
   margin-right: 18px;
+  overflow: hidden;
 }
 .personal-status span {
   display: block;
@@ -6752,8 +6753,10 @@ display: block !important;
   position: absolute;
   left: 14px;
   width: 24px;
+  height: 24px;
   top: 50%;
   transform: translateY(-50%);
+  object-fit: contain;
 }
 
 .notification-icon {
@@ -7009,10 +7012,12 @@ display: block !important;
   font-size: 32px;
   text-transform: none;
   margin-top: 20px;
+  margin-bottom: 0;
 }
 
 .lk-slide__content {
   width: 100%;
+  margin-top: 12px;
 }
 
 .lk-form {
@@ -7047,24 +7052,26 @@ display: block !important;
 }
 
 .photo-input-custom__inner-photo {
-  display: block;
+  display: flex;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   width: 80px;
   height: 80px;
-  /* border-radius: 50%; */
+  border-radius: 50%;
+  overflow: hidden;
   border: 1px solid #9153E1;
+  clip-path: circle(50%);
 }
 .photo-input-custom__inner-photo img {
   display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
+  min-width: 100%;
+  min-height: 100%;
   object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
 }
 
 .photo-input-delete {
@@ -7256,7 +7263,6 @@ display: block !important;
   width: 100%;
   justify-content: center;
   margin-top: 25px;
-  padding-right: 30px;
 }
 .lk-form-safe input {
   display: none;
@@ -7269,17 +7275,17 @@ display: block !important;
 }
 
 .lk-form-safe__text {
-  display: inline-block;
+  display: none;
   position: relative;
   color: #9153E1;
   padding-right: 26px;
   margin-top: auto;
   margin-bottom: auto;
   padding-left: 25px;
-  opacity: 0;
   transition: 0.4s ease;
 }
 .lk-form-safe__text.active {
+  display: inline-block;
   opacity: 1;
 }
 .lk-form-safe__text::after {
@@ -7296,7 +7302,7 @@ display: block !important;
 
 .lk-kriyi {
   width: 100%;
-  margin-top: -5px;
+  margin-top: 0;
 }
 .lk-kriyi .kriya-info h3 {
   line-height: 1.15em;
@@ -10755,7 +10761,7 @@ footer {
   width: 100%;
 }
 .modal-login.active .modal-login-inner, .modal-addnewcard.active .modal-login-inner {
-  width: 608px;
+  width: 507px;
 }
 .modal-login .modal-close, .modal-addnewcard .modal-close {
   top: 24px;
@@ -10769,7 +10775,7 @@ footer {
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
   background: #E8FF57;
-  padding-left: 50px;
+  padding-left: 77px;
   padding-right: 120px;
   padding-bottom: 50px;
   padding-top: 76px;
@@ -10815,7 +10821,7 @@ footer {
 .modal-login-inner__slide {
   display: block;
   width: 100%;
-  min-width: 438px;
+  min-width: 310px;
   right: 0px;
   opacity: 0;
   pointer-events: none;
@@ -10844,8 +10850,8 @@ footer {
   border-color: #F8BDF6;
 }
 .modal-login-inner__slide .input {
-  height: 63px;
-  line-height: 63px;
+  height: 65px;
+  line-height: 65px;
   margin-top: 25px;
 }
 .modal-login-inner__slide button {
@@ -10887,7 +10893,7 @@ footer {
   display: inline-block;
   left: calc(50% - 19px);
   transform: translateX(-50%);
-  margin-top: 33px;
+  margin-top: 30px;
 }
 .form-link_vk::after {
   content: "";
@@ -11055,6 +11061,124 @@ label.checkbox {
   pointer-events: none !important;
 }
 
+/* Форма входа/регистрации по почте */
+.modal-login-inner__slide .form {
+  padding-top: 12px;
+}
+.login-slide-switches {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+.login-slide-switches h3 {
+  display: inline-block;
+}
+.login-switch-link, .loggin-back__link {
+  display: inline-block;
+  position: relative;
+  margin-top: auto;
+  margin-bottom: auto;
+  bottom: -4px;
+  color: #646464;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  cursor: pointer;
+}
+.login-switch-link::before, .loggin-back__link::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: 0px;
+  bottom: -1px;
+  width: 100%;
+  height: 1px;
+  background: #646464;
+  transition: 0.4s ease;
+}
+.login-switch-link:hover::before, .loggin-back__link:hover::before {
+  width: 0%;
+}
+p.login-rules {
+  display: block;
+  margin-top: 25px;
+  font-size: 14px;
+  line-height: 1.26em;
+  color: #1F1F1F;
+}
+p.login-rules a {
+  font: inherit;
+  color: inherit;
+}
+p.login-rules a:hover {
+  text-decoration: none;
+}
+.loggin-additional {
+  width: 100%;
+  display: flex;
+  margin-top: 22px;
+}
+.loggin-additional__item {
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  cursor: pointer;
+  color: #1F1F1F;
+  transition: 0.4s ease;
+}
+.loggin-additional__item:hover {
+  color: #646464;
+}
+.login-captcha {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 25px;
+}
+.login-captcha__plug {
+  display: block;
+  width: 100%;
+  min-width: 315px;
+  margin-bottom: -4px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.login-captcha .g-recaptcha {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  height: 74px;
+}
+.loggin-back {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+.loggin-back_mob {
+  display: none;
+}
+.loggin-back__link {
+  bottom: auto;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.modal-login-inner__slide_succes {
+  top: 50%;
+  transform: translateY(-50%);
+  padding-bottom: 45px;
+}
+.login-notification {
+  display: block;
+  background: #DDF354;
+  margin-top: 20px;
+  text-align: center;
+  padding: 6px;
+  border-radius: 3px;
+  margin-bottom: -5px;
+}
+
 @media (max-width: 1320px) {
   .modal-login .modal-close, .modal-addnewcard .modal-close {
     top: 15px;
@@ -11128,7 +11252,10 @@ label.checkbox {
     border-bottom-left-radius: 0px;
     padding: 20px;
     padding-top: 48px;
-    padding-bottom: 60px;
+    padding-bottom: 54px;
+  }
+  .modal-login-inner {
+    padding-top: 28px;
   }
   .modal-login-inner__slide {
     position: absolute;
@@ -11147,18 +11274,63 @@ label.checkbox {
   .modal-login-inner__slide p {
     width: 100%;
     text-align: center;
-    margin-top: 3px;
   }
   .modal-login-inner__slide .input {
     height: 61px;
     line-height: 61px;
-    text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
   }
   .modal-login-inner__slide .btn {
     height: 61px;
     line-height: 61px;
     margin-top: 10px;
+  }
+  .modal-login-inner__slide .form-link_vk {
+    margin-top: 30px;
+  }
+  .modal-login-inner__slide form p {
+    text-align: left;
+  }
+  .modal-login-inner__slide_succes {
+    padding-top: 16px;
+  }
+  .login-notification {
+    margin-bottom: 0px;
+  }
+  .login-switch-link {
+    display: none;
+  }
+  .loggin-back {
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 25px;
+  }
+  .loggin-back__link {
+    display: inline-block;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .loggin-back__link:first-child {
+    margin-top: 0px;
+  }
+  .loggin-back_mob {
+    display: flex;
+    margin-top: 8px;
+  }
+  .loggin-back_mob span {
+    color: #1F1F1F;
+  }
+  .loggin-back_grey {
+    margin-top: 12px;
+  }
+  .loggin-back_grey span {
+    color: #646464;
+  }
+  .login-captcha__plug {
+    min-width: 100%;
+    margin-bottom: 20px;
   }
   .form-back {
     position: relative;
@@ -11976,4 +12148,8 @@ label.checkbox {
 
 .tariff form.cart {
 	margin-top: auto;
+}
+
+.lk-settings-part .subscribe-cta p{
+  margin-bottom: 20px;
 }

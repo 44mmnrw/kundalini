@@ -40,11 +40,19 @@
 							?>
 						</nav>
 						<div class="header-lk">
+							<?php
+							$has_paid_tariff = is_user_logged_in() && get_current_user_tariff();
+							if (!$has_paid_tariff) :
+								$tariffs_url = home_url('/product-category/tariffs/');
+								if (is_user_logged_in()) : ?>
+							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white">
+								<span>Попробовать бесплатно</span>
+							</a>
+							<?php else : ?>
 							<div class="btn btn_white modal-call_login">
-								<span>
-									Попробовать бесплатно
-								</span>
+								<span>Попробовать бесплатно</span>
 							</div>
+							<?php endif; endif; ?>
 							<?php if (is_user_logged_in()): ?>
 							<?php
 								$current_user = wp_get_current_user();
