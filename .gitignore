@@ -1,5 +1,10 @@
-*
+# Ignore everything by default
+/*
+
+# Keep gitignore itself
 !/.gitignore
+
+# Allow traversing into wp-content/themes/yoga only
 !/wp-content/
 /wp-content/*
 !/wp-content/themes/

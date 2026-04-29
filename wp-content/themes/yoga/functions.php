@@ -657,8 +657,17 @@ function handle_comment_delete() {
 	function register_faq_question_cpt() {
 		register_post_type('faq_question', array(
         'labels' => array(
-		'name' => 'Р’РѕРїСЂРѕСЃС‹ FAQ',
-		'singular_name' => 'Р’РѕРїСЂРѕСЃ'
+		'name' => 'Вопросы FAQ',
+		'singular_name' => 'Вопрос',
+		'menu_name' => 'Вопросы FAQ',
+		'add_new' => 'Добавить вопрос',
+		'add_new_item' => 'Добавить новый вопрос',
+		'edit_item' => 'Редактировать вопрос',
+		'new_item' => 'Новый вопрос',
+		'view_item' => 'Просмотреть вопрос',
+		'search_items' => 'Поиск вопросов',
+		'not_found' => 'Вопросы не найдены',
+		'not_found_in_trash' => 'Вопросы в корзине не найдены'
         ),
         'public' => false,
         'show_ui' => true,
@@ -978,6 +987,10 @@ function handle_comment_delete() {
 	// РћС‡РёСЃС‚РєР° РєРѕСЂР·РёРЅС‹ Рё РґРѕР±Р°РІР»РµРЅРёРµ С‚РѕРІР°СЂР° СЃ СЂРµРґРёСЂРµРєС‚РѕРј
 	add_action('template_redirect', 'handle_tariff_add_to_cart');
 	function handle_tariff_add_to_cart() {
+	if (!function_exists('WC') || !function_exists('wc_get_checkout_url')) {
+		return;
+	}
+
 		// РџСЂРѕРІРµСЂСЏРµРј, РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Р»Рё С‚РѕРІР°СЂ РєР°С‚РµРіРѕСЂРёРё tariffs
 		if (isset($_POST['add-to-cart']) && is_numeric($_POST['add-to-cart']) && isset($_POST['woocommerce-add-to-cart-nonce'])) {
 			
@@ -1022,11 +1035,6 @@ function handle_comment_delete() {
 		add_theme_support('woocommerce');
 		
 		// РџРѕРґРєР»СЋС‡Р°РµРј СЃРєСЂРёРїС‚С‹ РґР»СЏ checkout
-		if (function_exists('is_checkout') && is_checkout()) {
-			wp_enqueue_script('wc-checkout');
-			wp_enqueue_script('wc-country-select');
-			wp_enqueue_script('wc-address-i18n');
-		}
 	}
 	add_action('after_setup_theme', 'theme_woocommerce_support');
 	
@@ -1035,6 +1043,8 @@ function handle_comment_delete() {
 		if (function_exists('is_checkout') && is_checkout()) {
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('wc-checkout');
+			wp_enqueue_script('wc-country-select');
+			wp_enqueue_script('wc-address-i18n');
 		}
 	}
 	add_action('wp_enqueue_scripts', 'theme_enqueue_checkout_scripts');
@@ -1042,9 +1052,13 @@ function handle_comment_delete() {
 	// РџСЂРѕРІРµСЂСЏРµРј Рё РёСЃРїСЂР°РІР»СЏРµРј РІРѕР·РјРѕР¶РЅС‹Рµ РїСЂРѕР±Р»РµРјС‹ СЃ checkout
 	add_action('template_redirect', 'fix_checkout_issues');
 	function fix_checkout_issues() {
-		if (function_exists('is_checkout') && function_exists('WC') && is_checkout() && WC() && WC()->cart && !WC()->cart->is_empty()) {
+	if (!function_exists('is_checkout') || !function_exists('WC')) {
+		return;
+	}
+
+		if (is_checkout() && WC()->cart && !WC()->cart->is_empty()) {
 			// РЈР±РµРґРёРјСЃСЏ, С‡С‚Рѕ СЃРµСЃСЃРёСЏ WooCommerce Р°РєС‚РёРІРЅР°
-			if (!WC()->session->has_session()) {
+			if (WC()->session && !WC()->session->has_session()) {
 				WC()->session->set_customer_session_cookie(true);
 			}
 		}
@@ -1053,7 +1067,10 @@ function handle_comment_delete() {
 	// РћС‚Р»Р°РґРѕС‡РЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
 	add_action('wp_footer', 'debug_checkout_info');
 	function debug_checkout_info() {
-		if (function_exists('is_checkout') && function_exists('WC') && is_checkout() && WC() && WC()->cart) {
+	if (!function_exists('is_checkout') || !function_exists('WC')) {
+		return;
+	}
+		if (is_checkout() && WC()->cart) {
 			echo '<!-- Debug: Checkout page -->';
 			echo '<!-- Debug: Cart items: ' . count(WC()->cart->get_cart()) . ' -->';
 			echo '<!-- Debug: Nonce field: ' . (wp_verify_nonce('test', 'woocommerce-process_checkout') ? 'OK' : 'Missing') . ' -->';
@@ -1072,6 +1089,9 @@ function handle_comment_delete() {
 	// РђР»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРµ СЂРµС€РµРЅРёРµ: СЃРѕР·РґР°РµРј СЃРІРѕСЋ РѕР±СЂР°Р±РѕС‚РєСѓ checkout
 	add_action('template_redirect', 'handle_custom_checkout');
 	function handle_custom_checkout() {
+	if (!function_exists('WC') || !function_exists('wc_add_notice')) {
+		return;
+	}
 		if (is_page('checkout') && !empty($_POST['woocommerce-process-checkout-nonce'])) {
 			
 			// РџСЂРѕРІРµСЂСЏРµРј nonce
@@ -1688,16 +1708,17 @@ function handle_comment_delete() {
         'menu_icon' => 'dashicons-format-chat',
         'supports' => array('title', 'editor'),
         'labels' => array(
-		'name' => 'Р’РѕРїСЂРѕСЃС‹',
-		'singular_name' => 'Р’РѕРїСЂРѕСЃ',
-		'add_new' => 'Р”РѕР±Р°РІРёС‚СЊ РІРѕРїСЂРѕСЃ',
-		'add_new_item' => 'Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
-		'edit_item' => 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РІРѕРїСЂРѕСЃ',
-		'new_item' => 'РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
-		'view_item' => 'РџСЂРѕСЃРјРѕС‚СЂРµС‚СЊ РІРѕРїСЂРѕСЃ',
-		'search_items' => 'РџРѕРёСЃРє РІРѕРїСЂРѕСЃРѕРІ',
-		'not_found' => 'Р’РѕРїСЂРѕСЃС‹ РЅРµ РЅР°Р№РґРµРЅС‹',
-		'not_found_in_trash' => 'Р’РѕРїСЂРѕСЃС‹ РІ РєРѕСЂР·РёРЅРµ РЅРµ РЅР°Р№РґРµРЅС‹'
+		'name' => 'Вопросы FAQ',
+		'singular_name' => 'Вопрос',
+		'menu_name' => 'Вопросы FAQ',
+		'add_new' => 'Добавить вопрос',
+		'add_new_item' => 'Добавить новый вопрос',
+		'edit_item' => 'Редактировать вопрос',
+		'new_item' => 'Новый вопрос',
+		'view_item' => 'Просмотреть вопрос',
+		'search_items' => 'Поиск вопросов',
+		'not_found' => 'Вопросы не найдены',
+		'not_found_in_trash' => 'Вопросы в корзине не найдены'
         )
 		);
 		
