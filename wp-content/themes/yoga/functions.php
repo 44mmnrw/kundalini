@@ -29,6 +29,23 @@
 			echo '';
 		}
 	}
+	if (!function_exists('yoga_ajax_error')) {
+		function yoga_ajax_error($message, $code = 'error', $status = 400, $extra = array()) {
+			$payload = array_merge(array(
+				'code' => $code,
+				'message' => $message,
+			), $extra);
+			wp_send_json_error($payload, $status);
+		}
+	}
+	if (!function_exists('yoga_ajax_success')) {
+		function yoga_ajax_success($message = '', $data = array(), $status = 200) {
+			$payload = array_merge(array(
+				'message' => $message,
+			), $data);
+			wp_send_json_success($payload, $status);
+		}
+	}
 	// Регистрация меню
 	function my_theme_setup() {
 		register_nav_menus( array(
@@ -1096,48 +1113,7 @@ function handle_comment_delete() {
 		}
 	}
 	
-	// Отладочная информация
-	add_action('wp_footer', 'debug_checkout_info');
-	function debug_checkout_info() {
-	if (!function_exists('is_checkout') || !function_exists('WC')) {
-		return;
-	}
-		if (is_checkout() && WC()->cart) {
-			echo '<!-- Debug: Checkout page -->';
-			echo '<!-- Debug: Cart items: ' . count(WC()->cart->get_cart()) . ' -->';
-			echo '<!-- Debug: Nonce field: ' . (wp_verify_nonce('test', 'woocommerce-process_checkout') ? 'OK' : 'Missing') . ' -->';
-		}
-	}
-	
-	// Исправление nonce проверки для checkout
-	add_filter('woocommerce_verify_nonce', 'fix_checkout_nonce_verification', 10, 2);
-	function fix_checkout_nonce_verification($result, $action) {
-		/* AxeCode.tech (безопасность, этап 1): сохраняем штатную проверку nonce WooCommerce без обхода. */
-		if ($action === 'woocommerce-process_checkout') {
-			return $result;
-		}
-		return $result;
-	}
-	
-	// Альтернативное решение: создаем свою обработку checkout
-	add_action('template_redirect', 'handle_custom_checkout');
-	function handle_custom_checkout() {
-	if (!function_exists('WC') || !function_exists('wc_add_notice')) {
-		return;
-	}
-		if (is_page('checkout') && !empty($_POST['woocommerce-process-checkout-nonce'])) {
-			
-			// Проверяем nonce
-			if (wp_verify_nonce($_POST['woocommerce-process-checkout-nonce'], 'woocommerce-process_checkout')) {
-				
-				// Обрабатываем заказ
-				WC()->checkout()->process_checkout();
-				
-				} else {
-				wc_add_notice('Ошибка безопасности. Пожалуйста, попробуйте еще раз.', 'error');
-			}
-		}
-	}
+	// Stage 2: keep WooCommerce checkout flow standard; no custom debug/override handlers.
 	
 	
 	// Добавляем возможности для пользователей
@@ -1959,11 +1935,11 @@ function handle_comment_delete() {
 	// Обработчик для добавления карты
 	function handle_add_payment_method() {
 		if (!isset($_POST['payment_nonce']) || !wp_verify_nonce($_POST['payment_nonce'], 'add_payment_method')) {
-			wp_send_json_error('Ошибка безопасности');
+			yoga_ajax_error('Ошибка безопасности', 'invalid_nonce', 403);
 		}
 		
 		if (!is_user_logged_in()) {
-			wp_send_json_error('Не авторизован');
+			yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
 		}
 		
 		// Здесь должна быть интеграция с платежной системой (Stripe, etc.)
@@ -1984,18 +1960,18 @@ function handle_comment_delete() {
 		
 		update_user_meta($user_id, 'saved_payment_cards', $saved_cards);
 		
-		wp_send_json_success('Карта успешно добавлена');
+		yoga_ajax_success('Карта успешно добавлена');
 	}
 	add_action('wp_ajax_add_payment_method', 'handle_add_payment_method');
 	
 	// Обработчик для удаления карты
 	function handle_remove_payment_method() {
 		if (!isset($_POST['card_id']) || !wp_verify_nonce($_POST['security'], 'remove_payment_method')) {
-			wp_send_json_error('Ошибка безопасности');
+			yoga_ajax_error('Ошибка безопасности', 'invalid_nonce', 403);
 		}
 		
 		if (!is_user_logged_in()) {
-			wp_send_json_error('Не авторизован');
+			yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
 		}
 		
 		$user_id = get_current_user_id();
@@ -2008,7 +1984,7 @@ function handle_comment_delete() {
 		
 		update_user_meta($user_id, 'saved_payment_cards', $updated_cards);
 		
-		wp_send_json_success('Карта успешно удалена');
+		yoga_ajax_success('Карта успешно удалена');
 	}
 	add_action('wp_ajax_remove_payment_method', 'handle_remove_payment_method');
 	
@@ -2056,7 +2032,7 @@ function handle_comment_delete() {
 		$log = sanitize_text_field($_POST['log']);
 		$pwd = $_POST['pwd'];
 		if (empty($log) || empty($pwd)) {
-			wp_send_json_error('Введите почту и пароль');
+			yoga_ajax_error('Введите почту и пароль', 'validation_error', 422);
 		}
 		$user = wp_signon(array(
 			'user_login'    => $log,
@@ -2064,9 +2040,9 @@ function handle_comment_delete() {
 			'remember'      => true,
 		), false);
 		if (is_wp_error($user)) {
-			wp_send_json_error($user->get_error_message());
+			yoga_ajax_error($user->get_error_message(), 'auth_failed', 401);
 		}
-		wp_send_json_success();
+		yoga_ajax_success('Успешный вход');
 	}
 	
 	// Регистрация по email
@@ -2076,24 +2052,24 @@ function handle_comment_delete() {
 		// Проверка reCAPTCHA
 		$recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
 		if (!verify_recaptcha($recaptcha_response)) {
-			wp_send_json_error('Пожалуйста, подтвердите, что вы не робот');
+			yoga_ajax_error('Пожалуйста, подтвердите, что вы не робот', 'captcha_failed', 422);
 		}
 		
 		$email = sanitize_email($_POST['user_email']);
 		$name = sanitize_text_field($_POST['user_name']);
 		$pass = $_POST['user_pass'];
 		if (empty($email) || !is_email($email)) {
-			wp_send_json_error('Введите корректный email');
+			yoga_ajax_error('Введите корректный email', 'validation_error', 422);
 		}
 		if (empty($pass) || strlen($pass) < 6) {
-			wp_send_json_error('Пароль должен быть не короче 6 символов');
+			yoga_ajax_error('Пароль должен быть не короче 6 символов', 'validation_error', 422);
 		}
 		if (username_exists($email) || email_exists($email)) {
-			wp_send_json_error('Пользователь с таким email уже зарегистрирован');
+			yoga_ajax_error('Пользователь с таким email уже зарегистрирован', 'already_exists', 409);
 		}
 		$user_id = wp_create_user($email, $pass, $email);
 		if (is_wp_error($user_id)) {
-			wp_send_json_error($user_id->get_error_message());
+			yoga_ajax_error($user_id->get_error_message(), 'registration_failed', 500);
 		}
 		wp_update_user(array('ID' => $user_id, 'display_name' => $name));
 		
@@ -2112,7 +2088,7 @@ function handle_comment_delete() {
 		$sent = wp_mail($email, $subject, $message, $headers);
 		
 		wp_set_auth_cookie($user_id);
-		wp_send_json_success();
+		yoga_ajax_success('Регистрация выполнена');
 	}
 	
 	// Восстановление пароля
@@ -2122,25 +2098,25 @@ function handle_comment_delete() {
 		// Проверка reCAPTCHA
 		$recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
 		if (!verify_recaptcha($recaptcha_response)) {
-			wp_send_json_error('Пожалуйста, подтвердите, что вы не робот');
+			yoga_ajax_error('Пожалуйста, подтвердите, что вы не робот', 'captcha_failed', 422);
 		}
 		
 		$login = sanitize_text_field($_POST['user_login']);
 		if (empty($login)) {
-			wp_send_json_error('Введите email');
+			yoga_ajax_error('Введите email', 'validation_error', 422);
 		}
 		$user = get_user_by('email', $login);
 		if (!$user) {
 			$user = get_user_by('login', $login);
 		}
 		if (!$user) {
-			wp_send_json_error('Пользователь с таким email не найден');
+			yoga_ajax_error('Пользователь с таким email не найден', 'not_found', 404);
 		}
 		$result = retrieve_password($user->user_login);
 		if (is_wp_error($result)) {
-			wp_send_json_error($result->get_error_message());
+			yoga_ajax_error($result->get_error_message(), 'password_reset_failed', 500);
 		}
-		wp_send_json_success();
+		yoga_ajax_success('Инструкции отправлены');
 	}
 	
 	// Отправка SMS кода
@@ -2151,7 +2127,7 @@ function handle_comment_delete() {
 		
 		// Валидация номера телефона
 		if (!validate_phone($phone)) {
-			wp_send_json_error('Введите корректный номер телефона');
+			yoga_ajax_error('Введите корректный номер телефона', 'validation_error', 422);
 		}
 		
 		// Генерация кода
@@ -2166,9 +2142,9 @@ function handle_comment_delete() {
 		
 		if ($sms_sent) {
 			/* AxeCode.tech: в ответе только статус, без OTP и внутренних данных. */
-			wp_send_json_success(array('message' => 'Code sent'));
+			yoga_ajax_success('Code sent');
 			} else {
-			wp_send_json_error('Ошибка отправки SMS');
+			yoga_ajax_error('Ошибка отправки SMS', 'sms_send_failed', 500);
 		}
 	}
 	
@@ -2630,7 +2606,7 @@ function handle_comment_delete() {
 		$terms_accepted = isset($_POST['checkbox_conf']);
 		
 		if (!$terms_accepted) {
-			wp_send_json_error('Необходимо принять условия использования');
+			yoga_ajax_error('Необходимо принять условия использования', 'validation_error', 422);
 		}
 		
 		$stored_code = get_transient('sms_code_' . $phone);
@@ -2642,12 +2618,12 @@ function handle_comment_delete() {
 			if ($user && !is_wp_error($user)) {
 				wp_set_auth_cookie($user->ID);
 				delete_transient('sms_code_' . $phone);
-				wp_send_json_success('Успешный вход');
+				yoga_ajax_success('Успешный вход');
 				} else {
-				wp_send_json_error('Ошибка входа');
+				yoga_ajax_error('Ошибка входа', 'auth_failed', 401);
 			}
 			} else {
-			wp_send_json_error('Неверный код');
+			yoga_ajax_error('Неверный код', 'invalid_code', 422);
 		}
 	}
 	
@@ -2680,7 +2656,7 @@ function handle_comment_delete() {
 		check_ajax_referer('favorite_practice_nonce', 'security');
 		
 		if (!is_user_logged_in()) {
-			wp_die('Не авторизован');
+			yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
 		}
 		
 		$practice_id = intval($_POST['practice_id']);
@@ -2701,7 +2677,7 @@ function handle_comment_delete() {
 		
 		update_user_meta($user_id, 'favorite_practices', $favorites);
 		
-		wp_send_json_success($message);
+		yoga_ajax_success($message);
 	}
 	add_action('wp_ajax_toggle_favorite_practice', 'toggle_favorite_practice');
 	
