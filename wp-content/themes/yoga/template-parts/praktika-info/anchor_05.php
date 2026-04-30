@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	/**
 		* Template Part: Anchor 05 - Техника выполнения
 	*/

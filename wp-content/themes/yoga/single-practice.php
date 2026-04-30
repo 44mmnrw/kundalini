@@ -1,4 +1,4 @@
-﻿<?php get_header(); 
+<?php get_header(); 
 	
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));

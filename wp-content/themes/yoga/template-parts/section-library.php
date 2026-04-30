@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	// Получаем текущий термин таксономии
 	$current_term = get_queried_object();
 	

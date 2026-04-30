@@ -1,4 +1,4 @@
-﻿<section class="section-questions" id="section-questions">
+<section class="section-questions" id="section-questions">
     <div class="container">
         <div class="row">
             <div class="questions-main">
