@@ -1,5 +1,8 @@
 ﻿// practice-player.js - Доработанная версия
 function initializePracticeSystem() {
+    if (window.practiceSystemInitialized) {
+        return;
+    }
     // Проверяем что Plyr загружен
     if (typeof Plyr === 'undefined') {
         console.log('Plyr not loaded yet, retrying in 100ms...');
@@ -37,6 +40,12 @@ function initializePracticeSystem() {
         debug: false
     });
 
+    if (!Array.isArray(players) || players.length === 0) {
+        console.warn('Plyr returned no initialized players');
+        return;
+    }
+
+    window.practiceSystemInitialized = true;
     console.log('Plyr players initialized:', players.length);
 
     // Обработка переключателей версий
@@ -711,7 +720,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Также запускаем если Plyr загрузился позже
-if (typeof Plyr !== 'undefined') {
-    initializePracticeSystem();
-}
+// Single init entrypoint is DOMContentLoaded block above.
