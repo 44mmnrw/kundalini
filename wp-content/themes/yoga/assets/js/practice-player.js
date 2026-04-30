@@ -1,5 +1,6 @@
 ﻿// practice-player.js - Доработанная версия
 function initializePracticeSystem() {
+    // Axecode.tech: Этап 2 стабилизации - предотвращение повторной инициализации.
     if (window.practiceSystemInitialized) {
         return;
     }
@@ -40,11 +41,13 @@ function initializePracticeSystem() {
         debug: false
     });
 
+    // Axecode.tech: Этап 2 стабилизации - защита от null/пустого результата Plyr.setup.
     if (!Array.isArray(players) || players.length === 0) {
         console.warn('Plyr returned no initialized players');
         return;
     }
 
+    // Axecode.tech: Этап 2 стабилизации - отмечаем успешную однократную инициализацию.
     window.practiceSystemInitialized = true;
     console.log('Plyr players initialized:', players.length);
 
@@ -720,4 +723,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Single init entrypoint is DOMContentLoaded block above.
+// Axecode.tech: Этап 2 стабилизации - единая точка входа инициализации (DOMContentLoaded).
+

@@ -30,6 +30,7 @@
 		}
 	}
 	if (!function_exists('yoga_ajax_error')) {
+		/* Axecode.tech: Этап 2 стабилизации - единый формат AJAX-ошибок. */
 		function yoga_ajax_error($message, $code = 'error', $status = 400, $extra = array()) {
 			$payload = array_merge(array(
 				'code' => $code,
@@ -39,6 +40,7 @@
 		}
 	}
 	if (!function_exists('yoga_ajax_success')) {
+		/* Axecode.tech: Этап 2 стабилизации - единый формат AJAX-успеха. */
 		function yoga_ajax_success($message = '', $data = array(), $status = 200) {
 			$payload = array_merge(array(
 				'message' => $message,
@@ -106,15 +108,20 @@
 	add_action( 'wp_enqueue_scripts', 'my_theme_scripts' );
 	
 	// Опции ACF
-	if( function_exists('acf_add_options_page') ) {
+	function yoga_register_acf_options_page() {
+		if (!function_exists('acf_add_options_page')) {
+			return;
+		}
+
 		acf_add_options_page(array(
-        'page_title'    => 'Общие настройки темы',
-        'menu_title'    => 'Настройки темы',
-        'menu_slug'     => 'theme-general-settings',
-        'capability'    => 'edit_posts',
-        'redirect'      => false
+			'page_title' => 'Общие настройки темы',
+			'menu_title' => 'Настройки темы',
+			'menu_slug' => 'theme-general-settings',
+			'capability' => 'edit_posts',
+			'redirect' => false,
 		));
 	}
+	add_action('acf/init', 'yoga_register_acf_options_page');
 	
 	// Обработчик AJAX для формы подписки
 	function yoga_subscribe_handler() {
@@ -1113,7 +1120,7 @@ function handle_comment_delete() {
 		}
 	}
 	
-	// Stage 2: keep WooCommerce checkout flow standard; no custom debug/override handlers.
+	/* Axecode.tech: Этап 2 стабилизации - сохранен стандартный поток WooCommerce checkout, отладочные/override-обработчики удалены. */
 	
 	
 	// Добавляем возможности для пользователей
@@ -1934,6 +1941,7 @@ function handle_comment_delete() {
 	
 	// Обработчик для добавления карты
 	function handle_add_payment_method() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		if (!isset($_POST['payment_nonce']) || !wp_verify_nonce($_POST['payment_nonce'], 'add_payment_method')) {
 			yoga_ajax_error('Ошибка безопасности', 'invalid_nonce', 403);
 		}
@@ -1966,6 +1974,7 @@ function handle_comment_delete() {
 	
 	// Обработчик для удаления карты
 	function handle_remove_payment_method() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		if (!isset($_POST['card_id']) || !wp_verify_nonce($_POST['security'], 'remove_payment_method')) {
 			yoga_ajax_error('Ошибка безопасности', 'invalid_nonce', 403);
 		}
@@ -2028,6 +2037,7 @@ function handle_comment_delete() {
 	
 	// Вход по email и паролю
 	function handle_yoga_email_login() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		check_ajax_referer('yoga_login_nonce', 'yoga_login_nonce');
 		$log = sanitize_text_field($_POST['log']);
 		$pwd = $_POST['pwd'];
@@ -2047,6 +2057,7 @@ function handle_comment_delete() {
 	
 	// Регистрация по email
 	function handle_yoga_email_register() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		check_ajax_referer('yoga_register_nonce', 'yoga_register_nonce');
 		
 		// Проверка reCAPTCHA
@@ -2093,6 +2104,7 @@ function handle_comment_delete() {
 	
 	// Восстановление пароля
 	function handle_yoga_lost_password() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		check_ajax_referer('yoga_recovery_nonce', 'yoga_recovery_nonce');
 		
 		// Проверка reCAPTCHA
@@ -2121,6 +2133,7 @@ function handle_comment_delete() {
 	
 	// Отправка SMS кода
 	function handle_send_sms_code() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		check_ajax_referer('login_modal_nonce', 'security');
 		
 		$phone = sanitize_text_field($_POST['phone']);
@@ -2599,6 +2612,7 @@ function handle_comment_delete() {
 	
 	// Проверка SMS кода
 	function handle_verify_sms_code() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		check_ajax_referer('login_modal_nonce', 'security');
 		
 		$phone = sanitize_text_field($_POST['phone']);
@@ -2652,6 +2666,7 @@ function handle_comment_delete() {
 	
 	// Обработчик для добавления/удаления из избранного
 	function toggle_favorite_practice() {
+		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
 		/* AxeCode.tech (безопасность, этап 1): восстановлена CSRF-проверка для AJAX-действия избранного. */
 		check_ajax_referer('favorite_practice_nonce', 'security');
 		
@@ -2762,6 +2777,7 @@ function handle_comment_delete() {
 			return 30 * DAY_IN_SECONDS;
 		}
 	}
+
 
 
 
