@@ -1,4 +1,4 @@
-﻿<span class="praktika-menu-anchor" id="<?php echo esc_attr($section['anchor_id']); ?>"></span>
+<span class="praktika-menu-anchor" id="<?php echo esc_attr($section['anchor_id']); ?>"></span>
 <div class="praktika-comments">
     <h3><?php echo esc_html($section['title']); ?></h3>
     

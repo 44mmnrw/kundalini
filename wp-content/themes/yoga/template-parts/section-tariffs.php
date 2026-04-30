@@ -1,4 +1,4 @@
-﻿<section class="section-tariffs section-tariffs_single" id="section-tariffs">
+<section class="section-tariffs section-tariffs_single" id="section-tariffs">
   <div class="container">
     <div class="row">
       <div class="tariffs">

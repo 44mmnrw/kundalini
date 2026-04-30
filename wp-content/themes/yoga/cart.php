@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Cart page template
  */

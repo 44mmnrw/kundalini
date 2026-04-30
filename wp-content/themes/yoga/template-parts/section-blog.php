@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Получаем настройки из ACF
 $new_title = get_field('blog_new_title', 'option');
 $main_post = get_field('blog_main_post', 'option');
