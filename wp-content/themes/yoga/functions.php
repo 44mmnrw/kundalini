@@ -13,29 +13,37 @@
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 
 	// Fallback, если ACF временно отключен: не даем теме падать на вызовах ACF-функций.
-	if (!function_exists('get_field')) {
-		function get_field($selector, $post_id = false, $format_value = true) {
-			return null;
+		/* Axecode.tech: Этап 3 (универсальность) — fallback ACF оставляем только для фронтенда.
+	 * В админке/активации плагинов заглушки запрещены, иначе возникает фатал
+	 * \"Cannot redeclare get_field()\" при активации Advanced Custom Fields PRO.
+	 */
+	/* Axecode.tech: CLI-режим исключаем, иначе при активации ACF из консоли ловим redeclare get_field(). */
+	$yoga_allow_acf_fallback = !is_admin() && !(defined('WP_CLI') && WP_CLI) && (php_sapi_name() !== 'cli');
+	if ($yoga_allow_acf_fallback) {
+		if (!function_exists('get_field')) {
+			function get_field($selector, $post_id = false, $format_value = true) {
+				return null;
+			}
 		}
-	}
-	if (!function_exists('the_field')) {
-		function the_field($selector, $post_id = false, $format_value = true) {
-			echo '';
+		if (!function_exists('the_field')) {
+			function the_field($selector, $post_id = false, $format_value = true) {
+				echo '';
+			}
 		}
-	}
-	if (!function_exists('have_rows')) {
-		function have_rows($selector, $post_id = false) {
-			return false;
+		if (!function_exists('have_rows')) {
+			function have_rows($selector, $post_id = false) {
+				return false;
+			}
 		}
-	}
-	if (!function_exists('the_row')) {
-		function the_row() {
-			return null;
+		if (!function_exists('the_row')) {
+			function the_row() {
+				return null;
+			}
 		}
-	}
-	if (!function_exists('the_sub_field')) {
-		function the_sub_field($selector, $format_value = true) {
-			echo '';
+		if (!function_exists('the_sub_field')) {
+			function the_sub_field($selector, $format_value = true) {
+				echo '';
+			}
 		}
 	}
 	if (!function_exists('yoga_ajax_error')) {
@@ -2055,6 +2063,7 @@ function handle_comment_delete() {
 			return 30 * DAY_IN_SECONDS;
 		}
 	}
+
 
 
 
