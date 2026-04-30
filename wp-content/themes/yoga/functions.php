@@ -2,6 +2,13 @@
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
+	/* Axecode.tech: Этап 3 (универсальность) — модульные подключения.
+	 * Переход выполняется поэтапно, без риска двойной регистрации хуков.
+	 */
+	require_once get_template_directory() . '/inc/core/ajax-responses.php';
+	require_once get_template_directory() . '/inc/core/dependencies.php';
+	require_once get_template_directory() . '/inc/ajax/payments.php';
+	require_once get_template_directory() . '/inc/ajax/favorites.php';
 
 	// Fallback, если ACF временно отключен: не даем теме падать на вызовах ACF-функций.
 	if (!function_exists('get_field')) {
@@ -1940,64 +1947,7 @@ function handle_comment_delete() {
 	add_shortcode('subscription_management', 'subscription_management_shortcode');
 	
 	// Обработчик для добавления карты
-	function handle_add_payment_method() {
-		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
-		if (!isset($_POST['payment_nonce']) || !wp_verify_nonce($_POST['payment_nonce'], 'add_payment_method')) {
-			yoga_ajax_error('Ошибка безопасности', 'invalid_nonce', 403);
-		}
-		
-		if (!is_user_logged_in()) {
-			yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
-		}
-		
-		// Здесь должна быть интеграция с платежной системой (Stripe, etc.)
-		// Это упрощенный пример
-		
-		$user_id = get_current_user_id();
-		$card_data = array(
-        'id' => 'card_' . uniqid(),
-        'brand' => sanitize_text_field($_POST['card_brand']),
-        'last4' => sanitize_text_field($_POST['card_last4']),
-        'exp_month' => sanitize_text_field($_POST['card_exp_month']),
-        'exp_year' => sanitize_text_field($_POST['card_exp_year']),
-        'type' => sanitize_text_field($_POST['card_type'])
-		);
-		
-		$saved_cards = get_user_meta($user_id, 'saved_payment_cards', true) ?: array();
-		$saved_cards[] = $card_data;
-		
-		update_user_meta($user_id, 'saved_payment_cards', $saved_cards);
-		
-		yoga_ajax_success('Карта успешно добавлена');
-	}
-	add_action('wp_ajax_add_payment_method', 'handle_add_payment_method');
-	
-	// Обработчик для удаления карты
-	function handle_remove_payment_method() {
-		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
-		if (!isset($_POST['card_id']) || !wp_verify_nonce($_POST['security'], 'remove_payment_method')) {
-			yoga_ajax_error('Ошибка безопасности', 'invalid_nonce', 403);
-		}
-		
-		if (!is_user_logged_in()) {
-			yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
-		}
-		
-		$user_id = get_current_user_id();
-		$card_id = sanitize_text_field($_POST['card_id']);
-		$saved_cards = get_user_meta($user_id, 'saved_payment_cards', true) ?: array();
-		
-		$updated_cards = array_filter($saved_cards, function($card) use ($card_id) {
-			return $card['id'] !== $card_id;
-		});
-		
-		update_user_meta($user_id, 'saved_payment_cards', $updated_cards);
-		
-		yoga_ajax_success('Карта успешно удалена');
-	}
-	add_action('wp_ajax_remove_payment_method', 'handle_remove_payment_method');
-	
-	// Функция для подключения разных header'ов
+// Функция для подключения разных header'ов
 	function custom_get_header() {
 		// Проверяем, используется ли шаблон "Личный кабинет"
 		if (is_page_template('my-account')) {
@@ -2665,45 +2615,14 @@ function handle_comment_delete() {
 	}		
 	
 	// Обработчик для добавления/удаления из избранного
-	function toggle_favorite_practice() {
-		/* Axecode.tech: Этап 2 стабилизации - стандартизированы JSON-ответы. */
-		/* AxeCode.tech (безопасность, этап 1): восстановлена CSRF-проверка для AJAX-действия избранного. */
-		check_ajax_referer('favorite_practice_nonce', 'security');
-		
-		if (!is_user_logged_in()) {
-			yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
-		}
-		
-		$practice_id = intval($_POST['practice_id']);
-		$user_id = get_current_user_id();
-		$favorites = get_user_meta($user_id, 'favorite_practices', true);
-		
-		if (empty($favorites)) {
-			$favorites = array();
-		}
-		
-		if (in_array($practice_id, $favorites)) {
-			$favorites = array_diff($favorites, array($practice_id));
-			$message = 'Удалено из избранного';
-			} else {
-			$favorites[] = $practice_id;
-			$message = 'Добавлено в избранное';
-		}
-		
-		update_user_meta($user_id, 'favorite_practices', $favorites);
-		
-		yoga_ajax_success($message);
-	}
-	add_action('wp_ajax_toggle_favorite_practice', 'toggle_favorite_practice');
-	
-	// Получение информации о текущем активном тарифе
+// Получение информации о текущем активном тарифе
 	function get_current_user_tariff($user_id = null) {
 		if (!$user_id) {
 			$user_id = get_current_user_id();
 		}
 		
 		if (!$user_id) return false;
-		if (!function_exists('wc_get_orders')) return false;
+		if (!yoga_has_woocommerce() || !function_exists('wc_get_orders')) return false;
 		
 		$orders = wc_get_orders(array(
         'customer_id' => $user_id,
@@ -2777,6 +2696,9 @@ function handle_comment_delete() {
 			return 30 * DAY_IN_SECONDS;
 		}
 	}
+
+
+
 
 
 
