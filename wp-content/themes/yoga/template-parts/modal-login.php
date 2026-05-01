@@ -74,6 +74,8 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <p class="login-rules">
                     Нажимая «Зарегистрироваться», вы принимаете условия <a href="<?php echo esc_url($terms_url); ?>">пользовательского соглашения</a> и <a href="<?php echo esc_url($privacy_url); ?>">политики конфиденциальности</a>
                 </p>
+                <?php /* Axecode.tech: reCAPTCHA disabled by request. Author: ChatGPT Codex. Date: 2026-05-01. */
+                /*
                 <div class="login-captcha">
                     <?php if ($recaptcha_key) : ?>
                         <div id="recaptcha-register" class="g-recaptcha" data-sitekey="<?php echo esc_attr($recaptcha_key); ?>"></div>
@@ -81,6 +83,7 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                         <img src="<?php echo esc_url($img_uri . '/login-captcha.png'); ?>" alt="" class="login-captcha__plug">
                     <?php endif; ?>
                 </div>
+                */ ?>
                 <label for="login-reg-btn" class="btn">
                     <span>
                         зарегистрироваться
@@ -107,6 +110,8 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <input type="hidden" name="action" value="yoga_lost_password">
                 <input type="email" name="user_login" class="input" required placeholder="Электронная почта">
                 <button type="submit" id="recovery-btn"></button>
+                <?php /* Axecode.tech: reCAPTCHA disabled by request. Author: ChatGPT Codex. Date: 2026-05-01. */
+                /*
                 <div class="login-captcha">
                     <?php if ($recaptcha_key) : ?>
                         <div id="recaptcha-recovery" class="g-recaptcha" data-sitekey="<?php echo esc_attr($recaptcha_key); ?>"></div>
@@ -114,6 +119,7 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                         <img src="<?php echo esc_url($img_uri . '/login-captcha.png'); ?>" alt="" class="login-captcha__plug">
                     <?php endif; ?>
                 </div>
+                */ ?>
                 <label for="recovery-btn" class="btn">
                     <span>
                         Восстановить
