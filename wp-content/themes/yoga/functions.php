@@ -52,6 +52,8 @@
 	}
 	if (!function_exists('yoga_ajax_error')) {
 		// Plyr JS - загружаем первым
+		// Axecode.tech: единый формат ошибок AJAX.
+		// Зачем: фронтенд стабильно получает поля code/message и HTTP-статус.
 		function yoga_ajax_error(string $message, string $code = 'error', int $status = 400, array $extra = array()) {
 			$payload = array_merge(array(
 				'code' => $code,
@@ -184,6 +186,8 @@ function yoga_subscribe_handler() {
 	add_action('wp_enqueue_scripts', 'yoga_ajax_localization');
 	
 // Определяем автора
+// Axecode.tech: шаблон комментария с разделением собственных/чужих действий.
+// Зачем: один рендер-блок для списка, редактирования и ответа без дублирования HTML.
 function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = (is_user_logged_in() && get_current_user_id() == $comment->user_id);
@@ -1675,6 +1679,8 @@ function handle_comment_delete() {
 	}
 	
 	// Добавляем метабокс для ответа на вопрос
+	// Axecode.tech: прием вопросов из личного кабинета.
+	// Зачем: централизованная валидация nonce/авторизации и единый формат уведомления в админку.
 	function handle_question_submission() {
 		if (!isset($_POST['question_nonce']) || !wp_verify_nonce($_POST['question_nonce'], 'submit_question')) {
 			wp_die('Ошибка безопасности');
@@ -1794,6 +1800,8 @@ function handle_comment_delete() {
 	}
 	
 	// Если используете WooCommerce Subscriptions
+	// Axecode.tech: сохранение ответа администратора и отправка email пользователю.
+	// Зачем: синхронно фиксируем текст ответа, дату/автора и уведомление в одном хуке.
 	function save_question_answer(int $post_id): void {
 		if (!isset($_POST['answer_nonce']) || !wp_verify_nonce($_POST['answer_nonce'], 'save_question_answer')) {
 			return;
@@ -1912,6 +1920,7 @@ function handle_comment_delete() {
 	function subscription_management_shortcode() {
 		ob_start();
 	?>
+    <!-- Axecode.tech: блок управления подпиской в ЛК; статус, срок и действия в одном месте. -->
     <div class="subscription-management">
         <h3>Управление подпиской</h3>
         <?php
@@ -2023,8 +2032,11 @@ function handle_comment_delete() {
 		return $latest_tariff;
 	}
 
+	// Axecode.tech: расчет периода доступа вынесен в отдельный helper для повторного использования.
 	if (!function_exists('calculate_access_duration')) {
 		// Восстановление пароля
+		// Axecode.tech: нормализация периода доступа в секунды.
+		// Зачем: поддержка форматов "30", "30d", "2m", "1y" и безопасный fallback по умолчанию.
 		function calculate_access_duration(string $period): int {
 			$period = trim((string) $period);
 
