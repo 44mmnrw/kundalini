@@ -11,3 +11,12 @@
 /wp-content/themes/*
 !/wp-content/themes/yoga/
 !/wp-content/themes/yoga/**
+
+# Allow tracking a targeted hotfix in Yandex Metrika plugin
+!/wp-content/plugins/
+/wp-content/plugins/*
+!/wp-content/plugins/wp-yandex-metrika/
+/wp-content/plugins/wp-yandex-metrika/*
+!/wp-content/plugins/wp-yandex-metrika/includes/
+/wp-content/plugins/wp-yandex-metrika/includes/*
+!/wp-content/plugins/wp-yandex-metrika/includes/class.ya-metrika-woocommerce.php
