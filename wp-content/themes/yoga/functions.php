@@ -716,17 +716,17 @@ function handle_comment_delete() {
 	function register_faq_question_cpt() {
 		register_post_type('faq_question', array(
         'labels' => array(
-		'name' => 'Р’РѕРїСЂРѕСЃС‹ FAQ',
-		'singular_name' => 'Р’РѕРїСЂРѕСЃ',
-		'menu_name' => 'Р’РѕРїСЂРѕСЃС‹ FAQ',
-		'add_new' => 'Р”РѕР±Р°РІРёС‚СЊ РІРѕРїСЂРѕСЃ',
-		'add_new_item' => 'Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
-		'edit_item' => 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РІРѕРїСЂРѕСЃ',
-		'new_item' => 'РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
-		'view_item' => 'РџСЂРѕСЃРјРѕС‚СЂРµС‚СЊ РІРѕРїСЂРѕСЃ',
-		'search_items' => 'РџРѕРёСЃРє РІРѕРїСЂРѕСЃРѕРІ',
-		'not_found' => 'Р’РѕРїСЂРѕСЃС‹ РЅРµ РЅР°Р№РґРµРЅС‹',
-		'not_found_in_trash' => 'Р’РѕРїСЂРѕСЃС‹ РІ РєРѕСЂР·РёРЅРµ РЅРµ РЅР°Р№РґРµРЅС‹'
+		'name' => 'Вопросы FAQ',
+		'singular_name' => 'Вопрос',
+		'menu_name' => 'Вопросы FAQ',
+		'add_new' => 'Добавить вопрос',
+		'add_new_item' => 'Добавить новый вопрос',
+		'edit_item' => 'Редактировать вопрос',
+		'new_item' => 'Новый вопрос',
+		'view_item' => 'Просмотреть вопрос',
+		'search_items' => 'Поиск вопросов',
+		'not_found' => 'Вопросы не найдены',
+		'not_found_in_trash' => 'Вопросы в корзине не найдены'
         ),
         'public' => false,
         'show_ui' => true,
@@ -1731,17 +1731,17 @@ function handle_comment_delete() {
         'menu_icon' => 'dashicons-format-chat',
         'supports' => array('title', 'editor'),
         'labels' => array(
-		'name' => 'Р’РѕРїСЂРѕСЃС‹ FAQ',
-		'singular_name' => 'Р’РѕРїСЂРѕСЃ',
-		'menu_name' => 'Р’РѕРїСЂРѕСЃС‹ FAQ',
-		'add_new' => 'Р”РѕР±Р°РІРёС‚СЊ РІРѕРїСЂРѕСЃ',
-		'add_new_item' => 'Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
-		'edit_item' => 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РІРѕРїСЂРѕСЃ',
-		'new_item' => 'РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
-		'view_item' => 'РџСЂРѕСЃРјРѕС‚СЂРµС‚СЊ РІРѕРїСЂРѕСЃ',
-		'search_items' => 'РџРѕРёСЃРє РІРѕРїСЂРѕСЃРѕРІ',
-		'not_found' => 'Р’РѕРїСЂРѕСЃС‹ РЅРµ РЅР°Р№РґРµРЅС‹',
-		'not_found_in_trash' => 'Р’РѕРїСЂРѕСЃС‹ РІ РєРѕСЂР·РёРЅРµ РЅРµ РЅР°Р№РґРµРЅС‹'
+		'name' => 'Вопросы FAQ',
+		'singular_name' => 'Вопрос',
+		'menu_name' => 'Вопросы FAQ',
+		'add_new' => 'Добавить вопрос',
+		'add_new_item' => 'Добавить новый вопрос',
+		'edit_item' => 'Редактировать вопрос',
+		'new_item' => 'Новый вопрос',
+		'view_item' => 'Просмотреть вопрос',
+		'search_items' => 'Поиск вопросов',
+		'not_found' => 'Вопросы не найдены',
+		'not_found_in_trash' => 'Вопросы в корзине не найдены'
         )
 		);
 		
