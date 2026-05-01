@@ -74,7 +74,7 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <p class="login-rules">
                     Нажимая «Зарегистрироваться», вы принимаете условия <a href="<?php echo esc_url($terms_url); ?>">пользовательского соглашения</a> и <a href="<?php echo esc_url($privacy_url); ?>">политики конфиденциальности</a>
                 </p>
-                <?php /* Axecode.tech: reCAPTCHA disabled by request. Author: ChatGPT Codex. Date: 2026-05-01. */
+                <?php /* Axecode.tech: reCAPTCHA отключена.*/
                 /*
                 <div class="login-captcha">
                     <?php if ($recaptcha_key) : ?>
