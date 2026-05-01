@@ -2,23 +2,26 @@
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
-	/* Axecode.tech: Р­С‚Р°Рї 3 (СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕСЃС‚СЊ) вЂ” РјРѕРґСѓР»СЊРЅС‹Рµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ.
-	 * РџРµСЂРµС…РѕРґ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕСЌС‚Р°РїРЅРѕ, Р±РµР· СЂРёСЃРєР° РґРІРѕР№РЅРѕР№ СЂРµРіРёСЃС‚СЂР°С†РёРё С…СѓРєРѕРІ.
-	 */
+	// Регистрация меню
 	require_once get_template_directory() . '/inc/core/ajax-responses.php';
 	require_once get_template_directory() . '/inc/core/dependencies.php';
+	// Axecode.tech: интеграция ACF вынесена в /inc/integrations/acf.php.
+	// Зачем: не держим bootstrap/hooks ACF в template-parts и централизуем
+	// все регистрации на acf/init, чтобы избежать побочных эффектов ранней загрузки.
 	require_once get_template_directory() . '/inc/integrations/acf.php';
 	require_once get_template_directory() . '/inc/ajax/payments.php';
 	require_once get_template_directory() . '/inc/ajax/favorites.php';
-	/* Axecode.tech: Р­С‚Р°Рї 3 (СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕСЃС‚СЊ) вЂ” РІС‹РЅРѕСЃРёРј auth/SMS AJAX РІ РѕС‚РґРµР»СЊРЅС‹Р№ РјРѕРґСѓР»СЊ. */
+	// Подключение стилей и скриптов
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 
-	// Fallback, РµСЃР»Рё ACF РІСЂРµРјРµРЅРЅРѕ РѕС‚РєР»СЋС‡РµРЅ: РЅРµ РґР°РµРј С‚РµРјРµ РїР°РґР°С‚СЊ РЅР° РІС‹Р·РѕРІР°С… ACF-С„СѓРЅРєС†РёР№.
-		/* Axecode.tech: Р­С‚Р°Рї 3 (СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕСЃС‚СЊ) вЂ” fallback ACF РѕСЃС‚Р°РІР»СЏРµРј С‚РѕР»СЊРєРѕ РґР»СЏ С„СЂРѕРЅС‚РµРЅРґР°.
-	 * Р’ Р°РґРјРёРЅРєРµ/Р°РєС‚РёРІР°С†РёРё РїР»Р°РіРёРЅРѕРІ Р·Р°РіР»СѓС€РєРё Р·Р°РїСЂРµС‰РµРЅС‹, РёРЅР°С‡Рµ РІРѕР·РЅРёРєР°РµС‚ С„Р°С‚Р°Р»
-	 * \"Cannot redeclare get_field()\" РїСЂРё Р°РєС‚РёРІР°С†РёРё Advanced Custom Fields PRO.
-	 */
-	/* Axecode.tech: CLI-СЂРµР¶РёРј РёСЃРєР»СЋС‡Р°РµРј, РёРЅР°С‡Рµ РїСЂРё Р°РєС‚РёРІР°С†РёРё ACF РёР· РєРѕРЅСЃРѕР»Рё Р»РѕРІРёРј redeclare get_field(). */
+	// Стили
+		// Скрипты (jQuery уже входит в состав WordPress)
+	// Plyr CSS
+	// Axecode.tech: guard для fallback ACF только на фронтенде.
+	// Зачем:
+	// 1) Шаблоны темы напрямую вызывают ACF-хелперы и не должны падать, если ACF временно отключен.
+	// 2) В админке и WP-CLI нельзя регистрировать заглушки, иначе при активации ACF возможен
+	//    фатал "Cannot redeclare get_field()".
 	$yoga_allow_acf_fallback = !is_admin() && !(defined('WP_CLI') && WP_CLI) && (php_sapi_name() !== 'cli');
 	if ($yoga_allow_acf_fallback) {
 		if (!function_exists('get_field')) {
@@ -48,7 +51,7 @@
 		}
 	}
 	if (!function_exists('yoga_ajax_error')) {
-		/* Axecode.tech: Р­С‚Р°Рї 2 СЃС‚Р°Р±РёР»РёР·Р°С†РёРё - РµРґРёРЅС‹Р№ С„РѕСЂРјР°С‚ AJAX-РѕС€РёР±РѕРє. */
+		// Plyr JS - загружаем первым
 		function yoga_ajax_error($message, $code = 'error', $status = 400, $extra = array()) {
 			$payload = array_merge(array(
 				'code' => $code,
@@ -58,7 +61,7 @@
 		}
 	}
 	if (!function_exists('yoga_ajax_success')) {
-		/* Axecode.tech: Р­С‚Р°Рї 2 СЃС‚Р°Р±РёР»РёР·Р°С†РёРё - РµРґРёРЅС‹Р№ С„РѕСЂРјР°С‚ AJAX-СѓСЃРїРµС…Р°. */
+		// Кастомный скрипт - зависит от plyr-js и jQuery
 		function yoga_ajax_success($message = '', $data = array(), $status = 200) {
 			$payload = array_merge(array(
 				'message' => $message,
@@ -66,7 +69,7 @@
 			wp_send_json_success($payload, $status);
 		}
 	}
-	// Р РµРіРёСЃС‚СЂР°С†РёСЏ РјРµРЅСЋ
+	// Локализация базовых строк (переводы/подписи)
 	function my_theme_setup() {
 		register_nav_menus( array(
         'primary' => __( 'Primary Menu', 'yoga' ),
@@ -76,16 +79,16 @@
 	}
 	add_action( 'after_setup_theme', 'my_theme_setup' );
 	
-	// РџРѕРґРєР»СЋС‡РµРЅРёРµ СЃС‚РёР»РµР№ Рё СЃРєСЂРёРїС‚РѕРІ
+	// Опции ACF
 	function my_theme_scripts() {
 		$theme_uri = get_template_directory_uri();
 		
-		// РЎС‚РёР»Рё
+		// Обработчик AJAX для формы подписки
 		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array(), '1.0.0' );
 		wp_enqueue_style( 'mulish-style', $theme_uri . '/assets/css/mulish.css', array(), '1.0.0' );
 		wp_enqueue_style( 'animate-style', $theme_uri . '/assets/css/animate.css', array(), '1.0.0' );
 		
-		// РЎРєСЂРёРїС‚С‹ (jQuery СѓР¶Рµ РІС…РѕРґРёС‚ РІ СЃРѕСЃС‚Р°РІ WordPress)
+		// Проверка nonce для безопасности
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'spincrement', $theme_uri . '/assets/js/jquery.spincrement.min.js', array('jquery'), null, true );
 		wp_enqueue_script( 'machheight', $theme_uri . '/assets/js/machheight.js', array('jquery'), null, true );
@@ -97,73 +100,73 @@
 		
 		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox'), '1.0.0', true );
 		
-		// Plyr CSS
+		// Здесь можно добавить логику подписки:
 		wp_enqueue_style('plyr-css', get_template_directory_uri() . '/assets/css/plyr.css');
 		
 		wp_enqueue_style('plyr-audio-custom', get_template_directory_uri() . '/assets/css/plyr-custom.css');
 		
-		// Plyr JS - Р·Р°РіСЂСѓР¶Р°РµРј РїРµСЂРІС‹Рј
+		// - Добавление в базу данных
 		wp_enqueue_script('plyr-js', get_template_directory_uri() . '/assets/js/plyr.min.js', array(), '3.7.8', true);
 		
-		// РљР°СЃС‚РѕРјРЅС‹Р№ СЃРєСЂРёРїС‚ - Р·Р°РІРёСЃРёС‚ РѕС‚ plyr-js Рё jQuery
+		// - Интеграция с сервисом рассылок (Mailchimp, SendPulse и т.д.)
 		wp_enqueue_script('practice-player', get_template_directory_uri() . '/assets/js/practice-player.js', 
         array('plyr-js', 'jquery'), '1.0.0', true);
 		
 		
 		
 		
-		// Р›РѕРєР°Р»РёР·Р°С†РёСЏ Р±Р°Р·РѕРІС‹С… СЃС‚СЂРѕРє (РїРµСЂРµРІРѕРґС‹/РїРѕРґРїРёСЃРё)
+		// Локализация базовых строк (переводы/подписи)
 		wp_localize_script('practice-js', 'practiceI18n', [
-		'pause' => 'РџР°СѓР·Р°',
-		'play' => 'РџСѓСЃРє',
-		'next' => 'Р”Р°Р»РµРµ',
-		'prev' => 'РќР°Р·Р°Рґ',
-		'stage' => 'Р­С‚Р°Рї',
-		'locked' => 'Р”РѕСЃС‚СѓРї С‚РѕР»СЊРєРѕ РїРѕ РїРѕРґРїРёСЃРєРµ',
-		'demo_over' => 'Р”РµРјРѕ-С„СЂР°РіРјРµРЅС‚ Р·Р°РІРµСЂС€С‘РЅ',
+		'pause' => 'Пауза',
+		'play' => 'Пуск',
+		'next' => 'Далее',
+		'prev' => 'Назад',
+		'stage' => 'Этап',
+		'locked' => 'Доступ только по подписке',
+		'demo_over' => 'Демо-фрагмент завершён',
 		]);
 	}
 	add_action( 'wp_enqueue_scripts', 'my_theme_scripts' );
 	
-	// РћРїС†РёРё ACF
-	// РћР±СЂР°Р±РѕС‚С‡РёРє AJAX РґР»СЏ С„РѕСЂРјС‹ РїРѕРґРїРёСЃРєРё
-	function yoga_subscribe_handler() {
-		// РџСЂРѕРІРµСЂРєР° nonce РґР»СЏ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+	// Пример: сохранение в опции WordPress
+	// Отправка email администратору (опционально)
+function yoga_subscribe_handler() {
+		// Проверка nonce для безопасности
 		if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
-			wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+			wp_die('Ошибка безопасности');
 		}
 		
 		$email = sanitize_email($_POST['email']);
 		
 		if (!is_email($email)) {
-			wp_send_json_error('РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ email Р°РґСЂРµСЃ');
+			wp_send_json_error('Некорректный email адрес');
 		}
 		
-		// Р—РґРµСЃСЊ РјРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ Р»РѕРіРёРєСѓ РїРѕРґРїРёСЃРєРё:
-		// - Р”РѕР±Р°РІР»РµРЅРёРµ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
-		// - РРЅС‚РµРіСЂР°С†РёСЏ СЃ СЃРµСЂРІРёСЃРѕРј СЂР°СЃСЃС‹Р»РѕРє (Mailchimp, SendPulse Рё С‚.Рґ.)
-		// - РћС‚РїСЂР°РІРєР° СѓРІРµРґРѕРјР»РµРЅРёСЏ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ
+		// Здесь можно добавить логику подписки:
+		// Обработка AJAX комментариев
+		// Проверка nonce - используем ваш 'yoga_ajax_nonce'
+		// Определяем автора используя ваши данные
 		
-		// РџСЂРёРјРµСЂ: СЃРѕС…СЂР°РЅРµРЅРёРµ РІ РѕРїС†РёРё WordPress
+		// Данные комментария
 		$subscribers = get_option('yoga_subscribers', array());
 		if (!in_array($email, $subscribers)) {
 			$subscribers[] = $email;
 			update_option('yoga_subscribers', $subscribers);
 			
-			// РћС‚РїСЂР°РІРєР° email Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ)
+			// Отправка email администратору (опционально)
 			$admin_email = get_option('admin_email');
-			$subject = 'РќРѕРІС‹Р№ РїРѕРґРїРёСЃС‡РёРє РЅР° СЃР°Р№С‚Рµ ' . get_bloginfo('name');
-			$message = "РќРѕРІС‹Р№ email РїРѕРґРїРёСЃС‡РёРєР°: $email\n";
-			$message .= "Р’СЂРµРјСЏ: " . current_time('mysql') . "\n";
+			$subject = 'Новый подписчик на сайте ' . get_bloginfo('name');
+			$message = "Новый email подписчика: $email\n";
+			$message .= "Время: " . current_time('mysql') . "\n";
 			wp_mail($admin_email, $subject, $message);
 		}
 		
-		wp_send_json_success('РџРѕРґРїРёСЃРєР° СѓСЃРїРµС€РЅРѕ РѕС„РѕСЂРјР»РµРЅР°');
+		wp_send_json_success('Подписка успешно оформлена');
 	}
 	add_action('wp_ajax_yoga_subscribe', 'yoga_subscribe_handler');
 	add_action('wp_ajax_nopriv_yoga_subscribe', 'yoga_subscribe_handler');
 	
-	// Р›РѕРєР°Р»РёР·Р°С†РёСЏ AJAX РїР°СЂР°РјРµС‚СЂРѕРІ
+	// Обработка ответов на комментарии
 	function yoga_ajax_localization() {
 		
 		$current_user = wp_get_current_user();
@@ -180,7 +183,7 @@
 	}
 	add_action('wp_enqueue_scripts', 'yoga_ajax_localization');
 	
-// Р¤СѓРЅРєС†РёСЏ С€Р°Р±Р»РѕРЅР° РєРѕРјРјРµРЅС‚Р°СЂРёСЏ
+// Определяем автора
 function custom_comment_template($comment, $args, $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = (is_user_logged_in() && get_current_user_id() == $comment->user_id);
@@ -195,21 +198,21 @@ function custom_comment_template($comment, $args, $depth) {
                     <?php comment_author(); ?>
                 </b>
                 <span class="praktika-comment-time">
-                    <?php printf(_x('%s РЅР°Р·Р°Рґ', '%s = human-readable time difference', 'textdomain'), human_time_diff(get_comment_time('U'), current_time('timestamp'))); ?>
+                    <?php printf(_x('%s назад', '%s = human-readable time difference', 'textdomain'), human_time_diff(get_comment_time('U'), current_time('timestamp'))); ?>
                 </span>
                 <div class="praktika-comment-item__main-action">
                     <?php if ($is_own_comment): ?>
                        <!-- <div class="your-comm">
                             <div class="your-comm__btn your-comm__btn_edit" onclick="toggleEditForm(<?php echo $comment->comment_ID; ?>)">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/edit-icon.png" alt="Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ">
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/edit-icon.png" alt="Редактировать">
                             </div>
                             <div class="your-comm__btn your-comm__btn_del" onclick="deleteComment(<?php echo $comment->comment_ID; ?>)">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/del-icon.png" alt="РЈРґР°Р»РёС‚СЊ">
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/del-icon.png" alt="Удалить">
                             </div>
                         </div>-->
                     <?php else: ?>
                         <div class="answer-btn" onclick="toggleReplyForm(<?php echo $comment->comment_ID; ?>)">
-                            <span>РћС‚РІРµС‚РёС‚СЊ</span>
+                            <span>Ответить</span>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -226,28 +229,29 @@ function custom_comment_template($comment, $args, $depth) {
                 ?>
             </div>
             
-            <!-- Р¤РѕСЂРјР° СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ (С‚РѕР»СЊРєРѕ РґР»СЏ СЃРІРѕРёС… РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ) -->
+            <!-- Форма редактирования (только для своих комментариев) -->
+            <!-- Форма редактирования (только для своих комментариев) -->
             <?php if ($is_own_comment): ?>
             <form class="praktika-comment-item__edit hidden" id="edit-form-<?php echo $comment->comment_ID; ?>">
                 <div class="answer-main">
                     <textarea name="comment_content" class="input textarea-resize" rows="1"><?php echo esc_textarea($comment->comment_content); ?></textarea>
                     <button type="button" class="btn" onclick="updateComment(<?php echo $comment->comment_ID; ?>)">
-                        РћР±РЅРѕРІРёС‚СЊ
+                        Обновить
                     </button>
                 </div>
             </form>
             <?php endif; ?>
         </div>
-        
-        <!-- Р¤РѕСЂРјР° РѕС‚РІРµС‚Р° -->
+
+        <!-- Форма ответа -->
         <div class="praktika-comment__answer hidden" id="reply-form-<?php echo $comment->comment_ID; ?>">
             <div class="answer-main">
                 <div class="answer-main__image">
                     <?php echo get_avatar(get_current_user_id(), 40); ?>
                 </div>
-                <textarea name="reply_content" class="input textarea-resize" placeholder="Р’Р°С€ РѕС‚РІРµС‚" rows="1"></textarea>
-                <button type="button" class="btn" >
-                    РћС‚РїСЂР°РІРёС‚СЊ
+                <textarea name="reply_content" class="input textarea-resize" placeholder="Ваш ответ" rows="1"></textarea>
+                <button type="button" class="btn">
+                    Отправить
                 </button>
             </div>
         </div>
@@ -255,29 +259,29 @@ function custom_comment_template($comment, $args, $depth) {
     <?php
 }
 
-// РћР±СЂР°Р±РѕС‚РєР° AJAX РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ
+// Обновление комментариев (только для зарегистрированных пользователей)
 add_action('wp_ajax_submit_custom_comment', 'handle_custom_comment');
 add_action('wp_ajax_nopriv_submit_custom_comment', 'handle_custom_comment');
 
 function handle_custom_comment() {
-    // РџСЂРѕРІРµСЂРєР° nonce - РёСЃРїРѕР»СЊР·СѓРµРј РІР°С€ 'yoga_ajax_nonce'
+    // Проверяем, что пользователь может редактировать комментарий
     if (!wp_verify_nonce($_POST['comment_security'], 'yoga_ajax_nonce')) {
-        wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+        wp_die('Ошибка безопасности');
     }
     
-    // РћРїСЂРµРґРµР»СЏРµРј Р°РІС‚РѕСЂР° РёСЃРїРѕР»СЊР·СѓСЏ РІР°С€Рё РґР°РЅРЅС‹Рµ
+    // Добавление комментариев (только для зарегистрированных пользователей)
     if (is_user_logged_in()) {
         $current_user = wp_get_current_user();
         $comment_author = $current_user->display_name ?: $current_user->user_login;
         $comment_author_email = $current_user->user_email;
         $user_id = $current_user->ID;
     } else {
-        $comment_author = 'Р“РѕСЃС‚СЊ';
+        $comment_author = 'Гость';
         $comment_author_email = '';
         $user_id = 0;
     }
     
-    // Р”Р°РЅРЅС‹Рµ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ
+    // Проверяем, что пользователь может добавлять комментарий
     $comment_data = array(
         'comment_post_ID' => intval($_POST['post_id']),
         'comment_content' => sanitize_textarea_field($_POST['comment']),
@@ -288,26 +292,26 @@ function handle_custom_comment() {
         'comment_approved' => 1,
     );
     
-    // Р’СЃС‚Р°РІР»СЏРµРј РєРѕРјРјРµРЅС‚Р°СЂРёР№
+    // Разрешить комментарии для custom post type 'practice'
     $comment_id = wp_insert_comment($comment_data);
     
     if ($comment_id) {
-        wp_send_json_success('РљРѕРјРјРµРЅС‚Р°СЂРёР№ РґРѕР±Р°РІР»РµРЅ');
+        wp_send_json_success('Комментарий добавлен');
     } else {
-        wp_send_json_error('РћС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РєРѕРјРјРµРЅС‚Р°СЂРёСЏ');
+        wp_send_json_error('Ошибка при добавлении комментария');
     }
 }
 
-// РћР±СЂР°Р±РѕС‚РєР° РѕС‚РІРµС‚РѕРІ РЅР° РєРѕРјРјРµРЅС‚Р°СЂРёРё
+// Включить поддержку комментариев для custom post type
 add_action('wp_ajax_submit_comment_reply', 'handle_comment_reply');
 add_action('wp_ajax_nopriv_submit_comment_reply', 'handle_comment_reply');
 
 function handle_comment_reply() {
     if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
-        wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+        wp_die('Ошибка безопасности');
     }
     
-    // РћРїСЂРµРґРµР»СЏРµРј Р°РІС‚РѕСЂР°
+    // Кастомизация аватаров
     if (is_user_logged_in()) {
         $current_user = wp_get_current_user();
         $comment_author = $current_user->display_name ?: $current_user->user_login;
@@ -332,26 +336,26 @@ function handle_comment_reply() {
     $comment_id = wp_insert_comment($comment_data);
     
     if ($comment_id) {
-        wp_send_json_success('РћС‚РІРµС‚ РґРѕР±Р°РІР»РµРЅ');
+        wp_send_json_success('Ответ добавлен');
     } else {
-        wp_send_json_error('РћС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РѕС‚РІРµС‚Р°');
+        wp_send_json_error('Ошибка при добавлении ответа');
     }
 }
 
-// РћР±РЅРѕРІР»РµРЅРёРµ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ (С‚РѕР»СЊРєРѕ РґР»СЏ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№)
+// Время комментариев на русском
 add_action('wp_ajax_update_comment', 'handle_comment_update');
 
 function handle_comment_update() {
     if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
-        wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+        wp_die('Ошибка безопасности');
     }
     
     $comment_id = intval($_POST['comment_id']);
     $comment = get_comment($comment_id);
     
-    // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РєРѕРјРјРµРЅС‚Р°СЂРёР№
+    // Обработка AJAX формы контактов
     if (!current_user_can('edit_comment', $comment_id) || $comment->user_id != get_current_user_id()) {
-        wp_send_json_error('РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ');
+        wp_send_json_error('Недостаточно прав для редактирования комментария');
     }
     
     $comment_data = array(
@@ -362,39 +366,39 @@ function handle_comment_update() {
     $result = wp_update_comment($comment_data);
     
     if ($result) {
-        wp_send_json_success('РљРѕРјРјРµРЅС‚Р°СЂРёР№ РѕР±РЅРѕРІР»РµРЅ');
+        wp_send_json_success('Комментарий обновлен');
     } else {
-        wp_send_json_error('РћС€РёР±РєР° РїСЂРё РѕР±РЅРѕРІР»РµРЅРёРё РєРѕРјРјРµРЅС‚Р°СЂРёСЏ');
+        wp_send_json_error('Ошибка при обновлении комментария');
     }
 }
 
-// РЈРґР°Р»РµРЅРёРµ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ (С‚РѕР»СЊРєРѕ РґР»СЏ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№)
+// Проверка nonce
 add_action('wp_ajax_delete_comment', 'handle_comment_delete');
 
 function handle_comment_delete() {
     if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
-        wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+        wp_die('Ошибка безопасности');
     }
     
     $comment_id = intval($_POST['comment_id']);
     
-    // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ СѓРґР°Р»СЏС‚СЊ РєРѕРјРјРµРЅС‚Р°СЂРёР№
+    // Валидация и санитизация данных
     if (!current_user_can('edit_comment', $comment_id) || get_comment($comment_id)->user_id != get_current_user_id()) {
-        wp_send_json_error('РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ');
+        wp_send_json_error('Недостаточно прав для удаления комментария');
     }
     
     $result = wp_delete_comment($comment_id, true);
     
     if ($result) {
-        wp_send_json_success('РљРѕРјРјРµРЅС‚Р°СЂРёР№ СѓРґР°Р»РµРЅ');
+        wp_send_json_success('Комментарий удален');
     } else {
-        wp_send_json_error('РћС€РёР±РєР° РїСЂРё СѓРґР°Р»РµРЅРёРё РєРѕРјРјРµРЅС‚Р°СЂРёСЏ');
+        wp_send_json_error('Ошибка при удалении комментария');
     }
 }
 
 
 	
-	// Р Р°Р·СЂРµС€РёС‚СЊ РєРѕРјРјРµРЅС‚Р°СЂРёРё РґР»СЏ custom post type 'practice'
+	// Отправка email администратору
 	function enable_comments_for_practice($open, $post_id) {
 		$post = get_post($post_id);
 		if ($post->post_type == 'practice') {
@@ -404,61 +408,61 @@ function handle_comment_delete() {
 	}
 	add_filter('comments_open', 'enable_comments_for_practice', 10, 2);
 	
-	// Р’РєР»СЋС‡РёС‚СЊ РїРѕРґРґРµСЂР¶РєСѓ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ РґР»СЏ custom post type
+	//$to = get_option('admin_email');
 	function add_comments_support_for_practice() {
 		add_post_type_support('practice', 'comments');
 	}
 	add_action('init', 'add_comments_support_for_practice');
 	
-	// РљР°СЃС‚РѕРјРёР·Р°С†РёСЏ Р°РІР°С‚Р°СЂРѕРІ
+	// Сохранение в базу данных (опционально)
 	add_filter('avatar_defaults', 'custom_avatar_defaults');
 	function custom_avatar_defaults($avatar_defaults) {
 		$avatar_defaults[get_template_directory_uri() . '/assets/img/default-avatar.png'] = 'Default Avatar';
 		return $avatar_defaults;
 	}
 	
-	// Р’СЂРµРјСЏ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ РЅР° СЂСѓСЃСЃРєРѕРј
+	// Сохранение сообщения в базу данных
 	function russian_comment_time($date, $d, $comment) {
 		if (!is_admin()) {
-			return human_time_diff(get_comment_time('U'), current_time('timestamp')) . ' РЅР°Р·Р°Рґ';
+			return human_time_diff(get_comment_time('U'), current_time('timestamp')) . ' назад';
 		}
 		return $date;
 	}
 	add_filter('get_comment_date', 'russian_comment_time', 10, 3);
 	
-	// РћР±СЂР°Р±РѕС‚РєР° AJAX С„РѕСЂРјС‹ РєРѕРЅС‚Р°РєС‚РѕРІ
+	// Обработка AJAX подписки
 	add_action('wp_ajax_process_contact_form', 'process_contact_form');
 	add_action('wp_ajax_nopriv_process_contact_form', 'process_contact_form');
 	
 	function process_contact_form() {
-		// РџСЂРѕРІРµСЂРєР° nonce
+		// Счетчик пунктов меню
 		if (!wp_verify_nonce($_POST['contacts_nonce_field'], 'contacts_nonce')) {
-			wp_send_json_error(array('message' => 'РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё'));
+			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 		}
 		
-		// Р’Р°Р»РёРґР°С†РёСЏ Рё СЃР°РЅРёС‚РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…
+		// Проверяем, является ли это первый пункт меню
 		$name = sanitize_text_field($_POST['contacts_name']);
 		$email = sanitize_email($_POST['contacts_email']);
 		$phone = sanitize_text_field($_POST['contacts_phone']);
 		$message = sanitize_textarea_field($_POST['contacts_message']);
 		
 		if (empty($name) || empty($email) || empty($phone) || empty($message)) {
-			wp_send_json_error(array('message' => 'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, Р·Р°РїРѕР»РЅРёС‚Рµ РІСЃРµ РїРѕР»СЏ'));
+			wp_send_json_error(array('message' => 'Пожалуйста, заполните все поля'));
 		}
 		
 		if (!is_email($email)) {
-			wp_send_json_error(array('message' => 'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ email'));
+			wp_send_json_error(array('message' => 'Пожалуйста, введите корректный email'));
 		}
 		
-		// РћС‚РїСЂР°РІРєР° email Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ
-		//$to = get_option('admin_email');
+		// Добавляем класс main-menu-active-item только первому пункту
+		// Создаем ссылку
 		$to = 'sshell72@yandex.ru';
-		$subject = 'РќРѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ СЃ С„РѕСЂРјС‹ РєРѕРЅС‚Р°РєС‚РѕРІ';
+		$subject = 'Новое сообщение с формы контактов';
 		$body = "
-        РРјСЏ: $name
+        Имя: $name
         Email: $email
-        РўРµР»РµС„РѕРЅ: $phone
-        РЎРѕРѕР±С‰РµРЅРёРµ: $message
+        Телефон: $phone
+        Сообщение: $message
 		";
 		
 		$headers = array('Content-Type: text/html; charset=UTF-8');
@@ -466,16 +470,16 @@ function handle_comment_delete() {
 		$sent = wp_mail($to, $subject, nl2br($body), $headers);
 		
 		if ($sent) {
-			// РЎРѕС…СЂР°РЅРµРЅРёРµ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ)
+			// Добавляем иконки только для первого пункта
 			save_contact_message($name, $email, $phone, $message);
 			
-			wp_send_json_success(array('message' => 'РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚РїСЂР°РІР»РµРЅРѕ СѓСЃРїРµС€РЅРѕ!'));
+			wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
 			} else {
-			wp_send_json_error(array('message' => 'РћС€РёР±РєР° РїСЂРё РѕС‚РїСЂР°РІРєРµ СЃРѕРѕР±С‰РµРЅРёСЏ'));
+			wp_send_json_error(array('message' => 'Ошибка при отправке сообщения'));
 		}
 	}
 	
-	// РЎРѕС…СЂР°РЅРµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
+	// Увеличиваем счетчик после обработки элемента
 	function save_contact_message($name, $email, $phone, $message) {
 		$post_data = array(
         'post_title' => 'РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚ ' . $name,
@@ -492,18 +496,18 @@ function handle_comment_delete() {
 		wp_insert_post($post_data);
 	}
 	
-	// РћР±СЂР°Р±РѕС‚РєР° AJAX РїРѕРґРїРёСЃРєРё
+	// Сбрасываем счетчик при начале нового уровня меню
 	add_action('wp_ajax_process_subscription', 'process_subscription');
 	add_action('wp_ajax_nopriv_process_subscription', 'process_subscription');
 	
 	function process_subscription() {
 		if (!wp_verify_nonce($_POST['nonce'], 'subscription_nonce')) {
-			wp_send_json_error(array('message' => 'РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё'));
+			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 		}
 		
 		$email = sanitize_email($_POST['email']);
 		if (!is_email($email)) {
-			wp_send_json_error(array('message' => 'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ email'));
+			wp_send_json_error(array('message' => 'Пожалуйста, введите корректный email'));
 		}
 		
 		$saved = save_subscription_email($email);
@@ -511,13 +515,13 @@ function handle_comment_delete() {
 		if ($saved) {
 			wp_mail(
             get_option('admin_email'),
-            'РќРѕРІР°СЏ РїРѕРґРїРёСЃРєР° РЅР° СЃР°Р№С‚Рµ',
-            'РќРѕРІС‹Р№ email РґР»СЏ РїРѕРґРїРёСЃРєРё: ' . $email
+            'Новая подписка на сайте',
+            'Новый email для подписки: ' . $email
 			);
 			
-			wp_send_json_success(array('message' => 'РџРѕРґРїРёСЃРєР° РѕС„РѕСЂРјР»РµРЅР° СѓСЃРїРµС€РЅРѕ!'));
+			wp_send_json_success(array('message' => 'Подписка оформлена успешно!'));
 			} else {
-			wp_send_json_error(array('message' => 'РћС€РёР±РєР° РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё РїРѕРґРїРёСЃРєРё'));
+			wp_send_json_error(array('message' => 'Ошибка при сохранении подписки'));
 		}
 	}
 	
@@ -533,24 +537,24 @@ function handle_comment_delete() {
 	}
 	
 	class Custom_Menu_Walker extends Walker_Nav_Menu {
-		private $item_counter = 0; // РЎС‡РµС‚С‡РёРє РїСѓРЅРєС‚РѕРІ РјРµРЅСЋ
+		private $item_counter = 0; // Сбрасываем счетчик при завершении уровня меню
 		
 		function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
-			// РџСЂРѕРІРµСЂСЏРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌС‚Рѕ РїРµСЂРІС‹Р№ РїСѓРЅРєС‚ РјРµРЅСЋ
+			// Сбрасываем счетчик для новых уровней
 			$is_first_item = ($this->item_counter === 0);
 			
-			// Р”РѕР±Р°РІР»СЏРµРј РєР»Р°СЃСЃ main-menu-active-item С‚РѕР»СЊРєРѕ РїРµСЂРІРѕРјСѓ РїСѓРЅРєС‚Сѓ
+			// Добавляем классы
 			$active_class = $is_first_item ? 'main-menu-active-item' : '';
 			
 			$output .= '<li class="' . $active_class . '">';
 			
-			// РЎРѕР·РґР°РµРј СЃСЃС‹Р»РєСѓ
+			// Добавляем special класс для первого пункта
 			$attributes = !empty($item->attr_title) ? ' title="' . esc_attr($item->attr_title) . '"' : '';
 			$attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
 			$attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
 			$attributes .= !empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '';
 			
-			/* AxeCode.tech (СЌС‚Р°Рї 1): РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ $args РІ walker РґР»СЏ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё СЃ PHP 8.x. */
+			// Для первого пункта не добавляем ссылку, для остальных - добавляем
 			$args_before = is_object($args) ? ($args->before ?? '') : (is_array($args) ? ($args['before'] ?? '') : '');
 			$args_link_before = is_object($args) ? ($args->link_before ?? '') : (is_array($args) ? ($args['link_before'] ?? '') : '');
 			$args_link_after = is_object($args) ? ($args->link_after ?? '') : (is_array($args) ? ($args['link_after'] ?? '') : '');
@@ -559,7 +563,7 @@ function handle_comment_delete() {
 			$item_output .= '<a class="ref"' . $attributes . '>';
 			$item_output .= $args_link_before . apply_filters('the_title', $item->title, $item->ID) . $args_link_after;
 			
-			// Р”РѕР±Р°РІР»СЏРµРј РёРєРѕРЅРєРё С‚РѕР»СЊРєРѕ РґР»СЏ РїРµСЂРІРѕРіРѕ РїСѓРЅРєС‚Р°
+			// Добавляем span с текстом
 			if ($is_first_item) {
 				$item_output .= '<div class="ref-icon">';
 				$item_output .= '<img src="' . get_template_directory_uri() . '/assets/img/menu-ref-icon.png" alt="" class="active">';
@@ -572,17 +576,17 @@ function handle_comment_delete() {
 			
 			$output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
 			
-			// РЈРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє РїРѕСЃР»Рµ РѕР±СЂР°Р±РѕС‚РєРё СЌР»РµРјРµРЅС‚Р°
+			// Кастомный walker
 			$this->item_counter++;
 		}
 		
-		// РЎР±СЂР°СЃС‹РІР°РµРј СЃС‡РµС‚С‡РёРє РїСЂРё РЅР°С‡Р°Р»Рµ РЅРѕРІРѕРіРѕ СѓСЂРѕРІРЅСЏ РјРµРЅСЋ
+		// Обработка AJAX формы FAQ
 		function start_lvl(&$output, $depth = 0, $args = array()) {
 			$this->item_counter = 0;
 			parent::start_lvl($output, $depth, $args);
 		}
 		
-		// РЎР±СЂР°СЃС‹РІР°РµРј СЃС‡РµС‚С‡РёРє РїСЂРё Р·Р°РІРµСЂС€РµРЅРёРё СѓСЂРѕРІРЅСЏ РјРµРЅСЋ
+		// Проверка nonce
 		function end_lvl(&$output, $depth = 0, $args = array()) {
 			$this->item_counter = 0;
 			parent::end_lvl($output, $depth, $args);
@@ -593,23 +597,23 @@ function handle_comment_delete() {
 		private $item_count = 0;
 		
 		function start_lvl(&$output, $depth = 0, $args = array()) {
-			$this->item_count = 0; // РЎР±СЂР°СЃС‹РІР°РµРј СЃС‡РµС‚С‡РёРє РґР»СЏ РЅРѕРІС‹С… СѓСЂРѕРІРЅРµР№
+			$this->item_count = 0; // Валидация данных
 		}
 		
 		function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
 			$this->item_count++;
 			
-			// Р”РѕР±Р°РІР»СЏРµРј РєР»Р°СЃСЃС‹
+			// Проверка обязательных полей
 			$class_names = 'mobile-menu-main-item';
 			
-			// Р”РѕР±Р°РІР»СЏРµРј special РєР»Р°СЃСЃ РґР»СЏ РїРµСЂРІРѕРіРѕ РїСѓРЅРєС‚Р°
+			// Проверка email
 			if ($this->item_count === 1) {
 				$class_names .= ' mobile-menu-main-item_sw';
 			}
 			
 			$output .= '<li class="' . $class_names . '">';
 			
-			// Р”Р»СЏ РїРµСЂРІРѕРіРѕ РїСѓРЅРєС‚Р° РЅРµ РґРѕР±Р°РІР»СЏРµРј СЃСЃС‹Р»РєСѓ, РґР»СЏ РѕСЃС‚Р°Р»СЊРЅС‹С… - РґРѕР±Р°РІР»СЏРµРј
+			// Отправка email администратору
 			if ($this->item_count !== 1) {
 				$attributes = !empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '';
 				$attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
@@ -618,7 +622,7 @@ function handle_comment_delete() {
 				$output .= '<a' . $attributes . '></a>';
 			}
 			
-			// Р”РѕР±Р°РІР»СЏРµРј span СЃ С‚РµРєСЃС‚РѕРј
+			// Отправка email
 			$output .= '<span>' . apply_filters('the_title', $item->title, $item->ID) . '</span>';
 		}
 		
@@ -628,7 +632,7 @@ function handle_comment_delete() {
 	}
 	
 	
-	// РљР°СЃС‚РѕРјРЅС‹Р№ walker
+	// Сохранение в базу данных
 	class Footer_Walker extends Walker_Nav_Menu {
 		function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
 			$classes     = empty( $item->classes ) ? array() : (array) $item->classes;
@@ -643,56 +647,92 @@ function handle_comment_delete() {
 		}
 	}
 	
-	// РћР±СЂР°Р±РѕС‚РєР° AJAX С„РѕСЂРјС‹ FAQ
+	// Создание Custom Post Type для вопросов
 	add_action('wp_ajax_faq_contact_form', 'handle_faq_contact_form');
 	add_action('wp_ajax_nopriv_faq_contact_form', 'handle_faq_contact_form');
 	
 	function handle_faq_contact_form() {
-		// РџСЂРѕРІРµСЂРєР° nonce
+		// Добавление метаполей для вопросов
 		if (!wp_verify_nonce($_POST['faq_nonce'], 'faq_contact_nonce')) {
-			wp_send_json_error(array('message' => 'РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё'));
+			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 			exit;
 		}
 		
-		// Р’Р°Р»РёРґР°С†РёСЏ РґР°РЅРЅС‹С…
+		// Сохранение метаполей
 		$name = sanitize_text_field($_POST['name']);
 		$email = sanitize_email($_POST['email']);
 		$message = sanitize_textarea_field($_POST['message']);
 		
-		// РџСЂРѕРІРµСЂРєР° РѕР±СЏР·Р°С‚РµР»СЊРЅС‹С… РїРѕР»РµР№
+		// === Сложность ===
 		if (empty($name) || empty($email) || empty($message)) {
-			wp_send_json_error(array('message' => 'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, Р·Р°РїРѕР»РЅРёС‚Рµ РІСЃРµ РїРѕР»СЏ'));
+			wp_send_json_error(array('message' => 'Пожалуйста, заполните все поля'));
 			exit;
 		}
 		
-		// РџСЂРѕРІРµСЂРєР° email
+		/* register_taxonomy('practice-difficulty', ['practice'], [
+		'label' => 'Сложность',
+		'public' => true,
+		'hierarchical' => false,
+		'show_ui' => true,
+		'show_in_menu' => true,
+		'show_in_nav_menus' => true,
+		'show_in_rest' => true, // Важно для отображения в новом редакторе
+		'rewrite' => ['slug' => 'duration'],
+		'show_admin_column' => true, // Показывать колонку в списке записей
+		]);
+		
+		// === Продолжительность ===
+		register_taxonomy('practice-duration', ['practice'], [
+		'label' => 'Продолжительность',
+		'public' => true,
+		'hierarchical' => false,
+		'show_ui' => true,
+		'show_in_menu' => true,
+		'show_in_nav_menus' => true,
+		'show_in_rest' => true, // Важно для отображения в новом редакторе
+		'rewrite' => ['slug' => 'duration'],
+		'show_admin_column' => true, // Показывать колонку в списке записей
+		]);
+		
+		// === Цель ===
+		register_taxonomy('practice-goal', ['practice'], [
+		'label' => 'Цели',
+		'public' => true,
+		'hierarchical' => false,
+		'show_ui' => true,
+		'show_in_menu' => true,
+		'show_in_nav_menus' => true,
+		'show_in_rest' => true, // Важно для отображения в новом редакторе
+		'rewrite' => ['slug' => 'goal'],
+		'show_admin_column' => true, // Показывать колонку в списке записей
+	]); */
 		if (!is_email($email)) {
-			wp_send_json_error(array('message' => 'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ email'));
+			wp_send_json_error(array('message' => 'Пожалуйста, введите корректный email'));
 			exit;
 		}
 		
-		// РћС‚РїСЂР°РІРєР° email Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ
+		// Axecode.tech: нормализация UTF-8 в email-блоке FAQ.
 		$to = get_option('admin_email');
-		$subject = 'РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ РёР· СЂР°Р·РґРµР»Р° FAQ: ' . $name;
+		$subject = 'Новый вопрос из раздела FAQ: ' . $name;
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 		
 		$body = "
-        <h3>РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ РёР· СЂР°Р·РґРµР»Р° FAQ</h3>
-        <p><strong>РРјСЏ:</strong> {$name}</p>
+        <h3>Новый вопрос из раздела FAQ</h3>
+        <p><strong>Имя:</strong> {$name}</p>
         <p><strong>Email:</strong> {$email}</p>
-        <p><strong>Р’РѕРїСЂРѕСЃ:</strong></p>
+        <p><strong>Вопрос:</strong></p>
         <p>" . nl2br($message) . "</p>
         <hr>
-        <p><small>РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚РїСЂР°РІР»РµРЅРѕ СЃ СЃР°Р№С‚Р° " . get_bloginfo('name') . "</small></p>
+        <p><small>Сообщение отправлено с сайта " . get_bloginfo('name') . "</small></p>
 		";
 		
-		// РћС‚РїСЂР°РІРєР° email
+		// Проверяем nonce для безопасности
 		$email_sent = wp_mail($to, $subject, $body, $headers);
 		
 		if ($email_sent) {
-			// РЎРѕС…СЂР°РЅРµРЅРёРµ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
+			// Параметры по умолчанию
 			$post_id = wp_insert_post(array(
-            'post_title' => 'Р’РѕРїСЂРѕСЃ РѕС‚ ' . $name,
+            'post_title' => 'Вопрос от ' . $name,
             'post_content' => $message,
             'post_type' => 'faq_question',
             'post_status' => 'private',
@@ -703,17 +743,19 @@ function handle_comment_delete() {
 			));
 			
 			wp_send_json_success(array(
-            'message' => get_field('faq_form_success_message', 'option') ?: 'Р’Р°С€ РІРѕРїСЂРѕСЃ РѕС‚РїСЂР°РІР»РµРЅ! РњС‹ РѕС‚РІРµС‚РёРј РІР°Рј РІ Р±Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ.'
+            'message' => get_field('faq_form_success_message', 'option') ?: 'Ваш вопрос отправлен! Мы ответим вам в ближайшее время.'
 			));
 			} else {
-			wp_send_json_error(array('message' => 'РћС€РёР±РєР° РїСЂРё РѕС‚РїСЂР°РІРєРµ СЃРѕРѕР±С‰РµРЅРёСЏ'));
+			wp_send_json_error(array('message' => 'Ошибка при отправке сообщения'));
 		}
 		
 		exit;
 	}
 	
-	// РЎРѕР·РґР°РЅРёРµ Custom Post Type РґР»СЏ РІРѕРїСЂРѕСЃРѕРІ
+	// Фильтр по категории (term_id)
 	function register_faq_question_cpt() {
+		// Axecode.tech: подписи в админке нормализованы в корректный UTF-8.
+		// Зачем: ранее mojibake в labels ломал текст меню в wp-admin.
 		register_post_type('faq_question', array(
         'labels' => array(
 		'name' => 'Вопросы FAQ',
@@ -738,11 +780,11 @@ function handle_comment_delete() {
 	}
 	add_action('init', 'register_faq_question_cpt');
 	
-	// Р”РѕР±Р°РІР»РµРЅРёРµ РјРµС‚Р°РїРѕР»РµР№ РґР»СЏ РІРѕРїСЂРѕСЃРѕРІ
+	// Поиск по названию и описанию
 	function add_faq_question_meta() {
 		add_meta_box(
         'faq_question_meta',
-        'РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РІРѕРїСЂРѕСЃРµ',
+        'Информация о вопросе',
         'display_faq_question_meta',
         'faq_question',
         'normal',
@@ -760,7 +802,7 @@ function handle_comment_delete() {
     <?php
 	}
 	
-	// РЎРѕС…СЂР°РЅРµРЅРёРµ РјРµС‚Р°РїРѕР»РµР№
+	// Фильтры по таксономиям
 	function save_faq_question_meta($post_id) {
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 		if (!current_user_can('edit_post', $post_id)) return;
@@ -771,44 +813,8 @@ function handle_comment_delete() {
 	}
 	add_action('save_post_faq_question', 'save_faq_question_meta');
 	
-	// === РЎР»РѕР¶РЅРѕСЃС‚СЊ ===
-	/* register_taxonomy('practice-difficulty', ['practice'], [
-		'label' => 'РЎР»РѕР¶РЅРѕСЃС‚СЊ',
-		'public' => true,
-		'hierarchical' => false,
-		'show_ui' => true,
-		'show_in_menu' => true,
-		'show_in_nav_menus' => true,
-		'show_in_rest' => true, // Р’Р°Р¶РЅРѕ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІ РЅРѕРІРѕРј СЂРµРґР°РєС‚РѕСЂРµ
-		'rewrite' => ['slug' => 'duration'],
-		'show_admin_column' => true, // РџРѕРєР°Р·С‹РІР°С‚СЊ РєРѕР»РѕРЅРєСѓ РІ СЃРїРёСЃРєРµ Р·Р°РїРёСЃРµР№
-		]);
-		
-		// === РџСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ ===
-		register_taxonomy('practice-duration', ['practice'], [
-		'label' => 'РџСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ',
-		'public' => true,
-		'hierarchical' => false,
-		'show_ui' => true,
-		'show_in_menu' => true,
-		'show_in_nav_menus' => true,
-		'show_in_rest' => true, // Р’Р°Р¶РЅРѕ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІ РЅРѕРІРѕРј СЂРµРґР°РєС‚РѕСЂРµ
-		'rewrite' => ['slug' => 'duration'],
-		'show_admin_column' => true, // РџРѕРєР°Р·С‹РІР°С‚СЊ РєРѕР»РѕРЅРєСѓ РІ СЃРїРёСЃРєРµ Р·Р°РїРёСЃРµР№
-		]);
-		
-		// === Р¦РµР»СЊ ===
-		register_taxonomy('practice-goal', ['practice'], [
-		'label' => 'Р¦РµР»Рё',
-		'public' => true,
-		'hierarchical' => false,
-		'show_ui' => true,
-		'show_in_menu' => true,
-		'show_in_nav_menus' => true,
-		'show_in_rest' => true, // Р’Р°Р¶РЅРѕ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІ РЅРѕРІРѕРј СЂРµРґР°РєС‚РѕСЂРµ
-		'rewrite' => ['slug' => 'goal'],
-		'show_admin_column' => true, // РџРѕРєР°Р·С‹РІР°С‚СЊ РєРѕР»РѕРЅРєСѓ РІ СЃРїРёСЃРєРµ Р·Р°РїРёСЃРµР№
-	]); */
+	// Сортировка
+	// Формируем HTML ответ
 	
 	add_action('wp_ajax_filter_practices', 'filter_practices_callback');
 	add_action('wp_ajax_nopriv_filter_practices', 'filter_practices_callback');
@@ -880,22 +886,22 @@ function handle_comment_delete() {
 		wp_die();
 	}
 	
-	// AJAX РѕР±СЂР°Р±РѕС‚С‡РёРє РґР»СЏ С„РёР»СЊС‚СЂР°С†РёРё РїСЂР°РєС‚РёРє
+	// Дополнительные элементы если результатов больше 10
 	add_action('wp_ajax_filter_practices_kriyi', 'filter_practices_callback_kriyi');
 	add_action('wp_ajax_nopriv_filter_practices_kriyi', 'filter_practices_callback_kriyi');
 	
 	function filter_practices_callback_kriyi() {
-		// РџСЂРѕРІРµСЂСЏРµРј nonce РґР»СЏ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+		// Возвращаем HTML и количество результатов
 		check_ajax_referer('practice_filter_nonce', 'nonce');
 		
-		// РџР°СЂР°РјРµС‚СЂС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+		// Очистка корзины и добавление товара с редиректом
 		$args = array(
         'post_type' => 'practice',
         'posts_per_page' => -1,
         'post_status' => 'publish'
 		);
 		
-		// Р¤РёР»СЊС‚СЂ РїРѕ РєР°С‚РµРіРѕСЂРёРё (term_id)
+		// Проверяем, добавляется ли товар категории tariffs
 		if (!empty($_POST['term_id'])) {
 			$args['tax_query'] = array(
             array(
@@ -906,12 +912,12 @@ function handle_comment_delete() {
 			);
 		}
 		
-		// РџРѕРёСЃРє РїРѕ РЅР°Р·РІР°РЅРёСЋ Рё РѕРїРёСЃР°РЅРёСЋ
+		// Проверяем nonce
 		if (!empty($_POST['search'])) {
 			$args['s'] = sanitize_text_field($_POST['search']);
 		}
 		
-		// Р¤РёР»СЊС‚СЂС‹ РїРѕ С‚Р°РєСЃРѕРЅРѕРјРёСЏРј
+		// Очищаем корзину
 		if (!empty($_POST['filters'])) {
 			$filters = $_POST['filters'];
 			
@@ -933,7 +939,7 @@ function handle_comment_delete() {
 			}
 		}
 		
-		// РЎРѕСЂС‚РёСЂРѕРІРєР°
+		// Добавляем товар
 		if (!empty($_POST['sort'])) {
 			switch ($_POST['sort']) {
 				case 'newness':
@@ -952,7 +958,7 @@ function handle_comment_delete() {
 		$query = new WP_Query($args);
 		$count = $query->found_posts;
 		
-		// Р¤РѕСЂРјРёСЂСѓРµРј HTML РѕС‚РІРµС‚
+		// Редирект на checkout
 		ob_start();
 		
 		if ($query->have_posts()) :
@@ -995,18 +1001,14 @@ function handle_comment_delete() {
 	<?php
         endwhile;
         
-        // Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ РµСЃР»Рё СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ Р±РѕР»СЊС€Рµ 10
+        // Отключаем стандартную обработку WooCommerce для тарифов
         if ($count > 10) :
 		for ($i = 0; $i < 2; $i++) :
 	?>
 	<div class="kriyi-item kriyi-item_last hidden">
 		<div class="kriyi-item__inner">
 			<a href="#"></a>
-			<span class="kriya-level">РќР°С‡РёРЅР°СЋС‰РёР№</span>
-			<div class="kriya-info">
-				<h3>РћСЃС‚Р°Р»СЊРЅС‹Рµ РєСЂРёР№Рё</h3>
-				<p>РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ РґРѕСЃС‚СѓРїРЅС‹Рµ РїСЂР°РєС‚РёРєРё</p>
-			</div>
+			<span class="kriya-level">Начинающий</span>`r`n			<div class="kriya-info">`r`n				<h3>Остальные крийи</h3>`r`n				<p>Показать все доступные практики</p>`r`n			</div>
 			<div class="kriya-media">
 				<div class="kriya-img">
 					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="РћСЃС‚Р°Р»СЊРЅС‹Рµ РєСЂРёР№Рё">
@@ -1029,12 +1031,12 @@ function handle_comment_delete() {
         endif;
         
 		else :
-        echo '<p class="no-practices">РџРѕ РІР°С€РµРјСѓ Р·Р°РїСЂРѕСЃСѓ РЅРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ.</p>';
+        echo '<p class="no-practices">По вашему запросу ничего не найдено.</p>';
 		endif;
 		
 		$html = ob_get_clean();
 		
-		// Р’РѕР·РІСЂР°С‰Р°РµРј HTML Рё РєРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
+		// Отключаем стандартный редирект
 		wp_send_json_success(array(
         'html' => $html,
         'count' => $count
@@ -1043,17 +1045,17 @@ function handle_comment_delete() {
 		wp_die();
 	}
 	
-	// РћС‡РёСЃС‚РєР° РєРѕСЂР·РёРЅС‹ Рё РґРѕР±Р°РІР»РµРЅРёРµ С‚РѕРІР°СЂР° СЃ СЂРµРґРёСЂРµРєС‚РѕРј
+	// Подключаем скрипты и стили WooCommerce
 	add_action('template_redirect', 'handle_tariff_add_to_cart');
 	function handle_tariff_add_to_cart() {
 	if (!function_exists('WC') || !function_exists('wc_get_checkout_url')) {
 		return;
 	}
 
-		// РџСЂРѕРІРµСЂСЏРµРј, РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Р»Рё С‚РѕРІР°СЂ РєР°С‚РµРіРѕСЂРёРё tariffs
+		// Подключаем скрипты для checkout
 		if (isset($_POST['add-to-cart']) && is_numeric($_POST['add-to-cart']) && isset($_POST['woocommerce-add-to-cart-nonce'])) {
 			
-			// РџСЂРѕРІРµСЂСЏРµРј nonce
+			// Убедимся, что все необходимые скрипты загружены
 			if (!wp_verify_nonce($_POST['woocommerce-add-to-cart-nonce'], 'woocommerce-add-to-cart')) {
 				return;
 			}
@@ -1061,14 +1063,14 @@ function handle_comment_delete() {
 			$product_id = intval($_POST['add-to-cart']);
 			
 			if (has_term('tariffs', 'product_cat', $product_id)) {
-				// РћС‡РёС‰Р°РµРј РєРѕСЂР·РёРЅСѓ
+				// Проверяем и исправляем возможные проблемы с checkout
 				WC()->cart->empty_cart();
 				
-				// Р”РѕР±Р°РІР»СЏРµРј С‚РѕРІР°СЂ
+				// Убедимся, что сессия WooCommerce активна
 				$added = WC()->cart->add_to_cart($product_id);
 				
 				if ($added) {
-					// Р РµРґРёСЂРµРєС‚ РЅР° checkout
+					// Отладочная информация
 					wp_redirect(wc_get_checkout_url());
 					exit;
 				}
@@ -1076,28 +1078,28 @@ function handle_comment_delete() {
 		}
 	}
 	
-	// РћС‚РєР»СЋС‡Р°РµРј СЃС‚Р°РЅРґР°СЂС‚РЅСѓСЋ РѕР±СЂР°Р±РѕС‚РєСѓ WooCommerce РґР»СЏ С‚Р°СЂРёС„РѕРІ
+	// Исправление nonce проверки для checkout
 	add_filter('woocommerce_add_to_cart_redirect', 'disable_standard_redirect_for_tariffs', 10, 1);
 	function disable_standard_redirect_for_tariffs($url) {
 		if (isset($_POST['add-to-cart']) && is_numeric($_POST['add-to-cart'])) {
 			$product_id = intval($_POST['add-to-cart']);
 			if (has_term('tariffs', 'product_cat', $product_id)) {
-				return ''; // РћС‚РєР»СЋС‡Р°РµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ СЂРµРґРёСЂРµРєС‚
+				return ''; // Временно отключаем проверку для тестирования
 			}
 		}
 		return $url;
 	}
 	
 	
-	// РџРѕРґРєР»СЋС‡Р°РµРј СЃРєСЂРёРїС‚С‹ Рё СЃС‚РёР»Рё WooCommerce
+	// Альтернативное решение: создаем свою обработку checkout
 	function theme_woocommerce_support() {
 		add_theme_support('woocommerce');
 		
-		// РџРѕРґРєР»СЋС‡Р°РµРј СЃРєСЂРёРїС‚С‹ РґР»СЏ checkout
+		// Проверяем nonce
 	}
 	add_action('after_setup_theme', 'theme_woocommerce_support');
 	
-	// РЈР±РµРґРёРјСЃСЏ, С‡С‚Рѕ РІСЃРµ РЅРµРѕР±С…РѕРґРёРјС‹Рµ СЃРєСЂРёРїС‚С‹ Р·Р°РіСЂСѓР¶РµРЅС‹
+	// Обрабатываем заказ
 	function theme_enqueue_checkout_scripts() {
 		if (function_exists('is_checkout') && is_checkout()) {
 			wp_enqueue_script('jquery');
@@ -1108,7 +1110,7 @@ function handle_comment_delete() {
 	}
 	add_action('wp_enqueue_scripts', 'theme_enqueue_checkout_scripts');
 	
-	// РџСЂРѕРІРµСЂСЏРµРј Рё РёСЃРїСЂР°РІР»СЏРµРј РІРѕР·РјРѕР¶РЅС‹Рµ РїСЂРѕР±Р»РµРјС‹ СЃ checkout
+	// Добавляем возможности для пользователей
 	add_action('template_redirect', 'fix_checkout_issues');
 	function fix_checkout_issues() {
 	if (!function_exists('is_checkout') || !function_exists('WC')) {
@@ -1116,38 +1118,26 @@ function handle_comment_delete() {
 	}
 
 		if (is_checkout() && WC()->cart && !WC()->cart->is_empty()) {
-			// РЈР±РµРґРёРјСЃСЏ, С‡С‚Рѕ СЃРµСЃСЃРёСЏ WooCommerce Р°РєС‚РёРІРЅР°
+			// Обработка обновления профиля
 			if (WC()->session && !WC()->session->has_session()) {
 				WC()->session->set_customer_session_cookie(true);
 			}
 		}
 	}
 	
-	/* Axecode.tech: Р­С‚Р°Рї 2 СЃС‚Р°Р±РёР»РёР·Р°С†РёРё - СЃРѕС…СЂР°РЅРµРЅ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РїРѕС‚РѕРє WooCommerce checkout, РѕС‚Р»Р°РґРѕС‡РЅС‹Рµ/override-РѕР±СЂР°Р±РѕС‚С‡РёРєРё СѓРґР°Р»РµРЅС‹. */
-	
-	
-	// Р”РѕР±Р°РІР»СЏРµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
-	function add_custom_capabilities() {
-		$subscriber = get_role('subscriber');
-		$subscriber->add_cap('read_private_practices');
-		$subscriber->add_cap('edit_user_profile');
-	}
-	add_action('init', 'add_custom_capabilities');
-	
-	// РћР±СЂР°Р±РѕС‚РєР° РѕР±РЅРѕРІР»РµРЅРёСЏ РїСЂРѕС„РёР»СЏ
 	/* function update_user_profile() {
 		if (!isset($_POST['profile_nonce']) || !wp_verify_nonce($_POST['profile_nonce'], 'update_user_profile')) {
-        wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+        wp_die('Ошибка безопасности');
 		}
 		
 		if (!is_user_logged_in()) {
-        wp_die('Р’С‹ РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅС‹');
+        wp_die('Вы не авторизованы');
 		}
 		
 		$user_id = get_current_user_id();
 		$user_data = array('ID' => $user_id);
 		
-		// РћР±РЅРѕРІР»РµРЅРёРµ РѕСЃРЅРѕРІРЅС‹С… РґР°РЅРЅС‹С…
+		// Обновление основных данных
 		if (!empty($_POST['first_name'])) {
         $user_data['first_name'] = sanitize_text_field($_POST['first_name']);
 		}
@@ -1162,7 +1152,7 @@ function handle_comment_delete() {
 		
 		wp_update_user($user_data);
 		
-		// РћР±РЅРѕРІР»РµРЅРёРµ РјРµС‚Р°РїРѕР»РµР№
+		// Обновление метаполей
 		if (!empty($_POST['phone'])) {
         update_user_meta($user_id, 'phone', sanitize_text_field($_POST['phone']));
 		}
@@ -1175,7 +1165,7 @@ function handle_comment_delete() {
         update_user_meta($user_id, 'gender', sanitize_text_field($_POST['gender']));
 		}
 		
-		// РћР±СЂР°Р±РѕС‚РєР° СЃРјРµРЅС‹ РїР°СЂРѕР»СЏ
+		// Обработка смены пароля
 		if (!empty($_POST['current_password']) && !empty($_POST['new_password']) && !empty($_POST['repeat_password'])) {
         if ($_POST['new_password'] === $_POST['repeat_password']) {
 		$user = get_user_by('id', $user_id);
@@ -1186,7 +1176,7 @@ function handle_comment_delete() {
         }
 		}
 		
-		// РћР±СЂР°Р±РѕС‚РєР° Р·Р°РіСЂСѓР·РєРё Р°РІР°С‚Р°СЂР°
+		// Обработка загрузки аватара
 		if (!empty($_FILES['avatar'])) {
         require_once(ABSPATH . 'wp-admin/includes/image.php');
         require_once(ABSPATH . 'wp-admin/includes/file.php');
@@ -1204,27 +1194,39 @@ function handle_comment_delete() {
 		}
 		add_action('admin_post_update_user_profile', 'update_user_profile');
 	add_action('admin_post_nopriv_update_user_profile', 'update_user_profile'); */
-	// AJAX РѕР±СЂР°Р±РѕС‚С‡РёРє РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РїСЂРѕС„РёР»СЏ
+	
+	
+	// AJAX обработчик для обновления профиля
+	function add_custom_capabilities() {
+		$subscriber = get_role('subscriber');
+		$subscriber->add_cap('read_private_practices');
+		$subscriber->add_cap('edit_user_profile');
+	}
+	add_action('init', 'add_custom_capabilities');
+	
+	// Логируем запрос для отладки
+	// Проверяем nonce
+	// Обновление основных данных
 	function yoga_update_profile_ajax() {
-		// Р›РѕРіРёСЂСѓРµРј Р·Р°РїСЂРѕСЃ РґР»СЏ РѕС‚Р»Р°РґРєРё
+		// Обновление метаполей
 		error_log('AJAX update_profile called');
 		error_log('POST data: ' . print_r($_POST, true));
 		error_log('FILES data: ' . print_r($_FILES, true));
 		
-		// РџСЂРѕРІРµСЂСЏРµРј nonce
+		// Обработка смены пароля
 		if (!isset($_POST['nonce'])) {
 			error_log('Nonce not set');
-			wp_send_json_error('Nonce РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ', 400);
+			wp_send_json_error('Nonce не установлен', 400);
 		}
 		
 		if (!wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
 			error_log('Nonce verification failed');
-			wp_send_json_error('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё: РЅРµРІРµСЂРЅС‹Р№ nonce', 403);
+			wp_send_json_error('Ошибка безопасности: неверный nonce', 403);
 		}
 		
 		if (!is_user_logged_in()) {
 			error_log('User not logged in');
-			wp_send_json_error('Р’С‹ РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅС‹', 401);
+			wp_send_json_error('Вы не авторизованы', 401);
 		}
 		
 		$user_id = get_current_user_id();
@@ -1233,7 +1235,7 @@ function handle_comment_delete() {
 		try {
 			$user_data = array('ID' => $user_id);
 			
-			// РћР±РЅРѕРІР»РµРЅРёРµ РѕСЃРЅРѕРІРЅС‹С… РґР°РЅРЅС‹С…
+			// Обработка загрузки аватара
 			if (!empty($_POST['first_name'])) {
 				$user_data['first_name'] = sanitize_text_field($_POST['first_name']);
 			}
@@ -1248,7 +1250,7 @@ function handle_comment_delete() {
 			
 			wp_update_user($user_data);
 			
-			// РћР±РЅРѕРІР»РµРЅРёРµ РјРµС‚Р°РїРѕР»РµР№
+			// Обработка загрузки аватара
 			if (!empty($_POST['phone'])) {
 				update_user_meta($user_id, 'phone', sanitize_text_field($_POST['phone']));
 			}
@@ -1261,7 +1263,8 @@ function handle_comment_delete() {
 				update_user_meta($user_id, 'gender', sanitize_text_field($_POST['gender']));
 			}
 			
-			// РћР±СЂР°Р±РѕС‚РєР° СЃРјРµРЅС‹ РїР°СЂРѕР»СЏ
+			/* $current_user = wp_get_current_user();
+				$user_id = $current_user->ID; */
 			if (!empty($_POST['current_password']) && !empty($_POST['new_password']) && !empty($_POST['repeat_password'])) {
 				if ($_POST['new_password'] === $_POST['repeat_password']) {
 					$user = get_user_by('id', $user_id);
@@ -1272,15 +1275,14 @@ function handle_comment_delete() {
 				}
 			}
 			
-			// РћР±СЂР°Р±РѕС‚РєР° Р·Р°РіСЂСѓР·РєРё Р°РІР°С‚Р°СЂР°
-			// РћР±СЂР°Р±РѕС‚РєР° Р·Р°РіСЂСѓР·РєРё Р°РІР°С‚Р°СЂР°
+			// Обновляем поле ACF для текущего пользователя
+			// Обработчик удаления аватара
 			if (!empty($_FILES['avatar'])) {
 				require_once(ABSPATH . 'wp-admin/includes/image.php');
 				require_once(ABSPATH . 'wp-admin/includes/file.php');
 				require_once(ABSPATH . 'wp-admin/includes/media.php');
 				
-				/* $current_user = wp_get_current_user();
-				$user_id = $current_user->ID; */
+				// Шорткод для истории практик
 				
 				$attachment_id = media_handle_upload('avatar', 0);
 				
@@ -1288,16 +1290,16 @@ function handle_comment_delete() {
 				if ($attachment && $attachment->post_type === 'attachment') {
 					$mime_type = get_post_mime_type($attachment_id);
 					if (strpos($mime_type, 'image/') === 0) {
-						// РћР±РЅРѕРІР»СЏРµРј РїРѕР»Рµ ACF РґР»СЏ С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+						// Шорткод для истории заказов и подписок
 						$result = update_field('user_avatar', $attachment_id, 'user_' . $user_id);
 						
 						if ($result) {
-							wp_send_json_success('РђРІР°С‚Р°СЂ СѓСЃРїРµС€РЅРѕ РѕР±РЅРѕРІР»РµРЅ С‡РµСЂРµР· ACF');
+							wp_send_json_success('Аватар успешно обновлен через ACF');
 							} else {
-							wp_send_json_error('РћС€РёР±РєР° РїСЂРё РѕР±РЅРѕРІР»РµРЅРёРё РїРѕР»СЏ ACF');
+							wp_send_json_error('Ошибка при обновлении поля ACF');
 						}
 						} else {
-						wp_send_json_error("Р¤Р°Р№Р» РЅРµ СЏРІР»СЏРµС‚СЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµРј: $mime_type");
+						wp_send_json_error("Файл не является изображением: $mime_type");
 					}
 				}
 			}
@@ -1306,28 +1308,28 @@ function handle_comment_delete() {
 			
 			} catch (Exception $e) {
 			error_log('Exception in update_profile: ' . $e->getMessage());
-			wp_send_json_error('Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°: ' . $e->getMessage(), 500);
+			wp_send_json_error('Внутренняя ошибка сервера: ' . $e->getMessage(), 500);
 		}
 	}
 	add_action('wp_ajax_update_user_profile', 'yoga_update_profile_ajax');
-	// РћР±СЂР°Р±РѕС‚С‡РёРє СѓРґР°Р»РµРЅРёСЏ Р°РІР°С‚Р°СЂР°
+	// Функция для получения рекомендованных практик
 	function delete_avatar_ajax() {
 		if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
-			wp_send_json_error('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+			wp_send_json_error('Ошибка безопасности');
 		}
 		
 		if (!is_user_logged_in()) {
-			wp_send_json_error('РќРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ');
+			wp_send_json_error('Не авторизован');
 		}
 		
 		$user_id = get_current_user_id();
 		delete_user_meta($user_id, 'simple_local_avatar');
 		
-		wp_send_json_success('РђРІР°С‚Р°СЂ СѓРґР°Р»РµРЅ');
+		wp_send_json_success('Аватар удален');
 	}
 	add_action('wp_ajax_delete_avatar', 'delete_avatar_ajax');
 	
-	// РЁРѕСЂС‚РєРѕРґ РґР»СЏ РёСЃС‚РѕСЂРёРё РїСЂР°РєС‚РёРє
+	// Если пользователь новый, показываем популярные практики
 	function practice_history_shortcode() {
 		if (!is_user_logged_in()) return '';
 		
@@ -1335,7 +1337,7 @@ function handle_comment_delete() {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true);
 		
 		if (empty($completed_practices)) {
-			return '<p>Р’С‹ РµС‰Рµ РЅРµ Р·Р°РІРµСЂС€РёР»Рё РЅРё РѕРґРЅРѕР№ РїСЂР°РєС‚РёРєРё.</p>';
+			return '<p>Вы еще не завершили ни одной практики.</p>';
 		}
 		
 		ob_start();
@@ -1348,7 +1350,7 @@ function handle_comment_delete() {
 						$practice = get_post($practice_id);
 						if ($practice) {
 							$level = get_the_terms($practice_id, 'practice-type');
-							$level_name = !empty($level) ? $level[0]->name : 'РќРµ СѓРєР°Р·Р°РЅ';
+							$level_name = !empty($level) ? $level[0]->name : 'Не указан';
 						?>
                         <div class="kriyi-item">
                             <div class="kriyi-item__inner">
@@ -1391,7 +1393,7 @@ function handle_comment_delete() {
 	}
 	add_shortcode('practice_history', 'practice_history_shortcode');
 	
-	// РЁРѕСЂС‚РєРѕРґ РґР»СЏ РёСЃС‚РѕСЂРёРё Р·Р°РєР°Р·РѕРІ Рё РїРѕРґРїРёСЃРѕРє
+	// Получаем практики на основе предпочтений пользователя
 	function subscription_settings_shortcode() {
 		if (!is_user_logged_in()) return '';
 		if (!function_exists('wc_get_orders')) return '';
@@ -1407,16 +1409,16 @@ function handle_comment_delete() {
 	?>
     <div class="lk-settings">
         <div class="lk-settings__slide lk-settings__slide_main active" data-target="1">
-            <h2>РќР°СЃС‚СЂРѕР№РєРё РїРѕРґРїРёСЃРєРё</h2>
+            <h2>Настройки подписки</h2>
             <div class="lk-settings-part">
                 <div class="lk-settings-item lk-settings-item_main">
                     <div class="lk-settings-item__col">
-                        <p class="lk-settings-item__col-text">Р’Р°С€ С‚Р°СЂРёС„:</p>
+                        <p class="lk-settings-item__col-text">Ваш тариф:</p>
                         <div class="personal-status">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/personal-status-icon_settings.png" alt="" class="personal-status__img">
                             <span>
                                 <?php 
-									/* AxeCode.tech: Р±РµР·РѕРїР°СЃРЅС‹Р№ РІС‹Р·РѕРІ РґР»СЏ РѕРєСЂСѓР¶РµРЅРёР№ Р±РµР· WooCommerce Subscriptions. */
+							// 1. По уровню сложности (на основе завершенных практик)
 									$active_subscriptions = function_exists('wcs_get_users_subscriptions')
 										? wcs_get_users_subscriptions($user_id)
 										: array();
@@ -1428,14 +1430,14 @@ function handle_comment_delete() {
 											}
 										}
 										} else {
-										echo 'РќРµ Р°РєС‚РёРІРµРЅ';
+									echo 'Не активен';
 									}
 								?>
 							</span>
 						</div>
 					</div>
                     <div class="lk-settings-item__col">
-                        <p class="lk-settings-item__col-text">Р”РµР№СЃС‚РІСѓРµС‚ РґРѕ:</p>
+                        <p class="lk-settings-item__col-text">Действует до:</p>
                         <time>
                             <?php
 								if (!empty($active_subscriptions)) {
@@ -1446,7 +1448,7 @@ function handle_comment_delete() {
 										}
 									}
 									} else {
-									echo 'вЂ”';
+								echo '—';
 								}
 							?>
 						</time>
@@ -1455,7 +1457,7 @@ function handle_comment_delete() {
 			</div>
             
             <div class="lk-settings-part">
-                <h4>РСЃС‚РѕСЂРёСЏ РїРѕРєСѓРїРѕРє</h4>
+                <h4>История покупок</h4>
                 <?php
 					if (!empty($orders)) {
 						foreach ($orders as $order) {
@@ -1474,7 +1476,7 @@ function handle_comment_delete() {
                         <?php
 						}
 						} else {
-						echo '<p>РЈ РІР°СЃ РїРѕРєР° РЅРµС‚ Р·Р°РІРµСЂС€РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ.</p>';
+						echo '<p>У вас пока нет завершенных заказов.</p>';
 					}
 				?>
 			</div>
@@ -1485,45 +1487,45 @@ function handle_comment_delete() {
 	}
 	add_shortcode('subscription_settings', 'subscription_settings_shortcode');
 	
-	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЂРµРєРѕРјРµРЅРґРѕРІР°РЅРЅС‹С… РїСЂР°РєС‚РёРє
+	// 2. Похожие на избранные
 	function get_recommended_practices($user_id) {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		$favorite_practices = get_user_meta($user_id, 'favorite_practices', true) ?: array();
 		
-		// Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРѕРІС‹Р№, РїРѕРєР°Р·С‹РІР°РµРј РїРѕРїСѓР»СЏСЂРЅС‹Рµ РїСЂР°РєС‚РёРєРё
+	// 3. Новые практики, которые пользователь еще не проходил
 		if (empty($completed_practices) && empty($favorite_practices)) {
 			return get_popular_practices();
 		}
 		
-		// РџРѕР»СѓС‡Р°РµРј РїСЂР°РєС‚РёРєРё РЅР° РѕСЃРЅРѕРІРµ РїСЂРµРґРїРѕС‡С‚РµРЅРёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	// Убираем дубликаты и уже завершенные практики
 		$recommended = array();
 		
-		// 1. РџРѕ СѓСЂРѕРІРЅСЋ СЃР»РѕР¶РЅРѕСЃС‚Рё (РЅР° РѕСЃРЅРѕРІРµ Р·Р°РІРµСЂС€РµРЅРЅС‹С… РїСЂР°РєС‚РёРє)
+	// Ограничиваем количество рекомендаций
 		$user_levels = get_user_practice_levels($user_id);
 		if (!empty($user_levels)) {
 			$level_practices = get_practices_by_levels($user_levels, 6);
 			$recommended = array_merge($recommended, $level_practices);
 		}
 		
-		// 2. РџРѕС…РѕР¶РёРµ РЅР° РёР·Р±СЂР°РЅРЅС‹Рµ
+		// Вспомогательные функции
 		if (!empty($favorite_practices)) {
 			$similar_practices = get_similar_practices($favorite_practices, 4);
 			$recommended = array_merge($recommended, $similar_practices);
 		}
 		
-		// 3. РќРѕРІС‹Рµ РїСЂР°РєС‚РёРєРё, РєРѕС‚РѕСЂС‹Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РµС‰Рµ РЅРµ РїСЂРѕС…РѕРґРёР»
+		// Можно реализовать систему подсчета популярности на основе просмотров
 		$new_practices = get_new_practices($user_id, 3);
 		$recommended = array_merge($recommended, $new_practices);
 		
-		// РЈР±РёСЂР°РµРј РґСѓР±Р»РёРєР°С‚С‹ Рё СѓР¶Рµ Р·Р°РІРµСЂС€РµРЅРЅС‹Рµ РїСЂР°РєС‚РёРєРё
+		// Пока просто возвращаем последние практики
 		$recommended = array_unique($recommended);
 		$recommended = array_diff($recommended, $completed_practices);
 		
-		// РћРіСЂР°РЅРёС‡РёРІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ СЂРµРєРѕРјРµРЅРґР°С†РёР№
+		// Функция для получения вопросов пользователя
 		return array_slice($recommended, 0, 12);
 	}
 	
-	// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
+	// Функция для отображения вопроса
 	function get_user_practice_levels($user_id) {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		$levels = array();
@@ -1604,8 +1606,8 @@ function handle_comment_delete() {
 	}
 	
 	function get_popular_practices($limit = 8) {
-		// РњРѕР¶РЅРѕ СЂРµР°Р»РёР·РѕРІР°С‚СЊ СЃРёСЃС‚РµРјСѓ РїРѕРґСЃС‡РµС‚Р° РїРѕРїСѓР»СЏСЂРЅРѕСЃС‚Рё РЅР° РѕСЃРЅРѕРІРµ РїСЂРѕСЃРјРѕС‚СЂРѕРІ
-		// РџРѕРєР° РїСЂРѕСЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРј РїРѕСЃР»РµРґРЅРёРµ РїСЂР°РєС‚РёРєРё
+		// Обработчик отправки вопроса
+		// Создаем пост вопроса
 		$args = array(
         'post_type' => 'practice',
         'posts_per_page' => $limit,
@@ -1618,7 +1620,7 @@ function handle_comment_delete() {
 	}
 	
 	
-	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РІРѕРїСЂРѕСЃРѕРІ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	// Отправляем уведомление администратору
 	function get_user_questions($user_id) {
 		$args = array(
         'post_type' => 'question',
@@ -1631,7 +1633,7 @@ function handle_comment_delete() {
 		return get_posts($args);
 	}
 	
-	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІРѕРїСЂРѕСЃР°
+	// Регистрируем тип записи для вопросов
 	function display_question_item($question, $hidden = false) {
 		$question_id = $question->ID;
 		$answer = get_post_meta($question_id, '_answer', true);
@@ -1672,27 +1674,27 @@ function handle_comment_delete() {
     <?php
 	}
 	
-	// РћР±СЂР°Р±РѕС‚С‡РёРє РѕС‚РїСЂР°РІРєРё РІРѕРїСЂРѕСЃР°
+	// Добавляем метабокс для ответа на вопрос
 	function handle_question_submission() {
 		if (!isset($_POST['question_nonce']) || !wp_verify_nonce($_POST['question_nonce'], 'submit_question')) {
-			wp_die('РћС€РёР±РєР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё');
+			wp_die('Ошибка безопасности');
 		}
 		
 		if (!is_user_logged_in()) {
-			wp_die('Р’С‹ РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅС‹');
+			wp_die('Вы не авторизованы');
 		}
 		
 		$question_text = sanitize_textarea_field($_POST['question_text']);
 		
 		if (empty($question_text)) {
-			wp_die('Р’РѕРїСЂРѕСЃ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј');
+			wp_die('Вопрос не может быть пустым');
 		}
 		
 		$user_id = get_current_user_id();
 		
-		// РЎРѕР·РґР°РµРј РїРѕСЃС‚ РІРѕРїСЂРѕСЃР°
+		// Сохранение ответа на вопрос
 		$question_data = array(
-        'post_title' => 'Р’РѕРїСЂРѕСЃ РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ ' . $user_id,
+        'post_title' => 'Вопрос от пользователя ' . $user_id,
         'post_content' => $question_text,
         'post_status' => 'publish',
         'post_type' => 'question',
@@ -1702,16 +1704,16 @@ function handle_comment_delete() {
 		$question_id = wp_insert_post($question_data);
 		
 		if (is_wp_error($question_id)) {
-			wp_die('РћС€РёР±РєР° РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё РІРѕРїСЂРѕСЃР°');
+			wp_die('Ошибка при сохранении вопроса');
 		}
 		
-		// РћС‚РїСЂР°РІР»СЏРµРј СѓРІРµРґРѕРјР»РµРЅРёРµ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ
+		// Если ответ изменился или добавлен новый
 		$admin_email = get_option('admin_email');
 		$user = get_userdata($user_id);
-		$subject = 'РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ РІ Р»РёС‡РЅРѕРј РєР°Р±РёРЅРµС‚Рµ';
-		$message = "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ {$user->display_name} Р·Р°РґР°Р» РЅРѕРІС‹Р№ РІРѕРїСЂРѕСЃ:\n\n";
-		$message .= $question_text . "\n\n";
-		$message .= "РЎСЃС‹Р»РєР° РґР»СЏ РѕС‚РІРµС‚Р°: " . admin_url("post.php?post={$question_id}&action=edit");
+		$subject = 'Новый вопрос в личном кабинете';
+		$message = "Пользователь {$user->display_name} задал новый вопрос:\n\n";
+		$message .= $question_text . "\\\\n\\\\n";
+		$message .= "Ссылка для ответа: " . admin_url("post.php?post={$question_id}&action=edit");
 		
 		wp_mail($admin_email, $subject, $message);
 		
@@ -1721,8 +1723,10 @@ function handle_comment_delete() {
 	add_action('admin_post_submit_question', 'handle_question_submission');
 	add_action('admin_post_nopriv_submit_question', 'handle_question_submission');
 	
-	// Р РµРіРёСЃС‚СЂРёСЂСѓРµРј С‚РёРї Р·Р°РїРёСЃРё РґР»СЏ РІРѕРїСЂРѕСЃРѕРІ
+	// Отправляем уведомление пользователю
 	function register_question_post_type() {
+		// Axecode.tech: для второго FAQ-подобного CPT также применены UTF-8 labels.
+		// Зачем: единая и читаемая навигация в админке без кракозябр.
 		$args = array(
         'public' => false,
         'show_ui' => true,
@@ -1749,7 +1753,7 @@ function handle_comment_delete() {
 	}
 	add_action('init', 'register_question_post_type');
 	
-	// Р”РѕР±Р°РІР»СЏРµРј РјРµС‚Р°Р±РѕРєСЃ РґР»СЏ РѕС‚РІРµС‚Р° РЅР° РІРѕРїСЂРѕСЃ
+	// Функция для получения активной подписки пользователя
 	function add_question_answer_meta_box() {
 		add_meta_box(
         'question_answer',
@@ -1789,7 +1793,7 @@ function handle_comment_delete() {
     <?php
 	}
 	
-	// РЎРѕС…СЂР°РЅРµРЅРёРµ РѕС‚РІРµС‚Р° РЅР° РІРѕРїСЂРѕСЃ
+	// Если используете WooCommerce Subscriptions
 	function save_question_answer($post_id) {
 		if (!isset($_POST['answer_nonce']) || !wp_verify_nonce($_POST['answer_nonce'], 'save_question_answer')) {
 			return;
@@ -1809,20 +1813,20 @@ function handle_comment_delete() {
 			
 			update_post_meta($post_id, '_answer', $answer);
 			
-			// Р•СЃР»Рё РѕС‚РІРµС‚ РёР·РјРµРЅРёР»СЃСЏ РёР»Рё РґРѕР±Р°РІР»РµРЅ РЅРѕРІС‹Р№
+			// Альтернатива: проверка через метаполя
 			if ($answer !== $old_answer) {
 				update_post_meta($post_id, '_answer_date', current_time('mysql'));
 				update_post_meta($post_id, '_answer_admin', get_current_user_id());
 				
-				// РћС‚РїСЂР°РІР»СЏРµРј СѓРІРµРґРѕРјР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ
+				// Функция для получения истории заказов
 				$question = get_post($post_id);
 				$user = get_userdata($question->post_author);
-				$subject = 'РћС‚РІРµС‚ РЅР° РІР°С€ РІРѕРїСЂРѕСЃ';
-				$message = "Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ, {$user->display_name}!\n\n";
-				$message .= "РќР° РІР°С€ РІРѕРїСЂРѕСЃ РїРѕР»СѓС‡РµРЅ РѕС‚РІРµС‚:\n\n";
-				$message .= "Р’РѕРїСЂРѕСЃ: {$question->post_content}\n\n";
-				$message .= "РћС‚РІРµС‚: {$answer}\n\n";
-				$message .= "РЎ СѓРІР°Р¶РµРЅРёРµРј, Р°РґРјРёРЅРёСЃС‚СЂР°С†РёСЏ СЃР°Р№С‚Р°";
+				$subject = 'Ответ на ваш вопрос';
+				$message = "Здравствуйте, {$user->display_name}!\n\n";
+				$message .= "На ваш вопрос получен ответ:\\n\\n";
+				$message .= "Вопрос: {$question->post_content}\n\n";
+				$message .= "Ответ: {$answer}\n\n";
+				$message .= "С уважением, администрация сайта";
 				
 				wp_mail($user->user_email, $subject, $message);
 			}
@@ -1830,14 +1834,14 @@ function handle_comment_delete() {
 	}
 	add_action('save_post_question', 'save_question_answer');
 	
-	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ Р°РєС‚РёРІРЅРѕР№ РїРѕРґРїРёСЃРєРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	// Функция для получения сохраненных карт
 	function get_user_active_subscription() {
 		if (!is_user_logged_in()) return false;
 		
 		$user_id = get_current_user_id();
 		
-		// Р•СЃР»Рё РёСЃРїРѕР»СЊР·СѓРµС‚Рµ WooCommerce Subscriptions
-		/* AxeCode.tech: РїРµСЂРµРґ РІС‹Р·РѕРІРѕРј API РїРѕРґРїРёСЃРѕРє РїСЂРѕРІРµСЂСЏРµРј Рё РєР»Р°СЃСЃ, Рё С„СѓРЅРєС†РёСЋ-С…РµР»РїРµСЂ. */
+		// Шорткод для отображения управления подпиской
+		// Обработчик для добавления карты
 		if (class_exists('WC_Subscriptions') && function_exists('wcs_get_users_subscriptions')) {
 			$subscriptions = wcs_get_users_subscriptions($user_id);
 			
@@ -1854,7 +1858,7 @@ function handle_comment_delete() {
 			}
 		}
 		
-		// РђР»СЊС‚РµСЂРЅР°С‚РёРІР°: РїСЂРѕРІРµСЂРєР° С‡РµСЂРµР· РјРµС‚Р°РїРѕР»СЏ
+		// Здесь должна быть интеграция с платежной системой (Stripe, etc.)
 		$active_subscription = get_user_meta($user_id, 'active_subscription', true);
 		if ($active_subscription && $active_subscription['end_date'] > current_time('mysql')) {
 			return $active_subscription;
@@ -1863,7 +1867,7 @@ function handle_comment_delete() {
 		return false;
 	}
 	
-	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РёСЃС‚РѕСЂРёРё Р·Р°РєР°Р·РѕРІ
+	// Это упрощенный пример
 	function get_user_orders_history() {
 		if (!is_user_logged_in()) return array();
 		if (!function_exists('wc_get_orders')) return array();
@@ -1894,7 +1898,7 @@ function handle_comment_delete() {
 		return $order_history;
 	}
 	
-	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРѕС…СЂР°РЅРµРЅРЅС‹С… РєР°СЂС‚
+	// Обработчик для удаления карты
 	function get_user_saved_cards() {
 		if (!is_user_logged_in()) return array();
 		
@@ -1904,33 +1908,33 @@ function handle_comment_delete() {
 		return $saved_cards ?: array();
 	}
 	
-	// РЁРѕСЂС‚РєРѕРґ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕРґРїРёСЃРєРѕР№
+	// Функция для подключения разных header'ов
 	function subscription_management_shortcode() {
 		ob_start();
 	?>
     <div class="subscription-management">
-        <h3>РЈРїСЂР°РІР»РµРЅРёРµ РїРѕРґРїРёСЃРєРѕР№</h3>
+        <h3>Управление подпиской</h3>
         <?php
 			$subscription = get_user_active_subscription();
 			if ($subscription) {
 			?>
             <div class="subscription-info">
-                <p><strong>РўРµРєСѓС‰РёР№ С‚Р°СЂРёС„:</strong> <?php echo $subscription['name']; ?></p>
-                <p><strong>Р”РµР№СЃС‚РІСѓРµС‚ РґРѕ:</strong> <?php echo date('d.m.Y', strtotime($subscription['end_date'])); ?></p>
-                <p><strong>РЎС‚Р°С‚СѓСЃ:</strong> <?php echo $subscription['status']; ?></p>
+                <p><strong>Текущий тариф:</strong> <?php echo $subscription['name']; ?></p>
+                <p><strong>Действует до:</strong> <?php echo date('d.m.Y', strtotime($subscription['end_date'])); ?></p>
+                <p><strong>Статус:</strong> <?php echo $subscription['status']; ?></p>
 			</div>
             
             <div class="subscription-actions">
-                <button class="btn btn-renew">РџСЂРѕРґР»РёС‚СЊ РїРѕРґРїРёСЃРєСѓ</button>
-                <button class="btn btn-cancel">РћС‚РјРµРЅРёС‚СЊ РїРѕРґРїРёСЃРєСѓ</button>
+                <button class="btn btn-renew">Продлить подписку</button>
+                <button class="btn btn-cancel">Отменить подписку</button>
 			</div>
             <?php
 				} else {
 			?>
             <div class="no-subscription">
-                <p>РЈ РІР°СЃ РЅРµС‚ Р°РєС‚РёРІРЅРѕР№ РїРѕРґРїРёСЃРєРё.</p>
+                <p>У вас нет активной подписки.</p>
                 <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="btn">
-                    Р’С‹Р±СЂР°С‚СЊ С‚Р°СЂРёС„
+                    Выбрать тариф
 				</a>
 			</div>
             <?php
@@ -1942,10 +1946,10 @@ function handle_comment_delete() {
 	}
 	add_shortcode('subscription_management', 'subscription_management_shortcode');
 	
-	// РћР±СЂР°Р±РѕС‚С‡РёРє РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РєР°СЂС‚С‹
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЂР°Р·РЅС‹С… header'РѕРІ
+	// Проверяем, используется ли шаблон "Личный кабинет"
+// Переопределяем стандартный get_header()
 	function custom_get_header() {
-		// РџСЂРѕРІРµСЂСЏРµРј, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ Р»Рё С€Р°Р±Р»РѕРЅ "Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚"
+		// 200 слов в минуту
 		if (is_page_template('my-account')) {
 			locate_template('header-lk.php', true);
 			} else {
@@ -1953,22 +1957,22 @@ function handle_comment_delete() {
 		}
 	}
 	
-	// РџРµСЂРµРѕРїСЂРµРґРµР»СЏРµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ get_header()
+	// Добавление AJAX обработчиков
 	remove_action('get_header', 'wp_get_header');
 	add_action('get_header', 'custom_get_header');
 	
 	function reading_time() {
 		$content = get_post_field('post_content', get_the_ID());
 		$word_count = str_word_count(strip_tags($content));
-		$reading_time = ceil($word_count / 200); // 200 СЃР»РѕРІ РІ РјРёРЅСѓС‚Сѓ
+		$reading_time = ceil($word_count / 200); // Вход по email и паролю
 		
 		return $reading_time;
 	}
 	
 	
-	// Р”РѕР±Р°РІР»РµРЅРёРµ AJAX РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ
-	// РћР±СЂР°Р±РѕС‚С‡РёРє РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ/СѓРґР°Р»РµРЅРёСЏ РёР· РёР·Р±СЂР°РЅРЅРѕРіРѕ
-// РџРѕР»СѓС‡РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ С‚РµРєСѓС‰РµРј Р°РєС‚РёРІРЅРѕРј С‚Р°СЂРёС„Рµ
+	// Регистрация по email
+	// Проверка reCAPTCHA
+// Отправка письма подтверждения регистрации
 	function get_current_user_tariff($user_id = null) {
 		if (!$user_id) {
 			$user_id = get_current_user_id();
@@ -2020,7 +2024,7 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('calculate_access_duration')) {
-		/* AxeCode.tech: РґРѕР±Р°РІР»РµРЅ fallback-С…РµР»РїРµСЂ, С‚.Рє. С„СѓРЅРєС†РёСЏ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ СЂР°СЃС‡РµС‚Рµ С‚Р°СЂРёС„Р°. */
+		// Восстановление пароля
 		function calculate_access_duration($period) {
 			$period = trim((string) $period);
 
@@ -2028,8 +2032,8 @@ function handle_comment_delete() {
 				return 30 * DAY_IN_SECONDS;
 			}
 
-			// Formats like "30", "30d", "2w", "3m", "1y".
-			if (preg_match('/^(\d+)\s*([dwmy])?$/i', $period, $matches)) {
+			// Проверка reCAPTCHA
+			if (preg_match('/^(\\\\d+)\\\\s*([dwmy])?$/i', $period, $matches)) {
 				$value = (int) $matches[1];
 				$unit = isset($matches[2]) ? strtolower($matches[2]) : 'd';
 
@@ -2049,6 +2053,7 @@ function handle_comment_delete() {
 			return 30 * DAY_IN_SECONDS;
 		}
 	}
+
 
 
 
