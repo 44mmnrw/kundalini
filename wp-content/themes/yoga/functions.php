@@ -52,7 +52,7 @@
 	}
 	if (!function_exists('yoga_ajax_error')) {
 		// Plyr JS - загружаем первым
-		function yoga_ajax_error($message, $code = 'error', $status = 400, $extra = array()) {
+		function yoga_ajax_error(string $message, string $code = 'error', int $status = 400, array $extra = array()) {
 			$payload = array_merge(array(
 				'code' => $code,
 				'message' => $message,
@@ -184,7 +184,7 @@ function yoga_subscribe_handler() {
 	add_action('wp_enqueue_scripts', 'yoga_ajax_localization');
 	
 // Определяем автора
-function custom_comment_template($comment, $args, $depth) {
+function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = (is_user_logged_in() && get_current_user_id() == $comment->user_id);
     ?>
@@ -399,7 +399,7 @@ function handle_comment_delete() {
 
 	
 	// Отправка email администратору
-	function enable_comments_for_practice($open, $post_id) {
+	function enable_comments_for_practice(bool $open, int $post_id): bool {
 		$post = get_post($post_id);
 		if ($post->post_type == 'practice') {
 			return true;
@@ -416,13 +416,13 @@ function handle_comment_delete() {
 	
 	// Сохранение в базу данных (опционально)
 	add_filter('avatar_defaults', 'custom_avatar_defaults');
-	function custom_avatar_defaults($avatar_defaults) {
+	function custom_avatar_defaults(array $avatar_defaults): array {
 		$avatar_defaults[get_template_directory_uri() . '/assets/img/default-avatar.png'] = 'Default Avatar';
 		return $avatar_defaults;
 	}
 	
 	// Сохранение сообщения в базу данных
-	function russian_comment_time($date, $d, $comment) {
+	function russian_comment_time(string $date, string $d, WP_Comment $comment): string {
 		if (!is_admin()) {
 			return human_time_diff(get_comment_time('U'), current_time('timestamp')) . ' назад';
 		}
@@ -480,7 +480,7 @@ function handle_comment_delete() {
 	}
 	
 	// Увеличиваем счетчик после обработки элемента
-	function save_contact_message($name, $email, $phone, $message) {
+	function save_contact_message(string $name, string $email, string $phone, string $message): void {
 		$post_data = array(
         'post_title' => 'РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚ ' . $name,
         'post_content' => $message,
@@ -525,7 +525,7 @@ function handle_comment_delete() {
 		}
 	}
 	
-	function save_subscription_email($email) {
+	function save_subscription_email(string $email): bool {
 		$existing_emails = get_option('subscription_emails', array());
 		
 		if (!in_array($email, $existing_emails)) {
@@ -793,7 +793,7 @@ function handle_comment_delete() {
 	}
 	add_action('add_meta_boxes', 'add_faq_question_meta');
 	
-	function display_faq_question_meta($post) {
+	function display_faq_question_meta(WP_Post $post): void {
 		$email = get_post_meta($post->ID, 'contact_email', true);
 		$date = get_post_meta($post->ID, 'contact_date', true);
 	?>
@@ -803,7 +803,7 @@ function handle_comment_delete() {
 	}
 	
 	// Фильтры по таксономиям
-	function save_faq_question_meta($post_id) {
+	function save_faq_question_meta(int $post_id): void {
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 		if (!current_user_can('edit_post', $post_id)) return;
 		
@@ -1080,7 +1080,7 @@ function handle_comment_delete() {
 	
 	// Исправление nonce проверки для checkout
 	add_filter('woocommerce_add_to_cart_redirect', 'disable_standard_redirect_for_tariffs', 10, 1);
-	function disable_standard_redirect_for_tariffs($url) {
+	function disable_standard_redirect_for_tariffs(string $url): string {
 		if (isset($_POST['add-to-cart']) && is_numeric($_POST['add-to-cart'])) {
 			$product_id = intval($_POST['add-to-cart']);
 			if (has_term('tariffs', 'product_cat', $product_id)) {
@@ -1488,7 +1488,7 @@ function handle_comment_delete() {
 	add_shortcode('subscription_settings', 'subscription_settings_shortcode');
 	
 	// 2. Похожие на избранные
-	function get_recommended_practices($user_id) {
+	function get_recommended_practices(int $user_id): array {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		$favorite_practices = get_user_meta($user_id, 'favorite_practices', true) ?: array();
 		
@@ -1526,7 +1526,7 @@ function handle_comment_delete() {
 	}
 	
 	// Функция для отображения вопроса
-	function get_user_practice_levels($user_id) {
+	function get_user_practice_levels(int $user_id): array {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		$levels = array();
 		
@@ -1538,7 +1538,7 @@ function handle_comment_delete() {
 		return array_count_values($levels);
 	}
 	
-	function get_practices_by_levels($level_counts, $limit = 6) {
+	function get_practices_by_levels(array $level_counts, int $limit = 6): array {
 		arsort($level_counts);
 		$most_common_levels = array_slice(array_keys($level_counts), 0, 2);
 		
@@ -1559,7 +1559,7 @@ function handle_comment_delete() {
 		return $practices;
 	}
 	
-	function get_similar_practices($favorite_practice_ids, $limit = 4) {
+	function get_similar_practices(array $favorite_practice_ids, int $limit = 4): array {
 		if (empty($favorite_practice_ids)) return array();
 		
 		$similar = array();
@@ -1590,7 +1590,7 @@ function handle_comment_delete() {
 		return array_slice($similar, 0, $limit);
 	}
 	
-	function get_new_practices($user_id, $limit = 3) {
+	function get_new_practices(int $user_id, int $limit = 3): array {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		
 		$args = array(
@@ -1621,7 +1621,7 @@ function handle_comment_delete() {
 	
 	
 	// Отправляем уведомление администратору
-	function get_user_questions($user_id) {
+	function get_user_questions(int $user_id): array {
 		$args = array(
         'post_type' => 'question',
         'author' => $user_id,
@@ -1634,7 +1634,7 @@ function handle_comment_delete() {
 	}
 	
 	// Регистрируем тип записи для вопросов
-	function display_question_item($question, $hidden = false) {
+	function display_question_item(WP_Post $question, bool $hidden = false): void {
 		$question_id = $question->ID;
 		$answer = get_post_meta($question_id, '_answer', true);
 		$answer_date = get_post_meta($question_id, '_answer_date', true);
@@ -1766,7 +1766,7 @@ function handle_comment_delete() {
 	}
 	add_action('add_meta_boxes', 'add_question_answer_meta_box');
 	
-	function render_question_answer_meta_box($post) {
+	function render_question_answer_meta_box(WP_Post $post): void {
 		$answer = get_post_meta($post->ID, '_answer', true);
 		$answer_date = get_post_meta($post->ID, '_answer_date', true);
 		$admin_id = get_post_meta($post->ID, '_answer_admin', true);
@@ -1794,7 +1794,7 @@ function handle_comment_delete() {
 	}
 	
 	// Если используете WooCommerce Subscriptions
-	function save_question_answer($post_id) {
+	function save_question_answer(int $post_id): void {
 		if (!isset($_POST['answer_nonce']) || !wp_verify_nonce($_POST['answer_nonce'], 'save_question_answer')) {
 			return;
 		}
@@ -2025,7 +2025,7 @@ function handle_comment_delete() {
 
 	if (!function_exists('calculate_access_duration')) {
 		// Восстановление пароля
-		function calculate_access_duration($period) {
+		function calculate_access_duration(string $period): int {
 			$period = trim((string) $period);
 
 			if ($period === '') {
