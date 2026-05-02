@@ -655,18 +655,6 @@
 		$(this).addClass("active");
 	});
 	
-	$('.input-password__btn').click(function() {
-		$(this).closest('.input-password').find('.input-password__btn').toggleClass("active");
-	})
-	
-	$('.input-password__btn_show').click(function() {
-		var b = $(this).closest('.input-password').find('input').attr('type','text');
-	})
-	
-	$('.input-password__btn_hide').click(function() {
-		var b = $(this).closest('.input-password').find('input').attr('type','password');
-	})
-	
 	$(".lk-form").submit(function(e) {
 		e.preventDefault();
 	});
