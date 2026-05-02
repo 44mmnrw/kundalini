@@ -906,7 +906,7 @@ function handle_comment_delete() {
 	
 	function filter_practices_callback_kriyi() {
 		// Возвращаем HTML и количество результатов
-		check_ajax_referer('practice_filter_nonce', 'nonce');
+		check_ajax_referer('yoga_ajax_nonce', 'nonce');
 		
 		// Очистка корзины и добавление товара с редиректом
 		$args = array(
@@ -926,9 +926,9 @@ function handle_comment_delete() {
 			);
 		}
 		
-		// Проверяем nonce
+		$search_term = '';
 		if (!empty($_POST['search'])) {
-			$args['s'] = sanitize_text_field($_POST['search']);
+			$search_term = sanitize_text_field($_POST['search']);
 		}
 		
 		// Очищаем корзину
@@ -967,6 +967,44 @@ function handle_comment_delete() {
                 $args['order'] = 'DESC';
                 break;
 			}
+		}
+		
+		if ($search_term !== '') {
+			$search_ids = array();
+			
+			// 1) Стандартный WP-поиск: title/content/excerpt.
+			$text_search_args = $args;
+			$text_search_args['fields'] = 'ids';
+			$text_search_args['posts_per_page'] = -1;
+			$text_search_args['s'] = $search_term;
+			$text_search_query = new WP_Query($text_search_args);
+			if (!empty($text_search_query->posts)) {
+				$search_ids = array_merge($search_ids, $text_search_query->posts);
+			}
+			
+			// 2) Поиск по всем ACF/meta значениям (включая "Основной текст") для post_type=practice.
+			global $wpdb;
+			$like_search = '%' . $wpdb->esc_like($search_term) . '%';
+			$meta_sql = $wpdb->prepare(
+				"SELECT DISTINCT pm.post_id
+				 FROM {$wpdb->postmeta} pm
+				 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				 WHERE p.post_type = %s
+				   AND p.post_status = %s
+				   AND pm.meta_key NOT LIKE %s
+				   AND pm.meta_value LIKE %s",
+				'practice',
+				'publish',
+				'\_%',
+				$like_search
+			);
+			$meta_search_ids = $wpdb->get_col($meta_sql);
+			if (!empty($meta_search_ids)) {
+				$search_ids = array_merge($search_ids, $meta_search_ids);
+			}
+			
+			$search_ids = array_values(array_unique(array_map('intval', $search_ids)));
+			$args['post__in'] = !empty($search_ids) ? $search_ids : array(0);
 		}
 		
 		$query = new WP_Query($args);

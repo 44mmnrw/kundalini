@@ -134,9 +134,14 @@ $current_posts = new WP_Query(array(
                                     <time class="article-time">
                                         <?php echo get_the_date('j F, Y'); ?>
                                     </time>
+                                    <?php
+                                    // Axecode: временно скрываем время чтения по задаче.
+                                    /*
                                     <time class="article-time article-time_time">
                                         <?php echo reading_time(); ?> мин
                                     </time>
+                                    */
+                                    ?>
                                 </div>
                                 
                                 <h4>

@@ -100,7 +100,7 @@
 									if (!empty($difficulty_terms) && !is_wp_error($difficulty_terms)) {
 										$i = 1;
 										foreach ($difficulty_terms as $term) {
-											echo '<input type="checkbox" id="filter-dif_' . sprintf('%02d', $i) . '">';
+											echo '<input type="checkbox" id="filter-dif_' . sprintf('%02d', $i) . '" name="practice-difficulty" value="' . esc_attr($term->term_id) . '">';
 											echo '<label for="filter-dif_' . sprintf('%02d', $i) . '" class="checkbox-item">';
 											echo '<div class="checkbox"></div>';
 											echo '<span>' . $term->name . '</span>';
@@ -129,7 +129,7 @@
 									if (!empty($duration_terms) && !is_wp_error($duration_terms)) {
 										$i = 1;
 										foreach ($duration_terms as $term) {
-											echo '<input type="checkbox" id="filter-time_' . sprintf('%02d', $i) . '">';
+											echo '<input type="checkbox" id="filter-time_' . sprintf('%02d', $i) . '" name="practice-duration" value="' . esc_attr($term->term_id) . '">';
 											echo '<label for="filter-time_' . sprintf('%02d', $i) . '" class="checkbox-item">';
 											echo '<div class="checkbox"></div>';
 											echo '<span>' . $term->name . '</span>';
@@ -156,7 +156,7 @@
 									if (!empty($goal_terms) && !is_wp_error($goal_terms)) {
 										$i = 1;
 										foreach ($goal_terms as $term) {
-											echo '<input type="checkbox" id="filter-goal_' . sprintf('%02d', $i) . '">';
+											echo '<input type="checkbox" id="filter-goal_' . sprintf('%02d', $i) . '" name="practice-goal" value="' . esc_attr($term->term_id) . '">';
 											echo '<label for="filter-goal_' . sprintf('%02d', $i) . '" class="checkbox-item">';
 											echo '<div class="checkbox"></div>';
 											echo '<span>' . $term->name . '</span>';
@@ -184,7 +184,7 @@
 									if (!empty($type_terms) && !is_wp_error($type_terms)) {
 										$i = 1;
 										foreach ($type_terms as $term) {
-											echo '<input type="checkbox" id="filter-type_' . sprintf('%02d', $i) . '">';
+											echo '<input type="checkbox" id="filter-type_' . sprintf('%02d', $i) . '" name="practice-type" value="' . esc_attr($term->term_id) . '">';
 											echo '<label for="filter-type_' . sprintf('%02d', $i) . '" class="checkbox-item">';
 											echo '<div class="checkbox"></div>';
 											echo '<span>' . $term->name . '</span>';
