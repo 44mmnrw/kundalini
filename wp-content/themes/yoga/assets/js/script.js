@@ -702,16 +702,6 @@
 		e.preventDefault();
 	});
 	
-	$('.lk-questions-form form').submit(function () {
-		
-		$('.body').addClass("body-fixed");
-		$('.overlay').addClass("active");
-		$('.modal').removeClass("active");
-		$('.modal-login').removeClass("active");
-		$('.modal-default_thanksforqw').addClass("active");
-		
-	});
-	
 	
 	$('.lk-form-safe .btn').on('click', function () {
 		
@@ -2281,6 +2271,11 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				// Показываем уведомление об успехе
 				showNotification('Вопрос успешно отправлен!');
+				$('.body').addClass("body-fixed");
+				$('.overlay').addClass("active");
+				$('.modal').removeClass("active");
+				$('.modal-login').removeClass("active");
+				$('.modal-default_formsucces').addClass("active");
 				
 				// Очищаем форму
 				$form.find('textarea').val('');
