@@ -1,9 +1,9 @@
 /* Specification */
-@import "../css/mulish.css";
-@import "../slick/slick.css";
-@import "../slick/slick-theme.css";
-@import "../libs/fancybox/jquery.fancybox.min.css";
-@import "../css/animate.css";
+@import "../mulish.css";
+@import "../../slick/slick.css";
+@import "../../slick/slick-theme.css";
+@import "../../libs/fancybox/jquery.fancybox.min.css";
+@import "../animate.css";
 /* Design tokens */
 :root {
   --color-black: #1f1f1f;
