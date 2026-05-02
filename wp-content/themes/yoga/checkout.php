@@ -11,12 +11,30 @@ get_header(); ?>
             <?php
             // Убедимся, что WooCommerce загружен
             if (class_exists('WooCommerce')) {
-                
-                // Выводим уведомления
-                wc_print_notices();
-                
+
+                // Инициализируем сессию/корзину максимально безопасно (защита от 5xx на checkout)
+                if (function_exists('WC')) {
+                    $wc = WC();
+
+                    if ($wc && isset($wc->session) && $wc->session && method_exists($wc->session, 'has_session') && !$wc->session->has_session()) {
+                        $wc->session->set_customer_session_cookie(true);
+                    }
+
+                    if ((!isset($wc->cart) || !$wc->cart) && function_exists('wc_load_cart')) {
+                        wc_load_cart();
+                    }
+                }
+
+                // Выводим уведомления, только если функция доступна
+                if (function_exists('wc_print_notices')) {
+                    wc_print_notices();
+                }
+
+                $cart = function_exists('WC') ? WC()->cart : null;
+                $has_cart_items = $cart && method_exists($cart, 'is_empty') ? !$cart->is_empty() : false;
+
                 // Проверяем корзину
-                if (WC()->cart->is_empty()) {
+                if (!$has_cart_items) {
                     echo '<div class="alert alert-info">';
                     echo '<p>Ваша корзина пуста.</p>';
                     echo '<a href="' . esc_url(wc_get_page_permalink('shop')) . '" class="btn btn-primary">Вернуться в магазин</a>';
