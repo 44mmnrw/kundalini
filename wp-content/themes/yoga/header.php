@@ -26,7 +26,7 @@
 				<div class="row">
 					<div class="header-content">
 						<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/logo.png'); ?>" alt="<?php bloginfo('name'); ?>">
+							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
 						</a>
 						<nav class="main-menu">
 							<?php

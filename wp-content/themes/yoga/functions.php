@@ -730,28 +730,29 @@ function handle_comment_delete() {
         <p><small>Сообщение отправлено с сайта " . get_bloginfo('name') . "</small></p>
 		";
 		
-		// Проверяем nonce для безопасности
-		$email_sent = wp_mail($to, $subject, $body, $headers);
-		
-		if ($email_sent) {
-			// Параметры по умолчанию
-			$post_id = wp_insert_post(array(
+		$post_id = wp_insert_post(array(
             'post_title' => 'Вопрос от ' . $name,
             'post_content' => $message,
             'post_type' => 'faq_question',
-            'post_status' => 'private',
+            'post_status' => 'draft',
             'meta_input' => array(
 			'contact_email' => $email,
 			'contact_date' => current_time('mysql')
             )
-			));
-			
-			wp_send_json_success(array(
-            'message' => get_field('faq_form_success_message', 'option') ?: 'Ваш вопрос отправлен! Мы ответим вам в ближайшее время.'
-			));
-			} else {
-			wp_send_json_error(array('message' => 'Ошибка при отправке сообщения'));
+		), true);
+		
+		if (is_wp_error($post_id) || !$post_id) {
+			wp_send_json_error(array('message' => 'Не удалось сохранить вопрос. Попробуйте еще раз.'));
+			exit;
 		}
+		
+		// Почту отправляем отдельно: если письмо не ушло, вопрос все равно уже есть в админке.
+		$email_sent = wp_mail($to, $subject, $body, $headers);
+		
+		wp_send_json_success(array(
+            'message' => get_field('faq_form_success_message', 'option') ?: 'Ваш вопрос отправлен! Мы ответим вам в ближайшее время.',
+            'mail_sent' => (bool) $email_sent
+		));
 		
 		exit;
 	}
