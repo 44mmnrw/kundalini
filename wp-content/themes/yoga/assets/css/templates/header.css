@@ -1,0 +1,268 @@
+/* Header */
+header {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  z-index: 9;
+  padding-top: 1.125rem;  padding-bottom: 1.125rem;  background: #fff;
+  box-shadow: 0px 20px 50px rgba(141, 141, 141, 0);
+  transition: 0.4s ease;
+}
+
+.header_fixed {
+  box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
+}
+.header_fixed .header-lk .btn {
+  background: var(--color-green);
+  border-color: var(--color-green);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.logo-header img {
+  display: block;
+  width: 3.125rem;}
+
+.main-menu {
+  display: block;
+  padding-right: 1.75rem;}
+
+.main-menu ul {
+  display: flex;
+}
+.main-menu ul li {
+  display: inline-block;
+  margin-left: 1.25rem;  margin-right: 1.25rem;}
+.main-menu-active-item {
+  position: relative;
+}
+.main-menu-active-item .ref {
+  position: relative;
+  padding-right: 1.0625rem;}
+.main-menu-active-item::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0px;
+  top: 100%;
+  width: 100%;
+  height: 3.125rem;  opacity: 0;
+  pointer-events: none;
+}
+
+.ref-icon {
+  position: absolute;
+  width: 0.75rem;  height: 0.75rem;  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: 0.4s ease;
+}
+.ref-icon img {
+  display: block;
+  position: absolute;
+  width: 0.75rem;  opacity: 0;
+  transition: 0.4s ease;
+}
+.ref-icon img.active {
+  opacity: 1;
+}
+
+.main-menu-active-item:hover::before, .main-menu-active-item.active::before {
+  pointer-events: auto;
+}
+
+.main-menu-active-item .ref:hover .ref-icon {
+  transform: translateY(-50%) rotate(-180deg);
+}
+.main-menu-active-item .ref:hover .ref-icon img {
+  opacity: 1;
+}
+.main-menu-active-item .ref:hover .ref-icon img.active {
+  opacity: 0;
+}
+
+.main-menu-active-item.active .ref {
+  color: var(--color-violet);
+}
+.main-menu-active-item.active .ref .ref-icon {
+  transform: translateY(-50%) rotate(-180deg);
+}
+.main-menu-active-item.active .ref .ref-icon img {
+  opacity: 1;
+}
+.main-menu-active-item.active .ref .ref-icon img.active {
+  opacity: 0;
+}
+
+.header-lk {
+  display: flex;
+  align-items: center;
+}
+.header-lk .btn {
+  height: 3.25rem;  line-height: 3.25rem;  padding-left: 0.9375rem;  padding-right: 0.9375rem;}
+.header-lk .btn span {
+  font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
+}
+.header-lk .btn:hover {
+  background: #DDF354;
+  border-color: #DDF354;
+}
+
+.login-icon {
+  position: relative;
+  width: 3.1875rem;  height: 3.1875rem;  border-radius: 50%;
+  margin-left: 1.25rem;  background: var(--color-grey);
+  cursor: pointer;
+  transition: 0.4s ease;
+}
+.login-icon img {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.5rem;}
+.login-icon:hover {
+  background: var(--color-green);
+}
+
+.burger {
+  display: none;
+}
+
+@media (max-width: 1320px) {
+  header {
+    padding-top: 0.9375rem;    padding-bottom: 0.9375rem;  }
+  .main-menu ul li {
+    margin-left: 0.8125rem;    margin-right: 0.8125rem;  }
+}
+@media (max-width: 1199px) {
+  .main-menu ul li {
+    margin-left: 0.5625rem;    margin-right: 0.5625rem;  }
+  .main-menu ul li .ref {
+    font-size: 0.875rem;  }
+  .header-lk .btn span {
+    font-size: 0.9375rem;  }
+  .login-icon {
+    margin-left: 0.9375rem;  }
+}
+@media (max-width: 991px) {
+  header {
+    padding-top: 0.75rem;    padding-bottom: 0.75rem;  }
+  .header_fixed {
+    box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
+  }
+  .main-menu ul {
+    display: none;
+  }
+  .header-lk .btn {
+    display: none;
+  }
+  .login-icon:hover {
+    background: var(--color-grey);
+  }
+  .burger {
+    display: block;
+    position: relative;
+    width: 3.25rem;    height: 3.1875rem;    border-radius: 50%;
+    margin-left: 1.25rem;  }
+  .burger img {
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    border-radius: 50%;
+  }
+}
+@media (max-width: 575px) {
+  .logo-header img {
+    width: 2.75rem;  }
+  .login-icon {
+    width: 3rem;    height: 3rem;  }
+  .burger {
+    width: 3.0625rem;    height: 3rem;    margin-left: 0.4375rem;  }
+}
+.input {
+  display: block;
+  width: 100%;
+  height: 3.8125rem;  line-height: 3.8125rem;  border-radius: 6.25rem;  padding-left: 1.8125rem;  padding-right: 1.8125rem;  font-size: 1.125rem;  margin: 0px;
+  font-family: "Mulish-Regular", sans-serif;
+  color: rgb(255, 255, 255);
+  border: 1px solid #fff;
+  background: transparent;
+  transition: 0.4s ease;
+}
+.input::placeholder {
+  appearance: none;
+  opacity: 1;
+  font-size: 1.125rem;  font-family: "Mulish-Regular", sans-serif;
+  color: rgba(255, 255, 255, 0.6);
+  transition: 0.4s ease;
+}
+.input:focus {
+  border-color: var(--color-green);
+}
+.form.active .form-btn {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.form.disabled .input {
+  border-color: var(--color-pink);
+}
+.form.disabled .form-btn {
+  background: #E8E8E8;
+}
+.form.disabled .form-btn img {
+  opacity: 0.4;
+}
+
+.form-btn {
+  position: absolute;
+  display: block;
+  width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;
+  background: var(--color-green);
+  cursor: pointer;
+  transition: 0.4s ease;
+}
+.form-btn img {
+  display: block;
+  position: absolute;
+  width: 1.25rem;  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.form__succes {
+  display: block;
+  position: absolute;
+  white-space: nowrap;
+  padding-left: 0.6875rem;  padding-right: 0.6875rem;  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4.125rem;  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+  font-size: 1.75rem;  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.form__succes::before, .form__succes::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;  height: 2.5625rem;  background: url(../../img/form-succes-bg.png) no-repeat center center/100% auto;
+}
+.form__succes::before {
+  right: 100%;
+}
+.form__succes::after {
+  left: 100%;
+}

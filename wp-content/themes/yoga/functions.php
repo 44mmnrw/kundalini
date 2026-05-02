@@ -85,17 +85,150 @@
 	function my_theme_scripts() {
 		$theme_uri = get_template_directory_uri();
 		$theme_dir = get_template_directory();
+		$reset_style_ver = file_exists($theme_dir . '/assets/css/reset.css') ? filemtime($theme_dir . '/assets/css/reset.css') : '1.0.0';
 		$main_style_ver = file_exists($theme_dir . '/assets/css/style.css') ? filemtime($theme_dir . '/assets/css/style.css') : '1.0.0';
+		$specification_style_ver = file_exists($theme_dir . '/assets/css/templates/specification.css') ? filemtime($theme_dir . '/assets/css/templates/specification.css') : '1.0.0';
+		$header_style_ver = file_exists($theme_dir . '/assets/css/templates/header.css') ? filemtime($theme_dir . '/assets/css/templates/header.css') : '1.0.0';
+		$footer_style_ver = file_exists($theme_dir . '/assets/css/templates/footer.css') ? filemtime($theme_dir . '/assets/css/templates/footer.css') : '1.0.0';
+		$modals_style_ver = file_exists($theme_dir . '/assets/css/templates/modals.css') ? filemtime($theme_dir . '/assets/css/templates/modals.css') : '1.0.0';
+		$homepage_style_ver = file_exists($theme_dir . '/assets/css/templates/homepage.css') ? filemtime($theme_dir . '/assets/css/templates/homepage.css') : '1.0.0';
+		$kriyi_style_ver = file_exists($theme_dir . '/assets/css/templates/kriyi.css') ? filemtime($theme_dir . '/assets/css/templates/kriyi.css') : '1.0.0';
+		$library_style_ver = file_exists($theme_dir . '/assets/css/templates/library.css') ? filemtime($theme_dir . '/assets/css/templates/library.css') : '1.0.0';
+		$praktika_style_ver = file_exists($theme_dir . '/assets/css/templates/praktika.css') ? filemtime($theme_dir . '/assets/css/templates/praktika.css') : '1.0.0';
+		$form_questions_style_ver = file_exists($theme_dir . '/assets/css/templates/form-questions.css') ? filemtime($theme_dir . '/assets/css/templates/form-questions.css') : '1.0.0';
+		$rules_style_ver = file_exists($theme_dir . '/assets/css/templates/rules.css') ? filemtime($theme_dir . '/assets/css/templates/rules.css') : '1.0.0';
+		$faq_style_ver = file_exists($theme_dir . '/assets/css/templates/faq.css') ? filemtime($theme_dir . '/assets/css/templates/faq.css') : '1.0.0';
+		$lk_style_ver = file_exists($theme_dir . '/assets/css/templates/lk.css') ? filemtime($theme_dir . '/assets/css/templates/lk.css') : '1.0.0';
+		$blog_form_style_ver = file_exists($theme_dir . '/assets/css/templates/blog-form.css') ? filemtime($theme_dir . '/assets/css/templates/blog-form.css') : '1.0.0';
+		$blog_style_ver = file_exists($theme_dir . '/assets/css/templates/blog.css') ? filemtime($theme_dir . '/assets/css/templates/blog.css') : '1.0.0';
+		$post_style_ver = file_exists($theme_dir . '/assets/css/templates/post.css') ? filemtime($theme_dir . '/assets/css/templates/post.css') : '1.0.0';
+		$popular_articles_style_ver = file_exists($theme_dir . '/assets/css/templates/popular-articles.css') ? filemtime($theme_dir . '/assets/css/templates/popular-articles.css') : '1.0.0';
+		$notfound_style_ver = file_exists($theme_dir . '/assets/css/templates/notfound.css') ? filemtime($theme_dir . '/assets/css/templates/notfound.css') : '1.0.0';
+		$about_style_ver = file_exists($theme_dir . '/assets/css/templates/about.css') ? filemtime($theme_dir . '/assets/css/templates/about.css') : '1.0.0';
+		$tariffs_style_ver = file_exists($theme_dir . '/assets/css/templates/tariffs.css') ? filemtime($theme_dir . '/assets/css/templates/tariffs.css') : '1.0.0';
+		$subscription_style_ver = file_exists($theme_dir . '/assets/css/templates/subscription.css') ? filemtime($theme_dir . '/assets/css/templates/subscription.css') : '1.0.0';
+		$ways_style_ver = file_exists($theme_dir . '/assets/css/templates/ways.css') ? filemtime($theme_dir . '/assets/css/templates/ways.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
 		
 		// В режиме разработки принудительно отключаем кэш ассетов.
 		if (defined('WP_DEBUG') && WP_DEBUG) {
+			$reset_style_ver = time();
 			$main_style_ver = time();
+			$specification_style_ver = time();
+			$header_style_ver = time();
+			$footer_style_ver = time();
+			$modals_style_ver = time();
+			$homepage_style_ver = time();
+			$kriyi_style_ver = time();
+			$library_style_ver = time();
+			$praktika_style_ver = time();
+			$form_questions_style_ver = time();
+			$rules_style_ver = time();
+			$faq_style_ver = time();
+			$lk_style_ver = time();
+			$blog_form_style_ver = time();
+			$blog_style_ver = time();
+			$post_style_ver = time();
+			$popular_articles_style_ver = time();
+			$notfound_style_ver = time();
+			$about_style_ver = time();
+			$tariffs_style_ver = time();
+			$subscription_style_ver = time();
+			$ways_style_ver = time();
 			$main_script_ver = time();
 		}
 		
 		// Обработчик AJAX для формы подписки
-		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array(), $main_style_ver );
+		$is_homepage = is_front_page() || is_page_template('templates-page/homepage.php');
+		$is_lk_template = is_page_template('templates-page/lk.php');
+		$is_contacts_template = is_page_template('templates-page/contacts.php');
+		$is_tariffs_template = is_page_template('templates-page/tariffs.php');
+		$is_faq_template = is_page_template('templates-page/faq.php');
+		$is_404_template = is_page_template('templates-page/404.php');
+		$is_privacy_template = is_page_template('templates-page/privacy-policy.php');
+		$is_about_template = is_page_template('templates-page/about.php');
+		$is_practice_tax = is_tax('practice-type');
+		$is_product_cat_tax = is_tax('product_cat');
+		$is_archive_page = is_archive();
+		$is_post_single = is_singular('post');
+		$is_practice_single = is_singular('practice');
+		$common_style_deps = array('main-style');
+
+		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
+		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array('reset-style'), $main_style_ver );
+		wp_enqueue_style( 'specification-style', $theme_uri . '/assets/css/templates/specification.css', $common_style_deps, $specification_style_ver );
+		wp_enqueue_style( 'header-style', $theme_uri . '/assets/css/templates/header.css', $common_style_deps, $header_style_ver );
+		wp_enqueue_style( 'footer-style', $theme_uri . '/assets/css/templates/footer.css', $common_style_deps, $footer_style_ver );
+		wp_enqueue_style( 'modals-style', $theme_uri . '/assets/css/templates/modals.css', $common_style_deps, $modals_style_ver );
+
+		if ($is_homepage) {
+			wp_enqueue_style( 'homepage-style', $theme_uri . '/assets/css/templates/homepage.css', $common_style_deps, $homepage_style_ver );
+		}
+		if ($is_practice_tax || $is_lk_template) {
+			wp_enqueue_style( 'library-style', $theme_uri . '/assets/css/templates/library.css', $common_style_deps, $library_style_ver );
+		}
+		if ($is_practice_single) {
+			wp_enqueue_style( 'praktika-style', $theme_uri . '/assets/css/templates/praktika.css', $common_style_deps, $praktika_style_ver );
+		}
+		if ($is_practice_single || $is_contacts_template) {
+			wp_enqueue_style( 'form-questions-style', $theme_uri . '/assets/css/templates/form-questions.css', $common_style_deps, $form_questions_style_ver );
+		}
+		if ($is_privacy_template) {
+			wp_enqueue_style( 'rules-style', $theme_uri . '/assets/css/templates/rules.css', $common_style_deps, $rules_style_ver );
+		}
+		if ($is_faq_template) {
+			wp_enqueue_style( 'faq-style', $theme_uri . '/assets/css/templates/faq.css', $common_style_deps, $faq_style_ver );
+		}
+		if ($is_lk_template) {
+			wp_enqueue_style( 'lk-style', $theme_uri . '/assets/css/templates/lk.css', $common_style_deps, $lk_style_ver );
+		}
+		if ($is_archive_page) {
+			wp_enqueue_style( 'blog-form-style', $theme_uri . '/assets/css/templates/blog-form.css', $common_style_deps, $blog_form_style_ver );
+			wp_enqueue_style( 'blog-style', $theme_uri . '/assets/css/templates/blog.css', $common_style_deps, $blog_style_ver );
+		}
+		if ($is_post_single) {
+			wp_enqueue_style( 'post-style', $theme_uri . '/assets/css/templates/post.css', $common_style_deps, $post_style_ver );
+			wp_enqueue_style( 'popular-articles-style', $theme_uri . '/assets/css/templates/popular-articles.css', $common_style_deps, $popular_articles_style_ver );
+		}
+		if ($is_404_template) {
+			wp_enqueue_style( 'notfound-style', $theme_uri . '/assets/css/templates/notfound.css', $common_style_deps, $notfound_style_ver );
+		}
+		if ($is_about_template) {
+			wp_enqueue_style( 'about-style', $theme_uri . '/assets/css/templates/about.css', $common_style_deps, $about_style_ver );
+		}
+
+		$load_kriyi_style = false;
+		if ($is_practice_tax) {
+			$current_term = get_queried_object();
+			$load_kriyi_style = $current_term instanceof WP_Term && !empty($current_term->parent);
+		}
+		if ($is_lk_template) {
+			$load_kriyi_style = true;
+		}
+		if ($load_kriyi_style) {
+			wp_enqueue_style( 'kriyi-style', $theme_uri . '/assets/css/templates/kriyi.css', $common_style_deps, $kriyi_style_ver );
+		}
+
+		if ($is_homepage || $is_tariffs_template || $is_product_cat_tax) {
+			wp_enqueue_style( 'tariffs-style', $theme_uri . '/assets/css/templates/tariffs.css', $common_style_deps, $tariffs_style_ver );
+		}
+		if ($is_homepage || $is_archive_page || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
+			wp_enqueue_style( 'subscription-style', $theme_uri . '/assets/css/templates/subscription.css', $common_style_deps, $subscription_style_ver );
+		}
+		if (
+			is_single() ||
+			$is_archive_page ||
+			$is_practice_tax ||
+			$is_product_cat_tax ||
+			$is_contacts_template ||
+			$is_faq_template ||
+			$is_404_template ||
+			$is_privacy_template ||
+			$is_about_template ||
+			$is_tariffs_template
+		) {
+			wp_enqueue_style( 'ways-style', $theme_uri . '/assets/css/templates/ways.css', $common_style_deps, $ways_style_ver );
+		}
 		wp_enqueue_style( 'mulish-style', $theme_uri . '/assets/css/mulish.css', array(), '1.0.0' );
 		wp_enqueue_style( 'animate-style', $theme_uri . '/assets/css/animate.css', array(), '1.0.0' );
 		
