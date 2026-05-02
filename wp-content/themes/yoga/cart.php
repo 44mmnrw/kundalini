@@ -25,8 +25,24 @@ get_header(); ?>
             
             <div class="woocommerce-cart-wrapper">
                 <?php
+                // Безопасная инициализация сессии/корзины WooCommerce (защита от 5xx на мобильных)
+                $cart = null;
+                if (function_exists('WC')) {
+                    $wc = WC();
+
+                    if ($wc && isset($wc->session) && $wc->session && method_exists($wc->session, 'has_session') && !$wc->session->has_session()) {
+                        $wc->session->set_customer_session_cookie(true);
+                    }
+
+                    if ((!isset($wc->cart) || !$wc->cart) && function_exists('wc_load_cart')) {
+                        wc_load_cart();
+                    }
+
+                    $cart = isset($wc->cart) ? $wc->cart : null;
+                }
+
                 // Проверяем, есть ли товары в корзине
-                if (WC()->cart->is_empty()) {
+                if (!$cart || $cart->is_empty()) {
                     // Пустая корзина
                     wc_get_template('cart/cart-empty.php');
                 } else {
@@ -52,7 +68,7 @@ get_header(); ?>
                                 <?php do_action('woocommerce_before_cart_contents'); ?>
                                 
                                 <?php
-                                foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                                foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
                                     $_product   = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
                                     $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                     
@@ -107,7 +123,7 @@ get_header(); ?>
                                             
                                             <td class="product-price" data-title="<?php esc_attr_e('Price', 'woocommerce'); ?>">
                                                 <?php
-                                                echo apply_filters('woocommerce_cart_item_price', WC()->cart->get_product_price($_product), $cart_item, $cart_item_key);
+                                                echo apply_filters('woocommerce_cart_item_price', $cart->get_product_price($_product), $cart_item, $cart_item_key);
                                                 ?>
                                             </td>
                                             
@@ -139,7 +155,7 @@ get_header(); ?>
                                             
                                             <td class="product-subtotal" data-title="<?php esc_attr_e('Subtotal', 'woocommerce'); ?>">
                                                 <?php
-                                                echo apply_filters('woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal($_product, $cart_item['quantity']), $cart_item, $cart_item_key);
+                                                echo apply_filters('woocommerce_cart_item_subtotal', $cart->get_product_subtotal($_product, $cart_item['quantity']), $cart_item, $cart_item_key);
                                                 ?>
                                             </td>
                                         </tr>
