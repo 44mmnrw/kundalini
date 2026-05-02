@@ -4,7 +4,7 @@
 	*/
 ?>
 </main>
-<?php if ( ! is_page('my-account') && ! is_page_template('templates-page/lk.php') ) : ?>
+<?php if ( ! is_page('my-account') && ! is_page_template('templates-page/lk.php') && !(function_exists('is_account_page') && is_account_page()) ) : ?>
 <footer class="footer wow fadeIn delay-200ms <?php 
     if ( empty($GLOBALS['has_subscription_section']) ) echo 'footer_big'; 
 	?>" id="footer">
