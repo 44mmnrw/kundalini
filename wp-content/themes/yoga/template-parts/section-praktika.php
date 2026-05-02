@@ -15,8 +15,8 @@
 					?>
                     <div class="praktika-fav fav" data-practice-id="<?php echo get_the_id(); ?>">
                         <div class="praktika-fav__icon">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="Добавить в избранное" class="<?php echo !$is_favorite ? 'active' : ''; ?>">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="В избранном" class="<?php echo $is_favorite ? 'active' : ''; ?>">
+                            <svg class="<?php echo !$is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+                            <svg class="<?php echo $is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 						</div>
                         <span>В избранное</span>
 					</div>

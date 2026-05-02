@@ -109,6 +109,20 @@
 	
 </div>
 
+<div class="modal modal-default modal-default_favoritesucces">
+	<div class="modal-close">
+        <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
+	</div>
+	<div class="thanksforqw">
+        <h3>
+			Избранное обновлено
+		</h3>
+		<p class="favorite-modal-message">
+			Практика добавлена в избранное.
+		</p>
+	</div>
+</div>
+
 <div class="modal modal-default modal-default_logout">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">

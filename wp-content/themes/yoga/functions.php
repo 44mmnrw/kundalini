@@ -84,9 +84,18 @@
 	// Опции ACF
 	function my_theme_scripts() {
 		$theme_uri = get_template_directory_uri();
+		$theme_dir = get_template_directory();
+		$main_style_ver = file_exists($theme_dir . '/assets/css/style.css') ? filemtime($theme_dir . '/assets/css/style.css') : '1.0.0';
+		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
+		
+		// В режиме разработки принудительно отключаем кэш ассетов.
+		if (defined('WP_DEBUG') && WP_DEBUG) {
+			$main_style_ver = time();
+			$main_script_ver = time();
+		}
 		
 		// Обработчик AJAX для формы подписки
-		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array(), '1.0.0' );
+		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array(), $main_style_ver );
 		wp_enqueue_style( 'mulish-style', $theme_uri . '/assets/css/mulish.css', array(), '1.0.0' );
 		wp_enqueue_style( 'animate-style', $theme_uri . '/assets/css/animate.css', array(), '1.0.0' );
 		
@@ -100,7 +109,7 @@
 		
 		wp_enqueue_script( 'fancybox', $theme_uri . '/assets/libs/fancybox/jquery.fancybox.min.js', array('jquery', 'slick'), null, true );
 		
-		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox'), '1.0.0', true );
+		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox'), $main_script_ver, true );
 		
 		// Здесь можно добавить логику подписки:
 		wp_enqueue_style('plyr-css', get_template_directory_uri() . '/assets/css/plyr.css');
@@ -967,13 +976,18 @@ function handle_comment_delete() {
 		ob_start();
 		
 		if ($query->have_posts()) :
+		$user_id = get_current_user_id();
+		$user_favorites = get_user_meta($user_id, 'favorite_practices', true);
+		if (!is_array($user_favorites)) {
+			$user_favorites = array();
+		}
         $item_count = 0;
         while ($query->have_posts()) : $query->the_post();
 		$item_count++;
 		$practice_level = get_field('level') ?: 'РќР°С‡РёРЅР°СЋС‰РёР№';
 		$practice_description = get_field('short_description') ?: get_the_excerpt();
 		$practice_image = get_field('image') ?: get_template_directory_uri() . '/assets/img/kriya-img_01.png';
-		$is_favorite = get_field('is_favorite') ?: false;
+		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
 		$hidden_class = ($item_count > 10) ? 'hidden' : '';
 	?>
 	
@@ -989,9 +1003,9 @@ function handle_comment_delete() {
 				<div class="kriya-img">
 					<img src="<?php echo esc_url($practice_image); ?>" alt="<?php the_title(); ?>">
 				</div>
-				<div class="kriya-fav">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="<?php echo !$is_favorite ? 'active' : ''; ?>">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="" class="<?php echo $is_favorite ? 'active' : ''; ?>">
+				<div class="kriya-fav fav" data-practice-id="<?php echo get_the_ID(); ?>">
+					<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+					<svg class="<?php echo $is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 				</div>
 				<div class="kriya-btn">
 					<div class="kriya-btn__arrow">
@@ -1019,8 +1033,8 @@ function handle_comment_delete() {
 					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="РћСЃС‚Р°Р»СЊРЅС‹Рµ РєСЂРёР№Рё">
 				</div>
 				<div class="kriya-fav">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="">
+					<svg class="active" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+					<svg aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 				</div>
 				<div class="kriya-btn">
 					<div class="kriya-btn__arrow">
@@ -1374,8 +1388,8 @@ function handle_comment_delete() {
                                         <?php endif; ?>
 									</div>
                                     <div class="kriya-fav">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="active">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="">
+                                        <svg class="active" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+                                        <svg aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 									</div>
                                     <div class="kriya-btn">
                                         <div class="kriya-btn__arrow">

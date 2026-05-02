@@ -200,6 +200,13 @@
 						<div class="lk-slide__content">
 							<?php
 							$favorites = get_user_meta($user_id, 'favorite_practices', true);
+							if (is_string($favorites)) {
+								$favorites = array_filter(array_map('trim', explode(',', $favorites)));
+							}
+							if (!is_array($favorites)) {
+								$favorites = array();
+							}
+							$favorites = array_values(array_unique(array_filter(array_map('intval', $favorites))));
 							if (empty($favorites)) :
 								echo '<div class="no-favorites">У вас пока нет избранных практик</div>';
 							else :
@@ -237,8 +244,8 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="kriya-fav fav active" data-practice-id="<?php echo $practice_id; ?>">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="active">
-                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="">
+                                        <svg class="active" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+                                        <svg aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
                                     </div>
                                     <div class="kriya-btn">
                                         <a href="<?php echo get_permalink($practice_id); ?>" class="kriya-btn__arrow">
@@ -286,7 +293,12 @@
 														if ($practice && $practice->post_type == 'practice') {
 															$level = get_the_terms($practice_id, 'practice-type');
 															$level_name = !empty($level) ? $level[0]->name : 'Не указан';
-															$is_favorite = in_array($practice_id, get_user_meta($user_id, 'favorite_practices', true) ?: array());
+															$user_favorites = get_user_meta($user_id, 'favorite_practices', true);
+															if (!is_array($user_favorites)) {
+																$user_favorites = array();
+															}
+															$user_favorites = array_map('intval', $user_favorites);
+															$is_favorite = in_array((int) $practice_id, $user_favorites, true);
 														?>
 														<div class="kriyi-item">
 															<div class="kriyi-item__inner">
@@ -305,8 +317,8 @@
 																		<?php endif; ?>
 																	</div>
 																	<div class="kriya-fav fav <?php echo $is_favorite ? 'active' : ''; ?>" data-practice-id="<?php echo $practice_id; ?>">
-																		<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="active">
-																		<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="">
+																		<svg class="active" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+																		<svg aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 																	</div>
 																	<div class="kriya-btn">
 																		<a href="<?php echo get_permalink($practice_id); ?>" class="kriya-btn__arrow">

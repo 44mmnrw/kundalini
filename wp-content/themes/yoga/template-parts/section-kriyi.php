@@ -260,8 +260,8 @@
 									<img src="<?php echo esc_url($practice_image); ?>" alt="<?php the_title(); ?>">
 								</div>
 								<div class="kriya-fav fav"  data-practice-id="<?php echo get_the_id(); ?>">
-									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="<?php echo !$is_favorite ? 'active' : ''; ?>">
-									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="" class="<?php echo $is_favorite ? 'active' : ''; ?>">
+									<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+									<svg class="<?php echo $is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 								</div>
 								<div class="kriya-btn">
 									<div class="kriya-btn__arrow">
@@ -277,6 +277,7 @@
 					
 					<!-- Дополнительные скрытые элементы -->
 					<?php if ($practices_count > 10): ?>
+					<?php $placeholder_is_favorite = false; ?>
 					<?php for ($i = 0; $i < 2; $i++): ?>
 					<div class="kriyi-item kriyi-item_last hidden">
 						<div class="kriyi-item__inner">
@@ -291,8 +292,8 @@
 									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="Остальные крийи">
 								</div>
 								<div class="kriya-fav">
-									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav.png" alt="" class="<?php echo !$is_favorite ? 'active' : ''; ?>">
-									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-fav_active.png" alt="" class="<?php echo $is_favorite ? 'active' : ''; ?>">
+									<svg class="<?php echo !$placeholder_is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+									<svg class="<?php echo $placeholder_is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 								</div>
 								<div class="kriya-btn">
 									<div class="kriya-btn__arrow">
@@ -330,6 +331,61 @@
 			$(this).toggleClass('active');
 			$('.kriyi-item.hidden').toggleClass('hidden');
 		});
+		
+		// Надежный обработчик избранного для страницы крий (без practice-notification).
+		$(document).off('click', '.fav');
+		$(document).on('click', '.fav', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			var $fav = $(this);
+			var practiceId = $fav.data('practice-id');
+			if (!practiceId || typeof yoga_ajax === 'undefined') {
+				return;
+			}
+			
+			$('.practice-notification').remove();
+			
+			$.ajax({
+				url: yoga_ajax.ajax_url,
+				type: 'POST',
+				data: {
+					action: 'toggle_favorite_practice',
+					practice_id: practiceId,
+					security: yoga_ajax.nonce
+				},
+				success: function(response) {
+					if (response && response.success) {
+						$fav.find('img, svg').toggleClass('active');
+						$('.practice-notification').remove();
+						showFavoriteModalLocal((response.data && response.data.message) ? response.data.message : 'Избранное обновлено');
+					} else if (response && response.data && response.data.message) {
+						showFavoriteModalLocal(response.data.message);
+					}
+				},
+				error: function(xhr) {
+					if (xhr.status === 401) {
+						showFavoriteModalLocal('Для добавления в избранное авторизуйтесь');
+					} else if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+						showFavoriteModalLocal(xhr.responseJSON.data.message);
+					} else {
+						showFavoriteModalLocal('Избранное не обновлено');
+					}
+				}
+			});
+		});
+		
+		function showFavoriteModalLocal(message) {
+			var $modal = $('.modal-default_favoritesucces');
+			if (!$modal.length) {
+				return;
+			}
+			$modal.find('.favorite-modal-message').text(message || 'Избранное обновлено');
+			$('.overlay').addClass('active');
+			$('.modal').removeClass('active');
+			$('.modal-login').removeClass('active');
+			$modal.addClass('active');
+		}
 		
 	});
 </script>

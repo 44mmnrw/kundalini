@@ -36,6 +36,18 @@ body {
   text-align: left;
   font-weight: 100;
   padding-top: 88px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+footer {
+  flex-shrink: 0;
 }
 
 .body-fixed {
@@ -4353,7 +4365,8 @@ input#filt-reset {
   z-index: 3;
   cursor: pointer;
 }
-.kriya-fav img {
+.kriya-fav img,
+.kriya-fav svg {
   display: block;
   position: absolute;
   left: 50%;
@@ -4363,14 +4376,28 @@ input#filt-reset {
   opacity: 0;
   transition: 0.4s ease;
 }
-.kriya-fav img.active {
+.kriya-fav img.active,
+.kriya-fav svg.active {
   opacity: 1;
 }
-.kriya-fav.active img {
+.kriya-fav.active img,
+.kriya-fav.active svg {
   opacity: 1;
 }
-.kriya-fav.active img.active {
+.kriya-fav.active img.active,
+.kriya-fav.active svg.active {
   opacity: 0;
+}
+
+.practice-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+body.tax-practice-type .practice-notification {
+  display: none !important;
 }
 
 .kriya-btn {

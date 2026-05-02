@@ -2195,9 +2195,13 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.fav', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		$('.practice-notification').remove();
 		
 		var $this = $(this);
 		var practiceId = $this.data('practice-id'); 
+		if (!practiceId) {
+			return;
+		}
 		
 		$.ajax({
 			url: yoga_ajax.ajax_url,
@@ -2210,15 +2214,37 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				if (response.success) {
 					//$this.toggleClass('active');
-					$this.find('img').toggleClass('active');
-					// Можно обновить рекомендации после изменения избранного
-					if (response.data && response.data.message) {
-						showNotification(response.data.message);
-					}
+					$this.find('img, svg').toggleClass('active');
+					$('.practice-notification').remove();
+					showFavoriteModal((response.data && response.data.message) ? response.data.message : 'Избранное обновлено');
+				} else if (response.data && response.data.message) {
+					showFavoriteModal(response.data.message);
+				}
+			},
+			error: function(xhr) {
+				if (xhr.status === 401) {
+					showFavoriteModal('Для добавления в избранное авторизуйтесь');
+				} else if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+					showFavoriteModal(xhr.responseJSON.data.message);
+				} else {
+					showFavoriteModal('Избранное не обновлено');
 				}
 			}
 		});
 	});
+	
+	function showFavoriteModal(message) {
+		var $modal = $('.modal-default_favoritesucces');
+		if (!$modal.length) {
+			return;
+		}
+		$modal.find('.favorite-modal-message').text(message || 'Избранное обновлено');
+		$('.body').addClass("body-fixed");
+		$('.overlay').addClass("active");
+		$('.modal').removeClass("active");
+		$('.modal-login').removeClass("active");
+		$modal.addClass("active");
+	}
 	
 	// Функция показа уведомлений
 	function showNotification(message) {
