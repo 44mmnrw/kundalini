@@ -27,7 +27,15 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <?php wp_nonce_field('yoga_login_nonce', 'yoga_login_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_email_login">
                 <input type="email" name="log" class="input" required placeholder="Электронная почта">
-                <input type="password" name="pwd" class="input" required placeholder="Пароль">
+                <div class="input-password">
+                    <input type="password" name="pwd" class="input" required placeholder="Пароль">
+                    <div class="input-password__btn input-password__btn_show active">
+                        <img src="<?php echo esc_url($img_uri . '/input-password-icon.png'); ?>" alt="">
+                    </div>
+                    <div class="input-password__btn input-password__btn_hide">
+                        <img src="<?php echo esc_url($img_uri . '/input-password-icon_hide.png'); ?>" alt="">
+                    </div>
+                </div>
                 <button type="submit" id="login-ent-btn"></button>
                 <label for="login-ent-btn" class="btn">
                     <span>
@@ -69,7 +77,15 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <input type="hidden" name="action" value="yoga_email_register">
                 <input type="text" name="user_name" class="input" required placeholder="Ваше имя">
                 <input type="email" name="user_email" class="input" required placeholder="Электронная почта">
-                <input type="password" name="user_pass" class="input" required placeholder="Пароль">
+                <div class="input-password">
+                    <input type="password" name="user_pass" class="input" required placeholder="Пароль">
+                    <div class="input-password__btn input-password__btn_show active">
+                        <img src="<?php echo esc_url($img_uri . '/input-password-icon.png'); ?>" alt="">
+                    </div>
+                    <div class="input-password__btn input-password__btn_hide">
+                        <img src="<?php echo esc_url($img_uri . '/input-password-icon_hide.png'); ?>" alt="">
+                    </div>
+                </div>
                 <button type="submit" id="login-reg-btn"></button>
                 <p class="login-rules">
                     Нажимая «Зарегистрироваться», вы принимаете условия <a href="<?php echo esc_url($terms_url); ?>">пользовательского соглашения</a> и <a href="<?php echo esc_url($privacy_url); ?>">политики конфиденциальности</a>
