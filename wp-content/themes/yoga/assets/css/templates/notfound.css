@@ -1,0 +1,92 @@
+/* Section-notfound */
+.section-notfound {
+  padding-top: 1.25rem;  padding-bottom: 7.625rem;  min-height: calc(100vh - 17.75rem);  background: url(../../img/404-bg.png) no-repeat center 9px/996px auto;
+}
+
+.notfound {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.notfound__media {
+  width: 36.875rem;  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+.notfound__media-desc {
+  display: block;
+  width: 100%;
+}
+
+.notfound__info {
+  display: block;
+  width: 100%;
+  margin-top: 1.375rem;}
+.notfound__info h3 {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+.notfound__info p {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 1.125rem;  font-family: "Mulish-Italic", sans-serif;
+  font-weight: normal;
+  margin-top: 0.3125rem;}
+.notfound__info .ref {
+  font: inherit;
+  color: var(--color-violet);
+  text-decoration: underline;
+}
+.notfound__info .ref:hover {
+  text-decoration: none;
+}
+
+@media (max-width: 1320px) {
+  .section-notfound {
+    padding-top: 0.75rem;    padding-bottom: 5.625rem;    background: url(../../img/404-bg.png) no-repeat center 0px/996px auto;
+  }
+  .notfound__media {
+    width: 34.25rem;  }
+}
+@media (max-width: 1199px) {
+  .section-notfound {
+    background: url(../../img/404-bg.png) no-repeat center 0px/902px auto;
+  }
+}
+@media (max-width: 991px) {
+  .section-notfound {
+    background: url(../../img/404-bg.png) no-repeat center 0px/calc(100% - 100px) auto;
+  }
+}
+@media (max-width: 767px) {
+  .section-notfound {
+    padding-top: 3.25rem;    background: url(../../img/404-bg_mob.png) no-repeat center -5px/380px auto;
+  }
+  .notfound__media {
+    width: 27.5rem;  }
+  .notfound__info {
+    margin-top: 3.25rem;  }
+}
+@media (max-width: 575px) {
+  .section-notfound {
+    padding-top: 3.75rem;    padding-bottom: 5rem;    background: url(../../img/404-bg_mob.png) no-repeat calc(50% - 6px) -4px/306px auto;
+  }
+  .notfound__media {
+    width: 20rem;  }
+  .notfound__info {
+    margin-top: 5rem;  }
+  .notfound__info h3 {
+    line-height: 1.1em;
+  }
+  .notfound__info p {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    max-width: 15.5rem;    font-size: 1rem;    line-height: 1.45em;
+    margin-top: 0.6875rem;  }
+}

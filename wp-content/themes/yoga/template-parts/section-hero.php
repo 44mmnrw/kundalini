@@ -27,14 +27,44 @@
 
                 <?php
                 $hero_image = get_field('hero_image');
+                $tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+                $tariffs_url = home_url('/product-category/tariffs/');
+                if ($tariffs_term && !is_wp_error($tariffs_term)) {
+                    $term_link = get_term_link($tariffs_term);
+                    if (!is_wp_error($term_link)) {
+                        $tariffs_url = $term_link;
+                    }
+                }
                 if ($hero_image) : ?>
                     <img src="<?php echo esc_url($hero_image['url']); ?>" alt="<?php echo esc_attr($hero_image['alt']); ?>" class="main__img animated slower fadeIn delay-400ms">
                 <?php endif; ?>
 
                 <div class="main__practices">
                     <div class="hundreds-practices">
-                        <strong><?php the_field('hero_count'); ?></strong>
-                        <p><?php the_field('hero_count_text'); ?></p>
+                        <svg class="hundreds-practices__card" aria-hidden="true">
+                            <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-card'); ?>"></use>
+                        </svg>
+                        <svg class="hundreds-practices__oval" aria-hidden="true">
+                            <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-oval'); ?>"></use>
+                        </svg>
+                        <svg class="hundreds-practices__star" aria-hidden="true">
+                            <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-star'); ?>"></use>
+                        </svg>
+                        <svg class="hundreds-practices__bg-mobile" aria-hidden="true">
+                            <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-mobile-bg'); ?>"></use>
+                        </svg>
+                        <div class="hundreds-practices__content">
+                            <strong><?php the_field('hero_count'); ?></strong>
+                            <p><?php the_field('hero_count_text'); ?></p>
+                        </div>
+                        <a class="hundreds-practices__arrow" href="<?php echo esc_url($tariffs_url); ?>" aria-label="Перейти к тарифам">
+                            <svg class="hundreds-practices__arrow-icon hundreds-practices__arrow-icon_default" aria-hidden="true">
+                                <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-arrow'); ?>"></use>
+                            </svg>
+                            <svg class="hundreds-practices__arrow-icon hundreds-practices__arrow-icon_hover" aria-hidden="true">
+                                <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-arrow-hover'); ?>"></use>
+                            </svg>
+                        </a>
                     </div>
                     <?php if (have_rows('hero_categories')) : ?>
                         <div class="practices-categories">

@@ -1,0 +1,20 @@
+/* Section-blog-form */
+.section-blog-form {
+  padding-top: 0.3125rem;  background: #fff;
+  transition: box-shadow 0.3s ease;
+}
+.section-blog-form.active {
+  position: fixed;
+  top: 5.5rem;  z-index: 22;
+  box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
+}
+
+@media (max-width: 1320px) {
+  .section-blog-form.active {
+    top: 5.125rem;  }
+}
+@media (max-width: 991px) {
+  .section-blog-form {
+    overflow: hidden;
+  }
+}

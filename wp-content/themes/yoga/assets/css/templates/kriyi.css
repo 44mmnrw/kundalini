@@ -1,0 +1,354 @@
+/* Template: taxonomy kriyi */
+.section-kriyi {
+  overflow: hidden;
+  padding-top: 1.5rem;  padding-bottom: 7.5rem;}
+
+.kriyi-form {
+  display: block;
+  position: relative;
+  z-index: 4;
+  width: 100%;
+}
+.kriyi-form form {
+  display: block;
+  width: 100%;
+}
+
+.kriyi-form-main {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sorting {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.5rem;}
+
+.sorting__result {
+  display: inline-block;
+  font-size: 0.9375rem;  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
+
+.sorting-item {
+  margin-right: 0px;
+  margin-top: 0.5px;
+}
+
+.sorting-item__main {
+  padding-top: 0.6875rem;  padding-bottom: 0.6875rem;  padding-left: 1.25rem;  padding-right: 2.625rem;}
+.sorting-item__main span {
+  font-size: 0.875rem;  color: var(--color-black);
+}
+.sorting-item__main span::after {
+  top: calc(50% + 0.5px);
+  width: 0.875rem;  height: 0.875rem;  background: url(../../img/sorting-select-arrow.png) no-repeat center center/100% auto;
+}
+
+.filter-item.active .filter-item__main span::after, .filter-item.active .sorting-item__main span::after, .sorting-item.active .filter-item__main span::after, .sorting-item.active .sorting-item__main span::after {
+  transform: translateY(-45%) rotate(-180deg);
+}
+
+.sorting-item__list {
+  position: absolute;
+  left: auto;
+  right: 0px;
+  top: 0.125rem;  width: 100%;
+  min-width: 11.25rem;  padding-left: 1.3125rem;  padding-right: 1.3125rem;  padding-top: 0.875rem;  padding-bottom: 1.5rem;  background: #fff;
+  border: 1px solid var(--color-violet);
+  border-bottom-left-radius: 0.4375rem;  border-bottom-right-radius: 0.4375rem;  opacity: 0%;
+  box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
+  pointer-events: none;
+  z-index: -1;
+}
+.sorting-item__list.active {
+  z-index: 2;
+  top: calc(100% - 0.125rem);  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+.sorting-item__list-item {
+  display: block;
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 0.625rem;}
+.sorting-item__list-item.active {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.sorting-item__list-item span {
+  font-size: 1rem;  line-height: 1.5em;
+  transition: 0.4s ease;
+}
+.sorting-item__list-item:hover span {
+  color: var(--color-violet);
+}
+
+.kriyi {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1.5625rem;}
+.kriyi .btn {
+  min-width: 14rem;  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3.75rem;}
+.kriyi .btn span {
+  text-transform: uppercase;
+  position: absolute;
+  opacity: 0;
+  top: 0px;
+  left: 0px;
+  transition: color 0.3s ease, opacity 0s;
+}
+.kriyi .btn span.active {
+  position: relative;
+  opacity: 1;
+  transition: color 0.3s ease, opacity 0s;
+}
+
+.kriyi__items {
+  width: 100%;
+}
+
+.kriyi-item {
+  width: 100%;
+}
+.kriyi-item:first-child .kriyi-item__inner {
+  border-top: 1px solid var(--color-black);
+}
+.kriyi-item:hover .kriyi-item__inner {
+  background: rgba(145, 83, 225, 0.07);
+}
+.kriyi-item:hover .kriya-info h3 {
+  color: var(--color-violet);
+}
+.kriyi-item:hover .kriya-btn {
+  transform: rotate(40deg);
+  background: var(--color-green);
+}
+.kriyi-item:hover .kriya-btn img {
+  opacity: 1;
+}
+.kriyi-item:hover .kriya-btn img.active {
+  opacity: 0;
+}
+.kriyi-item.hidden {
+  display: none;
+}
+
+.kriyi-item__inner {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  padding: 0.625rem;  padding-top: 0.9062rem;  padding-bottom: 0.9062rem;  background: rgba(145, 83, 225, 0);
+  border-bottom: 1px solid var(--color-black);
+  transition: 0.4s ease;
+}
+.kriyi-item__inner a {
+  display: block;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.kriya-level {
+  display: block;
+  width: 8.75rem;  text-align: center;
+  line-height: 1em;
+  padding: 0.3125rem;  padding-top: 0.375rem;  padding-bottom: 0.375rem;  border: 1px solid var(--color-violet);
+  border-radius: 6.25rem;  color: var(--color-violet);
+  font-family: "Mulish-Medium", sans-serif;
+}
+
+.kriya-info {
+  width: calc(100% - 8.75rem - 17.5625rem);  padding-left: 1.5625rem;  padding-right: 2.5rem;}
+.kriya-info h3 {
+  display: block;
+  font-size: 1.75rem;  transition: 0.4s ease;
+}
+.kriya-info p {
+  display: block;
+  font-family: "Mulish-Medium", sans-serif;
+  margin-top: 0.5rem;}
+
+.kriya-media {
+  display: flex;
+  width: 17.5625rem;  justify-content: space-between;
+  align-items: center;
+}
+
+.kriya-img {
+  display: block;
+  width: 9.375rem;}
+.kriya-img img {
+  display: block;
+  width: 100%;
+  height: 6.25rem;  object-fit: cover;
+  border-radius: 1.25rem;}
+
+.kriya-fav {
+  width: 1.875rem;  height: 1.875rem;  border-radius: 50%;
+  position: relative;
+  z-index: 3;
+  cursor: pointer;
+}
+.kriya-fav img,
+.kriya-fav svg {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  opacity: 0;
+  transition: 0.4s ease;
+}
+.kriya-fav img.active,
+.kriya-fav svg.active {
+  opacity: 1;
+}
+.kriya-fav.active img,
+.kriya-fav.active svg {
+  opacity: 1;
+}
+.kriya-fav.active img.active,
+.kriya-fav.active svg.active {
+  opacity: 0;
+}
+
+.practice-notification {
+  position: fixed;
+  top: 1.25rem;  right: 1.25rem;  z-index: 10000;
+}
+
+body.tax-practice-type .practice-notification {
+  display: none !important;
+}
+
+.kriya-btn {
+  width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;
+  position: relative;
+  background: var(--color-black);
+  transition: 0.4s ease;
+}
+.kriya-btn img {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.25rem;  opacity: 0;
+  transition: 0.4s ease;
+}
+.kriya-btn img.active {
+  opacity: 1;
+}
+
+@media (max-width: 1320px) {
+  .section-kriyi {
+    padding-top: 1.25rem;    padding-bottom: 5.625rem;  }
+  .sorting {
+    margin-top: 1.25rem;  }
+  .kriyi {
+    margin-top: 1.25rem;  }
+  .kriyi .btn {
+    margin-top: 2.5rem;  }
+  .kriya-info h3 {
+    font-size: 1.5625rem;  }
+}
+@media (max-width: 1199px) {
+  .kriyi-item__inner {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .kriya-info {
+    width: calc(100% - 8.75rem - 16.3125rem);    padding-left: 1.25rem;    padding-right: 1.875rem;  }
+  .kriya-media {
+    width: 16.3125rem;  }
+}
+@media (max-width: 991px) {
+  .kriyi {
+    margin-top: 0px;
+  }
+  .kriyi__items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: -0.3125rem;  }
+  .kriyi-item {
+    display: flex;
+    width: calc(50% - 1.25rem);    margin-top: 1.5625rem;  }
+  .kriyi-item__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5625rem;    padding-top: 1.25rem;    padding-bottom: 1.25rem;    background: rgba(145, 83, 225, 0.07) !important;
+    border-top: 0px solid !important;
+    border-bottom: 0px solid !important;
+    border-radius: 1.25rem;  }
+  .kriya-media {
+    width: 100%;
+    margin-top: auto;
+  }
+  .kriya-btn {
+    display: none;
+  }
+  .kriya-info {
+    width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 0.9375rem;    margin-bottom: 1.25rem;  }
+  .kriya-img {
+    width: 100%;
+  }
+  .kriya-img img {
+    height: 12.0625rem;  }
+  .kriya-fav {
+    position: absolute;
+    right: 1.5625rem;    top: 1.25rem;  }
+}
+@media (max-width: 767px) {
+  .kriyi-item {
+    width: calc(50% - 0.4688rem);  }
+  .kriyi-item__inner {
+    padding-left: 0.9375rem;    padding-right: 0.9375rem;  }
+  .kriya-info h3 {
+    font-size: 1.375rem;  }
+  .kriya-level {
+    width: auto;
+    font-size: 0.875rem;    padding: 0.9375rem;    padding-top: 0.4062rem;    padding-bottom: 0.4062rem;  }
+  .kriya-fav {
+    right: 0.9375rem;  }
+  .kriya-img img {
+    height: 9.6875rem;  }
+}
+@media (max-width: 575px) {
+  .section-kriyi {
+    padding-top: 1.25rem;    padding-bottom: 5rem;  }
+  .kriyi-item {
+    width: 100%;
+  }
+  .kriya-img img {
+    height: 12.0625rem;  }
+  .sorting-item__list {
+    width: 100%;
+    min-width: 11.25rem;    left: auto;
+    right: 0px;
+    padding-left: 0.9375rem;    padding-right: 0.9375rem;    padding-top: 0.5625rem;    padding-bottom: 1.1875rem;  }
+  .sorting-item__list-item span {
+    font-size: 0.875rem;  }
+  .kriyi .btn {
+    margin-top: 1.875rem;    width: 100%;
+  }
+}

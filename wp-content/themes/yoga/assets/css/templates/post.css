@@ -1,0 +1,280 @@
+/* Section-post */
+.section-post {
+  padding-top: 1.875rem;  padding-bottom: 7.75rem;}
+
+.post-intro {
+  width: 100%;
+  max-width: calc(100% - 19.0625rem);}
+.post-intro h2 {
+  text-align: left;
+  margin-top: 0px !important;
+  line-height: 1.3em;
+  padding-bottom: 0.625rem;}
+.post-intro .article-cat {
+  margin-right: 0.9375rem;}
+.post-intro .article-time {
+  font-size: 1.125rem;  padding-left: 1.75rem;}
+.post-intro .article-time::before {
+  width: 1.5rem;  height: 1.5rem;  background: url(../../img/article-time-icon.png) no-repeat center center/100% auto;
+}
+
+.post {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-top: 2.5rem;}
+
+.post-main {
+  width: calc(100% - 19.0625rem);}
+.post-main h3 {
+  display: block;
+  font-size: 2rem;  line-height: 1.1em;
+}
+.post-main h4 {
+  display: block;
+  font-size: 1.75rem;  line-height: 1.1em;
+  margin-top: 2.875rem;}
+.post-main > p {
+  display: block;
+  font-size: 1.125rem;  line-height: 1.5em;
+  margin-top: 1.5625rem;}
+.post-main > p a {
+  display: inline;
+  font: inherit;
+  color: var(--color-violet);
+  text-decoration: underline;
+}
+.post-main > p a:hover {
+  text-decoration: none;
+}
+.post-main ul {
+  list-style-type: none;
+  margin-top: 1.5625rem;}
+.post-main ul li {
+  position: relative;
+  font-size: 1.125rem;  line-height: 1.71em;
+  padding-left: 1.6875rem;}
+.post-main ul li b {
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
+.post-main ul li::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0.625rem;  top: 0.8125rem;  width: 0.425rem;  height: 0.425rem;  border-radius: 50%;
+  background: var(--color-black);
+}
+.post-main ol {
+  padding-left: 1.25rem;  margin-top: 1.5625rem;}
+.post-main ol li {
+  font-size: 1.125rem;  line-height: 1.71em;
+}
+.post-main .praktika-notice {
+  border-radius: 1.25rem;  margin-top: 2.875rem;}
+.post-main .praktika-notice p {
+  font-size: 1.125rem;  line-height: 1.4em;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+}
+.post-main .praktika-quote {
+  margin-top: 2.875rem;  margin-bottom: 0px;
+}
+.post-main .praktika-quote p {
+  font-size: 1.125rem;  line-height: 1.5em;
+  margin-top: 1.5625rem;}
+
+.post-main__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.875rem;  margin-top: 1.875rem;}
+
+.post-video {
+  width: 100%;
+  display: block;
+  margin-top: 2.8125rem;}
+
+.post-video__plug {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.875rem;  cursor: pointer;
+}
+
+.post-table {
+  display: block;
+  width: 100%;
+  margin-top: 2.125rem;}
+
+.post-table-row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.post-table-row:first-child .post-table-col {
+  padding-bottom: 0.9375rem;}
+.post-table-row:first-child .post-table-col span {
+  font-size: 1.125rem;}
+.post-table-row:last-child .post-table-col {
+  border-bottom: 0px;
+}
+
+.post-table-col {
+  width: 33.3333333333%;
+  padding-top: 0.9375rem;  padding-bottom: 0.7625rem;  padding-right: 0.625rem;  border-bottom: 1px solid rgba(31, 31, 31, 0.6);
+}
+.post-table-col span b {
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
+
+.post-author {
+  position: relative;
+  width: 17.8125rem;  height: 100%;
+}
+
+.post-author-fixed {
+  width: 100%;
+  max-width: 17.8125rem;  padding: 1.5625rem;  background: var(--color-grey);
+  border-radius: 1.25rem;}
+
+.post-author-main {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-author-main__image {
+  position: relative;
+  width: 3.125rem;  height: 3.125rem;}
+
+.post-author-main__info {
+  width: calc(100% - 4.375rem);}
+
+.post-author-job {
+  display: block;
+  font-size: 0.875rem;  opacity: 0.4;
+}
+
+.post-author-name {
+  display: block;
+  font-size: 1.125rem;  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+}
+
+.post-author-social {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;  padding-top: 1rem;  border-top: 1px solid #fff;
+}
+
+.post-author-social__item {
+  width: 2.25rem;  height: 2.25rem;  margin-top: 0.625rem;  margin-right: 0.3125rem;  margin-left: 0.3125rem;  border-radius: 50%;
+  transition: 0.4s ease;
+}
+.post-author-social__item img {
+  display: block;
+  width: 2.25rem;  height: auto;
+}
+.post-author-social__item:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 1320px) {
+  .section-post {
+    padding-top: 1.4375rem;    padding-bottom: 5.75rem;  }
+  .post {
+    padding-top: 1.875rem;  }
+  .post h3 {
+    font-size: 1.75rem;  }
+  .post h4 {
+    font-size: 1.5rem;  }
+}
+@media (max-width: 1199px) {
+  .post-main {
+    width: calc(100% - 17.5rem);  }
+  .post-author {
+    width: 16.25rem;  }
+  .post-author-fixed {
+    width: 16.25rem;    padding-left: 1.25rem;    padding-right: 1.25rem;  }
+  .post-author-social {
+    width: calc(100% + 0.625rem);    min-width: calc(100% + 0.625rem);    margin-left: -0.3125rem;  }
+}
+@media (max-width: 991px) {
+  .post-intro {
+    max-width: 100%;
+  }
+  .post {
+    flex-wrap: wrap;
+  }
+  .post-main {
+    width: 100%;
+  }
+  .post-author {
+    width: 100%;
+    margin-top: 1.875rem;    height: auto;
+  }
+  .post-author-fixed {
+    width: 100% !important;
+    position: unset !important;
+    transform: none !important;
+    top: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5625rem;    padding-right: 1.5625rem;  }
+}
+@media (max-width: 767px) {
+  .section-post {
+    padding-top: 1.5625rem;  }
+  .post h3 {
+    font-size: 1.625rem;  }
+  .post h4 {
+    font-size: 1.375rem;  }
+}
+@media (max-width: 575px) {
+  .section-post {
+    padding-top: 1.125rem;    padding-bottom: 4.75rem;  }
+  .post-intro .article-cat {
+    font-size: 1rem;  }
+  .post-table-row {
+    display: block;
+    padding-top: 0.5rem;    padding-bottom: 0.5rem;    border-bottom: 1px solid rgba(31, 31, 31, 0.6);
+  }
+  .post-table-row:first-child {
+    display: none;
+  }
+  .post-table-col {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 0px;
+    padding-top: 0.4375rem;    padding-bottom: 0.3438rem;  }
+  .post-table-col::before {
+    display: inline-block;
+    width: calc(50% - 0.9375rem);    font-size: 1rem;    color: var(--color-black);
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-weight: normal;
+  }
+  .post-table-col:nth-child(1)::before {
+    content: "Чакра";
+  }
+  .post-table-col:nth-child(2)::before {
+    content: "Расположение";
+  }
+  .post-table-col:nth-child(3)::before {
+    content: "Основная функция";
+  }
+  .post-table-col span {
+    width: calc(50% - 0.3125rem);    display: inline-block;
+    font-family: "Mulish-Regular", sans-serif;
+    color: #646464;
+  }
+  .post-table-col span b {
+    font-family: "Mulish-Regular", sans-serif;
+    color: #646464;
+  }
+}
