@@ -1763,77 +1763,60 @@
 	});
 	
 	// Обработка формы FAQ
-	document.addEventListener('DOMContentLoaded', function() {
-		const faqForm = document.getElementById('faqContactForm');
-		const submitLabel = document.querySelector('label[for="form-questions-submit"]');
+	$(document).on('submit', '#faqContactForm', function(e) {
+		e.preventDefault();
 		
-		if (faqForm && submitLabel) {
-			// Клик по кнопке отправки
-			submitLabel.addEventListener('click', function(e) {
-				e.preventDefault();
-				submitFaqForm();
-			});
-			
-			// Отправка по Enter в textarea
-			const textarea = faqForm.querySelector('textarea');
-			if (textarea) {
-				textarea.addEventListener('keydown', function(e) {
-					if (e.key === 'Enter' && !e.shiftKey) {
-						e.preventDefault();
-						submitFaqForm();
-					}
-				});
-			}
+		const faqForm = this;
+		const submitLabel = faqForm.querySelector('label[for="faq-form-submit"]');
+		if (!submitLabel) {
+			return;
 		}
 		
-		function submitFaqForm() {
-			const formData = new FormData(faqForm);
-			
-			// Валидация
-			const name = formData.get('name');
-			const email = formData.get('email');
-			const message = formData.get('message');
-			
-			if (!name || !email || !message) {
-				alert('Пожалуйста, заполните все поля');
-				return;
-			}
-			
-			if (!isValidEmail(email)) {
-				alert('Пожалуйста, введите корректный email');
-				return;
-			}
-			
-			// Показ лоадера
-			const originalHtml = submitLabel.innerHTML;
-			submitLabel.innerHTML = '<span class="spinner"></span>';
-			submitLabel.style.pointerEvents = 'none';
-			
-			// AJAX запрос
-			fetch('/wp-admin/admin-ajax.php?action=faq_contact_form', {
-				method: 'POST',
-				body: formData
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					alert(data.message);
-					faqForm.reset();
-					} else {
-					alert(data.message);
-				}
-			})
-			.catch(error => {
-				alert('Ошибка сети. Попробуйте еще раз.');
-			})
-			.finally(() => {
-				// Восстановление кнопки
-				submitLabel.innerHTML = originalHtml;
-				submitLabel.style.pointerEvents = 'auto';
-			});
+		const formData = new FormData(faqForm);
+		formData.append('action', 'faq_contact_form');
+		
+		const name = (formData.get('name') || '').toString().trim();
+		const email = (formData.get('email') || '').toString().trim();
+		const message = (formData.get('message') || '').toString().trim();
+		
+		if (!name || !email || !message) {
+			alert('Пожалуйста, заполните все поля');
+			return;
 		}
 		
+		if (!isValidEmail(email)) {
+			alert('Пожалуйста, введите корректный email');
+			return;
+		}
 		
+		const originalHtml = submitLabel.innerHTML;
+		submitLabel.innerHTML = '<span class="spinner"></span>';
+		submitLabel.style.pointerEvents = 'none';
+		
+		fetch((typeof yoga_ajax !== 'undefined' && yoga_ajax.ajax_url) ? yoga_ajax.ajax_url : '/wp-admin/admin-ajax.php', {
+			method: 'POST',
+			body: formData
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				faqForm.reset();
+				$('.body').addClass("body-fixed");
+				$('.overlay').addClass("active");
+				$('.modal').removeClass("active");
+				$('.modal-login').removeClass("active");
+				$('.modal-default_formsucces').addClass("active");
+			} else {
+				alert((data && data.data && data.data.message) || data.message || 'Ошибка отправки. Попробуйте еще раз.');
+			}
+		})
+		.catch(() => {
+			alert('Ошибка сети. Попробуйте еще раз.');
+		})
+		.finally(() => {
+			submitLabel.innerHTML = originalHtml;
+			submitLabel.style.pointerEvents = 'auto';
+		});
 	});
 	
 	function isValidEmail(email) {

@@ -59,16 +59,16 @@
                                 <div class="form-questions-textarea">
                                     <textarea name="message" placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_question') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
                                     
-                                    <input type="submit" id="form-questions-submit" style="display: none;">
+                                    <input type="submit" id="faq-form-submit" style="display: none;">
                                     
                                     <?php 
                                     $btn_icon = get_field('faq_form_btn_icon');
                                     if ($btn_icon) : ?>
-                                        <label for="form-questions-submit" class="btn">
+                                        <label for="faq-form-submit" class="btn">
                                             <img src="<?php echo esc_url($btn_icon); ?>" alt="Отправить">
                                         </label>
                                     <?php else : ?>
-                                        <label for="form-questions-submit" class="btn">
+                                        <label for="faq-form-submit" class="btn">
                                             <span>→</span>
                                         </label>
                                     <?php endif; ?>

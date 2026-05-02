@@ -12,7 +12,7 @@
         <div class="row">
 			<div class="footer-main">
 				<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-footer wow fadeIn delay-200ms">
-					<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/footer-logo.png'); ?>" alt="<?php bloginfo('name'); ?>">
+					<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
 				</a>
 				<nav class="footer-menu wow fadeIn delay-200ms">
 					<ul>
