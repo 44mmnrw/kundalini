@@ -9,14 +9,39 @@
         </div>
         <div class="row">
             <div class="questions">
-                <div class="questions-intro wow fadeIn delay-200ms">
-                    <div class="questions-quote">
-                        <div class="questions-quote__decor wow fadeInDown delay-600ms">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/questions-quote-decor.png" alt="Декоративный элемент">
+                <div class="questions-side">
+                    <div class="questions-faq wow fadeIn delay-200ms" aria-hidden="true">
+                        <svg class="questions-faq__label" aria-hidden="true">
+                            <use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#faq-label"></use>
+                        </svg>
+                        <span class="questions-faq__icon">
+                            <svg aria-hidden="true">
+                                <use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#faq-star-violet"></use>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div class="questions-intro wow fadeIn delay-200ms">
+                        <div class="questions-quote">
+                            <div class="questions-quote__oval" aria-hidden="true">
+                                <svg aria-hidden="true">
+                                    <use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#faq-quote-oval"></use>
+                                </svg>
+                            </div>
+                            <span class="questions-quote__mark questions-quote__mark_open" aria-hidden="true">
+                                <svg aria-hidden="true">
+                                    <use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#faq-quote-mark"></use>
+                                </svg>
+                            </span>
+                            <b>
+                                <?php echo esc_html(get_field('faq_quote', 'option') ?: 'Йога – это искусство слушать свое тело, ум и душу, находя гармонию между ними.'); ?>
+                            </b>
+                            <span class="questions-quote__mark questions-quote__mark_close" aria-hidden="true">
+                                <svg aria-hidden="true">
+                                    <use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#faq-quote-mark"></use>
+                                </svg>
+                            </span>
                         </div>
-                        <b>
-                            <?php echo esc_html(get_field('faq_quote', 'option') ?: 'Йога – это искусство слушать свое тело, ум и душу, находя гармонию между ними.'); ?>
-                        </b>
                     </div>
                 </div>
                 

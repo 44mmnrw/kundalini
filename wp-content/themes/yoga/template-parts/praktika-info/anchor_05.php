@@ -162,27 +162,27 @@
 							$button_class = ($timing_count == 1) ? 'btn btn_big' : 'btn btn_min';
 						}
 					?>
-					<button class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
+					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
 						<span><?php echo esc_html($value); ?> мин</span>
 					</button>
 					<?php endforeach; ?>
 					<?php else: ?>
 					<!-- Дефолтные значения, если timing не заполнен -->
-					<button class="btn timer-preset" data-duration="180">
+					<button type="button" class="btn btn_min timer-preset" data-duration="180">
 						<span>3 мин</span>
 					</button>
-					<button class="btn btn_min timer-preset" data-duration="420">
+					<button type="button" class="btn btn_min timer-preset" data-duration="420">
 						<span>7 мин</span>
 					</button>
-					<button class="btn btn_min timer-preset" data-duration="660">
+					<button type="button" class="btn btn_min timer-preset" data-duration="660">
 						<span>11 мин</span>
 					</button>
 					<?php endif; ?>
 					
-					<button class="btn timer-play-pause">
-						<span>Пауза</span>
+					<button type="button" class="btn timer-play-pause">
+						<span>Старт</span>
 					</button>
-					<button class="btn timer-reset">
+					<button type="button" class="btn timer-reset">
 						<span>Сброс</span>
 					</button>
 				</div>
@@ -331,27 +331,27 @@
 							$button_class = ($timing_count == 1) ? 'btn btn_big' : 'btn btn_min';
 						}
 					?>
-					<button class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
+					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
 						<span><?php echo esc_html($value); ?> мин</span>
 					</button>
 					<?php endforeach; ?>
 					<?php else: ?>
 					<!-- Дефолтные значения, если timing не заполнен -->
-					<button class="btn timer-preset" data-duration="180">
+					<button type="button" class="btn btn_min timer-preset" data-duration="180">
 						<span>3 мин</span>
 					</button>
-					<button class="btn btn_min timer-preset" data-duration="420">
+					<button type="button" class="btn btn_min timer-preset" data-duration="420">
 						<span>7 мин</span>
 					</button>
-					<button class="btn btn_min timer-preset" data-duration="660">
+					<button type="button" class="btn btn_min timer-preset" data-duration="660">
 						<span>11 мин</span>
 					</button>
 					<?php endif; ?>
 					
-					<button class="btn timer-play-pause">
-						<span>Пауза</span>
+					<button type="button" class="btn timer-play-pause">
+						<span>Старт</span>
 					</button>
-					<button class="btn timer-reset">
+					<button type="button" class="btn timer-reset">
 						<span>Сброс</span>
 					</button>
 				</div>

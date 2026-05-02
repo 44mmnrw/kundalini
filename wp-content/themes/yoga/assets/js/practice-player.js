@@ -94,14 +94,25 @@ function initializePracticeSystem() {
             const presetBtns = version.querySelectorAll('.timer-preset');
             const playerElement = version.querySelector('.exercise-player');
             
-            let timerInterval;
+            let timerInterval = null;
             let remainingTime = 180; // 3 минуты по умолчанию
             let isPlaying = false;
             let player = null;
-            
-            // Сохраняем исходную длительность для сброса
-            const initialDuration = parseInt(timerDisplay.textContent.split(':')[0]) * 60 + 
-                                   parseInt(timerDisplay.textContent.split(':')[1]);
+            let suppressAutoPlayUntil = 0;
+            const initialDuration = parseDuration(timerDisplay?.textContent);
+            let selectedDuration = initialDuration;
+            if (initialDuration > 0) {
+                remainingTime = initialDuration;
+            }
+
+            function parseDuration(value) {
+                if (!value || typeof value !== 'string') return 180;
+                const [minutesText, secondsText] = value.trim().split(':');
+                const minutes = parseInt(minutesText, 10);
+                const seconds = parseInt(secondsText, 10);
+                if (Number.isNaN(minutes) || Number.isNaN(seconds)) return 180;
+                return (minutes * 60) + seconds;
+            }
             
             if (playerElement) {
                 const mediaElement = playerElement.querySelector('audio, video');
@@ -125,8 +136,9 @@ function initializePracticeSystem() {
                     }
                     
                     player.on('play', () => {
-                        if (!isPlaying) {
-                            startTimer();
+                        if (Date.now() < suppressAutoPlayUntil) {
+                            player.pause();
+                            return;
                         }
                     });
                     
@@ -157,6 +169,23 @@ function initializePracticeSystem() {
                             closeAudioFullscreen();
                         }
                     });
+
+                    // Перехват нативного autoplay/playing после сброса (в обход Plyr events).
+                    const blockUnexpectedPlay = (event) => {
+                        if (Date.now() < suppressAutoPlayUntil || !isPlaying) {
+                            if (event && typeof event.preventDefault === 'function') {
+                                event.preventDefault();
+                            }
+                            try { mediaElement.pause(); } catch (e) {}
+                            try { mediaElement.currentTime = 0; } catch (e) {}
+                            if (player) {
+                                try { player.pause(); } catch (e) {}
+                            }
+                        }
+                    };
+
+                    mediaElement.addEventListener('play', blockUnexpectedPlay);
+                    mediaElement.addEventListener('playing', blockUnexpectedPlay);
                 }
             }
             
@@ -182,6 +211,17 @@ function initializePracticeSystem() {
             }
 			
             function startTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+
+                // После ручного сброса до 00:00 запускаем с последней выбранной длительности.
+                if (remainingTime <= 0) {
+                    remainingTime = selectedDuration > 0 ? selectedDuration : initialDuration;
+                    updateTimerDisplay();
+                }
+
                 isPlaying = true;
                 if (playPauseBtn) {
                     playPauseBtn.querySelector('span').textContent = 'Пауза';
@@ -194,13 +234,13 @@ function initializePracticeSystem() {
                 stopAllTimersAndPlayers(exerciseId, versionType);
                 
                 timerInterval = setInterval(() => {
+                    if (!isPlaying) {
+                        return;
+                    }
+
                     if (remainingTime > 0) {
                         remainingTime--;
                         updateTimerDisplay();
-                        
-                        if (player && !player.playing) {
-                            player.play();
-                        }
                         
                         // Обновляем полноэкранный таймер, если активен
                         if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
@@ -228,7 +268,13 @@ function initializePracticeSystem() {
                     playPauseBtn.querySelector('span').textContent = 'Старт';
                 }
                 clearInterval(timerInterval);
-                if (player) player.pause();
+                timerInterval = null;
+                if (player) {
+                    player.pause();
+                    if (player.media && typeof player.media.pause === 'function') {
+                        player.media.pause();
+                    }
+                }
 				
                  // Разблокируем переключатели длительности при паузе
                 toggleDurationButtons(false);
@@ -241,6 +287,7 @@ function initializePracticeSystem() {
             
             function stopTimer() {
                 clearInterval(timerInterval);
+                timerInterval = null;
                 isPlaying = false;
                 if (playPauseBtn) {
                     playPauseBtn.querySelector('span').textContent = 'Старт';
@@ -255,26 +302,59 @@ function initializePracticeSystem() {
                 }
             }
             
-            function resetTimer(duration) {
-                // Блокируем сброс во время воспроизведения
-                if (isPlaying) return;
+            function resetTimer(duration, options = {}) {
+                const { allowWhilePlaying = false } = options;
+
+                // Для пресетов сохраняем защиту от изменения во время воспроизведения.
+                if (isPlaying && !allowWhilePlaying) return;
+
+                if (duration > 0) {
+                    selectedDuration = duration;
+                }
+
+                // После сброса блокируем любые случайные auto-play события плеера.
+                suppressAutoPlayUntil = Date.now() + 1500;
                 
                 stopTimer();
                 remainingTime = duration;
                 updateTimerDisplay();
                 
                 if (player) {
-                    player.stop();
-                    // Для ограниченного контента сбрасываем на начало
-                    if (playerElement.dataset.restrictScrub === 'true') {
-                        player.currentTime = 0;
-                    }
+                    resetMediaToStart();
                 }
                 
                 // Обновляем полноэкранный режим, если активен
                 if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
                     updateFullscreenTimer();
+                    updateFullscreenControls();
                 }
+            }
+
+            function resetMediaToStart() {
+                const media = player?.media || playerElement?.querySelector('audio, video');
+                if (!media) return;
+
+                const forceSeekToStart = () => {
+                    if (player) {
+                        try { player.pause(); } catch (e) {}
+                        try { player.currentTime = 0; } catch (e) {}
+                    }
+                    try { media.pause(); } catch (e) {}
+                    try { media.currentTime = 0; } catch (e) {}
+                    try { media.pause(); } catch (e) {}
+                    if (player) {
+                        try { player.pause(); } catch (e) {}
+                    }
+                };
+
+                if (media.readyState === 0) {
+                    media.addEventListener('loadedmetadata', forceSeekToStart, { once: true });
+                }
+
+                // Выполняем несколько попыток, чтобы обойти асинхронные состояния плеера.
+                forceSeekToStart();
+                setTimeout(forceSeekToStart, 0);
+                setTimeout(forceSeekToStart, 120);
             }
             
             function updateTimerDisplay() {
@@ -287,12 +367,16 @@ function initializePracticeSystem() {
             
             // Обработчики событий
             if (playPauseBtn) {
-                playPauseBtn.addEventListener('click', () => {
-                    if (isPlaying) {
+                playPauseBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const shouldPause = isPlaying || (player && player.playing);
+                    if (shouldPause) {
                         pauseTimer();
                     } else {
+                        // Явный клик "Старт" должен обходить анти-автозапуск после сброса.
+                        suppressAutoPlayUntil = 0;
                         startTimer();
-                        if (player && playerElement && playerElement.dataset.autoPlay === 'true') {
+                        if (player) {
                             player.play();
                         }
                     }
@@ -300,14 +384,16 @@ function initializePracticeSystem() {
             }
             
             if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                    resetTimer(initialDuration);
+                resetBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    resetTimer(0, { allowWhilePlaying: true });
                 });
             }
             
             if (presetBtns) {
                 presetBtns.forEach(btn => {
-                    btn.addEventListener('click', () => {
+                    btn.addEventListener('click', (event) => {
+                        event.preventDefault();
 					
                         // Блокируем изменение длительности во время воспроизведения
                         if (isPlaying || durationButtonsLocked) return;
@@ -378,7 +464,7 @@ function createAudioFullscreenContainer() {
             <span class="audio-fullscreen__time">00:00</span>
         </div>
         <div class="audio-fullscreen__controls">
-            <button class="audio-fullscreen__control audio-fullscreen__play-pause">Пауза</button>
+            <button class="audio-fullscreen__control audio-fullscreen__play-pause">Старт</button>
             <button class="audio-fullscreen__control audio-fullscreen__prev">Назад</button>
             <button class="audio-fullscreen__control audio-fullscreen__next">Далее</button>
         </div>
