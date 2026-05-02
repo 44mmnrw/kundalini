@@ -1629,6 +1629,7 @@ function handle_comment_delete() {
 		$args = array(
         'post_type' => 'question',
         'author' => $user_id,
+        'post_status' => array('publish', 'pending', 'draft', 'private'),
         'posts_per_page' => -1,
         'orderby' => 'date',
         'order' => 'DESC'
@@ -1643,7 +1644,7 @@ function handle_comment_delete() {
 		$answer = get_post_meta($question_id, '_answer', true);
 		$answer_date = get_post_meta($question_id, '_answer_date', true);
 		$admin_id = get_post_meta($question_id, '_answer_admin', true);
-		$admin_name = $admin_id ? get_the_author_meta('display_name', $admin_id) : 'РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ';
+		$admin_name = $admin_id ? get_the_author_meta('display_name', $admin_id) : 'Администратор';
 		
 		$status_class = $answer ? '' : 'lk-questions-item_new';
 		$hidden_class = $hidden ? 'hidden' : '';
@@ -1658,14 +1659,14 @@ function handle_comment_delete() {
                 <p><?php echo esc_html($question->post_content); ?></p>
 			</div>
             <?php if (!$answer): ?>
-            <span class="lk-question__status">РћР¶РёРґР°РµС‚ РѕС‚РІРµС‚Р°</span>
+            <span class="lk-question__status">Ожидает ответа</span>
             <?php endif; ?>
 		</div>
         
         <?php if ($answer): ?>
         <div class="lk-question lk-question_answer">
             <div class="lk-question__time">
-                <b>РћС‚РІРµС‚ <?php echo esc_html($admin_name); ?></b>
+                <b>Ответ <?php echo esc_html($admin_name); ?></b>
                 <time><?php echo date('d.m.Y', strtotime($answer_date)); ?></time>
                 <time><?php echo date('H:i', strtotime($answer_date)); ?></time>
 			</div>
