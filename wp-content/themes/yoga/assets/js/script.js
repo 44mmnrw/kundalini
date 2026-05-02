@@ -575,11 +575,11 @@
 	
 	/* Section-form-questions */
 	
-	$(".form-questions__main-form").submit(function(e) {
+	$(".form-questions__main-form").not('#faqContactForm').submit(function(e) {
 		e.preventDefault();
 	});
 	
-	$('.form-questions__main-form').submit(function () {
+	$('.form-questions__main-form').not('#faqContactForm').submit(function () {
 		$(this).closest('.form-questions').addClass("active");
 	});
 	
@@ -1763,6 +1763,14 @@
 	});
 	
 	// Обработка формы FAQ
+	$(document).on('click', '#faqContactForm label[for="faq-form-submit"]', function(e) {
+		e.preventDefault();
+		const faqForm = this.closest('form');
+		if (faqForm) {
+			$(faqForm).trigger('submit');
+		}
+	});
+	
 	$(document).on('submit', '#faqContactForm', function(e) {
 		e.preventDefault();
 		
@@ -1801,6 +1809,7 @@
 		.then(data => {
 			if (data.success) {
 				faqForm.reset();
+				$(faqForm).find('input[type="text"], input[type="email"], textarea').val('');
 				$('.body').addClass("body-fixed");
 				$('.overlay').addClass("active");
 				$('.modal').removeClass("active");

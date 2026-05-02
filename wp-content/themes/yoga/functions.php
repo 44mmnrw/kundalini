@@ -733,7 +733,7 @@ function handle_comment_delete() {
 		$post_id = wp_insert_post(array(
             'post_title' => 'Вопрос от ' . $name,
             'post_content' => $message,
-            'post_type' => 'faq_question',
+            'post_type' => 'question',
             'post_status' => 'draft',
             'meta_input' => array(
 			'contact_email' => $email,
@@ -783,7 +783,7 @@ function handle_comment_delete() {
         'menu_icon' => 'dashicons-format-chat'
 		));
 	}
-	add_action('init', 'register_faq_question_cpt');
+	// add_action('init', 'register_faq_question_cpt');
 	
 	// Поиск по названию и описанию
 	function add_faq_question_meta() {
@@ -796,7 +796,7 @@ function handle_comment_delete() {
         'high'
 		);
 	}
-	add_action('add_meta_boxes', 'add_faq_question_meta');
+	// add_action('add_meta_boxes', 'add_faq_question_meta');
 	
 	function display_faq_question_meta(WP_Post $post): void {
 		$email = get_post_meta($post->ID, 'contact_email', true);
@@ -816,7 +816,7 @@ function handle_comment_delete() {
 			update_post_meta($post_id, 'contact_email', sanitize_email($_POST['contact_email']));
 		}
 	}
-	add_action('save_post_faq_question', 'save_faq_question_meta');
+	// add_action('save_post_faq_question', 'save_faq_question_meta');
 	
 	// Сортировка
 	// Формируем HTML ответ
@@ -1765,7 +1765,7 @@ function handle_comment_delete() {
 	function add_question_answer_meta_box() {
 		add_meta_box(
         'question_answer',
-        'РћС‚РІРµС‚ РЅР° РІРѕРїСЂРѕСЃ',
+        'Ответ на вопрос',
         'render_question_answer_meta_box',
         'question',
         'normal',
@@ -1782,7 +1782,7 @@ function handle_comment_delete() {
 		wp_nonce_field('save_question_answer', 'answer_nonce');
 	?>
     <div style="margin-bottom: 15px;">
-        <label for="question_answer" style="display: block; margin-bottom: 5px; font-weight: bold;">РћС‚РІРµС‚:</label>
+        <label for="question_answer" style="display: block; margin-bottom: 5px; font-weight: bold;">Ответ:</label>
         <?php
 			wp_editor($answer, 'question_answer', array(
             'textarea_name' => 'question_answer',
@@ -1794,8 +1794,8 @@ function handle_comment_delete() {
 	</div>
     <?php if ($answer_date): ?>
     <div style="color: #666; font-size: 13px;">
-        РћС‚РІРµС‚ РґР°РЅ: <?php echo date('d.m.Y H:i', strtotime($answer_date)); ?> 
-        РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј: <?php echo $admin_id ? get_the_author_meta('display_name', $admin_id) : 'РќРµРёР·РІРµСЃС‚РЅРѕ'; ?>
+        Ответ дан: <?php echo date('d.m.Y H:i', strtotime($answer_date)); ?> 
+        пользователем: <?php echo $admin_id ? get_the_author_meta('display_name', $admin_id) : 'Неизвестно'; ?>
 	</div>
     <?php endif; ?>
     <?php
