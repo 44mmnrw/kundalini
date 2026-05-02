@@ -140,7 +140,7 @@
 		
 		// Обработчик AJAX для формы подписки
 		$is_homepage = is_front_page() || is_page_template('templates-page/homepage.php');
-		$is_lk_template = is_page_template('templates-page/lk.php');
+		$is_lk_template = is_page_template('templates-page/lk.php') || is_page('my-account') || (function_exists('is_account_page') && is_account_page());
 		$is_contacts_template = is_page_template('templates-page/contacts.php');
 		$is_tariffs_template = is_page_template('templates-page/tariffs.php');
 		$is_faq_template = is_page_template('templates-page/faq.php');
@@ -170,13 +170,13 @@
 		if ($is_practice_single) {
 			wp_enqueue_style( 'praktika-style', $theme_uri . '/assets/css/templates/praktika.css', $common_style_deps, $praktika_style_ver );
 		}
-		if ($is_practice_single || $is_contacts_template) {
+		if ($is_practice_single || $is_contacts_template || $is_faq_template) {
 			wp_enqueue_style( 'form-questions-style', $theme_uri . '/assets/css/templates/form-questions.css', $common_style_deps, $form_questions_style_ver );
 		}
 		if ($is_privacy_template) {
 			wp_enqueue_style( 'rules-style', $theme_uri . '/assets/css/templates/rules.css', $common_style_deps, $rules_style_ver );
 		}
-		if ($is_faq_template) {
+		if ($is_faq_template || $is_lk_template) {
 			wp_enqueue_style( 'faq-style', $theme_uri . '/assets/css/templates/faq.css', $common_style_deps, $faq_style_ver );
 		}
 		if ($is_lk_template) {
@@ -2146,7 +2146,7 @@ function handle_comment_delete() {
 // Переопределяем стандартный get_header()
 	function custom_get_header() {
 		// 200 слов в минуту
-		if (is_page_template('my-account')) {
+		if (is_page_template('templates-page/lk.php') || is_page('my-account') || (function_exists('is_account_page') && is_account_page())) {
 			locate_template('header-lk.php', true);
 			} else {
 			locate_template('header.php', true);
@@ -2251,6 +2251,70 @@ function handle_comment_delete() {
 
 			return 30 * DAY_IN_SECONDS;
 		}
+	}
+
+	// Дружелюбный роут блога: /blog/ -> архив рубрики со slug "blog".
+	if (!function_exists('theme_register_blog_friendly_route')) {
+		function theme_register_blog_friendly_route() {
+			add_rewrite_rule('^blog/?$', 'index.php?category_name=blog', 'top');
+		}
+		add_action('init', 'theme_register_blog_friendly_route');
+	}
+
+	// 301-редирект со старого адреса /category/blog/ на /blog/.
+	if (!function_exists('theme_redirect_legacy_blog_category_url')) {
+		function theme_redirect_legacy_blog_category_url() {
+			if (is_admin() || wp_doing_ajax()) {
+				return;
+			}
+
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+			if ($request_uri === '') {
+				return;
+			}
+
+			$path = wp_parse_url($request_uri, PHP_URL_PATH);
+			if (!is_string($path)) {
+				return;
+			}
+
+			$normalized_path = untrailingslashit(strtolower($path));
+			if ($normalized_path === '/category/blog') {
+				wp_redirect(home_url('/blog/'), 301);
+				exit;
+			}
+		}
+		add_action('template_redirect', 'theme_redirect_legacy_blog_category_url', 1);
+	}
+
+	// Обработка /blog/ без необходимости вручную сбрасывать rewrite rules.
+	if (!function_exists('theme_force_blog_request_to_category')) {
+		function theme_force_blog_request_to_category($query_vars) {
+			if (is_admin()) {
+				return $query_vars;
+			}
+
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+			if ($request_uri === '') {
+				return $query_vars;
+			}
+
+			$path = wp_parse_url($request_uri, PHP_URL_PATH);
+			if (!is_string($path)) {
+				return $query_vars;
+			}
+
+			$normalized_path = untrailingslashit(strtolower($path));
+			if ($normalized_path !== '/blog') {
+				return $query_vars;
+			}
+
+			$query_vars['category_name'] = 'blog';
+			unset($query_vars['pagename'], $query_vars['name'], $query_vars['page'], $query_vars['page_id'], $query_vars['error']);
+
+			return $query_vars;
+		}
+		add_filter('request', 'theme_force_blog_request_to_category', 1);
 	}
 
 
