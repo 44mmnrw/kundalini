@@ -109,6 +109,7 @@
 		$subscription_style_ver = file_exists($theme_dir . '/assets/css/templates/subscription.css') ? filemtime($theme_dir . '/assets/css/templates/subscription.css') : '1.0.0';
 		$ways_style_ver = file_exists($theme_dir . '/assets/css/templates/ways.css') ? filemtime($theme_dir . '/assets/css/templates/ways.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
+		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
 		
 		// В режиме разработки принудительно отключаем кэш ассетов.
 		if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -136,6 +137,7 @@
 			$subscription_style_ver = time();
 			$ways_style_ver = time();
 			$main_script_ver = time();
+			$practice_player_script_ver = time();
 		}
 		
 		// Обработчик AJAX для формы подписки
@@ -254,7 +256,7 @@
 		
 		// - Интеграция с сервисом рассылок (Mailchimp, SendPulse и т.д.)
 		wp_enqueue_script('practice-player', get_template_directory_uri() . '/assets/js/practice-player.js', 
-        array('plyr-js', 'jquery'), '1.0.0', true);
+        array('plyr-js', 'jquery'), $practice_player_script_ver, true);
 		
 		
 		
