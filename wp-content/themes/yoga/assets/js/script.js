@@ -2046,7 +2046,7 @@
 
                 const html = items.map(function(item) {
                     return '<div class="form-search-list__item" data-url="' + escapeHtml(item.url || '') + '">' +
-                        '<span>' + escapeHtml(item.title || '') + '</span>' +
+                        '<span>' + highlightSuggestionMatch(item.title || '', query) + '</span>' +
                     '</div>';
                 }).join('');
                 $list.html(html).addClass('active');
@@ -2182,6 +2182,38 @@
             .replace(/'/g, '&#39;');
     }
 
+    function escapeRegExp(text) {
+        return String(text || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function highlightSuggestionMatch(text, query) {
+        const source = String(text || '');
+        const cleanQuery = String(query || '').trim();
+        if (!cleanQuery) {
+            return escapeHtml(source);
+        }
+
+        const regex = new RegExp(escapeRegExp(cleanQuery), 'ig');
+        let result = '';
+        let lastIndex = 0;
+        let match;
+
+        while ((match = regex.exec(source)) !== null) {
+            const start = match.index;
+            const end = start + match[0].length;
+            result += escapeHtml(source.slice(lastIndex, start));
+            result += '<b>' + escapeHtml(source.slice(start, end)) + '</b>';
+            lastIndex = end;
+
+            if (match[0].length === 0) {
+                regex.lastIndex += 1;
+            }
+        }
+
+        result += escapeHtml(source.slice(lastIndex));
+        return result;
+    }
+
     function renderPracticeSuggestions(items, query) {
         const $search = $('.section-kriyi .form-search');
         const $list = $search.find('.form-search-list');
@@ -2202,7 +2234,7 @@
 
         const html = items.map(function(item) {
             return '<div class="form-search-list__item" data-url="' + escapeHtml(item.url || '') + '" data-title="' + escapeHtml(item.title || '') + '">' +
-                '<span>' + escapeHtml(item.title || '') + '</span>' +
+                '<span>' + highlightSuggestionMatch(item.title || '', cleanQuery) + '</span>' +
             '</div>';
         }).join('');
 
