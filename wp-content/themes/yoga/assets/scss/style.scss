@@ -2988,93 +2988,32 @@ header {
 }
 
 .popular-practices-slider {
-	display: flex;
-	flex-wrap: wrap;
-	width: 100%;
-	min-width: 100%;
-	margin-left: 0px;
-	padding-bottom: 0px;
-	justify-content: space-between;
+	width: calc(100% + 20px);
+	min-width: calc(100% + 20px);
+	margin-left: -10px;
+	padding-bottom: 24px;
 }
 
 .popular-practice {
-	display: none;
-	width: calc(calc(100% - 60px) / 3);
-	max-width: calc(calc(100% - 60px) / 3);
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	&:nth-child(1),
-	&:nth-child(2),
-	&:nth-child(3),
-	&:nth-child(4),
-	&:nth-child(5),
-	&:nth-child(6) {
-		display: block;
-	}
+	display: flex !important;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 0;
 }
 
 }
 
 @media (max-width: 991px) {
 
-.popular-practices-slider {
-	max-width: 660px;
-	min-width: auto;
-	position: relative;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
 .popular-practice {
-	padding: 25px;
-	padding-bottom: 30px;
-	width: calc(calc(100% - 20px) / 2);
-	max-width: calc(calc(100% - 20px) / 2);
-	&:nth-child(5),
-	&:nth-child(6) {
-		display: none;
-	}
+	padding: 24px;
+	padding-bottom: 26px;
+	min-height: 420px;
 	img {
-		height: 217px;
+		height: 200px;
 	}
 }
 
-.popular-practices-slider {
-	max-width: 100%;
-	min-width: auto;
-	position: unset;
-	transform: none;
-}
-
-.popular-practice {
-	display: none !important;
-	flex-direction: column;
-	justify-content: center;
-	position: relative;
-	padding: 30px;
-	padding-left: 260px;
-	padding-top: 16px;
-	padding-bottom: 30px;
-	min-height: 245px;
-	width: 100%;
-	max-width: 100%;
-	&:nth-child(1),
-	&:nth-child(2),
-	&:nth-child(3),
-	&:nth-child(4) {
-		display: flex !important;
-	}
-	img {
-		position: absolute;
-		left: 30px;
-		top: 30px;
-		width: 200px;
-		height: 185px;
-		object-fit: cover;
-	}
-}
-	
 }
 
 @media (max-width: 767px) {
@@ -3098,23 +3037,13 @@ header {
 }
 
 .popular-practice {
-	padding: 25px;
-	padding-bottom: 30px;
+	padding: 20px;
+	padding-bottom: 22px;
 	min-height: auto;
-	&:nth-child(1),
-	&:nth-child(2),
-	&:nth-child(3),
-	&:nth-child(4) {
-		display: block !important;
-	}
 	img {
-		position: relative;
-		left: 0px;
-		top: 0px;
 		width: 100%;
-		height: 217px;
-		background: #fff;
-		object-fit: contain;
+		height: 186px;
+		object-fit: cover;
 	}
 }
 
