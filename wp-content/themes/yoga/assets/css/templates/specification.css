@@ -456,26 +456,22 @@ input::-moz-placeholder {
   border: 1px solid var(--color-black);
   transition: 0.4s ease;
 }
-.arrows-slick__arrow img {
+.arrows-slick__arrow svg {
   display: inline-block;
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-  width: 1.25rem;  opacity: 0;
+  transform: translate(-50%, -50%) rotate(0deg);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-black);
   transition: 0.4s ease;
-}
-.arrows-slick__arrow img.active {
-  opacity: 1;
 }
 .arrows-slick__arrow:hover {
   background: var(--color-black);
 }
-.arrows-slick__arrow:hover img {
-  opacity: 1;
-}
-.arrows-slick__arrow:hover img.active {
-  opacity: 0;
+.arrows-slick__arrow:hover svg {
+  color: var(--color-green);
 }
 
 .slick-next {
@@ -484,6 +480,9 @@ input::-moz-placeholder {
 
 .slick-prev {
   opacity: 1 !important;
+}
+.slick-prev svg {
+  transform: translate(-50%, -50%) rotate(180deg);
 }
 
 .slick-next:hover {

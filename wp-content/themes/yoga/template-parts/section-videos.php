@@ -69,12 +69,14 @@ $videos_button_text = get_field('videos_button_text', get_the_ID()) ?: 'Попр
                 
                 <div class="arrows-slick wow fadeIn delay-200ms">
                     <div class="arrows-slick__arrow slick-prev">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-prev.png'); ?>" alt="<?php esc_attr_e('Предыдущее', 'yoga'); ?>" class="active">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-prev_active.png'); ?>" alt="<?php esc_attr_e('Предыдущее', 'yoga'); ?>">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                        </svg>
                     </div>
                     <div class="arrows-slick__arrow slick-next">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-next.png'); ?>" alt="<?php esc_attr_e('Следующее', 'yoga'); ?>" class="active">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-next_active.png'); ?>" alt="<?php esc_attr_e('Следующее', 'yoga'); ?>">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                        </svg>
                     </div>  
                 </div>
                 

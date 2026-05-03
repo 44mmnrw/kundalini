@@ -77,12 +77,14 @@ $popular_items = is_array($popular_items) ? $popular_items : array();
 
                 <div class="arrows-slick wow fadeIn delay-200ms">
                     <div class="arrows-slick__arrow slick-prev">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-prev.png'); ?>" alt="" class="active">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-prev_active.png'); ?>" alt="">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                        </svg>
                     </div>
                     <div class="arrows-slick__arrow slick-next">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-next.png'); ?>" alt="" class="active">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-next_active.png'); ?>" alt="">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                        </svg>
                     </div>
                 </div>
             </div>
