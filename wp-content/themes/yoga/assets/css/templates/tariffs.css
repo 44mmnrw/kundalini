@@ -108,6 +108,7 @@
   display: inline-flex;
   width: 0.9375rem;
   height: 1.25rem;
+  color: #1F1F1F;
   flex-shrink: 0;
 }
 .check-list__icon svg {
@@ -115,8 +116,6 @@
   width: 0.9375rem;
   height: 0.9375rem;
   margin-top: 0.3125rem;
-  fill: #1F1F1F;
-  stroke: #1F1F1F;
 }
 .check-list__text {
   display: block;
@@ -167,6 +166,9 @@
   top: 29.3125rem;
   background-image: url(../../svg/tariff-star-2.svg);
   background-size: 2.02303125rem 1.76838125rem;
+}
+.tariff_visual_2 .check-list__icon {
+  color: #9153E1;
 }
 .tariff_visual_3 .tariff__bg::after {
   left: 1.9375rem;

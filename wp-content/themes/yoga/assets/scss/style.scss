@@ -2000,14 +2000,13 @@ header {
 	display: inline-flex;
 	width: 15px;
 	height: 20px;
+	color: #1F1F1F;
 	flex-shrink: 0;
 	svg {
 		display: block;
 		width: 15px;
 		height: 15px;
 		margin-top: 5px;
-		fill: #1F1F1F;
-		stroke: #1F1F1F;
 	}
 }
 
@@ -2067,6 +2066,10 @@ header {
 	top: 469px;
 	background-image: url(../svg/tariff-star-2.svg);
 	background-size: 32.3685px 28.2941px;
+}
+
+.tariff_visual_2 .check-list__icon {
+	color: #9153E1;
 }
 
 .tariff_visual_3 .tariff__bg::after {
