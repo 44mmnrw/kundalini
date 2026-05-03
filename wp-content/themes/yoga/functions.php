@@ -1422,6 +1422,9 @@ function handle_comment_delete() {
 	// Дополнительные элементы если результатов больше 10
 	add_action('wp_ajax_filter_practices_kriyi', 'filter_practices_callback_kriyi');
 	add_action('wp_ajax_nopriv_filter_practices_kriyi', 'filter_practices_callback_kriyi');
+
+	add_action('wp_ajax_search_practices_suggest', 'yoga_search_practices_suggest');
+	add_action('wp_ajax_nopriv_search_practices_suggest', 'yoga_search_practices_suggest');
 	
 	function filter_practices_callback_kriyi() {
 		// Возвращаем HTML и количество результатов
@@ -1643,6 +1646,155 @@ function handle_comment_delete() {
 		));
 		
 		wp_die();
+	}
+
+	function yoga_search_practices_suggest() {
+		check_ajax_referer('yoga_ajax_nonce', 'nonce');
+
+		$query = sanitize_text_field((string) ($_POST['query'] ?? ''));
+		$term_id = isset($_POST['term_id']) ? (int) $_POST['term_id'] : 0;
+		$query_lc = function_exists('mb_strtolower') ? mb_strtolower($query, 'UTF-8') : strtolower($query);
+
+		if ($query === '' || mb_strlen($query, 'UTF-8') < 2) {
+			wp_send_json_success(array('items' => array()));
+		}
+
+		global $wpdb;
+		$like_search = '%' . $wpdb->esc_like($query) . '%';
+
+		$term_ids = array();
+		if ($term_id > 0) {
+			$term_ids[] = $term_id;
+			$children = get_term_children($term_id, 'practice-type');
+			if (!is_wp_error($children) && !empty($children)) {
+				$term_ids = array_merge($term_ids, array_map('intval', $children));
+			}
+			$term_ids = array_values(array_unique(array_filter($term_ids, static function ($id) {
+				return $id > 0;
+			})));
+		}
+
+		$sql_params = array(
+			$like_search,        // has_meta_match CASE
+			'practice',
+			'publish',
+		);
+
+		$tax_join = '';
+		$tax_where = '';
+		if (!empty($term_ids)) {
+			$placeholders = implode(',', array_fill(0, count($term_ids), '%d'));
+			$tax_join = " INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
+			              INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id ";
+			$tax_where = " AND tt.taxonomy = 'practice-type' AND tt.term_id IN ({$placeholders}) ";
+			$sql_params = array_merge($sql_params, $term_ids);
+		}
+
+		$sql_params[] = $like_search; // title
+		$sql_params[] = $like_search; // excerpt
+		$sql_params[] = $like_search; // content
+		$sql_params[] = 60;           // limit
+
+		$sql = "
+			SELECT
+				p.ID,
+				p.post_title,
+				p.post_excerpt,
+				p.post_content,
+				MAX(CASE WHEN pm.meta_key NOT LIKE '\\\\_%' AND pm.meta_value LIKE %s THEN 1 ELSE 0 END) AS has_meta_match
+			FROM {$wpdb->posts} p
+			{$tax_join}
+			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
+			WHERE p.post_type = %s
+			  AND p.post_status = %s
+			  {$tax_where}
+			GROUP BY p.ID
+			HAVING (
+				p.post_title LIKE %s
+				OR p.post_excerpt LIKE %s
+				OR p.post_content LIKE %s
+				OR has_meta_match = 1
+			)
+			ORDER BY p.post_date DESC
+			LIMIT %d
+		";
+
+		$prepared_sql = $wpdb->prepare($sql, $sql_params);
+		$rows = $wpdb->get_results($prepared_sql, ARRAY_A);
+		if (empty($rows)) {
+			wp_send_json_success(array('items' => array()));
+		}
+
+		$ranked = array();
+		foreach ($rows as $row) {
+			$post_id = isset($row['ID']) ? (int) $row['ID'] : 0;
+			if ($post_id <= 0) {
+				continue;
+			}
+
+			$title = isset($row['post_title']) ? (string) $row['post_title'] : '';
+			$excerpt = isset($row['post_excerpt']) ? (string) $row['post_excerpt'] : '';
+			$content = isset($row['post_content']) ? wp_strip_all_tags((string) $row['post_content']) : '';
+			$title_lc = function_exists('mb_strtolower') ? mb_strtolower($title, 'UTF-8') : strtolower($title);
+			$excerpt_lc = function_exists('mb_strtolower') ? mb_strtolower($excerpt, 'UTF-8') : strtolower($excerpt);
+			$content_lc = function_exists('mb_strtolower') ? mb_strtolower($content, 'UTF-8') : strtolower($content);
+
+			$score = 0;
+			if ($title_lc === $query_lc) {
+				$score += 1000;
+			}
+			if (strpos($title_lc, $query_lc) === 0) {
+				$score += 650;
+			} elseif (mb_stripos($title_lc, $query_lc, 0, 'UTF-8') !== false) {
+				$score += 450;
+			}
+			if (mb_stripos($excerpt_lc, $query_lc, 0, 'UTF-8') !== false) {
+				$score += 220;
+			}
+			if (mb_stripos($content_lc, $query_lc, 0, 'UTF-8') !== false) {
+				$score += 120;
+			}
+			if (!empty($row['has_meta_match'])) {
+				$score += 150;
+			}
+
+			$url = get_permalink($post_id);
+			if ($title === '' || !$url || $score <= 0) {
+				continue;
+			}
+
+			$ranked[] = array(
+				'score' => $score,
+				'id' => (int) $post_id,
+				'title' => (string) $title,
+				'url' => (string) $url,
+			);
+		}
+
+		if (empty($ranked)) {
+			wp_send_json_success(array('items' => array()));
+		}
+
+		usort($ranked, static function ($a, $b) {
+			if ($a['score'] === $b['score']) {
+				return strnatcasecmp($a['title'], $b['title']);
+			}
+			return ($a['score'] > $b['score']) ? -1 : 1;
+		});
+
+		$items = array();
+		foreach ($ranked as $row) {
+			$items[] = array(
+				'id' => $row['id'],
+				'title' => $row['title'],
+				'url' => $row['url'],
+			);
+			if (count($items) >= 8) {
+				break;
+			}
+		}
+
+		wp_send_json_success(array('items' => $items));
 	}
 	
 	// Подключаем скрипты и стили WooCommerce
