@@ -2038,6 +2038,16 @@
 	});
 	
 	
+    function getActivePracticeTermId() {
+        const $activeCategory = $('.section-kriyi .form-categories__value span.active');
+        if (!$activeCategory.length) {
+            return 0;
+        }
+
+        const rawTermId = parseInt($activeCategory.data('target'), 10);
+        return Number.isNaN(rawTermId) ? 0 : rawTermId;
+    }
+
     // Функция загрузки практик
     function loadPractices() {
         // Показываем индикатор загрузки
@@ -2048,7 +2058,7 @@
             nonce: yoga_ajax.nonce,
             filters: {},
             search: $('.section-kriyi .input').val(),
-            term_id: $('.section-kriyi .form-categories__value span.active').data('target') || '',
+            term_id: getActivePracticeTermId(),
             sort: $('.section-kriyi .sorting-item__list-item.active').data('target') || 'popularity'
 		};
 		
@@ -2130,7 +2140,7 @@
 
     function requestPracticeSuggestions() {
         const query = $('.section-kriyi .input').val().trim();
-        const termId = $('.section-kriyi .form-categories__value span.active').data('target') || '';
+        const termId = getActivePracticeTermId();
 
         if (query.length < 2) {
             renderPracticeSuggestions([], '');
