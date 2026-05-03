@@ -28,6 +28,21 @@
 						<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
 							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
 						</a>
+						<?php
+							$current_user = wp_get_current_user();
+							$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
+							$user_display_name = trim((string) $current_user->display_name);
+							$user_login = trim((string) $current_user->user_login);
+							$user_source_name = $user_first_name !== '' ? $user_first_name : ($user_display_name !== '' ? $user_display_name : $user_login);
+							if ($user_source_name === '') {
+								$user_source_name = 'U';
+							}
+							if (function_exists('mb_substr') && function_exists('mb_strtoupper')) {
+								$user_initial = mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8');
+							} else {
+								$user_initial = strtoupper(substr($user_source_name, 0, 1));
+							}
+						?>
 						<div class="notification-icon">
 							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/notification-icon.png'); ?>" alt="Уведомления">
 							<span>0</span>
@@ -43,7 +58,7 @@
 						</div>
 						<div class="lk-header-main__buttons">
 							<div class="lk-login-btn">
-								<span>М</span>
+								<span><?php echo esc_html($user_initial); ?></span>
 							</div>
 							<div class="lk-burger">
 								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/burger-lk-icon.png'); ?>" alt="Меню" class="active">

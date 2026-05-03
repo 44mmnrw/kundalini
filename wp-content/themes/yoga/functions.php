@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
@@ -80,6 +80,276 @@
 		add_theme_support( 'post-thumbnails' );
 	}
 	add_action( 'after_setup_theme', 'my_theme_setup' );
+
+	// Логичная структура URL для практик:
+	// /library/{category}/{type}/{practice}
+	if (!function_exists('yoga_customize_practice_post_type_rewrite')) {
+		function yoga_customize_practice_post_type_rewrite($args, $post_type) {
+			if ($post_type !== 'practice') {
+				return $args;
+			}
+
+			$rewrite = isset($args['rewrite']) && is_array($args['rewrite']) ? $args['rewrite'] : array();
+			$args['rewrite'] = array_merge($rewrite, array(
+				'slug' => 'practice',
+				'with_front' => false,
+			));
+
+			return $args;
+		}
+	}
+	add_filter('register_post_type_args', 'yoga_customize_practice_post_type_rewrite', 20, 2);
+
+	if (!function_exists('yoga_customize_practice_type_taxonomy_rewrite')) {
+		function yoga_customize_practice_type_taxonomy_rewrite($args, $taxonomy) {
+			if ($taxonomy !== 'practice-type') {
+				return $args;
+			}
+
+			$rewrite = isset($args['rewrite']) && is_array($args['rewrite']) ? $args['rewrite'] : array();
+			$args['rewrite'] = array_merge($rewrite, array(
+				'slug' => 'library',
+				'with_front' => false,
+				'hierarchical' => true,
+			));
+
+			return $args;
+		}
+	}
+	add_filter('register_taxonomy_args', 'yoga_customize_practice_type_taxonomy_rewrite', 20, 2);
+
+	if (!function_exists('yoga_get_practice_primary_term_path')) {
+		function yoga_get_practice_primary_term_path($post_id) {
+			$terms = get_the_terms((int) $post_id, 'practice-type');
+			if (empty($terms) || is_wp_error($terms)) {
+				return '';
+			}
+
+			$child_term = null;
+			foreach ($terms as $term) {
+				if ((int) $term->parent > 0) {
+					$child_term = $term;
+					break;
+				}
+			}
+
+			if (!$child_term) {
+				return '';
+			}
+
+			$parent_term = get_term((int) $child_term->parent, 'practice-type');
+			if (!$parent_term || is_wp_error($parent_term)) {
+				return '';
+			}
+
+			return $parent_term->slug . '/' . $child_term->slug;
+		}
+	}
+
+	if (!function_exists('yoga_filter_practice_permalink')) {
+		function yoga_filter_practice_permalink($post_link, $post, $leavename, $sample) {
+			if (!$post instanceof WP_Post || $post->post_type !== 'practice') {
+				return $post_link;
+			}
+
+			$term_path = yoga_get_practice_primary_term_path($post->ID);
+			if ($term_path === '') {
+				return $post_link;
+			}
+
+			$slug = $leavename ? '%postname%' : $post->post_name;
+			return home_url('/library/' . $term_path . '/' . $slug . '/');
+		}
+	}
+	add_filter('post_type_link', 'yoga_filter_practice_permalink', 20, 4);
+
+	if (!function_exists('yoga_register_practice_library_rewrite_rules')) {
+		function yoga_register_practice_library_rewrite_rules() {
+			add_rewrite_rule(
+				'^library/([^/]+)/([^/]+)/([^/]+)/?$',
+				'index.php?post_type=practice&name=$matches[3]',
+				'top'
+			);
+		}
+	}
+	add_action('init', 'yoga_register_practice_library_rewrite_rules', 20);
+
+	if (!function_exists('yoga_redirect_legacy_practice_urls')) {
+		function yoga_redirect_legacy_practice_urls() {
+			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
+				return;
+			}
+
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+			$path = trim((string) parse_url($request_uri, PHP_URL_PATH), '/');
+			if ($path === '') {
+				return;
+			}
+
+			$target_path = '';
+
+			if (strpos($path, 'practice-type/') === 0) {
+				$tail = ltrim(substr($path, strlen('practice-type/')), '/');
+				$target_path = 'library' . ($tail !== '' ? '/' . $tail : '');
+			} elseif (strpos($path, 'practice/') === 0 || strpos($path, 'practices/') === 0) {
+				$prefix = strpos($path, 'practices/') === 0 ? 'practices/' : 'practice/';
+				$tail = ltrim(substr($path, strlen($prefix)), '/');
+				$practice = get_page_by_path($tail, OBJECT, 'practice');
+				if ($practice instanceof WP_Post) {
+					wp_safe_redirect(get_permalink($practice->ID), 301);
+					exit;
+				}
+				$target_path = 'practice' . ($tail !== '' ? '/' . $tail : '');
+			}
+
+			if ($target_path === '') {
+				if (is_singular('practice')) {
+					$canonical = trailingslashit((string) wp_parse_url(get_permalink(), PHP_URL_PATH));
+					$current = trailingslashit('/' . $path);
+					if ($canonical && $current !== $canonical) {
+						$query_string = isset($_SERVER['QUERY_STRING']) ? (string) $_SERVER['QUERY_STRING'] : '';
+						$target_url = home_url($canonical);
+						if ($query_string !== '') {
+							$target_url .= '?' . $query_string;
+						}
+						wp_safe_redirect($target_url, 301);
+						exit;
+					}
+				}
+				return;
+			}
+
+			$target_url = home_url('/' . $target_path . '/');
+			$query_string = isset($_SERVER['QUERY_STRING']) ? (string) $_SERVER['QUERY_STRING'] : '';
+			if ($query_string !== '') {
+				$target_url .= '?' . $query_string;
+			}
+
+			wp_safe_redirect($target_url, 301);
+			exit;
+		}
+	}
+	add_action('template_redirect', 'yoga_redirect_legacy_practice_urls', 0);
+
+	if (!function_exists('yoga_flush_rewrite_rules_once_for_practice_urls')) {
+		function yoga_flush_rewrite_rules_once_for_practice_urls() {
+			if (wp_doing_ajax() || wp_doing_cron()) {
+				return;
+			}
+
+			$version = 'yoga_practice_urls_v2';
+			if (get_option('yoga_rewrite_version') === $version) {
+				return;
+			}
+
+			flush_rewrite_rules(false);
+			update_option('yoga_rewrite_version', $version, false);
+		}
+	}
+	add_action('init', 'yoga_flush_rewrite_rules_once_for_practice_urls', 99);
+
+	if (!function_exists('yoga_has_child_practice_type_term')) {
+		function yoga_has_child_practice_type_term(array $term_ids): bool {
+			foreach ($term_ids as $term_id) {
+				$term = get_term((int) $term_id, 'practice-type');
+				if ($term instanceof WP_Term && !is_wp_error($term) && (int) $term->parent > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	if (!function_exists('yoga_collect_practice_type_term_ids')) {
+		function yoga_collect_practice_type_term_ids(array $postarr): array {
+			$term_ids = array();
+
+			if (isset($postarr['tax_input']) && is_array($postarr['tax_input']) && isset($postarr['tax_input']['practice-type'])) {
+				$raw_terms = $postarr['tax_input']['practice-type'];
+				if (!is_array($raw_terms)) {
+					$raw_terms = array($raw_terms);
+				}
+
+				foreach ($raw_terms as $raw_term) {
+					if (is_numeric($raw_term)) {
+						$term_ids[] = (int) $raw_term;
+						continue;
+					}
+
+					$raw_term = trim((string) $raw_term);
+					if ($raw_term === '') {
+						continue;
+					}
+
+					$term = get_term_by('slug', $raw_term, 'practice-type');
+					if ($term instanceof WP_Term) {
+						$term_ids[] = (int) $term->term_id;
+					}
+				}
+			}
+
+			if (empty($term_ids) && !empty($postarr['ID'])) {
+				$current_terms = wp_get_object_terms((int) $postarr['ID'], 'practice-type', array('fields' => 'ids'));
+				if (is_array($current_terms) && !is_wp_error($current_terms)) {
+					$term_ids = array_map('intval', $current_terms);
+				}
+			}
+
+			return array_values(array_unique(array_filter($term_ids)));
+		}
+	}
+
+	if (!function_exists('yoga_block_practice_publish_without_child_type')) {
+		function yoga_block_practice_publish_without_child_type(array $data, array $postarr): array {
+			if (is_admin() !== true) {
+				return $data;
+			}
+
+			if (($data['post_type'] ?? '') !== 'practice') {
+				return $data;
+			}
+
+			$target_status = $data['post_status'] ?? '';
+			if (!in_array($target_status, array('publish', 'future'), true)) {
+				return $data;
+			}
+
+			if (!empty($postarr['ID']) && wp_is_post_revision((int) $postarr['ID'])) {
+				return $data;
+			}
+
+			$term_ids = yoga_collect_practice_type_term_ids($postarr);
+			if (yoga_has_child_practice_type_term($term_ids)) {
+				return $data;
+			}
+
+			$data['post_status'] = 'draft';
+			$GLOBALS['yoga_practice_publish_blocked'] = true;
+			return $data;
+		}
+	}
+	add_filter('wp_insert_post_data', 'yoga_block_practice_publish_without_child_type', 20, 2);
+
+	if (!function_exists('yoga_add_practice_publish_block_notice_query_arg')) {
+		function yoga_add_practice_publish_block_notice_query_arg(string $location): string {
+			if (empty($GLOBALS['yoga_practice_publish_blocked'])) {
+				return $location;
+			}
+			return add_query_arg('yoga_practice_type_error', '1', $location);
+		}
+	}
+	add_filter('redirect_post_location', 'yoga_add_practice_publish_block_notice_query_arg');
+
+	if (!function_exists('yoga_show_practice_publish_block_notice')) {
+		function yoga_show_practice_publish_block_notice(): void {
+			if (!is_admin() || empty($_GET['yoga_practice_type_error'])) {
+				return;
+			}
+
+			echo '<div class="notice notice-error is-dismissible"><p>Для публикации практики выберите дочерний "Тип практики" (внутри категории).</p></div>';
+		}
+	}
+	add_action('admin_notices', 'yoga_show_practice_publish_block_notice');
 	
 	// Опции ACF
 	function my_theme_scripts() {
@@ -1515,23 +1785,16 @@ function handle_comment_delete() {
 	// Обновление основных данных
 	function yoga_update_profile_ajax() {
 		// Обновление метаполей
-		error_log('AJAX update_profile called');
-		error_log('POST data: ' . print_r($_POST, true));
-		error_log('FILES data: ' . print_r($_FILES, true));
-		
 		// Обработка смены пароля
 		if (!isset($_POST['nonce'])) {
-			error_log('Nonce not set');
 			wp_send_json_error('Nonce не установлен', 400);
 		}
 		
 		if (!wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
-			error_log('Nonce verification failed');
 			wp_send_json_error('Ошибка безопасности: неверный nonce', 403);
 		}
 		
 		if (!is_user_logged_in()) {
-			error_log('User not logged in');
 			wp_send_json_error('Вы не авторизованы', 401);
 		}
 		
@@ -1613,7 +1876,6 @@ function handle_comment_delete() {
 			wp_send_json_success($result);
 			
 			} catch (Exception $e) {
-			error_log('Exception in update_profile: ' . $e->getMessage());
 			wp_send_json_error('Внутренняя ошибка сервера: ' . $e->getMessage(), 500);
 		}
 	}

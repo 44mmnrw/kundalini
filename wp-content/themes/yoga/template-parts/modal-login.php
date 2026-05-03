@@ -30,10 +30,14 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <div class="input-password">
                     <input type="password" name="pwd" class="input" required placeholder="Пароль">
                     <div class="input-password__btn input-password__btn_show active">
-                        <img src="<?php echo esc_url($img_uri . '/input-password-icon.png'); ?>" alt="">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+                        </svg>
                     </div>
                     <div class="input-password__btn input-password__btn_hide">
-                        <img src="<?php echo esc_url($img_uri . '/input-password-icon_hide.png'); ?>" alt="">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+                        </svg>
                     </div>
                 </div>
                 <button type="submit" id="login-ent-btn"></button>
@@ -80,10 +84,14 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                 <div class="input-password">
                     <input type="password" name="user_pass" class="input" required placeholder="Пароль">
                     <div class="input-password__btn input-password__btn_show active">
-                        <img src="<?php echo esc_url($img_uri . '/input-password-icon.png'); ?>" alt="">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+                        </svg>
                     </div>
                     <div class="input-password__btn input-password__btn_hide">
-                        <img src="<?php echo esc_url($img_uri . '/input-password-icon_hide.png'); ?>" alt="">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+                        </svg>
                     </div>
                 </div>
                 <button type="submit" id="login-reg-btn"></button>
