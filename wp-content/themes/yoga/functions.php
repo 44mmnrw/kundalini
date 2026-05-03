@@ -967,6 +967,66 @@ function handle_comment_delete() {
 	
 	add_action('wp_ajax_filter_practices', 'filter_practices_callback');
 	add_action('wp_ajax_nopriv_filter_practices', 'filter_practices_callback');
+
+	if (!function_exists('yoga_get_practice_type_card_data')) {
+		function yoga_get_practice_type_card_data($post_id) {
+			$data = array(
+				'term_name' => '',
+				'class' => 'library-item_violet',
+				'image_url' => '',
+			);
+
+			$terms = wp_get_post_terms($post_id, 'practice-type');
+			if (empty($terms) || is_wp_error($terms)) {
+				return $data;
+			}
+
+			$term = $terms[0];
+			$data['term_name'] = $term->name;
+
+			$color_value = '';
+			$image_value = '';
+			$term_ref = 'practice-type_' . (int) $term->term_id;
+
+			if (function_exists('get_field')) {
+				$color_value = (string) get_field('practice_type_card_color', $term_ref);
+				$image_value = get_field('practice_type_card_image', $term_ref);
+			}
+
+			if ($color_value === '') {
+				$color_value = (string) get_term_meta((int) $term->term_id, 'practice_type_card_color', true);
+			}
+
+			if (!$image_value) {
+				$image_value = get_term_meta((int) $term->term_id, 'practice_type_card_image', true);
+			}
+
+			$color_value = strtolower(trim((string) $color_value));
+			if ($color_value === 'green' || $color_value === 'library-item_green' || $color_value === 'зеленая' || $color_value === 'зелёная') {
+				$data['class'] = 'library-item_green';
+			} elseif ($color_value === 'violet_alt' || $color_value === 'library-item_violet_alt' || $color_value === 'фиолетовая (прозрачная, вариант 2)') {
+				$data['class'] = 'library-item_violet_alt';
+			} elseif ($color_value === 'violet' || $color_value === 'default' || $color_value === 'library-item_violet' || $color_value === 'фиолетовая' || $color_value === 'фиолетовая (прозрачная)') {
+				$data['class'] = 'library-item_violet';
+			} elseif ($color_value === 'pink' || $color_value === 'library-item_pink' || $color_value === 'розовая') {
+				$data['class'] = 'library-item_pink';
+			}
+
+			if (is_array($image_value)) {
+				if (!empty($image_value['url'])) {
+					$data['image_url'] = (string) $image_value['url'];
+				} elseif (!empty($image_value['ID'])) {
+					$data['image_url'] = (string) wp_get_attachment_image_url((int) $image_value['ID'], 'medium');
+				}
+			} elseif (is_numeric($image_value)) {
+				$data['image_url'] = (string) wp_get_attachment_image_url((int) $image_value, 'medium');
+			} elseif (is_string($image_value)) {
+				$data['image_url'] = $image_value;
+			}
+
+			return $data;
+		}
+	}
 	
 	function filter_practices_callback() {
 		$filters = $_POST['filters'] ?? [];
@@ -1007,22 +1067,30 @@ function handle_comment_delete() {
 		
 		if ($query->have_posts()) {
 			while ($query->have_posts()) {
-			$query->the_post(); ?>
-            <div class="library-item">
+			$query->the_post();
+			$card_data = yoga_get_practice_type_card_data(get_the_ID());
+			$library_variant_class = $card_data['class'];
+			$library_term_name = $card_data['term_name'];
+			$library_term_image_url = $card_data['image_url'];
+			?>
+            <div class="library-item<?php echo $library_variant_class ? ' ' . esc_attr($library_variant_class) : ''; ?>">
                 <div class="library-item__bg"></div>
                 <div class="library-item__cat">
                     <?php
-						$cats = wp_get_post_terms(get_the_ID(), 'practice-type');
-						if ($cats) echo esc_html($cats[0]->name);
+						echo esc_html($library_term_name);
 					?>
                     <a href="<?php the_permalink(); ?>" target="_blank"></a>
 				</div>
                 <p class="library-item__text"><?php echo get_the_excerpt(); ?></p>
                 <div class="library-item__img">
-                    <?php if (has_post_thumbnail()) the_post_thumbnail('medium'); ?>
+                    <?php if ($library_term_image_url) : ?>
+						<img src="<?php echo esc_url($library_term_image_url); ?>" alt="<?php echo esc_attr($library_term_name); ?>">
+					<?php elseif (has_post_thumbnail()) : ?>
+						<?php the_post_thumbnail('medium'); ?>
+					<?php endif; ?>
 				</div>
                 <div class="library-item__btn">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/library-item-btn.png" alt="">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/svg/library-card-corner-icon.svg" alt="">
 				</div>
                 <a href="<?php the_permalink(); ?>" class="library-item__link"></a>
 			</div>

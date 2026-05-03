@@ -94,3 +94,96 @@ if (!function_exists('yoga_register_tariff_fields')) {
 
 add_action('acf/init', 'yoga_register_tariff_fields');
 
+if (!function_exists('yoga_register_practice_type_fields')) {
+    function yoga_register_practice_type_fields() {
+        if (!function_exists('acf_add_local_field_group')) {
+            return;
+        }
+
+        acf_add_local_field_group(array(
+            'key' => 'group_practice_type_fields',
+            'title' => 'Поля типа практики',
+            'fields' => array(
+                array(
+                    'key' => 'field_practice_type_card_image',
+                    'label' => 'Картинка карточки',
+                    'name' => 'practice_type_card_image',
+                    'type' => 'image',
+                    'return_format' => 'id',
+                    'preview_size' => 'medium',
+                    'library' => 'all',
+                ),
+                array(
+                    'key' => 'field_practice_type_card_color',
+                    'label' => 'Цвет карточки',
+                    'name' => 'practice_type_card_color',
+                    'type' => 'select',
+                    'choices' => array(
+                        'green' => 'Зеленая',
+                        'violet' => 'Фиолетовая (прозрачная)',
+                        'pink' => 'Розовая',
+                        'violet_alt' => 'Фиолетовая (прозрачная, вариант 2)',
+                    ),
+                    'default_value' => 'violet',
+                    'allow_null' => 0,
+                    'ui' => 1,
+                    'return_format' => 'value',
+                ),
+                array(
+                    'key' => 'field_practice_type_card_order',
+                    'label' => 'Порядок карточки',
+                    'name' => 'practice_type_card_order',
+                    'type' => 'number',
+                    'default_value' => 0,
+                    'min' => 0,
+                    'step' => 1,
+                    'placeholder' => '0',
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param' => 'taxonomy',
+                        'operator' => '==',
+                        'value' => 'practice-type',
+                    ),
+                ),
+            ),
+        ));
+    }
+}
+
+add_action('acf/init', 'yoga_register_practice_type_fields');
+
+if (!function_exists('yoga_sync_practice_type_term_fields')) {
+    /**
+     * Подстраховка сохранения полей taxonomy-term:
+     * пишем значения напрямую в termmeta, чтобы цвет/порядок гарантированно сохранялись.
+     */
+    function yoga_sync_practice_type_term_fields($term_id) {
+        if (!is_admin() || empty($_POST['acf']) || !is_array($_POST['acf'])) {
+            return;
+        }
+
+        $term_id = (int) $term_id;
+        if ($term_id <= 0) {
+            return;
+        }
+
+        $acf_payload = $_POST['acf'];
+
+        $color = isset($acf_payload['field_practice_type_card_color']) ? sanitize_key((string) $acf_payload['field_practice_type_card_color']) : '';
+        if ($color !== '') {
+            update_term_meta($term_id, 'practice_type_card_color', $color);
+        } else {
+            delete_term_meta($term_id, 'practice_type_card_color');
+        }
+
+        $order = isset($acf_payload['field_practice_type_card_order']) ? (int) $acf_payload['field_practice_type_card_order'] : 0;
+        update_term_meta($term_id, 'practice_type_card_order', $order);
+    }
+}
+
+add_action('created_practice-type', 'yoga_sync_practice_type_term_fields', 20);
+add_action('edited_practice-type', 'yoga_sync_practice_type_term_fields', 20);
+
