@@ -44,10 +44,10 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 						<div class="form-search">
 							<div class="form-categories">
 								<div class="form-categories__value">
-									<span class="active">Категория</span>
+									<span class="active" data-target="0">Категория</span>
 									<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 										<?php foreach ($category_terms as $term) : ?>
-											<span><?php echo esc_html($term->name); ?></span>
+											<span data-target="<?php echo esc_attr((string) $term->term_id); ?>"><?php echo esc_html($term->name); ?></span>
 										<?php endforeach; ?>
 									<?php endif; ?>
 								</div>
@@ -58,13 +58,14 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/library-btn-arrow.png'); ?>" class="active" alt="">
 								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/library-btn-arrow_purple.png'); ?>" alt="">
 							</label>
+							<div class="form-search-list"></div>
 
 							<div class="form-cat-list">
 								<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 									<?php foreach ($category_terms as $term) : ?>
 										<?php $term_link = get_term_link($term); ?>
 										<?php if (!is_wp_error($term_link)) : ?>
-											<div class="form-cat-list__item" data-link="<?php echo esc_url($term_link); ?>">
+											<div class="form-cat-list__item" data-target="<?php echo esc_attr((string) $term->term_id); ?>" data-link="<?php echo esc_url($term_link); ?>">
 												<a href="<?php echo esc_url($term_link); ?>">
 													<span><?php echo esc_html($term->name); ?></span>
 												</a>
