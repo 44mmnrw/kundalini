@@ -2135,9 +2135,14 @@ header {
     max-width: 380px;
     margin-left: 10px;
     margin-right: 10px;
+    background: #F6F6F9;
     .btn-icon {
 	    right: calc(50% - 95px);
 	}
+}
+
+.tariff__bg {
+	display: none;
 }
 
 .tariff__top {
