@@ -431,10 +431,119 @@
 	
 	$(".praktika-menu nav ul li a").click(function () {
 		var elementClick = $(this).attr("href");
-		var destination = $(elementClick).offset().top - 80;
+		var $target = $(elementClick);
+		if (!$target.length) {
+			return false;
+		}
+
+		var destination = $target.offset().top - 80;
 		$('html, body').animate({ scrollTop: destination }, 800);
 		return false;
 	});
+
+	function initPraktikaMenuScrollSpy() {
+		var $menuLinks = $('.praktika-menu nav ul li a.ref[href^="#"]');
+		if (!$menuLinks.length) {
+			return;
+		}
+
+		var trackedSections = [];
+		var topOffset = 120;
+
+		function rebuildTrackedSections() {
+			trackedSections = [];
+
+			$menuLinks.each(function () {
+				var $link = $(this);
+				var href = $link.attr('href');
+				if (!href || href === '#') {
+					return;
+				}
+
+				var $anchor = $(href);
+				if (!$anchor.length) {
+					return;
+				}
+
+				trackedSections.push({
+					$link: $link,
+					$anchor: $anchor
+				});
+			});
+		}
+
+		function getSectionBounds(index) {
+			var currentTop = trackedSections[index].$anchor.offset().top;
+			var sectionBottom = $(document).height();
+
+			if (index < trackedSections.length - 1) {
+				sectionBottom = trackedSections[index + 1].$anchor.offset().top;
+			} else {
+				var $questions = $('#section-form-questions');
+				if ($questions.length) {
+					sectionBottom = $questions.offset().top + $questions.outerHeight();
+				}
+			}
+
+			if (sectionBottom <= currentTop) {
+				sectionBottom = currentTop + 1;
+			}
+
+			return {
+				top: currentTop,
+				bottom: sectionBottom
+			};
+		}
+
+		function setActiveByVisibleArea() {
+			if (!trackedSections.length) {
+				return;
+			}
+
+			var scrollTop = $(window).scrollTop();
+			var viewportTop = scrollTop + topOffset;
+			var viewportBottom = scrollTop + $(window).height();
+			var bestIndex = 0;
+			var bestVisibleHeight = -1;
+
+			for (var i = 0; i < trackedSections.length; i++) {
+				var bounds = getSectionBounds(i);
+				var visibleHeight = Math.max(0, Math.min(bounds.bottom, viewportBottom) - Math.max(bounds.top, viewportTop));
+
+				if (visibleHeight > bestVisibleHeight) {
+					bestVisibleHeight = visibleHeight;
+					bestIndex = i;
+				}
+			}
+
+			if (bestVisibleHeight <= 0) {
+				var lastBounds = getSectionBounds(trackedSections.length - 1);
+				bestIndex = viewportTop >= lastBounds.top ? trackedSections.length - 1 : 0;
+			}
+
+			$menuLinks.removeClass('active');
+			trackedSections[bestIndex].$link.addClass('active');
+		}
+
+		var ticking = false;
+		function requestRepaint() {
+			if (ticking) {
+				return;
+			}
+
+			ticking = true;
+			window.requestAnimationFrame(function () {
+				ticking = false;
+				setActiveByVisibleArea();
+			});
+		}
+
+		rebuildTrackedSections();
+		setActiveByVisibleArea();
+		$(window).on('scroll.praktikaMenuSpy resize.praktikaMenuSpy', requestRepaint);
+	}
+
+	initPraktikaMenuScrollSpy();
 	
 	
 	$('.exercise-slider_active').slick({

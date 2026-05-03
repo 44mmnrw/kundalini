@@ -43,7 +43,14 @@
 							<?php
 							$has_paid_tariff = is_user_logged_in() && get_current_user_tariff();
 							if (!$has_paid_tariff) :
+								$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
 								$tariffs_url = home_url('/product-category/tariffs/');
+								if ($tariffs_term && !is_wp_error($tariffs_term)) {
+									$term_link = get_term_link($tariffs_term);
+									if (!is_wp_error($term_link)) {
+										$tariffs_url = $term_link;
+									}
+								}
 								if (is_user_logged_in()) : ?>
 							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white">
 								<span>Попробовать бесплатно</span>

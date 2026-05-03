@@ -103,7 +103,7 @@
 											echo '<input type="checkbox" id="filter-dif_' . sprintf('%02d', $i) . '" name="practice-difficulty" value="' . esc_attr($term->term_id) . '">';
 											echo '<label for="filter-dif_' . sprintf('%02d', $i) . '" class="checkbox-item">';
 											echo '<div class="checkbox"></div>';
-											echo '<span>' . $term->name . '</span>';
+											echo '<span>' . esc_html(yoga_get_practice_difficulty_label($term)) . '</span>';
 											echo '</label>';
 											$i++;
 										}

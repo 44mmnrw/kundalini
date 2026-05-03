@@ -41,6 +41,7 @@
                     elseif (is_tax() || is_category() || is_tag()) {
                         $current_term = get_queried_object();
                         $taxonomy = get_taxonomy($current_term->taxonomy);
+                        $hide_current_term_in_breadcrumbs = is_tax('product_cat', 'tariffs');
                         
                         // Если это категория записи и у записи есть архив
                         if (is_category() && $taxonomy->object_type[0] == 'post') {
@@ -54,8 +55,10 @@
                             }
                         }
                         
-                        // Текущий термин
-                        echo '<li><span class="ways-item">' . esc_html($current_term->name) . '</span></li>';
+                        // Текущий термин (для тарифов скрываем подпись в хлебных крошках)
+                        if (!$hide_current_term_in_breadcrumbs) {
+                            echo '<li><span class="ways-item">' . esc_html($current_term->name) . '</span></li>';
+                        }
                     }
                     // Если это страница поиска
                     elseif (is_search()) {
