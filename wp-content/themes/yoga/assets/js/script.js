@@ -2085,6 +2085,89 @@
 			}
 		});
 	}
+
+    const suggestState = {
+        timer: null,
+        requestSeq: 0
+    };
+
+    function escapeHtml(text) {
+        return String(text || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function renderPracticeSuggestions(items, query) {
+        const $search = $('.section-kriyi .form-search');
+        const $list = $search.find('.form-search-list');
+        const cleanQuery = String(query || '').trim();
+
+        if (cleanQuery.length < 2) {
+            $list.removeClass('active').empty();
+            return;
+        }
+
+        if (!Array.isArray(items) || !items.length) {
+            $list
+                .html('<div class="form-search-list__item form-search-list__item_empty"><span>Ничего не найдено</span></div>')
+                .addClass('active');
+            $search.addClass('active');
+            return;
+        }
+
+        const html = items.map(function(item) {
+            return '<div class="form-search-list__item" data-url="' + escapeHtml(item.url || '') + '" data-title="' + escapeHtml(item.title || '') + '">' +
+                '<span>' + escapeHtml(item.title || '') + '</span>' +
+            '</div>';
+        }).join('');
+
+        $list.html(html).addClass('active');
+        $search.addClass('active');
+    }
+
+    function requestPracticeSuggestions() {
+        const query = $('.section-kriyi .input').val().trim();
+        const termId = $('.section-kriyi .form-categories__value span.active').data('target') || '';
+
+        if (query.length < 2) {
+            renderPracticeSuggestions([], '');
+            return;
+        }
+
+        suggestState.requestSeq += 1;
+        const requestId = suggestState.requestSeq;
+
+        $.ajax({
+            url: yoga_ajax.ajax_url,
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'search_practices_suggest',
+                nonce: yoga_ajax.nonce,
+                query: query,
+                term_id: termId
+            },
+            success: function(response) {
+                if (requestId !== suggestState.requestSeq) {
+                    return;
+                }
+                if (response && response.success && response.data) {
+                    renderPracticeSuggestions(response.data.items || [], query);
+                } else {
+                    renderPracticeSuggestions([], query);
+                }
+            },
+            error: function() {
+                if (requestId !== suggestState.requestSeq) {
+                    return;
+                }
+                renderPracticeSuggestions([], query);
+            }
+        });
+    }
 	
     // Функция для установки активного элемента по term ID
     function setActiveTerm(termId) {
@@ -2102,6 +2185,7 @@
         const targetTerm = $(this).data('target');
         setActiveTerm(targetTerm);
         loadPractices();
+        requestPracticeSuggestions();
 	});
 	
     // Поиск
@@ -2109,6 +2193,21 @@
         e.preventDefault();
         loadPractices();
 	});
+
+    $(document).on('input keyup change', '.section-kriyi .form-search .input', function() {
+        clearTimeout(suggestState.timer);
+        suggestState.timer = setTimeout(function() {
+            requestPracticeSuggestions();
+        }, 220);
+    });
+
+    $(document).on('click', '.section-kriyi .form-search-list__item[data-url]', function(e) {
+        e.preventDefault();
+        const url = $(this).data('url');
+        if (url) {
+            window.location.href = url;
+        }
+    });
 	
     // Чекбоксы
     $('.section-kriyi .filter input[type=checkbox]').on('change', function() {
