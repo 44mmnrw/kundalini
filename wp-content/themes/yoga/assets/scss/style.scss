@@ -1929,7 +1929,8 @@ header {
 	padding-top: 38px;
 	padding-bottom: 40px;
 	border-radius: 30px;
-	background: #F6F6F9;
+	background: transparent;
+	overflow: hidden;
 	& > * {
 		position: relative;
 		z-index: 2;
@@ -1950,9 +1951,11 @@ header {
 		line-height: 60px;
 		margin-top: auto;
 		padding-right: 62px;
+		white-space: nowrap;
 		span {
 			font-size: 14px;
 			text-transform: uppercase;
+			white-space: nowrap;
 		}
 	}
 	.btn-icon {
@@ -1985,34 +1988,92 @@ header {
 .check-list {
 	padding-top: 12px;
 	li {
-		position: relative;
-		padding-left: 27px;
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
 		margin-top: 10px;
 		color: $color-black;
-		&::before {
-			content: '';
-			display: inline-block;
-			position: absolute;
-			left: 0px;
-			top: 0px;
-			width: 15px;
-			height: 20px;
-			background: url(../img/check-list-before.png) no-repeat center center/ 100% auto;
-		}
 	}
 }
 
-.tariff_highlighted .check-list li::before {
-	background-image: url(../img/check-list-before_violet.png);
-}	
+.check-list__icon {
+	display: inline-flex;
+	width: 15px;
+	height: 20px;
+	flex-shrink: 0;
+	svg {
+		display: block;
+		width: 15px;
+		height: 15px;
+		margin-top: 5px;
+		fill: #1F1F1F;
+		stroke: #1F1F1F;
+	}
+}
+
+.check-list__text {
+	display: block;
+}
 
 .tariff__bg {
-	display: inline-block;
+	display: block;
 	position: absolute;
 	left: 0px;
 	top: 0px;
 	width: 100%;
 	height: 100%;
+	background-color: transparent;
+	pointer-events: none;
+}
+
+.tariff_visual_1 .tariff__bg {
+	background: url(../svg/tariff-card-1-bg.svg) no-repeat center center/100% 100%;
+}
+
+.tariff_visual_3 .tariff__bg {
+	background: url(../svg/tariff-card-3-bg.svg) no-repeat center center/100% 100%;
+}
+
+.tariff_visual_1 .tariff__bg::after,
+.tariff_visual_2 .tariff__bg::after,
+.tariff_visual_3 .tariff__bg::after {
+	content: "";
+	position: absolute;
+	width: 51px;
+	height: 51px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.tariff_visual_1 .tariff__bg::after {
+	left: 52px;
+	top: 412.5px;
+	background-image: url(../svg/tariff-star-1.svg);
+	background-size: 32.1487px 31.3957px;
+}
+
+.tariff_visual_2 {
+	background: rgba(145, 83, 225, 0.07);
+	border: 3px solid $color-violet;
+}
+
+.tariff_visual_4 {
+	background: #F6F6F9;
+}
+
+.tariff_visual_2 .tariff__bg::after {
+	right: 83px;
+	top: 469px;
+	background-image: url(../svg/tariff-star-2.svg);
+	background-size: 32.3685px 28.2941px;
+}
+
+.tariff_visual_3 .tariff__bg::after {
+	left: 31px;
+	top: 137px;
+	background-image: url(../svg/tariff-star-3.svg);
+	background-size: 34.0966px 34.0966px;
 }
 
 .tariff__top {
@@ -2059,14 +2120,6 @@ header {
 	padding-top: 4px;
 }
 
-.tariff__bg {
-	object-position: 50% -5px;
-}
-
-.tariff_highlighted .tariff__bg {
-	object-position: 50% 50%;
-}
-
 }
 
 
@@ -2087,19 +2140,9 @@ header {
 	}
 }
 
-.tariff_highlighted {
-	background: rgba(145, 83, 225, 0.07);
-	border: 3px solid $color-violet;
-}
-
 .tariff__top {
     min-height: 92px;
 } 
-
-.tariff__bg {
-	display: none;
-}
-
 
 }
 

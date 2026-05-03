@@ -54,7 +54,8 @@
   flex-direction: column;
   position: relative;
   width: calc((100% - 3.75rem) / 4);  min-height: 100%;
-  margin-top: 1.3125rem;  padding: 1.5625rem;  padding-top: 2.375rem;  padding-bottom: 2.5rem;  border-radius: 1.875rem;  background: var(--color-grey);
+  margin-top: 1.3125rem;  padding: 1.5625rem;  padding-top: 2.375rem;  padding-bottom: 2.5rem;  border-radius: 1.875rem;  background: transparent;
+  overflow: hidden;
 }
 .tariff > * {
   position: relative;
@@ -67,9 +68,11 @@
   padding-bottom: 1.5625rem;}
 .tariff .btn {
   height: 3.75rem;  line-height: 3.75rem;  margin-top: auto;
-  padding-right: 3.875rem;}
+  padding-right: 3.875rem;
+  white-space: nowrap;}
 .tariff .btn span {
   font-size: 0.875rem;  text-transform: uppercase;
+  white-space: nowrap;
 }
 .tariff .btn-icon {
   width: 1.9375rem;  height: 1.9375rem;}
@@ -95,29 +98,81 @@
 .check-list {
   padding-top: 0.75rem;}
 .check-list li {
-  position: relative;
-  padding-left: 1.6875rem;  margin-top: 0.625rem;  color: var(--color-black);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 0.625rem;
+  color: var(--color-black);
 }
-.check-list li::before {
-  content: "";
-  display: inline-block;
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  width: 0.9375rem;  height: 1.25rem;  background: url(../../img/check-list-before.png) no-repeat center center/100% auto;
+.check-list__icon {
+  display: inline-flex;
+  width: 0.9375rem;
+  height: 1.25rem;
+  flex-shrink: 0;
 }
-
-.tariff_highlighted .check-list li::before {
-  background-image: url(../../img/check-list-before_violet.png);
+.check-list__icon svg {
+  display: block;
+  width: 0.9375rem;
+  height: 0.9375rem;
+  margin-top: 0.3125rem;
+  fill: #1F1F1F;
+  stroke: #1F1F1F;
+}
+.check-list__text {
+  display: block;
 }
 
 .tariff__bg {
-  display: inline-block;
+  display: block;
   position: absolute;
   left: 0px;
   top: 0px;
   width: 100%;
   height: 100%;
+  background-color: transparent;
+  pointer-events: none;
+}
+.tariff_visual_1 .tariff__bg {
+  background: url(../../svg/tariff-card-1-bg.svg) no-repeat center center/100% 100%;
+}
+.tariff_visual_3 .tariff__bg {
+  background: url(../../svg/tariff-card-3-bg.svg) no-repeat center center/100% 100%;
+}
+.tariff_visual_1 .tariff__bg::after,
+.tariff_visual_2 .tariff__bg::after,
+.tariff_visual_3 .tariff__bg::after {
+  content: "";
+  position: absolute;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.tariff_visual_1 .tariff__bg::after {
+  left: 3.25rem;
+  top: 25.78125rem;
+  background-image: url(../../svg/tariff-star-1.svg);
+  background-size: 2.00929375rem 1.96223125rem;
+}
+.tariff_visual_2 {
+  background: rgba(145, 83, 225, 0.07);
+  border: 0.1875rem solid var(--color-violet);
+}
+.tariff_visual_4 {
+  background: #F6F6F9;
+}
+.tariff_visual_2 .tariff__bg::after {
+  right: 5.1875rem;
+  top: 29.3125rem;
+  background-image: url(../../svg/tariff-star-2.svg);
+  background-size: 2.02303125rem 1.76838125rem;
+}
+.tariff_visual_3 .tariff__bg::after {
+  left: 1.9375rem;
+  top: 8.5625rem;
+  background-image: url(../../svg/tariff-star-3.svg);
+  background-size: 2.1310375rem 2.1310375rem;
 }
 
 .tariff__top {
@@ -143,12 +198,6 @@
     margin-top: 0.9375rem;  }
   .check-list {
     padding-top: 0.25rem;  }
-  .tariff__bg {
-    object-position: 50% -5px;
-  }
-  .tariff_highlighted .tariff__bg {
-    object-position: 50% 50%;
-  }
 }
 @media (max-width: 1199px) {
   .tariffs-items__slide {
@@ -159,15 +208,8 @@
     width: calc((100% - 3.75rem) / 2);    max-width: 23.75rem;    margin-left: 0.625rem;    margin-right: 0.625rem;  }
   .tariff .btn-icon {
     right: calc(50% - 5.9375rem);  }
-  .tariff_highlighted {
-    background: rgba(145, 83, 225, 0.07);
-    border: 3px solid var(--color-violet);
-  }
   .tariff__top {
     min-height: 5.75rem;  }
-  .tariff__bg {
-    display: none;
-  }
 }
 @media (max-width: 991px) {
   .switches {
