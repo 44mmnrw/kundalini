@@ -1980,12 +1980,21 @@
 		return emailRegex.test(email);
 	}
 	
+    function getActiveLibraryTermId() {
+        const $activeCategory = $('.section-library .form-categories__value span.active');
+        if (!$activeCategory.length) {
+            return 0;
+        }
+        const rawTermId = parseInt($activeCategory.data('target'), 10);
+        return Number.isNaN(rawTermId) ? 0 : rawTermId;
+    }
+
     function loadLibraryPractices() {
 		let data = {
 			action: 'filter_practices',
 			filters: {},
 			search: $('.section-library input[name="s"]').val(),
-			term_id: $('.section-library .form-categories__value span.active').data('target') || ''
+			term_id: getActiveLibraryTermId()
 		};
 		
 		// Собираем чекбоксы
@@ -1999,6 +2008,56 @@
 			$('.section-library .library').html(response);
 		});
 	}
+
+    function requestLibrarySuggestions() {
+        const query = $('.section-library .form-search .input').val().trim();
+        const termId = getActiveLibraryTermId();
+        const $search = $('.section-library .form-search');
+        const $list = $search.find('.form-search-list');
+
+        if (query.length < 2) {
+            $list.removeClass('active').empty();
+            return;
+        }
+
+        $.ajax({
+            url: yoga_ajax.ajax_url,
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'search_practices_suggest',
+                nonce: yoga_ajax.nonce,
+                query: query,
+                term_id: termId
+            },
+            success: function(response) {
+                if (!(response && response.success && response.data && Array.isArray(response.data.items))) {
+                    $list.html('<div class="form-search-list__item form-search-list__item_empty"><span>Ничего не найдено</span></div>').addClass('active');
+                    $search.addClass('active');
+                    return;
+                }
+
+                const items = response.data.items;
+                if (!items.length) {
+                    $list.html('<div class="form-search-list__item form-search-list__item_empty"><span>Ничего не найдено</span></div>').addClass('active');
+                    $search.addClass('active');
+                    return;
+                }
+
+                const html = items.map(function(item) {
+                    return '<div class="form-search-list__item" data-url="' + escapeHtml(item.url || '') + '">' +
+                        '<span>' + escapeHtml(item.title || '') + '</span>' +
+                    '</div>';
+                }).join('');
+                $list.html(html).addClass('active');
+                $search.addClass('active');
+            },
+            error: function() {
+                $list.html('<div class="form-search-list__item form-search-list__item_empty"><span>Ничего не найдено</span></div>').addClass('active');
+                $search.addClass('active');
+            }
+        });
+    }
 	
 	// Функция для установки активного элемента по term ID
 	function setActiveLibraryTerm(termId) {
@@ -2015,6 +2074,7 @@
 		const targetTerm = $(this).data('target');
 		setActiveLibraryTerm(targetTerm);
 		loadLibraryPractices();
+        requestLibrarySuggestions();
 	});
 	
 	// Также можно вызвать при загрузке страницы для установки начального активного элемента
@@ -2031,6 +2091,18 @@
 		e.preventDefault();
 		loadLibraryPractices();
 	});
+
+    $(document).on('input keyup change', '.section-library .form-search .input', function() {
+        requestLibrarySuggestions();
+    });
+
+    $(document).on('click', '.section-library .form-search-list__item[data-url]', function(e) {
+        e.preventDefault();
+        const url = $(this).data('url');
+        if (url) {
+            window.location.href = url;
+        }
+    });
 	
 	// чекбоксы
 	$('.section-library .filter input[type=checkbox]').on('change', function() {
