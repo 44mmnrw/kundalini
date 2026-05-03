@@ -1,0 +1,111 @@
+<?php
+/**
+ * Секция "Популярные практики"
+ */
+$popular_title = get_field('popular_practices_title', get_the_ID())
+    ?: get_field('popular_practices_title', 'option')
+    ?: get_field('popular_title', get_the_ID())
+    ?: get_field('popular_title', 'option')
+    ?: 'популярные практики';
+
+$popular_items = get_field('popular_practice_items', get_the_ID());
+if (!$popular_items) {
+    $popular_items = get_field('popular_practice_items', 'option');
+}
+if (!$popular_items) {
+    $popular_items = get_field('popular_practices', get_the_ID()) ?: get_field('popular_practices', 'option');
+}
+if (!$popular_items) {
+    $popular_items = get_field('popular_items', get_the_ID()) ?: get_field('popular_items', 'option');
+}
+
+/*
+ * Fallback карточек отключен по задаче.
+ * При пустом ACF секция отрисуется без элементов.
+ *
+ * $popular_default_items = array(
+ *     ...
+ * );
+ *
+ * if (!$popular_items) {
+ *     $popular_items = $popular_default_items;
+ * }
+ */
+$popular_items = is_array($popular_items) ? $popular_items : array();
+?>
+
+<section class="section-popular-practices" id="section-popular-practices">
+    <div class="container">
+        <div class="row">
+            <div class="popular-practices">
+                <h2 class="wow flipInX delay-200ms">
+                    <?php echo esc_html($popular_title); ?>
+                </h2>
+
+                <div class="popular-practices-slider wow fadeIn delay-200ms">
+                    <?php foreach ($popular_items as $index => $item) :
+                        $item_title = is_array($item) ? ($item['practice_title'] ?? $item['popular_practice_title'] ?? $item['title'] ?? '') : '';
+                        $item_text = is_array($item) ? ($item['practice_description'] ?? $item['popular_practice_text'] ?? $item['practice_text'] ?? $item['description'] ?? $item['text'] ?? '') : '';
+                        $item_image = is_array($item) ? ($item['popular_practice_image'] ?? $item['practice_image'] ?? $item['image'] ?? '') : '';
+                        $item_link = is_array($item) ? ($item['practice_link'] ?? $item['popular_practice_link'] ?? $item['link'] ?? '') : '';
+                        $item_color = is_array($item) ? strtolower((string) ($item['practice_style'] ?? $item['popular_practice_color'] ?? $item['card_color'] ?? '')) : '';
+
+                        if (is_array($item_image) && isset($item_image['url'])) {
+                            $item_image = $item_image['url'];
+                        } elseif (is_numeric($item_image)) {
+                            $item_image = wp_get_attachment_image_url((int) $item_image, 'large');
+                        }
+
+                        if (is_array($item_link) && isset($item_link['url'])) {
+                            $item_link = $item_link['url'];
+                        } elseif (is_object($item_link) && isset($item_link->ID)) {
+                            $item_link = get_permalink($item_link->ID);
+                        } elseif (is_numeric($item_link)) {
+                            $item_link = get_permalink((int) $item_link);
+                        }
+
+                        $color_class = '';
+                        if ($item_color === 'popular-practice_pink' || $item_color === 'pink' || $item_color === 'розовый') {
+                            $color_class = ' popular-practice_pink';
+                        } elseif ($item_color === 'popular-practice_green' || $item_color === 'green' || $item_color === 'lime' || $item_color === 'лайм' || $item_color === 'зеленый' || $item_color === 'зелёный') {
+                            $color_class = ' popular-practice_green';
+                        } elseif (!empty($item_color) && str_contains($item_color, 'popular-practice_pink')) {
+                            $color_class = ' popular-practice_pink';
+                        } elseif (!empty($item_color) && str_contains($item_color, 'popular-practice_green')) {
+                            $color_class = ' popular-practice_green';
+                        }
+                    ?>
+                    <div class="popular-practice<?php echo esc_attr($color_class); ?>">
+                        <?php if ($item_image) : ?>
+                            <img src="<?php echo esc_url($item_image); ?>" alt="<?php echo esc_attr($item_title); ?>">
+                        <?php endif; ?>
+
+                        <?php if ($item_title) : ?>
+                            <h4><?php echo esc_html($item_title); ?></h4>
+                        <?php endif; ?>
+
+                        <?php if ($item_text) : ?>
+                            <p><?php echo esc_html($item_text); ?></p>
+                        <?php endif; ?>
+
+                        <?php if ($item_link) : ?>
+                            <a href="<?php echo esc_url($item_link); ?>" class="popular-practice__link" aria-label="<?php echo esc_attr($item_title ?: 'Открыть практику'); ?>"></a>
+                        <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="arrows-slick wow fadeIn delay-200ms">
+                    <div class="arrows-slick__arrow slick-prev">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-prev.png'); ?>" alt="" class="active">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-prev_active.png'); ?>" alt="">
+                    </div>
+                    <div class="arrows-slick__arrow slick-next">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-next.png'); ?>" alt="" class="active">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/slick-arrow-next_active.png'); ?>" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

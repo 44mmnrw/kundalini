@@ -169,11 +169,6 @@
 		]
 	});
 	
-	if ($(window).width() < 1199 ) {
-        $('.popular-practices-slider').slick('unslick');    
-	};
-	
-	
 	/* Section-questions */
 	
 	$('.question__main').click(function () {
