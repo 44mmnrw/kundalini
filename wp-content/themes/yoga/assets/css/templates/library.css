@@ -1,6 +1,7 @@
 /* Section-library */
 .section-library {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   padding-top: 1.5rem;  padding-bottom: 7.5rem;}
 
 .library-form {
@@ -26,7 +27,7 @@
   position: relative;
   padding-left: 0.4375rem;  width: calc(100% - 5.0625rem);  border: 1px solid var(--color-black);
   border-radius: 0.4375rem;  cursor: pointer;
-  z-index: 2;
+  z-index: 20;
   transition: 0.4s ease;
 }
 .form-search input {
@@ -183,6 +184,7 @@
 .form-search-list.active {
   top: calc(100% - 0.3125rem);  opacity: 1;
   pointer-events: auto;
+  z-index: 40;
   transition: opacity 0.3s ease;
 }
 
@@ -224,6 +226,7 @@
   top: 100%;
   opacity: 1;
   pointer-events: auto;
+  z-index: 40;
   transition: opacity 0.3s ease;
 }
 
@@ -266,7 +269,7 @@
   position: relative;
   margin-right: 1.25rem;  margin-top: 0.375rem;}
 .filter-item.active, .sorting-item.active {
-  z-index: 2;
+  z-index: 25;
 }
 .filter-item.active .filter-item__main, .filter-item.active .sorting-item__main, .sorting-item.active .filter-item__main, .sorting-item.active .sorting-item__main {
   border-bottom-left-radius: 0px;
@@ -318,6 +321,7 @@
   top: calc(100% - 1px);
   opacity: 1;
   pointer-events: auto !important;
+  z-index: 35;
   transition: opacity 0.3s ease;
 }
 .filter-item__list .checkbox-item, .sorting-item__list .checkbox-item {

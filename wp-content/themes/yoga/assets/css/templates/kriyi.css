@@ -1,6 +1,7 @@
 /* Template: taxonomy kriyi */
 .section-kriyi {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   padding-top: 1.5rem;  padding-bottom: 7.5rem;}
 
 .kriyi-form {

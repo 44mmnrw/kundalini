@@ -449,6 +449,10 @@
 
 		var trackedSections = [];
 		var topOffset = 120;
+		var currentActiveIndex = 0;
+		var pendingActiveIndex = null;
+		var pendingStartedAt = 0;
+		var switchDelayMs = 500;
 
 		function rebuildTrackedSections() {
 			trackedSections = [];
@@ -495,34 +499,56 @@
 			};
 		}
 
+		function applyActiveIndex(nextIndex) {
+			if (!trackedSections.length) {
+				return;
+			}
+
+			var safeIndex = Math.max(0, Math.min(nextIndex, trackedSections.length - 1));
+			pendingActiveIndex = null;
+			pendingStartedAt = 0;
+			currentActiveIndex = safeIndex;
+			$menuLinks.removeClass('active');
+			trackedSections[safeIndex].$link.addClass('active');
+		}
+
 		function setActiveByVisibleArea() {
 			if (!trackedSections.length) {
 				return;
 			}
 
 			var scrollTop = $(window).scrollTop();
-			var viewportTop = scrollTop + topOffset;
-			var viewportBottom = scrollTop + $(window).height();
-			var bestIndex = 0;
-			var bestVisibleHeight = -1;
+			var probeY = scrollTop + topOffset + 1;
+			var targetIndex = 0;
 
 			for (var i = 0; i < trackedSections.length; i++) {
 				var bounds = getSectionBounds(i);
-				var visibleHeight = Math.max(0, Math.min(bounds.bottom, viewportBottom) - Math.max(bounds.top, viewportTop));
+				if (probeY >= bounds.top && probeY < bounds.bottom) {
+					targetIndex = i;
+					break;
+				}
 
-				if (visibleHeight > bestVisibleHeight) {
-					bestVisibleHeight = visibleHeight;
-					bestIndex = i;
+				if (probeY >= bounds.bottom) {
+					targetIndex = i;
 				}
 			}
 
-			if (bestVisibleHeight <= 0) {
-				var lastBounds = getSectionBounds(trackedSections.length - 1);
-				bestIndex = viewportTop >= lastBounds.top ? trackedSections.length - 1 : 0;
+			if (targetIndex === currentActiveIndex) {
+				pendingActiveIndex = null;
+				pendingStartedAt = 0;
+				return;
 			}
 
-			$menuLinks.removeClass('active');
-			trackedSections[bestIndex].$link.addClass('active');
+			var now = Date.now();
+			if (pendingActiveIndex !== targetIndex) {
+				pendingActiveIndex = targetIndex;
+				pendingStartedAt = now;
+				return;
+			}
+
+			if (now - pendingStartedAt >= switchDelayMs) {
+				applyActiveIndex(targetIndex);
+			}
 		}
 
 		var ticking = false;
@@ -539,7 +565,22 @@
 		}
 
 		rebuildTrackedSections();
+		var initialIndex = 0;
+		$menuLinks.each(function (index) {
+			if ($(this).hasClass('active')) {
+				initialIndex = index;
+			}
+		});
+		applyActiveIndex(initialIndex);
 		setActiveByVisibleArea();
+
+		$menuLinks.on('click.praktikaMenuSpy', function () {
+			var clickedIndex = $menuLinks.index(this);
+			if (clickedIndex >= 0) {
+				applyActiveIndex(clickedIndex);
+			}
+		});
+
 		$(window).on('scroll.praktikaMenuSpy resize.praktikaMenuSpy', requestRepaint);
 	}
 
