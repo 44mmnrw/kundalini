@@ -513,10 +513,20 @@
 									</div>
 									
 									<?php if (!$current_subscription): ?>
+									<?php
+										$tariffs_url = home_url('/product-category/tariffs/');
+										$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+										if ($tariffs_term && !is_wp_error($tariffs_term)) {
+											$term_link = get_term_link($tariffs_term);
+											if (!is_wp_error($term_link)) {
+												$tariffs_url = $term_link;
+											}
+										}
+									?>
 									<div class="lk-settings-part">
 										<div class="subscribe-cta">
 											<p>У вас нет активной подписки. Выберите подходящий тариф:</p>
-											<a href="/product-category/tariffs/" class="btn">
+											<a href="<?php echo esc_url($tariffs_url); ?>" class="btn">
 												<span>Выбрать тариф</span>
 											</a>
 										</div>

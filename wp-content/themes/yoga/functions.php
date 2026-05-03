@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
@@ -233,7 +233,7 @@
 
 	if (!function_exists('yoga_flush_rewrite_rules_once_for_practice_urls')) {
 		function yoga_flush_rewrite_rules_once_for_practice_urls() {
-			if (wp_doing_ajax() || wp_doing_cron()) {
+			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
 				return;
 			}
 
@@ -2693,6 +2693,276 @@ function handle_comment_delete() {
 			return $query_vars;
 		}
 		add_filter('request', 'theme_force_blog_request_to_category', 1);
+	}
+
+	// Кастомный роутинг product_cat без префикса /product-category/.
+	// Важно: это намеренный компромисс и может конфликтовать с одинаковыми slug страниц.
+	if (!function_exists('yoga_get_product_cat_path')) {
+		function yoga_get_product_cat_path($term): string {
+			$term = get_term($term, 'product_cat');
+			if (!$term instanceof WP_Term || is_wp_error($term)) {
+				return '';
+			}
+
+			$slugs = array($term->slug);
+			$parent_id = (int) $term->parent;
+
+			while ($parent_id > 0) {
+				$parent_term = get_term($parent_id, 'product_cat');
+				if (!$parent_term instanceof WP_Term || is_wp_error($parent_term)) {
+					break;
+				}
+				array_unshift($slugs, $parent_term->slug);
+				$parent_id = (int) $parent_term->parent;
+			}
+
+			return implode('/', $slugs);
+		}
+	}
+
+	if (!function_exists('yoga_find_product_cat_by_path')) {
+		function yoga_find_product_cat_by_path(string $path) {
+			$path = trim($path, '/');
+			if ($path === '') {
+				return null;
+			}
+
+			$segments = explode('/', $path);
+			$last_slug = end($segments);
+			if (!is_string($last_slug) || $last_slug === '') {
+				return null;
+			}
+
+			$candidates = get_terms(array(
+				'taxonomy' => 'product_cat',
+				'hide_empty' => false,
+				'slug' => $last_slug,
+			));
+
+			if (empty($candidates) || is_wp_error($candidates)) {
+				return null;
+			}
+
+			foreach ($candidates as $candidate) {
+				if (!$candidate instanceof WP_Term) {
+					continue;
+				}
+
+				if (yoga_get_product_cat_path($candidate) === $path) {
+					return $candidate;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	if (!function_exists('yoga_filter_product_cat_link_without_base')) {
+		function yoga_filter_product_cat_link_without_base($termlink, $term, $taxonomy) {
+			if ($taxonomy !== 'product_cat' || !$term instanceof WP_Term) {
+				return $termlink;
+			}
+
+			$path = yoga_get_product_cat_path($term);
+			if ($path === '') {
+				return $termlink;
+			}
+
+			return home_url('/' . trailingslashit($path));
+		}
+		add_filter('term_link', 'yoga_filter_product_cat_link_without_base', 20, 3);
+	}
+
+	if (!function_exists('yoga_route_product_cat_without_base')) {
+		function yoga_product_cat_path_conflicts_with_public_content(string $path): bool {
+			$path = trim($path, '/');
+			if ($path === '') {
+				return true;
+			}
+
+			$post_type_objects = get_post_types(array('public' => true), 'objects');
+			if (empty($post_type_objects) || !is_array($post_type_objects)) {
+				return false;
+			}
+
+			$post_type_names = array();
+			foreach ($post_type_objects as $post_type_object) {
+				if (!($post_type_object instanceof WP_Post_Type)) {
+					continue;
+				}
+				if ($post_type_object->name === 'attachment') {
+					continue;
+				}
+				$post_type_names[] = $post_type_object->name;
+			}
+
+			if (!empty($post_type_names) && get_page_by_path($path, OBJECT, $post_type_names)) {
+				return true;
+			}
+
+			$segments = explode('/', $path);
+			$first_segment = $segments[0] ?? '';
+			if ($first_segment === '') {
+				return false;
+			}
+
+			foreach ($post_type_objects as $post_type_object) {
+				if (!($post_type_object instanceof WP_Post_Type) || $post_type_object->name === 'attachment') {
+					continue;
+				}
+
+				$rewrite_slug = '';
+				if (is_array($post_type_object->rewrite) && !empty($post_type_object->rewrite['slug'])) {
+					$rewrite_slug = trim((string) $post_type_object->rewrite['slug'], '/');
+				}
+
+				if ($rewrite_slug !== '') {
+					$rewrite_root = explode('/', $rewrite_slug)[0];
+					if ($rewrite_root === $first_segment) {
+						return true;
+					}
+				}
+
+				if (!empty($post_type_object->has_archive)) {
+					$archive_slug = is_string($post_type_object->has_archive)
+						? trim($post_type_object->has_archive, '/')
+						: $rewrite_slug;
+
+					if ($archive_slug !== '') {
+						$archive_root = explode('/', $archive_slug)[0];
+						if ($archive_root === $first_segment) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		function yoga_route_product_cat_without_base($query_vars) {
+			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
+				return $query_vars;
+			}
+
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+			$path = trim((string) wp_parse_url($request_uri, PHP_URL_PATH), '/');
+			if ($path === '') {
+				return $query_vars;
+			}
+
+			// Старый адрес обработается отдельным редиректом.
+			if (strpos($path, 'product-category/') === 0) {
+				return $query_vars;
+			}
+
+			// Системные маршруты и ресурсы не перехватываем.
+			if (
+				strpos($path, 'wp-') === 0 ||
+				strpos($path, 'wc-') === 0 ||
+				strpos($path, 'feed') === 0 ||
+				preg_match('/\.(php|xml|xsl|json|txt|ico)$/i', $path)
+			) {
+				return $query_vars;
+			}
+
+			// Если путь занят публичным контентом/архивом CPT, приоритет у него.
+			if (yoga_product_cat_path_conflicts_with_public_content($path)) {
+				return $query_vars;
+			}
+
+			$matched_term = yoga_find_product_cat_by_path($path);
+			if (!$matched_term instanceof WP_Term) {
+				return $query_vars;
+			}
+
+			$query_vars['product_cat'] = trim(yoga_get_product_cat_path($matched_term), '/');
+			unset($query_vars['name'], $query_vars['pagename'], $query_vars['page'], $query_vars['page_id'], $query_vars['error']);
+
+			return $query_vars;
+		}
+		add_filter('request', 'yoga_route_product_cat_without_base', 2);
+	}
+
+	if (!function_exists('yoga_redirect_legacy_product_cat_base_url')) {
+		function yoga_redirect_legacy_product_cat_base_url() {
+			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
+				return;
+			}
+
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+			$path = trim((string) wp_parse_url($request_uri, PHP_URL_PATH), '/');
+			if ($path === '' || strpos($path, 'product-category/') !== 0) {
+				return;
+			}
+
+			$new_path = trim(substr($path, strlen('product-category/')), '/');
+			if ($new_path === '') {
+				return;
+			}
+
+			$term = yoga_find_product_cat_by_path($new_path);
+			if (!$term instanceof WP_Term) {
+				return;
+			}
+
+			$target_url = home_url('/' . trailingslashit($new_path));
+			$query = isset($_SERVER['QUERY_STRING']) ? (string) $_SERVER['QUERY_STRING'] : '';
+			if ($query !== '') {
+				$target_url .= '?' . $query;
+			}
+
+			wp_safe_redirect($target_url, 301);
+			exit;
+		}
+		add_action('template_redirect', 'yoga_redirect_legacy_product_cat_base_url', 1);
+	}
+
+	if (!function_exists('yoga_get_practice_difficulty_label')) {
+		function yoga_get_practice_difficulty_label($term): string {
+			if (!$term instanceof WP_Term) {
+				return '';
+			}
+
+			$slug = sanitize_title((string) $term->slug);
+			$name = function_exists('mb_strtolower')
+				? mb_strtolower((string) $term->name, 'UTF-8')
+				: strtolower((string) $term->name);
+
+			$slug_map = array(
+				'beginner' => 'новичок',
+				'easy' => 'новичок',
+				'novice' => 'новичок',
+				'intermediate' => 'средний',
+				'medium' => 'средний',
+				'middle' => 'средний',
+				'advanced' => 'профи',
+				'pro' => 'профи',
+				'expert' => 'профи',
+			);
+
+			if (isset($slug_map[$slug])) {
+				return $slug_map[$slug];
+			}
+
+			$name_map = array(
+				'beginner' => 'новичок',
+				'easy' => 'новичок',
+				'novice' => 'новичок',
+				'intermediate' => 'средний',
+				'medium' => 'средний',
+				'middle' => 'средний',
+				'advanced' => 'профи',
+				'pro' => 'профи',
+				'expert' => 'профи',
+			);
+
+			if (isset($name_map[$name])) {
+				return $name_map[$name];
+			}
+
+			return (string) $term->name;
+		}
 	}
 
 
