@@ -187,3 +187,38 @@ if (!function_exists('yoga_sync_practice_type_term_fields')) {
 add_action('created_practice-type', 'yoga_sync_practice_type_term_fields', 20);
 add_action('edited_practice-type', 'yoga_sync_practice_type_term_fields', 20);
 
+if (!function_exists('yoga_register_homepage_section_toggles')) {
+    function yoga_register_homepage_section_toggles() {
+        if (!function_exists('acf_add_local_field_group')) {
+            return;
+        }
+
+        acf_add_local_field_group(array(
+            'key' => 'group_homepage_section_toggles',
+            'title' => 'Главная: отображение секций',
+            'fields' => array(
+                array(
+                    'key' => 'field_show_videos_section',
+                    'label' => 'Показывать секцию Видео',
+                    'name' => 'show_videos_section',
+                    'type' => 'true_false',
+                    'ui' => 1,
+                    'default_value' => 1,
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param' => 'page_type',
+                        'operator' => '==',
+                        'value' => 'front_page',
+                    ),
+                ),
+            ),
+            'position' => 'side',
+        ));
+    }
+}
+
+add_action('acf/init', 'yoga_register_homepage_section_toggles');
+

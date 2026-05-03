@@ -535,26 +535,21 @@ body {
     background-color: #fff;
     border: 1px solid $color-black;
     transition: $transition-all;
-    img {
-    	display: inline-block;
+	svg {
+		display: inline-block;
     	position: absolute;
     	left: 50%;
     	top: 50%;
-    	transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%) rotate(0deg);
     	width: 20px;
-    	opacity: 0;
+		height: 20px;
+		color: $color-black;
     	transition: $transition-all;
-    	&.active {
-    		opacity: 1;
-    	}
     }
     &:hover {
     	background: $color-black;
-    	img {
-    		opacity: 1;
-    		&.active {
-    			opacity: 0;
-    		}
+		svg {
+			color: $color-green;
     	}
     }
 }
@@ -566,6 +561,9 @@ body {
 
 .slick-prev {
 	opacity: 1!Important;
+	svg {
+		transform: translate(-50%, -50%) rotate(180deg);
+	}
 }
 
 .slick-next:hover {
