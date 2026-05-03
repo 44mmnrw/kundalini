@@ -717,6 +717,65 @@
   color: rgba(31, 31, 31, 0.6);
 }
 
+.modal-login-inner .input-password {
+  width: 100%;
+  position: relative;
+}
+
+.modal-login-inner .input-password .input {
+  padding-right: 3.125rem;
+}
+
+.modal-login-inner .input-password__btn {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.1875rem;
+  height: 2.1875rem;
+  cursor: pointer;
+  z-index: 3;
+  user-select: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-login-inner .input-password__btn.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-login-inner .input-password__btn svg {
+  display: block;
+  width: 1.3125rem;
+  height: 1.3125rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-login-inner .input-password__btn.input-password__btn_hide svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* Prevent browser autofill from repainting the input background */
+.modal-login-inner .input:-webkit-autofill,
+.modal-login-inner .input:-webkit-autofill:hover,
+.modal-login-inner .input:-webkit-autofill:focus,
+.modal-login-inner .input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  box-shadow: 0 0 0 1000px transparent inset;
+  -webkit-text-fill-color: var(--color-black);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.modal-login-inner .input:-moz-autofill {
+  box-shadow: 0 0 0 1000px transparent inset;
+  -moz-text-fill-color: var(--color-black);
+}
+
 .modal-close {
   display: block;
   position: absolute;

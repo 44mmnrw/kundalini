@@ -57,28 +57,33 @@
 							<?php
 								$current_user = wp_get_current_user();
 								$myaccount_url = get_permalink(get_option('woocommerce_myaccount_page_id'));
+								$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
+								$user_display_name = trim((string) $current_user->display_name);
+								$user_login = trim((string) $current_user->user_login);
+								$user_source_name = $user_first_name !== '' ? $user_first_name : ($user_display_name !== '' ? $user_display_name : $user_login);
+								if ($user_source_name === '') {
+									$user_source_name = 'U';
+								}
+								if (function_exists('mb_substr') && function_exists('mb_strtoupper')) {
+									$user_initial = mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8');
+								} else {
+									$user_initial = strtoupper(substr($user_source_name, 0, 1));
+								}
 							?>
-							<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon">
-								<span class="user-avatar">
-									<?php
-										$avatar_id = get_field('user_avatar', 'user_' . $current_user->ID);
-										
-										if ($avatar_id) {
-											echo wp_get_attachment_image($avatar_id, 'thumbnail', false, array('class' => 'avatar'));
-											} else {
-											// Fallback на стандартный аватар WordPress
-											echo get_avatar($current_user->ID, 96);
-										}
-									?>
-								</span>
+							<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon login-icon_logged" aria-label="<?php echo esc_attr__('Личный кабинет', 'yoga'); ?>">
+								<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
 							</a>
 							<?php else: ?>
 							<div class="login-icon modal-call_login">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/login-icon.png'); ?>" alt="Вход">
+								<svg aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
+								</svg>
 							</div>
 							<?php endif; ?>
 							<div class="burger modal-call">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/burger.png'); ?>" alt="Меню">
+								<svg aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-icon'); ?>"></use>
+								</svg>
 							</div>
 						</div>
 					</div>

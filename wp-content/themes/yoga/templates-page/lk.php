@@ -109,10 +109,14 @@
                                             <div class="input-password">
                                                 <input type="password" class="input" name="current_password"  placeholder="Текущий пароль">
                                                 <div class="input-password__btn input-password__btn_show active">
-                                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/input-password-icon.png" alt="">
+                                                    <svg aria-hidden="true" focusable="false">
+                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+                                                    </svg>
 												</div>
                                                 <div class="input-password__btn input-password__btn_hide">
-                                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/input-password-icon_hide.png" alt="">
+                                                    <svg aria-hidden="true" focusable="false">
+                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+                                                    </svg>
 												</div>
 											</div>
 										</div>
@@ -121,10 +125,14 @@
                                             <div class="input-password">
                                                 <input type="password" class="input" name="new_password">
                                                 <div class="input-password__btn input-password__btn_show active">
-                                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/input-password-icon.png" alt="">
+                                                    <svg aria-hidden="true" focusable="false">
+                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+                                                    </svg>
 												</div>
                                                 <div class="input-password__btn input-password__btn_hide">
-                                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/input-password-icon_hide.png" alt="">
+                                                    <svg aria-hidden="true" focusable="false">
+                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+                                                    </svg>
 												</div>
 											</div>
 										</div>
@@ -133,10 +141,14 @@
                                             <div class="input-password">
                                                 <input type="password" class="input" name="repeat_password">
                                                 <div class="input-password__btn input-password__btn_show active">
-                                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/input-password-icon.png" alt="">
+                                                    <svg aria-hidden="true" focusable="false">
+                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+                                                    </svg>
 												</div>
                                                 <div class="input-password__btn input-password__btn_hide">
-                                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/input-password-icon_hide.png" alt="">
+                                                    <svg aria-hidden="true" focusable="false">
+                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+                                                    </svg>
 												</div>
                                                 <span class="input-password__placeholder">Пароли не совпадают</span>
 											</div>

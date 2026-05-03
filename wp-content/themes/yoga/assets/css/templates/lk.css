@@ -220,8 +220,21 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+.input-password__btn svg {
+  display: block;
+  width: 1.3125rem;
+  height: 1.3125rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
 .input-password__btn.input-password__btn_hide img {
   width: 1.75rem;}
+.input-password__btn.input-password__btn_hide svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
 
 .input-password__placeholder {
   width: 100%;
