@@ -581,7 +581,7 @@
 										
 										<!-- Форма добавления новой карты -->
 										<div class="add-card-form" style="display: none;">
-											<form id="add-card-form">
+											<form id="add-card-form" data-stripe-key="<?php echo esc_attr((string) get_option('stripe_publishable_key')); ?>">
 												<?php wp_nonce_field('add_payment_method', 'payment_nonce'); ?>
 												<div class="form-row">
 													<label>Номер карты</label>
@@ -684,70 +684,5 @@
 		</div>
 	</div>
 </div>
-<script>
-	jQuery(document).ready(function($) {
-		// Инициализация Stripe Elements (пример)
-		function initStripeElements() {
-			if (typeof Stripe === 'undefined') return;
-			
-			var stripe = Stripe('<?php echo get_option("stripe_publishable_key"); ?>');
-			var elements = stripe.elements();
-			
-			var cardNumber = elements.create('cardNumber');
-			cardNumber.mount('#card-number-element');
-			
-			var cardExpiry = elements.create('cardExpiry');
-			cardExpiry.mount('#card-expiry-element');
-			
-			var cardCvc = elements.create('cardCvc');
-			cardCvc.mount('#card-cvc-element');
-			
-			// Обработка формы
-			$('#add-card-form').on('submit', function(e) {
-				e.preventDefault();
-				
-				stripe.createPaymentMethod({
-					type: 'card',
-					card: cardNumber,
-					billing_details: {
-					// Добавьте данные пользователя
-				}
-				}).then(function(result) {
-				if (result.error) {
-					showNotification(result.error.message, 'error');
-					} else {
-					// Отправка на сервер
-					$.ajax({
-						url: yoga_ajax.ajax_url,
-						type: 'POST',
-						data: {
-							action: 'add_payment_method',
-							payment_method_id: result.paymentMethod.id,
-							security: yoga_ajax.nonce
-						},
-						success: function(response) {
-							if (response.success) {
-								showNotification('Карта успешно добавлена');
-								$('.add-card-form').slideUp();
-								// Обновить список карт
-								location.reload();
-								} else {
-								showNotification(response.data, 'error');
-							}
-						}
-					});
-				}
-			});
-		});
-	}
-	
-	// Инициализация при загрузке
-	$(document).ready(function() {
-		if ($('#card-number-element').length) {
-			initStripeElements();
-		}
-	});
-});
-</script>
 <?php
 	get_footer();					

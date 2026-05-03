@@ -1263,7 +1263,7 @@ function handle_comment_delete() {
 		$date = get_post_meta($post->ID, 'contact_date', true);
 	?>
     <p><strong>Email:</strong> <?php echo esc_html($email); ?></p>
-    <p><strong>Р”Р°С‚Р°:</strong> <?php echo esc_html($date); ?></p>
+    <p><strong>Дата:</strong> <?php echo esc_html($date); ?></p>
     <?php
 	}
 	
@@ -1413,7 +1413,7 @@ function handle_comment_delete() {
 			<?php }
 			wp_reset_postdata();
 			} else {
-			echo '<p>РќРµС‚ РїСЂР°РєС‚РёРє РїРѕ РІС‹Р±СЂР°РЅРЅС‹Рј С„РёР»СЊС‚СЂР°Рј.</p>';
+			echo '<p>Нет практик по выбранным фильтрам.</p>';
 		}
 		
 		wp_die();
@@ -1433,15 +1433,28 @@ function handle_comment_delete() {
         'posts_per_page' => -1,
         'post_status' => 'publish'
 		);
-		
-		// Проверяем, добавляется ли товар категории tariffs
-		if (!empty($_POST['term_id'])) {
+
+		$raw_filters = array();
+		if (!empty($_POST['filters']) && is_array($_POST['filters'])) {
+			$raw_filters = $_POST['filters'];
+		}
+
+		$selected_type_terms = array();
+		if (!empty($raw_filters['practice-type']) && is_array($raw_filters['practice-type'])) {
+			$selected_type_terms = array_values(array_unique(array_map('intval', $raw_filters['practice-type'])));
+			$selected_type_terms = array_filter($selected_type_terms, static function ($term_id) {
+				return $term_id > 0;
+			});
+		}
+
+		// Базовый term_id используем только если отдельно не задан фильтр "По типу".
+		if (!empty($_POST['term_id']) && empty($selected_type_terms)) {
 			$args['tax_query'] = array(
-            array(
-			'taxonomy' => 'practice-type',
-			'field' => 'term_id',
-			'terms' => intval($_POST['term_id'])
-            )
+				array(
+					'taxonomy' => 'practice-type',
+					'field' => 'term_id',
+					'terms' => intval($_POST['term_id'])
+				)
 			);
 		}
 		
@@ -1451,8 +1464,8 @@ function handle_comment_delete() {
 		}
 		
 		// Очищаем корзину
-		if (!empty($_POST['filters'])) {
-			$filters = $_POST['filters'];
+		if (!empty($raw_filters)) {
+			$filters = $raw_filters;
 			
 			if (!isset($args['tax_query'])) {
 				$args['tax_query'] = array('relation' => 'AND');
@@ -1481,8 +1494,10 @@ function handle_comment_delete() {
                 break;
 				case 'popularity':
 				default:
-                $args['orderby'] = 'meta_value_num';
-                $args['meta_key'] = 'views_count';
+                // На части практик нет views_count, из-за чего meta-сортировка
+                // отфильтровывает записи и даёт "Найдено: 0" при переключении типа.
+                // Оставляем безопасную сортировку без потерь результатов.
+                $args['orderby'] = 'date';
                 $args['order'] = 'DESC';
                 break;
 			}
@@ -1541,7 +1556,16 @@ function handle_comment_delete() {
         $item_count = 0;
         while ($query->have_posts()) : $query->the_post();
 		$item_count++;
-		$practice_level = get_field('level') ?: 'РќР°С‡РёРЅР°СЋС‰РёР№';
+		$practice_level = get_field('level') ?: 'Начинающий';
+		$practice_level = (string) $practice_level;
+		$level_mojibake_map = array(
+			'РќР°С‡РёРЅР°СЋС‰РёР№' => 'Начинающий',
+			'РЎСЂРµРґРЅРёР№' => 'Средний',
+			'РџСЂРѕС„Рё' => 'Профи',
+		);
+		if (isset($level_mojibake_map[$practice_level])) {
+			$practice_level = $level_mojibake_map[$practice_level];
+		}
 		$practice_description = get_field('short_description') ?: get_the_excerpt();
 		$practice_image = get_field('image') ?: get_template_directory_uri() . '/assets/img/kriya-img_01.png';
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
@@ -1587,7 +1611,7 @@ function handle_comment_delete() {
 			<span class="kriya-level">Начинающий</span>`r`n			<div class="kriya-info">`r`n				<h3>Остальные крийи</h3>`r`n				<p>Показать все доступные практики</p>`r`n			</div>
 			<div class="kriya-media">
 				<div class="kriya-img">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="РћСЃС‚Р°Р»СЊРЅС‹Рµ РєСЂРёР№Рё">
+					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="Остальные практики">
 				</div>
 				<div class="kriya-fav">
 					<svg class="active" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>

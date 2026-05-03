@@ -4,6 +4,10 @@
   overflow-y: visible;
   padding-top: 1.5rem;  padding-bottom: 7.5rem;}
 
+.section-kriyi.section-practice-category {
+  min-height: calc(100vh - 17.75rem);
+}
+
 .kriyi-form {
   display: block;
   position: relative;
@@ -258,6 +262,9 @@ body.tax-practice-type .practice-notification {
 }
 
 @media (max-width: 1320px) {
+  .section-kriyi.section-practice-category {
+    min-height: calc(100vh - 16.5rem);
+  }
   .section-kriyi {
     padding-top: 1.25rem;    padding-bottom: 5.625rem;  }
   .sorting {
@@ -335,6 +342,9 @@ body.tax-practice-type .practice-notification {
     height: 9.6875rem;  }
 }
 @media (max-width: 575px) {
+  .section-kriyi.section-practice-category {
+    min-height: calc(100vh - 14rem);
+  }
   .section-kriyi {
     padding-top: 1.25rem;    padding-bottom: 5rem;  }
   .kriyi-item {
