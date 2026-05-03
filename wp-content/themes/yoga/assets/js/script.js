@@ -1713,7 +1713,10 @@
 				showContactSuccess('Сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
 				form.reset();
 				} else {
-				showContactError(data.message);
+				const errorMessage = (data && data.data && data.data.message)
+					|| data.message
+					|| 'Ошибка отправки. Попробуйте еще раз.';
+				showContactError(errorMessage);
 			}
 		})
 		.catch(error => {
@@ -2514,7 +2517,13 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     location.reload();
                 } else {
-                    alert('Ошибка при отправке комментария: ' + (response.data || 'Неизвестная ошибка'));
+                    var errorText = 'Неизвестная ошибка';
+                    if (typeof response.data === 'string') {
+                        errorText = response.data;
+                    } else if (response.data && response.data.message) {
+                        errorText = response.data.message;
+                    }
+                    alert('Ошибка при отправке комментария: ' + errorText);
                 }
             },
             error: function() {

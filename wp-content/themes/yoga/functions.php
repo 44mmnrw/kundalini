@@ -413,8 +413,27 @@ add_action('wp_ajax_nopriv_submit_custom_comment', 'handle_custom_comment');
 
 function handle_custom_comment() {
     // Проверяем, что пользователь может редактировать комментарий
-    if (!wp_verify_nonce($_POST['comment_security'], 'yoga_ajax_nonce')) {
-        wp_die('Ошибка безопасности');
+    if (!isset($_POST['comment_security']) || !wp_verify_nonce($_POST['comment_security'], 'yoga_ajax_nonce')) {
+        wp_send_json_error('Ошибка безопасности');
+    }
+
+    $post_id = isset($_POST['post_id']) ? (int) $_POST['post_id'] : 0;
+    $comment_content = isset($_POST['comment']) ? sanitize_textarea_field($_POST['comment']) : '';
+
+    if ($post_id <= 0 || !get_post($post_id)) {
+        wp_send_json_error('Некорректная практика для комментария');
+    }
+
+    if ($comment_content === '') {
+        wp_send_json_error('Введите текст комментария');
+    }
+
+    if (!comments_open($post_id)) {
+        wp_send_json_error('Комментирование для этой практики закрыто');
+    }
+
+    if (!is_user_logged_in() && get_option('comment_registration')) {
+        wp_send_json_error('Для отправки комментария необходимо авторизоваться');
     }
     
     // Добавление комментариев (только для зарегистрированных пользователей)
@@ -431,22 +450,44 @@ function handle_custom_comment() {
     
     // Проверяем, что пользователь может добавлять комментарий
     $comment_data = array(
-        'comment_post_ID' => intval($_POST['post_id']),
-        'comment_content' => sanitize_textarea_field($_POST['comment']),
+        'comment_post_ID' => $post_id,
+        'comment_content' => $comment_content,
         'comment_author' => $comment_author,
         'comment_author_email' => $comment_author_email,
         'comment_author_url' => '',
         'user_id' => $user_id,
-        'comment_approved' => 1,
+        'comment_approved' => 1
     );
     
     // Разрешить комментарии для custom post type 'practice'
-    $comment_id = wp_insert_comment($comment_data);
+    $comment_id = wp_new_comment($comment_data, true);
     
-    if ($comment_id) {
+    if (!is_wp_error($comment_id) && $comment_id) {
         wp_send_json_success('Комментарий добавлен');
     } else {
-        wp_send_json_error('Ошибка при добавлении комментария');
+        $error_message = is_wp_error($comment_id)
+            ? $comment_id->get_error_message()
+            : '';
+
+        // Fallback: в некоторых окружениях wp_new_comment возвращает 0 без WP_Error.
+        if (!$error_message) {
+            $fallback_comment_id = wp_insert_comment($comment_data);
+            if ($fallback_comment_id) {
+                wp_send_json_success('Комментарий добавлен');
+            }
+        }
+
+        global $wpdb;
+        if (!$error_message && !empty($wpdb->last_error)) {
+            $error_message = 'DB: ' . $wpdb->last_error;
+        }
+
+        if (!$error_message) {
+            $error_message = 'Ошибка при добавлении комментария';
+        }
+
+        error_log('handle_custom_comment failed. post_id=' . $post_id . '; user_id=' . $user_id . '; error=' . $error_message);
+        wp_send_json_error($error_message);
     }
 }
 
@@ -584,17 +625,17 @@ function handle_comment_delete() {
 	
 	function process_contact_form() {
 		// Счетчик пунктов меню
-		if (!wp_verify_nonce($_POST['contacts_nonce_field'], 'contacts_nonce')) {
+		if (!isset($_POST['contacts_nonce_field']) || !wp_verify_nonce($_POST['contacts_nonce_field'], 'contacts_nonce')) {
 			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 		}
 		
 		// Проверяем, является ли это первый пункт меню
-		$name = sanitize_text_field($_POST['contacts_name']);
-		$email = sanitize_email($_POST['contacts_email']);
-		$phone = sanitize_text_field($_POST['contacts_phone']);
-		$message = sanitize_textarea_field($_POST['contacts_message']);
+		$name = isset($_POST['contacts_name']) ? sanitize_text_field($_POST['contacts_name']) : '';
+		$email = isset($_POST['contacts_email']) ? sanitize_email($_POST['contacts_email']) : '';
+		$phone = isset($_POST['contacts_phone']) ? sanitize_text_field($_POST['contacts_phone']) : '';
+		$message = isset($_POST['contacts_message']) ? sanitize_textarea_field($_POST['contacts_message']) : '';
 		
-		if (empty($name) || empty($email) || empty($phone) || empty($message)) {
+		if (empty($name) || empty($email) || empty($message)) {
 			wp_send_json_error(array('message' => 'Пожалуйста, заполните все поля'));
 		}
 		
@@ -615,33 +656,38 @@ function handle_comment_delete() {
 		
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 		
+		// Сначала всегда сохраняем обращение в БД, чтобы не терять заявки.
+		$saved = save_contact_message($name, $email, $phone, $message);
 		$sent = wp_mail($to, $subject, nl2br($body), $headers);
 		
-		if ($sent) {
-			// Добавляем иконки только для первого пункта
-			save_contact_message($name, $email, $phone, $message);
-			
-			wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
-			} else {
-			wp_send_json_error(array('message' => 'Ошибка при отправке сообщения'));
+		if (!$saved) {
+			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
 		}
+		
+		if (!$sent) {
+			error_log('process_contact_form: wp_mail failed for email ' . $email);
+		}
+		
+		wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
 	}
 	
 	// Увеличиваем счетчик после обработки элемента
-	function save_contact_message(string $name, string $email, string $phone, string $message): void {
+	function save_contact_message(string $name, string $email, string $phone, string $message): bool {
 		$post_data = array(
-        'post_title' => 'РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚ ' . $name,
+        'post_title' => 'Вопрос от ' . $name,
         'post_content' => $message,
-        'post_type' => 'contact_message',
-        'post_status' => 'private',
+        'post_type' => 'question',
+        'post_status' => 'draft',
         'meta_input' => array(
 		'contact_email' => $email,
 		'contact_phone' => $phone,
-		'contact_date' => current_time('mysql')
+		'contact_date' => current_time('mysql'),
+		'question_source' => 'practice_form'
         )
 		);
 		
-		wp_insert_post($post_data);
+		$post_id = wp_insert_post($post_data, true);
+		return !is_wp_error($post_id) && (int) $post_id > 0;
 	}
 	
 	// Сбрасываем счетчик при начале нового уровня меню
