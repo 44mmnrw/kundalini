@@ -46,13 +46,9 @@ $recaptcha_key = get_option('recaptcha_site_key', '');
                         войти
                     </span>
                 </label>
-                <?php if (shortcode_exists('vkid_login')) : ?>
-                    <?php echo do_shortcode('[vkid_login]'); ?>
-                <?php else : ?>
-                    <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk">
-                        Войти через VK
-                    </a>
-                <?php endif; ?>
+                <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk">
+                    Войти через VK
+                </a>
                 <div class="loggin-additional">
                     <div class="loggin-additional__item ml-sl-switch" data-target="3">
                         <span>

@@ -10,7 +10,7 @@ if (empty($current_term->parent)) {
     // Родительский термин - загружаем шаблон библиотеки практик
     get_template_part('template-parts/taxonomy', 'biblioteka-praktik');
 } else {
-    // Дочерний термин - загружаем шаблон крийи
-    get_template_part('template-parts/taxonomy', 'kriyi');
+    // Дочерний термин - загружаем универсальный шаблон категории практик
+    get_template_part('template-parts/taxonomy', 'practice-category');
 }
 ?>

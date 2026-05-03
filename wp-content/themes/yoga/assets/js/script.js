@@ -1599,14 +1599,18 @@
 			});
 		}); */
 		
-		// Плавная прокрутка к якорям
-		document.querySelectorAll('.ref').forEach(link => {
+		// Плавная прокрутка только к якорям (#...), без перехвата обычных ссылок.
+		document.querySelectorAll('.ref[href^="#"]').forEach(link => {
 			link.addEventListener('click', function(e) {
-				e.preventDefault();
 				const targetId = this.getAttribute('href');
+				if (!targetId || targetId === '#') {
+					return;
+				}
+
 				const targetElement = document.querySelector(targetId);
 				
 				if (targetElement) {
+					e.preventDefault();
 					targetElement.scrollIntoView({
 						behavior: 'smooth',
 						block: 'start'
@@ -1976,61 +1980,61 @@
 		return emailRegex.test(email);
 	}
 	
-    function loadPractices() {
+    function loadLibraryPractices() {
 		let data = {
 			action: 'filter_practices',
 			filters: {},
-			search: $('input[name="s"]').val(),
-			term_id: $('.form-categories__value span.active').data('target') || ''
+			search: $('.section-library input[name="s"]').val(),
+			term_id: $('.section-library .form-categories__value span.active').data('target') || ''
 		};
 		
 		// Собираем чекбоксы
-		$('.filter input[type=checkbox]:checked').each(function() {
+		$('.section-library .filter input[type=checkbox]:checked').each(function() {
 			let name = $(this).attr('name').replace('[]','');
 			if (!data.filters[name]) data.filters[name] = [];
 			data.filters[name].push($(this).val());
 		});
 		
 		$.post(yoga_ajax.ajax_url, data, function(response) {
-			$('.library').html(response);
+			$('.section-library .library').html(response);
 		});
 	}
 	
 	// Функция для установки активного элемента по term ID
-	function setActiveTerm(termId) {
+	function setActiveLibraryTerm(termId) {
 		// Убираем активный класс у всех элементов
-		$('.form-categories__value span, .form-cat-list__item').removeClass('active');
+		$('.section-library .form-categories__value span, .section-library .form-cat-list__item').removeClass('active');
 		
 		// Добавляем активный класс элементам с соответствующим data-target
-		$(`.form-categories__value span[data-target="${termId}"]`).addClass('active');
-		$(`.form-cat-list__item[data-target="${termId}"]`).addClass('active');
+		$(`.section-library .form-categories__value span[data-target="${termId}"]`).addClass('active');
+		$(`.section-library .form-cat-list__item[data-target="${termId}"]`).addClass('active');
 	}
 	
 	// Обработчики кликов
-	$(document).on('click', '.form-categories__value span, .form-cat-list__item', function() {
+	$(document).on('click', '.section-library .form-categories__value span, .section-library .form-cat-list__item', function() {
 		const targetTerm = $(this).data('target');
-		setActiveTerm(targetTerm);
-		loadPractices();
+		setActiveLibraryTerm(targetTerm);
+		loadLibraryPractices();
 	});
 	
 	// Также можно вызвать при загрузке страницы для установки начального активного элемента
 	$(document).ready(function() {
-		const initialActiveTerm = $('.form-categories__value span.active').data('target') || 
-		$('.form-cat-list__item.active').data('target');
+		const initialActiveTerm = $('.section-library .form-categories__value span.active').data('target') || 
+		$('.section-library .form-cat-list__item.active').data('target');
 		if (initialActiveTerm) {
-			setActiveTerm(initialActiveTerm);
+			setActiveLibraryTerm(initialActiveTerm);
 		}
 	});
 	
 	// поиск
-	$('#practice-filter-form').on('submit', function(e) {
+	$('.section-library #practice-filter-form').on('submit', function(e) {
 		e.preventDefault();
-		loadPractices();
+		loadLibraryPractices();
 	});
 	
 	// чекбоксы
-	$('.filter input[type=checkbox]').on('change', function() {
-		loadPractices();
+	$('.section-library .filter input[type=checkbox]').on('change', function() {
+		loadLibraryPractices();
 	});
 	
 	
@@ -2504,6 +2508,74 @@ jQuery(document).ready(function($) {
 	$('.btn-cancel').on('click', function() {
 		$('.add-card-form').slideUp();
 	});
+
+	function initStripeElementsForLk() {
+		var $cardForm = $('#add-card-form');
+		if (!$cardForm.length) {
+			return;
+		}
+
+		if (typeof Stripe === 'undefined') {
+			return;
+		}
+
+		if ($cardForm.data('stripeInitialized')) {
+			return;
+		}
+
+		var stripeKey = ($cardForm.data('stripe-key') || '').toString().trim();
+		if (!stripeKey) {
+			return;
+		}
+
+		var stripe = Stripe(stripeKey);
+		var elements = stripe.elements();
+		var cardNumber = elements.create('cardNumber');
+		var cardExpiry = elements.create('cardExpiry');
+		var cardCvc = elements.create('cardCvc');
+
+		cardNumber.mount('#card-number-element');
+		cardExpiry.mount('#card-expiry-element');
+		cardCvc.mount('#card-cvc-element');
+
+		$cardForm.data('stripeInitialized', true);
+
+		$cardForm.off('submit.lkStripe').on('submit.lkStripe', function(e) {
+			e.preventDefault();
+
+			stripe.createPaymentMethod({
+				type: 'card',
+				card: cardNumber,
+				billing_details: {}
+			}).then(function(result) {
+				if (result.error) {
+					showNotification(result.error.message, 'error');
+					return;
+				}
+
+				$.ajax({
+					url: yoga_ajax.ajax_url,
+					type: 'POST',
+					data: {
+						action: 'add_payment_method',
+						payment_method_id: result.paymentMethod.id,
+						security: yoga_ajax.nonce
+					},
+					success: function(response) {
+						if (response.success) {
+							showNotification('Карта успешно добавлена');
+							$('.add-card-form').slideUp();
+							location.reload();
+						} else {
+							showNotification(response.data, 'error');
+						}
+					}
+				});
+			});
+		});
+	}
+
+	initStripeElementsForLk();
 	
 	// Удаление карты
 	$('.lk-settings-item__col-action-options').on('click', function(e) {
