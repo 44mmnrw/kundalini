@@ -50,6 +50,7 @@
               $is_active = $period['period_active'] ?? false;
           ?>
           <div class="tariffs-items__slide <?php echo $is_active ? 'active' : ''; ?>" data-target="<?php echo esc_attr($period_index); ?>">
+            <?php $tariff_card_index = 0; ?>
             <?php foreach ($tariff_products as $product) : 
               $product_id = $product->get_id();
               $product_name = $product->get_name();
@@ -82,15 +83,13 @@
               
               // Пропускаем продукты без цены для этого периода
               if (empty($current_price)) continue;
+              $tariff_card_index++;
+              $tariff_visual_index = (($tariff_card_index - 1) % 4) + 1;
               
               $tariff_features = get_field('tariff_features', $product_id);
-              $tariff_bg = get_field('tariff_bg_image', $product_id);
-              if (!$tariff_bg) {
-                $tariff_bg = get_template_directory_uri() . '/assets/img/tariff-bg_0' . rand(1,4) . '.png';
-              }
             ?>
-            <div class="tariff <?php echo $is_highlighted ? 'tariff_highlighted' : ''; ?>">
-              <img src="<?php echo esc_url($tariff_bg); ?>" alt="<?php echo esc_attr($product_name); ?>" class="tariff__bg">
+            <div class="tariff tariff_visual_<?php echo esc_attr($tariff_visual_index); ?> <?php echo $is_highlighted ? 'tariff_highlighted' : ''; ?>">
+              <div class="tariff__bg" aria-hidden="true"></div>
               
               <div class="tariff__top">
                 <h3><?php echo esc_html($product_name); ?></h3>
@@ -110,7 +109,14 @@
                     $feature_text = is_array($feature) ? ($feature['feature_text'] ?? '') : $feature;
                   ?>
                   <?php if ($feature_text) : ?>
-                  <li><?php echo esc_html($feature_text); ?></li>
+                  <li>
+                    <span class="check-list__icon" aria-hidden="true">
+                      <svg aria-hidden="true">
+                        <use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#tariff-check"></use>
+                      </svg>
+                    </span>
+                    <span class="check-list__text"><?php echo esc_html($feature_text); ?></span>
+                  </li>
                   <?php endif; ?>
                   <?php endforeach; ?>
                 </ul>
