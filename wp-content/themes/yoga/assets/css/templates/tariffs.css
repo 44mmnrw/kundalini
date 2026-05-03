@@ -205,7 +205,10 @@
     justify-content: center;
   }
   .tariff {
-    width: calc((100% - 3.75rem) / 2);    max-width: 23.75rem;    margin-left: 0.625rem;    margin-right: 0.625rem;  }
+    width: calc((100% - 3.75rem) / 2);    max-width: 23.75rem;    margin-left: 0.625rem;    margin-right: 0.625rem;    background: #F6F6F9;  }
+  .tariff__bg {
+    display: none;
+  }
   .tariff .btn-icon {
     right: calc(50% - 5.9375rem);  }
   .tariff__top {
