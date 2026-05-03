@@ -4,33 +4,13 @@
  */
 $popular_title = get_field('popular_practices_title', get_the_ID())
     ?: get_field('popular_practices_title', 'option')
-    ?: get_field('popular_title', get_the_ID())
-    ?: get_field('popular_title', 'option')
     ?: 'популярные практики';
 
-$popular_items = get_field('popular_practice_items', get_the_ID());
+$popular_items = get_field('popular_practices_items', get_the_ID());
 if (!$popular_items) {
-    $popular_items = get_field('popular_practice_items', 'option');
-}
-if (!$popular_items) {
-    $popular_items = get_field('popular_practices', get_the_ID()) ?: get_field('popular_practices', 'option');
-}
-if (!$popular_items) {
-    $popular_items = get_field('popular_items', get_the_ID()) ?: get_field('popular_items', 'option');
+    $popular_items = get_field('popular_practices_items', 'option');
 }
 
-/*
- * Fallback карточек отключен по задаче.
- * При пустом ACF секция отрисуется без элементов.
- *
- * $popular_default_items = array(
- *     ...
- * );
- *
- * if (!$popular_items) {
- *     $popular_items = $popular_default_items;
- * }
- */
 $popular_items = is_array($popular_items) ? $popular_items : array();
 ?>
 
@@ -44,11 +24,11 @@ $popular_items = is_array($popular_items) ? $popular_items : array();
 
                 <div class="popular-practices-slider wow fadeIn delay-200ms">
                     <?php foreach ($popular_items as $index => $item) :
-                        $item_title = is_array($item) ? ($item['practice_title'] ?? $item['popular_practice_title'] ?? $item['title'] ?? '') : '';
-                        $item_text = is_array($item) ? ($item['practice_description'] ?? $item['popular_practice_text'] ?? $item['practice_text'] ?? $item['description'] ?? $item['text'] ?? '') : '';
-                        $item_image = is_array($item) ? ($item['popular_practice_image'] ?? $item['practice_image'] ?? $item['image'] ?? '') : '';
-                        $item_link = is_array($item) ? ($item['practice_link'] ?? $item['popular_practice_link'] ?? $item['link'] ?? '') : '';
-                        $item_color = is_array($item) ? strtolower((string) ($item['practice_style'] ?? $item['popular_practice_color'] ?? $item['card_color'] ?? '')) : '';
+                        $item_title = is_array($item) ? ($item['practice_title'] ?? '') : '';
+                        $item_text = is_array($item) ? ($item['practice_description'] ?? '') : '';
+                        $item_image = is_array($item) ? ($item['practice_image'] ?? '') : '';
+                        $item_link = is_array($item) ? ($item['practice_link'] ?? '') : '';
+                        $item_color = is_array($item) ? strtolower((string) ($item['practice_style'] ?? '')) : '';
 
                         if (is_array($item_image) && isset($item_image['url'])) {
                             $item_image = $item_image['url'];
