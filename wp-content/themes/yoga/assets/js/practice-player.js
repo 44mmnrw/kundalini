@@ -95,22 +95,25 @@ function initializePracticeSystem() {
             const playerElement = version.querySelector('.exercise-player');
             
             let timerInterval = null;
-            let remainingTime = 180; // 3 минуты по умолчанию
+            let remainingTime = 0;
             let isPlaying = false;
             let player = null;
             let suppressAutoPlayUntil = 0;
             const initialDuration = parseDuration(timerDisplay?.textContent);
-            let selectedDuration = initialDuration;
-            if (initialDuration > 0) {
-                remainingTime = initialDuration;
-            }
+            const presetDefaultDuration = (() => {
+                const firstPreset = presetBtns && presetBtns.length ? presetBtns[0] : null;
+                const fromPreset = parseInt(firstPreset?.dataset?.duration, 10);
+                return Number.isNaN(fromPreset) ? 0 : fromPreset;
+            })();
+            const fallbackDuration = initialDuration > 0 ? initialDuration : 180;
+            let selectedDuration = presetDefaultDuration > 0 ? presetDefaultDuration : fallbackDuration;
 
             function parseDuration(value) {
-                if (!value || typeof value !== 'string') return 180;
+                if (!value || typeof value !== 'string') return 0;
                 const [minutesText, secondsText] = value.trim().split(':');
                 const minutes = parseInt(minutesText, 10);
                 const seconds = parseInt(secondsText, 10);
-                if (Number.isNaN(minutes) || Number.isNaN(seconds)) return 180;
+                if (Number.isNaN(minutes) || Number.isNaN(seconds)) return 0;
                 return (minutes * 60) + seconds;
             }
             
@@ -369,7 +372,7 @@ function initializePracticeSystem() {
                 if (timerDisplay) {
                     const minutes = Math.floor(remainingTime / 60);
                     const seconds = remainingTime % 60;
-                    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 }
             }
             
@@ -411,6 +414,8 @@ function initializePracticeSystem() {
                     });
                 });
             }
+
+            updateTimerDisplay();
         });
     });
 
@@ -469,7 +474,7 @@ function createAudioFullscreenContainer() {
             <h3 class="audio-fullscreen__title"></h3>
         </div>
         <div class="audio-fullscreen__timer">
-            <span class="audio-fullscreen__time">00:00</span>
+            <span class="audio-fullscreen__time">0:00</span>
         </div>
         <div class="audio-fullscreen__controls">
             <button class="audio-fullscreen__control audio-fullscreen__play-pause">Старт</button>
