@@ -222,3 +222,38 @@ if (!function_exists('yoga_register_homepage_section_toggles')) {
 
 add_action('acf/init', 'yoga_register_homepage_section_toggles');
 
+if (!function_exists('yoga_register_theme_cta_fields')) {
+    function yoga_register_theme_cta_fields() {
+        if (!function_exists('acf_add_local_field_group')) {
+            return;
+        }
+
+        acf_add_local_field_group(array(
+            'key' => 'group_theme_cta_fields',
+            'title' => 'Тексты кнопок покупки',
+            'fields' => array(
+                array(
+                    'key' => 'field_purchase_cta_text',
+                    'label' => 'Текст CTA покупки',
+                    'name' => 'purchase_cta_text',
+                    'type' => 'text',
+                    'default_value' => 'Выбрать тариф',
+                    'placeholder' => 'Выбрать тариф',
+                    'instructions' => 'Единый текст для кнопок покупки/подписки в теме.',
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param' => 'options_page',
+                        'operator' => '==',
+                        'value' => 'theme-general-settings',
+                    ),
+                ),
+            ),
+        ));
+    }
+}
+
+add_action('acf/init', 'yoga_register_theme_cta_fields');
+
