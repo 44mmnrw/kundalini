@@ -42,6 +42,15 @@
 							} else {
 								$user_initial = strtoupper(substr($user_source_name, 0, 1));
 							}
+							$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
+							$user_avatar_html = $user_avatar_id > 0
+								? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
+									'class' => 'lk-login-btn__avatar',
+									'alt' => '',
+									'loading' => 'lazy',
+									'decoding' => 'async',
+								))
+								: '';
 						?>
 						<div class="notification-icon">
 							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/notification-icon.png'); ?>" alt="Уведомления">
@@ -58,7 +67,11 @@
 						</div>
 						<div class="lk-header-main__buttons">
 							<div class="lk-login-btn">
-								<span><?php echo esc_html($user_initial); ?></span>
+								<?php if ($user_avatar_html) : ?>
+									<?php echo $user_avatar_html; ?>
+								<?php else : ?>
+									<span><?php echo esc_html($user_initial); ?></span>
+								<?php endif; ?>
 							</div>
 							<div class="lk-burger">
 								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/burger-lk-icon.png'); ?>" alt="Меню" class="active">

@@ -380,6 +380,12 @@
   color: #fff;
   font-size: 1.125rem;  font-family: "Mulish-SemiBold", sans-serif;
 }
+.lk-login-btn__avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 .personal-status {
   position: relative;
