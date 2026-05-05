@@ -1,16 +1,38 @@
 <?php
 // Получаем настройки из ACF
 $new_title = get_field('blog_new_title', 'option');
-$main_post = get_field('blog_main_post', 'option');
-$secondary_post = get_field('blog_secondary_post', 'option');
-$popular_title = get_field('blog_popular_title', 'option');
 $posts_count = get_field('blog_posts_count', 'option') ?: 9;
 $blog_category = get_category_by_slug('blog');
-// Получаем текущие посты
+
+// Верхний блок "Новое": автоматически берём 2 последних поста по дате.
+$latest_posts_query = new WP_Query(array(
+    'post_type' => 'post',
+    'posts_per_page' => 2,
+    'post_status' => 'publish',
+    'orderby' => 'date',
+    'order' => 'DESC',
+    'ignore_sticky_posts' => true,
+));
+
+$main_post = null;
+$secondary_post = null;
+$exclude_ids = array();
+
+if (!empty($latest_posts_query->posts)) {
+    $main_post = isset($latest_posts_query->posts[0]) ? $latest_posts_query->posts[0]->ID : null;
+    $secondary_post = isset($latest_posts_query->posts[1]) ? $latest_posts_query->posts[1]->ID : null;
+    $exclude_ids = array_filter(array($main_post, $secondary_post));
+}
+
+// Нижний список: продолжаем после первых 2 постов.
 $current_posts = new WP_Query(array(
     'post_type' => 'post',
     'posts_per_page' => $posts_count,
-    'post_status' => 'publish'
+    'post_status' => 'publish',
+    'orderby' => 'date',
+    'order' => 'DESC',
+    'ignore_sticky_posts' => true,
+    'post__not_in' => $exclude_ids,
 ));
 ?>
 
@@ -22,7 +44,7 @@ $current_posts = new WP_Query(array(
                     <?php echo esc_html($new_title ?: 'Новое'); ?>
                 </h3>
                 <b>
-                    Найдено практик: <?php echo $current_posts->found_posts; ?>
+                    Найдено практик: <?php echo (int) $latest_posts_query->found_posts; ?>
                 </b>
             </div>
         </div>
@@ -113,11 +135,13 @@ $current_posts = new WP_Query(array(
         
         <div class="row">
             <div class="blog-articles">
+                <?php
+                /*
                 <div class="blog-articles__intro">
-                    <h3>
-                        <?php echo esc_html($popular_title ?: 'Популярное'); ?>
-                    </h3>
+                    <h3>Популярное</h3>
                 </div>
+                */
+                ?>
                 
                 <div class="blog-articles__items">
                     <?php if ($current_posts->have_posts()) : ?>
@@ -172,3 +196,4 @@ $current_posts = new WP_Query(array(
         </div>
     </div>
 </section>
+<?php wp_reset_postdata(); ?>
