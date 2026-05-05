@@ -609,21 +609,92 @@ function yoga_subscribe_handler() {
 	}
 	add_action('wp_enqueue_scripts', 'yoga_ajax_localization');
 	
+if (!function_exists('yoga_get_user_public_name')) {
+	function yoga_get_user_public_name(int $user_id): string {
+		if ($user_id <= 0) {
+			return '';
+		}
+
+		$user = get_userdata($user_id);
+		if (!$user) {
+			return '';
+		}
+
+		$first_name = trim((string) get_user_meta($user_id, 'first_name', true));
+		$last_name = trim((string) get_user_meta($user_id, 'last_name', true));
+		$full_name = trim($first_name . ' ' . $last_name);
+
+		if ($full_name !== '') {
+			return $full_name;
+		}
+		if ($first_name !== '') {
+			return $first_name;
+		}
+		if (!empty($user->display_name)) {
+			return (string) $user->display_name;
+		}
+
+		return (string) $user->user_login;
+	}
+}
+
+if (!function_exists('yoga_get_user_avatar_html')) {
+	function yoga_get_user_avatar_html(int $user_id, int $size = 60, string $class = 'avatar'): string {
+		if ($user_id > 0 && function_exists('get_field')) {
+			$avatar_id = (int) get_field('user_avatar', 'user_' . $user_id);
+			if ($avatar_id > 0) {
+				$attachment = wp_get_attachment_image(
+					$avatar_id,
+					array($size, $size),
+					false,
+					array(
+						'class' => $class,
+						'alt' => '',
+						'loading' => 'lazy',
+						'decoding' => 'async',
+					)
+				);
+				if (!empty($attachment)) {
+					return $attachment;
+				}
+			}
+		}
+
+		return get_avatar($user_id, $size, '', '', array('class' => $class));
+	}
+}
+
 // Определяем автора
 // Axecode.tech: шаблон комментария с разделением собственных/чужих действий.
 // Зачем: один рендер-блок для списка, редактирования и ответа без дублирования HTML.
 function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = (is_user_logged_in() && get_current_user_id() == $comment->user_id);
+    $comment_user_id = (int) $comment->user_id;
+    $comment_author_name = trim((string) $comment->comment_author);
+
+    if ($comment_user_id > 0) {
+        $resolved_author_name = yoga_get_user_public_name($comment_user_id);
+        if ($resolved_author_name !== '') {
+            $comment_author_name = $resolved_author_name;
+        }
+    }
+    if ($comment_author_name === '') {
+        $comment_author_name = 'Пользователь';
+    }
+
+    $comment_avatar_html = $comment_user_id > 0
+        ? yoga_get_user_avatar_html($comment_user_id, 60, 'avatar')
+        : get_avatar($comment, 60, '', '', array('class' => 'avatar'));
     ?>
     <div class="praktika-comment <?php echo ($depth > 0) ? 'sub-answer' : ''; ?>" id="comment-<?php comment_ID(); ?>">
         <div class="praktika-comment-item <?php echo $is_own_comment ? 'praktika-comment-item_own' : ''; ?>">
             <div class="praktika-comment-item__main">
                 <div class="praktika-comment-img">
-                    <?php echo get_avatar($comment, 60, '', '', array('class' => 'avatar')); ?>
+                    <?php echo $comment_avatar_html; ?>
                 </div>
                 <b class="praktika-comment-name">
-                    <?php comment_author(); ?>
+                    <?php echo esc_html($comment_author_name); ?>
                 </b>
                 <span class="praktika-comment-time">
                     <?php printf(_x('%s назад', '%s = human-readable time difference', 'textdomain'), human_time_diff(get_comment_time('U'), current_time('timestamp'))); ?>
@@ -650,7 +721,14 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                 if ($comment->comment_parent != 0) {
                     $parent_comment = get_comment($comment->comment_parent);
                     if ($parent_comment) {
-                        echo '<b>@' . $parent_comment->comment_author . '</b> ';
+                        $parent_author_name = trim((string) $parent_comment->comment_author);
+                        if ((int) $parent_comment->user_id > 0) {
+                            $resolved_parent_name = yoga_get_user_public_name((int) $parent_comment->user_id);
+                            if ($resolved_parent_name !== '') {
+                                $parent_author_name = $resolved_parent_name;
+                            }
+                        }
+                        echo '<b>@' . esc_html($parent_author_name) . '</b> ';
                     }
                 }
                 comment_text(); 
@@ -675,7 +753,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
         <div class="praktika-comment__answer hidden" id="reply-form-<?php echo $comment->comment_ID; ?>">
             <div class="answer-main">
                 <div class="answer-main__image">
-                    <?php echo get_avatar(get_current_user_id(), 40); ?>
+                    <?php echo yoga_get_user_avatar_html(get_current_user_id(), 40, 'avatar'); ?>
                 </div>
                 <textarea name="reply_content" class="input textarea-resize" placeholder="Ваш ответ" rows="1"></textarea>
                 <button type="button" class="btn">
@@ -719,7 +797,10 @@ function handle_custom_comment() {
     // Добавление комментариев (только для зарегистрированных пользователей)
     if (is_user_logged_in()) {
         $current_user = wp_get_current_user();
-        $comment_author = $current_user->display_name ?: $current_user->user_login;
+        $comment_author = yoga_get_user_public_name((int) $current_user->ID);
+        if ($comment_author === '') {
+            $comment_author = $current_user->display_name ?: $current_user->user_login;
+        }
         $comment_author_email = $current_user->user_email;
         $user_id = $current_user->ID;
     } else {
@@ -783,7 +864,10 @@ function handle_comment_reply() {
     // Кастомизация аватаров
     if (is_user_logged_in()) {
         $current_user = wp_get_current_user();
-        $comment_author = $current_user->display_name ?: $current_user->user_login;
+        $comment_author = yoga_get_user_public_name((int) $current_user->ID);
+        if ($comment_author === '') {
+            $comment_author = $current_user->display_name ?: $current_user->user_login;
+        }
         $comment_author_email = $current_user->user_email;
         $user_id = $current_user->ID;
     } else {
