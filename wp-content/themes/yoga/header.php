@@ -78,9 +78,22 @@
 								} else {
 									$user_initial = strtoupper(substr($user_source_name, 0, 1));
 								}
+								$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
+								$user_avatar_html = $user_avatar_id > 0
+									? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
+										'class' => 'login-icon__avatar',
+										'alt' => '',
+										'loading' => 'lazy',
+										'decoding' => 'async',
+									))
+									: '';
 							?>
 							<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon login-icon_logged" aria-label="<?php echo esc_attr__('Личный кабинет', 'yoga'); ?>">
-								<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
+								<?php if ($user_avatar_html) : ?>
+									<?php echo $user_avatar_html; ?>
+								<?php else : ?>
+									<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
+								<?php endif; ?>
 							</a>
 							<?php else: ?>
 							<div class="login-icon modal-call_login">

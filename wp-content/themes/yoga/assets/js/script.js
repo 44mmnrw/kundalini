@@ -2523,7 +2523,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// Удаление аватара
-	$('.photo-input-delete').on('click', function() {
+	$(document).on('click', '.photo-input-delete', function() {
 		if (confirm('Удалить аватар?')) {
 			$.ajax({
 				url: yoga_ajax.ajax_url,
@@ -2535,7 +2535,12 @@ jQuery(document).ready(function($) {
 				success: function(response) {
 					if (response.success) {
 						location.reload();
+					} else {
+						showNotification((response && response.data) ? response.data : 'Не удалось удалить аватар', 'error');
 					}
+				},
+				error: function() {
+					showNotification('Ошибка соединения', 'error');
 				}
 			});
 		}

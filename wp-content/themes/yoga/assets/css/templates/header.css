@@ -169,6 +169,12 @@ header {
   font-size: 1.125rem;
   line-height: 1.4;
 }
+.login-icon__avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
 .login-icon:hover {
   background: var(--color-green);
 }

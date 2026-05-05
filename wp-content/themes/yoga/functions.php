@@ -2087,6 +2087,20 @@ function handle_comment_delete() {
 		}
 		
 		$user_id = get_current_user_id();
+		$avatar_id = (int) get_field('user_avatar', 'user_' . $user_id);
+
+		if ($avatar_id > 0) {
+			if (function_exists('delete_field')) {
+				delete_field('user_avatar', 'user_' . $user_id);
+			} else {
+				delete_user_meta($user_id, 'user_avatar');
+			}
+
+			if (get_post_type($avatar_id) === 'attachment') {
+				wp_delete_attachment($avatar_id, true);
+			}
+		}
+
 		delete_user_meta($user_id, 'simple_local_avatar');
 		
 		wp_send_json_success('Аватар удален');
