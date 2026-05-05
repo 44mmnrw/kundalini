@@ -73,7 +73,7 @@
 									</div>
                                     <div class="lk-form-item">
                                         <h5>Телефон</h5>
-                                        <input type="text" class="input input_phone" placeholder="+7 (999) 999 99 99" name="phone" value="<?php echo esc_attr(get_user_meta($current_user->ID, 'phone', true)); ?>">
+                                        <input type="text" class="input input_phone" name="phone" value="<?php echo esc_attr(get_user_meta($current_user->ID, 'phone', true)); ?>">
 									</div>
                                     <div class="lk-form-item">
                                         <h5>Дата рождения</h5>

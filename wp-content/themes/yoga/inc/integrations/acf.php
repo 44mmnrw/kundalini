@@ -205,6 +205,14 @@ if (!function_exists('yoga_register_homepage_section_toggles')) {
                     'ui' => 1,
                     'default_value' => 1,
                 ),
+                array(
+                    'key' => 'field_show_review_people_photos',
+                    'label' => 'Показывать фото людей в отзывах',
+                    'name' => 'show_review_people_photos',
+                    'type' => 'true_false',
+                    'ui' => 1,
+                    'default_value' => 1,
+                ),
             ),
             'location' => array(
                 array(

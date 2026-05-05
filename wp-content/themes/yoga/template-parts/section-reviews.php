@@ -6,6 +6,12 @@ $reviews_title = get_field('reviews_title', get_the_ID()) ?: 'отзывы';
 $reviews_decor = get_field('reviews_decor', get_the_ID());
 $reviews_items = get_field('reviews_items', get_the_ID());
 $review_people = get_field('review_people', get_the_ID());
+$reviews_source_id = (int) get_option('page_on_front');
+if ($reviews_source_id <= 0) {
+    $reviews_source_id = (int) get_the_ID();
+}
+$raw_show_review_people_photos = get_field('show_review_people_photos', $reviews_source_id);
+$show_review_people_photos = ($raw_show_review_people_photos === null || $raw_show_review_people_photos === '') ? true : (bool) $raw_show_review_people_photos;
 ?>
 
 <section class="section-reviews" id="section-reviews">
@@ -60,7 +66,7 @@ $review_people = get_field('review_people', get_the_ID());
                                     </span>
                                 <?php endif; ?>
                                 
-                                <?php if ($review_people) : ?>
+                                <?php if ($show_review_people_photos && $review_people) : ?>
                                     <div class="review-people">
                                         <?php foreach ($review_people as $person) : ?>
                                             <div class="review-people__item">
@@ -88,7 +94,7 @@ $review_people = get_field('review_people', get_the_ID());
                             <div class="review-info wow fadeIn delay-200ms">
                                 <p>«Никаких эмоциональных качелей, тяги на поесть у меня не было. Единственное что в начале я могла встать в 5 утра и сделать практику, а после начала практики по Киртан Крий свалилась на вечернее время. Я прям ощущала как в мозгу после КК начиналось такое кружение, как перезагрузка...»</p>
                                 <span class="review-expand modal-call modal-call_review">Развернуть</span>
-                                <?php if ($review_people) : ?>
+                                <?php if ($show_review_people_photos && $review_people) : ?>
                                     <div class="review-people">
                                         <?php foreach ($review_people as $person) : ?>
                                             <div class="review-people__item">
@@ -96,7 +102,7 @@ $review_people = get_field('review_people', get_the_ID());
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
-                                <?php else : ?>
+                                <?php elseif ($show_review_people_photos) : ?>
                                     <div class="review-people">
                                         <?php for ($i = 1; $i <= 8; $i++) : ?>
                                             <div class="review-people__item">

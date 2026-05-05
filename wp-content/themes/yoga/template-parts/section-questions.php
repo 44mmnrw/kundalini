@@ -1,9 +1,50 @@
+<?php
+$faq_source_id = (int) get_option('page_on_front');
+if ($faq_source_id <= 0) {
+    $faq_source_id = (int) get_the_ID();
+}
+
+$questions_title = trim((string) get_field('questions_title', $faq_source_id));
+if ($questions_title === '') {
+    $questions_title = trim((string) get_field('questions_title', 'option'));
+}
+if ($questions_title === '') {
+    $questions_title = trim((string) get_field('faq_title', $faq_source_id));
+}
+if ($questions_title === '') {
+    $questions_title = trim((string) get_field('faq_title', 'option'));
+}
+if ($questions_title === '') {
+    $questions_title = 'ЧАСТЫЕ ВОПРОСЫ';
+}
+
+$faq_quote = trim((string) get_field('faq_quote', $faq_source_id));
+if ($faq_quote === '') {
+    $faq_quote = trim((string) get_field('faq_quote', 'option'));
+}
+if ($faq_quote === '') {
+    $faq_quote = 'Йога – это искусство слушать свое тело, ум и душу, находя гармонию между ними.';
+}
+
+$faq_items = get_field('faq_items', $faq_source_id);
+if (empty($faq_items)) {
+    $faq_items = get_field('faq_items', 'option');
+}
+
+$questions_more_link = trim((string) get_field('questions_more_link', $faq_source_id));
+if ($questions_more_link === '') {
+    $questions_more_link = trim((string) get_field('questions_more_link', 'option'));
+}
+if ($questions_more_link === '') {
+    $questions_more_link = '/faq/';
+}
+?>
 <section class="section-questions" id="section-questions">
     <div class="container">
         <div class="row">
             <div class="questions-main">
                 <h2 class="wow flipInX delay-200ms">
-                    <?php echo esc_html(get_field('faq_title', 'option') ?: 'ВОПРОС-ОТВЕТ'); ?>
+                    <?php echo esc_html($questions_title); ?>
                 </h2>
             </div>    
         </div>
@@ -34,7 +75,7 @@
                                 </svg>
                             </span>
                             <b>
-                                <?php echo esc_html(get_field('faq_quote', 'option') ?: 'Йога – это искусство слушать свое тело, ум и душу, находя гармонию между ними.'); ?>
+                                <?php echo esc_html($faq_quote); ?>
                             </b>
                             <span class="questions-quote__mark questions-quote__mark_close" aria-hidden="true">
                                 <svg aria-hidden="true">
@@ -48,7 +89,6 @@
                 <div class="questions-answers">
                     <div class="questions-items">
                         <?php
-                        $faq_items = get_field('faq_items', 'option');
                         if ($faq_items) :
                             $counter = 1;
                             foreach ($faq_items as $index => $item) :
@@ -116,7 +156,7 @@
                         ?>
                     </div>
                     
-                    <a href="<?php echo esc_html(get_field('questions_more_link') ?: '/faq/'); ?>" class="questions-answers__more wow fadeIn delay-200ms">
+                    <a href="<?php echo esc_url($questions_more_link); ?>" class="questions-answers__more wow fadeIn delay-200ms">
                         <span>Ещё</span>
                     </a>
                 </div>
