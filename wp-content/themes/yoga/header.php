@@ -55,11 +55,11 @@
 								}
 								if (is_user_logged_in()) : ?>
 							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white">
-								<span>Попробовать бесплатно</span>
+								<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
 							</a>
 							<?php else : ?>
 							<div class="btn btn_white modal-call_login">
-								<span>Попробовать бесплатно</span>
+								<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
 							</div>
 							<?php endif; endif; ?>
 							<?php if (is_user_logged_in()): ?>

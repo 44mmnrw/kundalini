@@ -3,7 +3,7 @@
  * Секция "Видео"
  */
 $videos_items = get_field('videos_items', get_the_ID());
-$videos_button_text = get_field('videos_button_text', get_the_ID()) ?: 'Попробовать бесплатно';
+$videos_button_text = yoga_get_purchase_cta_text();
 ?>
 
 <section class="section-videos" id="section-videos">

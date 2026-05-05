@@ -90,7 +90,7 @@
 			</div>
 		</div>
         <div class="btn btn_alt modal-call_login">
-            <span><?php _e('Попробовать бесплатно', 'yoga'); ?></span>
+            <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
 		</div>
 	</div>
 </div>

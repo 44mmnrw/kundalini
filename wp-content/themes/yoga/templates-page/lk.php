@@ -527,7 +527,7 @@
 										<div class="subscribe-cta">
 											<p>У вас нет активной подписки. Выберите подходящий тариф:</p>
 											<a href="<?php echo esc_url($tariffs_url); ?>" class="btn">
-												<span>ВЫБРАТЬ ТАРИФ</span>
+												<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
 											</a>
 										</div>
 									</div>

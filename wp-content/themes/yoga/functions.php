@@ -50,6 +50,16 @@
 			}
 		}
 	}
+	if (!function_exists('yoga_get_purchase_cta_text')) {
+		function yoga_get_purchase_cta_text(): string {
+			$default_text = 'Выбрать тариф';
+			if (!function_exists('get_field')) {
+				return $default_text;
+			}
+			$text = trim((string) get_field('purchase_cta_text', 'option'));
+			return $text !== '' ? $text : $default_text;
+		}
+	}
 	if (!function_exists('yoga_ajax_error')) {
 		// Plyr JS - загружаем первым
 		// Axecode.tech: единый формат ошибок AJAX.

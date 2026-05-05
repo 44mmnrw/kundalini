@@ -141,7 +141,7 @@
                 ?>
                 
                 <button type="submit" class="btn btn_icon single_add_to_cart_button">
-                  <span>начать бесплатно</span>
+                  <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                   <div class="btn-icon">
                     <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
                       <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
