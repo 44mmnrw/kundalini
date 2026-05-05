@@ -24,12 +24,6 @@
                 <div class="lk__slides">
                     <!-- Слайд "Мои данные" -->
                     <div class="lk-slide active" data-target="1">
-                        <div class="ways">
-                            <ul>
-                                <li><a href="<?php echo home_url(); ?>" class="ways-item ref">Главная</a></li>
-                                <li><a href="#" class="ways-item ref">Мои данные</a></li>
-							</ul>
-						</div>
                         <h2>Мои данные</h2>
                         <div class="lk-slide__content">
                             <form action="#" class="lk-form" id="profile-form" enctype="multipart/form-data">
@@ -169,20 +163,6 @@
                     
                     <!-- Остальные слайды будут здесь -->
 					<div class="lk-slide" data-target="2">
-						<div class="ways">
-							<ul>
-								<li>
-									<a href="index.html" class="ways-item ref">
-										Главная
-									</a>
-								</li>
-								<li>
-									<a href="#" class="ways-item ref">
-										История практик
-									</a>
-								</li>
-							</ul>
-						</div>
 						<h2>
 							История пройденных практик
 						</h2>
@@ -192,20 +172,6 @@
 					</div>
 					
 					<div class="lk-slide" data-target="3">
-						<div class="ways">
-							<ul>
-								<li>
-									<a href="index.html" class="ways-item ref">
-										Главная
-									</a>
-								</li>
-								<li>
-									<a href="#" class="ways-item ref">
-										Избранное
-									</a>
-								</li>
-							</ul>
-						</div>
 						<h2>
 							Избранное
 						</h2>
@@ -281,12 +247,6 @@
 					
 					<!-- Слайд "Рекомендации" -->
 					<div class="lk-slide" data-target="4">
-						<div class="ways">
-							<ul>
-								<li><a href="<?php echo home_url(); ?>" class="ways-item ref">Главная</a></li>
-								<li><a href="#" class="ways-item ref">Рекомендации</a></li>
-							</ul>
-						</div>
 						<h2>Рекомендации</h2>
 						<div class="lk-slide__content">
 							<?php
@@ -365,12 +325,6 @@
 					
 					<!-- Слайд "Мои вопросы" -->
 					<div class="lk-slide" data-target="5">
-						<div class="ways">
-							<ul>
-								<li><a href="<?php echo home_url(); ?>" class="ways-item ref">Главная</a></li>
-								<li><a href="#" class="ways-item ref">Мои вопросы</a></li>
-							</ul>
-						</div>
 						<h2>Мои вопросы</h2>
 						<div class="lk-slide__content">
 							<div class="lk-questions-form">
@@ -424,12 +378,6 @@
 					
 					<!-- Слайд "Настройки подписки" -->
 					<div class="lk-slide" data-target="6">
-						<div class="ways">
-							<ul>
-								<li><a href="<?php echo home_url(); ?>" class="ways-item ref">Главная</a></li>
-								<li><a href="#" class="ways-item ref">Настройки подписки</a></li>
-							</ul>
-						</div>
 						<div class="lk-slide__content">
 							<div class="lk-settings">
 								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1">
