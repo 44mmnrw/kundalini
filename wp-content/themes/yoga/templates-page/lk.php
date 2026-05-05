@@ -527,7 +527,7 @@
 										<div class="subscribe-cta">
 											<p>У вас нет активной подписки. Выберите подходящий тариф:</p>
 											<a href="<?php echo esc_url($tariffs_url); ?>" class="btn">
-												<span>Выбрать тариф</span>
+												<span>ВЫБРАТЬ ТАРИФ</span>
 											</a>
 										</div>
 									</div>

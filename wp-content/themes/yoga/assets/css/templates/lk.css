@@ -463,6 +463,9 @@
 .lk-settings-part {
   width: 100%;
   padding-top: 0.9375rem;}
+.lk-settings .subscribe-cta .btn span {
+  text-transform: uppercase;
+}
 .lk-settings-part h4 {
   display: block;
   margin-top: 2.125rem;  padding-bottom: 0.5rem;}
