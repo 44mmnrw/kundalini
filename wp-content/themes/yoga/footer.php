@@ -66,7 +66,7 @@
 					</li>
 				</ul>
 				<span class="footer-rules wow fadeIn delay-200ms">
-					<?php echo date('Y'); ?> © <?php the_field('copyright_text', 'option'); ?>
+					©<?php echo wp_date('Y'); ?> <?php the_field('copyright_text', 'option'); ?>
 				</span>
 			</div>
 		</div>
