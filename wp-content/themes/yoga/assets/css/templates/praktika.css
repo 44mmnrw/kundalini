@@ -276,6 +276,18 @@ display: block !important;
   font-weight: normal !important;
   color: var(--color-violet);
 }
+.exercise-item__info-details .exercise-time-label {
+  font-family: "Mulish-SemiBold", sans-serif;
+  color: var(--color-black);
+}
+.exercise-item__info-details .exercise-time-value {
+  color: var(--color-violet);
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+}
+.exercise-item__info-details .exercise-time-unit {
+  color: var(--color-black);
+}
 
 .exercise-switches {
   display: flex;
@@ -445,6 +457,24 @@ display: block !important;
 .player__plug img {
   display: block;
   width: 100%;
+}
+.player__plug .exercise-player[data-media-type=video] {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 1.875rem;
+  overflow: hidden;
+  background: #000;
+}
+.player__plug .exercise-player[data-media-type=video] > video,
+.player__plug .exercise-player[data-media-type=video] .plyr,
+.player__plug .exercise-player[data-media-type=video] .plyr__video-wrapper,
+.player__plug .exercise-player[data-media-type=video] .plyr__video-wrapper video {
+  width: 100%;
+  height: 100%;
+}
+.player__plug .exercise-player[data-media-type=video] .plyr__controls {
+  display: none !important;
 }
 
 .selected-text {

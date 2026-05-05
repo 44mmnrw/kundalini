@@ -117,7 +117,15 @@ function initializePracticeSystem() {
             if (playerElement) {
                 const mediaElement = playerElement.querySelector('audio, video');
                 if (mediaElement) {
-                    player = new Plyr(mediaElement);
+                    const isVideo = mediaElement.tagName === 'VIDEO';
+                    const playerOptions = isVideo
+                        ? {
+                            controls: [],
+                            clickToPlay: true,
+                            hideControls: true
+                        }
+                        : {};
+                    player = new Plyr(mediaElement, playerOptions);
                     
                     // Сохраняем ссылку на плеер для глобального доступа
                     window.activePlayers[`${exerciseId}_${versionType}`] = player;
