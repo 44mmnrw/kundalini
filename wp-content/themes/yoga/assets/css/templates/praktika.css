@@ -473,8 +473,20 @@ display: block !important;
   width: 100%;
   height: 100%;
 }
+.player__plug .exercise-player[data-media-type=video] .plyr__video-wrapper {
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
 .player__plug .exercise-player[data-media-type=video] .plyr__controls {
   display: none !important;
+}
+.player__plug .exercise-player[data-media-type=video] .plyr__control--overlaid {
+  display: none !important;
+}
+.player__plug .exercise-player[data-media-type=video] .plyr,
+.player__plug .exercise-player[data-media-type=video] .plyr__video-wrapper,
+.player__plug .exercise-player[data-media-type=video] .plyr__poster {
+  transition: none !important;
 }
 
 .selected-text {
