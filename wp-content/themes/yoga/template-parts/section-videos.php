@@ -84,8 +84,12 @@ $videos_button_text = get_field('videos_button_text', get_the_ID()) ?: 'Попр
                     <div class="btn btn_icon modal-call_login">
                         <span><?php echo esc_html($videos_button_text); ?></span>
                         <div class="btn-icon">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/btn-arrow_black.png'); ?>" alt="" class="active">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/btn-arrow_green.png'); ?>" alt="">
+                            <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            </svg>
+                            <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            </svg>
                         </div>
                     </div> 
                 </div>

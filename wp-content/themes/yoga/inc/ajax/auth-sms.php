@@ -23,6 +23,12 @@ add_action('wp_ajax_nopriv_yoga_email_register', 'handle_yoga_email_register');
 add_action('wp_ajax_yoga_lost_password', 'handle_yoga_lost_password');
 add_action('wp_ajax_nopriv_yoga_lost_password', 'handle_yoga_lost_password');
 
+if (!function_exists('yoga_get_registration_role')) {
+    function yoga_get_registration_role() {
+        return get_role('customer') instanceof WP_Role ? 'customer' : 'subscriber';
+    }
+}
+
 if (!function_exists('handle_yoga_email_login')) {
     function handle_yoga_email_login() {
         check_ajax_referer('yoga_login_nonce', 'yoga_login_nonce');
@@ -47,11 +53,6 @@ if (!function_exists('handle_yoga_email_register')) {
     function handle_yoga_email_register() {
         check_ajax_referer('yoga_register_nonce', 'yoga_register_nonce');
 
-        $recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
-        if (!verify_recaptcha($recaptcha_response)) {
-            yoga_ajax_error('Пожалуйста, подтвердите, что вы не робот', 'captcha_failed', 422);
-        }
-
         $email = sanitize_email($_POST['user_email']);
         $name = sanitize_text_field($_POST['user_name']);
         $pass = $_POST['user_pass'];
@@ -68,7 +69,14 @@ if (!function_exists('handle_yoga_email_register')) {
         if (is_wp_error($user_id)) {
             yoga_ajax_error($user_id->get_error_message(), 'registration_failed', 500);
         }
-        wp_update_user(array('ID' => $user_id, 'display_name' => $name));
+        wp_update_user(array(
+            'ID' => $user_id,
+            'display_name' => $name,
+            'role' => yoga_get_registration_role(),
+        ));
+        if ($name !== '') {
+            update_user_meta($user_id, 'first_name', $name);
+        }
 
         $site_name = get_bloginfo('name');
         $login_url = wp_login_url(home_url('/'));
@@ -81,7 +89,11 @@ if (!function_exists('handle_yoga_email_register')) {
             $site_name
         );
         $headers = array('Content-Type: text/plain; charset=UTF-8');
-        wp_mail($email, $subject, $message, $headers);
+        try {
+            wp_mail($email, $subject, $message, $headers);
+        } catch (Throwable $e) {
+            // Registration should not fail if mail transport is unavailable.
+        }
 
         wp_set_auth_cookie($user_id);
         yoga_ajax_success('Регистрация выполнена');
@@ -91,11 +103,6 @@ if (!function_exists('handle_yoga_email_register')) {
 if (!function_exists('handle_yoga_lost_password')) {
     function handle_yoga_lost_password() {
         check_ajax_referer('yoga_recovery_nonce', 'yoga_recovery_nonce');
-
-        $recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
-        if (!verify_recaptcha($recaptcha_response)) {
-            yoga_ajax_error('Пожалуйста, подтвердите, что вы не робот', 'captcha_failed', 422);
-        }
 
         $login = sanitize_text_field($_POST['user_login']);
         if (empty($login)) {
@@ -180,6 +187,10 @@ if (!function_exists('login_or_register_user')) {
         if (!$user) {
             $user_id = wp_create_user($username, wp_generate_password(), '');
             if (!is_wp_error($user_id)) {
+                wp_update_user(array(
+                    'ID' => $user_id,
+                    'role' => yoga_get_registration_role(),
+                ));
                 update_user_meta($user_id, 'phone', $phone);
                 $user = get_user_by('id', $user_id);
             }

@@ -1950,11 +1950,21 @@ function handle_comment_delete() {
 	
 	// AJAX обработчик для обновления профиля
 	function add_custom_capabilities() {
+		$version = 'yoga_caps_v1';
+		if (get_option('yoga_caps_version') === $version) {
+			return;
+		}
+		
 		$subscriber = get_role('subscriber');
-		$subscriber->add_cap('read_private_practices');
-		$subscriber->add_cap('edit_user_profile');
+		if ($subscriber instanceof WP_Role) {
+			$subscriber->add_cap('read_private_practices');
+			$subscriber->add_cap('edit_user_profile');
+		}
+		
+		update_option('yoga_caps_version', $version, false);
 	}
-	add_action('init', 'add_custom_capabilities');
+	add_action('after_switch_theme', 'add_custom_capabilities');
+	add_action('admin_init', 'add_custom_capabilities');
 	
 	// Логируем запрос для отладки
 	// Проверяем nonce

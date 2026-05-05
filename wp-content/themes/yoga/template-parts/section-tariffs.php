@@ -143,8 +143,12 @@
                 <button type="submit" class="btn btn_icon single_add_to_cart_button">
                   <span>начать бесплатно</span>
                   <div class="btn-icon">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/btn-arrow_black.png'); ?>" alt="" class="active">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/btn-arrow_green.png'); ?>" alt="">
+                    <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
+                      <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                    </svg>
+                    <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                      <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                    </svg>
                   </div>
                 </button>
               </form>
