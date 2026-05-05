@@ -573,6 +573,10 @@ display: block !important;
   opacity: 0.4;
   pointer-events: none;
 }
+.comment-form-main form.active .btn:hover {
+  background: var(--color-green);
+  color: var(--color-black);
+}
 
 .comments-items {
   width: 100%;
