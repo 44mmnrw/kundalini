@@ -45,7 +45,10 @@
                         
                         // Если это категория записи и у записи есть архив
                         if (is_category() && $taxonomy->object_type[0] == 'post') {
-                            echo '<li><a href="' . esc_url(get_post_type_archive_link('post')) . '" class="ways-item ref">Блог</a></li>';
+                            $is_blog_root_category = isset($current_term->slug) && $current_term->slug === 'blog';
+                            if (!$is_blog_root_category) {
+                                echo '<li><a href="' . esc_url(get_post_type_archive_link('post')) . '" class="ways-item ref">Блог</a></li>';
+                            }
                         } 
                         // Если это пользовательская таксономия
                         elseif (!empty($taxonomy->object_type)) {
