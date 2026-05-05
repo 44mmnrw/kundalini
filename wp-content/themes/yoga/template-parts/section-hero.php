@@ -18,8 +18,12 @@
                     <div class="btn btn_alt btn_icon modal-call_login">
                         <span>Попробовать бесплатно</span>
                         <div class="btn-icon">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/btn-arrow_black.png'); ?>" alt="" class="active">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/btn-arrow_green.png'); ?>" alt="">
+                            <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            </svg>
+                            <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            </svg>
                         </div>
                     </div>
                     <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/main-decor.png'); ?>" alt="" class="main__info-decor animated rollIn slower delay-300ms">

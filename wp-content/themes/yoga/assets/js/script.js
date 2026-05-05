@@ -1194,38 +1194,36 @@
 		var $form = $(this);
 		var $btn = $form.find('label[for="login-reg-btn"]');
 		if (typeof yoga_ajax === 'undefined') return;
-		
-		// Получаем токен reCAPTCHA
-		var recaptchaWidgetId = window.recaptchaWidgets && window.recaptchaWidgets.register;
-		var recaptchaResponse = '';
-		var hasRecaptcha = $('#recaptcha-register').length > 0;
-		if (hasRecaptcha && typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== undefined) {
-			recaptchaResponse = grecaptcha.getResponse(recaptchaWidgetId);
-			if (!recaptchaResponse) {
-				alert('Пожалуйста, подтвердите, что вы не робот');
-				return;
+		var extractAjaxError = function(xhr, fallbackText) {
+			var json = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+			if (json && json.data) {
+				if (typeof json.data === 'string') return json.data;
+				if (json.data.message) return json.data.message;
 			}
-		}
-		
+			if (xhr && xhr.responseText) {
+				try {
+					var parsed = JSON.parse(xhr.responseText);
+					if (parsed && parsed.data) {
+						if (typeof parsed.data === 'string') return parsed.data;
+						if (parsed.data.message) return parsed.data.message;
+					}
+				} catch (err) {}
+			}
+			return fallbackText;
+		};
+
 		$btn.prop('disabled', true);
-		var formData = $form.serialize();
-		if (recaptchaResponse) {
-			formData += '&g-recaptcha-response=' + encodeURIComponent(recaptchaResponse);
-		}
-		$.post(yoga_ajax.ajax_url, formData)
+		$.post(yoga_ajax.ajax_url, $form.serialize())
 			.done(function(r) {
 				if (r.success) {
 					$('.modal-login').removeClass("active");
 					location.reload();
 				} else {
-					alert(r.data || 'Ошибка регистрации');
-					// Сброс reCAPTCHA при ошибке
-					if (typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== undefined) {
-						grecaptcha.reset(recaptchaWidgetId);
-					}
+					var message = (r && r.data && r.data.message) ? r.data.message : (r.data || 'Ошибка регистрации');
+					alert(message);
 				}
 			})
-			.fail(function() { alert('Ошибка соединения'); })
+			.fail(function(xhr) { alert(extractAjaxError(xhr, 'Ошибка соединения')); })
 			.always(function() { $btn.prop('disabled', false); });
 	});
 	
@@ -1235,38 +1233,36 @@
 		var $form = $(this);
 		var $btn = $form.find('label[for="recovery-btn"]');
 		if (typeof yoga_ajax === 'undefined') return;
-		
-		// Получаем токен reCAPTCHA
-		var recaptchaWidgetId = window.recaptchaWidgets && window.recaptchaWidgets.recovery;
-		var recaptchaResponse = '';
-		var hasRecaptcha = $('#recaptcha-recovery').length > 0;
-		if (hasRecaptcha && typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== undefined) {
-			recaptchaResponse = grecaptcha.getResponse(recaptchaWidgetId);
-			if (!recaptchaResponse) {
-				alert('Пожалуйста, подтвердите, что вы не робот');
-				return;
+		var extractAjaxError = function(xhr, fallbackText) {
+			var json = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+			if (json && json.data) {
+				if (typeof json.data === 'string') return json.data;
+				if (json.data.message) return json.data.message;
 			}
-		}
-		
+			if (xhr && xhr.responseText) {
+				try {
+					var parsed = JSON.parse(xhr.responseText);
+					if (parsed && parsed.data) {
+						if (typeof parsed.data === 'string') return parsed.data;
+						if (parsed.data.message) return parsed.data.message;
+					}
+				} catch (err) {}
+			}
+			return fallbackText;
+		};
+
 		$btn.prop('disabled', true);
-		var formData = $form.serialize();
-		if (recaptchaResponse) {
-			formData += '&g-recaptcha-response=' + encodeURIComponent(recaptchaResponse);
-		}
-		$.post(yoga_ajax.ajax_url, formData)
+		$.post(yoga_ajax.ajax_url, $form.serialize())
 			.done(function(r) {
 				if (r.success) {
 					$('.modal-login-inner__slide').removeClass("active");
 					$('.modal-login-inner__slide[data-target=4]').addClass("active");
 				} else {
-					alert(r.data || 'Не удалось отправить письмо');
-					// Сброс reCAPTCHA при ошибке
-					if (typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== undefined) {
-						grecaptcha.reset(recaptchaWidgetId);
-					}
+					var message = (r && r.data && r.data.message) ? r.data.message : (r.data || 'Не удалось отправить письмо');
+					alert(message);
 				}
 			})
-			.fail(function() { alert('Ошибка соединения'); })
+			.fail(function(xhr) { alert(extractAjaxError(xhr, 'Ошибка соединения')); })
 			.always(function() { $btn.prop('disabled', false); });
 	});
 	
@@ -2588,7 +2584,23 @@ jQuery(document).ready(function($) {
 					//$this.toggleClass('active');
 					$this.find('img, svg').toggleClass('active');
 					$('.practice-notification').remove();
-					showFavoriteModal((response.data && response.data.message) ? response.data.message : 'Избранное обновлено');
+					var favoriteMessage = (response.data && response.data.message) ? response.data.message : 'Избранное обновлено';
+					var isLkFavoritesContext = $this.closest('.lk-slide[data-target="3"]').length > 0;
+					if (isLkFavoritesContext && favoriteMessage === 'Удалено из избранного') {
+						var $card = $this.closest('.kriyi-item');
+						var $items = $this.closest('.kriyi__items');
+						var $content = $this.closest('.lk-slide__content');
+						$card.remove();
+						if ($items.length && $items.find('.kriyi-item').length === 0) {
+							$content.find('.lk-kriyi').remove();
+							if ($content.find('.no-favorites').length === 0) {
+								$content.append('<div class="no-favorites">У вас пока нет избранных практик</div>');
+							}
+						}
+						showNotification('Удалено из избранного');
+						return;
+					}
+					showFavoriteModal(favoriteMessage);
 				} else if (response.data && response.data.message) {
 					showFavoriteModal(response.data.message);
 				}

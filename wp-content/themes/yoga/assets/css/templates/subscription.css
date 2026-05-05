@@ -76,6 +76,20 @@
 .subscription .form-btn {
   right: 0.625rem;  top: 50%;
   transform: translateY(-50%);
+  transition: transform var(--transition-base), background-color var(--transition-base), color var(--transition-base);
+}
+.subscription .form-btn .subscription-btn-icon {
+  color: var(--color-black);
+  transition: color var(--transition-base);
+}
+.subscription .form-btn:hover,
+.subscription .form-btn:focus-visible {
+  background: var(--color-black);
+  transform: translateY(-50%) rotate(45deg);
+}
+.subscription .form-btn:hover .subscription-btn-icon,
+.subscription .form-btn:focus-visible .subscription-btn-icon {
+  color: var(--color-green);
 }
 
 .subscription-decor {

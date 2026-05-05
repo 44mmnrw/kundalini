@@ -44,8 +44,12 @@
                                 <a href="<?php echo esc_url(get_term_link($parent_term)); ?>"></a>
                                 <span class="modal-menu-item__text">Все практики</span>
                                 <div class="btn-icon">
-                                    <img src="<?php echo esc_url($theme_uri . '/assets/img/btn-arrow_black.png'); ?>" alt="" class="active">
-                                    <img src="<?php echo esc_url($theme_uri . '/assets/img/btn-arrow_green.png'); ?>" alt="">
+                                    <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
+                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                    </svg>
+                                    <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                    </svg>
 								</div>
 								<?php else : ?>
                                 <a href="#"></a>
@@ -73,8 +77,12 @@
 								<a href="<?php echo esc_url(get_term_link($child_term)); ?>"></a>
 								<span class="modal-menu-item__text"><?php echo esc_html($child_term->name); ?></span>
 								<div class="btn-icon">
-									<img src="<?php echo esc_url($theme_uri . '/assets/img/btn-arrow_black.png'); ?>" alt="" class="active">
-									<img src="<?php echo esc_url($theme_uri . '/assets/img/btn-arrow_green.png'); ?>" alt="">
+									<svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+									</svg>
+									<svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+									</svg>
 								</div>
 								<?php else : ?>
 								<a href="#"></a>

@@ -32,17 +32,11 @@
 			
 			<button type="submit" id="subscription-btn" style="display: none;"></button>
 			
-			<?php 
-				$btn_icon = get_field('subscription_btn_icon', 'option');
-			if ($btn_icon) : ?>
 			<label for="subscription-btn" class="form-btn">
-				<img src="<?php echo esc_url($btn_icon); ?>" alt="Подписаться">
+				<svg class="subscription-btn-icon" aria-hidden="true" focusable="false">
+					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+				</svg>
 			</label>
-			<?php else : ?>
-			<label for="subscription-btn" class="form-btn">
-				<img src="<?php echo get_template_directory_uri(); ?>/assets/img/btn-arrow_black.png" alt="">
-			</label>
-			<?php endif; ?>
 				</form>
                 
                 <span class="form__succes">

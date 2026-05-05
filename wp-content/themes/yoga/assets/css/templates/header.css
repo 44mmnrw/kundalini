@@ -4,7 +4,7 @@ header {
   left: 0px;
   top: 0px;
   z-index: 9;
-  padding-top: 1.125rem;  padding-bottom: 1.125rem;  background: #fff;
+  padding-top: 1rem;  padding-bottom: 1rem;  background: var(--color-grey);
   box-shadow: 0px 20px 50px rgba(141, 141, 141, 0);
   transition: 0.4s ease;
 }
@@ -21,7 +21,14 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   width: 100%;
+}
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 3.3125rem;
+  min-width: 0;
 }
 
 .logo-header img {
@@ -30,20 +37,26 @@ header {
 
 .main-menu {
   display: block;
-  padding-right: 1.75rem;}
+  min-width: 0;
+  padding-right: 0px;}
 
 .main-menu ul {
   display: flex;
+  align-items: center;
+  gap: 2.1875rem;
 }
 .main-menu ul li {
   display: inline-block;
-  margin-left: 1.25rem;  margin-right: 1.25rem;}
+  margin-left: 0px;  margin-right: 0px;}
 .main-menu-active-item {
   position: relative;
 }
 .main-menu-active-item .ref {
   position: relative;
-  padding-right: 1.0625rem;}
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding-right: 0px;}
 .main-menu-active-item::before {
   content: "";
   display: block;
@@ -56,16 +69,18 @@ header {
 }
 
 .ref-icon {
-  position: absolute;
-  width: 0.75rem;  height: 0.75rem;  right: 0px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  width: 0.75rem;  height: 0.75rem;
+  flex-shrink: 0;
+  transform: none;
   transition: 0.4s ease;
 }
 .ref-icon img {
   display: block;
   position: absolute;
-  width: 0.75rem;  opacity: 0;
+  inset: 0px;
+  width: 0.75rem;  height: 0.75rem;
+  opacity: 0;
   transition: 0.4s ease;
 }
 .ref-icon img.active {
@@ -77,7 +92,7 @@ header {
 }
 
 .main-menu-active-item .ref:hover .ref-icon {
-  transform: translateY(-50%) rotate(-180deg);
+  transform: rotate(-180deg);
 }
 .main-menu-active-item .ref:hover .ref-icon img {
   opacity: 1;
@@ -90,7 +105,7 @@ header {
   color: var(--color-violet);
 }
 .main-menu-active-item.active .ref .ref-icon {
-  transform: translateY(-50%) rotate(-180deg);
+  transform: rotate(-180deg);
 }
 .main-menu-active-item.active .ref .ref-icon img {
   opacity: 1;
@@ -98,13 +113,19 @@ header {
 .main-menu-active-item.active .ref .ref-icon img.active {
   opacity: 0;
 }
+.main-menu ul li.current-menu-item > .ref,
+.main-menu ul li.current-menu-parent > .ref,
+.main-menu ul li.current_page_item > .ref {
+  color: var(--color-violet);
+}
 
 .header-lk {
   display: flex;
   align-items: center;
+  gap: 1.25rem;
 }
 .header-lk .btn {
-  height: 3.25rem;  line-height: 3.25rem;  padding-left: 0.9375rem;  padding-right: 0.9375rem;}
+  height: 3.1875rem;  line-height: 3.1875rem;  padding-left: 0.9375rem;  padding-right: 0.9375rem;}
 .header-lk .btn span {
   font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
 }
@@ -116,7 +137,7 @@ header {
 .login-icon {
   position: relative;
   width: 3.1875rem;  height: 3.1875rem;  border-radius: 50%;
-  margin-left: 1.25rem;  background: var(--color-grey);
+  margin-left: 0px;  background: var(--color-grey);
   cursor: pointer;
   transition: 0.4s ease;
 }
@@ -162,18 +183,26 @@ header {
 @media (max-width: 1320px) {
   header {
     padding-top: 0.9375rem;    padding-bottom: 0.9375rem;  }
+  .header-main {
+    gap: 2.5rem;
+  }
+  .main-menu ul {
+    gap: 1.375rem;
+  }
   .main-menu ul li {
-    margin-left: 0.8125rem;    margin-right: 0.8125rem;  }
+    margin-left: 0px;    margin-right: 0px;  }
 }
 @media (max-width: 1199px) {
-  .main-menu ul li {
-    margin-left: 0.5625rem;    margin-right: 0.5625rem;  }
+  .header-main {
+    gap: 1.75rem;
+  }
+  .main-menu ul {
+    gap: 1rem;
+  }
   .main-menu ul li .ref {
     font-size: 0.875rem;  }
   .header-lk .btn span {
     font-size: 0.9375rem;  }
-  .login-icon {
-    margin-left: 0.9375rem;  }
 }
 @media (max-width: 991px) {
   header {
@@ -183,6 +212,9 @@ header {
   }
   .main-menu ul {
     display: none;
+  }
+  .header-main {
+    gap: 0px;
   }
   .header-lk .btn {
     display: none;
@@ -197,7 +229,7 @@ header {
     display: block;
     position: relative;
     width: 3.25rem;    height: 3.1875rem;    border-radius: 50%;
-    margin-left: 1.25rem;  }
+    margin-left: 0px;  }
   .burger img {
     display: inline-block;
     position: absolute;
@@ -221,6 +253,9 @@ header {
 @media (max-width: 575px) {
   .logo-header img {
     width: 2.75rem;  }
+  .header-lk {
+    gap: 0.4375rem;
+  }
   .login-icon {
     width: 3rem;    height: 3rem;  }
   .burger {
@@ -259,6 +294,9 @@ header {
 .form.disabled .form-btn img {
   opacity: 0.4;
 }
+.form.disabled .form-btn svg {
+  opacity: 0.4;
+}
 
 .form-btn {
   position: absolute;
@@ -274,6 +312,15 @@ header {
   width: 1.25rem;  left: 50%;
   top: 50%;
   transform: translate(-50%, -50%) rotate(-45deg);
+}
+.form-btn svg {
+  display: block;
+  position: absolute;
+  width: 1.25rem;  height: 1.25rem;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  color: var(--color-black);
 }
 
 .form__succes {

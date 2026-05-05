@@ -283,6 +283,10 @@
 .modal-menu-item .btn-icon img {
   width: 1.125rem;  transition: 0.4s ease;
 }
+.modal-menu-item .btn-icon svg {
+  width: 1.125rem;  height: 1.125rem;
+  transition: 0.4s ease;
+}
 .modal-menu-item:hover::before {
   width: 100%;
 }
@@ -293,6 +297,12 @@
   opacity: 1;
 }
 .modal-menu-item:hover .btn-icon img.active {
+  opacity: 0;
+}
+.modal-menu-item:hover .btn-icon svg {
+  opacity: 1;
+}
+.modal-menu-item:hover .btn-icon svg.active {
   opacity: 0;
 }
 .modal-menu-item:hover .modal-menu-item__text {

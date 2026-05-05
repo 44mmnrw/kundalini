@@ -25,20 +25,22 @@
 			<div class="container">
 				<div class="row">
 					<div class="header-content">
-						<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
-						</a>
-						<nav class="main-menu">
-							<?php
-								wp_nav_menu( array(
-								'theme_location' => 'primary',
-								'container' => false,
-								'menu_class' => '',
-								'items_wrap' => '<ul>%3$s</ul>',
-								'walker' => new Custom_Menu_Walker()
-								) );
-							?>
-						</nav>
+						<div class="header-main">
+							<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
+								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
+							</a>
+							<nav class="main-menu">
+								<?php
+									wp_nav_menu( array(
+									'theme_location' => 'primary',
+									'container' => false,
+									'menu_class' => '',
+									'items_wrap' => '<ul>%3$s</ul>',
+									'walker' => new Custom_Menu_Walker()
+									) );
+								?>
+							</nav>
+						</div>
 						<div class="header-lk">
 							<?php
 							$has_paid_tariff = is_user_logged_in() && get_current_user_tariff();
