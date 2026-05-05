@@ -238,11 +238,11 @@
     <div class="exercise-item" data-version="mod" style="display: none;">
         <div class="exercise-item__info">
             <?php if ($title): ?>
-            <h4><?php echo esc_html($title); ?> (Модификация)</h4>
+            <h3><?php echo esc_html($title); ?> (Модификация)</h3>
             <?php endif; ?>
             
             <?php if ($subtitle): ?>
-            <p class="exercise-subtitle"><?php echo esc_html($subtitle); ?></p>
+            <h4><?php echo esc_html($subtitle); ?></h4>
             <?php endif; ?>
             
             <div class="exercise-switches">
