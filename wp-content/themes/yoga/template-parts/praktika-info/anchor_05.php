@@ -8,6 +8,21 @@
 	}
 	
 	$steps = $section['steps'];
+
+	if (!function_exists('yoga_get_timing_label_short')) {
+		function yoga_get_timing_label_short($index) {
+			if ($index === 0) {
+				return 'мин.';
+			}
+			if ($index === 1) {
+				return 'сред.';
+			}
+			if ($index === 2) {
+				return 'макс.';
+			}
+			return 'доп.';
+		}
+	}
 ?>
 
 <span class="praktika-menu-anchor" id="anchor_05"></span>
@@ -93,15 +108,10 @@
 				<div>
 					<b>Время:</b> 
 					<?php foreach ($timing as $index => $value): ?>
-					<?php 
-						$label = '';
-						if ($index === 0) $label = 'Мин';
-						elseif ($index === 1) $label = 'Сред';
-						elseif ($index === 2) $label = 'Макс';
-						else $label = 'Доп';
-					?>
 					<?php if ($index > 0): ?>, <?php endif; ?>
-					<strong><?php echo esc_html($label); ?></strong> <?php echo esc_html($value); ?>
+					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($index)); ?></span>
+					<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
+					<span class="exercise-time-unit">мин.</span>
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>
@@ -163,19 +173,19 @@
 						}
 					?>
 					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
-						<span><?php echo esc_html($value); ?> мин</span>
+						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 					</button>
 					<?php endforeach; ?>
 					<?php else: ?>
 					<!-- Дефолтные значения, если timing не заполнен -->
 					<button type="button" class="btn btn_min timer-preset" data-duration="180">
-						<span>3 мин</span>
+						<span>3 мин.</span>
 					</button>
 					<button type="button" class="btn btn_min timer-preset" data-duration="420">
-						<span>7 мин</span>
+						<span>7 мин.</span>
 					</button>
 					<button type="button" class="btn btn_min timer-preset" data-duration="660">
-						<span>11 мин</span>
+						<span>11 мин.</span>
 					</button>
 					<?php endif; ?>
 					
@@ -262,15 +272,10 @@
 				<div>
 					<b>Время:</b> 
 					<?php foreach ($timing_mod as $index => $value): ?>
-					<?php 
-						$label = '';
-						if ($index === 0) $label = 'Мин';
-						elseif ($index === 1) $label = 'Сред';
-						elseif ($index === 2) $label = 'Макс';
-						else $label = 'Доп';
-					?>
 					<?php if ($index > 0): ?>, <?php endif; ?>
-					<strong><?php echo esc_html($label); ?></strong> <?php echo esc_html($value); ?>
+					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($index)); ?></span>
+					<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
+					<span class="exercise-time-unit">мин.</span>
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>
@@ -332,19 +337,19 @@
 						}
 					?>
 					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
-						<span><?php echo esc_html($value); ?> мин</span>
+						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 					</button>
 					<?php endforeach; ?>
 					<?php else: ?>
 					<!-- Дефолтные значения, если timing не заполнен -->
 					<button type="button" class="btn btn_min timer-preset" data-duration="180">
-						<span>3 мин</span>
+						<span>3 мин.</span>
 					</button>
 					<button type="button" class="btn btn_min timer-preset" data-duration="420">
-						<span>7 мин</span>
+						<span>7 мин.</span>
 					</button>
 					<button type="button" class="btn btn_min timer-preset" data-duration="660">
-						<span>11 мин</span>
+						<span>11 мин.</span>
 					</button>
 					<?php endif; ?>
 					
