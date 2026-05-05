@@ -750,6 +750,45 @@
 		$(this).toggleClass("active");
 		$('.modal-mobile-menu-lk').addClass("active");
 	});
+
+	function closeLkNotifications() {
+		$('.notification-icon').removeClass('active').attr('aria-expanded', 'false');
+		$('.lk-notifications-popup').attr('aria-hidden', 'true');
+	}
+
+	$('.notification-icon').on('click', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var isActive = $(this).hasClass('active');
+		closeLkNotifications();
+		if (!isActive) {
+			$(this).addClass('active').attr('aria-expanded', 'true');
+			$(this).find('.lk-notifications-popup').attr('aria-hidden', 'false');
+		}
+	});
+
+	$('.notification-icon').on('keydown', function (e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			$(this).trigger('click');
+		}
+	});
+
+	$('.lk-notifications-popup').on('click', function (e) {
+		e.stopPropagation();
+	});
+
+	$(document).on('click', function (e) {
+		if (!$(e.target).closest('.notification-icon').length) {
+			closeLkNotifications();
+		}
+	});
+
+	$(document).on('keydown', function (e) {
+		if (e.key === 'Escape') {
+			closeLkNotifications();
+		}
+	});
 	
 	
 	if ($(window).width() < 991 ) {
@@ -2346,6 +2385,68 @@
             $(this).find('span:last').text('Показать еще');
 		}
 	});
+
+	function applyPracticeFiltersFromUrl() {
+		if (typeof URLSearchParams === 'undefined') {
+			return false;
+		}
+
+		const params = new URLSearchParams(window.location.search || '');
+		const filterValues = [];
+
+		['practice-difficulty', 'practice-difficulty[]', 'difficulty'].forEach(function(key) {
+			params.getAll(key).forEach(function(rawValue) {
+				String(rawValue || '')
+					.split(',')
+					.map(function(part) { return part.trim(); })
+					.filter(Boolean)
+					.forEach(function(value) {
+						filterValues.push(value);
+					});
+			});
+		});
+
+		if (!filterValues.length) {
+			return false;
+		}
+
+		let applied = false;
+		const uniqueValues = Array.from(new Set(filterValues));
+
+		uniqueValues.forEach(function(value) {
+			let $checkbox = $('.section-kriyi .filter input[type=checkbox][name="practice-difficulty"]').filter(function() {
+				return String($(this).val()) === value;
+			});
+
+			if (!$checkbox.length) {
+				const $labelByKey = $('.section-kriyi .filter label.checkbox-item[data-level-key="' + value + '"]').first();
+				if ($labelByKey.length) {
+					$checkbox = $('.section-kriyi .filter input[type=checkbox][name="practice-difficulty"]#' + $labelByKey.attr('for'));
+				}
+			}
+
+			if (!$checkbox.length) {
+				return;
+			}
+
+			$checkbox.prop('checked', true);
+			const checkboxId = $checkbox.attr('id');
+			const $label = checkboxId
+				? $('.section-kriyi .filter label[for="' + checkboxId + '"]')
+				: $checkbox.next('.checkbox-item');
+			$label.addClass('active');
+			$label.find('.checkbox').addClass('active');
+			applied = true;
+		});
+
+		if (applied) {
+			$('.section-kriyi .form-reset').addClass('active');
+			$('.section-kriyi .filter-item').removeClass('focused');
+			$('.section-kriyi .filter-item__list .checkbox-item.active').closest('.filter-item').addClass('focused');
+		}
+
+		return applied;
+	}
 	
     // Добавление в избранное
     /* $(document).on('click', '.section-kriyi .kriya-fav', function(e) {
@@ -2361,9 +2462,11 @@
     if (initialActiveTerm) {
         setActiveTerm(initialActiveTerm);
 	}
-    
-    // Загружаем практики при первой загрузке
-    //loadPractices();
+
+	const hasUrlPracticeFilters = applyPracticeFiltersFromUrl();
+	if (hasUrlPracticeFilters) {
+		loadPractices();
+	}
 	
 	
 });

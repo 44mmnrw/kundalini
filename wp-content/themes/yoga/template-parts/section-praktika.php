@@ -1,10 +1,86 @@
+<?php
+$practice_level_raw = trim((string) get_field('practice_level'));
+$practice_level_label = function_exists('yoga_normalize_practice_level_label')
+	? yoga_normalize_practice_level_label($practice_level_raw)
+	: $practice_level_raw;
+$practice_level_slug = function_exists('yoga_get_practice_level_slug')
+	? yoga_get_practice_level_slug($practice_level_raw)
+	: '';
+$same_level_url = '';
+$difficulty_term_id = 0;
+
+if ($practice_level_slug !== '') {
+	$difficulty_term = get_term_by('slug', $practice_level_slug, 'practice-difficulty');
+	if ($difficulty_term instanceof WP_Term && !is_wp_error($difficulty_term)) {
+		$difficulty_term_id = (int) $difficulty_term->term_id;
+	}
+}
+
+if ($difficulty_term_id <= 0) {
+	$difficulty_terms = get_terms(array(
+		'taxonomy' => 'practice-difficulty',
+		'hide_empty' => false,
+		'orderby' => 'term_id',
+		'order' => 'ASC',
+	));
+
+	if (!empty($difficulty_terms) && !is_wp_error($difficulty_terms)) {
+		foreach ($difficulty_terms as $term) {
+			$term_label = function_exists('yoga_get_practice_difficulty_label')
+				? yoga_get_practice_difficulty_label($term)
+				: (string) $term->name;
+			$term_label_normalized = function_exists('yoga_normalize_practice_level_label')
+				? yoga_normalize_practice_level_label($term_label)
+				: $term_label;
+			if ($term_label_normalized === $practice_level_label) {
+				$difficulty_term_id = (int) $term->term_id;
+				break;
+			}
+		}
+
+		if ($difficulty_term_id <= 0 && count($difficulty_terms) >= 3) {
+			$fallback_order_map = array(
+				'beginner' => 0,
+				'intermediate' => 1,
+				'advanced' => 2,
+			);
+			$fallback_index = $fallback_order_map[$practice_level_slug] ?? null;
+			if ($fallback_index !== null && isset($difficulty_terms[$fallback_index])) {
+				$difficulty_term_id = (int) $difficulty_terms[$fallback_index]->term_id;
+			}
+		}
+	}
+}
+
+$library_path = function_exists('yoga_get_practice_primary_term_path')
+	? (string) yoga_get_practice_primary_term_path((int) get_the_ID())
+	: '';
+$library_url = $library_path !== ''
+	? home_url('/library/' . trim($library_path, '/') . '/')
+	: home_url('/library/');
+
+if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
+	// Используем универсальный параметр difficulty, чтобы не попадать в 404 на некоторых rewrite-настройках.
+	$same_level_url = add_query_arg('difficulty', $practice_level_slug, $library_url);
+} elseif ($practice_level_slug !== '') {
+	$same_level_url = add_query_arg('difficulty', $practice_level_slug, $library_url);
+} else {
+	$same_level_url = $library_url;
+}
+?>
 <section class="section-praktika" id="section-praktika">
     <div class="container">
         <div class="row">
             <div class="praktika">
                 <div class="praktika-details">
                     <span class="praktika-details__lvl">
-                        <?= get_field('practice_level') ?>
+						<?php if ($same_level_url !== '') : ?>
+							<a class="praktika-details__lvl-link" href="<?php echo esc_url($same_level_url); ?>">
+								<?php echo esc_html($practice_level_label); ?>
+							</a>
+						<?php else : ?>
+							<?php echo esc_html($practice_level_label); ?>
+						<?php endif; ?>
 					</span>
                     <span class="praktika-details__time">
                         <?php echo get_field('practice_time') ?: '7 минут'; ?>

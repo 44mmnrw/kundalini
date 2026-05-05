@@ -1653,16 +1653,7 @@ function handle_comment_delete() {
         $item_count = 0;
         while ($query->have_posts()) : $query->the_post();
 		$item_count++;
-		$practice_level = get_field('level') ?: 'Начинающий';
-		$practice_level = (string) $practice_level;
-		$level_mojibake_map = array(
-			'РќР°С‡РёРЅР°СЋС‰РёР№' => 'Начинающий',
-			'РЎСЂРµРґРЅРёР№' => 'Средний',
-			'РџСЂРѕС„Рё' => 'Профи',
-		);
-		if (isset($level_mojibake_map[$practice_level])) {
-			$practice_level = $level_mojibake_map[$practice_level];
-		}
+		$practice_level = yoga_normalize_practice_level_label(get_field('level') ?: 'новичок');
 		$practice_description = get_field('short_description') ?: get_the_excerpt();
 		$practice_image = get_field('image') ?: get_template_directory_uri() . '/assets/img/kriya-img_01.png';
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
@@ -3212,50 +3203,71 @@ function handle_comment_delete() {
 		add_action('template_redirect', 'yoga_redirect_legacy_product_cat_base_url', 1);
 	}
 
+	if (!function_exists('yoga_normalize_practice_level_label')) {
+		function yoga_normalize_practice_level_label($value): string {
+			$raw_value = trim((string) $value);
+			if ($raw_value === '') {
+				return '';
+			}
+
+			$key = function_exists('mb_strtolower')
+				? mb_strtolower($raw_value, 'UTF-8')
+				: strtolower($raw_value);
+
+			$level_map = array(
+				'beginner' => 'Начинающий',
+				'easy' => 'Начинающий',
+				'novice' => 'Начинающий',
+				'начинающий' => 'Начинающий',
+				'новичек' => 'Начинающий',
+				'новичёк' => 'Начинающий',
+				'новичок' => 'Начинающий',
+				'рќр°с‡рёрѕр°сћс‰рёр№' => 'Начинающий',
+				'intermediate' => 'Средний',
+				'medium' => 'Средний',
+				'middle' => 'Средний',
+				'средний' => 'Средний',
+				'рўсђрµрґрѕрёр№' => 'Средний',
+				'advanced' => 'Продвинутый',
+				'pro' => 'Продвинутый',
+				'expert' => 'Продвинутый',
+				'профи' => 'Продвинутый',
+				'рџсђрѕс„рё' => 'Продвинутый',
+			);
+
+			return $level_map[$key] ?? $raw_value;
+		}
+	}
+
+	if (!function_exists('yoga_get_practice_level_slug')) {
+		function yoga_get_practice_level_slug($value): string {
+			$normalized = yoga_normalize_practice_level_label($value);
+			$key = function_exists('mb_strtolower')
+				? mb_strtolower($normalized, 'UTF-8')
+				: strtolower($normalized);
+
+			$slug_map = array(
+				'начинаюший' => 'beginner',
+				'средний' => 'intermediate',
+				'продвинутый' => 'advanced',
+			);
+
+			return $slug_map[$key] ?? '';
+		}
+	}
+
 	if (!function_exists('yoga_get_practice_difficulty_label')) {
 		function yoga_get_practice_difficulty_label($term): string {
 			if (!$term instanceof WP_Term) {
 				return '';
 			}
 
-			$slug = sanitize_title((string) $term->slug);
-			$name = function_exists('mb_strtolower')
-				? mb_strtolower((string) $term->name, 'UTF-8')
-				: strtolower((string) $term->name);
-
-			$slug_map = array(
-				'beginner' => 'новичок',
-				'easy' => 'новичок',
-				'novice' => 'новичок',
-				'intermediate' => 'средний',
-				'medium' => 'средний',
-				'middle' => 'средний',
-				'advanced' => 'профи',
-				'pro' => 'профи',
-				'expert' => 'профи',
-			);
-
-			if (isset($slug_map[$slug])) {
-				return $slug_map[$slug];
+			$by_slug = yoga_normalize_practice_level_label((string) $term->slug);
+			if (in_array($by_slug, array('Начинающий', 'Средний', 'Продвинутый'), true)) {
+				return $by_slug;
 			}
 
-			$name_map = array(
-				'beginner' => 'новичок',
-				'easy' => 'новичок',
-				'novice' => 'новичок',
-				'intermediate' => 'средний',
-				'medium' => 'средний',
-				'middle' => 'средний',
-				'advanced' => 'профи',
-				'pro' => 'профи',
-				'expert' => 'профи',
-			);
-
-			if (isset($name_map[$name])) {
-				return $name_map[$name];
-			}
-
-			return (string) $term->name;
+			return yoga_normalize_practice_level_label((string) $term->name);
 		}
 	}
 
