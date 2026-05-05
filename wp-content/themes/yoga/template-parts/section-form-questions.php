@@ -17,8 +17,7 @@
                         <input type="email" name="contacts_email" class="input" required 
                                placeholder="<?php echo esc_attr(get_field('contacts_placeholder_email', 'option') ?: 'E-mail'); ?>">
                         
-                        <input type="tel" name="contacts_phone" class="input input_phone" required 
-                               placeholder="<?php echo esc_attr(get_field('contacts_placeholder_phone', 'option') ?: '+7 (999) 999 99 99'); ?>">
+                        <input type="tel" name="contacts_phone" class="input input_phone" required>
                         
                         <div class="form-questions-textarea">
                             <textarea name="contacts_message" placeholder="<?php echo esc_attr(get_field('contacts_placeholder_message', 'option') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
