@@ -150,15 +150,7 @@
                         <div class="timer-main__time-bg">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/timer-bg.png" alt="Таймер">
 						</div>
-                        <span class="timer-display">
-                            <?php 
-                                // Преобразуем строку в число
-                                $duration_int = intval($duration);
-                                $minutes = floor($duration_int / 60);
-                                $seconds = $duration_int % 60;
-                                printf('%02d:%02d', $minutes, $seconds);
-							?>
-						</span>
+                        <span class="timer-display">0:00</span>
 					</div>
 				</div>
                 <div class="timer-buttons">
@@ -315,14 +307,7 @@
                         <div class="timer-main__time-bg">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/timer-bg.png" alt="Таймер">
 						</div>
-                        <span class="timer-display">
-                            <?php 
-                                $duration_mod_int = intval($duration_mod);
-                                $minutes = floor($duration_mod_int / 60);
-                                $seconds = $duration_mod_int % 60;
-                                printf('%02d:%02d', $minutes, $seconds);
-							?>
-						</span>
+                        <span class="timer-display">0:00</span>
 					</div>
 				</div>
                 <div class="timer-buttons">

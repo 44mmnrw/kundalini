@@ -1983,11 +1983,11 @@ function handle_comment_delete() {
 		// Обновление метаполей
 		// Обработка смены пароля
 		if (!isset($_POST['nonce'])) {
-			wp_send_json_error('Nonce не установлен', 400);
+			wp_send_json_error('Ошибка безопасности', 400);
 		}
 		
 		if (!wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
-			wp_send_json_error('Ошибка безопасности: неверный nonce', 403);
+			wp_send_json_error('Ошибка безопасности', 403);
 		}
 		
 		if (!is_user_logged_in()) {
@@ -2059,9 +2059,9 @@ function handle_comment_delete() {
 						$result = update_field('user_avatar', $attachment_id, 'user_' . $user_id);
 						
 						if ($result) {
-							wp_send_json_success('Аватар успешно обновлен через ACF');
+							wp_send_json_success('Аватар успешно обновлен');
 							} else {
-							wp_send_json_error('Ошибка при обновлении поля ACF');
+							wp_send_json_error('Ошибка при обновлении аватара');
 						}
 						} else {
 						wp_send_json_error("Файл не является изображением: $mime_type");
@@ -2072,7 +2072,7 @@ function handle_comment_delete() {
 			wp_send_json_success($result);
 			
 			} catch (Exception $e) {
-			wp_send_json_error('Внутренняя ошибка сервера: ' . $e->getMessage(), 500);
+			wp_send_json_error('Не удалось обновить профиль. Попробуйте еще раз.', 500);
 		}
 	}
 	add_action('wp_ajax_update_user_profile', 'yoga_update_profile_ajax');
