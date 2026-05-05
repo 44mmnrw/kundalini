@@ -108,10 +108,16 @@ $practices_count = (int) $practices->found_posts;
 								if (!empty($difficulty_terms) && !is_wp_error($difficulty_terms)) {
 									$i = 1;
 									foreach ($difficulty_terms as $term) {
+										$level_label = function_exists('yoga_get_practice_difficulty_label')
+											? yoga_get_practice_difficulty_label($term)
+											: (string) $term->name;
+										$level_slug = function_exists('yoga_get_practice_level_slug')
+											? yoga_get_practice_level_slug($level_label)
+											: '';
 										echo '<input type="checkbox" id="filter-dif_' . sprintf('%02d', $i) . '" name="practice-difficulty" value="' . esc_attr((string) $term->term_id) . '">';
-										echo '<label for="filter-dif_' . sprintf('%02d', $i) . '" class="checkbox-item">';
+										echo '<label for="filter-dif_' . sprintf('%02d', $i) . '" class="checkbox-item" data-level-key="' . esc_attr($level_slug) . '">';
 										echo '<div class="checkbox"></div>';
-										echo '<span>' . esc_html(yoga_get_practice_difficulty_label($term)) . '</span>';
+										echo '<span>' . esc_html($level_label) . '</span>';
 										echo '</label>';
 										$i++;
 									}
@@ -207,7 +213,9 @@ $practices_count = (int) $practices->found_posts;
 						while ($practices->have_posts()) :
 							$practices->the_post();
 							$count++;
-							$practice_level = get_field('level') ?: 'Начинающий';
+							$practice_level = function_exists('yoga_normalize_practice_level_label')
+								? yoga_normalize_practice_level_label(get_field('level') ?: 'новичок')
+								: (get_field('level') ?: 'новичок');
 							$practice_description = get_field('short_description') ?: get_the_excerpt();
 							$practice_image = get_field('image') ?: get_template_directory_uri() . '/assets/img/kriya-img_01.png';
 							$user_id = get_current_user_id();

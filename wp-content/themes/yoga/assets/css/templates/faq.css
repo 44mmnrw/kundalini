@@ -406,7 +406,9 @@
 
 .notification-icon {
   position: relative;
-  margin-right: 1.4375rem;  bottom: -0.125rem;}
+  margin-right: 1.4375rem;  bottom: -0.125rem;
+  cursor: pointer;
+}
 .notification-icon img {
   display: block;
   width: 1.6875rem;}
@@ -419,6 +421,39 @@
   font-weight: normal;
   background: var(--color-green);
   border: 1px solid rgba(232, 255, 87, 0.3);
+}
+.lk-notifications-popup {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: -0.5rem;
+  width: 18.75rem;
+  background: #fff;
+  border: 1px solid #E8E8E8;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 40px rgba(24, 25, 34, 0.12);
+  padding: 0.875rem 1rem;
+  opacity: 0;
+  transform: translateY(0.375rem);
+  pointer-events: none;
+  transition: 0.25s ease;
+  z-index: 20;
+}
+.notification-icon.active .lk-notifications-popup {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.lk-notifications-popup__title {
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--color-black);
+}
+.lk-notifications-popup__empty {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: rgba(24, 25, 34, 0.65);
 }
 
 .lk-header-menu {
@@ -474,6 +509,10 @@
 @media (max-width: 575px) {
   .lk-header-main .personal-status {
     display: none;
+  }
+  .lk-notifications-popup {
+    right: -2.75rem;
+    width: 16.5rem;
   }
 }
 /* Sidebar */
