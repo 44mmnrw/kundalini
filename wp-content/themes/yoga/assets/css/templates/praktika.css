@@ -481,7 +481,14 @@ display: block !important;
   display: none !important;
 }
 .player__plug .exercise-player[data-media-type=video] .plyr__control--overlaid {
-  display: none !important;
+  display: flex !important;
+  transform: translate(-50%, -50%) !important;
+  transition: none !important;
+}
+.player__plug .exercise-player[data-media-type=video] .plyr__control--overlaid:hover,
+.player__plug .exercise-player[data-media-type=video] .plyr__control--overlaid:focus,
+.player__plug .exercise-player[data-media-type=video] .plyr__control--overlaid:active {
+  transform: translate(-50%, -50%) !important;
 }
 .player__plug .exercise-player[data-media-type=video] .plyr,
 .player__plug .exercise-player[data-media-type=video] .plyr__video-wrapper,

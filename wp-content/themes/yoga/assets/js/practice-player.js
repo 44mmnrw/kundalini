@@ -120,9 +120,9 @@ function initializePracticeSystem() {
                     const isVideo = mediaElement.tagName === 'VIDEO';
                     const playerOptions = isVideo
                         ? {
-                            controls: [],
+                            controls: ['play-large'],
                             clickToPlay: true,
-                            hideControls: true
+                            hideControls: false
                         }
                         : {};
                     player = new Plyr(mediaElement, playerOptions);
