@@ -39,11 +39,16 @@ header {
   display: block;
   min-width: 0;
   padding-right: 0px;}
+@media (min-width: 992px) {
+  .main-menu {
+    margin-left: -0.875rem;
+  }
+}
 
 .main-menu ul {
   display: flex;
   align-items: center;
-  gap: 2.1875rem;
+  gap: clamp(0.5rem, 1vw, 2.1875rem);
 }
 .main-menu ul li {
   display: inline-block;
@@ -128,13 +133,46 @@ header {
   gap: 1.25rem;
 }
 .header-lk .btn {
-  height: 3.1875rem;  line-height: 3.1875rem;  padding-left: 0.9375rem;  padding-right: 0.9375rem;}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 3.1875rem;  line-height: 1;  padding-left: 0.9375rem;  padding-right: 0.9375rem;}
 .header-lk .btn span {
+  min-width: auto;
+  white-space: nowrap;
+  line-height: 1;
   font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
 }
 .header-lk .btn:hover {
   background: #DDF354;
   border-color: #DDF354;
+}
+
+@media (max-width: 1460px) {
+  .header-content {
+    gap: 0.375rem;
+  }
+  .header-main {
+    gap: 1rem;
+  }
+  .main-menu ul {
+    gap: 0.375rem;
+  }
+  .main-menu ul li .ref {
+    font-size: 0.875rem;
+  }
+  .header-lk {
+    gap: 0.375rem;
+  }
+  .header-lk .btn {
+    height: 2.875rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .header-lk .btn span {
+    font-size: 0.8125rem;
+  }
 }
 
 .login-icon {

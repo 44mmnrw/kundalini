@@ -3176,10 +3176,18 @@ jQuery(document).ready(function($) {
 // Функции для работы с комментариями
 function toggleReplyForm(commentId) {
     var $form = jQuery('#reply-form-' + commentId);
-    $form.toggleClass('hidden');
-    
+    var isOpen = $form.hasClass('active');
+
     // Скрываем другие открытые формы ответа
-    jQuery('.praktika-comment__answer').not($form).addClass('hidden');
+    jQuery('.praktika-comment__answer').not($form).removeClass('active').addClass('hidden');
+
+    if (isOpen) {
+        $form.removeClass('active').addClass('hidden');
+        return;
+    }
+
+    $form.removeClass('hidden').addClass('active');
+    $form.find('.textarea-resize').trigger('focus');
 }
 
 function toggleEditForm(commentId) {
@@ -3273,7 +3281,7 @@ function deleteComment(commentId) {
 // Закрытие форм при клике вне области
 jQuery(document).on('click', function(e) {
     if (!jQuery(e.target).closest('.praktika-comment__answer, .answer-btn').length) {
-        jQuery('.praktika-comment__answer').addClass('hidden');
+        jQuery('.praktika-comment__answer').removeClass('active').addClass('hidden');
     }
     
     if (!jQuery(e.target).closest('.praktika-comment-item__edit, .your-comm__btn_edit').length) {

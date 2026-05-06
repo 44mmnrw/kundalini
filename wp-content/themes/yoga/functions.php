@@ -1167,7 +1167,7 @@ function handle_comment_delete() {
 
 			$normalized_item_title = trim(wp_strip_all_tags((string) $item_title));
 			if ($normalized_item_title === 'ЧАСТЫЕ ВОПРОСЫ') {
-				$item_title = 'FAQ';
+				$item_title = 'Частые вопросы';
 			}
 			if ($normalized_item_title === 'О ПРЕПОДАВАТЕЛЕ') {
 				$item_title = 'О преподавателе';
@@ -1251,10 +1251,15 @@ function handle_comment_delete() {
 			$classes     = empty( $item->classes ) ? array() : (array) $item->classes;
 			$is_active   = in_array( 'current-menu-item', $classes ) || in_array( 'current_page_item', $classes );
 			$active_class = $is_active ? ' active' : '';
+			$item_title = trim(wp_strip_all_tags((string) $item->title));
+
+			if ($item_title === 'ЧАСТЫЕ ВОПРОСЫ') {
+				$item_title = 'Частые вопросы';
+			}
 			
 			$output .= '<li>';
 			$output .= '<a class="footer-menu-item' . $active_class . '" href="' . esc_url( $item->url ) . '">';
-			$output .= esc_html( $item->title );
+			$output .= esc_html( $item_title );
 			$output .= '</a>';
 			$output .= '</li>';
 		}
