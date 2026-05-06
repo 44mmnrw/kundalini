@@ -62,16 +62,20 @@
 								<div class="lk-notifications-popup__empty">Ничего нет...</div>
 							</div>
 						</div>
-						<div class="personal-status">
+						<?php
+							$tariff = get_current_user_tariff();
+							$tariff_name = '';
+							if (is_array($tariff) && !empty($tariff['product_name'])) {
+								$tariff_name = (string) $tariff['product_name'];
+							}
+						?>
+						<div class="personal-status<?php echo $tariff_name === '' ? ' personal-status_empty' : ''; ?>">
 							<svg class="personal-status__img" aria-hidden="true">
 								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
 							</svg>
-							<?php
-								$tariff = get_current_user_tariff();
-								if ($tariff) {
-									echo '<span>' . $tariff['product_name'] . '</span>';
-								}
-							?>
+							<?php if ($tariff_name !== '') : ?>
+							<span><?php echo esc_html($tariff_name); ?></span>
+							<?php endif; ?>
 						</div>
 						<div class="lk-header-main__buttons">
 							<div class="lk-login-btn">
