@@ -10929,6 +10929,9 @@ input#filt-reset {
 	thead {
 		display: none;
 	}
+	tbody tr.responsive-table-label-row {
+		display: none;
+	}
 	&, tbody, tr, td {
 		display: block;
 		width: 100%;
@@ -10942,9 +10945,11 @@ input#filt-reset {
 		border-bottom: 0px;
 	}
 	td {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		display: grid;
+		grid-template-columns: 10.25rem minmax(0, 1fr);
+		align-items: start;
+		column-gap: 14px;
+		row-gap: 4px;
 		border-bottom: 0px;
 		padding-top: 8px;
 	    padding-bottom: 8px;
@@ -10952,25 +10957,27 @@ input#filt-reset {
 		font-family: "Mulish-Regular", sans-serif;
 		font-size: 16px;
 		line-height: 1.3em;
+		word-break: normal;
+		overflow-wrap: break-word;
 		&::before {
-			display: inline-block;
-			width: calc(50% - 10px);
+			content: attr(data-label);
+			display: block;
+			min-width: 0;
+			max-width: 100%;
+			padding-right: 4px;
+			white-space: normal;
 			font-size: 16px;
 			color: $color-black;
 			font-family: "Mulish-SemiBold", sans-serif;
 			font-weight: normal;
 		}
-		&:nth-child(1)::before {
-			content: 'Чакра';
-		}
-		&:nth-child(2)::before {
-			content: 'Расположение';
-		}
-		&:nth-child(3)::before {
-			content: 'Основная функция';
+		&[data-label='']::before {
+			display: none;
 		}
 		> * {
-			width: calc(50% - 10px);
+			width: auto;
+			min-width: 0;
+			max-width: 100%;
 		}
 	}
 }
