@@ -109,6 +109,36 @@ footer {
   color: rgba(246, 246, 249, 0.3);
 }
 
+@media (min-width: 1200px) {
+  .footer-main {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 18px;
+  }
+  .footer-menu {
+    width: 100%;
+    max-width: 100%;
+  }
+  .footer-menu ul {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+  .footer-add {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 20px;
+  }
+  .footer-add__links {
+    flex-wrap: nowrap;
+  }
+  .footer-menu-item,
+  .footer-link,
+  .footer-rules {
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 1320px) {
   .footer_big .footer-main {
     margin-top: 0.25rem;  }
