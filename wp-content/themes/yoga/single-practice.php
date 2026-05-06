@@ -1,4 +1,14 @@
-<?php get_header(); 
+<?php
+get_header();
+
+$practice_prefill_name = '';
+$practice_prefill_email = '';
+
+if (is_user_logged_in()) {
+	$current_user = wp_get_current_user();
+	$practice_prefill_name = (string) ($current_user->display_name ?? '');
+	$practice_prefill_email = (string) ($current_user->user_email ?? '');
+}
 	
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));
@@ -18,8 +28,8 @@
 					</div>
 					<form action="#" class="form-questions__main-form contacts-form">
 						<?php wp_nonce_field('contacts_nonce', 'contacts_nonce_field'); ?>
-						<input name="contacts_name" type="text" class="input" required placeholder="Имя">
-						<input name="contacts_email" type="email" class="input" required placeholder="E-mail">
+						<input name="contacts_name" type="text" class="input" required value="<?php echo esc_attr($practice_prefill_name); ?>" placeholder="Имя">
+						<input name="contacts_email" type="email" class="input" required value="<?php echo esc_attr($practice_prefill_email); ?>" placeholder="E-mail">
 						<div class="form-questions-textarea">
 							<textarea name="contacts_message" id="" placeholder="Ваш вопрос" required class="input"></textarea>
 							<input type="submit" id="form-questions-submit">
