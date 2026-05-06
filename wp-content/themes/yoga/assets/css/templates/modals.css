@@ -708,14 +708,14 @@
 .modal-login.active .modal-login-inner, .modal-addnewcard.active .modal-login-inner {
   width: 31.6875rem;}
 .modal-login .modal-close, .modal-addnewcard .modal-close {
-  top: 1.5rem;  right: 1.875rem;}
+  top: 1rem;  right: 1rem;  z-index: 25;}
 
 .modal-login-inner, .addnewcard-inner {
   margin-left: auto;
   width: 0px;
   max-width: 100%;
   border-top-left-radius: 3.125rem;  border-bottom-left-radius: 3.125rem;  background: var(--color-green);
-  padding-left: 4.8125rem;  padding-right: 7.5rem;  padding-bottom: 3.125rem;  padding-top: 4.75rem;  pointer-events: auto;
+  padding-left: 3.875rem;  padding-right: 3.875rem;  padding-bottom: 3.125rem;  padding-top: 4.25rem;  pointer-events: auto;
   overflow: hidden;
   transition: 0.4s ease;
 }
@@ -825,7 +825,9 @@
   transition: opacity 0.3s ease;
 }
 .modal-login-inner__slide h3 {
-  font-size: 2rem;}
+  font-size: 2rem;
+  line-height: 1.2;
+}
 .modal-login-inner__slide p {
   margin-top: 0.4375rem;}
 .modal-login-inner__slide .form {
@@ -838,12 +840,14 @@
   border-color: var(--color-pink);
 }
 .modal-login-inner__slide .input {
-  height: 4.0625rem;  line-height: 4.0625rem;  margin-top: 1.5625rem;}
+  height: 4.0625rem;  line-height: 4.0625rem;  margin-top: 1.125rem;}
 .modal-login-inner__slide button {
   display: none;
 }
 .modal-login-inner__slide .btn {
-  margin-top: 1.5625rem;}
+  margin-top: 1.25rem;
+  width: 100%;
+}
 .modal-login-inner__slide .btn span {
   text-transform: uppercase;
 }
@@ -876,7 +880,7 @@
 .form-link_vk {
   display: inline-block;
   left: calc(50% - 1.1875rem);  transform: translateX(-50%);
-  margin-top: 1.875rem;}
+  margin-top: 1rem;}
 .form-link_vk::after {
   content: "";
   display: block;
@@ -1066,7 +1070,7 @@ p.login-rules a:hover {
 .loggin-additional {
   width: 100%;
   display: flex;
-  margin-top: 1.375rem;}
+  margin-top: 0.875rem;}
 .loggin-additional__item {
   margin-left: auto;
   margin-right: auto;
@@ -1099,7 +1103,7 @@ p.login-rules a:hover {
 .loggin-back {
   display: flex;
   justify-content: center;
-  margin-top: 1.5625rem;}
+  margin-top: 0.75rem;}
 .loggin-back_mob {
   display: none;
 }
@@ -1132,7 +1136,7 @@ p.login-rules a:hover {
 }
 @media (max-width: 1199px) {
   .modal-login.active .modal-login-inner {
-    width: 33.75rem;    padding-left: 2.5rem;  }
+    width: 33.75rem;    padding-left: 2.25rem;    padding-right: 2.25rem;  }
   .modal-login-inner__slide {
     min-width: 26.25rem;  }
 }

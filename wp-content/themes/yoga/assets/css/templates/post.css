@@ -5,20 +5,47 @@
 .post-intro {
   width: 100%;
   max-width: calc(100% - 19.0625rem);}
+.post-intro .main-article-into {
+  display: flex;
+  align-items: center;
+  gap: 0.9375rem;
+}
 .post-intro h2 {
   text-align: left;
   margin-top: 0px !important;
   line-height: 1.3em;
   padding-bottom: 0.625rem;}
 .post-intro .article-cat {
-  margin-right: 0.9375rem;}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3125rem 0.9375rem;
+  border: 1px solid var(--color-violet);
+  border-radius: 6.25rem;
+  color: var(--color-violet);
+  font-size: 1rem;
+  line-height: 1;
+  font-family: "Mulish-Medium", sans-serif;
+  font-weight: normal;
+}
 .post-intro .article-time {
-  font-size: 1.125rem;  padding-left: 1.75rem;}
-.post-intro .article-time::before {
-  width: 1.5rem;  height: 1.5rem;  background: url(../../img/article-time-icon.png) no-repeat center center/100% auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  color: var(--color-black);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  padding-left: 0;
+  font-family: "Mulish-Regular", sans-serif;
+  font-weight: normal;
+}
+.post-intro .article-time .article-time__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
 }
 
-.post {
+.post-layout {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -26,6 +53,37 @@
 
 .post-main {
   width: calc(100% - 19.0625rem);}
+.post-main > :first-child {
+  margin-top: 0 !important;
+}
+.post-main .wp-block-group,
+.post-main .wp-block-columns,
+.post-main .wp-block-media-text,
+.post-main .wp-block-cover {
+  margin-top: 1.875rem;
+}
+.post-main .wp-block-columns,
+.post-main .wp-block-columns.is-layout-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.post-main .wp-block-columns > .wp-block-column {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+}
+.post-main .wp-block-columns > .wp-block-column + .wp-block-column {
+  margin-top: 1.5625rem;
+}
+.post-main h2,
+.post-main .wp-block-heading {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.1em;
+  margin-top: 2.875rem;
+}
 .post-main h3 {
   display: block;
   font-size: 2rem;  line-height: 1.1em;
@@ -34,18 +92,194 @@
   display: block;
   font-size: 1.75rem;  line-height: 1.1em;
   margin-top: 2.875rem;}
-.post-main > p {
+.post-main p {
   display: block;
   font-size: 1.125rem;  line-height: 1.5em;
   margin-top: 1.5625rem;}
-.post-main > p a {
+.post-main p a {
   display: inline;
   font: inherit;
   color: var(--color-violet);
   text-decoration: underline;
 }
-.post-main > p a:hover {
+.post-main p a:hover {
   text-decoration: none;
+}
+.post-main > img,
+.post-main .wp-block-image img,
+.post-main figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.875rem;
+  margin-top: 1.875rem;
+}
+.post-main figure {
+  margin: 1.875rem 0 0;
+}
+.post-main figure img {
+  margin-top: 0;
+}
+.post-main .wp-block-image,
+.post-main .wp-block-video,
+.post-main .wp-block-embed,
+.post-main .wp-block-table,
+.post-main .wp-block-quote {
+  margin-top: 1.875rem;
+}
+.post-main .wp-block-quote {
+  position: relative;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 2.1875rem 2.8125rem;
+  border: 0;
+  border-radius: 1.25rem;
+  background: var(--color-green);
+}
+.post-main .wp-block-quote::before,
+.post-main .wp-block-quote::after {
+  position: absolute;
+  color: var(--color-black);
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 3.5rem;
+  line-height: 1;
+}
+.post-main .wp-block-quote::before {
+  content: "\201C";
+  left: 1rem;
+  top: 0.9375rem;
+}
+.post-main .wp-block-quote::after {
+  content: "\201D";
+  right: 1rem;
+  bottom: 0.5rem;
+}
+.post-main .wp-block-quote p {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-family: "Mulish-Italic", sans-serif;
+  font-style: italic;
+}
+.post-main .wp-block-quote cite {
+  display: block;
+  margin-top: 0.9375rem;
+  color: var(--color-black);
+  font-size: 1.125rem;
+  line-height: 1.4;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-style: normal;
+}
+.post-main .wp-block-quote cite::before,
+.post-main .wp-block-quote cite::after {
+  display: none;
+}
+.post-main .wp-block-pullquote {
+  margin: 1.875rem 0 0;
+  padding: 0;
+  border: 0;
+}
+.post-main .wp-block-pullquote blockquote {
+  position: relative;
+  margin: 0;
+  padding: 1.875rem 1.875rem 1.875rem 4rem;
+  border: 0;
+  border-radius: 1.25rem;
+  background: var(--color-grey);
+}
+.post-main .wp-block-pullquote blockquote::before {
+  content: "i";
+  position: absolute;
+  left: 1.875rem;
+  top: 1.875rem;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  background: var(--color-violet);
+  color: #fff;
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  text-align: center;
+}
+.post-main .wp-block-pullquote p {
+  margin: 0;
+  color: var(--color-black);
+  font-size: 1.125rem;
+  line-height: 1.4;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-style: normal;
+}
+.post-main .wp-block-pullquote cite {
+  display: none;
+}
+.post-main video,
+.post-main iframe,
+.post-main .wp-block-embed__wrapper iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+  border: 0;
+  border-radius: 1.875rem;
+  margin-top: 2.8125rem;
+}
+.post-main .wp-block-embed__wrapper {
+  width: 100%;
+  margin-top: 2.8125rem;
+  border-radius: 1.875rem;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+.post-main .wp-block-embed__wrapper iframe {
+  height: 100%;
+  margin-top: 0;
+  border-radius: 0;
+}
+.post-main table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-top: 2.125rem;
+}
+.post-main table th,
+.post-main table td {
+  width: 33.3333333333%;
+  padding-top: 0.8125rem;
+  padding-bottom: 0.8125rem;
+  padding-right: 1.25rem;
+  text-align: left;
+  vertical-align: middle;
+  border: 0 !important;
+}
+.post-main table tr {
+  border-bottom: 1px solid rgba(31, 31, 31, 0.6);
+}
+.post-main table th {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
+.post-main table tbody tr:first-child td {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
+.post-main table td {
+  font-size: 1rem;
+  line-height: normal;
+}
+.post-main table td:first-child {
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+  line-height: 1.1;
+}
+.post-main table tr:last-child {
+  border-bottom: 0;
 }
 .post-main ul {
   list-style-type: none;
@@ -144,6 +378,9 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.5625rem;
+  border-bottom: 1px solid #fff;
 }
 
 .post-author-main__image {
@@ -166,15 +403,29 @@
 
 .post-author-social {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.625rem;
   width: 100%;
-  flex-wrap: wrap;
-  margin-top: 1.5rem;  padding-top: 1rem;  border-top: 1px solid #fff;
+  flex-wrap: nowrap;
+  margin-top: 1.5625rem;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .post-author-social__item {
-  width: 2.25rem;  height: 2.25rem;  margin-top: 0.625rem;  margin-right: 0.3125rem;  margin-left: 0.3125rem;  border-radius: 50%;
+  display: block;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
   transition: 0.4s ease;
+}
+.post-author-social__item svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .post-author-social__item img {
   display: block;
@@ -187,11 +438,11 @@
 @media (max-width: 1320px) {
   .section-post {
     padding-top: 1.4375rem;    padding-bottom: 5.75rem;  }
-  .post {
+  .post-layout {
     padding-top: 1.875rem;  }
-  .post h3 {
+  .post-main h3 {
     font-size: 1.75rem;  }
-  .post h4 {
+  .post-main h4 {
     font-size: 1.5rem;  }
 }
 @media (max-width: 1199px) {
@@ -208,7 +459,7 @@
   .post-intro {
     max-width: 100%;
   }
-  .post {
+  .post-layout {
     flex-wrap: wrap;
   }
   .post-main {
@@ -230,9 +481,13 @@
 @media (max-width: 767px) {
   .section-post {
     padding-top: 1.5625rem;  }
-  .post h3 {
+  .post-main h2,
+  .post-main .wp-block-heading {
+    font-size: 1.625rem;
+  }
+  .post-main h3 {
     font-size: 1.625rem;  }
-  .post h4 {
+  .post-main h4 {
     font-size: 1.375rem;  }
 }
 @media (max-width: 575px) {
@@ -240,6 +495,91 @@
     padding-top: 1.125rem;    padding-bottom: 4.75rem;  }
   .post-intro .article-cat {
     font-size: 1rem;  }
+  .post-main .wp-block-quote {
+    padding: 1.5rem 1.25rem;
+  }
+  .post-main .wp-block-quote::before,
+  .post-main .wp-block-quote::after {
+    font-size: 2.5rem;
+  }
+  .post-main .wp-block-quote::before {
+    left: 0.625rem;
+    top: 0.75rem;
+  }
+  .post-main .wp-block-quote::after {
+    right: 0.625rem;
+    bottom: 0.25rem;
+  }
+  .post-main .wp-block-quote p {
+    font-size: 1rem;
+  }
+  .post-main .wp-block-quote cite {
+    font-size: 1rem;
+  }
+  .post-main .wp-block-quote cite::before,
+  .post-main .wp-block-quote cite::after {
+    display: none;
+  }
+  .post-main .wp-block-pullquote blockquote {
+    padding: 1.25rem 1.25rem 1.25rem 3rem;
+  }
+  .post-main .wp-block-pullquote blockquote::before {
+    left: 1rem;
+    top: 1.25rem;
+  }
+  .post-main .wp-block-pullquote p {
+    font-size: 1rem;
+  }
+  .post-main table thead {
+    display: none;
+  }
+  .post-main table,
+  .post-main table tbody,
+  .post-main table tr,
+  .post-main table td {
+    display: block;
+    width: 100%;
+  }
+  .post-main table tr {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(31, 31, 31, 0.6);
+  }
+  .post-main table tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .post-main table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    color: var(--color-black);
+    font-family: "Mulish-Regular", sans-serif;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  .post-main table td::before {
+    display: inline-block;
+    width: calc(50% - 0.625rem);
+    font-size: 1rem;
+    color: var(--color-black);
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-weight: normal;
+  }
+  .post-main table td:nth-child(1)::before {
+    content: "Чакра";
+  }
+  .post-main table td:nth-child(2)::before {
+    content: "Расположение";
+  }
+  .post-main table td:nth-child(3)::before {
+    content: "Основная функция";
+  }
+  .post-main table td > * {
+    width: calc(50% - 0.625rem);
+  }
   .post-table-row {
     display: block;
     padding-top: 0.5rem;    padding-bottom: 0.5rem;    border-bottom: 1px solid rgba(31, 31, 31, 0.6);
