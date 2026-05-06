@@ -1,4 +1,14 @@
 <section class="section-faq" id="section-faq">
+    <?php
+    $faq_prefill_name = '';
+    $faq_prefill_email = '';
+
+    if (is_user_logged_in()) {
+        $current_user = wp_get_current_user();
+        $faq_prefill_name = (string) ($current_user->display_name ?? '');
+        $faq_prefill_email = (string) ($current_user->user_email ?? '');
+    }
+    ?>
     <div class="container">
         <div class="row">
             <div class="faq">
@@ -50,10 +60,10 @@
                             <form action="#" class="form-questions__main-form" id="faqContactForm">
                                 <?php wp_nonce_field('faq_contact_nonce', 'faq_nonce'); ?>
                                 
-                                <input type="text" name="name" class="input" required 
+                                <input type="text" name="name" class="input" required value="<?php echo esc_attr($faq_prefill_name); ?>"
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_name') ?: 'Имя'); ?>">
                                 
-                                <input type="email" name="email" class="input" required 
+                                <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_email') ?: 'E-mail'); ?>">
                                 
                                 <div class="form-questions-textarea">
