@@ -48,6 +48,9 @@ header {
 .main-menu ul li {
   display: inline-block;
   margin-left: 0px;  margin-right: 0px;}
+.main-menu ul li .ref {
+  white-space: nowrap;
+}
 .main-menu-active-item {
   position: relative;
 }

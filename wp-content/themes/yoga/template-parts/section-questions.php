@@ -15,7 +15,7 @@ if ($questions_title === '') {
     $questions_title = trim((string) get_field('faq_title', 'option'));
 }
 if ($questions_title === '') {
-    $questions_title = 'ЧАСТЫЕ ВОПРОСЫ';
+    $questions_title = 'FAQ';
 }
 
 $faq_quote = trim((string) get_field('faq_quote', $faq_source_id));

@@ -82,7 +82,11 @@
                     if (is_home() || is_front_page()) {
                         echo 'Главная';
                     } elseif (is_single() || is_page()) {
-                        echo esc_html(get_the_title());
+                        $custom_main_title = '';
+                        if (function_exists('get_field') && is_page()) {
+                            $custom_main_title = trim((string) get_field('about_main_title', get_the_ID()));
+                        }
+                        echo esc_html($custom_main_title !== '' ? $custom_main_title : get_the_title());
                     } elseif (is_post_type_archive()) {
                         $post_type = get_post_type_object(get_post_type());
                         echo esc_html($post_type->labels->name);
