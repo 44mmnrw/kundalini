@@ -3288,3 +3288,45 @@ jQuery(document).on('click', function(e) {
         jQuery('.praktika-comment-item__edit').addClass('hidden');
     }
 });
+
+(function () {
+    function applyResponsiveTableLabels() {
+        var tables = document.querySelectorAll('.post-main .wp-block-table table');
+
+        tables.forEach(function (table) {
+            var headers = Array.from(table.querySelectorAll('thead th')).map(function (th) {
+                return th.textContent.trim();
+            });
+            var headerRowFromBody = false;
+
+            if (!headers.length) {
+                headers = Array.from(table.querySelectorAll('tbody tr:first-child td')).map(function (td) {
+                    return td.textContent.trim();
+                });
+                headerRowFromBody = headers.length > 0;
+            }
+
+            if (!headers.length) return;
+
+            table.querySelectorAll('tbody tr').forEach(function (row, rowIndex) {
+                if (headerRowFromBody && rowIndex === 0) {
+                    row.classList.add('responsive-table-label-row');
+                }
+                row.querySelectorAll('td').forEach(function (cell, index) {
+                    if (rowIndex === 0 && !table.querySelector('thead')) {
+                        cell.setAttribute('data-label', '');
+                        return;
+                    }
+
+                    cell.setAttribute('data-label', headers[index] || '');
+                });
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyResponsiveTableLabels);
+    } else {
+        applyResponsiveTableLabels();
+    }
+})();
