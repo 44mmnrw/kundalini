@@ -7945,9 +7945,9 @@ input#filt-reset {
 
 .personal-status {
 	position: relative;
-	padding-top: 7px;
-	padding-bottom: 7px;
-	padding-left: 43px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 44px;
 	padding-right: 15px;
 	background: rgba(145, 83, 225, 0.07);
 	border-radius: 100px;
@@ -7961,21 +7961,23 @@ input#filt-reset {
 .personal-status__img {
 	display: block;
 	position: absolute;
-	left: 14px;
+	left: 15px;
 	width: 24px;
 	height: 24px;
 	top: 50%;
 	transform: translateY(-50%);
-	object-fit: contain;
+	color: $color-violet;
 }
 
 .notification-icon {
 	position: relative;
 	margin-right: 23px;
 	bottom: -2px;
-	img {
+	.notification-icon__img {
 		display: block;
 		width: 27px;
+		height: 27px;
+		color: $color-violet;
 	}
 	span {
 		display: block;

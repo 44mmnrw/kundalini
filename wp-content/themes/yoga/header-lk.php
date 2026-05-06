@@ -53,7 +53,9 @@
 								: '';
 						?>
 						<div class="notification-icon" role="button" tabindex="0" aria-expanded="false" aria-controls="lk-notifications-popup">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/notification-icon.png'); ?>" alt="Уведомления">
+							<svg class="notification-icon__img" aria-hidden="true">
+								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>"></use>
+							</svg>
 							<span>0</span>
 							<div class="lk-notifications-popup" id="lk-notifications-popup" aria-hidden="true">
 								<div class="lk-notifications-popup__title">Уведомления</div>
@@ -61,7 +63,9 @@
 							</div>
 						</div>
 						<div class="personal-status">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/personal-status-icon.png'); ?>" alt="Статус" class="personal-status__img">
+							<svg class="personal-status__img" aria-hidden="true">
+								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
+							</svg>
 							<?php
 								$tariff = get_current_user_tariff();
 								if ($tariff) {
