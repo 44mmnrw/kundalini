@@ -857,29 +857,52 @@ add_action('wp_ajax_submit_comment_reply', 'handle_comment_reply');
 add_action('wp_ajax_nopriv_submit_comment_reply', 'handle_comment_reply');
 
 function handle_comment_reply() {
-    if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
-        wp_die('Ошибка безопасности');
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
+        wp_send_json_error('Ошибка безопасности');
+    }
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error('Для ответа необходимо авторизоваться');
     }
     
     // Кастомизация аватаров
-    if (is_user_logged_in()) {
-        $current_user = wp_get_current_user();
-        $comment_author = yoga_get_user_public_name((int) $current_user->ID);
-        if ($comment_author === '') {
-            $comment_author = $current_user->display_name ?: $current_user->user_login;
-        }
-        $comment_author_email = $current_user->user_email;
-        $user_id = $current_user->ID;
-    } else {
-        $comment_author = 'Р“РѕСЃС‚СЊ';
-        $comment_author_email = '';
-        $user_id = 0;
+    $current_user = wp_get_current_user();
+    $comment_author = yoga_get_user_public_name((int) $current_user->ID);
+    if ($comment_author === '') {
+        $comment_author = $current_user->display_name ?: $current_user->user_login;
+    }
+    $comment_author_email = $current_user->user_email;
+    $user_id = $current_user->ID;
+
+    $post_id = isset($_POST['post_id']) ? (int) $_POST['post_id'] : 0;
+    $parent_id = isset($_POST['parent_id']) ? (int) $_POST['parent_id'] : 0;
+    $content = isset($_POST['content']) ? sanitize_textarea_field($_POST['content']) : '';
+
+    if ($post_id <= 0 || !get_post($post_id)) {
+        wp_send_json_error('Некорректная практика для ответа');
+    }
+
+    $parent_comment = $parent_id > 0 ? get_comment($parent_id) : null;
+    if ($parent_id <= 0 || !$parent_comment) {
+        wp_send_json_error('Некорректный родительский комментарий');
+    }
+
+    if ((int) $parent_comment->comment_post_ID !== $post_id) {
+        wp_send_json_error('Некорректная привязка ответа к комментарию');
+    }
+
+    if ($content === '') {
+        wp_send_json_error('Введите текст ответа');
+    }
+
+    if (!comments_open($post_id)) {
+        wp_send_json_error('Комментирование для этой практики закрыто');
     }
     
     $comment_data = array(
-        'comment_post_ID' => intval($_POST['post_id']),
-        'comment_content' => sanitize_textarea_field($_POST['content']),
-        'comment_parent' => intval($_POST['parent_id']),
+        'comment_post_ID' => $post_id,
+        'comment_content' => $content,
+        'comment_parent' => $parent_id,
         'comment_author' => $comment_author,
         'comment_author_email' => $comment_author_email,
         'user_id' => $user_id,
