@@ -657,14 +657,23 @@
 	});
 	
 	$('.praktika-comment > .praktika-comment-item .answer-btn').click(function () {
-		$(this).closest('.praktika-comment').find('> .praktika-comment__answer').addClass("active");
-		$(this).closest('.praktika-comment').find('> .praktika-comment__answer .textarea-resize').focus();
+		if (typeof yoga_ajax !== 'undefined' && !yoga_ajax.user_logged_in) {
+			alert('Для ответа необходимо авторизоваться');
+			return;
+		}
+
+		var commentId = $(this).closest('.praktika-comment').attr('id').replace('comment-', '');
+		toggleReplyForm(commentId);
 	});
 	
 	$('.sub-answer > .praktika-comment-item .answer-btn').click(function () {
-		$(this).closest('.sub-answer').find('> .praktika-comment__answer').addClass("active");
-		$(this).closest('.sub-answer').find('> .praktika-comment__answer .textarea-resize').focus();
-		
+		if (typeof yoga_ajax !== 'undefined' && !yoga_ajax.user_logged_in) {
+			alert('Для ответа необходимо авторизоваться');
+			return;
+		}
+
+		var commentId = $(this).closest('.praktika-comment').attr('id').replace('comment-', '');
+		toggleReplyForm(commentId);
 	});
 	
 	
@@ -2504,14 +2513,23 @@
 });
 
 jQuery(document).ready(function($) {
-    // Переключение между слайдами
-    $('.sidebar-menu__item').on('click', function() {
-        var target = $(this).data('target');
+    function switchLkSlide(target) {
         $('.lk-slide').removeClass('active');
         $('.lk-slide[data-target="' + target + '"]').addClass('active');
         $('.sidebar-menu__item').removeClass('active');
-        $(this).addClass('active');
+        $('.sidebar-menu__item[data-target="' + target + '"]').addClass('active');
+    }
+
+    // Переключение между слайдами
+    $('.sidebar-menu__item').on('click', function() {
+        var target = $(this).data('target');
+        switchLkSlide(target);
 	});
+
+    // Переход в "Мои данные" при клике по аватару в шапке ЛК
+    $('.lk-login-btn').on('click', function() {
+        switchLkSlide(1);
+    });
     
     // Отправка формы через AJAX
 	$('#profile-form').on('submit', function(e) {
@@ -3173,6 +3191,11 @@ function toggleEditForm(commentId) {
 }
 
 function submitReply(parentId) {
+    if (typeof yoga_ajax !== 'undefined' && !yoga_ajax.user_logged_in) {
+        alert('Для ответа необходимо авторизоваться');
+        return;
+    }
+
     var content = jQuery('#reply-form-' + parentId + ' textarea').val();
     
     if (!content.trim()) {
