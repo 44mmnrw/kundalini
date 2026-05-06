@@ -1,8 +1,10 @@
 <?php
 $current_term = get_queried_object();
 $category_terms = array();
+$default_library_term_id = 0;
 
 if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-type') {
+    $default_library_term_id = (int) $current_term->term_id;
     $category_terms = get_terms(array(
         'taxonomy' => 'practice-type',
         'parent' => (int) $current_term->term_id,
@@ -35,7 +37,7 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 }
 ?>
 
-<section class="section-library" id="section-library">
+<section class="section-library" id="section-library" data-default-term-id="<?php echo esc_attr((string) $default_library_term_id); ?>">
 	<div class="container">
 		<div class="row">
 			<div class="library-form">
@@ -44,7 +46,9 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 						<div class="form-search">
 							<div class="form-categories">
 								<div class="form-categories__value">
-									<span class="active" data-target="0">Категория</span>
+									<?php if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-type') : ?>
+										<span class="active" data-target="<?php echo esc_attr((string) $default_library_term_id); ?>"><?php echo esc_html($current_term->name); ?></span>
+									<?php endif; ?>
 									<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 										<?php foreach ($category_terms as $term) : ?>
 											<span data-target="<?php echo esc_attr((string) $term->term_id); ?>"><?php echo esc_html($term->name); ?></span>
@@ -61,6 +65,13 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 							<div class="form-search-list"></div>
 
 							<div class="form-cat-list">
+								<?php if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-type') : ?>
+									<div class="form-cat-list__item active" data-target="<?php echo esc_attr((string) $default_library_term_id); ?>">
+										<a href="<?php echo esc_url(get_term_link($current_term)); ?>">
+											<span><?php echo esc_html($current_term->name); ?></span>
+										</a>
+									</div>
+								<?php endif; ?>
 								<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 									<?php foreach ($category_terms as $term) : ?>
 										<?php $term_link = get_term_link($term); ?>
@@ -82,7 +93,86 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 							<span>0</span>
 						</div>
 					</div>
-					<div class="filter"></div>
+					<div class="filter">
+						<div class="filter-item">
+							<div class="filter-item__main">
+								<span>По сложности</span>
+							</div>
+							<div class="filter-item__list">
+								<?php
+								$difficulty_terms = get_terms(array(
+									'taxonomy' => 'practice-difficulty',
+									'hide_empty' => false,
+									'orderby' => 'name',
+									'order' => 'ASC',
+								));
+								if (!empty($difficulty_terms) && !is_wp_error($difficulty_terms)) :
+									foreach ($difficulty_terms as $index => $difficulty_term) :
+										$input_id = 'library-filter-difficulty-' . ($index + 1);
+										?>
+										<input type="checkbox" id="<?php echo esc_attr($input_id); ?>" name="practice-difficulty[]" value="<?php echo esc_attr((string) $difficulty_term->slug); ?>">
+										<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
+											<div class="checkbox"></div>
+											<span><?php echo esc_html((string) $difficulty_term->name); ?></span>
+										</label>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</div>
+						</div>
+
+						<div class="filter-item">
+							<div class="filter-item__main">
+								<span>По продолжительности</span>
+							</div>
+							<div class="filter-item__list">
+								<?php
+								$duration_terms = get_terms(array(
+									'taxonomy' => 'practice-duration',
+									'hide_empty' => false,
+									'orderby' => 'name',
+									'order' => 'ASC',
+								));
+								if (!empty($duration_terms) && !is_wp_error($duration_terms)) :
+									foreach ($duration_terms as $index => $duration_term) :
+										$input_id = 'library-filter-duration-' . ($index + 1);
+										?>
+										<input type="checkbox" id="<?php echo esc_attr($input_id); ?>" name="practice-duration[]" value="<?php echo esc_attr((string) $duration_term->slug); ?>">
+										<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
+											<div class="checkbox"></div>
+											<span><?php echo esc_html((string) $duration_term->name); ?></span>
+										</label>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</div>
+						</div>
+
+						<div class="filter-item">
+							<div class="filter-item__main">
+								<span>По цели</span>
+							</div>
+							<div class="filter-item__list">
+								<?php
+								$goal_terms = get_terms(array(
+									'taxonomy' => 'practice-goal',
+									'hide_empty' => false,
+									'orderby' => 'name',
+									'order' => 'ASC',
+								));
+								if (!empty($goal_terms) && !is_wp_error($goal_terms)) :
+									foreach ($goal_terms as $index => $goal_term) :
+										$input_id = 'library-filter-goal-' . ($index + 1);
+										?>
+										<input type="checkbox" id="<?php echo esc_attr($input_id); ?>" name="practice-goal[]" value="<?php echo esc_attr((string) $goal_term->slug); ?>">
+										<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
+											<div class="checkbox"></div>
+											<span><?php echo esc_html((string) $goal_term->name); ?></span>
+										</label>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</div>
+						</div>
+
+					</div>
 				</form>
 			</div>
 		</div>

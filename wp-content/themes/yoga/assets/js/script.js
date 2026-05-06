@@ -219,7 +219,12 @@
 	
 	$('.filter-btn').click(function () {
 		$(this).toggleClass("active");
-		$('.filter').toggleClass("active");
+		const $contextForm = $(this).closest('form');
+		if ($contextForm.length) {
+			$contextForm.find('.filter').first().toggleClass("active");
+		} else {
+			$('.filter').toggleClass("active");
+		}
 	}); 
 	
 	
@@ -323,19 +328,34 @@
 	});
 	
 	
-	$('.filter-item__main').click(function () {
-		$('.form-search').removeClass("active");
-		$('.form-categories').removeClass("active");
-		$('.form-cat-list').removeClass("active");
-		$('.form-search-list').removeClass("active");
-		
-		$(this).closest('.filter').find('.filter-item').find('.filter-item__main').not(this).closest('.filter-item').removeClass("active");
-		$(this).closest('.filter').find('.filter-item').find('.filter-item__main').not(this).closest('.filter-item').find('.filter-item__list').removeClass("active");
-		
-		$(this).closest('.filter-item').toggleClass("active");
-		$(this).closest('.filter-item').find('.filter-item__list').toggleClass("active");
-		$('.filter-item__list .checkbox-item').not('.active').closest('.filter-item').removeClass("focused");
-		$('.filter-item__list .checkbox-item.active').closest('.filter-item').addClass("focused");
+	$(document).on('click', '.filter-item__main', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const $currentMain = $(this);
+		const $currentFilter = $currentMain.closest('.filter');
+		const $currentSection = $currentMain.closest('.section-library, .section-kriyi');
+
+		if ($currentSection.length) {
+			$currentSection.find('.form-search').removeClass("active");
+			$currentSection.find('.form-categories').removeClass("active");
+			$currentSection.find('.form-cat-list').removeClass("active");
+			$currentSection.find('.form-search-list').removeClass("active");
+		} else {
+			$('.form-search').removeClass("active");
+			$('.form-categories').removeClass("active");
+			$('.form-cat-list').removeClass("active");
+			$('.form-search-list').removeClass("active");
+		}
+
+		$currentFilter.find('.filter-item').not($currentMain.closest('.filter-item')).removeClass("active");
+		$currentFilter.find('.filter-item__list').not($currentMain.closest('.filter-item').find('.filter-item__list')).removeClass("active");
+
+		$currentMain.closest('.filter-item').toggleClass("active");
+		$currentMain.closest('.filter-item').find('.filter-item__list').toggleClass("active");
+
+		$currentFilter.find('.filter-item__list .checkbox-item').not('.active').closest('.filter-item').removeClass("focused");
+		$currentFilter.find('.filter-item__list .checkbox-item.active').closest('.filter-item').addClass("focused");
 	});
 	
 	
@@ -1372,7 +1392,7 @@
 	
 	
 	if ($(window).width() < 991 ) {
-        $('.filter-btn').click(function () {
+        $('.section-library .filter-btn').click(function () {
             $(this).removeClass("active");
             $('.overlay').addClass("active");
             $('.modal-mobile-menu').removeClass("active");
@@ -2018,13 +2038,21 @@
 		return emailRegex.test(email);
 	}
 	
+    function getLibraryDefaultTermId() {
+        const rawDefaultTerm = parseInt($('.section-library').data('default-term-id'), 10);
+        return Number.isNaN(rawDefaultTerm) ? 0 : rawDefaultTerm;
+    }
+
     function getActiveLibraryTermId() {
         const $activeCategory = $('.section-library .form-categories__value span.active');
         if (!$activeCategory.length) {
-            return 0;
+            return getLibraryDefaultTermId();
         }
         const rawTermId = parseInt($activeCategory.data('target'), 10);
-        return Number.isNaN(rawTermId) ? 0 : rawTermId;
+        if (Number.isNaN(rawTermId) || rawTermId <= 0) {
+            return getLibraryDefaultTermId();
+        }
+        return rawTermId;
     }
 
     function loadLibraryPractices() {
@@ -2108,7 +2136,7 @@
 	}
 	
 	// Обработчики кликов
-	$(document).on('click', '.section-library .form-categories__value span, .section-library .form-cat-list__item', function() {
+	$(document).on('click', '.section-library .form-cat-list__item', function() {
 		const targetTerm = $(this).data('target');
 		setActiveLibraryTerm(targetTerm);
 		loadLibraryPractices();
@@ -2118,7 +2146,8 @@
 	// Также можно вызвать при загрузке страницы для установки начального активного элемента
 	$(document).ready(function() {
 		const initialActiveTerm = $('.section-library .form-categories__value span.active').data('target') || 
-		$('.section-library .form-cat-list__item.active').data('target');
+		$('.section-library .form-cat-list__item.active').data('target') ||
+		getLibraryDefaultTermId();
 		if (initialActiveTerm) {
 			setActiveLibraryTerm(initialActiveTerm);
 		}

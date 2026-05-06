@@ -1117,9 +1117,41 @@ function handle_comment_delete() {
 			$args_link_before = is_object($args) ? ($args->link_before ?? '') : (is_array($args) ? ($args['link_before'] ?? '') : '');
 			$args_link_after = is_object($args) ? ($args->link_after ?? '') : (is_array($args) ? ($args['link_after'] ?? '') : '');
 			$args_after = is_object($args) ? ($args->after ?? '') : (is_array($args) ? ($args['after'] ?? '') : '');
+			$item_title = apply_filters('the_title', $item->title, $item->ID);
+
+			if (!empty($item->url) && function_exists('get_field')) {
+				static $about_page_url = null;
+				static $about_page_custom_title = null;
+
+				if ($about_page_url === null) {
+					$about_page = get_page_by_path('o-nas');
+					if ($about_page instanceof WP_Post) {
+						$about_page_url = untrailingslashit((string) get_permalink($about_page));
+						$about_page_custom_title = trim((string) get_field('about_main_title', $about_page->ID));
+					} else {
+						$about_page_url = '';
+						$about_page_custom_title = '';
+					}
+				}
+
+				if ($about_page_url !== '' && $about_page_custom_title !== '') {
+					$item_url = untrailingslashit((string) $item->url);
+					if ($item_url === $about_page_url) {
+						$item_title = $about_page_custom_title;
+					}
+				}
+			}
+
+			$normalized_item_title = trim(wp_strip_all_tags((string) $item_title));
+			if ($normalized_item_title === 'ЧАСТЫЕ ВОПРОСЫ') {
+				$item_title = 'FAQ';
+			}
+			if ($normalized_item_title === 'О ПРЕПОДАВАТЕЛЕ') {
+				$item_title = 'О преподавателе';
+			}
 			$item_output = $args_before;
 			$item_output .= '<a class="ref"' . $attributes . '>';
-			$item_output .= $args_link_before . apply_filters('the_title', $item->title, $item->ID) . $args_link_after;
+			$item_output .= $args_link_before . $item_title . $args_link_after;
 			
 			// Добавляем span с текстом
 			if ($is_first_item) {
@@ -1445,10 +1477,20 @@ function handle_comment_delete() {
 		
 		$tax_query = [];
 		if ($term_id) {
+			$term_ids = array($term_id);
+			$children = get_term_children($term_id, 'practice-type');
+			if (!is_wp_error($children) && !empty($children)) {
+				$term_ids = array_merge($term_ids, array_map('intval', $children));
+			}
+			$term_ids = array_values(array_unique(array_filter($term_ids, static function ($id) {
+				return (int) $id > 0;
+			})));
+
 			$tax_query[] = [
-            'taxonomy' => 'practice-type',
-            'field'    => 'term_id',
-            'terms'    => $term_id,
+            'taxonomy'         => 'practice-type',
+            'field'            => 'term_id',
+            'terms'            => $term_ids,
+            'include_children' => false,
 			];
 		}
 		

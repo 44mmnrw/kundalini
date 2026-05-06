@@ -572,7 +572,7 @@ input#filt-reset {
     height: 11.6875rem;  }
   .library-item__btn img {
     width: 2.8125rem;  }
-  .form-categories, .form-cat-list, .filter {
+  .section-library .form-categories, .section-library .form-cat-list, .section-library .filter {
     display: none;
   }
 }
