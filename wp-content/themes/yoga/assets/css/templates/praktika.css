@@ -554,6 +554,10 @@ display: block !important;
   pointer-events: auto;
   opacity: 1;
 }
+.comment-form-main form:hover .btn {
+  pointer-events: auto;
+  opacity: 1;
+}
 .comment-form-main textarea {
   width: 80%;
   background: var(--color-grey);
@@ -571,6 +575,9 @@ display: block !important;
   display: none;
 }
 .comment-form-main textarea:focus {
+  border-color: var(--color-violet) !important;
+}
+.comment-form-main textarea:hover {
   border-color: var(--color-violet) !important;
 }
 .comment-form-main .btn {
@@ -716,6 +723,9 @@ display: block !important;
 .answer-main textarea:focus {
   border-color: var(--color-violet) !important;
 }
+.answer-main textarea:hover {
+  border-color: var(--color-violet) !important;
+}
 .answer-main .btn {
   margin-left: auto;
   margin-top: 1.25rem;  min-width: 7.6875rem;  text-align: center;
@@ -729,6 +739,10 @@ display: block !important;
   pointer-events: none;
 }
 .answer-main.active .btn {
+  pointer-events: auto;
+  opacity: 1;
+}
+.answer-main:hover .btn {
   pointer-events: auto;
   opacity: 1;
 }

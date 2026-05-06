@@ -494,7 +494,7 @@
 		if ($is_homepage || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'tariffs-style', $theme_uri . '/assets/css/templates/tariffs.css', $common_style_deps, $tariffs_style_ver );
 		}
-		if ($is_homepage || $is_archive_page || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
+		if ($is_homepage || $is_archive_page || $is_post_single || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'subscription-style', $theme_uri . '/assets/css/templates/subscription.css', $common_style_deps, $subscription_style_ver );
 		}
 		if (
@@ -2822,10 +2822,13 @@ function handle_comment_delete() {
 	
 	function reading_time() {
 		$content = get_post_field('post_content', get_the_ID());
-		$word_count = str_word_count(strip_tags($content));
-		$reading_time = ceil($word_count / 200); // Вход по email и паролю
+		$plain_text = wp_strip_all_tags((string) $content);
 		
-		return $reading_time;
+		// Count words for any language, including Cyrillic.
+		preg_match_all('/[\p{L}\p{N}\']+/u', $plain_text, $matches);
+		$word_count = isset($matches[0]) ? count($matches[0]) : 0;
+		
+		return max(1, (int) ceil($word_count / 180));
 	}
 	
 	

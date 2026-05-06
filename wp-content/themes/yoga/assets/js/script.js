@@ -1012,19 +1012,22 @@
 	$( document ).ready(function() {
 		
 		
-		var block_pos_03 = $('.praktika-fixed').offset()?.top || 0;
-		var wrap_pos_03 = $('.praktika-menu').offset()?.top || 0;
+		var block_pos_03 = $('.post-author').offset()?.top || $('.post-author-fixed').offset()?.top || 0;
+		var wrap_pos_03 = $('.post-layout').offset()?.top || 0;
 		// позиция контейнера
 		var block_height_03 = $('.post-author-fixed').outerHeight();
 		// высота блока
-		var wrap_height_03 = $('.post').outerHeight();
+		var wrap_height_03 = $('.post-layout').outerHeight();
 		// высота контейнера
 		var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;
 		
 		
 		$(window).scroll(function () {
+			if (!$('.post-author-fixed').length || !block_height_03 || !wrap_height_03) {
+				return;
+			}
 			
-			var wrap_height_03 = $('.post').outerHeight();
+			var wrap_height_03 = $('.post-layout').outerHeight();
 			// высота контейнера
 			var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;   
 			
