@@ -2830,6 +2830,38 @@ function handle_comment_delete() {
 		
 		return max(1, (int) ceil($word_count / 180));
 	}
+
+	if (!function_exists('yoga_minutes_word')) {
+		function yoga_minutes_word($minutes) {
+			$minutes = abs((int) $minutes);
+			$mod10 = $minutes % 10;
+			$mod100 = $minutes % 100;
+
+			if ($mod100 >= 11 && $mod100 <= 14) {
+				return 'минут';
+			}
+			if ($mod10 === 1) {
+				return 'минута';
+			}
+			if ($mod10 >= 2 && $mod10 <= 4) {
+				return 'минуты';
+			}
+
+			return 'минут';
+		}
+	}
+
+	if (!function_exists('yoga_format_minutes')) {
+		function yoga_format_minutes($minutes, $short = false) {
+			$minutes = max(1, (int) $minutes);
+
+			if ($short) {
+				return $minutes . ' мин';
+			}
+
+			return $minutes . ' ' . yoga_minutes_word($minutes);
+		}
+	}
 	
 	
 	// Регистрация по email

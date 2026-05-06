@@ -1,3 +1,13 @@
+<?php
+$contacts_prefill_name = '';
+$contacts_prefill_email = '';
+
+if (is_user_logged_in()) {
+    $current_user = wp_get_current_user();
+    $contacts_prefill_name = (string) ($current_user->display_name ?? '');
+    $contacts_prefill_email = (string) ($current_user->user_email ?? '');
+}
+?>
 <section class="section-form-questions section-form-questions_contacts" id="section-form-questions">
     <div class="container">
         <div class="row">
@@ -11,10 +21,10 @@
                     <form action="#" class="form-questions__main-form contacts-form" method="post">
                         <?php wp_nonce_field('contacts_nonce', 'contacts_nonce_field'); ?>
                         
-                        <input type="text" name="contacts_name" class="input" required 
+                        <input type="text" name="contacts_name" class="input" required value="<?php echo esc_attr($contacts_prefill_name); ?>"
                                placeholder="<?php echo esc_attr(get_field('contacts_placeholder_name', 'option') ?: 'Имя'); ?>">
                         
-                        <input type="email" name="contacts_email" class="input" required 
+                        <input type="email" name="contacts_email" class="input" required value="<?php echo esc_attr($contacts_prefill_email); ?>"
                                placeholder="<?php echo esc_attr(get_field('contacts_placeholder_email', 'option') ?: 'E-mail'); ?>">
                         
                         <input type="tel" name="contacts_phone" class="input input_phone" required>

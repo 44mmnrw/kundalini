@@ -225,7 +225,7 @@ if (have_posts()) :
                                 <svg aria-hidden="true" focusable="false" class="article-time__icon">
                                     <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#time-read-icon'); ?>"></use>
                                 </svg>
-                                <?php echo esc_html($reading_minutes . ' минут'); ?>
+                                <?php echo esc_html(function_exists('yoga_format_minutes') ? yoga_format_minutes($reading_minutes) : ($reading_minutes . ' минут')); ?>
                             </time>
                         </div>
                     </div>
@@ -332,7 +332,7 @@ if (have_posts()) :
                                                         ? (int) reading_time()
                                                         : $count_reading_minutes(get_the_content());
 
-                                                    echo esc_html($popular_reading_minutes . ' мин');
+                                                    echo esc_html(function_exists('yoga_format_minutes') ? yoga_format_minutes($popular_reading_minutes, true) : ($popular_reading_minutes . ' мин'));
                                                     ?>
                                                 </time>
                                             </div>
