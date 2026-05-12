@@ -4789,6 +4789,10 @@ input#filt-reset {
 .form-categories, .form-cat-list, .filter {
 	display: none;
 }
+
+.filter.active {
+	display: flex;
+}
 	
 }
 

@@ -423,8 +423,8 @@
 		$(this).closest('.sorting-item__list').find('.sorting-item__list-item').removeClass("active");
 		$(this).addClass("active");
 		
-		var sortcat = $(this).attr('data-target');
-		$('.sorting-item__main').find('span').html(sortcat);
+		var sortcat = $(this).find('span').text();
+		$(this).closest('.sorting-item').find('.sorting-item__main span').text(sortcat);
 	}); 
 	
 	/* $('.kriya-fav').click(function () {
