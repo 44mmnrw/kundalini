@@ -461,12 +461,7 @@
 		}
 		if ($is_practice_tax || $is_lk_template) {
 			wp_enqueue_style( 'library-style', $theme_uri . '/assets/css/templates/library.css', $common_style_deps, $library_style_ver );
-		}
-		if ($is_practice_tax) {
-			$library_root_term = get_queried_object();
-			if ($library_root_term instanceof WP_Term && $library_root_term->taxonomy === 'practice-type' && (int) $library_root_term->parent === 0) {
-				wp_enqueue_style( 'library-filters-style', $theme_uri . '/assets/css/templates/library-filters.css', array( 'library-style' ), $library_filters_style_ver );
-			}
+			wp_enqueue_style( 'library-filters-style', $theme_uri . '/assets/css/templates/library-filters.css', array( 'library-style' ), $library_filters_style_ver );
 		}
 		if ($is_practice_single) {
 			wp_enqueue_style( 'praktika-style', $theme_uri . '/assets/css/templates/praktika.css', $common_style_deps, $praktika_style_ver );
