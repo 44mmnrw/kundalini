@@ -12418,9 +12418,10 @@ footer {
 .review-modal {
 	display: block;
 	width: 100%;
-	padding: 30px;
-	padding-top: 44px;
-	padding-bottom: 35px;
+	padding: 1.875rem;
+	padding-top: 1.875rem;
+	padding-left: 1.875rem;
+	padding-bottom: 2.1875rem;
 }
 
 .review-modal__main {
@@ -12510,8 +12511,9 @@ footer {
 @media (max-width: 1320px) {
 
 .review-modal {
-    padding-top: 34px;
-    padding-bottom: 32px;
+    padding-top: 1.875rem;
+    padding-left: 1.875rem;
+    padding-bottom: 2rem;
 }
 
 .review-modal__text {
@@ -12561,15 +12563,15 @@ footer {
 }
 
 .review-modal {
-	padding-left: 25px;
-	padding-right: 12px;
-    padding-top: 40px;
-    padding-bottom: 44px;
+	padding-left: 1.875rem;
+	padding-right: 0.75rem;
+    padding-top: 1.875rem;
+    padding-bottom: 2.75rem;
 } 
 
 .review-modal__text {
    max-height: calc(100vh - 290px);
-   padding-right: 30px;
+   padding-right: 1.875rem;
    margin-top: 32px;
    p {
       margin-bottom: 20px;
