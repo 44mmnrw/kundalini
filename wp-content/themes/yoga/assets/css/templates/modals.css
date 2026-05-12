@@ -359,6 +359,23 @@
   .modal-mobile-menu-lk .mobile-menu-inner {
     background: var(--color-violet);
   }
+  .modal-mobile-menu-lk.active .mobile-menu-inner {
+    height: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+  .modal-mobile-menu-lk .mobile-menu {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: none;
+    -webkit-overflow-scrolling: touch;
+  }
   .modal-mobile-menu-lk .mobile-menu-inner::before {
     content: "";
     display: block;
@@ -371,6 +388,7 @@
   }
   .modal-mobile-menu-lk .mobile-menu__slide {
     padding-bottom: 1.25rem;
+    overflow: visible;
   }
   .modal-mobile-menu-lk .mobile-menu-main {
     border-top: 1px solid #fff;
@@ -803,7 +821,7 @@
   .mobile-menu-back {
     left: 0.25rem;  }
   .modal-mobile-menu-lk .mobile-menu {
-    max-height: 100vh;
+    max-height: none;
   }
   .modal-mobile-menu-lk .mobile-menu-back {
     left: 1.25rem;    top: 4.75rem;  }
