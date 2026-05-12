@@ -2136,7 +2136,6 @@
 		$.ajax({
 			url: yoga_ajax.ajax_url,
 			type: 'POST',
-			traditional: true,
 			data: data,
 			success: function(response) {
 				$('.section-library .library').html(response);
