@@ -46,7 +46,7 @@ $img_uri = get_template_directory_uri() . '/assets/img';
                     </span>
                 </label>
                 <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk">
-                    Войти через VK
+                    Войти через
                 </a>
                 <div class="loggin-additional">
                     <div class="loggin-additional__item ml-sl-switch" data-target="3">

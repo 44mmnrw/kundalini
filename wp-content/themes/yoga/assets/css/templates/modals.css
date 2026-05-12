@@ -414,32 +414,114 @@
   .modal-mobile-menu-lk .sidebar-menu {
     padding-top: 0px;
   }
+  .modal-mobile-menu-lk .sidebar-menu-lk-group--primary .sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-lk-group--primary .sidebar-menu__item {
+    margin-top: 0;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-sep {
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    border: none;
+    background: rgba(255, 255, 255, 0.45);
+    flex-shrink: 0;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-sep--before-logout {
+    margin-top: 0.625rem;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-secondary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+    width: 100%;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-secondary__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.4375rem;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.1;
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: 0.4s ease;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-secondary__link--library {
+    padding-right: 0.625rem;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-secondary__link span {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-secondary__chevron {
+    display: block;
+    width: calc(1em * 9 / 16);
+    height: 1em;
+    flex-shrink: 0;
+    color: inherit;
+  }
+  .modal-mobile-menu-lk .sidebar-menu-secondary__chevron use {
+    color: inherit;
+  }
   .modal-mobile-menu-lk .sidebar-menu.sidebar-menu_exit {
     padding-top: 0.3125rem;    padding-bottom: 0.9375rem;  }
   .modal-mobile-menu-lk .sidebar-menu__item span {
-    padding-left: 0.75rem;  }
+    padding-left: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.1;
+  }
   .modal-mobile-menu-lk .personal-status__img {
     color: #e8ff57;
   }
   .modal-mobile-menu-lk .sidebar-menu__item {
     color: #fff;
+    font-size: 1rem;
   }
   .modal-mobile-menu-lk .sidebar-menu__item.active {
     color: #1f1f1f;
   }
+  .modal-mobile-menu-lk .sidebar-menu__item-icon,
+  .modal-mobile-menu-lk .sidebar-exit__icon {
+    width: 1em;
+    height: 1em;
+    max-height: 1em;
+    flex-shrink: 0;
+  }
+  /* Figma favorite_icon 620:12663 — кадр 17×15, не квадрат */
+  .modal-mobile-menu-lk .sidebar-menu__item-icon--heart {
+    width: calc(1em * 17.4 / 15.4852);
+    height: 1em;
+    max-height: 1em;
+  }
   .modal-mobile-menu-lk .sidebar-menu__item-icon svg,
   .modal-mobile-menu-lk .sidebar-menu__item-svg {
     display: block;
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 100%;
+    height: 100%;
+    max-height: 1em;
     flex-shrink: 0;
+    overflow: visible;
   }
   .modal-mobile-menu-lk .sidebar-exit__icon svg,
   .modal-mobile-menu-lk .sidebar-exit__svg {
     display: block;
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 100%;
+    height: 100%;
+    max-height: 1em;
     flex-shrink: 0;
+    overflow: visible;
   }
   .modal-mobile-menu-lk .modal-close__icon {
     display: block;
@@ -458,18 +540,21 @@
     left: auto;
     right: auto;
     width: 100%;
-    margin-top: 0.625rem;
+    margin-top: 0;
     flex-shrink: 0;
     z-index: 1;
     background: var(--color-violet);
-    border-top: 1px solid #fff;
+    border-top: none;
     color: #fff;
+    font-size: 1rem;
   }
   .modal-mobile-menu-lk .mobile-menu-exit.sidebar-exit::before {
     display: none;
   }
   .modal-mobile-menu-lk .mobile-menu-exit span {
     padding-left: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.1;
   }
   .lk-mobile-menu-item {
     display: flex;
@@ -1089,7 +1174,8 @@ label.checkbox {
   margin-top: auto;
   margin-bottom: auto;
   bottom: -0.25rem;  color: #646464;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish-Medium", sans-serif;
+  font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
 }
@@ -1126,7 +1212,8 @@ p.login-rules a:hover {
 .loggin-additional__item {
   margin-left: auto;
   margin-right: auto;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish-Medium", sans-serif;
+  font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
   color: var(--color-black);
