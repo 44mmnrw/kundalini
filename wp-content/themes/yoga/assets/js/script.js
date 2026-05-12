@@ -1402,6 +1402,9 @@
 	
 	if ($(window).width() < 991 ) {
         $('.section-library .filter-btn').click(function () {
+            if (!$('.modal-filter').length) {
+                return;
+            }
             $(this).removeClass("active");
             $('.overlay').addClass("active");
             $('.modal-mobile-menu').removeClass("active");
