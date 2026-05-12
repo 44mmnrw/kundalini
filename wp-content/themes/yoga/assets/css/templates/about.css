@@ -167,8 +167,14 @@
     text-align: left;
   }
   .about-img {
-    max-width: 36.875rem;    left: 50%;
-    transform: translateX(-50%);
+    max-width: 36.875rem;
+  }
+  .about__main_start .about-img,
+  .about__main_sec .about-img {
+    margin-left: auto;
+    margin-right: auto;
+    left: auto;
+    transform: none;
   }
   .about-year {
     padding-top: 3.9375rem;  }
