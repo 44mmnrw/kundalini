@@ -2078,11 +2078,11 @@
     }
 
     function syncLibraryFilterCheckboxLabels() {
-        $('#practice-filter-form input[type=checkbox]').each(function() {
+        $('input.library-filter-input').each(function() {
             var id = $(this).attr('id');
             if (!id) return;
             var on = $(this).prop('checked');
-            $('label[for="' + id + '"]').toggleClass('active', on).find('.checkbox').toggleClass('active', on);
+            $('label[for="' + id + '"]').add($(this).closest('label.checkbox-item')).toggleClass('active', on).find('.checkbox').toggleClass('active', on);
         });
     }
 
@@ -2123,7 +2123,7 @@
 		};
 		
 		// Собираем чекбоксы из формы (на мобильных .filter скрыт display:none — input всё равно в DOM)
-		$('#practice-filter-form input[type=checkbox]:checked').each(function() {
+		$('input.library-filter-input:checked').each(function() {
 			let name = $(this).attr('name').replace('[]','');
 			if (!data.filters[name]) data.filters[name] = [];
 			data.filters[name].push($(this).val());
@@ -2241,79 +2241,8 @@
         }
     });
 	
-	// Чекбоксы библиотеки: перехват в capture (кастомный .checkbox и нативный label конфликтовали)
-	(function ($) {
-		var debounceMs = 450;
-		var lastToggle = {};
-
-		function labelFromTarget(target) {
-			return target && target.closest ? target.closest('label.checkbox-item[for^="library-filter-"]') : null;
-		}
-
-		function isOurLibraryLabel(lab) {
-			var form = document.getElementById('practice-filter-form');
-			var screen = document.getElementById('library-filters-screen');
-			var inForm = !!(form && lab.closest && form.contains(lab));
-			var inActiveScreen = !!(screen && screen.classList.contains('active') && lab.closest && screen.contains(lab));
-			return inForm || inActiveScreen;
-		}
-
-		function handleActivation(e) {
-			/* pointerup с тачскрина: часто button === -1 (Pointer Events 2). Нельзя отсекать «!== 0». */
-			if (e.type === 'pointerup' && e.pointerType === 'mouse' && typeof e.button === 'number' && e.button !== 0) {
-				return;
-			}
-			var lab = labelFromTarget(e.target);
-			if (!lab || !isOurLibraryLabel(lab)) {
-				return;
-			}
-			var forId = lab.getAttribute('for');
-			if (!forId) {
-				return;
-			}
-			var input = document.getElementById(forId);
-			var form = document.getElementById('practice-filter-form');
-			if (!input || !form || String(input.type).toLowerCase() !== 'checkbox' || !form.contains(input)) {
-				return;
-			}
-			var now = Date.now();
-			if (lastToggle[forId] && now - lastToggle[forId] < debounceMs) {
-				if (e.cancelable) {
-					e.preventDefault();
-				}
-				e.stopPropagation();
-				if (e.stopImmediatePropagation) {
-					e.stopImmediatePropagation();
-				}
-				return;
-			}
-			lastToggle[forId] = now;
-
-			$('.form-categories').removeClass('active');
-			$('.form-search').removeClass('active');
-			$('.form-cat-list').removeClass('active');
-			$('.form-search-list').removeClass('active');
-
-			if (e.cancelable) {
-				e.preventDefault();
-			}
-			e.stopPropagation();
-			if (e.stopImmediatePropagation) {
-				e.stopImmediatePropagation();
-			}
-
-			input.checked = !input.checked;
-			$(input).trigger('change');
-		}
-
-		if (window.PointerEvent) {
-			document.addEventListener('pointerup', handleActivation, true);
-		}
-		document.addEventListener('click', handleActivation, true);
-	})(jQuery);
-
-	// чекбоксы (включая мобильный экран: те же input в .filter)
-	$(document).on('change', '#practice-filter-form input[type=checkbox]', function() {
+	// Фильтры библиотеки: input с class + form="" вне тега <form> — только input.library-filter-input
+	$(document).on('change', 'input.library-filter-input', function() {
 		syncLibraryFilterCheckboxLabels();
 		loadLibraryPractices();
 	});
@@ -2334,7 +2263,7 @@
 	});
 
 	$(document).on('click', '.js-library-filters-reset', function() {
-		$('#practice-filter-form input[type=checkbox]').prop('checked', false);
+		$('input.library-filter-input').prop('checked', false);
 		syncLibraryFilterCheckboxLabels();
 		loadLibraryPractices();
 	});
