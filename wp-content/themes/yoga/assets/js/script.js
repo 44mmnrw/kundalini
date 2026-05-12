@@ -872,8 +872,7 @@
 			$('.modal-mobile-menu').removeClass("active")
 			$('.modal-mobile-menu-lk').removeClass("active")
 			$('.body').removeClass("body-fixed");
-			$('.library-filters-screen').removeClass('active').attr('aria-hidden', 'true');
-			$('.section-library .filter-btn').removeClass('active');
+			closeLibraryFiltersScreen(true);
 		});
 	};
 	
@@ -1180,8 +1179,7 @@
 		$('.modal-addnewcard').removeClass("active");
 		$('.body_lk .header').removeClass("active");
 		$('.body_lk .lk-burger').removeClass("active");
-		$('.library-filters-screen').removeClass('active').attr('aria-hidden', 'true');
-		$('.section-library .filter-btn').removeClass('active');
+		closeLibraryFiltersScreen(true);
 	});
 	
 	$('.modal-close').click(function () {
@@ -1195,8 +1193,7 @@
 		$('.body').removeClass("body-fixed");
 		$('.body_lk .header').removeClass("active");
 		$('.body_lk .lk-burger').removeClass("active");
-		$('.library-filters-screen').removeClass('active').attr('aria-hidden', 'true');
-		$('.section-library .filter-btn').removeClass('active');
+		closeLibraryFiltersScreen(true);
 	});
 	
 	jQuery(function($){
@@ -2098,15 +2095,69 @@
         $c.text(n);
     }
 
-    function closeLibraryFiltersScreen() {
-        $('.library-filters-screen').removeClass('active').attr('aria-hidden', 'true');
+    function finalizeLibraryFiltersScreenUi() {
+        $('.library-filters-screen').removeClass('active library-filters-screen--closing').attr('aria-hidden', 'true');
         $('.section-library .filter-btn').removeClass('active');
         $('.overlay').removeClass('active');
         $('.body').removeClass('body-fixed');
     }
 
+    /**
+     * @param {boolean} immediate — без анимации (другие модалки, оверлей, <991 init).
+     */
+    function closeLibraryFiltersScreen(immediate) {
+        var $screen = $('.library-filters-screen');
+        if (!$screen.length) {
+            return;
+        }
+
+        if (immediate || $(window).width() >= 991) {
+            $screen.find('.library-filters-screen__panel').off('transitionend.libraryFiltersPanel');
+            finalizeLibraryFiltersScreenUi();
+            return;
+        }
+
+        if (!$screen.hasClass('active')) {
+            if ($screen.hasClass('library-filters-screen--closing')) {
+                $screen.find('.library-filters-screen__panel').off('transitionend.libraryFiltersPanel');
+                finalizeLibraryFiltersScreenUi();
+            }
+            return;
+        }
+
+        if ($screen.hasClass('library-filters-screen--closing')) {
+            return;
+        }
+
+        var $panel = $screen.find('.library-filters-screen__panel');
+        $screen.addClass('library-filters-screen--closing');
+
+        function onPanelTransitionEnd(e) {
+            if (e.target !== $panel[0]) {
+                return;
+            }
+            var pn = e.originalEvent && e.originalEvent.propertyName;
+            if (pn && pn !== 'transform') {
+                return;
+            }
+            $panel.off('transitionend.libraryFiltersPanel', onPanelTransitionEnd);
+            finalizeLibraryFiltersScreenUi();
+        }
+
+        $panel.on('transitionend.libraryFiltersPanel', onPanelTransitionEnd);
+        window.setTimeout(function () {
+            if ($screen.hasClass('library-filters-screen--closing')) {
+                $panel.off('transitionend.libraryFiltersPanel', onPanelTransitionEnd);
+                finalizeLibraryFiltersScreenUi();
+            }
+        }, 450);
+    }
+
     function openLibraryFiltersScreen() {
-        $('.library-filters-screen').addClass('active').attr('aria-hidden', 'false');
+        var $screen = $('.library-filters-screen');
+        $screen.removeClass('library-filters-screen--closing');
+        $screen.find('.library-filters-screen__panel').off('transitionend.libraryFiltersPanel');
+        $screen.addClass('active').attr('aria-hidden', 'false');
         $('.overlay').addClass('active');
         $('.body').addClass('body-fixed');
         syncLibraryFilterCheckboxLabels();
@@ -2316,12 +2367,10 @@
 	});
 
 	$(document).on('click', '.library-filters-screen__close', function() {
-		$('.section-library .filter-btn').removeClass('active');
 		closeLibraryFiltersScreen();
 	});
 
 	$(document).on('click', '.library-filters-screen__backdrop', function() {
-		$('.section-library .filter-btn').removeClass('active');
 		closeLibraryFiltersScreen();
 	});
 
