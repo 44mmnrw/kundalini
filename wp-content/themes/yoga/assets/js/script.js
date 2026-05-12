@@ -1984,6 +1984,9 @@
 	
 	jQuery(document).ready(function($) {
 		$('.mobile-menu-switches__item').on('click', function() {
+			if ($(this).hasClass('mobile-menu-switches__item_unavailable') || $(this).attr('data-unavailable') === '1') {
+				return;
+			}
 			var target = $(this).data('target');
 			
 			// Активируем переключатель

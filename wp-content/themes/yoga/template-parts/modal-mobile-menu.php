@@ -34,45 +34,65 @@
 				</div>
                 <div class="mobile-menu-switches">
 					<?php
-						// Получаем родительские термины таксономии
+						// Родительские термины practice-type; «в разработке» — как в modal-menu.php
 						$parent_terms = get_terms(array(
-						'taxonomy' => 'practice-type',
-						'parent' => 0,
-						'hide_empty' => false,
-						'orderby' => 'name',
-						'order' => 'ASC'
+							'taxonomy'   => 'practice-type',
+							'parent'     => 0,
+							'hide_empty' => false,
+							'orderby'    => 'name',
+							'order'      => 'ASC',
 						));
-						
-						if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
-						$first = true;
+						$parent_terms = (!empty($parent_terms) && !is_wp_error($parent_terms)) ? $parent_terms : array();
+
+						$active_switch_idx = 0;
+						foreach ($parent_terms as $idx => $t_switch) {
+							if (function_exists('yoga_is_practice_type_term_available') && yoga_is_practice_type_term_available($t_switch)) {
+								$active_switch_idx = (int) $idx;
+								break;
+							}
+						}
+
 						foreach ($parent_terms as $index => $term) :
+							$pt_available   = function_exists('yoga_is_practice_type_term_available') ? yoga_is_practice_type_term_available($term) : true;
+							$is_tab_active  = ((int) $index === $active_switch_idx);
+							$tab_classes    = 'mobile-menu-switches__item';
+							if ($is_tab_active) {
+								$tab_classes .= ' active';
+							}
+							if (!$pt_available) {
+								$tab_classes .= ' mobile-menu-switches__item_unavailable';
+							}
 					?>
-					<div class="mobile-menu-switches__item <?php echo $first ? 'active' : ''; ?>" data-target="<?php echo $index + 1; ?>">
+					<div class="<?php echo esc_attr($tab_classes); ?>" data-target="<?php echo (int) $index + 1; ?>"<?php echo $pt_available ? '' : ' data-unavailable="1" aria-disabled="true"'; ?>>
 						<span><?php echo esc_html($term->name); ?></span>
+						<?php if (!$pt_available) : ?>
+						<span class="mobile-menu-switch-unavailable"><?php esc_html_e('в разработке', 'yoga'); ?></span>
+						<?php endif; ?>
 					</div>
 					<?php
-						$first = false;
 						endforeach;
-						endif;
 					?>
 				</div>
 				
-				<?php
-					if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
-					foreach ($parent_terms as $index => $parent_term) :
-					// Получаем дочерние термины для каждого родителя
-					$child_terms = get_terms(array(
-					'taxonomy' => 'practice-type',
-					'parent' => $parent_term->term_id,
-					'hide_empty' => false,
-					'orderby' => 'name',
-					'order' => 'ASC'
+				<?php foreach ($parent_terms as $index => $parent_term) : ?>
+					<?php
+					$pt_available = function_exists('yoga_is_practice_type_term_available') ? yoga_is_practice_type_term_available($parent_term) : true;
+					$child_terms  = get_terms(array(
+						'taxonomy'   => 'practice-type',
+						'parent'     => $parent_term->term_id,
+						'hide_empty' => false,
+						'orderby'    => 'name',
+						'order'      => 'ASC',
 					));
-				?>
-				<nav class="mobile-menu-sub <?php echo $index === 0 ? 'active' : ''; ?>" data-target="<?php echo $index + 1; ?>">
+					$sub_active = ((int) $index === $active_switch_idx);
+					$sub_class  = 'mobile-menu-sub' . ($sub_active ? ' active' : '') . (!$pt_available ? ' mobile-menu-sub_unavailable' : '');
+					?>
+				<nav class="<?php echo esc_attr(trim($sub_class)); ?>" data-target="<?php echo (int) $index + 1; ?>">
 					<ul>
-						<li class="mobile-menu-sub-item">
+						<li class="mobile-menu-sub-item<?php echo $pt_available ? '' : ' mobile-menu-sub-item_unavailable'; ?>">
+							<?php if ($pt_available) : ?>
 							<a href="<?php echo esc_url(get_term_link($parent_term)); ?>"></a>
+							<?php endif; ?>
 							<span><?php esc_html_e('Все практики', 'yoga'); ?></span>
 							<span class="mobile-menu-sub-item__chevron" aria-hidden="true">
 								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 20 20" width="20" height="20" focusable="false">
@@ -83,8 +103,10 @@
 						
 						<?php if (!empty($child_terms) && !is_wp_error($child_terms)) : ?>
 						<?php foreach ($child_terms as $child_term) : ?>
-                        <li class="mobile-menu-sub-item">
+                        <li class="mobile-menu-sub-item<?php echo $pt_available ? '' : ' mobile-menu-sub-item_unavailable'; ?>">
+							<?php if ($pt_available) : ?>
                             <a href="<?php echo esc_url(get_term_link($child_term)); ?>"></a>
+							<?php endif; ?>
 							<span><?php echo esc_html($child_term->name); ?></span>
 							<span class="mobile-menu-sub-item__chevron" aria-hidden="true">
 								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 20 20" width="20" height="20" focusable="false">
@@ -96,10 +118,7 @@
 						<?php endif; ?>
 					</ul>
 				</nav>
-				<?php
-					endforeach;
-					endif;
-				?>
+				<?php endforeach; ?>
 			</div>
 		</div>
         <div class="btn btn_alt modal-call_login">
