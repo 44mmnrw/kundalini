@@ -11740,8 +11740,14 @@ input#filt-reset {
 
 .about-img {
 	max-width: 590px;
-	left: 50%;
-	transform: translateX(-50%);
+}
+
+.about__main_start .about-img,
+.about__main_sec .about-img {
+	margin-left: auto;
+	margin-right: auto;
+	left: auto;
+	transform: none;
 }
 
 .about-year {
