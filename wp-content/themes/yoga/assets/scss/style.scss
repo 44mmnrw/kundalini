@@ -206,7 +206,8 @@ h5, .h5 {
 	position: relative;
 	padding-left: 22px;
 	padding-right: 22px;
-	text-decoration: none;	
+	text-decoration: none;
+	border: none;
 	background: $color-black;
 	height: 71px;
 	line-height: 71px;
@@ -2635,7 +2636,7 @@ header {
 }
 
 .reviews__main .arrows-slick {
-	bottom: 60px;
+	bottom: 20px;
 }
 	
 }
@@ -2644,6 +2645,10 @@ header {
 
 .section-reviews {
 	padding-top: 24px;
+}
+
+.reviews__main .arrows-slick {
+	bottom: 14px;
 }
 
 .review-info {
@@ -2667,7 +2672,7 @@ header {
 
 .review {
 	margin-top: 30px;
-	margin-bottom: 45px;
+	margin-bottom: 56px;
 }
 
 .review-main {
@@ -2708,7 +2713,7 @@ header {
 	.arrows-slick {
 		width: 100%;
 		justify-content: space-between;
-		bottom: 49px;
+		bottom: 8px;
 	}
 }
 
@@ -5230,7 +5235,7 @@ input#filt-reset {
 }
 
 .kriya-info {
-	width: calc(100% - 140px - 281px);
+	width: calc(100% - 140px - 344px);
 	padding-left: 25px;
 	padding-right: 40px;
 	h3 {
@@ -5247,9 +5252,11 @@ input#filt-reset {
 
 .kriya-media {
 	display: flex;
-  	width: 281px;
+	flex-shrink: 0;
+  	width: 344px;
   	justify-content: space-between;
   	align-items: center;
+	gap: 8px;
 }
 
 .kriya-img {
@@ -5266,33 +5273,59 @@ input#filt-reset {
 }
 
 .kriya-fav {
-	width: 30px;
-	height: 30px;
-	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	width: auto;
+	min-height: 30px;
 	position: relative;
 	z-index: 3;
 	cursor: pointer;
-	img {
-		display: block;
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		width: 100%;
-
-		opacity: 0;
-		transition: $transition-all;
-		&.active {
-			opacity: 1;
-		}
-	}
-	&.active {
-		img {
-			opacity: 1;
+	.kriya-fav__icon {
+		position: relative;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		img, svg {
+			display: block;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 100%;
+			opacity: 0;
+			transition: $transition-all;
 			&.active {
-				opacity: 0;
+				opacity: 1;
 			}
 		}
+	}
+	.kriya-fav__text {
+		display: none;
+		font-family: "Mulish-Medium", sans-serif;
+		font-size: 11px;
+		line-height: 1.25;
+		color: $color-violet;
+		text-align: right;
+		max-width: 160px;
+	}
+	&.kriya-fav--icon-only .kriya-fav__text {
+		display: none !important;
+	}
+}
+
+.kriya-fav.active .kriya-fav__text--add {
+	display: none;
+}
+.kriya-fav.active .kriya-fav__text--remove {
+	display: block;
+}
+
+@media (min-width: 992px) {
+	.section-practice-category .kriya-fav__text {
+		display: none !important;
 	}
 }
 
@@ -5355,14 +5388,14 @@ input#filt-reset {
 }
 
 .kriya-info {
-	width: calc(100% - 140px - 261px);
+	width: calc(100% - 140px - 316px);
 	padding-left: 20px;
 	padding-right: 30px;
 
 }
 
 .kriya-media {
-  	width: 261px;
+  	width: 316px;
 }
 
 }
@@ -5388,8 +5421,9 @@ input#filt-reset {
 
 
 .kriyi-item__inner {
-	flex-direction: column;
-	align-items: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
 	padding: 25px;
 	padding-top: 20px;
 	padding-bottom: 20px;
@@ -5399,16 +5433,34 @@ input#filt-reset {
 	border-radius: 20px;
 }
 
-.kriya-media {
-	width: 100%;
-	margin-top: auto;
+.kriya-level {
+	order: 1;
+	flex: 0 0 auto;
 }
 
-.kriya-btn {
+.kriya-media {
+	display: contents;
+}
+
+.kriya-fav {
+	order: 2;
+	position: relative;
+	margin-left: auto;
+	flex: 0 0 auto;
+	flex-shrink: 0;
+	z-index: 3;
+}
+
+.kriya-fav:not(.active) .kriya-fav__text--add {
+	display: block;
+}
+.kriya-fav:not(.active) .kriya-fav__text--remove {
 	display: none;
 }
 
 .kriya-info {
+	order: 3;
+	flex: 1 0 100%;
 	width: 100%;
 	padding-left: 0px;
 	padding-right: 0px;
@@ -5417,16 +5469,18 @@ input#filt-reset {
 }
 
 .kriya-img {
+	order: 4;
+	flex: 1 0 100%;
+	margin-top: auto;
 	width: 100%;
 	img {
 		height: 193px;
 	}
 }
 
-.kriya-fav {
-	position: absolute;
-	right: 25px;
-	top: 20px;
+.kriya-btn {
+	order: 5;
+	display: none;
 }
 	
 }
@@ -5454,10 +5508,6 @@ input#filt-reset {
     padding: 15px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
-}
-
-.kriya-fav {
-	right: 15px;
 }
 
 .kriya-img {
@@ -5563,9 +5613,19 @@ input#filt-reset {
 	position: relative;
 	padding-left: 37px;
 	cursor: pointer;
-	span {
+	.praktika-fav__text {
 		font-size: 18px;
 	}
+}
+
+.praktika-fav__text--remove {
+	display: none;
+}
+.praktika-fav.active .praktika-fav__text--add {
+	display: none;
+}
+.praktika-fav.active .praktika-fav__text--remove {
+	display: inline;
 }
 
 .praktika-fav__icon {
@@ -6834,7 +6894,7 @@ input#filt-reset {
 @media (max-width: 575px) {
 
 .praktika-fav {
-	span {
+	.praktika-fav__text {
 		display: none;
 	}
 }

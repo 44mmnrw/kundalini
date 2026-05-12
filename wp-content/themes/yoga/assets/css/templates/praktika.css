@@ -48,8 +48,18 @@
   position: relative;
   padding-left: 2.3125rem;  cursor: pointer;
 }
-.praktika-fav span {
-  font-size: 1.125rem;}
+.praktika-fav__text {
+  font-size: 1.125rem;
+}
+.praktika-fav__text--remove {
+  display: none;
+}
+.praktika-fav.active .praktika-fav__text--add {
+  display: none;
+}
+.praktika-fav.active .praktika-fav__text--remove {
+  display: inline;
+}
 
 .praktika-fav__icon {
   position: absolute;
@@ -991,7 +1001,7 @@ display: block !important;
     right: 1.25rem;    bottom: 1.25rem;  }
 }
 @media (max-width: 575px) {
-  .praktika-fav span {
+  .praktika-fav__text {
     display: none;
   }
   .praktika-details__lvl {
