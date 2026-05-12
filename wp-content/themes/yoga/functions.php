@@ -385,6 +385,7 @@
 		$homepage_style_ver = file_exists($theme_dir . '/assets/css/templates/homepage.css') ? filemtime($theme_dir . '/assets/css/templates/homepage.css') : '1.0.0';
 		$kriyi_style_ver = file_exists($theme_dir . '/assets/css/templates/kriyi.css') ? filemtime($theme_dir . '/assets/css/templates/kriyi.css') : '1.0.0';
 		$library_style_ver = file_exists($theme_dir . '/assets/css/templates/library.css') ? filemtime($theme_dir . '/assets/css/templates/library.css') : '1.0.0';
+		$library_filters_style_ver = file_exists($theme_dir . '/assets/css/templates/library-filters.css') ? filemtime($theme_dir . '/assets/css/templates/library-filters.css') : '1.0.0';
 		$praktika_style_ver = file_exists($theme_dir . '/assets/css/templates/praktika.css') ? filemtime($theme_dir . '/assets/css/templates/praktika.css') : '1.0.0';
 		$form_questions_style_ver = file_exists($theme_dir . '/assets/css/templates/form-questions.css') ? filemtime($theme_dir . '/assets/css/templates/form-questions.css') : '1.0.0';
 		$rules_style_ver = file_exists($theme_dir . '/assets/css/templates/rules.css') ? filemtime($theme_dir . '/assets/css/templates/rules.css') : '1.0.0';
@@ -413,6 +414,7 @@
 			$homepage_style_ver = time();
 			$kriyi_style_ver = time();
 			$library_style_ver = time();
+			$library_filters_style_ver = time();
 			$praktika_style_ver = time();
 			$form_questions_style_ver = time();
 			$rules_style_ver = time();
@@ -459,6 +461,12 @@
 		}
 		if ($is_practice_tax || $is_lk_template) {
 			wp_enqueue_style( 'library-style', $theme_uri . '/assets/css/templates/library.css', $common_style_deps, $library_style_ver );
+		}
+		if ($is_practice_tax) {
+			$library_root_term = get_queried_object();
+			if ($library_root_term instanceof WP_Term && $library_root_term->taxonomy === 'practice-type' && (int) $library_root_term->parent === 0) {
+				wp_enqueue_style( 'library-filters-style', $theme_uri . '/assets/css/templates/library-filters.css', array( 'library-style' ), $library_filters_style_ver );
+			}
 		}
 		if ($is_practice_single) {
 			wp_enqueue_style( 'praktika-style', $theme_uri . '/assets/css/templates/praktika.css', $common_style_deps, $praktika_style_ver );

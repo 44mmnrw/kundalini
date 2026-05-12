@@ -173,6 +173,7 @@ if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-ty
 						</div>
 
 					</div>
+					<?php get_template_part('template-parts/section', 'library-filters'); ?>
 				</form>
 			</div>
 		</div>
