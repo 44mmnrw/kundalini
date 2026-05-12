@@ -2085,8 +2085,10 @@
     }
 
     function updateLibraryFiltersApplyCountFromHtml(html) {
+        var $c = $('.library-filters-apply-count');
+        if (!$c.length) return;
         var n = $('<div>').html(html).find('.library-item').length;
-        $('.library-filters-apply-count').text(n);
+        $c.text(n);
     }
 
     function closeLibraryFiltersScreen() {
@@ -2101,7 +2103,10 @@
         $('.overlay').addClass('active');
         $('.body').addClass('body-fixed');
         syncLibraryFilterCheckboxLabels();
-        $('.library-filters-apply-count').text($('.section-library .library .library-item').length);
+        var $applyCount = $('.library-filters-apply-count');
+        if ($applyCount.length) {
+            $applyCount.text($('.section-library .library .library-item').length);
+        }
     }
 
     function loadLibraryPractices() {
@@ -2236,6 +2241,11 @@
 		closeLibraryFiltersScreen();
 	});
 
+	$(document).on('click', '.library-filters-screen__backdrop', function() {
+		$('.section-library .filter-btn').removeClass('active');
+		closeLibraryFiltersScreen();
+	});
+
 	$(document).on('click', '.js-library-filters-apply', function() {
 		loadLibraryPractices();
 		closeLibraryFiltersScreen();
@@ -2243,8 +2253,7 @@
 
 	$(document).on('click', '.js-library-filters-reset', function() {
 		$('#practice-filter-form input[type=checkbox]').prop('checked', false);
-		$('#practice-filter-form label.checkbox-item').removeClass('active');
-		$('#practice-filter-form label.checkbox-item .checkbox').removeClass('active');
+		syncLibraryFilterCheckboxLabels();
 		loadLibraryPractices();
 	});
 
