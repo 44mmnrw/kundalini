@@ -796,6 +796,8 @@
 			$(this).closest('.header').removeClass('active');
 		}
 	});
+
+	function closeLkNotifications() {
 		$('.notification-icon').removeClass('active').attr('aria-expanded', 'false');
 		$('.lk-notifications-popup').attr('aria-hidden', 'true');
 	}
