@@ -2959,7 +2959,13 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				if (response.success) {
 					//$this.toggleClass('active');
+					$this.toggleClass('active');
 					$this.find('img, svg').toggleClass('active');
+					if ($this.attr('role') === 'button') {
+						var pressed = $this.hasClass('active');
+						$this.attr('aria-pressed', pressed ? 'true' : 'false');
+						$this.attr('aria-label', pressed ? 'Удалить из избранного' : 'В избранное');
+					}
 					$('.practice-notification').remove();
 					var favoriteMessage = (response.data && response.data.message) ? response.data.message : 'Избранное обновлено';
 					var isLkFavoritesContext = $this.closest('.lk-slide[data-target="3"]').length > 0;
@@ -2984,7 +2990,7 @@ jQuery(document).ready(function($) {
 			},
 			error: function(xhr) {
 				if (xhr.status === 401) {
-					showFavoriteModal('Для добавления в избранное авторизуйтесь');
+					showFavoriteModal('Для добавления в избранное авторизуйтесь', 'Избранное не обновлено');
 				} else if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
 					showFavoriteModal(xhr.responseJSON.data.message);
 				} else {
@@ -2994,11 +3000,13 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-	function showFavoriteModal(message) {
+	function showFavoriteModal(message, title) {
 		var $modal = $('.modal-default_favoritesucces');
 		if (!$modal.length) {
 			return;
 		}
+		var heading = title !== undefined && title !== null && title !== '' ? title : 'Избранное обновлено';
+		$modal.find('.thanksforqw h3').text(heading);
 		$modal.find('.favorite-modal-message').text(message || 'Избранное обновлено');
 		$('.body').addClass("body-fixed");
 		$('.overlay').addClass("active");

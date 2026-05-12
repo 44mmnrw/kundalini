@@ -916,11 +916,13 @@
     display: none;
   }
   .reviews__main .arrows-slick {
-    bottom: 3.75rem;  }
+    bottom: 1.25rem;  }
 }
 @media (max-width: 767px) {
   .section-reviews {
     padding-top: 1.5rem;  }
+  .reviews__main .arrows-slick {
+    bottom: 0.875rem;  }
   .review-info {
     margin-top: 1.3125rem;  }
   .review-info p {
@@ -934,7 +936,7 @@
 }
 @media (max-width: 575px) {
   .review {
-    margin-top: 1.875rem;    margin-bottom: 2.8125rem;  }
+    margin-top: 1.875rem;    margin-bottom: 3.5rem;  }
   .review-main {
     width: 100%;
     padding-left: 4.6875rem;  }
@@ -953,7 +955,7 @@
   .reviews__main .arrows-slick {
     width: 100%;
     justify-content: space-between;
-    bottom: 3.0625rem;  }
+    bottom: 0.5rem;  }
   .review-info p {
     -webkit-line-clamp: 11;
     line-clamp: 11;

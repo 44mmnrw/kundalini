@@ -85,16 +85,17 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                     <span class="praktika-details__time">
                         <?php echo get_field('practice_time') ?: '7 минут'; ?>
 					</span>
-					<?php
+                    <?php
 					$user_id = get_current_user_id();
-					$is_favorite = in_array(get_the_id(), get_user_meta($user_id, 'favorite_practices', true) ?: array());
+					$is_favorite = in_array(get_the_ID(), get_user_meta($user_id, 'favorite_practices', true) ?: array(), true);
 					?>
-                    <div class="praktika-fav fav" data-practice-id="<?php echo get_the_id(); ?>">
-                        <div class="praktika-fav__icon">
-                            <svg class="<?php echo !$is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
-                            <svg class="<?php echo $is_favorite ? 'active' : ''; ?>" aria-hidden="true"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
+                    <div class="praktika-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo esc_attr((string) get_the_ID()); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Удалить из избранного' : 'В избранное'); ?>">
+                        <div class="praktika-fav__icon" aria-hidden="true">
+                            <svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+                            <svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 						</div>
-                        <span>В избранное</span>
+                        <span class="praktika-fav__text praktika-fav__text--add">В избранное</span>
+                        <span class="praktika-fav__text praktika-fav__text--remove">Удалить из избранного</span>
 					</div>
 				</div>
                 <div class="praktika__main">
