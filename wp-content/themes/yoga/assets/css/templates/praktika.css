@@ -61,6 +61,20 @@
   display: inline;
 }
 
+@media (max-width: 991px) {
+  .praktika-fav__text {
+    color: var(--color-black);
+    font-size: 1rem;
+    line-height: 1em;
+    font-family: "Mulish-Medium", sans-serif;
+  }
+}
+@media (max-width: 767px) {
+  .praktika-fav__text {
+    font-size: 0.875rem;
+  }
+}
+
 .praktika-fav__icon {
   position: absolute;
   left: 0px;

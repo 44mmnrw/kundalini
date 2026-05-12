@@ -1921,13 +1921,13 @@ function handle_comment_delete() {
 				<div class="kriya-img">
 					<img src="<?php echo esc_url($practice_image); ?>" alt="<?php the_title(); ?>">
 				</div>
-				<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo get_the_ID(); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Удалить из избранного' : 'В избранное'); ?>">
+				<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo get_the_ID(); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 					<span class="kriya-fav__icon" aria-hidden="true">
 						<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
 						<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 					</span>
 					<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
-					<span class="kriya-fav__text kriya-fav__text--remove">Удалить из избранного</span>
+					<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
 				</div>
 				<div class="kriya-btn">
 					<div class="kriya-btn__arrow">
