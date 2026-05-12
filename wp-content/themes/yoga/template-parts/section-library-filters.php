@@ -4,24 +4,39 @@
  * Те же input, что в .filter (label[for] без дублирования полей).
  */
 
-$difficulty_terms = get_terms(array(
-	'taxonomy' => 'practice-difficulty',
-	'hide_empty' => false,
-	'orderby' => 'name',
-	'order' => 'ASC',
-));
-$duration_terms = get_terms(array(
-	'taxonomy' => 'practice-duration',
-	'hide_empty' => false,
-	'orderby' => 'name',
-	'order' => 'ASC',
-));
-$goal_terms = get_terms(array(
-	'taxonomy' => 'practice-goal',
-	'hide_empty' => false,
-	'orderby' => 'name',
-	'order' => 'ASC',
-));
+if (!isset($difficulty_terms) || !is_array($difficulty_terms)) {
+	$difficulty_terms = get_terms(array(
+		'taxonomy' => 'practice-difficulty',
+		'hide_empty' => false,
+		'orderby' => 'name',
+		'order' => 'ASC',
+	));
+}
+if (!isset($duration_terms) || !is_array($duration_terms)) {
+	$duration_terms = get_terms(array(
+		'taxonomy' => 'practice-duration',
+		'hide_empty' => false,
+		'orderby' => 'name',
+		'order' => 'ASC',
+	));
+}
+if (!isset($goal_terms) || !is_array($goal_terms)) {
+	$goal_terms = get_terms(array(
+		'taxonomy' => 'practice-goal',
+		'hide_empty' => false,
+		'orderby' => 'name',
+		'order' => 'ASC',
+	));
+}
+if (!is_array($difficulty_terms) || is_wp_error($difficulty_terms)) {
+	$difficulty_terms = array();
+}
+if (!is_array($duration_terms) || is_wp_error($duration_terms)) {
+	$duration_terms = array();
+}
+if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
+	$goal_terms = array();
+}
 ?>
 <div class="library-filters-screen" id="library-filters-screen" aria-hidden="true">
 	<div class="library-filters-screen__backdrop" aria-hidden="true"></div>

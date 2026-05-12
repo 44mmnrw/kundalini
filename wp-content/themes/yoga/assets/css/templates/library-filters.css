@@ -192,10 +192,7 @@
     cursor: pointer;
     text-align: left;
     gap: 0.75rem;
-    /* Тап по iOS/Android: без pointer-events:none на дочернем «квадрате» target — label/span, не скролл */
-    touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(31, 31, 31, 0.06);
-    min-height: 2.75rem;
   }
 
   /* modals.css: .checkbox-item span { width: calc(100% - 1.375rem) } — растягивает чекбокс в полоску */
