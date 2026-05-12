@@ -15,22 +15,8 @@
   width: 100%;
 }
 
-/* Реальные чекбоксы вне display:none .filter на мобиле: label[for] переключает input, AJAX по change */
-.library-form .library-filter-inputs-hack {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  clip-path: inset(50%);
-  border: 0;
-  white-space: nowrap;
-}
-
-/* modals.css: visibility:hidden на всех input[type=checkbox] ломает label[for] в части браузеров */
-#practice-filter-form .library-filter-inputs-hack input[type="checkbox"] {
+/* Фильтры библиотеки: input.library-filter-input в моб. оверлее + form="practice-filter-form" (см. modals.css — visibility:hidden у всех checkbox) */
+input.library-filter-input[type="checkbox"] {
   visibility: visible !important;
   opacity: 0 !important;
   position: absolute !important;

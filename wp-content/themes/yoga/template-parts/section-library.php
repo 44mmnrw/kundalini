@@ -70,22 +70,6 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 		<div class="row">
 			<div class="library-form">
 				<form id="practice-filter-form" action="#" method="get">
-					<div class="library-filter-inputs-hack">
-						<?php foreach ($library_difficulty_terms as $index => $difficulty_term) : ?>
-							<?php
-							$input_id = 'library-filter-difficulty-' . ($index + 1);
-							?>
-							<input type="checkbox" id="<?php echo esc_attr($input_id); ?>" name="practice-difficulty[]" value="<?php echo esc_attr((string) $difficulty_term->slug); ?>">
-						<?php endforeach; ?>
-						<?php foreach ($library_duration_terms as $index => $duration_term) : ?>
-							<?php $input_id = 'library-filter-duration-' . ($index + 1); ?>
-							<input type="checkbox" id="<?php echo esc_attr($input_id); ?>" name="practice-duration[]" value="<?php echo esc_attr((string) $duration_term->slug); ?>">
-						<?php endforeach; ?>
-						<?php foreach ($library_goal_terms as $index => $goal_term) : ?>
-							<?php $input_id = 'library-filter-goal-' . ($index + 1); ?>
-							<input type="checkbox" id="<?php echo esc_attr($input_id); ?>" name="practice-goal[]" value="<?php echo esc_attr((string) $goal_term->slug); ?>">
-						<?php endforeach; ?>
-					</div>
 					<div class="library-form-main">
 						<div class="form-search">
 							<div class="form-categories">
