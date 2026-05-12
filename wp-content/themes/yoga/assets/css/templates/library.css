@@ -15,6 +15,20 @@
   width: 100%;
 }
 
+/* Реальные чекбоксы вне display:none .filter на мобиле: label[for] переключает input, AJAX по change */
+.library-form .library-filter-inputs-hack {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+
 .library-form-main {
   display: flex;
   width: 100%;
