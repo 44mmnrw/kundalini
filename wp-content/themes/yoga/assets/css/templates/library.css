@@ -575,6 +575,9 @@ input#filt-reset {
   .section-library .form-categories, .section-library .form-cat-list, .section-library .filter {
     display: none;
   }
+  .section-library .filter.active {
+    display: flex;
+  }
 }
 @media (max-width: 767px) {
   .library {
