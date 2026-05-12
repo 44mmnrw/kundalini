@@ -79,6 +79,14 @@
 <div class="overlay-modal"></div>
 <?php get_template_part('template-parts/modal', 'menu'); ?>
 <?php get_template_part('template-parts/modal', 'mobile-menu'); ?>
+<?php
+$is_lk_shell = is_page_template('templates-page/lk.php')
+	|| is_page('my-account')
+	|| (function_exists('is_account_page') && is_account_page());
+if ($is_lk_shell) {
+	get_template_part('template-parts/modal', 'mobile-menu-lk');
+}
+?>
 <?php get_template_part('template-parts/modal', 'login'); ?>
 <?php get_template_part('template-parts/modal', 'review'); ?>
 <div class="modal modal-default modal-default_cardsucces">

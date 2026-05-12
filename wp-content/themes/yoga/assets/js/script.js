@@ -772,15 +772,30 @@
 	
 	
 	
-	/* Header-lk */
-	
-	$('.lk-burger').click(function () {
-		$(this).closest('.header').toggleClass("active");
-		$(this).toggleClass("active");
-		$('.modal-mobile-menu-lk').addClass("active");
+	/* Header-lk — бургер: панель .modal-mobile-menu-lk (разметки раньше не было; второй обработчик для ширины <991 снимал active и мешал). */
+	$('.lk-burger').on('click', function (e) {
+		e.stopPropagation();
+		var $panel = $('.modal-mobile-menu-lk');
+		if (!$panel.length) {
+			return;
+		}
+		var opening = !$panel.hasClass('active');
+		if (opening) {
+			$panel.addClass('active');
+			$('.overlay').addClass('active');
+			$('.body').addClass('body-fixed');
+			$('.modal').removeClass('active');
+			$('.modal-login').removeClass('active');
+			$(this).addClass('active');
+			$(this).closest('.header').addClass('active');
+		} else {
+			$panel.removeClass('active');
+			$('.overlay').removeClass('active');
+			$('.body').removeClass('body-fixed');
+			$(this).removeClass('active');
+			$(this).closest('.header').removeClass('active');
+		}
 	});
-
-	function closeLkNotifications() {
 		$('.notification-icon').removeClass('active').attr('aria-expanded', 'false');
 		$('.lk-notifications-popup').attr('aria-hidden', 'true');
 	}
@@ -819,17 +834,6 @@
 		}
 	});
 	
-	
-	if ($(window).width() < 991 ) {
-		$('.lk-burger').click(function () {
-			$('.body').addClass("body-fixed");
-			$('.overlay').addClass("active");
-			$('.modal').removeClass("active");
-			$('.modal-login').removeClass("active");
-			$(this).closest('.header').removeClass("active");
-			$(this).removeClass("active");
-		});
-	};
 	
 	/* Sidebar */
 	
@@ -1158,6 +1162,8 @@
 		$('.modal-mobile-menu-lk').removeClass("active");
 		$('.body').removeClass("body-fixed");
 		$('.modal-addnewcard').removeClass("active");
+		$('.body_lk .header').removeClass("active");
+		$('.body_lk .lk-burger').removeClass("active");
 	});
 	
 	$('.modal-close').click(function () {
@@ -1169,6 +1175,8 @@
 		$('.modal-mobile-menu-lk').removeClass("active");
 		$('.modal-addnewcard').removeClass("active");
 		$('.body').removeClass("body-fixed");
+		$('.body_lk .header').removeClass("active");
+		$('.body_lk .lk-burger').removeClass("active");
 	});
 	
 	jQuery(function($){
@@ -1453,9 +1461,12 @@
 	
 	
 	$('.modal-call_logout').click(function () {
-		$('.overlay').addClass("active");
-		$('.modal-default_logout').addClass("active");
-		$('.body').addClass("body-fixed");
+		$('.modal-mobile-menu-lk').removeClass('active');
+		$('.body_lk .lk-burger').removeClass('active');
+		$('.body_lk .header').removeClass('active');
+		$('.overlay').addClass('active');
+		$('.modal-default_logout').addClass('active');
+		$('.body').addClass('body-fixed');
 	});
 	
 	// Закрытие модального окна выхода по кнопке "Нет, остаться" или крестику
