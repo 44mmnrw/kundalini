@@ -256,6 +256,7 @@
     background: #fff;
   }
 
+  /* Галочка через ::after; modals.css задаёт .checkbox::after { opacity: 0 } — без opacity:1 здесь галочка невидима */
   .library-filters-screen__box.checkbox.active::after {
     content: "";
     position: absolute;
@@ -267,6 +268,7 @@
     border-width: 0 0.125rem 0.125rem 0;
     transform: translate(-50%, -50%) rotate(45deg);
     box-sizing: border-box;
+    opacity: 1 !important;
   }
 
   /* Regular 16 */

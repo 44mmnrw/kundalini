@@ -2126,14 +2126,13 @@
 			search: $('.section-library input[name="s"]').val(),
 			term_id: getActiveLibraryTermId()
 		};
-		
-		// Собираем чекбоксы из формы (на мобильных .filter скрыт display:none — input всё равно в DOM)
+
 		$('input.library-filter-input:checked').each(function() {
 			let name = $(this).attr('name').replace('[]','');
 			if (!data.filters[name]) data.filters[name] = [];
 			data.filters[name].push($(this).val());
 		});
-		
+
 		$.ajax({
 			url: yoga_ajax.ajax_url,
 			type: 'POST',
@@ -2246,12 +2245,18 @@
         }
     });
 	
-	// Мобильный оверлей: переключение только через JS (iOS/WebKit ломали label + невидимый input)
+	// Мобильный оверлей фильтров: тап по строке — программный toggle (делегирование на .library-filters-screen__row + проверка .active)
 	(function ($) {
 		var touchStart = { x: 0, y: 0, row: null };
 		var suppressRowClickUntil = 0;
 
+		function screenIsActive(row) {
+			var screen = row.closest('#library-filters-screen');
+			return !!(screen && screen.classList.contains('active'));
+		}
+
 		function activateLibraryFilterRow(row) {
+			if (!screenIsActive(row)) return;
 			var inp = row.querySelector('input.library-filter-input');
 			if (!inp) return;
 			$('.form-categories').removeClass('active');
@@ -2262,7 +2267,8 @@
 			$(inp).trigger('change');
 		}
 
-		$(document).on('touchstart', '#library-filters-screen.active .library-filters-screen__row', function (e) {
+		$(document).on('touchstart', '.library-filters-screen__row', function (e) {
+			if (!screenIsActive(this)) return;
 			if ($(e.target).closest('button, a').length) {
 				touchStart.row = null;
 				return;
@@ -2274,7 +2280,8 @@
 			touchStart.row = this;
 		});
 
-		$(document).on('touchend', '#library-filters-screen.active .library-filters-screen__row', function (e) {
+		$(document).on('touchend', '.library-filters-screen__row', function (e) {
+			if (!screenIsActive(this)) return;
 			if ($(e.target).closest('button, a').length) return;
 			if (touchStart.row !== this) {
 				if (touchStart.row) {
@@ -2296,14 +2303,14 @@
 			activateLibraryFilterRow(this);
 		});
 
-		$(document).on('click', '#library-filters-screen.active .library-filters-screen__row', function (e) {
+		$(document).on('click', '.library-filters-screen__row', function (e) {
+			if (!screenIsActive(this)) return;
 			if (Date.now() < suppressRowClickUntil) return;
 			if ($(e.target).closest('button, a').length) return;
 			activateLibraryFilterRow(this);
 		});
 	})(jQuery);
 
-	// Фильтры библиотеки: input с class + form="" вне тега <form> — только input.library-filter-input
 	$(document).on('change', 'input.library-filter-input', function() {
 		syncLibraryFilterCheckboxLabels();
 		loadLibraryPractices();
