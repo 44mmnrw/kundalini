@@ -39,7 +39,7 @@
 		$('.main-menu-active-item').removeClass("active");
 	});  
 	
-	// Кастомные «чекбоксы» (не трогать библиотечные фильтры — см. bindLibraryFilterCheckboxLabelsCapture)
+	// Кастомные «чекбоксы» (не мобильный оверлей библиотеки — там свой перехват по строке)
 	$(document).on('click', '.checkbox:not(.library-filters-screen__box):not(.library-filter-faux-checkbox)', function () {
 		$(this).toggleClass("active");
 	});
@@ -2082,7 +2082,12 @@
             var id = $(this).attr('id');
             if (!id) return;
             var on = $(this).prop('checked');
-            $('label[for="' + id + '"]').add($(this).closest('label.checkbox-item')).toggleClass('active', on).find('.checkbox').toggleClass('active', on);
+            var $mobileRow = $(this).closest('.library-filters-screen__row');
+            var $targets = $('label[for="' + id + '"]');
+            if ($mobileRow.length) {
+                $targets = $targets.add($mobileRow);
+            }
+            $targets.toggleClass('active', on).find('.checkbox').toggleClass('active', on);
         });
     }
 
@@ -2241,6 +2246,63 @@
         }
     });
 	
+	// Мобильный оверлей: переключение только через JS (iOS/WebKit ломали label + невидимый input)
+	(function ($) {
+		var touchStart = { x: 0, y: 0, row: null };
+		var suppressRowClickUntil = 0;
+
+		function activateLibraryFilterRow(row) {
+			var inp = row.querySelector('input.library-filter-input');
+			if (!inp) return;
+			$('.form-categories').removeClass('active');
+			$('.form-search').removeClass('active');
+			$('.form-cat-list').removeClass('active');
+			$('.form-search-list').removeClass('active');
+			inp.checked = !inp.checked;
+			$(inp).trigger('change');
+		}
+
+		$(document).on('touchstart', '#library-filters-screen.active .library-filters-screen__row', function (e) {
+			if ($(e.target).closest('button, a').length) {
+				touchStart.row = null;
+				return;
+			}
+			var o = e.originalEvent;
+			if (!o || !o.touches || !o.touches[0]) return;
+			touchStart.x = o.touches[0].clientX;
+			touchStart.y = o.touches[0].clientY;
+			touchStart.row = this;
+		});
+
+		$(document).on('touchend', '#library-filters-screen.active .library-filters-screen__row', function (e) {
+			if ($(e.target).closest('button, a').length) return;
+			if (touchStart.row !== this) {
+				if (touchStart.row) {
+					touchStart.row = null;
+				}
+				return;
+			}
+			var o = e.originalEvent;
+			var t = o && o.changedTouches && o.changedTouches[0];
+			var x0 = touchStart.x;
+			var y0 = touchStart.y;
+			touchStart.row = null;
+			if (!t) return;
+			var dx = t.clientX - x0;
+			var dy = t.clientY - y0;
+			if (dx * dx + dy * dy > 120) return;
+			if (e.cancelable) e.preventDefault();
+			suppressRowClickUntil = Date.now() + 650;
+			activateLibraryFilterRow(this);
+		});
+
+		$(document).on('click', '#library-filters-screen.active .library-filters-screen__row', function (e) {
+			if (Date.now() < suppressRowClickUntil) return;
+			if ($(e.target).closest('button, a').length) return;
+			activateLibraryFilterRow(this);
+		});
+	})(jQuery);
+
 	// Фильтры библиотеки: input с class + form="" вне тега <form> — только input.library-filter-input
 	$(document).on('change', 'input.library-filter-input', function() {
 		syncLibraryFilterCheckboxLabels();

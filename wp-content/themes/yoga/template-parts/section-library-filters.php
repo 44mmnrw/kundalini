@@ -1,7 +1,7 @@
 <?php
 /**
- * Мобильные фильтры библиотеки — макет Figma pop_up (node 582:10993).
- * Реальные input здесь (внутри label) + form="practice-filter-form" — нативный тап; десктопные label[for] в section-library ссылаются на эти id.
+ * Мобильные фильтры библиотеки — Figma pop_up (node 582:10993).
+ * Строки — div + явный тап в script.js; input с form= для связи с #practice-filter-form; десктоп: label[for] в section-library.
  */
 
 if (!isset($difficulty_terms) || !is_array($difficulty_terms)) {
@@ -53,11 +53,11 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 						foreach ($difficulty_terms as $index => $difficulty_term) :
 							$input_id = 'library-filter-difficulty-' . ($index + 1);
 							?>
-							<label class="library-filters-screen__row checkbox-item">
-								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-difficulty[]" value="<?php echo esc_attr((string) $difficulty_term->slug); ?>" form="practice-filter-form">
+							<div class="library-filters-screen__row checkbox-item">
+								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-difficulty[]" value="<?php echo esc_attr((string) $difficulty_term->slug); ?>" form="practice-filter-form" tabindex="-1">
 								<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 								<span class="library-filters-screen__text"><?php echo esc_html((string) $difficulty_term->name); ?></span>
-							</label>
+							</div>
 						<?php
 						endforeach;
 					endif;
@@ -73,11 +73,11 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 						foreach ($duration_terms as $index => $duration_term) :
 							$input_id = 'library-filter-duration-' . ($index + 1);
 							?>
-							<label class="library-filters-screen__row checkbox-item">
-								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-duration[]" value="<?php echo esc_attr((string) $duration_term->slug); ?>" form="practice-filter-form">
+							<div class="library-filters-screen__row checkbox-item">
+								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-duration[]" value="<?php echo esc_attr((string) $duration_term->slug); ?>" form="practice-filter-form" tabindex="-1">
 								<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 								<span class="library-filters-screen__text"><?php echo esc_html((string) $duration_term->name); ?></span>
-							</label>
+							</div>
 						<?php
 						endforeach;
 					endif;
@@ -93,11 +93,11 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 						foreach ($goal_terms as $index => $goal_term) :
 							$input_id = 'library-filter-goal-' . ($index + 1);
 							?>
-							<label class="library-filters-screen__row checkbox-item">
-								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-goal[]" value="<?php echo esc_attr((string) $goal_term->slug); ?>" form="practice-filter-form">
+							<div class="library-filters-screen__row checkbox-item">
+								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-goal[]" value="<?php echo esc_attr((string) $goal_term->slug); ?>" form="practice-filter-form" tabindex="-1">
 								<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 								<span class="library-filters-screen__text"><?php echo esc_html((string) $goal_term->name); ?></span>
-							</label>
+							</div>
 						<?php
 						endforeach;
 					endif;
