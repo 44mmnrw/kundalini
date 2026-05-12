@@ -91,6 +91,17 @@
 	}
 	add_action( 'after_setup_theme', 'my_theme_setup' );
 
+	/** Поиск на сайте — только записи блога (post), без практик и прочих CPT. */
+	if (!function_exists('yoga_search_main_query_only_posts')) {
+		function yoga_search_main_query_only_posts($query) {
+			if (is_admin() || !($query instanceof WP_Query) || !$query->is_main_query() || !$query->is_search()) {
+				return;
+			}
+			$query->set('post_type', 'post');
+		}
+	}
+	add_action('pre_get_posts', 'yoga_search_main_query_only_posts', 9);
+
 	// Логичная структура URL для практик:
 	// /library/{category}/{type}/{practice}
 	if (!function_exists('yoga_customize_practice_post_type_rewrite')) {
@@ -3048,7 +3059,11 @@ function handle_comment_delete() {
 
 			$normalized_path = untrailingslashit(strtolower($path));
 			if ($normalized_path === '/category/blog') {
-				wp_redirect(home_url('/blog/'), 301);
+				$target = home_url('/blog/');
+				if (!empty($_GET)) {
+					$target = add_query_arg(wp_unslash($_GET), $target);
+				}
+				wp_safe_redirect($target, 301);
 				exit;
 			}
 		}
