@@ -15,21 +15,23 @@
   width: 100%;
 }
 
-/* Фильтры библиотеки: input.library-filter-input в моб. оверлее + form="practice-filter-form" (см. modals.css — visibility:hidden у всех checkbox) */
-input.library-filter-input[type="checkbox"] {
-  visibility: visible !important;
-  opacity: 0 !important;
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  max-width: 1px !important;
-  max-height: 1px !important;
-  margin: -1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  clip-path: inset(50%) !important;
-  pointer-events: none !important;
+/* Десктоп: единственные input фильтра скрыты в #library-filters-screen; label[for] их переключает */
+@media (min-width: 992px) {
+  input.library-filter-input[type="checkbox"] {
+    visibility: visible !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    max-width: 1px !important;
+    max-height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    pointer-events: none !important;
+  }
 }
 
 .library-form-main {

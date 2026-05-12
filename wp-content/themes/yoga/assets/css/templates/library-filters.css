@@ -180,7 +180,7 @@
     width: 100%;
   }
 
-  /* Чекбокс + текст gap 12px */
+  /* Чекбокс + текст gap 12px; position для полноразмерного невидимого input (тап по строке в iOS) */
   .library-filters-screen__row {
     display: flex;
     flex-direction: row;
@@ -189,10 +189,38 @@
     width: 100%;
     max-width: 100%;
     margin: 0;
+    position: relative;
     cursor: pointer;
     text-align: left;
     gap: 0.75rem;
     -webkit-tap-highlight-color: rgba(31, 31, 31, 0.06);
+  }
+
+  /* Невидимый чекбокс на всю строку — ловит тап; квадрат и текст не перехватывают hit-test */
+  .library-filters-screen__row input.library-filter-input[type="checkbox"] {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    z-index: 3 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    clip: auto !important;
+    clip-path: none !important;
+    overflow: visible !important;
+    visibility: visible !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+
+  .library-filters-screen__row .library-filters-screen__box,
+  .library-filters-screen__row .library-filters-screen__text {
+    pointer-events: none;
   }
 
   /* modals.css: .checkbox-item span { width: calc(100% - 1.375rem) } — растягивает чекбокс в полоску */
@@ -223,7 +251,6 @@
     border: 1px solid #1f1f1f;
     border-radius: 2px;
     background: #fff;
-    pointer-events: auto;
     transition: background 0.2s ease;
   }
 
