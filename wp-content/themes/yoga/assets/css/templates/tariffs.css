@@ -84,11 +84,9 @@
   margin-top: auto;
 }
 
-.tariff__top {
-  min-height: 8rem;}
-
 .tariff-price {
-  margin-top: 1.3125rem;}
+  margin-top: 0px;
+}
 .tariff-price span {
   color: #4A4A4A;
 }
@@ -182,11 +180,13 @@
 .tariff__top {
   position: relative;
   z-index: 2;
+  min-height: 0px;
 }
 
 .tariff__center {
   position: relative;
   z-index: 2;
+  margin-top: 1.5rem;
 }
 
 @media (max-width: 1320px) {
@@ -198,8 +198,6 @@
     padding-bottom: 1.25rem;  }
   .tariff .btn span {
     font-size: 0.8125rem;  }
-  .tariff-price {
-    margin-top: 0.9375rem;  }
   .check-list {
     padding-top: 0.25rem;  }
 }
@@ -216,7 +214,7 @@
   .tariff .btn-icon {
     right: calc(50% - 5.9375rem);  }
   .tariff__top {
-    min-height: 5.75rem;  }
+    min-height: 0px;  }
 }
 @media (max-width: 991px) {
   .switches {

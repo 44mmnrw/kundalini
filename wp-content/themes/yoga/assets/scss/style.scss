@@ -2099,11 +2099,13 @@ header {
 }
 
 .tariff__top {
-	min-height: 128px;
+	min-height: 0;
+	position: relative;
+	z-index: 2;
 }
 
 .tariff-price {
-	margin-top: 21px;
+	margin-top: 0;
 	span {
 		color: #4A4A4A;
 
@@ -2210,14 +2212,10 @@ header {
 	background-size: 34.0966px 34.0966px;
 }
 
-.tariff__top {
-	position: relative;
-	z-index: 2;
-}
-
 .tariff__center {
 	position: relative;
 	z-index: 2;
+	margin-top: 24px;
 }
 
 
@@ -2245,10 +2243,6 @@ header {
         }
     }
 } 
-
-.tariff-price {
-	margin-top: 15px;
-}
 
 .check-list {
 	padding-top: 4px;
@@ -2280,7 +2274,7 @@ header {
 }
 
 .tariff__top {
-    min-height: 92px;
+    min-height: 0;
 } 
 
 }
