@@ -39,9 +39,10 @@
 		$('.main-menu-active-item').removeClass("active");
 	});  
 	
-	$('.checkbox').click(function () {
+	// Кастомные «чекбоксы» (не трогать .library-filters-screen__box — там связка с реальным input)
+	$(document).on('click', '.checkbox:not(.library-filters-screen__box)', function () {
 		$(this).toggleClass("active");
-	})
+	});
 	
 	$('.burger').click(function () {
 		$('.modal-mobile-menu').addClass("active");
@@ -378,17 +379,21 @@
 		$('.form-search-list').removeClass("active");
 		if ($(this).closest('.library-filters-screen').length) {
 			var forId = $(this).attr('for');
-			if (forId) {
-				var inputEl = document.getElementById(forId);
-				var formEl = document.getElementById('practice-filter-form');
-				if (inputEl && String(inputEl.type).toLowerCase() === 'checkbox' && formEl && formEl.contains(inputEl)) {
-					e.preventDefault();
-					inputEl.checked = !inputEl.checked;
-					syncLibraryFilterCheckboxLabels();
-					loadLibraryPractices();
-				}
+			if (!forId) {
+				return;
 			}
-			return;
+			var inputEl = document.getElementById(forId);
+			if (!inputEl || String(inputEl.type).toLowerCase() !== 'checkbox') {
+				return;
+			}
+			if (!$(inputEl).closest('#practice-filter-form').length) {
+				return;
+			}
+			e.preventDefault();
+			inputEl.checked = !inputEl.checked;
+			syncLibraryFilterCheckboxLabels();
+			loadLibraryPractices();
+			return false;
 		}
 		$(this).toggleClass("active");
 		$(this).find('.checkbox').toggleClass("active");
