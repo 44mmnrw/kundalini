@@ -72,18 +72,18 @@
     flex-direction: column;
     overflow: hidden;
     backface-visibility: hidden;
-    /* Закрыто: за правым краем; открыто — см. .active; закрытие — .library-filters-screen--closing (уезд влево). */
+    /* Закрыто / закрытие: панель за правым краем; открыто — .active → translateX(0). */
     transform: translateX(100%) translateZ(0);
     transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  .library-filters-screen.active:not(.library-filters-screen--closing)
-    .library-filters-screen__panel {
+  /* Открыто. Ниже — --closing с тем же translateX(100%), что в базовом (уезд вправо, без проезда через экран). */
+  .library-filters-screen.active .library-filters-screen__panel {
     transform: translateX(0) translateZ(0);
   }
 
   .library-filters-screen.active.library-filters-screen--closing .library-filters-screen__panel {
-    transform: translateX(-100%) translateZ(0);
+    transform: translateX(100%) translateZ(0);
   }
 
   @media (prefers-reduced-motion: reduce) {
