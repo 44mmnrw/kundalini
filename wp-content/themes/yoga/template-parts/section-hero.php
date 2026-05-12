@@ -1,6 +1,15 @@
 <?php
 // Проверяем, есть ли данные для этой секции
 // Можно проверять через get_field() или через гибкий контент (если решите его использовать)
+
+$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+$tariffs_url = home_url('/product-category/tariffs/');
+if ($tariffs_term && !is_wp_error($tariffs_term)) {
+	$term_link = get_term_link($tariffs_term);
+	if (!is_wp_error($term_link)) {
+		$tariffs_url = $term_link;
+	}
+}
 ?>
 <section class="section-main animated fadeIn delay-200ms" id="section-main">
     <div class="container">
@@ -15,6 +24,19 @@
                     <p class="main__info-text">
                         <?php the_field('hero_subtitle'); ?>
                     </p>
+                    <?php if (is_user_logged_in()) : ?>
+                    <a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt btn_icon">
+                        <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
+                        <div class="btn-icon">
+                            <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            </svg>
+                            <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            </svg>
+                        </div>
+                    </a>
+                    <?php else : ?>
                     <div class="btn btn_alt btn_icon modal-call_login">
                         <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                         <div class="btn-icon">
@@ -26,19 +48,12 @@
                             </svg>
                         </div>
                     </div>
+                    <?php endif; ?>
                     <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/main-decor.png'); ?>" alt="" class="main__info-decor animated rollIn slower delay-300ms">
                 </div>
 
                 <?php
                 $hero_image = get_field('hero_image');
-                $tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
-                $tariffs_url = home_url('/product-category/tariffs/');
-                if ($tariffs_term && !is_wp_error($tariffs_term)) {
-                    $term_link = get_term_link($tariffs_term);
-                    if (!is_wp_error($term_link)) {
-                        $tariffs_url = $term_link;
-                    }
-                }
                 if ($hero_image) : ?>
                     <img src="<?php echo esc_url($hero_image['url']); ?>" alt="<?php echo esc_attr($hero_image['alt']); ?>" class="main__img animated slower fadeIn delay-400ms">
                 <?php endif; ?>
