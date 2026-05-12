@@ -874,6 +874,16 @@
 			$('.body').removeClass("body-fixed");
 			closeLibraryFiltersScreen(true);
 		});
+		$('.sidebar-menu-secondary__link').on('click', function () {
+			$('.overlay').removeClass("active");
+			$('.modal').removeClass("active");
+			$('.modal-filter').removeClass("active");
+			$('.modal-login').removeClass("active");
+			$('.modal-mobile-menu').removeClass("active");
+			$('.modal-mobile-menu-lk').removeClass("active");
+			$('.body').removeClass("body-fixed");
+			closeLibraryFiltersScreen(true);
+		});
 	};
 	
 	if ($(window).width() < 991 ) {

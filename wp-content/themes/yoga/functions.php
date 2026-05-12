@@ -281,6 +281,97 @@
 		}
 	}
 
+	if (!function_exists('yoga_lk_sidebar_secondary_nav_urls')) {
+		/**
+		 * URL внешних пунктов бокового меню ЛК (Figma sidebar_lk 620:12651).
+		 *
+		 * @return array{library:string,tariffs:string,about:string,blog:string,contacts:string,faq:string}
+		 */
+		function yoga_lk_sidebar_secondary_nav_urls(): array {
+			$fallback = home_url('/');
+
+			$library = $fallback;
+			$parents = get_terms(array(
+				'taxonomy' => 'practice-type',
+				'parent' => 0,
+				'hide_empty' => false,
+				'orderby' => 'term_order',
+				'order' => 'ASC',
+				'number' => 1,
+			));
+			if (!is_wp_error($parents) && !empty($parents)) {
+				$link = get_term_link($parents[0]);
+				if (!is_wp_error($link)) {
+					$library = $link;
+				}
+			}
+
+			$tariffs = '';
+			$tariffs_pages = get_pages(array(
+				'meta_key' => '_wp_page_template',
+				'meta_value' => 'templates-page/tariffs.php',
+				'number' => 1,
+				'post_status' => 'publish',
+			));
+			if (!empty($tariffs_pages)) {
+				$tariffs = get_permalink($tariffs_pages[0]->ID);
+			}
+			if ($tariffs === '') {
+				$tariffs = home_url('/product-category/tariffs/');
+				$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+				if ($tariffs_term instanceof WP_Term) {
+					$tl = get_term_link($tariffs_term);
+					if (!is_wp_error($tl)) {
+						$tariffs = $tl;
+					}
+				}
+			}
+
+			$about = '';
+			$about_page = get_page_by_path('o-nas');
+			if ($about_page instanceof WP_Post) {
+				$about = get_permalink($about_page);
+			}
+
+			$blog = '';
+			$blog_page_id = (int) get_option('page_for_posts');
+			if ($blog_page_id > 0) {
+				$blog = get_permalink($blog_page_id);
+			}
+
+			$contacts = '';
+			$contact_pages = get_pages(array(
+				'meta_key' => '_wp_page_template',
+				'meta_value' => 'templates-page/contacts.php',
+				'number' => 1,
+				'post_status' => 'publish',
+			));
+			if (!empty($contact_pages)) {
+				$contacts = get_permalink($contact_pages[0]->ID);
+			}
+
+			$faq = '';
+			$faq_pages = get_pages(array(
+				'meta_key' => '_wp_page_template',
+				'meta_value' => 'templates-page/faq.php',
+				'number' => 1,
+				'post_status' => 'publish',
+			));
+			if (!empty($faq_pages)) {
+				$faq = get_permalink($faq_pages[0]->ID);
+			}
+
+			return array(
+				'library' => $library,
+				'tariffs' => $tariffs !== '' ? $tariffs : $fallback,
+				'about' => $about !== '' ? $about : $fallback,
+				'blog' => $blog !== '' ? $blog : $fallback,
+				'contacts' => $contacts !== '' ? $contacts : $fallback,
+				'faq' => $faq !== '' ? $faq : $fallback,
+			);
+		}
+	}
+
 	if (!function_exists('yoga_collect_practice_type_term_ids')) {
 		function yoga_collect_practice_type_term_ids(array $postarr): array {
 			$term_ids = array();

@@ -560,16 +560,29 @@
 		</div>
 	</div>
 </section>
+<?php
+$lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
+$lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array(
+	'library' => home_url('/'),
+	'tariffs' => home_url('/'),
+	'about' => home_url('/'),
+	'blog' => home_url('/'),
+	'contacts' => home_url('/'),
+	'faq' => home_url('/'),
+);
+?>
 <div class="sidebar">
 	<div class="sidebar-inner">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="sidebar-logo">
 			<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-logo.png" alt="">
 		</a>
+        <div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
         <div class="sidebar-menu">
 			<div class="sidebar-menu__item active" data-target="1">
 				<div class="sidebar-menu__item-icon">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_01.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_01-active.png" alt="">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-user" width="100%" height="100%"></use>
+					</svg>
 				</div>
 				<span>
 					Мои данные
@@ -577,17 +590,19 @@
 			</div>
 			<div class="sidebar-menu__item" data-target="2">
 				<div class="sidebar-menu__item-icon">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_02.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_02-active.png" alt="">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-history" width="100%" height="100%"></use>
+					</svg>
 				</div>
 				<span>
 					История практик
 				</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="3">
-				<div class="sidebar-menu__item-icon">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_03.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_03-active.png" alt="">
+				<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 17.4 15.4852" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-heart" width="100%" height="100%"></use>
+					</svg>
 				</div>
 				<span>
 					Избранное
@@ -595,8 +610,9 @@
 			</div>
 			<div class="sidebar-menu__item" data-target="4">
 				<div class="sidebar-menu__item-icon">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_04.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_04-active.png" alt="">
+					<svg class="sidebar-menu__item-svg" viewBox="-0.6 -0.6 18.2 18.2" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-smile" width="100%" height="100%"></use>
+					</svg>
 				</div>
 				<span>
 					Рекомендации
@@ -604,8 +620,9 @@
 			</div>
 			<div class="sidebar-menu__item" data-target="5">
 				<div class="sidebar-menu__item-icon">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_05.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_05-active.png" alt="">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-question" width="100%" height="100%"></use>
+					</svg>
 				</div>
 				<span>
 					Мои вопросы
@@ -613,8 +630,9 @@
 			</div>
 			<div class="sidebar-menu__item" data-target="6">
 				<div class="sidebar-menu__item-icon">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_06.png" alt="" class="active">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-menu-icon_06-active.png" alt="">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-settings" width="100%" height="100%"></use>
+					</svg>
 				</div>
 				<span>
 					Настройки подписки
@@ -622,9 +640,43 @@
 			</div>
 			
 		</div>
+		</div>
+
+		<hr class="sidebar-menu-sep" aria-hidden="true">
+
+		<div class="sidebar-menu-lk-group sidebar-menu-lk-group--secondary">
+		<nav class="sidebar-menu-secondary" aria-label="<?php esc_attr_e('Навигация по сайту', 'yoga'); ?>">
+			<a class="sidebar-menu-secondary__link sidebar-menu-secondary__link--library" href="<?php echo esc_url($lk_secondary['library']); ?>">
+				<span><?php esc_html_e('Библиотека практик', 'yoga'); ?></span>
+				<svg class="sidebar-menu-secondary__chevron" viewBox="0 0 9 16" aria-hidden="true" focusable="false">
+					<use href="<?php echo $lk_sidebar_sprite; ?>#lk-library-chevron" width="100%" height="100%"></use>
+				</svg>
+			</a>
+			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['tariffs']); ?>">
+				<span><?php esc_html_e('Тарифы и подписка', 'yoga'); ?></span>
+			</a>
+			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['about']); ?>">
+				<span><?php esc_html_e('О нас', 'yoga'); ?></span>
+			</a>
+			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['blog']); ?>">
+				<span><?php esc_html_e('Блог', 'yoga'); ?></span>
+			</a>
+			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['contacts']); ?>">
+				<span><?php esc_html_e('Контакты', 'yoga'); ?></span>
+			</a>
+			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['faq']); ?>">
+				<span><?php esc_html_e('FAQ', 'yoga'); ?></span>
+			</a>
+		</nav>
+		</div>
+
+		<hr class="sidebar-menu-sep sidebar-menu-sep--before-logout" aria-hidden="true">
+
         <div class="sidebar-exit modal-call modal-call_logout">
 			<div class="sidebar-exit__icon">
-				<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-exit.png" alt="" class="active">
+				<svg class="sidebar-exit__svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+					<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-logout" width="100%" height="100%"></use>
+				</svg>
 			</div>
 			<span>
 				Выйти
