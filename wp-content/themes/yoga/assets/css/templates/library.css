@@ -29,6 +29,23 @@
   white-space: nowrap;
 }
 
+/* modals.css: visibility:hidden на всех input[type=checkbox] ломает label[for] в части браузеров */
+#practice-filter-form .library-filter-inputs-hack input[type="checkbox"] {
+  visibility: visible !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  max-width: 1px !important;
+  max-height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
 .library-form-main {
   display: flex;
   width: 100%;
