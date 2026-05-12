@@ -196,31 +196,24 @@
     -webkit-tap-highlight-color: rgba(31, 31, 31, 0.06);
   }
 
-  /* Невидимый чекбокс на всю строку — ловит тап; квадрат и текст не перехватывают hit-test */
+  /* Строка кликабельна целиком через JS; input только для формы и label[for] на десктопе */
   .library-filters-screen__row input.library-filter-input[type="checkbox"] {
     position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    max-height: none !important;
-    margin: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 1px !important;
+    height: 1px !important;
+    max-width: 1px !important;
+    max-height: 1px !important;
+    margin: -1px !important;
     padding: 0 !important;
     opacity: 0 !important;
-    z-index: 3 !important;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    clip: auto !important;
-    clip-path: none !important;
-    overflow: visible !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
     visibility: visible !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-  }
-
-  .library-filters-screen__row .library-filters-screen__box,
-  .library-filters-screen__row .library-filters-screen__text {
-    pointer-events: none;
   }
 
   /* modals.css: .checkbox-item span { width: calc(100% - 1.375rem) } — растягивает чекбокс в полоску */
