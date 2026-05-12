@@ -70,7 +70,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 		<div class="row">
 			<div class="library-form">
 				<form id="practice-filter-form" action="#" method="get">
-					<div class="library-filter-inputs-hack" aria-hidden="true">
+					<div class="library-filter-inputs-hack">
 						<?php foreach ($library_difficulty_terms as $index => $difficulty_term) : ?>
 							<?php
 							$input_id = 'library-filter-difficulty-' . ($index + 1);
