@@ -121,7 +121,7 @@ $img_uri = get_template_directory_uri() . '/assets/img';
                 <button type="submit" id="recovery-btn"></button>
                 <label for="recovery-btn" class="btn">
                     <span>
-                        Восстановить
+                        Восстановить пароль
                     </span>
                 </label>
                 <div class="loggin-back">
