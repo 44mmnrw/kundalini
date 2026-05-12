@@ -132,5 +132,48 @@
     <path d="M14.7307 2.65295L11.5077 4.95741C11.0806 5.2636 10.4682 5.07827 10.2829 4.58676L8.76004 0.525755C8.5022 -0.175252 7.51112 -0.175252 7.25328 0.525755L5.72236 4.5787C5.53704 5.07827 4.93272 5.2636 4.50567 4.94935L1.28265 2.64489C0.638045 2.19367 -0.216055 2.83022 0.049844 3.57957L3.40179 12.9666C3.51459 13.289 3.82078 13.4984 4.1592 13.4984H11.838C12.1764 13.4984 12.4826 13.2809 12.5954 12.9666L15.9474 3.57957C16.2213 2.83022 15.3672 2.19367 14.7307 2.65295ZM10.017 10.0901H5.98826C5.6579 10.0901 5.38395 9.81615 5.38395 9.48579C5.38395 9.15543 5.6579 8.88147 5.98826 8.88147H10.017C10.3474 8.88147 10.6213 9.15543 10.6213 9.48579C10.6213 9.81615 10.3474 10.0901 10.017 10.0901Z" fill="currentColor"/>
   </symbol>
 
+  <!-- ЛК моб. меню (Figma sidebar_lk 620:12651) — currentColor: белый / #1f1f1f на активном пункте -->
+  <symbol id="lk-sidebar-user" viewBox="0 0 20 20">
+    <circle cx="10" cy="6.75" r="3.15" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M4.25 17.25c0-3.45 2.58-6.25 5.75-6.25s5.75 2.8 5.75 6.25" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="lk-sidebar-history" viewBox="0 0 20 20">
+    <g fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+      <circle cx="5" cy="6" r="1.15" stroke="none"/>
+      <circle cx="5" cy="10" r="1.15" stroke="none"/>
+      <circle cx="5" cy="14" r="1.15" stroke="none"/>
+      <line x1="8.75" y1="6" x2="16" y2="6" fill="none"/>
+      <line x1="8.75" y1="10" x2="16" y2="10" fill="none"/>
+      <line x1="8.75" y1="14" x2="16" y2="14" fill="none"/>
+    </g>
+  </symbol>
+  <symbol id="lk-sidebar-heart" viewBox="0 0 20 20">
+    <path d="M10 16.25 4.92 11.17c-1.45-1.45-1.45-3.64-.02-5.07 1.43-1.43 3.62-1.43 5.1 0 1.48-1.47 3.67-1.47 5.1 0 1.43 1.43 1.43 3.62-.02 5.07L10 16.25z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="lk-sidebar-smile" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="7.25" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    <circle cx="7.35" cy="8.35" r="0.85" fill="currentColor" stroke="none"/>
+    <circle cx="12.65" cy="8.35" r="0.85" fill="currentColor" stroke="none"/>
+    <path d="M7.25 12.1c.85 1.55 2.2 2.5 3.75 2.5s2.9-.95 3.75-2.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="lk-sidebar-question" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="7.25" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    <path d="M10 14.4v.15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M10 12.5v-.35c0-1.15.75-1.55 1.35-1.95.45-.3.8-.85.8-1.5a1.85 1.85 0 0 0-3.7 0" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="lk-sidebar-settings" viewBox="0 0 20 20">
+    <g fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round">
+      <circle cx="10" cy="10" r="2.65"/>
+      <path d="M10 2.35v2.55M10 15.1v2.55M17.65 10h-2.55M4.9 10H2.35M15.45 4.55l-1.8 1.8M6.35 13.65l-1.8 1.8M15.45 15.45l-1.8-1.8M6.35 6.35l-1.8-1.8"/>
+    </g>
+  </symbol>
+  <symbol id="lk-sidebar-logout" viewBox="0 0 24 24">
+    <path d="M12 2v10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M18.4 6.6a9 9 0 1 1-12.73.04" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="lk-modal-close" viewBox="0 0 18 18">
+    <path d="M4.5 4.5l9 9m0-9l-9 9" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+  </symbol>
+
   <!-- Add new icons here as <symbol id="icon-name" viewBox="...">...</symbol> -->
 </svg>
