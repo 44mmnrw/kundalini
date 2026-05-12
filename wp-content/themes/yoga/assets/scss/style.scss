@@ -11927,6 +11927,10 @@ footer {
 	}
 }
 
+.footer-nav-cluster {
+	display: contents;
+}
+
 
 .logo-footer {
 	img {
@@ -12187,12 +12191,66 @@ footer {
 	
 }
 
+/* Планшет ~576–991: сетка на .footer-nav-cluster */
+@media (max-width: 991px) and (min-width: 576px) {
+
+.footer-main {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.footer-nav-cluster {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px 8px;
+	width: 100%;
+	min-width: 0;
+	align-items: stretch;
+}
+
+.footer-nav-cluster .footer-menu,
+.footer-nav-cluster .footer-menu ul,
+.footer-nav-cluster .footer-social,
+.footer-nav-cluster .footer-social ul {
+	display: contents;
+}
+
+.footer-nav-cluster .footer-social {
+	position: static;
+	width: auto;
+	right: auto;
+	bottom: auto;
+}
+
+.footer-nav-cluster .footer-menu li,
+.footer-nav-cluster .footer-social li {
+	display: block;
+	min-width: 0;
+}
+
+.footer-nav-cluster .footer-menu .footer-menu-item,
+.footer-nav-cluster .footer-social .footer-menu-item {
+	margin-left: 0;
+	margin-right: 0;
+	margin-top: 0;
+	width: 100%;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+}
+
 @media (max-width: 575px) {
 
 .footer {
 	padding-top: 25px;
 	overflow: hidden;
 	padding-bottom: 28px;
+}
+
+.footer-nav-cluster {
+	display: block;
+	width: 100%;
 }
 
 .footer-main {

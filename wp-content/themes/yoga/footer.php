@@ -14,35 +14,36 @@
 				<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-footer wow fadeIn delay-200ms">
 					<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
 				</a>
-				<nav class="footer-menu wow fadeIn delay-200ms">
-					<ul>
-						<?php
-							wp_nav_menu( array(
-							'theme_location' => 'primary',
-							'container'      => false,
-							'items_wrap'     => '%3$s', // убираем обертку <ul>
-							'link_before'    => '',
-							'link_after'     => '',
-							'menu_class'     => 'footer-menu',
-							'walker'         => new Footer_Walker()
-							) );
-						?>
-						
-					</ul>
-				</nav>
-				<div class="footer-social wow fadeIn delay-200ms">
-					<ul>
-						<li>
-							<a href="<?php echo esc_url(get_field('telegram_link', 'option')); ?>" class="footer-menu-item" target="_blank" rel="noopener">
-								Telegram
-							</a>
-						</li>
-						<li>
-							<a href="<?php echo esc_url(get_field('youtube_link', 'option')); ?>" class="footer-menu-item" target="_blank" rel="noopener">
-								YouTube
-							</a>
-						</li>
-					</ul>
+				<div class="footer-nav-cluster">
+					<nav class="footer-menu">
+						<ul>
+							<?php
+								wp_nav_menu( array(
+								'theme_location' => 'primary',
+								'container'      => false,
+								'items_wrap'     => '%3$s', // убираем обертку <ul>
+								'link_before'    => '',
+								'link_after'     => '',
+								'menu_class'     => 'footer-menu',
+								'walker'         => new Footer_Walker()
+								) );
+							?>
+						</ul>
+					</nav>
+					<div class="footer-social">
+						<ul>
+							<li>
+								<a href="<?php echo esc_url(get_field('telegram_link', 'option')); ?>" class="footer-menu-item" target="_blank" rel="noopener">
+									Telegram
+								</a>
+							</li>
+							<li>
+								<a href="<?php echo esc_url(get_field('youtube_link', 'option')); ?>" class="footer-menu-item" target="_blank" rel="noopener">
+									YouTube
+								</a>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
