@@ -18,13 +18,22 @@
 			);
 		}
 	}
+// Всегда короткий URL блога: иначе POST на /category/blog/ даёт 301 на /blog/ без query — теряются s и фильтр.
+$form_action = home_url('/blog/');
+$blog_search_value = '';
+if (isset($_GET['s']) && is_string($_GET['s'])) {
+	$blog_search_value = sanitize_text_field(wp_unslash($_GET['s']));
+}
+if ($blog_search_value === '') {
+	$blog_search_value = get_search_query();
+}
 ?>
 
 <section class="section-blog-form animated fadeIn slow delay-200ms" id="section-blog-form">
     <div class="container">
         <div class="row">
             <div class="blog-form">
-                <form action="<?php echo esc_url(home_url('/')); ?>" method="get">
+                <form action="<?php echo esc_url($form_action); ?>" method="get">
                     <div class="blog-radios">
 						<?php if (!empty($radio_items)) : ?>
 						<!-- Кнопка "Все статьи" -->
@@ -44,7 +53,7 @@
 						<?php endif; ?>
 					</div>
                     <div class="blog-search">
-                        <input type="text" name="s" class="input" placeholder="Что ищете?" value="<?php echo get_search_query(); ?>" required>
+                        <input type="text" name="s" class="input" placeholder="Что ищете?" value="<?php echo esc_attr($blog_search_value); ?>" required>
                         <label class="blog-search__btn">
                             <input type="submit">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/search-btn-icon.png" alt="" class="active">

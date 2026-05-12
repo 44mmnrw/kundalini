@@ -953,18 +953,8 @@
 		
 	});
 	
-	$(".blog-form form").submit(function(e) {
-		e.preventDefault();
-		$('.blog-result h3').text('Результаты поиска');
-		$('.blog-result b').addClass("active");
-		$('.blog-main').addClass("hidden");
-		$('.blog-articles').toggleClass("blog-articles_mt");
-		$('.blog-search').addClass("search-active");
-		
-		var destination = $('.body').offset().top;
-		$('html, body').animate({ scrollTop: destination }, 300);
-		return false;
-	});
+	// Поиск блога: обычный GET на action формы (/blog/?s=…). Раньше был preventDefault() —
+	// страница не перезагружалась, .blog-main скрывался — визуально «ничего не найдено».
 	
 	$('.blog-articles__more > .btn, .popular-articles__media-more > .btn').click(function () {
 		$(this).find('span').toggleClass("active");

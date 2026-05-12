@@ -4,15 +4,71 @@ $new_title = get_field('blog_new_title', 'option');
 $posts_count = get_field('blog_posts_count', 'option') ?: 9;
 $blog_category = get_category_by_slug('blog');
 
-// Верхний блок "Новое": автоматически берём 2 последних поста по дате.
-$latest_posts_query = new WP_Query(array(
+$search_q = '';
+if (isset($_GET['s']) && is_string($_GET['s'])) {
+    $search_q = sanitize_text_field(wp_unslash($_GET['s']));
+}
+if ($search_q === '') {
+    $search_q = is_string(get_search_query()) ? get_search_query() : '';
+}
+$has_search = ($search_q !== '');
+$is_blog_search_ui = ($has_search || is_search());
+
+// На /blog/?s=… основной запрос — архив рубрики (is_search() = false), но строка поиска в URL есть.
+$category_filter_term_id = null;
+
+if ($blog_category && !is_wp_error($blog_category) && is_category()) {
+    $qobj = get_queried_object();
+    if ($qobj instanceof WP_Term && $qobj->taxonomy === 'category') {
+        $blog_tid = (int) $blog_category->term_id;
+        $q_tid = (int) $qobj->term_id;
+        if ($q_tid === $blog_tid || (int) $qobj->parent === $blog_tid || cat_is_ancestor_of($blog_tid, $q_tid)) {
+            $category_filter_term_id = $q_tid;
+        }
+    }
+}
+
+// Узкая рубрика из формы (радио «Все статьи» / дочерние). Без этого — не навязываем родителя «blog»:
+// статьи часто лежат не в дереве рубрики blog, и жёсткий tax_query давал 0 результатов.
+if ($category_filter_term_id === null && $blog_category && !is_wp_error($blog_category) && $is_blog_search_ui) {
+    if (!empty($_GET['category'])) {
+        $slug = sanitize_title(wp_unslash($_GET['category']));
+        if ($slug !== '') {
+            $child = get_category_by_slug($slug);
+            if ($child && !is_wp_error($child) && (int) $child->parent === (int) $blog_category->term_id) {
+                $category_filter_term_id = (int) $child->term_id;
+            }
+        }
+    }
+}
+
+$query_common = array(
     'post_type' => 'post',
-    'posts_per_page' => 2,
     'post_status' => 'publish',
     'orderby' => 'date',
     'order' => 'DESC',
     'ignore_sticky_posts' => true,
-));
+);
+
+if ($is_blog_search_ui) {
+    $query_common['s'] = $search_q;
+}
+
+if ($category_filter_term_id) {
+    $query_common['tax_query'] = array(
+        array(
+            'taxonomy' => 'category',
+            'field' => 'term_id',
+            'terms' => $category_filter_term_id,
+            'include_children' => true,
+        ),
+    );
+}
+
+// Верхний блок "Новое": 2 релевантных поста (по дате среди выборки поиска / рубрики).
+$latest_posts_query = new WP_Query(array_merge($query_common, array(
+    'posts_per_page' => 2,
+)));
 
 $main_post = null;
 $secondary_post = null;
@@ -24,16 +80,20 @@ if (!empty($latest_posts_query->posts)) {
     $exclude_ids = array_filter(array($main_post, $secondary_post));
 }
 
-// Нижний список: продолжаем после первых 2 постов.
-$current_posts = new WP_Query(array(
-    'post_type' => 'post',
+$blog_posts_total = (int) $latest_posts_query->found_posts;
+$blog_count_label = 'Всего статей:';
+$blog_count_value = $blog_posts_total;
+
+if ($is_blog_search_ui) {
+    $blog_count_label = 'Найдено статей:';
+    $blog_count_value = $blog_posts_total;
+}
+
+// Нижний список: остальные посты той же выборки.
+$current_posts = new WP_Query(array_merge($query_common, array(
     'posts_per_page' => $posts_count,
-    'post_status' => 'publish',
-    'orderby' => 'date',
-    'order' => 'DESC',
-    'ignore_sticky_posts' => true,
     'post__not_in' => $exclude_ids,
-));
+)));
 ?>
 
 <section class="section-blog" id="section-blog">
@@ -41,10 +101,12 @@ $current_posts = new WP_Query(array(
         <div class="row">
             <div class="blog-result">
                 <h3>
-                    <?php echo esc_html($new_title ?: 'Новое'); ?>
+                    <?php
+                    echo esc_html($is_blog_search_ui ? 'Результаты поиска' : ($new_title ?: 'Новое'));
+                    ?>
                 </h3>
-                <b>
-                    Найдено практик: <?php echo (int) $latest_posts_query->found_posts; ?>
+                <b class="<?php echo $is_blog_search_ui ? 'active' : ''; ?>">
+                    <?php echo esc_html($blog_count_label); ?> <?php echo $blog_count_value; ?>
                 </b>
             </div>
         </div>
