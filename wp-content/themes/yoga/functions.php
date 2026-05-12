@@ -1570,13 +1570,25 @@ function handle_comment_delete() {
 				return true;
 			}
 
+			$term_id = (int) $term->term_id;
+			$meta_key = 'practice_type_available';
+			$acf_ref = 'practice-type_' . $term_id;
+
 			if (function_exists('get_field')) {
-				$value = get_field('practice_type_available', $term);
-				return $value !== false ? (bool) $value : true;
+				$value = get_field($meta_key, $acf_ref);
+				if ($value === 0 || $value === '0') {
+					return false;
+				}
+				if ($value === false) {
+					return metadata_exists('term', $term_id, $meta_key) ? false : true;
+				}
+				if ($value === null || $value === '') {
+					return true;
+				}
+				return (bool) $value;
 			}
 
-			$term_id = (int) $term->term_id;
-			$raw = get_term_meta($term_id, 'practice_type_available', true);
+			$raw = get_term_meta($term_id, $meta_key, true);
 			if ($raw === '' || $raw === false || $raw === null) {
 				return true;
 			}
