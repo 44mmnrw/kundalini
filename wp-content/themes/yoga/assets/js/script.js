@@ -2231,9 +2231,9 @@
                     
                     // Показываем/скрываем кнопку "Показать еще"
                     if (response.data.count > 10) {
-                        $('.btn').show();
+                        $('.section-kriyi .kriyi > .btn').show();
 						} else {
-                        $('.btn').hide();
+                        $('.section-kriyi .kriyi > .btn').hide();
 					}
 					} else {
                     console.error('Ошибка загрузки данных');
