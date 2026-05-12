@@ -380,10 +380,12 @@
 			var forId = $(this).attr('for');
 			if (forId) {
 				var inputEl = document.getElementById(forId);
-				if (inputEl && inputEl.type === 'checkbox' && inputEl.closest('#practice-filter-form')) {
+				var formEl = document.getElementById('practice-filter-form');
+				if (inputEl && String(inputEl.type).toLowerCase() === 'checkbox' && formEl && formEl.contains(inputEl)) {
 					e.preventDefault();
 					inputEl.checked = !inputEl.checked;
-					$(inputEl).trigger('change');
+					syncLibraryFilterCheckboxLabels();
+					loadLibraryPractices();
 				}
 			}
 			return;
@@ -2129,8 +2131,8 @@
 			term_id: getActiveLibraryTermId()
 		};
 		
-		// Собираем чекбоксы
-		$('.section-library .filter input[type=checkbox]:checked').each(function() {
+		// Собираем чекбоксы из формы (на мобильных .filter скрыт display:none — input всё равно в DOM)
+		$('#practice-filter-form input[type=checkbox]:checked').each(function() {
 			let name = $(this).attr('name').replace('[]','');
 			if (!data.filters[name]) data.filters[name] = [];
 			data.filters[name].push($(this).val());
