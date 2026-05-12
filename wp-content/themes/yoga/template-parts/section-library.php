@@ -146,7 +146,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php foreach ($library_difficulty_terms as $index => $difficulty_term) : ?>
 									<?php $input_id = 'library-filter-difficulty-' . ($index + 1); ?>
 									<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-										<div class="checkbox"></div>
+										<div class="checkbox library-filter-faux-checkbox"></div>
 										<span><?php echo esc_html((string) $difficulty_term->name); ?></span>
 									</label>
 								<?php endforeach; ?>
@@ -161,7 +161,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php foreach ($library_duration_terms as $index => $duration_term) : ?>
 									<?php $input_id = 'library-filter-duration-' . ($index + 1); ?>
 									<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-										<div class="checkbox"></div>
+										<div class="checkbox library-filter-faux-checkbox"></div>
 										<span><?php echo esc_html((string) $duration_term->name); ?></span>
 									</label>
 								<?php endforeach; ?>
@@ -176,7 +176,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php foreach ($library_goal_terms as $index => $goal_term) : ?>
 									<?php $input_id = 'library-filter-goal-' . ($index + 1); ?>
 									<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-										<div class="checkbox"></div>
+										<div class="checkbox library-filter-faux-checkbox"></div>
 										<span><?php echo esc_html((string) $goal_term->name); ?></span>
 									</label>
 								<?php endforeach; ?>
