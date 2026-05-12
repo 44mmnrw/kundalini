@@ -82,7 +82,7 @@
   padding: 1.875rem;
   padding-top: 1.875rem;
   padding-left: 1.875rem;
-  padding-bottom: 2.1875rem;}
+  padding-bottom: 1.875rem;}
 
 .review-modal__main {
   width: 100%;
@@ -145,7 +145,7 @@
 
 @media (max-width: 1320px) {
   .review-modal {
-    padding-top: 1.875rem;    padding-left: 1.875rem;    padding-bottom: 2rem;  }
+    padding-top: 1.875rem;    padding-left: 1.875rem;    padding-bottom: 1.875rem;  }
   .review-modal__text {
     margin-top: 1.375rem;    max-height: calc(100vh - 8.75rem);  }
   .review-modal__text p {
@@ -173,7 +173,7 @@
     display: none;
   }
   .review-modal {
-    padding-left: 1.875rem;    padding-right: 0.75rem;    padding-top: 1.875rem;    padding-bottom: 2.75rem;  }
+    padding-left: 1.875rem;    padding-right: 0.75rem;    padding-top: 1.875rem;    padding-bottom: 1.875rem;  }
   .review-modal__text {
     max-height: calc(100vh - 18.125rem);    padding-right: 1.875rem;    margin-top: 2rem;  }
   .review-modal__text p {
@@ -546,6 +546,8 @@
   }
   .modal-mobile-menu-lk .modal-close__icon {
     display: block;
+    width: 1.5rem;
+    height: 1.5rem;
     color: #1f1f1f;
   }
   .modal-mobile-menu-lk .mobile-menu__slide.active {
@@ -707,6 +709,89 @@
     transform: translateY(-50%);
     width: 0.5625rem;    height: 1rem;    background: url(../../img/mobile-menu-arrow.png) no-repeat center center/100% auto;
   }
+  .modal-mobile-menu .modal-close__icon {
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-black);
+  }
+  .modal-mobile-menu .mobile-menu__slide_main {
+    padding-top: 5.5rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .modal-mobile-menu .mobile-menu__slide_sub {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .modal-mobile-menu .mobile-menu-inner .btn {
+    left: 1.25rem;
+    width: calc(100% - 2.5rem);
+    bottom: 1.875rem;
+    height: auto;
+    min-height: 3.125rem;
+    padding: 1rem 0.9375rem;
+    line-height: 1.2;
+  }
+  .modal-mobile-menu .mobile-menu-main-item {
+    padding-top: 0px;
+    padding-bottom: 0.9375rem;
+  }
+  .modal-mobile-menu .mobile-menu-main-item:first-child::after {
+    display: none;
+  }
+  .modal-mobile-menu .mobile-menu-main-item_sw {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3125rem;
+  }
+  .modal-mobile-menu .mobile-menu-main-item_sw > span:first-of-type {
+    flex: 1 1 auto;
+    min-width: 0px;
+    padding-right: 0px;
+  }
+  .modal-mobile-menu .mobile-menu-main-item__chevron {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    color: var(--color-black);
+    pointer-events: none;
+  }
+  .modal-mobile-menu .mobile-menu-main-item__chevron-svg {
+    display: block;
+    width: 0.5rem;
+    height: 1rem;
+  }
+  .modal-mobile-menu .mobile-menu-sub-item::after {
+    display: none;
+  }
+  .modal-mobile-menu .mobile-menu-sub-item > span:not(.mobile-menu-sub-item__chevron) {
+    padding-right: 2.5rem;
+  }
+  .modal-mobile-menu .mobile-menu-sub-item__chevron {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: var(--color-black);
+    pointer-events: none;
+  }
+  .modal-mobile-menu .mobile-menu-sub-item__chevron-svg {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .modal-mobile-menu .mobile-menu-back__icon {
+    display: block;
+    margin: auto;
+    width: 0.5625rem;
+    height: 1rem;
+    color: var(--color-black);
+    transform: rotate(180deg);
+  }
   .mobile-menu-sub {
     display: block;
     width: 100%;
@@ -809,6 +894,10 @@
     margin-bottom: 0.75rem;  }
   .modal-mobile-menu .modal-close, .modal-mobile-menu-lk .modal-close {
     right: 0.625rem;  }
+  .modal-mobile-menu .modal-close__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
   .mobile-menu {
     max-height: calc(100vh - 6.25rem);  }
   .modal-mobile-menu.active .mobile-menu-inner, .modal-mobile-menu-lk.active .mobile-menu-inner {
@@ -841,8 +930,8 @@
     display: none;
   }
   .modal-mobile-menu-lk .modal-close__icon {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 1.25rem;
+    height: 1.25rem;
   }
   .modal-mobile-menu-lk .personal-status {
     top: 1.375rem;    left: 0.625rem;    font-size: 0.875rem;  }

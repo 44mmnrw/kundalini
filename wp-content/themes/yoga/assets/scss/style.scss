@@ -880,6 +880,41 @@ header {
 
 }
 
+@media (max-width: 1024px) and (min-width: 992px) {
+
+.header-content {
+	gap: 10px;
+}
+
+.header-main {
+	gap: 22px;
+}
+
+.main-menu ul {
+	gap: 10px;
+	li {
+		margin-left: 6px;
+		margin-right: 6px;
+		.ref {
+			font-size: 14px;
+		}
+	}
+}
+
+.header-lk {
+	gap: 10px;
+	.btn {
+		height: 46px;
+		padding-left: 9px;
+		padding-right: 9px;
+		span {
+			font-size: 14px;
+		}
+	}
+}
+
+}
+
 @media (max-width: 991px) {
 
 header {
@@ -12421,7 +12456,7 @@ footer {
 	padding: 1.875rem;
 	padding-top: 1.875rem;
 	padding-left: 1.875rem;
-	padding-bottom: 2.1875rem;
+	padding-bottom: 1.875rem;
 }
 
 .review-modal__main {
@@ -12513,7 +12548,7 @@ footer {
 .review-modal {
     padding-top: 1.875rem;
     padding-left: 1.875rem;
-    padding-bottom: 2rem;
+    padding-bottom: 1.875rem;
 }
 
 .review-modal__text {
@@ -12566,7 +12601,7 @@ footer {
 	padding-left: 1.875rem;
 	padding-right: 0.75rem;
     padding-top: 1.875rem;
-    padding-bottom: 2.75rem;
+    padding-bottom: 1.875rem;
 } 
 
 .review-modal__text {
@@ -12801,6 +12836,10 @@ footer {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+	.modal-close__icon {
+		width: 24px;
+		height: 24px;
 	}
 }
 
@@ -13330,8 +13369,8 @@ footer {
 	    	display: none;
 	    }
 	    .modal-close__icon {
-	    	width: 14px;
-	    	height: 14px;
+	    	width: 20px;
+	    	height: 20px;
 	    }
 	}
     .personal-status {

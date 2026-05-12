@@ -1,12 +1,16 @@
 <?php
 	/**
-		* Модальное окно мобильного меню
-	*/
-	$theme_uri = get_template_directory_uri();
+	 * Модальное окно мобильного меню (Figma pop_up 582:10836).
+	 * Иконки закрытия / назад / стрелки — sprite.svg (единый спрайт).
+	 */
+	$theme_uri   = get_template_directory_uri();
+	$sprite_href = esc_url($theme_uri . '/assets/svg/sprite.svg');
 ?>
 <div class="modal-mobile-menu">
     <div class="modal-close">
-        <img src="<?php echo esc_url($theme_uri . '/assets/img/modal-close-img.png'); ?>" alt="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
+			<use href="<?php echo $sprite_href; ?>#lk-modal-close" width="100%" height="100%"></use>
+		</svg>
 	</div>
     <div class="mobile-menu-inner">
         <div class="mobile-menu">
@@ -23,8 +27,10 @@
 				</nav>
 			</div>
             <div class="mobile-menu__slide mobile-menu__slide_sub">
-                <div class="mobile-menu-back">
-                    <img src="<?php echo esc_url($theme_uri . '/assets/img/mobile-menu-back.png'); ?>" alt="<?php esc_attr_e('Назад', 'yoga'); ?>">
+                <div class="mobile-menu-back" role="button" tabindex="0" aria-label="<?php esc_attr_e('Назад', 'yoga'); ?>">
+					<svg class="mobile-menu-back__icon" viewBox="0 0 9 16" width="9" height="16" aria-hidden="true" focusable="false">
+						<use href="<?php echo $sprite_href; ?>#lk-library-chevron" width="100%" height="100%"></use>
+					</svg>
 				</div>
                 <div class="mobile-menu-switches">
 					<?php
@@ -66,18 +72,25 @@
 				<nav class="mobile-menu-sub <?php echo $index === 0 ? 'active' : ''; ?>" data-target="<?php echo $index + 1; ?>">
 					<ul>
 						<li class="mobile-menu-sub-item">
-							<a href="<?php echo get_term_link($parent_term); ?>">
-								
-							</a>
-							<span>Все практики</span>
+							<a href="<?php echo esc_url(get_term_link($parent_term)); ?>"></a>
+							<span><?php esc_html_e('Все практики', 'yoga'); ?></span>
+							<span class="mobile-menu-sub-item__chevron" aria-hidden="true">
+								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 20 20" width="20" height="20" focusable="false">
+									<use href="<?php echo $sprite_href; ?>#slick-arrow" width="100%" height="100%"></use>
+								</svg>
+							</span>
 						</li>
 						
 						<?php if (!empty($child_terms) && !is_wp_error($child_terms)) : ?>
 						<?php foreach ($child_terms as $child_term) : ?>
                         <li class="mobile-menu-sub-item">
-                            <a href="<?php echo get_term_link($child_term); ?>">
-							</a>
+                            <a href="<?php echo esc_url(get_term_link($child_term)); ?>"></a>
 							<span><?php echo esc_html($child_term->name); ?></span>
+							<span class="mobile-menu-sub-item__chevron" aria-hidden="true">
+								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 20 20" width="20" height="20" focusable="false">
+									<use href="<?php echo $sprite_href; ?>#slick-arrow" width="100%" height="100%"></use>
+								</svg>
+							</span>
 						</li>
 						<?php endforeach; ?>
 						<?php endif; ?>
