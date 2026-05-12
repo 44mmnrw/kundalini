@@ -2056,9 +2056,7 @@ header {
 	width: calc(calc(100% - 60px) / 4);
 	min-height: 100%;
 	margin-top: 21px;
-	padding: 25px;
-	padding-top: 38px;
-	padding-bottom: 40px;
+	padding: 30px 25px;
 	border-radius: 30px;
 	background: transparent;
 	overflow: hidden;
@@ -2066,34 +2064,69 @@ header {
 		position: relative;
 		z-index: 2;
 	}
-	h3 {
-
-	}
 	p {
 		font-size: 14px;
 		line-height: 1.28em;
-		margin-top: 8px;
+		margin-top: 10px;
 	}
 	.check-list {
-		padding-bottom: 25px;
-	}
-	.btn {
-		height: 60px;
-		line-height: 60px;
-		margin-top: auto;
-		padding-right: 62px;
-		white-space: nowrap;
-		span {
-			font-size: 14px;
-			text-transform: uppercase;
-			white-space: nowrap;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin: 0;
+		padding-top: 20px;
+		padding-bottom: 0;
+		li {
+			margin-top: 0;
 		}
 	}
-	.btn-icon {
-		width: 31px;
-		height: 31px;
-		img {
-			width: 15px;
+	.check-list__text {
+		font-size: 16px;
+		line-height: 1.28em;
+	}
+	.btn.btn_icon {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		width: 100%;
+		box-sizing: border-box;
+		min-height: 60px;
+		height: auto;
+		line-height: 1;
+		padding: 15px 20px;
+		margin-top: auto;
+		white-space: nowrap;
+		span {
+			display: block;
+			flex: 0 1 auto;
+			min-width: 0;
+			font-size: 14px;
+			line-height: 1;
+			letter-spacing: -0.154px;
+			text-transform: uppercase;
+			text-align: center;
+			font-family: "Mulish-SemiBold", sans-serif;
+			white-space: nowrap;
+		}
+		&:hover .btn-icon {
+			transform: rotate(0deg);
+		}
+	}
+	.btn .btn-icon {
+		position: relative;
+		right: auto;
+		top: auto;
+		left: auto;
+		transform: rotate(-45deg);
+		transition: $transition-all;
+		flex-shrink: 0;
+		width: 30px;
+		height: 30px;
+		svg {
+			width: 14.634px;
+			height: 14.634px;
 		}
 	}
 }
@@ -2102,12 +2135,17 @@ header {
 	min-height: 0;
 	position: relative;
 	z-index: 2;
+	h3 {
+		margin: 0;
+		line-height: 1.1;
+	}
 }
 
 .tariff-price {
 	margin-top: 0;
 	span {
 		color: #4A4A4A;
+		font-size: 16px;
 
 	}
 	b {
@@ -2230,23 +2268,8 @@ header {
 .tariff {
     width: calc((100% - 60px) / 4);
     margin-top: 21px;
-    padding: 20px;
-    padding-top: 26px;
-    padding-bottom: 28px;
-    .check-list {
-    	padding-bottom: 20px;
-    }
-    .btn {
-    
-        span {
-        	font-size: 13px;
-        }
-    }
+    padding: 30px 20px;
 } 
-
-.check-list {
-	padding-top: 4px;
-}
 
 }
 
@@ -2264,9 +2287,7 @@ header {
     margin-left: 10px;
     margin-right: 10px;
     background: #F6F6F9;
-    .btn-icon {
-	    right: calc(50% - 95px);
-	}
+    padding: 30px 25px;
 }
 
 .tariff__bg {
@@ -2301,9 +2322,9 @@ header {
 	width: 320px;
 	max-width: 100%;
 	min-height: 100%;
-	padding-top: 28px;
+	padding: 30px 20px;
 	.check-list {
-		padding-top: 6px;
+		padding-top: 20px;
 		padding-bottom: 32px;
 		li {
 

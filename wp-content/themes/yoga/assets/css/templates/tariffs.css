@@ -54,7 +54,9 @@
   flex-direction: column;
   position: relative;
   width: calc((100% - 3.75rem) / 4);  min-height: 100%;
-  margin-top: 1.3125rem;  padding: 1.5625rem;  padding-top: 2.375rem;  padding-bottom: 2.5rem;  border-radius: 1.875rem;  background: transparent;
+  margin-top: 1.3125rem;
+  padding: 1.875rem 1.5625rem;
+  border-radius: 1.875rem;  background: transparent;
   overflow: hidden;
 }
 .tariff > * {
@@ -63,23 +65,63 @@
 }
 .tariff p {
   font-size: 0.875rem;  line-height: 1.28em;
-  margin-top: 0.5rem;}
+  margin-top: 0.625rem;}
+.tariff__top h3 {
+  margin: 0px;
+  line-height: 1.1;}
 .tariff .check-list {
-  padding-bottom: 1.5625rem;}
-.tariff .btn {
-  height: 3.75rem;  line-height: 3.75rem;  margin-top: auto;
-  padding-right: 3.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin: 0px;
+  padding-top: 1.25rem;
+  padding-bottom: 0px;}
+.tariff .check-list li {
+  margin-top: 0px;}
+.tariff .check-list__text {
+  font-size: 1rem;  line-height: 1.28em;}
+/* Кнопка CTA в карточке — Figma 593:15474 */
+.tariff .btn.btn_icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 3.75rem;
+  height: auto;
+  line-height: 1;
+  padding: 0.9375rem 1.25rem;
+  margin-top: auto;
   white-space: nowrap;}
-.tariff .btn span {
-  font-size: 0.875rem;  text-transform: uppercase;
-  white-space: nowrap;
-}
-.tariff .btn-icon {
-  width: 1.9375rem;  height: 1.9375rem;}
-.tariff .btn-icon img {
-  width: 0.9375rem;}
-.tariff .btn-icon svg {
-  width: 0.9375rem;  height: 0.9375rem;}
+.tariff .btn.btn_icon span {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0px;
+  font-size: 0.875rem;
+  line-height: 1;
+  letter-spacing: -0.154px;
+  text-transform: uppercase;
+  text-align: center;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  white-space: nowrap;}
+.tariff .btn .btn-icon {
+  position: relative;
+  right: auto;
+  top: auto;
+  left: auto;
+  transform: rotate(-45deg);
+  transition: 0.4s ease;
+  flex-shrink: 0;
+  width: 1.875rem;
+  height: 1.875rem;}
+.tariff .btn:hover .btn-icon {
+  transform: rotate(0deg);}
+.tariff .btn .btn-icon svg {
+  width: 0.914625rem;
+  height: 0.914625rem;}
 .tariff form.cart {
   margin-top: auto;
 }
@@ -89,7 +131,7 @@
 }
 .tariff-price span {
   color: #4A4A4A;
-}
+  font-size: 1rem;}
 .tariff-price b {
   font-family: "Mulish-Bold", sans-serif;
   color: var(--color-black);
@@ -193,13 +235,7 @@
   .section-tariffs.section-tariffs_single {
     padding-bottom: 5.625rem;  }
   .tariff {
-    width: calc((100% - 3.75rem) / 4);    margin-top: 1.3125rem;    padding: 1.25rem;    padding-top: 1.625rem;    padding-bottom: 1.75rem;  }
-  .tariff .check-list {
-    padding-bottom: 1.25rem;  }
-  .tariff .btn span {
-    font-size: 0.8125rem;  }
-  .check-list {
-    padding-top: 0.25rem;  }
+    width: calc((100% - 3.75rem) / 4);    margin-top: 1.3125rem;    padding: 1.875rem 1.25rem;  }
 }
 @media (max-width: 1199px) {
   .tariffs-items__slide {
@@ -207,12 +243,10 @@
     justify-content: center;
   }
   .tariff {
-    width: calc((100% - 3.75rem) / 2);    max-width: 23.75rem;    margin-left: 0.625rem;    margin-right: 0.625rem;    background: #F6F6F9;  }
+    width: calc((100% - 3.75rem) / 2);    max-width: 23.75rem;    margin-left: 0.625rem;    margin-right: 0.625rem;    background: #F6F6F9;    padding: 1.875rem 1.5625rem;  }
   .tariff__bg {
     display: none;
   }
-  .tariff .btn-icon {
-    right: calc(50% - 5.9375rem);  }
   .tariff__top {
     min-height: 0px;  }
 }
@@ -230,9 +264,9 @@
     margin-right: auto;
     width: 20rem;    max-width: 100%;
     min-height: 100%;
-    padding-top: 1.75rem;  }
+    padding: 1.875rem 1.25rem;  }
   .tariff .check-list {
-    padding-top: 0.375rem;    padding-bottom: 2rem;  }
+    padding-top: 1.25rem;    padding-bottom: 2rem;  }
   .tariff__top {
     min-height: auto;
   }
