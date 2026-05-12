@@ -2140,19 +2140,55 @@
 		});
 	}
 
-	/* Мобильный оверлей фильтров: capture до jQuery/.checkbox, иначе клик «съедают» другие обработчики */
+	/* Мобильный оверлей: capture + поиск label по координатам (из-за pointer-events и hit-test под скроллом на iOS) */
 	(function bindLibraryFiltersScreenCapture() {
 		var screen = document.getElementById('library-filters-screen');
 		if (!screen) return;
-		screen.addEventListener('click', function (e) {
-			var label = e.target && e.target.closest && e.target.closest('label.library-filters-screen__row.checkbox-item');
-			if (!label || !screen.contains(label)) return;
+
+		var lastFilterUiToggle = 0;
+
+		function findFilterLabel(e) {
+			var t = e.target;
+			if (t && t.closest) {
+				var label = t.closest('label.library-filters-screen__row.checkbox-item');
+				if (label && screen.contains(label)) return label;
+			}
+			var cx = typeof e.clientX === 'number' ? e.clientX : null;
+			var cy = typeof e.clientY === 'number' ? e.clientY : null;
+			if ((cx == null || cy == null) && e.changedTouches && e.changedTouches[0]) {
+				cx = e.changedTouches[0].clientX;
+				cy = e.changedTouches[0].clientY;
+			}
+			if (cx == null || cy == null || !document.elementsFromPoint) return null;
+			var stack = document.elementsFromPoint(cx, cy);
+			if (!stack || !stack.length) return null;
+			for (var i = 0; i < stack.length; i++) {
+				var el = stack[i];
+				if (!screen.contains(el)) continue;
+				if (el.matches && el.matches('label.library-filters-screen__row.checkbox-item')) return el;
+				if (el.closest) {
+					var lab = el.closest('label.library-filters-screen__row.checkbox-item');
+					if (lab && screen.contains(lab)) return lab;
+				}
+			}
+			return null;
+		}
+
+		function applyFilterLabelToggle(e, label) {
 			var forId = label.getAttribute('for');
 			if (!forId) return;
 			var inputEl = document.getElementById(forId);
 			var formEl = document.getElementById('practice-filter-form');
 			if (!inputEl || !formEl || String(inputEl.type).toLowerCase() !== 'checkbox' || !formEl.contains(inputEl)) return;
-			e.preventDefault();
+			var now = Date.now();
+			if (now - lastFilterUiToggle < 450) {
+				if (e.cancelable) e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				return;
+			}
+			lastFilterUiToggle = now;
+			if (e.cancelable) e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
 			$('.form-categories').removeClass('active');
@@ -2162,7 +2198,19 @@
 			inputEl.checked = !inputEl.checked;
 			syncLibraryFilterCheckboxLabels();
 			loadLibraryPractices();
+		}
+
+		screen.addEventListener('click', function (e) {
+			var label = findFilterLabel(e);
+			if (!label) return;
+			applyFilterLabelToggle(e, label);
 		}, true);
+
+		screen.addEventListener('touchend', function (e) {
+			var label = findFilterLabel(e);
+			if (!label) return;
+			applyFilterLabelToggle(e, label);
+		}, { passive: false });
 	})();
 
     function requestLibrarySuggestions() {
