@@ -1342,6 +1342,14 @@ function handle_comment_delete() {
 			
 			// Отправка email
 			$output .= '<span>' . apply_filters('the_title', $item->title, $item->ID) . '</span>';
+			
+			if ($this->item_count === 1) {
+				$sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
+				$output .= '<span class="mobile-menu-main-item__chevron" aria-hidden="true">';
+				$output .= '<svg class="mobile-menu-main-item__chevron-svg" viewBox="0 0 9 16" width="9" height="16" focusable="false">';
+				$output .= '<use href="' . $sprite_href . '#lk-library-chevron" width="100%" height="100%"></use>';
+				$output .= '</svg></span>';
+			}
 		}
 		
 		function end_el(&$output, $item, $depth = 0, $args = array()) {
