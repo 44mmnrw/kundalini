@@ -370,12 +370,24 @@
 	
 	
 	
-	$(document).on('click', '.filter-item__list .checkbox-item, .library-filters-screen .checkbox-item', function () {
+	$(document).on('click', '.filter-item__list .checkbox-item, .library-filters-screen .checkbox-item', function (e) {
 		
 		$('.form-categories').removeClass("active");
 		$('.form-search').removeClass("active");
 		$('.form-cat-list').removeClass("active");
 		$('.form-search-list').removeClass("active");
+		if ($(this).closest('.library-filters-screen').length) {
+			var forId = $(this).attr('for');
+			if (forId) {
+				var inputEl = document.getElementById(forId);
+				if (inputEl && inputEl.type === 'checkbox' && inputEl.closest('#practice-filter-form')) {
+					e.preventDefault();
+					inputEl.checked = !inputEl.checked;
+					$(inputEl).trigger('change');
+				}
+			}
+			return;
+		}
 		$(this).toggleClass("active");
 		$(this).find('.checkbox').toggleClass("active");
 		$('.filter-item__list .checkbox-item').not('.active').closest('.library-form').find('.form-reset').removeClass("active");

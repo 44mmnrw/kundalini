@@ -3,7 +3,6 @@
  * Мобильные фильтры библиотеки — макет Figma pop_up (node 582:10993).
  * Те же input, что в .filter (label[for] без дублирования полей).
  */
-$theme_uri = get_template_directory_uri();
 
 $difficulty_terms = get_terms(array(
 	'taxonomy' => 'practice-difficulty',
@@ -31,7 +30,7 @@ $goal_terms = get_terms(array(
 			<span class="library-filters-screen__close-lines" aria-hidden="true"></span>
 		</button>
 		<div class="library-filters-screen__scroll">
-			<section class="library-filters-screen__block">
+			<div class="library-filters-screen__block">
 				<h3 class="library-filters-screen__heading"><?php esc_html_e('По сложности', 'yoga'); ?></h3>
 				<div class="library-filters-screen__options">
 					<?php
@@ -48,9 +47,9 @@ $goal_terms = get_terms(array(
 					endif;
 					?>
 				</div>
-			</section>
+			</div>
 
-			<section class="library-filters-screen__block">
+			<div class="library-filters-screen__block">
 				<h3 class="library-filters-screen__heading"><?php esc_html_e('По продолжительности', 'yoga'); ?></h3>
 				<div class="library-filters-screen__options">
 					<?php
@@ -67,9 +66,9 @@ $goal_terms = get_terms(array(
 					endif;
 					?>
 				</div>
-			</section>
+			</div>
 
-			<section class="library-filters-screen__block">
+			<div class="library-filters-screen__block">
 				<h3 class="library-filters-screen__heading"><?php esc_html_e('По цели', 'yoga'); ?></h3>
 				<div class="library-filters-screen__options">
 					<?php
@@ -86,7 +85,7 @@ $goal_terms = get_terms(array(
 					endif;
 					?>
 				</div>
-			</section>
+			</div>
 		</div>
 	</div>
 </div>
