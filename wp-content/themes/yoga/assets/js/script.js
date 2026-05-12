@@ -371,30 +371,12 @@
 	
 	
 	
-	$(document).on('click', '.filter-item__list .checkbox-item, .library-filters-screen .checkbox-item', function (e) {
+	$(document).on('click', '.filter-item__list .checkbox-item', function (e) {
 		
 		$('.form-categories').removeClass("active");
 		$('.form-search').removeClass("active");
 		$('.form-cat-list').removeClass("active");
 		$('.form-search-list').removeClass("active");
-		if ($(this).closest('.library-filters-screen').length) {
-			var forId = $(this).attr('for');
-			if (!forId) {
-				return;
-			}
-			var inputEl = document.getElementById(forId);
-			if (!inputEl || String(inputEl.type).toLowerCase() !== 'checkbox') {
-				return;
-			}
-			if (!$(inputEl).closest('#practice-filter-form').length) {
-				return;
-			}
-			e.preventDefault();
-			inputEl.checked = !inputEl.checked;
-			syncLibraryFilterCheckboxLabels();
-			loadLibraryPractices();
-			return false;
-		}
 		$(this).toggleClass("active");
 		$(this).find('.checkbox').toggleClass("active");
 		$('.filter-item__list .checkbox-item').not('.active').closest('.library-form').find('.form-reset').removeClass("active");
@@ -2129,6 +2111,9 @@
     }
 
     function loadLibraryPractices() {
+		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.ajax_url) {
+			return;
+		}
 		let data = {
 			action: 'filter_practices',
 			filters: {},
@@ -2143,11 +2128,42 @@
 			data.filters[name].push($(this).val());
 		});
 		
-		$.post(yoga_ajax.ajax_url, data, function(response) {
-			$('.section-library .library').html(response);
-			updateLibraryFiltersApplyCountFromHtml(response);
+		$.ajax({
+			url: yoga_ajax.ajax_url,
+			type: 'POST',
+			traditional: true,
+			data: data,
+			success: function(response) {
+				$('.section-library .library').html(response);
+				updateLibraryFiltersApplyCountFromHtml(response);
+			}
 		});
 	}
+
+	/* Мобильный оверлей фильтров: capture до jQuery/.checkbox, иначе клик «съедают» другие обработчики */
+	(function bindLibraryFiltersScreenCapture() {
+		var screen = document.getElementById('library-filters-screen');
+		if (!screen) return;
+		screen.addEventListener('click', function (e) {
+			var label = e.target && e.target.closest && e.target.closest('label.library-filters-screen__row.checkbox-item');
+			if (!label || !screen.contains(label)) return;
+			var forId = label.getAttribute('for');
+			if (!forId) return;
+			var inputEl = document.getElementById(forId);
+			var formEl = document.getElementById('practice-filter-form');
+			if (!inputEl || !formEl || String(inputEl.type).toLowerCase() !== 'checkbox' || !formEl.contains(inputEl)) return;
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			$('.form-categories').removeClass('active');
+			$('.form-search').removeClass('active');
+			$('.form-cat-list').removeClass('active');
+			$('.form-search-list').removeClass('active');
+			inputEl.checked = !inputEl.checked;
+			syncLibraryFilterCheckboxLabels();
+			loadLibraryPractices();
+		}, true);
+	})();
 
     function requestLibrarySuggestions() {
         const query = $('.section-library .form-search .input').val().trim();
