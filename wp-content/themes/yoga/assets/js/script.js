@@ -2259,7 +2259,8 @@
 		}
 
 		function handleActivation(e) {
-			if (e.type === 'pointerup' && typeof e.button === 'number' && e.button !== 0) {
+			/* pointerup с тачскрина: часто button === -1 (Pointer Events 2). Нельзя отсекать «!== 0». */
+			if (e.type === 'pointerup' && e.pointerType === 'mouse' && typeof e.button === 'number' && e.button !== 0) {
 				return;
 			}
 			var lab = labelFromTarget(e.target);
