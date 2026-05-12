@@ -19,14 +19,7 @@
 					
 					if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
 					foreach ($parent_terms as $parent_term) :
-					// Проверяем доступность через ACF или fallback
-					$is_available = true;
-					if (function_exists('get_field')) {
-						$is_available = get_field('practice_type_available', $parent_term) !== false ? 
-						get_field('practice_type_available', $parent_term) : true;
-						} else {
-						$is_available = is_practice_type_available($parent_term->slug);
-					}
+					$is_available = yoga_is_practice_type_term_available($parent_term);
 					
 					$column_class = $is_available ? 'modal-menu-column' : 'modal-menu-column modal-menu-column_unavailable';
 				?>

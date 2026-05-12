@@ -1543,6 +1543,48 @@ function handle_comment_delete() {
 	add_action('wp_ajax_filter_practices', 'filter_practices_callback');
 	add_action('wp_ajax_nopriv_filter_practices', 'filter_practices_callback');
 
+	if (!function_exists('yoga_is_practice_type_term_available')) {
+		/**
+		 * Термин practice-type доступен в меню (не «в разработке»).
+		 * С ACF — поле practice_type_available; без ACF — term meta practice_type_available / синонимы ACF.
+		 *
+		 * @param WP_Term|int|string $term Термин, ID или slug.
+		 */
+		function yoga_is_practice_type_term_available($term): bool {
+			if (is_numeric($term)) {
+				$t = get_term((int) $term, 'practice-type');
+				$term = ($t instanceof WP_Term) ? $t : null;
+			} elseif (is_string($term) && $term !== '') {
+				$t = get_term_by('slug', $term, 'practice-type');
+				$term = ($t instanceof WP_Term) ? $t : null;
+			}
+			if (!($term instanceof WP_Term) || $term->taxonomy !== 'practice-type') {
+				return true;
+			}
+
+			if (function_exists('get_field')) {
+				$value = get_field('practice_type_available', $term);
+				return $value !== false ? (bool) $value : true;
+			}
+
+			$term_id = (int) $term->term_id;
+			$raw = get_term_meta($term_id, 'practice_type_available', true);
+			if ($raw === '' || $raw === false || $raw === null) {
+				return true;
+			}
+			if (is_string($raw)) {
+				$lower = strtolower(trim($raw));
+				if (in_array($lower, array('0', 'false', 'no', 'off', ''), true)) {
+					return false;
+				}
+				if (in_array($lower, array('1', 'true', 'yes', 'on'), true)) {
+					return true;
+				}
+			}
+			return (bool) $raw;
+		}
+	}
+
 	if (!function_exists('yoga_get_practice_type_card_data')) {
 		function yoga_get_practice_type_card_data($post_id) {
 			$data = array(
