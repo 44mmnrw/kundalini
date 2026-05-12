@@ -5458,6 +5458,13 @@ input#filt-reset {
 	display: none;
 }
 
+.kriya-fav__text {
+	font-size: 16px;
+	line-height: 1em;
+	color: $color-black;
+	font-family: "Mulish-Medium", sans-serif;
+}
+
 .kriya-info {
 	order: 3;
 	flex: 1 0 100%;
@@ -5508,6 +5515,10 @@ input#filt-reset {
     padding: 15px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
+}
+
+.kriya-fav__text {
+	font-size: 14px;
 }
 
 .kriya-img {
@@ -5626,6 +5637,20 @@ input#filt-reset {
 }
 .praktika-fav.active .praktika-fav__text--remove {
 	display: inline;
+}
+
+@media (max-width: 991px) {
+	.praktika-fav__text {
+		color: $color-black;
+		font-size: 16px;
+		line-height: 1em;
+		font-family: "Mulish-Medium", sans-serif;
+	}
+}
+@media (max-width: 767px) {
+	.praktika-fav__text {
+		font-size: 14px;
+	}
 }
 
 .praktika-fav__icon {

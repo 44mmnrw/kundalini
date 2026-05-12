@@ -352,6 +352,12 @@ body.tax-practice-type .practice-notification {
   .kriya-fav:not(.active) .kriya-fav__text--remove {
     display: none;
   }
+  .kriya-fav__text {
+    font-size: 1rem;
+    line-height: 1em;
+    color: var(--color-black);
+    font-family: "Mulish-Medium", sans-serif;
+  }
   .kriya-info {
     order: 3;
     flex: 1 0 100%;
@@ -382,6 +388,9 @@ body.tax-practice-type .practice-notification {
   .kriya-level {
     width: auto;
     font-size: 0.875rem;    padding: 0.9375rem;    padding-top: 0.4062rem;    padding-bottom: 0.4062rem;  }
+  .kriya-fav__text {
+    font-size: 0.875rem;
+  }
   .kriya-img img {
     height: 9.6875rem;  }
 }

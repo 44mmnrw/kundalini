@@ -2964,7 +2964,7 @@ jQuery(document).ready(function($) {
 					if ($this.attr('role') === 'button') {
 						var pressed = $this.hasClass('active');
 						$this.attr('aria-pressed', pressed ? 'true' : 'false');
-						$this.attr('aria-label', pressed ? 'Удалить из избранного' : 'В избранное');
+						$this.attr('aria-label', pressed ? 'Убрать' : 'В избранное');
 					}
 					$('.practice-notification').remove();
 					var favoriteMessage = (response.data && response.data.message) ? response.data.message : 'Избранное обновлено';
