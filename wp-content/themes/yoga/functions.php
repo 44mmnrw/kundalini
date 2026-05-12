@@ -1514,6 +1514,9 @@ function handle_comment_delete() {
 	
 	function filter_practices_callback() {
 		$filters = $_POST['filters'] ?? [];
+		if (!is_array($filters)) {
+			$filters = [];
+		}
 		$search  = sanitize_text_field($_POST['search'] ?? '');
 		$term_id = intval($_POST['term_id'] ?? 0);
 		
@@ -1537,13 +1540,22 @@ function handle_comment_delete() {
 		}
 		
 		foreach ($filters as $taxonomy => $terms) {
-			if (!empty($terms)) {
-				$tax_query[] = [
-                'taxonomy' => sanitize_text_field($taxonomy),
-                'field'    => 'slug',
-                'terms'    => array_map('sanitize_text_field', $terms),
-				];
+			$taxonomy = sanitize_text_field((string) $taxonomy);
+			if ($taxonomy === '' || empty($terms)) {
+				continue;
 			}
+			if (!is_array($terms)) {
+				$terms = array($terms);
+			}
+			$terms = array_values(array_filter(array_map('sanitize_text_field', $terms)));
+			if (empty($terms)) {
+				continue;
+			}
+			$tax_query[] = [
+				'taxonomy' => $taxonomy,
+				'field'    => 'slug',
+				'terms'    => $terms,
+			];
 		}
 		
 		$args = [
