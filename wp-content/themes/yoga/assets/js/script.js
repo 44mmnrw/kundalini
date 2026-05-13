@@ -1276,8 +1276,8 @@
 		e.preventDefault();
 		var $form = $(this);
 		var $msg = $form.find('.yoga-form-login-message');
-		var showLoginErr = function(text) {
-			$msg.text(text).addClass('is-visible');
+		var showLoginErr = function(html) {
+			$msg.html(html).addClass('is-visible');
 		};
 		var messageFromPayload = function(d, fallbackText) {
 			if (d === undefined || d === null || d === '') return fallbackText;

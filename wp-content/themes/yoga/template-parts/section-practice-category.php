@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+$sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
+
 $current_term = get_queried_object();
 if (!($current_term instanceof WP_Term) || $current_term->taxonomy !== 'practice-type') {
 	return;
@@ -88,8 +90,12 @@ $practices_count = (int) $practices->found_posts;
 							</div>
 						</div>
 						<div class="filter-btn">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/filter-img.png'); ?>" alt="" class="filter-btn__img filter-btn__img_main active">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/filter-close.png'); ?>" alt="" class="filter-btn__img">
+							<svg class="filter-btn__icon filter-btn__icon--filter active" viewBox="0 0 28 28" width="28" height="28" aria-hidden="true" focusable="false">
+								<use href="<?php echo esc_url($sprite_href); ?>#library-filter-icon"></use>
+							</svg>
+							<svg class="filter-btn__icon filter-btn__icon--close" viewBox="0 0 18 18" width="22" height="22" aria-hidden="true" focusable="false">
+								<use href="<?php echo esc_url($sprite_href); ?>#lk-modal-close"></use>
+							</svg>
 							<span>1</span>
 						</div>
 					</div>
