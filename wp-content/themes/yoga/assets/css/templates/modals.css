@@ -1495,20 +1495,14 @@ p.login-rules a:hover {
   .modal-login-inner__slide form p {
     text-align: left;
   }
-  /* Слайд «письмо отправлено»: панель и блок текста по центру по вертикали */
-  .modal-login.active:has(.modal-login-inner__slide_succes.active) {
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-  }
-  .modal-login.active:has(.modal-login-inner__slide_succes.active) .modal-login-inner {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
+  /* Слайд «письмо отправлено»: панель как раньше прижата к низу (margin-top: auto у .modal-login-inner);
+     текст по центру по вертикали внутри за счёт min-height + flex */
   .modal-login-inner:has(.modal-login-inner__slide_succes.active) {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-height: min(78dvh, 100%);
+    min-height: min(78vh, 100%);
   }
   .modal-login-inner:has(.modal-login-inner__slide_succes.active) .modal-login-inner__slide_succes.active {
     top: auto;
