@@ -86,6 +86,11 @@
 		$('.overlay').addClass("active");
 		$('.modal-login').addClass("active");
 		$('.modal-mobile-menu').removeClass("active");
+		setTimeout(function() {
+			if (typeof window.yogaTryInitSmartCaptcha === 'function') {
+				window.yogaTryInitSmartCaptcha();
+			}
+		}, 200);
 	});
 	
 	/* Section-reviews */
@@ -1260,6 +1265,11 @@
 		var mlsw = $(this).attr('data-target');
 		$('.modal-login-inner__slide').removeClass("active");
 		$('.modal-login-inner__slide[data-target=' + mlsw + ']').addClass("active");
+		setTimeout(function() {
+			if (typeof window.yogaTryInitSmartCaptcha === 'function') {
+				window.yogaTryInitSmartCaptcha();
+			}
+		}, 200);
 	});
 	
 	$(".modal-login .form").submit(function(e) {
