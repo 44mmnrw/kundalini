@@ -215,11 +215,12 @@
                                 </div>
                                 <div class="kriya-media">
                                     <div class="kriya-img">
-                                        <?php if (has_post_thumbnail($practice_id)): ?>
-                                        <?php echo get_the_post_thumbnail($practice_id, 'medium', array('alt' => get_the_title($practice_id))); ?>
-                                        <?php else: ?>
-                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="<?php echo get_the_title($practice_id); ?>">
-                                        <?php endif; ?>
+										<?php
+										$lk_practice_img = yoga_get_practice_card_image_url((int) $practice_id, 'medium');
+										if ($lk_practice_img !== '') :
+										?>
+                                        <img src="<?php echo esc_url($lk_practice_img); ?>" alt="<?php echo esc_attr(get_the_title($practice_id)); ?>">
+										<?php endif; ?>
                                     </div>
                                     <div class="kriya-fav fav active" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="true" aria-label="Убрать">
 										<span class="kriya-fav__icon" aria-hidden="true">
@@ -286,10 +287,11 @@
 																</div>
 																<div class="kriya-media">
 																	<div class="kriya-img">
-																		<?php if (has_post_thumbnail($practice_id)): ?>
-																		<?php echo get_the_post_thumbnail($practice_id, 'medium', array('alt' => get_the_title($practice_id))); ?>
-																		<?php else: ?>
-																		<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="<?php echo get_the_title($practice_id); ?>">
+																		<?php
+																		$lk_rec_img = yoga_get_practice_card_image_url((int) $practice_id, 'medium');
+																		if ($lk_rec_img !== '') :
+																		?>
+																		<img src="<?php echo esc_url($lk_rec_img); ?>" alt="<?php echo esc_attr(get_the_title($practice_id)); ?>">
 																		<?php endif; ?>
 																	</div>
 																	<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">

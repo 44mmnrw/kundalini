@@ -61,6 +61,38 @@
 			return $text !== '' ? $text : $default_text;
 		}
 	}
+	if (!function_exists('yoga_get_practice_card_image_url')) {
+		/**
+		 * URL обложки карточки практики: ACF поле image, иначе миниатюра записи.
+		 *
+		 * @param string $size Размер вложения / миниатюры (large, medium и т.д.).
+		 */
+		function yoga_get_practice_card_image_url(int $post_id, string $size = 'large'): string {
+			if ($post_id <= 0) {
+				return '';
+			}
+			$image = function_exists('get_field') ? get_field('image', $post_id) : null;
+			$url = '';
+			if (is_array($image)) {
+				if (!empty($image['url'])) {
+					$url = (string) $image['url'];
+				} elseif (!empty($image['ID'])) {
+					$thumb = wp_get_attachment_image_url((int) $image['ID'], $size);
+					$url = $thumb ? (string) $thumb : '';
+				}
+			} elseif (is_numeric($image)) {
+				$thumb = wp_get_attachment_image_url((int) $image, $size);
+				$url = $thumb ? (string) $thumb : '';
+			} elseif (is_string($image) && $image !== '') {
+				$url = $image;
+			}
+			if ($url !== '') {
+				return esc_url_raw($url);
+			}
+			$featured = get_the_post_thumbnail_url($post_id, $size);
+			return $featured ? (string) $featured : '';
+		}
+	}
 	if (!function_exists('yoga_ajax_error')) {
 		// Plyr JS - загружаем первым
 		// Axecode.tech: единый формат ошибок AJAX.
@@ -1921,7 +1953,7 @@ function handle_comment_delete() {
 		$item_count++;
 		$practice_level = yoga_normalize_practice_level_label(get_field('level') ?: 'новичок');
 		$practice_description = get_field('short_description') ?: get_the_excerpt();
-		$practice_image = get_field('image') ?: get_template_directory_uri() . '/assets/img/kriya-img_01.png';
+		$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
 		$hidden_class = ($item_count > 10) ? 'hidden' : '';
 	?>
@@ -1936,7 +1968,9 @@ function handle_comment_delete() {
 			</div>
 			<div class="kriya-media">
 				<div class="kriya-img">
+					<?php if ($practice_image !== '') : ?>
 					<img src="<?php echo esc_url($practice_image); ?>" alt="<?php the_title(); ?>">
+					<?php endif; ?>
 				</div>
 				<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo get_the_ID(); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 					<span class="kriya-fav__icon" aria-hidden="true">
@@ -1966,11 +2000,13 @@ function handle_comment_delete() {
 	<div class="kriyi-item kriyi-item_last hidden">
 		<div class="kriyi-item__inner">
 			<a href="#"></a>
-			<span class="kriya-level">Начинающий</span>`r`n			<div class="kriya-info">`r`n				<h3>Остальные крийи</h3>`r`n				<p>Показать все доступные практики</p>`r`n			</div>
+			<span class="kriya-level">Начинающий</span>
+			<div class="kriya-info">
+				<h3>Остальные крийи</h3>
+				<p>Показать все доступные практики</p>
+			</div>
 			<div class="kriya-media">
-				<div class="kriya-img">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="Остальные практики">
-				</div>
+				<div class="kriya-img"></div>
 				<div class="kriya-fav kriya-fav--icon-only">
 					<span class="kriya-fav__icon" aria-hidden="true">
 						<svg class="active"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
@@ -2487,11 +2523,12 @@ function handle_comment_delete() {
 								</div>
                                 <div class="kriya-media">
                                     <div class="kriya-img">
-                                        <?php if (has_post_thumbnail($practice_id)): ?>
-										<?php echo get_the_post_thumbnail($practice_id, 'medium'); ?>
-                                        <?php else: ?>
-										<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-img_01.png" alt="">
-                                        <?php endif; ?>
+                                        <?php
+										$_ph_hist_url = yoga_get_practice_card_image_url((int) $practice_id, 'medium');
+										if ($_ph_hist_url !== '') :
+										?>
+										<img src="<?php echo esc_url($_ph_hist_url); ?>" alt="<?php echo esc_attr(get_the_title($practice_id)); ?>">
+										<?php endif; ?>
 									</div>
                                     <div class="kriya-fav kriya-fav--icon-only">
 										<span class="kriya-fav__icon" aria-hidden="true">
