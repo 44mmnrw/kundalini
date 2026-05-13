@@ -29,6 +29,15 @@ if (!function_exists('yoga_get_registration_role')) {
     }
 }
 
+if (!function_exists('yoga_sanitize_ajax_notice_html')) {
+    /**
+     * WP/WooCommerce отдаёт часть текстов ошибок уже с HTML-сущностями и разметкой.
+     */
+    function yoga_sanitize_ajax_notice_html($message) {
+        return wp_kses_post(wp_specialchars_decode((string) $message, ENT_QUOTES));
+    }
+}
+
 if (!function_exists('handle_yoga_email_login')) {
     function handle_yoga_email_login() {
         check_ajax_referer('yoga_login_nonce', 'yoga_login_nonce');
@@ -51,7 +60,7 @@ if (!function_exists('handle_yoga_email_login')) {
             'remember'      => true,
         ), false);
         if (is_wp_error($user)) {
-            yoga_ajax_error($user->get_error_message(), 'auth_failed', 401);
+            yoga_ajax_error(yoga_sanitize_ajax_notice_html($user->get_error_message()), 'auth_failed', 401);
         }
         yoga_ajax_success('Успешный вход');
     }
@@ -76,7 +85,7 @@ if (!function_exists('handle_yoga_email_register')) {
         }
         $user_id = wp_create_user($email, $pass, $email);
         if (is_wp_error($user_id)) {
-            yoga_ajax_error($user_id->get_error_message(), 'registration_failed', 500);
+            yoga_ajax_error(yoga_sanitize_ajax_notice_html($user_id->get_error_message()), 'registration_failed', 500);
         }
         wp_update_user(array(
             'ID' => $user_id,
@@ -127,7 +136,7 @@ if (!function_exists('handle_yoga_lost_password')) {
         }
         $result = retrieve_password($user->user_login);
         if (is_wp_error($result)) {
-            yoga_ajax_error($result->get_error_message(), 'password_reset_failed', 500);
+            yoga_ajax_error(yoga_sanitize_ajax_notice_html($result->get_error_message()), 'password_reset_failed', 500);
         }
         yoga_ajax_success('Инструкции отправлены');
     }

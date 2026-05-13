@@ -24,7 +24,7 @@
 					$column_class = $is_available ? 'modal-menu-column' : 'modal-menu-column modal-menu-column_unavailable';
 				?>
 				<div class="<?php echo esc_attr($column_class); ?>">
-					<h2><?php echo esc_html($parent_term->name); ?>-йога</h2>
+					<h2><?php echo esc_html($parent_term->name); ?></h2>
 					
 					<?php if (!$is_available) : ?>
                     <span class="modal-menu-unavailable">в разработке</span>

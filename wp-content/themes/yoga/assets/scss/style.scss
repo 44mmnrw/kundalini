@@ -4117,13 +4117,14 @@ header {
 	width: 100%;
 	justify-content: space-between;
 	align-items: center;
+	--library-search-row-height: 4.0625rem;
 }
 
 .form-search {
 	display: flex;
 	position: relative;
 	padding-left: 7px;
-	width: calc(100% - 81px);
+	width: calc(100% - var(--library-search-row-height) - 20px);
 	border: 1px solid $color-black;
 	border-radius: 7px;
 	cursor: pointer;
@@ -4133,8 +4134,8 @@ header {
 		width: 100%;
 		padding-left: 20px;
 		padding-right: 85px;
-		height: 65px;
-		line-height: 65px;
+		height: var(--library-search-row-height);
+		line-height: var(--library-search-row-height);
 		border-radius: 7px;
 		border: 0px solid #fff !important;
 		color: $color-black;
@@ -4250,8 +4251,9 @@ header {
 
 .filter-btn {
 	position: relative;
-	width: 61px;
-	height: 61px;
+	flex-shrink: 0;
+	width: var(--library-search-row-height);
+	height: var(--library-search-row-height);
 	border-radius: 7px;
 	border: 1px solid $color-violet;
 	background: rgba(145, 83, 225, 1);
@@ -4278,26 +4280,30 @@ header {
 			pointer-events: auto;
 		}
 	}
-	img {
+	.filter-btn__icon {
 		display: block;
 		position: absolute;
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%) rotate(-90deg) scale(0);
 		width: 22px;
+		height: auto;
 		transition: $transition-all;
 		&.active {
 			transform: translate(-50%, -50%) rotate(0deg) scale(1);
 		}
-		&.filter-btn__img_main {
+		&--filter {
 			width: 28px;
+		}
+		&--close {
+			color: $color-black;
 		}
 
 	}
 	&.active {
 		border-color: $color-black;
 		background: rgba(145, 83, 225, 0);
-		img {
+		.filter-btn__icon {
 			transform: translate(-50%, -50%) rotate(0deg) scale(1);
 			&.active {
 				transform: translate(-50%, -50%) rotate(-90deg) scale(0);
@@ -4929,14 +4935,16 @@ input#filt-reset {
 	padding-bottom: 80px;
 }
 
+.library-form-main {
+	--library-search-row-height: 3.125rem;
+}
+
 .form-search {
-	width: calc(100% - 57px);
+	width: calc(100% - var(--library-search-row-height) - 7px);
 	padding-left: 0px;
 	input {	
 		padding-left: 15px;
 		padding-right: 50px;
-		height: 50px;
-		line-height: 50px;
 		font-size: 16px;
 		&::placeholder {
 			font-size: 16px;
@@ -4945,13 +4953,11 @@ input#filt-reset {
 }
 
 .form-search__btn {
-	width: 50px;
+	width: var(--library-search-row-height);
 }
 
 .filter-btn {
-	width: 50px;
-	height: 50px;
-	img {
+	.filter-btn__icon {
 		width: 23px !important;
 	}
 }
