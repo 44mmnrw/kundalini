@@ -80,11 +80,6 @@
               // Пропускаем продукты без цены для этого периода
               if (empty($current_price)) continue;
               $current_price_text = trim((string) $current_price_text);
-              $current_price_text = preg_replace('/^\/?\s*в\s+/ui', '/ ', $current_price_text);
-              $current_price_text = preg_replace('/^\/\s*/u', '/ ', $current_price_text);
-              if ($current_price_text === '/') {
-                $current_price_text = '';
-              }
               $tariff_card_index++;
               $tariff_visual_index = (($tariff_card_index - 1) % 4) + 1;
               
