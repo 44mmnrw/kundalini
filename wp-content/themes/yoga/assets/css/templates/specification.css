@@ -11,6 +11,7 @@
   --color-pink: #f8bdf6;
   --color-green: #e8ff57;
   --color-grey: #f6f6f9;
+  --color-white: #ffffff;
   --transition-base: 0.4s ease;
   /* Горизонтальный полуполя от края вьюпорта до .container (10px при root 16px) */
   --container-inline-gutter: 0.625rem;
@@ -19,6 +20,7 @@
 html {
   min-height: 100%;
   min-height: 100vh;
+  background-color: var(--color-white);
 }
 
 * {
@@ -52,11 +54,13 @@ body {
   padding-top: 5.5rem;  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-white);
 }
 
 main {
   flex: 1 1 auto;
   width: 100%;
+  background-color: var(--color-white);
 }
 
 footer {
@@ -77,6 +81,7 @@ footer {
   margin-left: auto;
   margin-right: auto;
   display: inline-block;
+  background-color: var(--color-white);
 }
 
 .row {

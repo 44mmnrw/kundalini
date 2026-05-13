@@ -264,6 +264,12 @@ header {
     width: 1.375rem;
     height: 1.375rem;
     color: var(--color-black);
+    transition: color 0.2s ease;
+  }
+
+  .header-lk .notification-icon_header:hover .notification-icon__img,
+  .header-lk .notification-icon_header:focus-visible .notification-icon__img {
+    color: var(--color-violet);
   }
 
   .header-favorites-link {
