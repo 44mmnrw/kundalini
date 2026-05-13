@@ -5,10 +5,23 @@
 
 .praktika-details {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 0.625rem;
+  row-gap: 0.375rem;
   width: 49.5625rem;  max-width: 100%;
   margin-top: 0.875rem;}
+
+.praktika-details__lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  column-gap: 0.9375rem;
+  row-gap: 0.375rem;
+}
 
 .praktika-details__lvl {
   display: inline-flex;
@@ -19,7 +32,7 @@
   font-weight: normal;
   font-size: 1rem;
   line-height: 1;
-  margin-right: 0.9375rem;  border: 1px solid var(--color-violet);
+  margin-right: 0;  border: 1px solid var(--color-violet);
   transition: 0.25s ease;
   border-radius: 6.25rem;}
 .praktika-details__lvl-link {
@@ -67,8 +80,7 @@
 .praktika-details .praktika-fav {
   display: flex;
   align-items: center;
-  margin-left: auto;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   min-width: 0;
   position: relative;
   cursor: pointer;
@@ -1014,6 +1026,10 @@ display: block !important;
     align-items: center;
   }
 
+  .praktika-details__lead {
+    column-gap: 0.5rem;
+  }
+
   /* Чуть уже полезная ширина только на странице практики */
   .section-praktika > .container {
     max-width: calc(100% - 1.125rem);
@@ -1025,7 +1041,7 @@ display: block !important;
     padding-right: 0.6875rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
-    margin-right: 0.5rem;
+    margin-right: 0;
     flex-shrink: 0;
     font-size: 0.875rem;
   }
@@ -1126,13 +1142,17 @@ display: block !important;
   .section-praktika > .container {
     max-width: calc(100% - 1rem);
   }
+  .praktika-details__lead {
+    column-gap: 0.4375rem;
+  }
+
   .praktika-details__lvl {
     font-size: 0.75rem;
     padding-left: 0.5625rem;
     padding-right: 0.5625rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
-    margin-right: 0.4375rem;
+    margin-right: 0;
     font-family: "Mulish-Regular", sans-serif;
     font-weight: normal;
   }
@@ -1145,9 +1165,6 @@ display: block !important;
   .praktika-details__time::before {
     width: 1.3125rem;
     height: 1.3125rem;
-  }
-  .praktika-details .praktika-fav {
-    margin-left: auto;
   }
   .praktika-details .praktika-fav__text {
     font-size: 0.75rem;
