@@ -1598,39 +1598,68 @@
 	
 	
 	(function cookieBannerInit() {
-		var storageKey = 'yoga_cookie_consent_v1';
+		var cookieName = 'yoga_cookie_consent';
+		var legacyLsKey = 'yoga_cookie_consent_v1';
+		var maxAgeSec = 365 * 24 * 60 * 60;
 		var $banner = $('#yoga-modal-cookie');
 		if (!$banner.length) {
 			return;
+		}
+		function readConsentValue() {
+			var raw = '';
+			try {
+				var parts = ('; ' + document.cookie).split('; ' + cookieName + '=');
+				if (parts.length === 2) {
+					raw = parts.pop().split(';').shift() || '';
+				}
+			} catch (e) {
+				raw = '';
+			}
+			if (raw !== '') {
+				try {
+					return decodeURIComponent(raw);
+				} catch (e2) {
+					return raw;
+				}
+			}
+			try {
+				if (window.localStorage) {
+					return window.localStorage.getItem(legacyLsKey) || '';
+				}
+			} catch (e3) {
+				// ignore
+			}
+			return '';
+		}
+		function writeConsentValue(val) {
+			var secure = window.location.protocol === 'https:' ? '; Secure' : '';
+			document.cookie = cookieName + '=' + encodeURIComponent(val)
+				+ '; Path=/; Max-Age=' + maxAgeSec + '; SameSite=Lax' + secure;
+			try {
+				if (window.localStorage) {
+					window.localStorage.setItem(legacyLsKey, val);
+				}
+			} catch (e) {
+				// ignore
+			}
 		}
 		function hideCookieBanner() {
 			$banner.removeClass('active');
 		}
 		function tryShowBanner() {
-			try {
-				if (window.localStorage && window.localStorage.getItem(storageKey)) {
-					return;
-				}
-			} catch (e) {
-				// ignore
+			var v = readConsentValue();
+			if (v === 'accept' || v === 'decline') {
+				return;
 			}
 			$banner.addClass('active');
 		}
 		tryShowBanner();
 		$banner.on('click', '.cookie__btn-accept', function () {
-			try {
-				window.localStorage.setItem(storageKey, 'accept');
-			} catch (e) {
-				// ignore
-			}
+			writeConsentValue('accept');
 			hideCookieBanner();
 		});
 		$banner.on('click', '.cookie__btn-decline', function () {
-			try {
-				window.localStorage.setItem(storageKey, 'decline');
-			} catch (e) {
-				// ignore
-			}
+			writeConsentValue('decline');
 			hideCookieBanner();
 		});
 	})();
