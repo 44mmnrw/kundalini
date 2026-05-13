@@ -1031,9 +1031,9 @@ display: block !important;
     column-gap: 0.5rem;
   }
 
-  /* Чуть уже полезная ширина только на странице практики */
+  /* Страница практики: те же боковые поля, что у глобального .container */
   .section-praktika > .container {
-    max-width: calc(100% - 1.125rem);
+    max-width: calc(100% - 2 * var(--container-inline-gutter));
   }
 
   /* Соседи избранного: компактнее отступы; время может сжиматься и переноситься */
@@ -1141,7 +1141,7 @@ display: block !important;
 }
 @media (max-width: 575px) {
   .section-praktika > .container {
-    max-width: calc(100% - 1rem);
+    max-width: calc(100% - 2 * var(--container-inline-gutter));
   }
   .praktika-details__lead {
     column-gap: 0.4375rem;
