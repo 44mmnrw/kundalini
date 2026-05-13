@@ -346,6 +346,10 @@
   .modal-mobile-menu.active {
     overflow: visible;
   }
+  /* Inset как у крестика → те же горизонтальные поля у списка, линий и CTA */
+  .modal-mobile-menu {
+    --mm-menu-inline-gutter: calc((100vw - min(45rem, 100vw - 2.1875rem)) / 2);
+  }
   .modal-mobile-menu.active .mobile-menu-inner, .modal-mobile-menu-lk.active .mobile-menu-inner {
     width: 33.75rem;    opacity: 1;
   }
@@ -364,7 +368,7 @@
     position: fixed;
     z-index: 25;
     top: 0.75rem;
-    right: calc((100vw - min(45rem, 100vw - 2.1875rem)) / 2);
+    right: var(--mm-menu-inline-gutter);
     width: 3.25rem;
     height: 3.1875rem;
     box-sizing: border-box;
@@ -745,12 +749,12 @@
   }
   .modal-mobile-menu .mobile-menu__slide_main {
     padding-top: 5.5rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    padding-left: var(--mm-menu-inline-gutter);
+    padding-right: var(--mm-menu-inline-gutter);
   }
   .modal-mobile-menu .mobile-menu__slide_sub {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    padding-left: var(--mm-menu-inline-gutter);
+    padding-right: var(--mm-menu-inline-gutter);
   }
   .modal-mobile-menu .mobile-menu-main ul {
     display: flex;
@@ -758,8 +762,8 @@
     gap: 15px;
   }
   .modal-mobile-menu .mobile-menu-inner .btn {
-    left: 1.25rem;
-    width: calc(100% - 2.5rem);
+    left: var(--mm-menu-inline-gutter);
+    width: calc(100% - var(--mm-menu-inline-gutter) - var(--mm-menu-inline-gutter));
     bottom: 1.875rem;
     height: auto;
     min-height: 3.125rem;
@@ -972,16 +976,18 @@
   }
 }
 @media (max-width: 767px) {
-  .modal-mobile-menu .modal-close {
-    right: calc((100vw - min(33.75rem, 100vw - 2.1875rem)) / 2);
+  .modal-mobile-menu {
+    --mm-menu-inline-gutter: calc((100vw - min(33.75rem, 100vw - 2.1875rem)) / 2);
   }
 }
 @media (max-width: 575px) {
   .mobile-menu-switches {
     margin-bottom: 0.75rem;  }
+  .modal-mobile-menu {
+    --mm-menu-inline-gutter: calc((100vw - min(20rem, 100vw - 1.875rem)) / 2);
+  }
   .modal-mobile-menu .modal-close {
     top: 0.75rem;
-    right: calc((100vw - min(20rem, 100vw - 1.875rem)) / 2);
     width: 3.0625rem;
     height: 3rem;
   }
@@ -1000,8 +1006,16 @@
     border-top-left-radius: 1.875rem;    border-bottom-left-radius: 1.875rem;  }
   .mobile-menu-inner .btn {
     width: calc(100% - 2.5rem);    left: 1.25rem;  }
+  .modal-mobile-menu .mobile-menu-inner .btn {
+    left: var(--mm-menu-inline-gutter);
+    width: calc(100% - var(--mm-menu-inline-gutter) - var(--mm-menu-inline-gutter));
+  }
   .mobile-menu__slide {
     padding-top: 4.625rem;    padding-bottom: 2.1875rem;    padding-left: 1.25rem;    padding-right: 1.25rem;  }
+  .modal-mobile-menu .mobile-menu__slide {
+    padding-left: var(--mm-menu-inline-gutter);
+    padding-right: var(--mm-menu-inline-gutter);
+  }
   .mobile-menu-sub-item span {
     max-width: 17.5rem;  }
   .mobile-menu-back {
