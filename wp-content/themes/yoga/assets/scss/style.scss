@@ -13561,6 +13561,7 @@ footer {
 	transition: $transition-all;
 	&.active {
 		width: 100%;
+		overflow: visible;
 		.modal-login-inner {
 			width: 507px;
 		}
@@ -13583,7 +13584,7 @@ footer {
 	padding-bottom: 50px;
 	padding-top: 76px;
 	pointer-events: auto;
-	overflow: hidden;
+	overflow: visible;
 	transition: $transition-all;
 
 	.input {
@@ -13968,7 +13969,7 @@ p.login-rules {
 	flex-wrap: wrap;
 	width: 100%;
 	margin-top: 20px;
-	min-height: 68px;
+	min-height: 100px;
 }
 
 .loggin-back {

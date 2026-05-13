@@ -978,6 +978,7 @@
 }
 .modal-login.active, .modal-addnewcard.active {
   width: 100%;
+  overflow: visible;
 }
 .modal-login.active .modal-login-inner, .modal-addnewcard.active .modal-login-inner {
   width: 31.6875rem;}
@@ -990,7 +991,7 @@
   max-width: 100%;
   border-top-left-radius: 3.125rem;  border-bottom-left-radius: 3.125rem;  background: var(--color-green);
   padding-left: 3.875rem;  padding-right: 3.875rem;  padding-bottom: 3.125rem;  padding-top: 4.25rem;  pointer-events: auto;
-  overflow: hidden;
+  overflow: visible;
   transition: 0.4s ease;
 }
 .modal-login-inner .input, .addnewcard-inner .input {
@@ -1379,7 +1380,7 @@ p.login-rules a:hover {
   flex-wrap: wrap;
   width: 100%;
   margin-top: 1.25rem;
-  min-height: 4.25rem;}
+  min-height: 100px;}
 .loggin-back {
   display: flex;
   justify-content: center;
