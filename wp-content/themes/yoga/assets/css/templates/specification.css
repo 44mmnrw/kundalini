@@ -455,8 +455,10 @@ input::-moz-placeholder {
   width: auto;
   position: absolute;
   z-index: 2;
-  left: 0px;
+  left: var(--container-inline-gutter, 0.625rem);
+  right: var(--container-inline-gutter, 0.625rem);
   bottom: 0px;
+  box-sizing: border-box;
 }
 .slick-dots li {
   margin: 0px;
@@ -478,10 +480,18 @@ input::-moz-placeholder {
 
 .arrows-slick {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: absolute;
-  right: 0px;
+  left: var(--container-inline-gutter, 0.625rem);
+  right: var(--container-inline-gutter, 0.625rem);
   bottom: 0px;
   z-index: 2;
+  box-sizing: border-box;
+}
+
+.arrows-slick .slick-next {
+  margin-left: 0;
 }
 
 .arrows-slick__arrow {

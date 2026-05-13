@@ -262,9 +262,12 @@
   .tariff {
     margin-left: auto;
     margin-right: auto;
-    width: 20rem;    max-width: 100%;
+    width: auto;
+    max-width: calc(100% - 2 * var(--container-inline-gutter, 0.625rem));
     min-height: 100%;
-    padding: 1.875rem 1.25rem;  }
+    padding: 1.875rem 1.25rem;
+    box-sizing: border-box;
+  }
   .tariff .check-list {
     padding-top: 1.25rem;    padding-bottom: 2rem;  }
   .tariff__top {
