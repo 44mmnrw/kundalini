@@ -85,10 +85,6 @@
 									<span><?php echo esc_html($user_initial); ?></span>
 								<?php endif; ?>
 							</div>
-							<div class="lk-burger">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/burger-lk-icon.png'); ?>" alt="Меню" class="active">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/burger-lk-icon_close.png'); ?>" alt="Закрыть">
-							</div>
 						</div>
 					</div>
 					<div class="lk-header-menu">
