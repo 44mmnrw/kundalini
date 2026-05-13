@@ -12,6 +12,11 @@
 !/wp-content/themes/yoga/
 !/wp-content/themes/yoga/**
 
+# Must-use plugins shipped with the project
+!/wp-content/mu-plugins/
+/wp-content/mu-plugins/*
+!/wp-content/mu-plugins/rest-no-store-cache.php
+
 # Allow tracking a targeted hotfix in Yandex Metrika plugin
 !/wp-content/plugins/
 /wp-content/plugins/*
