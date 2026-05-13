@@ -738,6 +738,85 @@
     padding-top: 0.75rem;  }
 }
 
+/* Главная: более плотные секции (уменьшены отступы заголовков и паддинги секций) */
+@media (min-width: 992px) {
+  .home #section-main h2 {
+    margin-top: 0;
+  }
+
+  .home section h2.h2,
+  .home section h2 {
+    margin-top: 2rem;
+  }
+
+  .home .section-begin .begin h2 {
+    margin-top: 0;
+  }
+
+  .home #section-main .main {
+    padding-bottom: 3rem;
+  }
+
+  .home .section-advantages {
+    padding-top: 1.75rem;
+    padding-bottom: 6.5rem;
+    margin-bottom: -6rem;
+    pointer-events: none;
+  }
+
+  .home .section-whyme {
+    padding-bottom: 3.75rem;
+  }
+
+  .home .whyme h2 {
+    margin-top: 1.5rem;
+  }
+
+  .home .begin-items {
+    padding-top: 1.5rem;
+  }
+
+  .home .section-tariffs.section-tariffs_single {
+    padding-top: 0;
+    padding-bottom: 3.25rem;
+  }
+
+  .home .tariffs .switches {
+    margin-top: 1rem;
+  }
+
+  .home .tariff {
+    margin-top: 1rem;
+  }
+
+  .home .review {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .home .reviews__main .arrows-slick {
+    bottom: 4rem;
+  }
+
+  .home .section-videos {
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .home .popular-practices-slider {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .home .section-questions {
+    padding-bottom: 2.25rem;
+  }
+
+  .home .section-subscription {
+    padding-top: 2.75rem;
+  }
+}
+
 /* Section-reviews */
 .reviews {
   width: 100%;
