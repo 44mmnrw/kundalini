@@ -3,6 +3,10 @@ footer {
   background: var(--color-black);
   padding-bottom: 0.625rem;}
 
+footer .container {
+  background-color: transparent;
+}
+
 .footer-main {
   display: flex;
   position: relative;

@@ -1,11 +1,16 @@
 /* Section-subscription */
 .section-subscription {
   position: relative;
+  background-color: var(--color-black);
   background-image: url(../../img/subscription-bg.png);
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 100% auto;
   padding-top: 5.5rem;  padding-bottom: 0.5rem;}
+
+.section-subscription .container {
+  background-color: transparent;
+}
 
 .subscription {
   display: block;

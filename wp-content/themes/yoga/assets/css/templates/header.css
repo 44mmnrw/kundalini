@@ -65,7 +65,7 @@ header {
   .main-menu > ul {
     justify-content: flex-start;
     width: auto;
-    gap: 2.1875rem;
+    gap: 2.5rem;
   }
 
   .main-menu ul li .ref {
@@ -360,18 +360,12 @@ header {
   .header-main {
     gap: 2.5rem;
   }
-  .main-menu > ul {
-    gap: 0.3125rem;
-  }
   .main-menu ul li {
     margin-left: 0px;    margin-right: 0px;  }
 }
 @media (max-width: 1199px) {
   .header-main {
     gap: 1.75rem;
-  }
-  .main-menu > ul {
-    gap: 0.25rem;
   }
   .main-menu ul li .ref {
     font-size: 0.875rem;  }
@@ -384,9 +378,6 @@ header {
   }
   .header-main {
     gap: 1.375rem;
-  }
-  .main-menu > ul {
-    gap: 0.25rem;
   }
   .main-menu ul li .ref {
     font-size: 0.875rem;  }
