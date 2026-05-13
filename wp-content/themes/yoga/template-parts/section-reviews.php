@@ -18,10 +18,22 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
     <div class="container">
         <div class="row">
             <div class="reviews">
-                <h2 class="wow flipInX delay-200ms">
-                    <?php echo esc_html($reviews_title); ?>
-                </h2>
-                
+                <div class="reviews__head">
+                    <div class="arrows-slick__arrow slick-prev wow fadeIn delay-200ms">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                        </svg>
+                    </div>
+                    <h2 class="wow flipInX delay-200ms">
+                        <?php echo esc_html($reviews_title); ?>
+                    </h2>
+                    <div class="arrows-slick__arrow slick-next wow fadeIn delay-200ms">
+                        <svg aria-hidden="true" focusable="false">
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                        </svg>
+                    </div>
+                </div>
+
                 <div class="reviews__main">
                     <?php if ($reviews_items) : ?>
                     <div class="reviews-slider">
@@ -115,20 +127,7 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
                         </div>
                     </div>
                     <?php endif; ?>
-                    
-                    <div class="arrows-slick wow fadeIn delay-200ms">
-                        <div class="arrows-slick__arrow slick-prev">
-                            <svg aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
-                            </svg>
-                        </div>
-                        <div class="arrows-slick__arrow slick-next">
-                            <svg aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
-                            </svg>
-                        </div>  
-                    </div>
-                    
+
                     <?php if ($reviews_decor) : ?>
                         <img src="<?php echo esc_url($reviews_decor); ?>" alt="" class="review-decor wow fadeInUp delay-600ms">
                     <?php else : ?>
