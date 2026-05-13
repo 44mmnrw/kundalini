@@ -25,8 +25,8 @@ $img_uri = get_template_directory_uri() . '/assets/img';
             <form action="#" class="form yoga-form-login" method="post">
                 <?php wp_nonce_field('yoga_login_nonce', 'yoga_login_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_email_login">
-                <p class="yoga-form-login-message" role="alert" aria-live="polite"></p>
                 <input type="email" name="log" class="input" required placeholder="Электронная почта">
+                <p class="yoga-form-login-message" role="alert" aria-live="polite"></p>
                 <div class="input-password">
                     <input type="password" name="pwd" class="input" required placeholder="Пароль">
                     <div class="input-password__btn input-password__btn_show active">
@@ -137,7 +137,7 @@ $img_uri = get_template_directory_uri() . '/assets/img';
         </div>
         <div class="modal-login-inner__slide modal-login-inner__slide_succes" data-target="4">
             <p>
-                Мы отправили подтверждение сброса пароля на ваш e-mail. Перейдите по ссылке в письме, чтобы продолжить.
+                Мы отправили подтверждение сброса пароля на вашу электронную почту. Перейдите по ссылке в письме, чтобы продолжить.
             </p>
             <b class="login-notification">
                 Нет письма? Проверьте папку Спам.
