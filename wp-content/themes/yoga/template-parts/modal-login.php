@@ -43,7 +43,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     </div>
                 </div>
                 <?php if ($yoga_smart_captcha) : ?>
-                <div class="login-smartcaptcha yoga-smart-captcha-mount" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
+                <div class="login-smartcaptcha yoga-smart-captcha-mount smart-captcha" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
                 <?php endif; ?>
                 <button type="submit" id="login-ent-btn"></button>
                 <label for="login-ent-btn" class="btn">
@@ -96,7 +96,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     </div>
                 </div>
                 <?php if ($yoga_smart_captcha) : ?>
-                <div class="login-smartcaptcha yoga-smart-captcha-mount" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
+                <div class="login-smartcaptcha yoga-smart-captcha-mount smart-captcha" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
                 <?php endif; ?>
                 <button type="submit" id="login-reg-btn"></button>
                 <p class="login-rules">
@@ -128,7 +128,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 <input type="hidden" name="action" value="yoga_lost_password">
                 <input type="email" name="user_login" class="input" required placeholder="Электронная почта">
                 <?php if ($yoga_smart_captcha) : ?>
-                <div class="login-smartcaptcha yoga-smart-captcha-mount" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
+                <div class="login-smartcaptcha yoga-smart-captcha-mount smart-captcha" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
                 <?php endif; ?>
                 <button type="submit" id="recovery-btn"></button>
                 <label for="recovery-btn" class="btn">

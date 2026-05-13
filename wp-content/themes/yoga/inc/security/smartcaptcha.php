@@ -99,7 +99,7 @@ if (!function_exists('yoga_smartcaptcha_is_enforced')) {
 
 if (!function_exists('yoga_smartcaptcha_validate_url')) {
     function yoga_smartcaptcha_validate_url() {
-        return 'https://smartcaptcha.cloud.yandex.net/validate';
+        return 'https://smartcaptcha.cloud.yandex.ru/validate';
     }
 }
 
