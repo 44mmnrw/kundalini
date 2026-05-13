@@ -73,18 +73,20 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
         <div class="row">
             <div class="praktika">
                 <div class="praktika-details">
-                    <span class="praktika-details__lvl">
-						<?php if ($same_level_url !== '') : ?>
-							<a class="praktika-details__lvl-link" href="<?php echo esc_url($same_level_url); ?>">
+					<div class="praktika-details__lead">
+						<span class="praktika-details__lvl">
+							<?php if ($same_level_url !== '') : ?>
+								<a class="praktika-details__lvl-link" href="<?php echo esc_url($same_level_url); ?>">
+									<?php echo esc_html($practice_level_label); ?>
+								</a>
+							<?php else : ?>
 								<?php echo esc_html($practice_level_label); ?>
-							</a>
-						<?php else : ?>
-							<?php echo esc_html($practice_level_label); ?>
-						<?php endif; ?>
-					</span>
-                    <span class="praktika-details__time">
-                        <?php echo get_field('practice_time') ?: '7 минут'; ?>
-					</span>
+							<?php endif; ?>
+						</span>
+						<span class="praktika-details__time">
+							<?php echo get_field('practice_time') ?: '7 минут'; ?>
+						</span>
+					</div>
                     <?php
 					$user_id = get_current_user_id();
 					$is_favorite = in_array(get_the_ID(), get_user_meta($user_id, 'favorite_practices', true) ?: array(), true);
