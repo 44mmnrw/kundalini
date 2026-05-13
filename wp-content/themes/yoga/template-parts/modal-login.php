@@ -25,6 +25,7 @@ $img_uri = get_template_directory_uri() . '/assets/img';
             <form action="#" class="form yoga-form-login" method="post">
                 <?php wp_nonce_field('yoga_login_nonce', 'yoga_login_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_email_login">
+                <p class="yoga-form-login-message" role="alert" aria-live="polite"></p>
                 <input type="email" name="log" class="input" required placeholder="Электронная почта">
                 <div class="input-password">
                     <input type="password" name="pwd" class="input" required placeholder="Пароль">
