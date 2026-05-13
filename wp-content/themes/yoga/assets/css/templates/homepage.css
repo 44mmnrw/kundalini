@@ -227,10 +227,18 @@
 }
 
 .main__img {
+  display: block;
   position: absolute;
   z-index: 2;
-  width: 28.375rem;  bottom: 0px;
-  right: 15.125rem;}
+  width: 28.375rem;
+  max-width: none;
+  height: auto;
+  right: 15.125rem;
+  bottom: 0;
+  top: auto;
+  object-fit: contain;
+  object-position: center bottom;
+}
 
 @media (max-width: 1320px) {
   .main {
@@ -243,7 +251,9 @@
   .practices-categories {
     padding-top: 1.25rem;  }
   .main__img {
-    width: 26.375rem;    right: 15.25rem;  }
+    width: 26.375rem;
+    right: 15.25rem;
+  }
   .main__info-decor {
     right: 8.5rem;  }
 }
@@ -263,7 +273,10 @@
     display: none;
   }
   .main__img {
-    width: 21rem;    right: 17rem;  }
+    width: 21rem;
+    max-width: none;
+    right: 17rem;
+  }
 }
 @media (max-width: 991px) {
   .main {
@@ -305,8 +318,11 @@
   .hundreds-practices p {
     max-width: 12.5rem;  }
   .main__img {
-    width: 18.625rem;    right: calc(50% - 0.25rem);    transform: translateX(50%);
-    bottom: 6.375rem;  }
+    width: 18.625rem;
+    right: calc(50% - 0.25rem);
+    transform: translateX(50%);
+    bottom: 6.375rem;
+  }
 }
 @media (max-width: 767px) {
   .main {
@@ -753,8 +769,21 @@
     margin-top: 0;
   }
 
+  .home #section-main,
+  .home #section-main .container,
+  .home #section-main .row {
+    overflow: visible;
+  }
+
+  .home #section-main {
+    padding-top: 1rem;
+    padding-bottom: 2.25rem;
+  }
+
+  /* Паддинги как в теме */
   .home #section-main .main {
-    padding-bottom: 3rem;
+    padding-top: 4.1875rem;
+    padding-bottom: 5.125rem;
   }
 
   .home .section-advantages {
