@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
@@ -602,7 +602,7 @@
 		if ($is_privacy_template) {
 			wp_enqueue_style( 'rules-style', $theme_uri . '/assets/css/templates/rules.css', $common_style_deps, $rules_style_ver );
 		}
-		if ($is_faq_template || $is_lk_template) {
+		if ($is_faq_template || $is_lk_template || is_user_logged_in()) {
 			wp_enqueue_style( 'faq-style', $theme_uri . '/assets/css/templates/faq.css', $common_style_deps, $faq_style_ver );
 		}
 		if ($is_lk_template) {
@@ -3228,6 +3228,29 @@ function handle_comment_delete() {
 		}
 		
 		return $latest_tariff;
+	}
+
+	if (!function_exists('yoga_get_lk_page_url')) {
+		/**
+		 * URL страницы с шаблоном «Личный кабинет» (templates-page/lk.php).
+		 */
+		function yoga_get_lk_page_url(): string {
+			static $cached = null;
+			if ($cached !== null) {
+				return $cached;
+			}
+			$cached = '';
+			$pages = get_pages(array(
+				'meta_key' => '_wp_page_template',
+				'meta_value' => 'templates-page/lk.php',
+				'number' => 1,
+				'post_status' => 'publish',
+			));
+			if (!empty($pages[0]) && $pages[0] instanceof WP_Post) {
+				$cached = get_permalink($pages[0]->ID);
+			}
+			return $cached;
+		}
 	}
 
 	// Axecode.tech: расчет периода доступа вынесен в отдельный helper для повторного использования.

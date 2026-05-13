@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Баннер согласия на cookie (Figma: desktop 265:5642, mobile 593:16200).
  *
@@ -17,8 +17,7 @@ if ($privacy_url === '') {
 }
 
 $cookie_text = __('Сайт использует файлы куки для обеспечения удобства пользователей сайта, его улучшения, предоставления персонализированных рекомендаций.', 'yoga');
-?>
-<div class="modal-cookie" id="yoga-modal-cookie" role="dialog" aria-live="polite" aria-label="<?php echo esc_attr__('Уведомление о файлах cookie', 'yoga'); ?>">
+?><div class="modal-cookie" id="yoga-modal-cookie" role="dialog" aria-live="polite" aria-label="<?php echo esc_attr__('Уведомление о файлах cookie', 'yoga'); ?>">
 	<div class="cookie">
 		<p class="cookie__info">
 			<span class="cookie__text"><?php echo esc_html($cookie_text); ?></span>
@@ -35,4 +34,3 @@ $cookie_text = __('Сайт использует файлы куки для об
 		</div>
 	</div>
 </div>
-

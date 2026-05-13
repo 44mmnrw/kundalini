@@ -171,7 +171,7 @@
 						</div>
 					</div>
 					
-					<div class="lk-slide" data-target="3">
+					<div class="lk-slide" id="lk-slide-favorites" data-target="3">
 						<h2>
 							Избранное
 						</h2>
@@ -387,7 +387,7 @@
 					</div>
 					
 					<!-- Слайд "Настройки подписки" -->
-					<div class="lk-slide" data-target="6">
+					<div class="lk-slide" id="lk-slide-settings" data-target="6">
 						<div class="lk-slide__content">
 							<div class="lk-settings">
 								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1">

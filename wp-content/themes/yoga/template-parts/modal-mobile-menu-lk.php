@@ -26,8 +26,7 @@ if (function_exists('get_current_user_tariff')) {
 		$tariff_name = (string) $tariff['product_name'];
 	}
 }
-?>
-<div class="modal-mobile-menu-lk">
+?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
 			<use href="<?php echo $sprite_href; ?>#lk-modal-close" width="100%" height="100%"></use>

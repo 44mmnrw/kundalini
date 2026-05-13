@@ -855,6 +855,9 @@
   align-items: center;
   column-gap: 1rem;
   width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
 }
 
 .reviews__head > .slick-prev {

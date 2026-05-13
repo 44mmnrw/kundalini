@@ -72,26 +72,14 @@
 			</div>
 		</div>
 	</div>
-</footer>
-<?php endif; ?>
-
-<!-- Модальные окна (перенесены из index.html) -->
-<?php get_template_part('template-parts/modal', 'cookie'); ?>
-<div class="overlay"></div>
-<div class="overlay-modal"></div>
-<?php get_template_part('template-parts/modal', 'menu'); ?>
-<?php get_template_part('template-parts/modal', 'mobile-menu'); ?>
-<?php
+</footer><?php endif; ?><?php get_template_part('template-parts/modal', 'cookie'); ?><div class="overlay"></div><div class="overlay-modal"></div><?php get_template_part('template-parts/modal', 'menu'); ?><?php get_template_part('template-parts/modal', 'mobile-menu'); ?><?php
 $is_lk_shell = is_page_template('templates-page/lk.php')
 	|| is_page('my-account')
 	|| (function_exists('is_account_page') && is_account_page());
 if ($is_lk_shell) {
 	get_template_part('template-parts/modal', 'mobile-menu-lk');
 }
-?>
-<?php get_template_part('template-parts/modal', 'login'); ?>
-<?php get_template_part('template-parts/modal', 'review'); ?>
-<div class="modal modal-default modal-default_cardsucces">
+?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_cardsucces">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</div>
@@ -102,9 +90,7 @@ if ($is_lk_shell) {
 			</b>
 		</div>  
 	</div>
-</div>
-
-<div class="modal modal-default modal-default_formsucces">
+</div><div class="modal modal-default modal-default_formsucces">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</div>
@@ -117,9 +103,7 @@ if ($is_lk_shell) {
 		</p>
 	</div>
 	
-</div>
-
-<div class="modal modal-default modal-default_favoritesucces">
+</div><div class="modal modal-default modal-default_favoritesucces">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</div>
@@ -131,9 +115,7 @@ if ($is_lk_shell) {
 			Практика добавлена в избранное.
 		</p>
 	</div>
-</div>
-
-<div class="modal modal-default modal-default_logout">
+</div><div class="modal modal-default modal-default_logout">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</div>
@@ -159,7 +141,6 @@ if ($is_lk_shell) {
 			</div>
 		</div>   
 	</div>
-</div>
-<?php wp_footer(); ?>
+</div><?php wp_footer(); ?>
 </body>
 </html>

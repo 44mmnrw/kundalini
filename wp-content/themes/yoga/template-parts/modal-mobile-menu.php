@@ -5,8 +5,7 @@
 	 */
 	$theme_uri   = get_template_directory_uri();
 	$sprite_href = esc_url($theme_uri . '/assets/svg/sprite.svg');
-?>
-<div class="modal-mobile-menu">
+?><div class="modal-mobile-menu">
     <div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
 			<use href="<?php echo $sprite_href; ?>#lk-modal-close" width="100%" height="100%"></use>
