@@ -68,9 +68,13 @@ $practices_count = (int) $practices->found_posts;
 							</div>
 							<input type="text" class="input" placeholder="Что ищете?" required>
 							<input type="submit" id="library-btn">
-							<label for="library-btn" class="form-search__btn">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/library-btn-arrow.png'); ?>" class="active" alt="">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/library-btn-arrow_purple.png'); ?>" alt="">
+							<label for="library-btn" class="form-search__btn" aria-label="Искать">
+								<svg class="form-search__btn-icon active" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url($sprite_href); ?>#slick-arrow"></use>
+								</svg>
+								<svg class="form-search__btn-icon form-search__btn-icon_hover" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url($sprite_href); ?>#slick-arrow"></use>
+								</svg>
 							</label>
 							<div class="form-search-list"></div>
 							<div class="form-cat-list">
@@ -223,7 +227,7 @@ $practices_count = (int) $practices->found_posts;
 								? yoga_normalize_practice_level_label(get_field('level') ?: 'новичок')
 								: (get_field('level') ?: 'новичок');
 							$practice_description = get_field('short_description') ?: get_the_excerpt();
-							$practice_image = get_field('image') ?: get_template_directory_uri() . '/assets/img/kriya-img_01.png';
+							$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 							$user_id = get_current_user_id();
 							$is_favorite = in_array(get_the_ID(), get_user_meta($user_id, 'favorite_practices', true) ?: array(), true);
 							$hidden_class = ($count > 10) ? 'hidden' : '';
@@ -238,7 +242,9 @@ $practices_count = (int) $practices->found_posts;
 									</div>
 									<div class="kriya-media">
 										<div class="kriya-img">
+											<?php if ($practice_image !== '') : ?>
 											<img src="<?php echo esc_url($practice_image); ?>" alt="<?php the_title_attribute(); ?>">
+											<?php endif; ?>
 										</div>
 										<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo esc_attr((string) get_the_ID()); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 											<span class="kriya-fav__icon" aria-hidden="true">

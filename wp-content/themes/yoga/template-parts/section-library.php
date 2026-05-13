@@ -89,8 +89,12 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 							<input type="text" class="input" name="s" placeholder="Что ищете?">
 							<input type="submit" id="library-btn">
 							<label for="library-btn" class="form-search__btn" aria-label="Искать">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/library-btn-arrow.png'); ?>" class="active" alt="">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/library-btn-arrow_purple.png'); ?>" alt="">
+								<svg class="form-search__btn-icon active" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url($sprite_href); ?>#slick-arrow"></use>
+								</svg>
+								<svg class="form-search__btn-icon form-search__btn-icon_hover" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url($sprite_href); ?>#slick-arrow"></use>
+								</svg>
 							</label>
 							<div class="form-search-list"></div>
 

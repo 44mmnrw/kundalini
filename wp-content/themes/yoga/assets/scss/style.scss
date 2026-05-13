@@ -4147,8 +4147,8 @@ header {
 	&.active {
 		border-bottom-left-radius: 0px;
 		border-color: $color-violet;
-		.library-search__btn {
-			img {
+		.form-search__btn {
+			.form-search__btn-icon {
 				opacity: 1;
 				&.active {
 					opacity: 0;
@@ -4170,23 +4170,27 @@ header {
 	height: 100%;
 	border-radius: 7px;
 	cursor: pointer;
-	img {
+	.form-search__btn-icon {
 		display: block;
 		position: absolute;
 		width: 20px;
+		height: 20px;
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
 		opacity: 0;
 		transition: $transition-all;
+		pointer-events: none;
+		color: $color-violet;
 		&.active {
 			opacity: 1;
+			color: $color-black;
 		}
 	}
 }
 
 .form-search__btn:hover {
-	img {
+	.form-search__btn-icon {
 		opacity: 1;
 		&.active {
 			opacity: 0;
