@@ -7,6 +7,7 @@ $privacy_url = get_permalink(get_page_by_path('privacy'));
 if (!$terms_url) $terms_url = home_url('/terms/');
 if (!$privacy_url) $privacy_url = home_url('/privacy/');
 $img_uri = get_template_directory_uri() . '/assets/img';
+$yoga_smart_captcha = function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced();
 ?>
 <div class="modal-login">
     <div class="modal-close">
@@ -40,6 +41,9 @@ $img_uri = get_template_directory_uri() . '/assets/img';
                         </svg>
                     </div>
                 </div>
+                <?php if ($yoga_smart_captcha) : ?>
+                <div class="login-smartcaptcha yoga-smart-captcha-mount"></div>
+                <?php endif; ?>
                 <button type="submit" id="login-ent-btn"></button>
                 <label for="login-ent-btn" class="btn">
                     <span>
@@ -90,6 +94,9 @@ $img_uri = get_template_directory_uri() . '/assets/img';
                         </svg>
                     </div>
                 </div>
+                <?php if ($yoga_smart_captcha) : ?>
+                <div class="login-smartcaptcha yoga-smart-captcha-mount"></div>
+                <?php endif; ?>
                 <button type="submit" id="login-reg-btn"></button>
                 <p class="login-rules">
                     Нажимая «Зарегистрироваться», вы принимаете условия <a href="<?php echo esc_url($terms_url); ?>">пользовательского соглашения</a> и <a href="<?php echo esc_url($privacy_url); ?>">политики конфиденциальности</a>
@@ -119,6 +126,9 @@ $img_uri = get_template_directory_uri() . '/assets/img';
                 <?php wp_nonce_field('yoga_recovery_nonce', 'yoga_recovery_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_lost_password">
                 <input type="email" name="user_login" class="input" required placeholder="Электронная почта">
+                <?php if ($yoga_smart_captcha) : ?>
+                <div class="login-smartcaptcha yoga-smart-captcha-mount"></div>
+                <?php endif; ?>
                 <button type="submit" id="recovery-btn"></button>
                 <label for="recovery-btn" class="btn">
                     <span>
