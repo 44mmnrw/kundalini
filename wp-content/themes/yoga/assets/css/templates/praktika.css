@@ -452,9 +452,12 @@ display: block !important;
   right: 1.25rem;  background: url(../../img/slick-arrow-next.png) no-repeat center center/100% auto;
 }
 .exercise-slider .slick-dots {
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 0.625rem;}
+  left: var(--container-inline-gutter, 0.625rem);
+  right: var(--container-inline-gutter, 0.625rem);
+  transform: none;
+  bottom: 0.625rem;
+  text-align: center;
+}
 .exercise-slider .slick-dots li {
   padding-left: 0px;
   margin-left: 0.3125rem;  margin-right: 0.1875rem;}

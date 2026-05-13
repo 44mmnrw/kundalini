@@ -37,8 +37,10 @@
   padding-right: 0.625rem;
 }
 .popular-articles-slider .slick-dots {
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--container-inline-gutter, 0.625rem);
+  right: var(--container-inline-gutter, 0.625rem);
+  transform: none;
+  text-align: center;
 }
 .popular-articles-slider .blog-article-item {
   margin-left: 0;
