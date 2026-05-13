@@ -12,6 +12,8 @@
   --color-green: #e8ff57;
   --color-grey: #f6f6f9;
   --transition-base: 0.4s ease;
+  /* Горизонтальный полуполя от края вьюпорта до .container (10px при root 16px) */
+  --container-inline-gutter: 0.625rem;
 }
 
 html {
@@ -70,7 +72,9 @@ footer {
   padding-top: 4.375rem;}
 
 .container {
-  width: 75rem;  max-width: calc(100% - 1.25rem);  margin-left: auto;
+  width: 75rem;
+  max-width: calc(100% - 2 * var(--container-inline-gutter));
+  margin-left: auto;
   margin-right: auto;
   display: inline-block;
 }
@@ -431,13 +435,13 @@ input::-moz-placeholder {
 }
 @media (max-width: 767px) {
   .container {
-    width: 33.75rem;  }
+    width: auto;
+    max-width: calc(100% - 2 * var(--container-inline-gutter));
+  }
 }
 @media (max-width: 575px) {
   body {
     padding-top: 4.5625rem;  }
-  .container {
-    width: 20rem;    max-width: calc(100% - 1.25rem);  }
 }
 @media (max-width: 350px) {
   .btn span {
