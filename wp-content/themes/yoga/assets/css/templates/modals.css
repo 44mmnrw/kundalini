@@ -1495,8 +1495,28 @@ p.login-rules a:hover {
   .modal-login-inner__slide form p {
     text-align: left;
   }
-  .modal-login-inner__slide_succes {
-    padding-top: 1rem;  }
+  /* Слайд «письмо отправлено»: панель и блок текста по центру по вертикали */
+  .modal-login.active:has(.modal-login-inner__slide_succes.active) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+  }
+  .modal-login.active:has(.modal-login-inner__slide_succes.active) .modal-login-inner {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .modal-login-inner:has(.modal-login-inner__slide_succes.active) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .modal-login-inner:has(.modal-login-inner__slide_succes.active) .modal-login-inner__slide_succes.active {
+    top: auto;
+    transform: translateY(0);
+    padding-top: 0;
+    padding-bottom: 0;
+    width: 100%;
+  }
   .login-notification {
     margin-bottom: 0px;
   }
