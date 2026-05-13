@@ -293,7 +293,7 @@
   .main__info .btn {
     position: absolute;
     width: calc(100% - 4.375rem);    z-index: 3;
-    left: 2.1875rem;    bottom: 2.5rem;    padding-right: 4.5rem;  }
+    left: 2.1875rem;    bottom: 2.1875rem;    padding-right: 4.5rem;  }
   .main__info .btn-icon {
     right: calc(50% - 8.3125rem);  }
   .main__info-text {
@@ -332,8 +332,6 @@
   .main__info h2 u {
     text-decoration: none;
   }
-  .main__info .btn {
-    bottom: 2.0625rem;  }
   .main__practices {
     margin-top: 0.625rem;  }
   .hundreds-practices__arrow {
@@ -354,10 +352,14 @@
   .main__info .main__info-text {
     font-size: 1.125rem;    text-align: left;
     margin-top: 0.4375rem;  }
+  /* Отступы кнопки снизу и по бокам как у .main (1.25rem) */
   .main__info .btn {
     position: absolute;
-    width: calc(100% - 0.75rem);    z-index: 3;
-    left: 0.375rem;  }
+    left: 1.25rem;
+    width: calc(100% - 2.5rem);
+    bottom: 1.25rem;
+    z-index: 3;
+  }
   .main__info .btn span {
     white-space: nowrap;
   }
@@ -823,10 +825,6 @@
     margin-bottom: 3rem;
   }
 
-  .home .reviews__main .arrows-slick {
-    bottom: 4rem;
-  }
-
   .home .section-videos {
     padding-top: 1rem;
     padding-bottom: 1.5rem;
@@ -851,13 +849,45 @@
   width: 100%;
 }
 
+.reviews__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1rem;
+  width: 100%;
+}
+
+.reviews__head > .slick-prev {
+  justify-self: end;
+}
+
+.reviews__head h2 {
+  justify-self: center;
+  margin-bottom: 0;
+  max-width: 100%;
+  text-align: center;
+}
+
+.reviews__head > .slick-next {
+  justify-self: start;
+}
+
+.reviews__head .arrows-slick__arrow {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  margin-left: 0;
+}
+
+.reviews__head .slick-next {
+  margin-left: 0;
+}
+
 .reviews__main {
   width: 100%;
   position: relative;
 }
-.reviews__main .arrows-slick {
-  bottom: 7.125rem;}
-
 .review {
   display: flex !important;
   position: relative;
@@ -975,14 +1005,10 @@
 @media (max-width: 1320px) {
   .review {
     margin-top: 2.625rem;    margin-bottom: 5.625rem;  }
-  .reviews__main .arrows-slick {
-    bottom: 5.875rem;  }
   .review-info {
     padding-left: 3.4375rem;  }
 }
 @media (max-width: 1199px) {
-  .reviews__main .arrows-slick {
-    bottom: 5.8125rem;  }
   .review-info p {
     font-size: 1.5625rem;    -webkit-line-clamp: 8;
     line-clamp: 8;
@@ -1023,14 +1049,10 @@
   .review-decor {
     display: none;
   }
-  .reviews__main .arrows-slick {
-    bottom: 1.25rem;  }
 }
 @media (max-width: 767px) {
   .section-reviews {
     padding-top: 1.5rem;  }
-  .reviews__main .arrows-slick {
-    bottom: 0.875rem;  }
   .review-info {
     margin-top: 1.3125rem;  }
   .review-info p {
@@ -1060,10 +1082,10 @@
     margin-top: 0.1875rem;  }
   .review-main__job {
     padding-left: 0.625rem;    padding-right: 0.625rem;    font-size: 0.75rem;    margin-top: 0.3125rem;  }
-  .reviews__main .arrows-slick {
-    width: 100%;
-    justify-content: space-between;
-    bottom: 0.5rem;  }
+  .reviews__head {
+    column-gap: 0.625rem;
+  }
+
   .review-info p {
     -webkit-line-clamp: 11;
     line-clamp: 11;
