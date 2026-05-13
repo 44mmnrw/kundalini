@@ -724,54 +724,104 @@
 	});
 	
 	
-	$( document ).ready(function() {
-		
-		
-		var block_pos_03 = $('.praktika-fixed').offset()?.top || 0;
-		var wrap_pos_03 = $('.praktika-menu').offset()?.top || 0;
-		var block_height_03 = $('.praktika-fixed').outerHeight();
-		// высота блока
-		var wrap_height_03 = $('.praktika-menu').outerHeight();
-		// высота контейнера
-		var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;
-		
-		
-		$(window).scroll(function () {
-			
-			var wrap_height_03 = $('.praktika-menu').outerHeight();
-			// высота контейнера
-			var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;   
-			
-			if ($(window).scrollTop() > pos_absolute_03 - 105) {
-				// Если страницу прокрутили дальше, чем высота родителя минус высота фикс. блока, то стопорим блок
-				$('.praktika-fixed').css({
-					'position': 'absolute',
-					'top': 'calc(100% + 0px)',
-					'transform': 'translateY(-100%)',
-					
-				});
+	$(document).ready(function () {
+		var $praktikaMenu = $('.praktika-menu');
+		var $praktikaFixed = $('.praktika-fixed');
+		if (!$praktikaFixed.length || !$praktikaMenu.length) {
+			return;
+		}
+
+		var block_pos_03 = 0;
+		var block_height_03 = 0;
+
+		function praktikaClearFixedInline() {
+			$praktikaFixed.css({
+				position: '',
+				top: '',
+				transform: '',
+				width: '',
+				left: '',
+				right: ''
+			});
+		}
+
+		function refreshPraktikaFixedAnchors() {
+			praktikaClearFixedInline();
+			block_pos_03 = $praktikaFixed.offset()?.top || 0;
+			block_height_03 = $praktikaFixed.outerHeight() || 0;
+		}
+
+		function praktikaFixedCssAbsTop() {
+			return {
+				position: 'absolute',
+				top: '0px',
+				transform: 'translateY(0%)',
+				width: '',
+				left: '',
+				right: ''
+			};
+		}
+
+		function praktikaFixedCssAbsBottom() {
+			return {
+				position: 'absolute',
+				top: 'calc(100% + 0px)',
+				transform: 'translateY(-100%)',
+				width: '',
+				left: '',
+				right: ''
+			};
+		}
+
+		function praktikaFixedCssFixedPin() {
+			var w = $praktikaMenu.outerWidth() || 0;
+			var l = $praktikaMenu.offset()?.left || 0;
+			return {
+				position: 'fixed',
+				top: '105px',
+				transform: 'translateY(0%)',
+				width: w + 'px',
+				left: l + 'px',
+				right: 'auto'
+			};
+		}
+
+		function praktikaFixedApplyScrollLogic() {
+			if ($(window).width() <= 1199) {
+				praktikaClearFixedInline();
+				return;
 			}
-			else if ($(window).scrollTop() > block_pos_03 - 105) {
-				// Если страницу прокрутили дальше, чем находится наш блок, то мы этот блок фиксируем и отображаем сверху
-				$('.praktika-fixed').css({
-					'position': 'fixed',
-					'top': '105px',
-					'transform': 'translateY(0%)',
-				});
-				
-				} else {
-				// Если же позиция скролла меньше (выше), чем наш блок, то возвращаем все назад
-				$('.praktika-fixed').css({
-					'position': 'absolute',
-					'top': '0px',
-					'transform': 'translateY(0%)',
-					
-				});
+
+			block_height_03 = $praktikaFixed.outerHeight() || 0;
+			var wrap_height_03 = $praktikaMenu.outerHeight() || 0;
+			var wrapTop = $praktikaMenu.offset()?.top || 0;
+			var pos_absolute_03 = wrapTop + wrap_height_03 - block_height_03;
+			var scrollTop = $(window).scrollTop();
+
+			if (scrollTop > pos_absolute_03 - 105) {
+				$praktikaFixed.css(praktikaFixedCssAbsBottom());
+			} else if (scrollTop > block_pos_03 - 105) {
+				$praktikaFixed.css(praktikaFixedCssFixedPin());
+			} else {
+				$praktikaFixed.css(praktikaFixedCssAbsTop());
 			}
-			
+		}
+
+		refreshPraktikaFixedAnchors();
+
+		$(window).on('scroll', praktikaFixedApplyScrollLogic);
+		$(window).on('resize orientationchange', function () {
+			refreshPraktikaFixedAnchors();
+			praktikaFixedApplyScrollLogic();
 		});
-		
-	}); 
+
+		$(window).on('load', function () {
+			refreshPraktikaFixedAnchors();
+			praktikaFixedApplyScrollLogic();
+		});
+
+		praktikaFixedApplyScrollLogic();
+	});
 	
 	
 	/* Section-form-questions */
