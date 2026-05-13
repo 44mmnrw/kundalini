@@ -287,3 +287,109 @@
   .switches-item span {
     font-size: 1rem;  }
 }
+
+/* Desktop: тарифные карточки — Figma 265:4409, 265:4430, 265:4453, 265:4484 (ширина ≥1200px) */
+@media (min-width: 1200px) {
+  .section-tariffs.section-tariffs_single .tariffs-items__slide {
+    align-items: stretch;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff {
+    min-height: 644px;
+    padding: 40px 25px;
+    box-sizing: border-box;
+    border-radius: 30px;
+  }
+
+  /* Зона заголовка: отступ до строки цены как в макете (y 40→190 ≈150px). */
+  .section-tariffs.section-tariffs_single .tariff__top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    min-height: 150px;
+    box-sizing: border-box;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff__top h3 {
+    font-size: 23px;
+    line-height: 1.1;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff__top > p {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: normal;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* Цена + список: середина колонки, список с мин. высотой — нижний край текста совпадает между карточками. */
+  .section-tariffs.section-tariffs_single .tariff__center {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+    min-height: 0;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff-price {
+    flex-shrink: 0;
+    min-height: 69px;
+    box-sizing: border-box;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff .check-list {
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-height: 259px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+    justify-content: flex-start;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff form.cart {
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+
+  .section-tariffs.section-tariffs_single .tariff .btn.btn_icon {
+    margin-top: 0;
+  }
+
+  /* Декор звёзд (px как в Dev Mode Figma при высоте карточки 644px) */
+  .tariff_visual_1 .tariff__bg::after {
+    left: 52px;
+    top: 415px;
+  }
+
+  .tariff_visual_2 .tariff__bg::after {
+    right: 83px;
+    top: 469px;
+  }
+
+  .tariff_visual_3 .tariff__bg::after {
+    left: 31px;
+    top: 137px;
+    background-size: 34.0966px 34.0966px;
+  }
+
+  .tariff_visual_3 .tariff__bg::before {
+    content: "";
+    position: absolute;
+    right: 204px;
+    top: 137px;
+    width: 51px;
+    height: 51px;
+    background-image: url(../../svg/tariff-star-3.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 34.0966px 34.0966px;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
