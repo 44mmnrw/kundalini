@@ -145,6 +145,7 @@
   height: 1.875rem;
   overflow: hidden;
   border-radius: 50%;
+  color: var(--color-violet);
 }
 .praktika-details .praktika-fav__icon img,
 .praktika-details .praktika-fav__icon svg {

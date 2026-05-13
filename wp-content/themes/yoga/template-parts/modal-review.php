@@ -3,8 +3,7 @@
  * Модальное окно отзыва
  */
 $theme_uri = get_template_directory_uri();
-?>
-<div class="modal modal_review">
+?><div class="modal modal_review">
     <div class="review-modal">
         <div class="review-modal__main">
             <div class="review-modal__main-image">

@@ -41,31 +41,39 @@
 								?>
 							</nav>
 						</div>
-						<div class="header-lk">
+						<div class="header-lk<?php echo is_user_logged_in() ? ' header-lk--logged' : ''; ?>">
 							<?php
-							$has_paid_tariff = is_user_logged_in() && get_current_user_tariff();
-							if (!$has_paid_tariff) :
-								$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
-								$tariffs_url = home_url('/product-category/tariffs/');
-								if ($tariffs_term && !is_wp_error($tariffs_term)) {
-									$term_link = get_term_link($tariffs_term);
-									if (!is_wp_error($term_link)) {
-										$tariffs_url = $term_link;
-									}
+							$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+							$tariffs_url = home_url('/product-category/tariffs/');
+							if ($tariffs_term && !is_wp_error($tariffs_term)) {
+								$term_link = get_term_link($tariffs_term);
+								if (!is_wp_error($term_link)) {
+									$tariffs_url = $term_link;
 								}
+							}
+							$has_paid_tariff = is_user_logged_in() && function_exists('get_current_user_tariff') && get_current_user_tariff();
+							if (!$has_paid_tariff) :
 								if (is_user_logged_in()) : ?>
-							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white">
+							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white header-lk-tariff-cta">
 								<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
 							</a>
-							<?php else : ?>
+								<?php else : ?>
 							<div class="btn btn_white modal-call_login">
 								<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
 							</div>
-							<?php endif; endif; ?>
-							<?php if (is_user_logged_in()): ?>
-							<?php
+								<?php endif;
+							endif;
+							?>
+							<?php if (is_user_logged_in()) : ?>
+								<?php
 								$current_user = wp_get_current_user();
-								$myaccount_url = get_permalink(get_option('woocommerce_myaccount_page_id'));
+								$lk_page_url = function_exists('yoga_get_lk_page_url') ? yoga_get_lk_page_url() : '';
+								$myaccount_url = $lk_page_url !== ''
+									? $lk_page_url
+									: get_permalink(get_option('woocommerce_myaccount_page_id'));
+								if (!$myaccount_url) {
+									$myaccount_url = home_url('/');
+								}
 								$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
 								$user_display_name = trim((string) $current_user->display_name);
 								$user_login = trim((string) $current_user->user_login);
@@ -87,7 +95,46 @@
 										'decoding' => 'async',
 									))
 									: '';
-							?>
+								$tariff_row = function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
+								$tariff_product_name = '';
+								if (is_array($tariff_row) && !empty($tariff_row['product_name'])) {
+									$tariff_product_name = (string) $tariff_row['product_name'];
+								}
+								$pill_href = $tariffs_url;
+								$pill_label = yoga_get_purchase_cta_text();
+								if ($tariff_product_name !== '') {
+									$pill_label = $tariff_product_name;
+									if ($lk_page_url !== '') {
+										$pill_href = trailingslashit($lk_page_url) . '#lk-slide-settings';
+									}
+								}
+								$favorites_href = ($lk_page_url !== '')
+									? trailingslashit($lk_page_url) . '#lk-slide-favorites'
+									: home_url('/');
+								$sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
+								?>
+							<div class="header-lk-logged-desktop">
+								<a class="header-rate-pill" href="<?php echo esc_url($pill_href); ?>">
+									<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url($sprite_uri); ?>#personal-status-crown"></use>
+									</svg>
+									<span><?php echo esc_html($pill_label); ?></span>
+								</a>
+								<div class="notification-icon notification-icon_header" role="button" tabindex="0" aria-expanded="false" aria-controls="header-notifications-popup">
+									<svg class="notification-icon__img" aria-hidden="true">
+										<use href="<?php echo esc_url($sprite_uri); ?>#notification-bell-icon"></use>
+									</svg>
+									<div class="lk-notifications-popup" id="header-notifications-popup" aria-hidden="true">
+										<div class="lk-notifications-popup__title"><?php esc_html_e('Уведомления', 'yoga'); ?></div>
+										<div class="lk-notifications-popup__empty"><?php esc_html_e('Ничего нет...', 'yoga'); ?></div>
+									</div>
+								</div>
+								<a class="header-favorites-link" href="<?php echo esc_url($favorites_href); ?>" aria-label="<?php esc_attr_e('Избранное', 'yoga'); ?>">
+									<svg aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url($sprite_uri); ?>#noun-heart"></use>
+									</svg>
+								</a>
+							</div>
 							<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon login-icon_logged" aria-label="<?php echo esc_attr__('Личный кабинет', 'yoga'); ?>">
 								<?php if ($user_avatar_html) : ?>
 									<?php echo $user_avatar_html; ?>
@@ -95,7 +142,7 @@
 									<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
 								<?php endif; ?>
 							</a>
-							<?php else: ?>
+							<?php else : ?>
 							<div class="login-icon modal-call_login">
 								<svg aria-hidden="true" focusable="false">
 									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>

@@ -2928,6 +2928,18 @@ jQuery(document).ready(function($) {
         $('.sidebar-menu__item[data-target="' + target + '"]').addClass('active');
     }
 
+    function applyLkDeepLinkHash() {
+        var raw = window.location.hash.replace(/^#/, '');
+        if (raw === 'lk-slide-favorites') {
+            switchLkSlide('3');
+        } else if (raw === 'lk-slide-settings') {
+            switchLkSlide('6');
+        }
+    }
+
+    applyLkDeepLinkHash();
+    $(window).on('hashchange', applyLkDeepLinkHash);
+
     // Переключение между слайдами
     $('.sidebar-menu__item').on('click', function() {
         var target = $(this).data('target');

@@ -9,8 +9,7 @@ if (!$privacy_url) $privacy_url = home_url('/privacy/');
 $img_uri = get_template_directory_uri() . '/assets/img';
 $yoga_smart_captcha = function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced();
 $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_client_key')) ? yoga_smartcaptcha_client_key() : '';
-?>
-<div class="modal-login">
+?><div class="modal-login">
     <div class="modal-close">
         <img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
     </div>
