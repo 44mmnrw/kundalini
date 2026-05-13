@@ -46,6 +46,7 @@
   align-items: center;
   cursor: pointer;
   border-bottom: 1px solid var(--color-black);
+  touch-action: manipulation;
 }
 
 .faq__questions .question__main::after {
@@ -60,20 +61,23 @@
   transition: all 0.5s ease-in-out;
 }
 
-.faq__questions .question__main:hover::after {
-  width: 100%;
-}
+/* Без этого на тачэкране первое касание «вешало» hover, второе открывало блок */
+@media (hover: hover) and (pointer: fine) {
+  .faq__questions .question__main:hover::after {
+    width: 100%;
+  }
 
-.faq__questions .question__main:hover .question-icon {
-  background: var(--color-black);
-}
+  .faq__questions .question__main:hover .question-icon {
+    background: var(--color-black);
+  }
 
-.faq__questions .question__main:hover .question-icon img {
-  opacity: 1;
-}
+  .faq__questions .question__main:hover .question-icon img {
+    opacity: 1;
+  }
 
-.faq__questions .question__main:hover .question-icon img.active {
-  opacity: 0;
+  .faq__questions .question__main:hover .question-icon img.active {
+    opacity: 0;
+  }
 }
 
 .faq__questions .question__main-text {
