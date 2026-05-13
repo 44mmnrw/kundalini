@@ -337,20 +337,48 @@
     height: 100%;
     pointer-events: none;
     z-index: 21;
-    transition: 0.4s ease;
+    transition: width 0.4s ease;
   }
   .modal-mobile-menu.active, .modal-mobile-menu-lk.active {
     width: 100%;
   }
+  /* Крестик position:fixed — не обрезаем при анимации width оболочки */
+  .modal-mobile-menu.active {
+    overflow: visible;
+  }
   .modal-mobile-menu.active .mobile-menu-inner, .modal-mobile-menu-lk.active .mobile-menu-inner {
     width: 33.75rem;    opacity: 1;
   }
-  .modal-mobile-menu .modal-close, .modal-mobile-menu-lk .modal-close {
+  .modal-mobile-menu-lk .modal-close {
     z-index: 3;
     top: 0.75rem;    right: 1.25rem;    background: var(--color-green);
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  /*
+   * Главное мобильное меню: крестик всегда fixed на месте бургера (как при открытии),
+   * при закрытии только скрываем — иначе слёт на position:absolute даёт скачок вправо.
+   */
+  .modal-mobile-menu .modal-close {
+    position: fixed;
+    z-index: 25;
+    top: 0.75rem;
+    right: calc((100vw - min(45rem, 100vw - 2.1875rem)) / 2);
+    width: 3.25rem;
+    height: 3.1875rem;
+    box-sizing: border-box;
+    background: var(--color-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.4s ease;
+  }
+  .modal-mobile-menu.active .modal-close {
+    visibility: visible;
+    pointer-events: auto;
   }
   .modal-mobile-menu-lk {
     display: flex;
@@ -943,11 +971,23 @@
     display: flex;
   }
 }
+@media (max-width: 767px) {
+  .modal-mobile-menu .modal-close {
+    right: calc((100vw - min(33.75rem, 100vw - 2.1875rem)) / 2);
+  }
+}
 @media (max-width: 575px) {
   .mobile-menu-switches {
     margin-bottom: 0.75rem;  }
-  .modal-mobile-menu .modal-close, .modal-mobile-menu-lk .modal-close {
-    right: 0.625rem;  }
+  .modal-mobile-menu .modal-close {
+    top: 0.75rem;
+    right: calc((100vw - min(20rem, 100vw - 1.875rem)) / 2);
+    width: 3.0625rem;
+    height: 3rem;
+  }
+  .modal-mobile-menu-lk .modal-close {
+    right: 0.625rem;
+  }
   .modal-mobile-menu .modal-close__icon {
     width: 1.25rem;
     height: 1.25rem;
