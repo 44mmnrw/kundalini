@@ -76,6 +76,7 @@
 <?php endif; ?>
 
 <!-- Модальные окна (перенесены из index.html) -->
+<?php get_template_part('template-parts/modal', 'cookie'); ?>
 <div class="overlay"></div>
 <div class="overlay-modal"></div>
 <?php get_template_part('template-parts/modal', 'menu'); ?>

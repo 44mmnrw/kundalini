@@ -1597,11 +1597,43 @@
 	});
 	
 	
-	$('.modal-cookie .btn').click(function () {
-		$('.overlay').removeClass("active");
-		$('.modal-cookie').removeClass("active");
-		$('.body').removeClass("body-fixed");
-	});
+	(function cookieBannerInit() {
+		var storageKey = 'yoga_cookie_consent_v1';
+		var $banner = $('#yoga-modal-cookie');
+		if (!$banner.length) {
+			return;
+		}
+		function hideCookieBanner() {
+			$banner.removeClass('active');
+		}
+		function tryShowBanner() {
+			try {
+				if (window.localStorage && window.localStorage.getItem(storageKey)) {
+					return;
+				}
+			} catch (e) {
+				// ignore
+			}
+			$banner.addClass('active');
+		}
+		tryShowBanner();
+		$banner.on('click', '.cookie__btn-accept', function () {
+			try {
+				window.localStorage.setItem(storageKey, 'accept');
+			} catch (e) {
+				// ignore
+			}
+			hideCookieBanner();
+		});
+		$banner.on('click', '.cookie__btn-decline', function () {
+			try {
+				window.localStorage.setItem(storageKey, 'decline');
+			} catch (e) {
+				// ignore
+			}
+			hideCookieBanner();
+		});
+	})();
 	
 	
 	$('.modal-call_logout').click(function () {
