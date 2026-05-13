@@ -727,8 +727,13 @@ function yoga_subscribe_handler() {
 			);
 			wp_add_inline_script(
 				'yandex-smartcaptcha',
-				'window.yogaInitSmartCaptcha=function(){try{if(typeof yoga_ajax==="undefined"||!yoga_ajax.smartcaptcha_enabled||!yoga_ajax.smartcaptcha_sitekey||!window.smartCaptcha)return;document.querySelectorAll(".yoga-smart-captcha-mount").forEach(function(el){if(el.getAttribute("data-yoga-sc-rendered")==="1")return;el.setAttribute("data-yoga-sc-rendered","1");var wid=window.smartCaptcha.render(el,{sitekey:yoga_ajax.smartcaptcha_sitekey,hl:"ru"});el.dataset.yogaWidgetId=String(wid);});}catch(err){console.warn(err);}};',
+				'window.yogaTryInitSmartCaptcha=function(){try{if(typeof yoga_ajax==="undefined"||!yoga_ajax.smartcaptcha_enabled)return;var m=document.querySelectorAll(".yoga-smart-captcha-mount");if(!m.length)return;if(!window.smartCaptcha){if(typeof window.yogaTryInitSmartCaptcha._n==="undefined")window.yogaTryInitSmartCaptcha._n=0;if(window.yogaTryInitSmartCaptcha._n++<80)return setTimeout(window.yogaTryInitSmartCaptcha,50);console.warn("Yandex SmartCaptcha: API не загрузился");return;}window.yogaTryInitSmartCaptcha._n=0;m.forEach(function(el){if(el.getAttribute("data-yoga-sc-rendered")==="1")return;var sk=(el.getAttribute("data-sitekey")||"").trim();if(!sk&&yoga_ajax.smartcaptcha_sitekey)sk=(""+yoga_ajax.smartcaptcha_sitekey).trim();if(!sk)return;var wid=window.smartCaptcha.render(el,{sitekey:sk,hl:"ru"});el.setAttribute("data-yoga-sc-rendered","1");el.dataset.yogaWidgetId=String(wid);});}catch(err){console.warn("Yandex SmartCaptcha:",err);}};window.yogaInitSmartCaptcha=window.yogaTryInitSmartCaptcha;',
 				'before'
+			);
+			wp_add_inline_script(
+				'yandex-smartcaptcha',
+				'if(typeof yogaTryInitSmartCaptcha==="function"){yogaTryInitSmartCaptcha();setTimeout(yogaTryInitSmartCaptcha,200);setTimeout(yogaTryInitSmartCaptcha,800);}',
+				'after'
 			);
 			wp_enqueue_script('yandex-smartcaptcha');
 		}

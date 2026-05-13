@@ -16,20 +16,44 @@ if (!defined('ABSPATH')) {
  * @see https://yandex.cloud/ru/docs/smartcaptcha/
  */
 
+if (!function_exists('yoga_smartcaptcha_normalize_key')) {
+    /**
+     * Убираем пробелы/переносы строк (часто после вставки ключей из почты/дока).
+     *
+     * @param mixed $raw
+     * @return string
+     */
+    function yoga_smartcaptcha_normalize_key($raw) {
+        if ($raw === null || $raw === '' || !is_string($raw)) {
+            return '';
+        }
+        return preg_replace('/\s+/u', '', trim(wp_check_invalid_utf8($raw, true)));
+    }
+}
+
 if (!function_exists('yoga_smartcaptcha_client_key')) {
     /**
      * @return string
      */
     function yoga_smartcaptcha_client_key() {
-        if (defined('YOGA_SMARTCAPTCHA_CLIENT_KEY') && trim((string) YOGA_SMARTCAPTCHA_CLIENT_KEY) !== '') {
-            return apply_filters('yoga_smartcaptcha_client_key', trim((string) YOGA_SMARTCAPTCHA_CLIENT_KEY));
+        if (defined('YOGA_SMARTCAPTCHA_CLIENT_KEY') && yoga_smartcaptcha_normalize_key(YOGA_SMARTCAPTCHA_CLIENT_KEY) !== '') {
+            return apply_filters('yoga_smartcaptcha_client_key', yoga_smartcaptcha_normalize_key((string) YOGA_SMARTCAPTCHA_CLIENT_KEY));
         }
 
         $key = '';
         if (function_exists('get_field')) {
             $v = get_field('smartcaptcha_client_key', 'option');
             if (is_string($v)) {
-                $key = trim($v);
+                $key = yoga_smartcaptcha_normalize_key($v);
+            }
+        }
+        if ($key === '') {
+            foreach (array('options_smartcaptcha_client_key', 'smartcaptcha_client_key') as $opt_key) {
+                $fallback = get_option($opt_key);
+                $key = is_string($fallback) ? yoga_smartcaptcha_normalize_key($fallback) : '';
+                if ($key !== '') {
+                    break;
+                }
             }
         }
 
@@ -42,15 +66,24 @@ if (!function_exists('yoga_smartcaptcha_server_key')) {
      * @return string
      */
     function yoga_smartcaptcha_server_key() {
-        if (defined('YOGA_SMARTCAPTCHA_SERVER_KEY') && trim((string) YOGA_SMARTCAPTCHA_SERVER_KEY) !== '') {
-            return apply_filters('yoga_smartcaptcha_server_key', trim((string) YOGA_SMARTCAPTCHA_SERVER_KEY));
+        if (defined('YOGA_SMARTCAPTCHA_SERVER_KEY') && yoga_smartcaptcha_normalize_key(YOGA_SMARTCAPTCHA_SERVER_KEY) !== '') {
+            return apply_filters('yoga_smartcaptcha_server_key', yoga_smartcaptcha_normalize_key((string) YOGA_SMARTCAPTCHA_SERVER_KEY));
         }
 
         $key = '';
         if (function_exists('get_field')) {
             $v = get_field('smartcaptcha_server_key', 'option');
             if (is_string($v)) {
-                $key = trim($v);
+                $key = yoga_smartcaptcha_normalize_key($v);
+            }
+        }
+        if ($key === '') {
+            foreach (array('options_smartcaptcha_server_key', 'smartcaptcha_server_key') as $opt_key) {
+                $fallback = get_option($opt_key);
+                $key = is_string($fallback) ? yoga_smartcaptcha_normalize_key($fallback) : '';
+                if ($key !== '') {
+                    break;
+                }
             }
         }
 
