@@ -41,15 +41,18 @@ function initializePracticeSystem() {
         debug: false
     });
 
-    // Axecode.tech: Этап 2 стабилизации - защита от null/пустого результата Plyr.setup.
-    if (!Array.isArray(players) || players.length === 0) {
-        console.warn('Plyr returned no initialized players');
+    // Axecode.tech: пустой список плееров — нормально, если у упражнений нет медиа (таймеры всё равно нужны).
+    if (!Array.isArray(players)) {
+        console.warn('Plyr.setup returned unexpected value');
         return;
+    }
+    if (players.length === 0) {
+        console.warn('Plyr: нет элементов audio/video на странице — инициализируем только таймеры');
     }
 
     // Axecode.tech: Этап 2 стабилизации - отмечаем успешную однократную инициализацию.
     window.practiceSystemInitialized = true;
-    console.log('Plyr players initialized:', players.length);
+    console.log('Plyr global setup players:', players.length);
 
     // Обработка переключателей версий
     document.querySelectorAll('.exercise-switches__item').forEach(switchItem => {

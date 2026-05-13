@@ -9,6 +9,16 @@ if (is_user_logged_in()) {
 	$practice_prefill_name = (string) ($current_user->display_name ?? '');
 	$practice_prefill_email = (string) ($current_user->user_email ?? '');
 }
+
+$practice_form_type_name = '';
+$practice_form_terms = get_the_terms(get_the_ID(), 'practice-type');
+if (is_array($practice_form_terms) && ! is_wp_error($practice_form_terms) && $practice_form_terms !== array()) {
+	$raw_practice_type = (string) $practice_form_terms[0]->name;
+	$practice_form_type_name = function_exists('mb_strtolower')
+		? mb_strtolower($raw_practice_type, 'UTF-8')
+		: strtolower($raw_practice_type);
+}
+$practice_form_title = get_the_title(get_the_ID());
 	
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));
@@ -23,7 +33,26 @@ if (is_user_logged_in()) {
 							Остались вопросы?
 						</h3>
 						<p>
-							Поделитесь опытом от практики крийи «Сохраняем тело красивым» или задайте вопрос о ее выполнении.
+							<?php
+							if ($practice_form_type_name !== '') {
+								echo esc_html(
+									sprintf(
+										/* translators: 1 = practice type (taxonomy practice-type name), 2 = practice post title */
+										__('Поделитесь опытом от практики %1$s «%2$s» или задайте вопрос о ее выполнении.', 'yoga'),
+										$practice_form_type_name,
+										$practice_form_title
+									)
+								);
+							} else {
+								echo esc_html(
+									sprintf(
+										/* translators: %s practice post title */
+										__('Поделитесь опытом от практики «%s» или задайте вопрос о ее выполнении.', 'yoga'),
+										$practice_form_title
+									)
+								);
+							}
+							?>
 						</p>
 					</div>
 					<form action="#" class="form-questions__main-form contacts-form">
