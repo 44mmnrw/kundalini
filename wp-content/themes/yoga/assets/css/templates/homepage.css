@@ -540,7 +540,6 @@
 .whyme-item__number {
   position: absolute;
   right: 0px;
-  top: 0px;
   top: 4.625rem;  width: 5.125rem;  font-size: 1.125rem;  font-family: "Mulish-SemiBold", sans-serif;
   font-weight: normal;
 }
@@ -605,8 +604,18 @@
     top: 0px;
     left: auto;
   }
+}
+@media (max-width: 991px) and (min-width: 768px) {
   .whyme-item__number {
-    top: 3.9375rem;    width: 4.5rem;  }
+    top: 3.9375rem;
+    width: 4.5rem;
+  }
+}
+@media (max-width: 767px) and (min-width: 576px) {
+  .whyme-item__number {
+    top: 4.4375rem;
+    width: 4.5rem;
+  }
 }
 @media (max-width: 767px) {
   .section-whyme {
@@ -651,7 +660,9 @@
     left: auto;
   }
   .whyme-item__number {
-    top: 3.625rem;    width: 4.25rem;  }
+    top: 4.875rem;
+    width: 4.25rem;
+  }
 }
 
 /* Section-begin */
