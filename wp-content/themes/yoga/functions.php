@@ -587,11 +587,17 @@
 			wp_enqueue_style( 'library-style', $theme_uri . '/assets/css/templates/library.css', $common_style_deps, $library_style_ver );
 			wp_enqueue_style( 'library-filters-style', $theme_uri . '/assets/css/templates/library-filters.css', array( 'library-style' ), $library_filters_style_ver );
 		}
-		if ($is_practice_single) {
-			wp_enqueue_style( 'praktika-style', $theme_uri . '/assets/css/templates/praktika.css', $common_style_deps, $praktika_style_ver );
-		}
+		/* Форма «Остались вопросы» подключается до praktika.css, чтобы стили страницы практики шли последними среди темы и не перебивались соседним листом с тем же приоритетом специфичности. */
 		if ($is_practice_single || $is_contacts_template || $is_faq_template) {
 			wp_enqueue_style( 'form-questions-style', $theme_uri . '/assets/css/templates/form-questions.css', $common_style_deps, $form_questions_style_ver );
+		}
+		if ($is_practice_single) {
+			wp_enqueue_style(
+				'praktika-style',
+				$theme_uri . '/assets/css/templates/praktika.css',
+				array( 'form-questions-style', 'modals-style' ),
+				$praktika_style_ver
+			);
 		}
 		if ($is_privacy_template) {
 			wp_enqueue_style( 'rules-style', $theme_uri . '/assets/css/templates/rules.css', $common_style_deps, $rules_style_ver );

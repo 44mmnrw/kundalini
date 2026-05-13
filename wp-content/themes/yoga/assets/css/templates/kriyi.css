@@ -344,6 +344,9 @@ body.tax-practice-type .practice-notification {
     margin-left: auto;
     flex: 0 0 auto;
     flex-shrink: 0;
+    gap: 0.5rem;
+    width: max-content;
+    max-width: calc(100% - 0.25rem);
     z-index: 3;
   }
   .kriya-fav:not(.active) .kriya-fav__text--add {
