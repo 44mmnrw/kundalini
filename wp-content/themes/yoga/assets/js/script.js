@@ -1264,23 +1264,55 @@
 		e.preventDefault();
 	});
 	
+	$(document).on('input focus', '.yoga-form-login .input', function() {
+		var $msg = $(this).closest('.yoga-form-login').find('.yoga-form-login-message');
+		$msg.removeClass('is-visible').empty();
+	});
+
 	// AJAX: форма входа по почте
 	$(document).on('submit', '.yoga-form-login', function(e) {
 		e.preventDefault();
 		var $form = $(this);
+		var $msg = $form.find('.yoga-form-login-message');
+		var showLoginErr = function(text) {
+			$msg.text(text).addClass('is-visible');
+		};
+		var messageFromPayload = function(d, fallbackText) {
+			if (d === undefined || d === null || d === '') return fallbackText;
+			if (typeof d === 'string') return d;
+			if (typeof d === 'object' && d.code === 'not_found') return 'Пользователь не найден';
+			if (typeof d === 'object' && d.message) return d.message;
+			return fallbackText;
+		};
+		$msg.removeClass('is-visible').empty();
 		var $btn = $form.find('.btn');
 		if (typeof yoga_ajax === 'undefined') return;
 		$btn.prop('disabled', true);
-		$.post(yoga_ajax.ajax_url, $form.serialize())
+		$.ajax({
+			url: yoga_ajax.ajax_url,
+			method: 'POST',
+			data: $form.serialize(),
+			dataType: 'json'
+		})
 			.done(function(r) {
-				if (r.success) {
+				if (r && r.success) {
 					$('.modal-login').removeClass("active");
 					location.reload();
 				} else {
-					alert(r.data || 'Ошибка входа');
+					showLoginErr(messageFromPayload(r && r.data, 'Ошибка входа'));
 				}
 			})
-			.fail(function() { alert('Ошибка соединения'); })
+			.fail(function(xhr) {
+				var json = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+				var d = json && json.data;
+				if (d === undefined && xhr && xhr.responseText) {
+					try {
+						var parsed = JSON.parse(xhr.responseText);
+						if (parsed) d = parsed.data;
+					} catch (err) {}
+				}
+				showLoginErr(messageFromPayload(d, 'Ошибка соединения'));
+			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
 	

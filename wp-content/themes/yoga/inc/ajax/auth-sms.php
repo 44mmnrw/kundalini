@@ -37,6 +37,13 @@ if (!function_exists('handle_yoga_email_login')) {
         if (empty($log) || empty($pwd)) {
             yoga_ajax_error('Введите почту и пароль', 'validation_error', 422);
         }
+        $existing = get_user_by('email', $log);
+        if (!$existing) {
+            $existing = get_user_by('login', $log);
+        }
+        if (!$existing) {
+            yoga_ajax_error('Пользователь не найден', 'not_found', 404);
+        }
         $user = wp_signon(array(
             'user_login'    => $log,
             'user_password' => $pwd,
