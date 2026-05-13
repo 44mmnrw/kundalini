@@ -185,7 +185,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										</a>
 									</li>
 								</ul>
-							</nav>
+                            </nav>
                             <?php
 								$download_file = get_field('practice_download');
 								if ($download_file) {

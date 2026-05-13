@@ -205,7 +205,20 @@
 
 .praktika-menu {
   position: relative;
-  width: 17.8125rem;  margin-top: 1.875rem;}
+  width: 17.8125rem;
+  margin-top: 1.875rem;
+  box-sizing: border-box;
+}
+
+.praktika-fixed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 .praktika-menu h3 {
   display: none;
 }
@@ -882,6 +895,10 @@ display: block !important;
     top: auto !important;
     position: relative !important;
     transform: none !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100%;
   }
   .praktika-menu {
     width: 13.75rem;  }
