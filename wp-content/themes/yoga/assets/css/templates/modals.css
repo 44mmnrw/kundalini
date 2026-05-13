@@ -1372,23 +1372,14 @@ p.login-rules a:hover {
 .loggin-additional__item:hover {
   color: #646464;
 }
-.login-captcha {
+.login-smartcaptcha {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   width: 100%;
-  margin-top: 1.5625rem;}
-.login-captcha__plug {
-  display: block;
-  width: 100%;
-  min-width: 19.6875rem;  margin-bottom: -0.25rem;  margin-left: auto;
-  margin-right: auto;
-}
-.login-captcha .g-recaptcha {
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
-  height: 4.625rem;}
+  margin-top: 1.25rem;
+  min-height: 4.25rem;}
 .loggin-back {
   display: flex;
   justify-content: center;
@@ -1541,9 +1532,6 @@ p.login-rules a:hover {
   .loggin-back_grey span {
     color: #646464;
   }
-  .login-captcha__plug {
-    min-width: 100%;
-    margin-bottom: 1.25rem;  }
   .form-back {
     position: relative;
     left: 50%;

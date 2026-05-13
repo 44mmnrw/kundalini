@@ -13961,28 +13961,14 @@ p.login-rules {
 	transition: $transition-all;
 }
 
-.login-captcha {
+.login-smartcaptcha {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-wrap: wrap;
 	width: 100%;
-	margin-top: 25px;
-	.g-recaptcha {
-		display: flex;
-		justify-content: center;
-		/* Скрываем накладывающийся текст "Условия/Конфиденциальность" под капчей */
-		overflow: hidden;
-		height: 74px;
-	}
-}
-
-.login-captcha__plug {
-	display: block;
-	width: 100%;
-	min-width: 315px;
-	margin-bottom: -4px;
-	margin-left: auto;
-	margin-right: auto;
+	margin-top: 20px;
+	min-height: 68px;
 }
 
 .loggin-back {
@@ -14210,11 +14196,6 @@ p.login-rules {
 	span {
 		color: #646464;
 	}
-}
-
-.login-captcha__plug {
-	min-width: 100%;
-	margin-bottom: 20px;
 }
 
 .form-back {

@@ -5,6 +5,7 @@
 	// Регистрация меню
 	require_once get_template_directory() . '/inc/core/ajax-responses.php';
 	require_once get_template_directory() . '/inc/core/dependencies.php';
+	require_once get_template_directory() . '/inc/security/smartcaptcha.php';
 	// Axecode.tech: интеграция ACF вынесена в /inc/integrations/acf.php.
 	// Зачем: не держим bootstrap/hooks ACF в template-parts и централизуем
 	// все регистрации на acf/init, чтобы избежать побочных эффектов ранней загрузки.
@@ -699,18 +700,38 @@ function yoga_subscribe_handler() {
 	
 	// Обработка ответов на комментарии
 	function yoga_ajax_localization() {
-		
+
 		$current_user = wp_get_current_user();
-		
-		wp_localize_script('main-script', 'yoga_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('yoga_ajax_nonce'),
-        'user_id' => get_current_user_id(),
-        'user_logged_in' => is_user_logged_in(),
-        'user_email' => $current_user->user_email,
-        'site_url' => home_url(),
-        'post_id' => get_the_ID()
-		));
+
+		$yoga_ajax_data = array(
+			'ajax_url'       => admin_url('admin-ajax.php'),
+			'nonce'          => wp_create_nonce('yoga_ajax_nonce'),
+			'user_id'        => get_current_user_id(),
+			'user_logged_in' => is_user_logged_in(),
+			'user_email'     => $current_user->user_email,
+			'site_url'       => home_url(),
+			'post_id'        => get_the_ID(),
+			'smartcaptcha_enabled' => function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced(),
+			'smartcaptcha_sitekey' => function_exists('yoga_smartcaptcha_client_key') ? yoga_smartcaptcha_client_key() : '',
+		);
+
+		wp_localize_script('main-script', 'yoga_ajax', $yoga_ajax_data);
+
+		if ($yoga_ajax_data['smartcaptcha_enabled']) {
+			wp_register_script(
+				'yandex-smartcaptcha',
+				'https://smartcaptcha.cloud.yandex.net/captcha.js?render=onload&onload=yogaInitSmartCaptcha',
+				array('main-script'),
+				null,
+				true
+			);
+			wp_add_inline_script(
+				'yandex-smartcaptcha',
+				'window.yogaInitSmartCaptcha=function(){try{if(typeof yoga_ajax==="undefined"||!yoga_ajax.smartcaptcha_enabled||!yoga_ajax.smartcaptcha_sitekey||!window.smartCaptcha)return;document.querySelectorAll(".yoga-smart-captcha-mount").forEach(function(el){if(el.getAttribute("data-yoga-sc-rendered")==="1")return;el.setAttribute("data-yoga-sc-rendered","1");var wid=window.smartCaptcha.render(el,{sitekey:yoga_ajax.smartcaptcha_sitekey,hl:"ru"});el.dataset.yogaWidgetId=String(wid);});}catch(err){console.warn(err);}};',
+				'before'
+			);
+			wp_enqueue_script('yandex-smartcaptcha');
+		}
 	}
 	add_action('wp_enqueue_scripts', 'yoga_ajax_localization');
 	
@@ -3119,11 +3140,7 @@ function handle_comment_delete() {
 			return $minutes . ' ' . yoga_minutes_word($minutes);
 		}
 	}
-	
-	
-	// Регистрация по email
-	// Проверка reCAPTCHA
-// Отправка письма подтверждения регистрации
+
 	function get_current_user_tariff($user_id = null) {
 		if (!$user_id) {
 			$user_id = get_current_user_id();
@@ -3186,7 +3203,6 @@ function handle_comment_delete() {
 				return 30 * DAY_IN_SECONDS;
 			}
 
-			// Проверка reCAPTCHA
 			if (preg_match('/^(\\\\d+)\\\\s*([dwmy])?$/i', $period, $matches)) {
 				$value = (int) $matches[1];
 				$unit = isset($matches[2]) ? strtolower($matches[2]) : 'd';

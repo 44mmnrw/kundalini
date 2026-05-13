@@ -32,6 +32,7 @@ if (!function_exists('yoga_get_registration_role')) {
 if (!function_exists('handle_yoga_email_login')) {
     function handle_yoga_email_login() {
         check_ajax_referer('yoga_login_nonce', 'yoga_login_nonce');
+        yoga_smartcaptcha_require_valid();
         $log = sanitize_text_field($_POST['log']);
         $pwd = $_POST['pwd'];
         if (empty($log) || empty($pwd)) {
@@ -60,6 +61,7 @@ if (!function_exists('handle_yoga_email_register')) {
     function handle_yoga_email_register() {
         check_ajax_referer('yoga_register_nonce', 'yoga_register_nonce');
 
+        yoga_smartcaptcha_require_valid();
         $email = sanitize_email($_POST['user_email']);
         $name = sanitize_text_field($_POST['user_name']);
         $pass = $_POST['user_pass'];
@@ -111,6 +113,7 @@ if (!function_exists('handle_yoga_lost_password')) {
     function handle_yoga_lost_password() {
         check_ajax_referer('yoga_recovery_nonce', 'yoga_recovery_nonce');
 
+        yoga_smartcaptcha_require_valid();
         $login = sanitize_text_field($_POST['user_login']);
         if (empty($login)) {
             yoga_ajax_error('Введите email', 'validation_error', 422);

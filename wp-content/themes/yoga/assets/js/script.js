@@ -1,4 +1,18 @@
 ﻿jQuery(document).ready(function($) {
+
+	window.yogaResetSmartCaptchaMount = function(mountEl) {
+		if (!mountEl || typeof window.smartCaptcha === 'undefined' || typeof window.smartCaptcha.reset !== 'function') {
+			return;
+		}
+		try {
+			var wid = mountEl.dataset.yogaWidgetId;
+			if (wid !== undefined && wid !== '') {
+				window.smartCaptcha.reset(wid);
+			} else {
+				window.smartCaptcha.reset();
+			}
+		} catch (ignore) {}
+	};
 	
 	new WOW().init();
     
@@ -72,12 +86,6 @@
 		$('.overlay').addClass("active");
 		$('.modal-login').addClass("active");
 		$('.modal-mobile-menu').removeClass("active");
-		// Инициализация reCAPTCHA при открытии модального окна
-		setTimeout(function() {
-			if (typeof initRecaptcha === 'function') {
-				initRecaptcha();
-			}
-		}, 300);
 	});
 	
 	/* Section-reviews */
@@ -1252,12 +1260,6 @@
 		var mlsw = $(this).attr('data-target');
 		$('.modal-login-inner__slide').removeClass("active");
 		$('.modal-login-inner__slide[data-target=' + mlsw + ']').addClass("active");
-		// Инициализация reCAPTCHA при переключении слайдов
-		setTimeout(function() {
-			if (typeof initRecaptcha === 'function') {
-				initRecaptcha();
-			}
-		}, 300);
 	});
 	
 	$(".modal-login .form").submit(function(e) {
@@ -1287,6 +1289,18 @@
 		$msg.removeClass('is-visible').empty();
 		var $btn = $form.find('.btn');
 		if (typeof yoga_ajax === 'undefined') return;
+
+		if (yoga_ajax.smartcaptcha_enabled && (!$form.find('input[name="smart-token"]').val() || !$form.find('input[name="smart-token"]').val().trim())) {
+			showLoginErr('Подтвердите, что вы не робот');
+			return;
+		}
+
+		var resetSmartCaptcha = function() {
+			$form.find('.yoga-smart-captcha-mount').each(function() {
+				window.yogaResetSmartCaptchaMount(this);
+			});
+		};
+
 		$btn.prop('disabled', true);
 		$.ajax({
 			url: yoga_ajax.ajax_url,
@@ -1300,6 +1314,7 @@
 					location.reload();
 				} else {
 					showLoginErr(messageFromPayload(r && r.data, 'Ошибка входа'));
+					resetSmartCaptcha();
 				}
 			})
 			.fail(function(xhr) {
@@ -1312,6 +1327,7 @@
 					} catch (err) {}
 				}
 				showLoginErr(messageFromPayload(d, 'Ошибка соединения'));
+				resetSmartCaptcha();
 			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
@@ -1340,6 +1356,17 @@
 			return fallbackText;
 		};
 
+		if (yoga_ajax.smartcaptcha_enabled && (!$form.find('input[name="smart-token"]').val() || !$form.find('input[name="smart-token"]').val().trim())) {
+			alert('Подтвердите, что вы не робот');
+			return;
+		}
+
+		var resetSmartCaptchaRegister = function() {
+			$form.find('.yoga-smart-captcha-mount').each(function() {
+				window.yogaResetSmartCaptchaMount(this);
+			});
+		};
+
 		$btn.prop('disabled', true);
 		$.post(yoga_ajax.ajax_url, $form.serialize())
 			.done(function(r) {
@@ -1349,9 +1376,13 @@
 				} else {
 					var message = (r && r.data && r.data.message) ? r.data.message : (r.data || 'Ошибка регистрации');
 					alert(message);
+					resetSmartCaptchaRegister();
 				}
 			})
-			.fail(function(xhr) { alert(extractAjaxError(xhr, 'Ошибка соединения')); })
+			.fail(function(xhr) {
+				alert(extractAjaxError(xhr, 'Ошибка соединения'));
+				resetSmartCaptchaRegister();
+			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
 	
@@ -1379,6 +1410,17 @@
 			return fallbackText;
 		};
 
+		if (yoga_ajax.smartcaptcha_enabled && (!$form.find('input[name="smart-token"]').val() || !$form.find('input[name="smart-token"]').val().trim())) {
+			alert('Подтвердите, что вы не робот');
+			return;
+		}
+
+		var resetSmartCaptchaRecovery = function() {
+			$form.find('.yoga-smart-captcha-mount').each(function() {
+				window.yogaResetSmartCaptchaMount(this);
+			});
+		};
+
 		$btn.prop('disabled', true);
 		$.post(yoga_ajax.ajax_url, $form.serialize())
 			.done(function(r) {
@@ -1388,9 +1430,13 @@
 				} else {
 					var message = (r && r.data && r.data.message) ? r.data.message : (r.data || 'Не удалось отправить письмо');
 					alert(message);
+					resetSmartCaptchaRecovery();
 				}
 			})
-			.fail(function(xhr) { alert(extractAjaxError(xhr, 'Ошибка соединения')); })
+			.fail(function(xhr) {
+				alert(extractAjaxError(xhr, 'Ошибка соединения'));
+				resetSmartCaptchaRecovery();
+			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
 	

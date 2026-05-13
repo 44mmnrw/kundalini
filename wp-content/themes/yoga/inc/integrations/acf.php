@@ -265,3 +265,55 @@ if (!function_exists('yoga_register_theme_cta_fields')) {
 
 add_action('acf/init', 'yoga_register_theme_cta_fields');
 
+if (!function_exists('yoga_register_theme_smartcaptcha_fields')) {
+    function yoga_register_theme_smartcaptcha_fields() {
+        if (!function_exists('acf_add_local_field_group')) {
+            return;
+        }
+
+        acf_add_local_field_group(array(
+            'key' => 'group_theme_smartcaptcha',
+            'title' => 'Yandex SmartCaptcha',
+            'fields' => array(
+                array(
+                    'key' => 'field_smartcaptcha_intro',
+                    'label' => '',
+                    'name' => '',
+                    'type' => 'message',
+                    'message' => 'Ключи из <a href="https://yandex.cloud/ru/docs/smartcaptcha/" target="_blank" rel="noopener noreferrer">консоли Yandex Cloud</a>. Если заданы константы <code>YOGA_SMARTCAPTCHA_CLIENT_KEY</code> и <code>YOGA_SMARTCAPTCHA_SERVER_KEY</code> в <code>wp-config.php</code>, они имеют приоритет над этими полями.',
+                    'new_lines' => 'wpautop',
+                    'esc_html' => 0,
+                ),
+                array(
+                    'key' => 'field_smartcaptcha_client_key',
+                    'label' => 'Клиентский ключ (site key)',
+                    'name' => 'smartcaptcha_client_key',
+                    'type' => 'text',
+                    'instructions' => 'Отображается в браузере в виджете капчи. Добавьте домен сайта в настройках капчи в облаке.',
+                    'placeholder' => '',
+                ),
+                array(
+                    'key' => 'field_smartcaptcha_server_key',
+                    'label' => 'Серверный ключ (secret)',
+                    'name' => 'smartcaptcha_server_key',
+                    'type' => 'text',
+                    'instructions' => 'Только для проверки токена на сервере. Не используйте в JavaScript.',
+                    'placeholder' => '',
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param' => 'options_page',
+                        'operator' => '==',
+                        'value' => 'theme-general-settings',
+                    ),
+                ),
+            ),
+            'menu_order' => 5,
+        ));
+    }
+}
+
+add_action('acf/init', 'yoga_register_theme_smartcaptcha_fields');
+
