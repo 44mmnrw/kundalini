@@ -16,7 +16,7 @@ if ($privacy_url === '') {
 	$privacy_url = '#';
 }
 
-$cookie_text = __('Сайт использует файлы cookie для обеспечения удобства пользователей сайта, его улучшения, предоставления персонализированных рекомендаций.', 'yoga');
+$cookie_text = __('Сайт использует файлы куки для обеспечения удобства пользователей сайта, его улучшения, предоставления персонализированных рекомендаций.', 'yoga');
 ?>
 <div class="modal-cookie" id="yoga-modal-cookie" role="dialog" aria-live="polite" aria-label="<?php echo esc_attr__('Уведомление о файлах cookie', 'yoga'); ?>">
 	<div class="cookie">
