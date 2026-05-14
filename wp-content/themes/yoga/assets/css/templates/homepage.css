@@ -273,9 +273,10 @@
     display: none;
   }
   .main__img {
-    width: 21rem;
+    /* Было right: 17rem при width 21rem — на ~1180px левый край фото заходил на .main__info */
+    width: 20rem;
     max-width: none;
-    right: 17rem;
+    right: clamp(6rem, calc(18vw - 2rem), 15rem);
   }
 }
 /* Как header/mobile lg: до 1024 включительно — не «узкий десктоп» flex hero */
