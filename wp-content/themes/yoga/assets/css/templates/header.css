@@ -529,6 +529,11 @@ header > .container > .row > .header-content {
     background: var(--color-white);
   }
 
+  /* Фикс. шапка: py + блок строки (min-height 2×py+иконка) + py; +1px border-bottom */
+  body.body_main {
+    padding-top: calc(var(--header-mobile-py) * 4 + var(--header-mobile-icon-size) + 1px);
+  }
+
   #header > .container > .row {
     justify-content: flex-start;
   }
