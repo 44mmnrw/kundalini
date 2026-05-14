@@ -648,8 +648,13 @@
 }
 @media (max-width: 767px) and (min-width: 640px) {
   .whyme-item__number {
-    top: 4.3125rem;
+    top: 4rem;
     width: 4.5rem;
+  }
+}
+@media (max-width: 639px) {
+  .whyme-item__number {
+    top: 3.0625rem;
   }
 }
 @media (max-width: 767px) {
@@ -695,7 +700,7 @@
     left: auto;
   }
   .whyme-item__number {
-    top: 4.75rem;
+    top: 4.4375rem;
     width: 4.25rem;
   }
 }
