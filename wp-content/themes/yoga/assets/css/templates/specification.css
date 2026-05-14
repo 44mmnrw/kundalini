@@ -13,8 +13,8 @@
   --color-grey: #f6f6f9;
   --color-white: #ffffff;
   --transition-base: 0.4s ease;
-  /* Горизонтальный полуполя от края вьюпорта до .container (10px при root 16px) */
-  --container-inline-gutter: 0.625rem;
+  /* Горизонтальный отступ от края вьюпорта до контента (в том числе max-width .container) */
+  --container-inline-gutter: 10px;
 }
 
 html {
