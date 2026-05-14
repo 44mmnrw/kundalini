@@ -170,7 +170,7 @@ footer .container {
   .footer-rules {
     font-size: 0.875rem;  }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .footer-main {
     flex-wrap: wrap;
     padding-top: 1.25rem;    padding-bottom: 1.25rem;  }
@@ -213,7 +213,7 @@ footer .container {
 }
 
 /* Планшет sm…below-lg: сетка на .footer-nav-cluster */
-@media (max-width: 1023px) and (min-width: 640px) {
+@media (max-width: 1024px) and (min-width: 640px) {
   .footer-main {
     padding-top: 0.9375rem;
     padding-bottom: 0.9375rem;

@@ -281,6 +281,25 @@
 }
 /* Как header/mobile lg: до 1024 включительно — не «узкий десктоп» flex hero */
 @media (max-width: 1024px) {
+  /*
+   * section — flex (specification.css); у .container фикс. width + inline-block.
+   * margin у контейнера давал неровную «рамку»: справа оставался пустой зазор.
+   * Поля 10px задаём padding на секции, контент растягиваем на 100%.
+   */
+  #section-main {
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+  }
+
+  #section-main > .container {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    display: block;
+  }
+
   .main {
     display: block;
     padding-top: 2.625rem;    padding-left: 2.1875rem;    padding-right: 2.1875rem;    padding-bottom: 25rem;  }
@@ -577,7 +596,7 @@
   .whyme-item__number {
     top: 3.4375rem;    width: 4.125rem;  }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .section-whyme {
     padding-top: 0.625rem;    padding-bottom: 6.5rem;  }
   .whyme__items {
@@ -617,16 +636,19 @@
     top: 0px;
     left: auto;
   }
-}
-@media (max-width: 1023px) and (min-width: 768px) {
   .whyme-item__number {
-    top: 3.9375rem;
+    top: 3.375rem;
+  }
+}
+@media (max-width: 1024px) and (min-width: 768px) {
+  .whyme-item__number {
+    top: 3.8125rem;
     width: 4.5rem;
   }
 }
 @media (max-width: 767px) and (min-width: 640px) {
   .whyme-item__number {
-    top: 4.4375rem;
+    top: 4.3125rem;
     width: 4.5rem;
   }
 }
@@ -673,7 +695,7 @@
     left: auto;
   }
   .whyme-item__number {
-    top: 4.875rem;
+    top: 4.75rem;
     width: 4.25rem;
   }
 }
@@ -730,7 +752,7 @@
   .begin-item__info {
     width: calc(100% - 10.3125rem);    padding-left: 0.9375rem;  }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .begin-items {
     display: block;
   }
