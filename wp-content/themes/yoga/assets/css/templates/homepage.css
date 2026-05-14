@@ -278,7 +278,8 @@
     right: 17rem;
   }
 }
-@media (max-width: 1023px) {
+/* Как header/mobile lg: до 1024 включительно — не «узкий десктоп» flex hero */
+@media (max-width: 1024px) {
   .main {
     display: block;
     padding-top: 2.625rem;    padding-left: 2.1875rem;    padding-right: 2.1875rem;    padding-bottom: 25rem;  }
@@ -289,6 +290,17 @@
   }
   .main__info h2 {
     font-size: 2.875rem;    text-align: center;
+  }
+  /* Иначе от 1279px остаётся width: 0% + typing — строки рвутся/обрезаются */
+  .main__info h2 p {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
+  }
+  .main__info h2 .animation-title {
+    animation: none;
+    overflow: visible;
   }
   .main__info .btn {
     position: absolute;
@@ -767,8 +779,8 @@
     padding-top: 0.75rem;  }
 }
 
-/* Главная: более плотные секции (уменьшены отступы заголовков и паддинги секций) */
-@media (min-width: 1024px) {
+/* Главная: более плотные секции (уменьшены отступы заголовков и паддинги секций) — с 1025 как остальной desktop */
+@media (min-width: 1025px) {
   .home #section-main h2 {
     margin-top: 0;
   }
