@@ -3,7 +3,7 @@
  * Дополнительно: tight-desktop ~1320px — шаг между xl и 2xl для узкого «полного» десктопа.
  *
  * Подключать до основного бандла (см. functions.php: yoga-breakpoints → main-style).
- * В условии @media (max-width: …) подставляйте те же числа литералами (639px, 1023px и т.д.):
+ * В условии @media (max-width: …) подставляйте те же числа литералами (639px, 1024px и т.д.):
  * var() там не поддерживается надёжно. Сами переменные можно использовать в значениях
  * свойств внутри блока @media или без него.
  */
@@ -11,13 +11,13 @@
 :root {
   --yoga-bp-sm: 640px;
   --yoga-bp-md: 768px;
-  --yoga-bp-lg: 1024px;
+  --yoga-bp-lg: 1025px;
   --yoga-bp-xl: 1280px;
   --yoga-bp-2xl: 1536px;
 
   --yoga-below-sm: 639px;
   --yoga-below-md: 767px;
-  --yoga-below-lg: 1023px;
+  --yoga-below-lg: 1024px;
   --yoga-below-xl: 1279px;
   --yoga-below-2xl: 1535px;
 

@@ -2,7 +2,7 @@
  * Ширины viewport — те же числа, что в assets/css/breakpoints.css (Tailwind sm/md/lg/xl/2xl + tight-desktop).
  * @type {{sm:number,md:number,lg:number,xl:number,xxl:number,tightDesktop:number}}
  */
-var yogaViewportBp = { sm: 640, md: 768, lg: 1024, xl: 1280, xxl: 1536, tightDesktop: 1320 };
+var yogaViewportBp = { sm: 640, md: 768, lg: 1025, xl: 1280, xxl: 1536, tightDesktop: 1320 };
 
 jQuery(document).ready(function($) {
 

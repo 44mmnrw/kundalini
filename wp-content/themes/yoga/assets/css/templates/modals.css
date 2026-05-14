@@ -970,7 +970,7 @@
     width: 1.25rem;    margin: auto;
   }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .modal-mobile-menu {
     display: flex;
   }
@@ -1507,7 +1507,7 @@ p.login-rules a:hover {
   .modal-login-inner__slide {
     min-width: 26.25rem;  }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .modal-login .modal-close, .modal-addnewcard .modal-close {
     top: 0.75rem;  }
 }
@@ -1645,7 +1645,7 @@ p.login-rules a:hover {
   display: none !important;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .modal-filter {
     display: flex !important;
     position: fixed;
@@ -2211,7 +2211,7 @@ p.login-rules a:hover {
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .modal-cookie {
     padding: 1.875rem 1.25rem;
   }
@@ -2244,7 +2244,7 @@ p.login-rules a:hover {
 
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
 
 }
 

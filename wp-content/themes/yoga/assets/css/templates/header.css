@@ -1,13 +1,14 @@
 /**
  * Шапка главного сайта (ЛК в шапке: .lk-header-* в faq.css).
  * Desktop гость: Figma 265:5652.
- * Mobile: Figma header_mobile 550:10307 — py 12px, inline 10px (как --container-inline-gutter), иконки 48px, между ними 7px, лого 44×28.
+ * Mobile: Figma header_mobile 593:16211 — py 12px, px 10px, круги 48px, gap 7px, лого 44×28, иконки внутри круга 24px.
  */
 
 :root {
   --header-desktop-logo-w: 3.125rem;
   --header-desktop-logo-h: 2rem;
-  --header-desktop-logo-nav-gap: clamp(1.125rem, 2.1vw + 0.875rem, calc(53 / 16 * 1rem));
+  /* Figma desktop: 53px между логотипом и навигацией */
+  --header-desktop-logo-nav-gap: calc(53 / 16 * 1rem);
   --header-desktop-nav-item-gap: clamp(0.8125rem, 1.45vw + 0.35rem, calc(35 / 16 * 1rem));
   /* Figma: 20px между CTA и иконкой входа */
   --header-desktop-lk-gap: 1.25rem;
@@ -15,6 +16,8 @@
   --header-mobile-py: 0.75rem;
   /* Figma: 48px круги log_in + burger */
   --header-mobile-icon-size: 3rem;
+  /* Внутри круга 48px: Figma User_duotone_line / три линии burger — графика 24×24 */
+  --header-mobile-figma-icon-inner: calc(24 / 16 * 1rem);
   /* Figma: gap-[7px] между иконками справа */
   --header-mobile-icon-gap: calc(7 / 16 * 1rem);
   --header-mobile-border: 1px solid rgba(145, 83, 225, 0.07);
@@ -327,7 +330,7 @@ header > .container > .row > .header-content {
   pointer-events: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   /* Авторизованный: три колонки (лого | меню | ЛК) */
   .header-content {
     display: grid;
@@ -350,6 +353,9 @@ header > .container > .row > .header-content {
     max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
+    /* CQ по ширине колонки меню: при широком ЛК средняя ячейка сетки уже, ширина всего header — та же */
+    container-type: inline-size;
+    container-name: nav-slot;
   }
 
   .main-menu > ul {
@@ -505,22 +511,60 @@ header > .container > .row > .header-content {
 }
 
 @supports (width: 1cqi) {
-  @media (min-width: 1024px) {
+  @media (min-width: 1025px) {
     .header-content {
-      --header-desktop-logo-nav-gap: clamp(1.125rem, 5.5cqi + 0.5rem, calc(53 / 16 * 1rem));
       --header-desktop-nav-item-gap: clamp(0.8125rem, 3.5cqi + 0.25rem, calc(35 / 16 * 1rem));
     }
   }
 }
 
-@media (max-width: 1319px) and (min-width: 1024px) {
+/* Узкий десктоп + авторизованный: плотнее только блок ЛК — меню без уменьшения шрифта/gap */
+@media (min-width: 1025px) and (max-width: 1319px) {
+  .header-content:has(> .header-lk.header-lk--logged) .header-lk--logged {
+    gap: 0.4375rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-lk-logged-desktop {
+    gap: 0.4375rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill {
+    max-width: 10.5rem;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.9375rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-favorites-link {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-favorites-link svg {
+    width: 1.25rem;
+    height: 1.125rem;
+  }
+}
+
+/* Очень узкая колонка nav: только пилюля; шрифт и gap меню не трогаем */
+@container nav-slot (max-width: 28rem) {
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill {
+    max-width: 9rem;
+  }
+}
+
+@media (max-width: 1319px) and (min-width: 1025px) {
   header {
     padding-top: 0.9375rem;
     padding-bottom: 0.9375rem;
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   header {
     padding-top: var(--header-mobile-py);
     padding-bottom: var(--header-mobile-py);
@@ -623,6 +667,11 @@ header > .container > .row > .header-content {
     height: var(--header-mobile-icon-size);
   }
 
+  .login-icon svg {
+    width: var(--header-mobile-figma-icon-inner);
+    height: var(--header-mobile-figma-icon-inner);
+  }
+
   .burger {
     display: block;
     position: relative;
@@ -658,7 +707,7 @@ header > .container > .row > .header-content {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 24px;
-    height: 24px;
+    width: var(--header-mobile-figma-icon-inner);
+    height: var(--header-mobile-figma-icon-inner);
   }
 }
