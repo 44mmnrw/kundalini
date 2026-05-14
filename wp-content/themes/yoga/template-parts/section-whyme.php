@@ -4,6 +4,18 @@
  */
 $whyme_title = get_field('whyme_title', get_the_ID()) ?: 'почему мы?';
 $whyme_items = get_field('whyme_items', get_the_ID());
+
+$whyme_shape_by_class = [
+    'whyme-item_green'  => 'wyme_1.svg',
+    'whyme-item_grey'   => 'wyme_2.svg',
+    'whyme-item_purple' => 'wyme_3.svg',
+];
+$whyme_star_by_class = [
+    'whyme-item_green'  => 'wyme_star_1.svg',
+    'whyme-item_grey'   => 'wyme_star_2.svg',
+    'whyme-item_purple' => 'wyme_star_3.svg',
+];
+$whyme_shape_base_uri = get_template_directory_uri() . '/assets/svg/';
 ?>
 
 <section class="section-whyme" id="section-whyme">
@@ -19,7 +31,6 @@ $whyme_items = get_field('whyme_items', get_the_ID());
                     <?php foreach ($whyme_items as $item) : 
                         $item_class = $item['item_class'] ?? 'whyme-item_green';
                         $item_number = $item['item_number'] ?? '01.';
-                        $item_bg = $item['item_bg'] ?? '';
                         $item_image = $item['item_image'] ?? '';
                         $item_title = $item['item_title'] ?? '';
                         $item_text = $item['item_text'] ?? '';
@@ -27,13 +38,19 @@ $whyme_items = get_field('whyme_items', get_the_ID());
                     ?>
                                        
                     <div class="whyme-item <?php echo esc_attr($item_class); ?> <?php echo esc_attr($item_animation); ?> delay-200ms slow">
-                        <?php if ($item_bg) : ?>
-                            <img src="<?php echo esc_url($item_bg); ?>" alt="" class="whyme-item__bg">
-                        <?php endif; ?>
-                        
-                        <span class="whyme-item__number">
-                            <?php echo esc_html($item_number); ?>
-                        </span>
+                        <?php
+                        $shape_file = $whyme_shape_by_class[ $item_class ] ?? $whyme_shape_by_class['whyme-item_green'];
+                        $shape_url  = $whyme_shape_base_uri . $shape_file;
+                        $star_file  = $whyme_star_by_class[ $item_class ] ?? $whyme_star_by_class['whyme-item_green'];
+                        $star_url   = $whyme_shape_base_uri . $star_file;
+                        ?>
+                        <div class="whyme-item__plate">
+                            <img src="<?php echo esc_url( $shape_url ); ?>" alt="" class="whyme-item__shape" loading="lazy" decoding="async" aria-hidden="true">
+                            <span class="whyme-item__star" aria-hidden="true">
+                                <img src="<?php echo esc_url( $star_url ); ?>" alt="" class="whyme-item__star-img" width="42" height="42" loading="lazy" decoding="async">
+                            </span>
+                            <span class="whyme-item__number"><?php echo esc_html($item_number); ?></span>
+                        </div>
                         
                         <?php if ($item_image) : ?>
                             <img src="<?php echo esc_url($item_image); ?>" alt="<?php echo esc_attr($item_title); ?>" class="whyme-item__image">
@@ -49,31 +66,6 @@ $whyme_items = get_field('whyme_items', get_the_ID());
                     </div>
                     <?php endforeach; ?>
                 </div>
-                <?php else : ?>
-                    <!-- Fallback контент если поля не заполнены -->
-                    <div class="whyme__items">
-                        <div class="whyme-item whyme-item_green wow rollIn delay-200ms slow">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/whyme-item-bg_01.png'); ?>" alt="" class="whyme-item__bg">
-                            <span class="whyme-item__number">01.</span>
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/whyme-item-img_01-min.png'); ?>" alt="" class="whyme-item__image">
-                            <h4>Удобный формат</h4>
-                            <p>понятные иллюстрации и подробные инструкции помогут легко освоить крийи и медитации</p>
-                        </div>
-                        <div class="whyme-item whyme-item_grey wow zoomIn delay-200ms slow">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/whyme-item-bg_02.png'); ?>" alt="" class="whyme-item__bg">
-                            <span class="whyme-item__number">02.</span>
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/whyme-item-img_02-min.png'); ?>" alt="" class="whyme-item__image">
-                            <h4>Комфортный ритм</h4>
-                            <p>доступ к платформе 24/7 позволяет заниматься в удобное время, без привязки к расписанию</p>
-                        </div>
-                        <div class="whyme-item whyme-item_purple wow rollInAlt delay-200ms slow">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/whyme-item-bg_03.png'); ?>" alt="" class="whyme-item__bg">
-                            <span class="whyme-item__number">03.</span>
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/whyme-item-img_03-min.png'); ?>" alt="" class="whyme-item__image">
-                            <h4>Глубокое погружение</h4>
-                            <p>изучайте не только практику, но и философию Кундалини, чтобы лучше понимать её принципы и влияние</p>
-                        </div>
-                    </div>
                 <?php endif; ?>
             </div>
         </div>
