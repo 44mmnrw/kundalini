@@ -461,7 +461,7 @@ input::-moz-placeholder {
   .container {
     width: 58.75rem;  }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   body {
     padding-top: 4.75rem;  }
   .container {

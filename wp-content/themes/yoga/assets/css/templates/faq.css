@@ -555,8 +555,8 @@
     margin-left: 0;
   }
   .lk-burger svg {
-    width: 24px;
-    height: 24px;
+    width: var(--header-mobile-figma-icon-inner, 1.5rem);
+    height: var(--header-mobile-figma-icon-inner, 1.5rem);
   }
   .lk-burger img.active {
     width: 1.25rem;  }
