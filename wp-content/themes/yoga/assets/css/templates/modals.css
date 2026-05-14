@@ -143,7 +143,7 @@
   margin-bottom: 1.625rem;  font-size: 1.125rem;  line-height: 1.51em;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
   .review-modal {
     padding-top: 1.875rem;    padding-left: 1.875rem;    padding-bottom: 1.875rem;  }
   .review-modal__text {
@@ -319,7 +319,7 @@
   font-size: 1.125rem;  transition: 0.4s ease;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
   .modal-menu {
     top: 5.125rem;  }
   .modal-menu-column nav {
@@ -327,7 +327,7 @@
   .modal-menu-item {
     padding-top: 0.8125rem;    padding-bottom: 0.8125rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .modal-mobile-menu, .modal-mobile-menu-lk {
     position: fixed;
     right: 0px;
@@ -970,9 +970,19 @@
     width: 1.25rem;    margin: auto;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .modal-mobile-menu {
     display: flex;
+  }
+
+  /* Крестик точно на месте бургера: те же top/right и 48×48, что у .burger */
+  .modal-mobile-menu .modal-close {
+    top: var(--header-mobile-close-top);
+    right: var(--header-mobile-close-right);
+    width: var(--header-mobile-icon-size);
+    height: var(--header-mobile-icon-size);
+    border-radius: 50%;
+    box-sizing: border-box;
   }
 }
 @media (max-width: 767px) {
@@ -986,17 +996,8 @@
   .modal-mobile-menu {
     --mm-menu-inline-gutter: calc((100vw - min(20rem, 100vw - 1.875rem)) / 2);
   }
-  .modal-mobile-menu .modal-close {
-    top: 0.75rem;
-    width: 3.0625rem;
-    height: 3rem;
-  }
   .modal-mobile-menu-lk .modal-close {
     right: 0.625rem;
-  }
-  .modal-mobile-menu .modal-close__icon {
-    width: 1.25rem;
-    height: 1.25rem;
   }
   .mobile-menu {
     max-height: calc(100vh - 6.25rem);  }
@@ -1486,7 +1487,7 @@ p.login-rules a:hover {
   margin-top: 1.25rem;  text-align: center;
   padding: 0.375rem;  border-radius: 0.1875rem;  margin-bottom: -0.3125rem;}
 
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
   .modal-login .modal-close, .modal-addnewcard .modal-close {
     top: 0.9375rem;  }
   .modal-login-inner, .addnewcard-inner {
@@ -1500,13 +1501,13 @@ p.login-rules a:hover {
   .form-link_vk {
     margin-top: 1.6875rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .modal-login.active .modal-login-inner {
     width: 33.75rem;    padding-left: 2.25rem;    padding-right: 2.25rem;  }
   .modal-login-inner__slide {
     min-width: 26.25rem;  }
 }
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .modal-login .modal-close, .modal-addnewcard .modal-close {
     top: 0.75rem;  }
 }
@@ -1644,7 +1645,7 @@ p.login-rules a:hover {
   display: none !important;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .modal-filter {
     display: flex !important;
     position: fixed;
@@ -2044,13 +2045,13 @@ p.login-rules a:hover {
   color: var(--color-green);
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
   .addnewcard-inner .form {
     padding-top: 1.5625rem;  }
   .addnewcard-inner .btn {
     margin-top: 1.25rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .addnewcard-inner {
     min-width: 33.75rem;    padding-left: 2.5rem;    padding-right: 5rem;  }
 }
@@ -2203,14 +2204,14 @@ p.login-rules a:hover {
   color: #ffffff;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
   .modal-cookie {
     padding-left: 3.75rem;
     padding-right: 3.75rem;
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .modal-cookie {
     padding: 1.875rem 1.25rem;
   }
@@ -2235,15 +2236,15 @@ p.login-rules a:hover {
 
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
 
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
 
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
 
 }
 

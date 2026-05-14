@@ -121,7 +121,7 @@
   text-align: right;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-about {
     padding-top: 0.9375rem;    padding-bottom: 3.75rem;  }
   .about {
@@ -133,11 +133,11 @@
   .about__last {
     padding-top: 5.9375rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: var(--yoga-below-xl)) {
   .about {
     max-width: 47.8125rem;  }
 }
-@media (max-width: 991px) {
+@media (max-width: var(--yoga-below-lg)) {
   .section-about {
     overflow: hidden;
   }

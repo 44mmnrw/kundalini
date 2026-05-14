@@ -1,4 +1,10 @@
-﻿jQuery(document).ready(function($) {
+﻿/**
+ * Ширины viewport — те же числа, что в assets/css/breakpoints.css (Tailwind sm/md/lg/xl/2xl + tight-desktop).
+ * @type {{sm:number,md:number,lg:number,xl:number,xxl:number,tightDesktop:number}}
+ */
+var yogaViewportBp = { sm: 640, md: 768, lg: 1024, xl: 1280, xxl: 1536, tightDesktop: 1320 };
+
+jQuery(document).ready(function($) {
 
 	window.yogaResetSmartCaptchaMount = function(mountEl) {
 		if (!mountEl || typeof window.smartCaptcha === 'undefined' || typeof window.smartCaptcha.reset !== 'function') {
@@ -58,9 +64,20 @@
 		$(this).toggleClass("active");
 	});
 	
-	$('.burger').click(function () {
-		$('.modal-mobile-menu').addClass("active");
-	});  
+	/* Бургер главного сайта: без класса modal-call (иначе конфликт с общим обработчиком .modal-call). */
+	$(document).on('click', '.body_main .burger', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var $panel = $('.modal-mobile-menu');
+		if (!$panel.length) {
+			return;
+		}
+		$panel.addClass('active');
+		$('.overlay').addClass('active');
+		$('.body').addClass('body-fixed');
+		$('.modal').removeClass('active');
+		$('.modal-login').removeClass('active');
+	});
 	
 	
 	/*
@@ -124,21 +141,21 @@
 		nextArrow: ".section-videos .slick-next",
 		responsive: [
 			{
-				breakpoint: 1199,
+				breakpoint: yogaViewportBp.xl,
 				settings: {   
 					slidesToShow: 4,
 					slidesToScroll: 4,   
 				}
 			},
 			{
-				breakpoint: 991,
+				breakpoint: yogaViewportBp.lg,
 				settings: {
 					slidesToShow: 3,
 					slidesToScroll: 3,
 				}
 			},
 			{
-				breakpoint: 767,
+				breakpoint: yogaViewportBp.md,
 				settings: {
 					slidesToShow: 1,
 					slidesToScroll: 1,  
@@ -162,21 +179,21 @@
 		nextArrow: ".section-popular-practices .slick-next",
 		responsive: [
 			{
-				breakpoint: 1199,
+				breakpoint: yogaViewportBp.xl,
 				settings: {   
 					slidesToShow: 3,
 					slidesToScroll: 3,   
 				}
 			},
 			{
-				breakpoint: 991,
+				breakpoint: yogaViewportBp.lg,
 				settings: {
 					slidesToShow: 2,
 					slidesToScroll: 2,
 				}
 			},
 			{
-				breakpoint: 575,
+				breakpoint: yogaViewportBp.sm,
 				settings: {
 					slidesToShow: 1,
 					slidesToScroll: 1,
@@ -228,7 +245,7 @@
 	
 	$('.filter-btn').click(function () {
 		var $lib = $(this).closest('.section-library');
-		if ($lib.length && $(window).width() < 991 && $('#library-filters-screen').length) {
+		if ($lib.length && $(window).width() < yogaViewportBp.lg && $('#library-filters-screen').length) {
 			$(this).toggleClass('active');
 			if ($(this).hasClass('active')) {
 				openLibraryFiltersScreen();
@@ -247,7 +264,7 @@
 	}); 
 	
 	
-	if ($(window).width() > 991 ) {
+	if ($(window).width() >= yogaViewportBp.lg ) {
         jQuery(function($){
 			$(document).mouseup(function (e){ // событие клика по веб-документу
 				$('.filter-item__list .checkbox-item').not('.active').closest('.library-form').find('.filter-btn span').removeClass("active");
@@ -256,7 +273,7 @@
 		});
 	};
 	
-	if ($(window).width() < 991 ) {
+	if ($(window).width() < yogaViewportBp.lg ) {
         jQuery(function($){
 			$(document).mouseup(function (e){ // событие клика по веб-документу
 				$('.modal-filter .checkbox-item').not('.active').closest('body').find('.library-form').find('.filter-btn span').removeClass("active");
@@ -787,7 +804,7 @@
 		}
 
 		function praktikaFixedApplyScrollLogic() {
-			if ($(window).width() <= 1199) {
+			if ($(window).width() < yogaViewportBp.xl) {
 				praktikaClearFixedInline();
 				return;
 			}
@@ -842,7 +859,7 @@
 	
 	
 	
-	/* Header-lk — бургер: панель .modal-mobile-menu-lk (разметки раньше не было; второй обработчик для ширины <991 снимал active и мешал). */
+	/* Header-lk — бургер: панель .modal-mobile-menu-lk (ниже lg второй обработчик снимал active и мешал). */
 	$('.lk-burger').on('click', function (e) {
 		e.stopPropagation();
 		var $panel = $('.modal-mobile-menu-lk');
@@ -864,6 +881,13 @@
 			$('.body').removeClass('body-fixed');
 			$(this).removeClass('active');
 			$(this).closest('.header').removeClass('active');
+		}
+	});
+
+	$('.lk-burger').on('keydown', function (e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			$(this).trigger('click');
 		}
 	});
 
@@ -921,7 +945,7 @@
 	}); 
 	
 	
-	if ($(window).width() < 991 ) {
+	if ($(window).width() < yogaViewportBp.lg ) {
 		$('.sidebar-menu__item').click(function () {
 			$('.overlay').removeClass("active");
 			$('.modal').removeClass("active");
@@ -944,7 +968,7 @@
 		});
 	};
 	
-	if ($(window).width() < 991 ) {
+	if ($(window).width() < yogaViewportBp.lg ) {
 		$(".sidebar-menu__item").click(function () {
 			var elementClick = $('#section-lk');
 			var destination = $(elementClick).offset().top - 400;
@@ -1049,7 +1073,7 @@
 		
 	});
 	
-	if ($(window).width() > 991 ) {
+	if ($(window).width() >= yogaViewportBp.lg ) {
 		$(window).scroll(function(){
 			if ($(window).scrollTop() > 107) {
 				$(".section-blog-form").addClass("active");
@@ -1065,7 +1089,7 @@
 	};
 	
 	
-	if ($(window).width() > 1320 ) {
+	if ($(window).width() > yogaViewportBp.tightDesktop ) {
 		$(window).scroll(function(){
 			if ($(window).scrollTop() > 119) {
 				$(".section-blog-form").addClass("active");
@@ -1172,7 +1196,7 @@
 	
 	$(document).ready(function () {
 		function checkWidthAndInitSlick() {
-			if ($(window).width() > 575) {
+			if ($(window).width() >= yogaViewportBp.sm) {
 				if (!$('.popular-articles-slider').hasClass('slick-initialized')) {
 					$('.popular-articles-slider').slick({
 						// твои настройки слайдера
@@ -1186,7 +1210,7 @@
 						nextArrow: ".popular-articles__intro .slick-next",
 						responsive: [
 							{
-								breakpoint: 991,
+								breakpoint: yogaViewportBp.lg,
 								settings: {   
 									slidesToShow: 2,
 									slidesToScroll: 1,   
@@ -2305,7 +2329,7 @@
     }
 
     /**
-     * @param {boolean} immediate — без анимации (другие модалки, оверлей, <991 init).
+     * @param {boolean} immediate — без анимации (другие модалки, оверлей, ниже lg init).
      */
     function closeLibraryFiltersScreen(immediate) {
         var $screen = $('.library-filters-screen');
@@ -2313,7 +2337,7 @@
             return;
         }
 
-        if (immediate || $(window).width() >= 991) {
+        if (immediate || $(window).width() >= yogaViewportBp.lg) {
             $screen.find('.library-filters-screen__panel').off('transitionend.libraryFiltersPanel');
             finalizeLibraryFiltersScreenUi();
             return;

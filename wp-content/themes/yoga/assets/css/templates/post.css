@@ -435,7 +435,7 @@
   opacity: 0.7;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-post {
     padding-top: 1.4375rem;    padding-bottom: 5.75rem;  }
   .post-layout {
@@ -445,7 +445,7 @@
   .post-main h4 {
     font-size: 1.5rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: var(--yoga-below-xl)) {
   .post-main {
     width: calc(100% - 17.5rem);  }
   .post-author {
@@ -455,7 +455,7 @@
   .post-author-social {
     width: calc(100% + 0.625rem);    min-width: calc(100% + 0.625rem);    margin-left: -0.3125rem;  }
 }
-@media (max-width: 991px) {
+@media (max-width: var(--yoga-below-lg)) {
   .post-intro {
     max-width: 100%;
   }

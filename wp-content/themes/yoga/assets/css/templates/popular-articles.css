@@ -63,7 +63,7 @@
   display: none;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-popular-articles {
     padding-bottom: 3.75rem;  }
   .popular-articles-slider {
