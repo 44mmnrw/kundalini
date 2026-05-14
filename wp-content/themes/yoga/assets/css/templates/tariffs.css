@@ -231,13 +231,14 @@
   margin-top: 1.5rem;
 }
 
-@media (max-width: 1320px) {
+/* В условии @media нельзя использовать var() — блоки бы игнорировались (см. breakpoints.css для чисел). */
+@media (max-width: 1319px) {
   .section-tariffs.section-tariffs_single {
     padding-bottom: 5.625rem;  }
   .tariff {
     width: calc((100% - 3.75rem) / 4);    margin-top: 1.3125rem;    padding: 1.875rem 1.25rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .tariffs-items__slide {
     flex-wrap: wrap;
     justify-content: center;
@@ -250,7 +251,7 @@
   .tariff__top {
     min-height: 0px;  }
 }
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .switches {
     padding: 0px;
     margin-top: 2rem;  }

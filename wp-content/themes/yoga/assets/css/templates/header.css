@@ -1,22 +1,76 @@
-/* Header */
+/**
+ * Шапка главного сайта (ЛК в шапке: .lk-header-* в faq.css).
+ * Desktop гость: Figma 265:5652.
+ * Mobile: Figma header_mobile 550:10307 — py 12px, inline 10px (как --container-inline-gutter), иконки 48px, между ними 7px, лого 44×28.
+ */
+
+:root {
+  --header-desktop-logo-w: 3.125rem;
+  --header-desktop-logo-h: 2rem;
+  --header-desktop-logo-nav-gap: clamp(1.125rem, 2.1vw + 0.875rem, calc(53 / 16 * 1rem));
+  --header-desktop-nav-item-gap: clamp(0.8125rem, 1.45vw + 0.35rem, calc(35 / 16 * 1rem));
+  /* Figma: 20px между CTA и иконкой входа */
+  --header-desktop-lk-gap: 1.25rem;
+  /* Figma header_mobile: 12px */
+  --header-mobile-py: 0.75rem;
+  /* Figma: 48px круги log_in + burger */
+  --header-mobile-icon-size: 3rem;
+  /* Figma: gap-[7px] между иконками справа */
+  --header-mobile-icon-gap: calc(7 / 16 * 1rem);
+  --header-mobile-border: 1px solid rgba(145, 83, 225, 0.07);
+  /* Figma: logo 44×28 */
+  --header-mobile-logo-w: 2.75rem;
+  --header-mobile-logo-h: 1.75rem;
+  /* Inset от viewport для fixed .modal-close = позиция .burger (py строки + py центрирование; справа — gutter контейнера) */
+  --header-mobile-close-top: calc(var(--header-mobile-py) * 2);
+  --header-mobile-close-right: var(--container-inline-gutter);
+}
+
 header {
+  /* specification.css даёт header display:flex — из-за flex-shrink/min-width у .container полоса могла сжиматься к контенту */
+  display: block;
   position: fixed;
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
   z-index: 9;
-  padding-top: 1rem;  padding-bottom: 1rem;
-  background: #fff;
-  box-shadow: 0px 20px 50px rgba(141, 141, 141, 0);
-  transition: 0.4s ease;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background: var(--color-white);
+  box-shadow: 0 20px 50px rgba(141, 141, 141, 0);
+  transition: var(--transition-base, 0.4s ease);
+}
+
+header > .container {
+  display: block;
+  box-sizing: border-box;
+}
+
+header > .container > .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Единственный ребёнок .row — на всю ширину контейнера (иначе strip сжимается → иконки «кучей» по центру) */
+header > .container > .row > .header-content {
+  /* flex-basis: 0% — иначе при «auto» полоса может сжаться к контенту → иконки в центре */
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .header_fixed {
-  box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
+  box-shadow: 0 20px 50px rgba(241, 241, 248, 0.7);
 }
+
 .header_fixed .header-lk .btn.btn_white {
   background: rgba(232, 255, 87, 0);
   border-color: var(--color-green);
 }
+
 .header_fixed .header-lk .btn.btn_white span {
   color: var(--color-black);
 }
@@ -27,127 +81,102 @@ header {
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-}
-.header-main {
-  display: flex;
-  align-items: center;
-  gap: 3.3125rem;
   min-width: 0;
+}
+
+.logo-header {
+  flex-shrink: 0;
 }
 
 .logo-header img {
   display: block;
-  width: 3.125rem;}
+  width: var(--header-desktop-logo-w);
+  height: var(--header-desktop-logo-h);
+  object-fit: contain;
+}
 
 .main-menu {
   display: block;
-  min-width: 0;
-  padding-right: 0px;}
-/* Десктоп: меню по ширине контента; 2.5rem от последнего пункта до блока ЛК (padding у nav); ЛК прижат вправо */
-@media (min-width: 992px) {
-  .header-content {
-    justify-content: flex-start;
-    gap: 0;
-  }
-
-  .header-main {
-    flex: 0 1 auto;
-    gap: 3.3125rem;
-    min-width: 0;
-  }
-
-  .main-menu {
-    flex: 0 1 auto;
-    min-width: 0;
-    margin-left: -0.875rem;
-    padding-right: 2.5rem;
-  }
-
-  .main-menu > ul {
-    justify-content: flex-start;
-    width: auto;
-    flex-wrap: nowrap;
-    gap: 1rem;
-  }
-
-  .main-menu ul li .ref {
-    font-size: 1rem;
-    font-family: "Mulish-Medium", sans-serif;
-    font-weight: 500;
-    line-height: normal;
-  }
-
-  .header-lk {
-    flex-shrink: 0;
-    gap: 1.25rem;
-    margin-left: auto;
-  }
-
-  .login-icon {
-    width: 3.1875rem;
-    height: 3.1875rem;
-  }
 }
 
 .main-menu > ul {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
+
 .main-menu ul li {
-  display: inline-block;
-  margin-left: 0px;  margin-right: 0px;}
+  flex-shrink: 0;
+  margin: 0;
+}
+
 .main-menu ul li .ref {
   white-space: nowrap;
 }
+
 .main-menu-active-item {
   position: relative;
 }
+
 .main-menu-active-item .ref {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.3125rem;
-  padding-right: 0px;}
+  padding-right: 0;
+}
+
 .main-menu-active-item::before {
   content: "";
   display: block;
   position: absolute;
-  left: 0px;
+  left: 0;
   top: 100%;
   width: 100%;
-  height: 3.125rem;  opacity: 0;
+  height: 3.125rem;
+  opacity: 0;
   pointer-events: none;
 }
 
 .ref-icon {
   position: relative;
-  width: 0.75rem;  height: 0.75rem;
+  width: 0.75rem;
+  height: 0.75rem;
   flex-shrink: 0;
   transform: none;
-  transition: 0.4s ease;
+  transition: var(--transition-base, 0.4s ease);
 }
+
 .ref-icon img {
   display: block;
   position: absolute;
-  inset: 0px;
-  width: 0.75rem;  height: 0.75rem;
+  inset: 0;
+  width: 0.75rem;
+  height: 0.75rem;
   opacity: 0;
-  transition: 0.4s ease;
+  transition: var(--transition-base, 0.4s ease);
 }
+
 .ref-icon img.active {
   opacity: 1;
 }
 
-.main-menu-active-item:hover::before, .main-menu-active-item.active::before {
+.main-menu-active-item:hover::before,
+.main-menu-active-item.active::before {
   pointer-events: auto;
 }
 
 .main-menu-active-item .ref:hover .ref-icon {
   transform: rotate(-180deg);
 }
+
 .main-menu-active-item .ref:hover .ref-icon img {
   opacity: 1;
 }
+
 .main-menu-active-item .ref:hover .ref-icon img.active {
   opacity: 0;
 }
@@ -155,15 +184,19 @@ header {
 .main-menu-active-item.active .ref {
   color: var(--color-violet);
 }
+
 .main-menu-active-item.active .ref .ref-icon {
   transform: rotate(-180deg);
 }
+
 .main-menu-active-item.active .ref .ref-icon img {
   opacity: 1;
 }
+
 .main-menu-active-item.active .ref .ref-icon img.active {
   opacity: 0;
 }
+
 .main-menu ul li.current-menu-item > .ref,
 .main-menu ul li.current-menu-parent > .ref,
 .main-menu ul li.current_page_item > .ref {
@@ -173,8 +206,16 @@ header {
 .header-lk {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: var(--header-desktop-lk-gap);
 }
+
+.header-lk__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--header-mobile-icon-gap);
+}
+
 .header-lk .btn {
   display: inline-flex;
   align-items: center;
@@ -182,28 +223,172 @@ header {
   flex-shrink: 0;
   height: auto;
   line-height: normal;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-left: 0.9375rem;
-  padding-right: 0.9375rem;
+  /* Figma button_green_border: py 16px, px 15px */
+  padding: 1rem 0.9375rem;
 }
+
 .header-lk .btn span {
   min-width: auto;
   white-space: nowrap;
   line-height: normal;
-  font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
-}
-.header-lk .btn:hover {
-  background: #DDF354;
-  border-color: #DDF354;
+  font-size: 1rem;
+  font-family: "Mulish-Medium", sans-serif;
+  font-weight: 500;
 }
 
-/* Авторизованный пользователь, desktop — блок тариф / колокол / избранное (Figma 265:5406) */
+.header-lk .btn:hover {
+  background: #ddf354;
+  border-color: #ddf354;
+}
+
+.header-lk .notification-icon.notification-icon_header {
+  margin-right: 0;
+  margin-bottom: 0;
+  bottom: auto;
+}
+
 .header-lk-logged-desktop {
   display: none;
 }
 
-@media (min-width: 992px) {
+.login-icon {
+  position: relative;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  border-radius: 50%;
+  margin-left: 0;
+  background: var(--color-grey);
+  cursor: pointer;
+  transition: var(--transition-base, 0.4s ease);
+}
+
+.login-icon img:not(.login-icon__avatar) {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.5rem;
+}
+
+.login-icon svg {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.1875rem;
+  height: 1.1875rem;
+}
+
+.login-icon.login-icon_logged {
+  background: #9153e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-icon__initial {
+  color: #fff;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+.login-icon__avatar {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  transform: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.login-icon:hover {
+  background: var(--color-green);
+}
+
+.login-icon.login-icon_logged:hover {
+  background: #9153e1;
+}
+
+.burger {
+  display: none;
+  box-sizing: border-box;
+}
+
+.burger svg {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  /* Авторизованный: три колонки (лого | меню | ЛК) */
+  .header-content {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0;
+    min-width: 0;
+    width: 100%;
+    container-type: inline-size;
+    container-name: header-bar;
+  }
+
+  .header-content > .logo-header {
+    margin-right: var(--header-desktop-logo-nav-gap);
+  }
+
+  .main-menu {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .main-menu > ul {
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    gap: var(--header-desktop-nav-item-gap);
+  }
+
+  .main-menu ul li .ref {
+    font-size: 1rem;
+    font-family: "Mulish-Medium", sans-serif;
+    font-weight: 500;
+    line-height: normal;
+    color: var(--color-black);
+  }
+
+  .header-lk {
+    position: relative;
+    z-index: 0;
+    background: var(--color-white);
+  }
+
+  .header-lk:not(.header-lk--logged) {
+    margin-inline-start: 0;
+  }
+
+  .header-lk .btn.btn_white {
+    border: 1px solid var(--color-green);
+    background: transparent;
+  }
+
+  .header-lk .login-icon.modal-call_login svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   .header-lk--logged {
     gap: 0.625rem;
   }
@@ -256,12 +441,6 @@ header {
     white-space: nowrap;
   }
 
-  .header-lk .notification-icon.notification-icon_header {
-    margin-right: 0;
-    margin-bottom: 0;
-    bottom: auto;
-  }
-
   .header-lk .notification-icon_header .notification-icon__img {
     width: 1.375rem;
     height: 1.375rem;
@@ -296,132 +475,168 @@ header {
     width: 1.4375rem;
     height: 1.25rem;
   }
-}
 
-.login-icon {
-  position: relative;
-  width: 3.1875rem;  height: 3.1875rem;  border-radius: 50%;
-  margin-left: 0px;  background: var(--color-grey);
-  cursor: pointer;
-  transition: 0.4s ease;
-}
-.login-icon img:not(.login-icon__avatar) {
-  display: inline-block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 1.5rem;}
-.login-icon svg {
-  display: inline-block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 1.1875rem;
-  height: 1.1875rem;
-}
-.login-icon.login-icon_logged {
-  background: #9153E1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.login-icon__initial {
-  color: #FFFFFF;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.4;
-}
-.login-icon__avatar {
-  display: block;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  transform: none;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.login-icon:hover {
-  background: var(--color-green);
-}
-.login-icon.login-icon_logged:hover {
-  background: #9153E1;
-}
-
-.burger {
-  display: none;
-}
-
-@media (max-width: 1320px) {
-  header {
-    padding-top: 0.9375rem;    padding-bottom: 0.9375rem;  }
-  .header-main {
-    gap: 2.5rem;
-  }
-  .main-menu ul li {
-    margin-left: 0px;    margin-right: 0px;  }
-}
-@media (max-width: 1199px) {
-  .header-main {
-    gap: 1.75rem;
-  }
-  .main-menu ul li .ref {
-    font-size: 0.875rem;  }
-  .header-lk .btn span {
-    font-size: 0.9375rem;  }
-}
-@media (max-width: 1024px) and (min-width: 992px) {
-  .header-content {
+  /* Гость: Figma — слева лого+меню (53px), справа CTA+иконка (20px), между блоками свободное место */
+  .header-content:has(> .header-lk:not(.header-lk--logged)) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     gap: 0;
+    container-type: inline-size;
+    container-name: header-bar;
   }
-  .header-main {
-    gap: 1.375rem;
+
+  .header-content:has(> .header-lk:not(.header-lk--logged)) > .logo-header {
+    margin-right: var(--header-desktop-logo-nav-gap);
   }
-  .main-menu ul li .ref {
-    font-size: 0.875rem;  }
-  .header-lk {
-    gap: 0.625rem;
+
+  .header-content:has(> .header-lk:not(.header-lk--logged)) > .main-menu {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    max-width: none;
   }
-  .header-lk .btn {
-    padding-top: 0.875rem;
-    padding-bottom: 0.875rem;
-    padding-left: 0.5625rem;
-    padding-right: 0.5625rem;
-    height: auto;
+
+  .header-content:has(> .header-lk:not(.header-lk--logged)) > .header-lk {
+    margin-left: auto;
+    flex-shrink: 0;
+    gap: var(--header-desktop-lk-gap);
   }
-  .header-lk .btn span {
-    font-size: 0.875rem;  }
 }
-@media (max-width: 991px) {
+
+@supports (width: 1cqi) {
+  @media (min-width: 1024px) {
+    .header-content {
+      --header-desktop-logo-nav-gap: clamp(1.125rem, 5.5cqi + 0.5rem, calc(53 / 16 * 1rem));
+      --header-desktop-nav-item-gap: clamp(0.8125rem, 3.5cqi + 0.25rem, calc(35 / 16 * 1rem));
+    }
+  }
+}
+
+@media (max-width: 1319px) and (min-width: 1024px) {
   header {
-    padding-top: 0.75rem;    padding-bottom: 0.75rem;  }
+    padding-top: 0.9375rem;
+    padding-bottom: 0.9375rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  header {
+    padding-top: var(--header-mobile-py);
+    padding-bottom: var(--header-mobile-py);
+    border-bottom: var(--header-mobile-border);
+    box-shadow: none;
+    background: var(--color-white);
+  }
+
+  #header > .container > .row {
+    justify-content: flex-start;
+  }
+
   .header_fixed {
-    box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
+    box-shadow: 0 20px 50px rgba(241, 241, 248, 0.7);
   }
-  .main-menu > ul {
-    display: none;
+
+  /* Grid надёжнее flex: при скрытом nav нет «схлопывания» полосы — лого слева, ЛК справа */
+  .header-content {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    box-sizing: border-box;
+    /* Высота полосы как в Figma header_mobile: 12 + 48 + 12 ≈ 72px */
+    min-height: calc(var(--header-mobile-py) * 2 + var(--header-mobile-icon-size));
   }
-  .header-main {
-    gap: 0px;
+
+  .header-content > .logo-header {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    margin-right: 0;
+    min-width: 0;
   }
+
+  .header-content > .main-menu,
+  #header .header-content > nav.main-menu {
+    display: none !important;
+  }
+
+  .header-content > .header-lk {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    margin-left: 0;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 0;
+    gap: var(--header-mobile-icon-gap);
+  }
+
+  .logo-header img {
+    width: var(--header-mobile-logo-w);
+    height: var(--header-mobile-logo-h);
+  }
+
+  .header-lk {
+    flex-shrink: 0;
+    gap: var(--header-mobile-icon-gap);
+  }
+
+  /* display:contents ломает flex в части браузеров — иконки съезжают в середину */
+  .header-lk-logged-desktop {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--header-mobile-icon-gap);
+    flex: 0 0 auto;
+  }
+
+  .header-lk-logged-desktop .header-rate-pill,
+  .header-lk-logged-desktop .header-favorites-link {
+    display: none !important;
+  }
+
+  .header-lk .notification-icon_header .notification-icon__img {
+    width: 1.6875rem;
+    height: 1.6875rem;
+  }
+
   .header-lk .btn {
     display: none;
   }
-  .login-icon:hover {
-    background: var(--color-grey);
+
+  .header-lk__trailing {
+    flex-shrink: 0;
+    justify-content: flex-end;
   }
-  .login-icon.login-icon_logged:hover {
-    background: #9153E1;
+
+  .login-icon {
+    width: var(--header-mobile-icon-size);
+    height: var(--header-mobile-icon-size);
   }
+
   .burger {
     display: block;
     position: relative;
-    width: 3.25rem;    height: 3.1875rem;    border-radius: 50%;
-    margin-left: 0px;  }
+    width: var(--header-mobile-icon-size);
+    height: var(--header-mobile-icon-size);
+    margin-left: 0;
+    padding: 0;
+    border: none;
+    color: var(--color-black);
+    background: var(--color-grey);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition-base, 0.4s ease);
+  }
+
+  .burger:hover {
+    background: var(--color-green);
+  }
+
   .burger img {
     display: inline-block;
     position: absolute;
@@ -431,114 +646,14 @@ header {
     width: 100%;
     border-radius: 50%;
   }
+
   .burger svg {
-    display: inline-block;
+    display: block;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
+    width: 24px;
+    height: 24px;
   }
-}
-@media (max-width: 575px) {
-  .logo-header img {
-    width: 2.75rem;  }
-  .header-lk {
-    gap: 0.4375rem;
-  }
-  .login-icon {
-    width: 3rem;    height: 3rem;  }
-  .burger {
-    width: 3.0625rem;    height: 3rem;    margin-left: 0.4375rem;  }
-}
-.input {
-  display: block;
-  width: 100%;
-  height: 3.8125rem;  line-height: 3.8125rem;  border-radius: 6.25rem;  padding-left: 1.8125rem;  padding-right: 1.8125rem;  font-size: 1.125rem;  margin: 0px;
-  font-family: "Mulish-Regular", sans-serif;
-  color: rgb(255, 255, 255);
-  border: 1px solid #fff;
-  background: transparent;
-  transition: 0.4s ease;
-}
-.input::placeholder {
-  appearance: none;
-  opacity: 1;
-  font-size: 1.125rem;  font-family: "Mulish-Regular", sans-serif;
-  color: rgba(255, 255, 255, 0.6);
-  transition: 0.4s ease;
-}
-.input:focus {
-  border-color: var(--color-green);
-}
-.form.active .form-btn {
-  transform: translateY(-50%) rotate(45deg);
-}
-
-.form.disabled .input {
-  border-color: var(--color-pink);
-}
-.form.disabled .form-btn {
-  background: #E8E8E8;
-}
-.form.disabled .form-btn img {
-  opacity: 0.4;
-}
-.form.disabled .form-btn svg {
-  opacity: 0.4;
-}
-
-.form-btn {
-  position: absolute;
-  display: block;
-  width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;
-  background: var(--color-green);
-  cursor: pointer;
-  transition: 0.4s ease;
-}
-.form-btn img {
-  display: block;
-  position: absolute;
-  width: 1.25rem;  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-.form-btn svg {
-  display: block;
-  position: absolute;
-  width: 1.25rem;  height: 1.25rem;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  color: var(--color-black);
-}
-
-.form__succes {
-  display: block;
-  position: absolute;
-  white-space: nowrap;
-  padding-left: 0.6875rem;  padding-right: 0.6875rem;  left: 50%;
-  transform: translateX(-50%);
-  bottom: 4.125rem;  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
-  font-size: 1.75rem;  color: #fff;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.form__succes::before, .form__succes::after {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2.5rem;  height: 2.5625rem;  background: url(../../img/form-succes-bg.png) no-repeat center center/100% auto;
-}
-.form__succes::before {
-  right: 100%;
-}
-.form__succes::after {
-  left: 100%;
 }

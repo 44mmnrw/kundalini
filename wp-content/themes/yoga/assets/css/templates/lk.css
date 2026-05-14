@@ -577,7 +577,7 @@
 .lk-settings__slide_payment h2 {
   padding-left: 5.625rem;}
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-lk {
     padding-left: 0.3125rem;    width: calc(100% - 15.9375rem);  }
   .lk-slide {
@@ -592,7 +592,7 @@
   .lk-settings-part h4 {
     margin-top: 1.25rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: var(--yoga-below-xl)) {
   .section-lk {
     padding-left: 0px;
     padding-right: 0px;
@@ -604,7 +604,7 @@
   .lk-form-password .lk-form-item {
     margin-bottom: 1.25rem;  }
 }
-@media (max-width: 991px) {
+@media (max-width: var(--yoga-below-lg)) {
   .lk-form {
     flex-wrap: wrap;
   }

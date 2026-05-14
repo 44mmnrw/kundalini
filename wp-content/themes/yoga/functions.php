@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
@@ -501,6 +501,7 @@
 		$theme_uri = get_template_directory_uri();
 		$theme_dir = get_template_directory();
 		$reset_style_ver = file_exists($theme_dir . '/assets/css/reset.css') ? filemtime($theme_dir . '/assets/css/reset.css') : '1.0.0';
+		$breakpoints_style_ver = file_exists($theme_dir . '/assets/css/breakpoints.css') ? filemtime($theme_dir . '/assets/css/breakpoints.css') : '1.0.0';
 		$main_style_ver = file_exists($theme_dir . '/assets/css/style.css') ? filemtime($theme_dir . '/assets/css/style.css') : '1.0.0';
 		$specification_style_ver = file_exists($theme_dir . '/assets/css/templates/specification.css') ? filemtime($theme_dir . '/assets/css/templates/specification.css') : '1.0.0';
 		$header_style_ver = file_exists($theme_dir . '/assets/css/templates/header.css') ? filemtime($theme_dir . '/assets/css/templates/header.css') : '1.0.0';
@@ -530,6 +531,7 @@
 		// В режиме разработки принудительно отключаем кэш ассетов.
 		if (defined('WP_DEBUG') && WP_DEBUG) {
 			$reset_style_ver = time();
+			$breakpoints_style_ver = time();
 			$main_style_ver = time();
 			$specification_style_ver = time();
 			$header_style_ver = time();
@@ -574,7 +576,8 @@
 		$common_style_deps = array('main-style');
 
 		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
-		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array('reset-style'), $main_style_ver );
+		wp_enqueue_style( 'yoga-breakpoints', $theme_uri . '/assets/css/breakpoints.css', array(), $breakpoints_style_ver );
+		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array( 'reset-style', 'yoga-breakpoints' ), $main_style_ver );
 		wp_enqueue_style( 'specification-style', $theme_uri . '/assets/css/templates/specification.css', $common_style_deps, $specification_style_ver );
 		wp_enqueue_style( 'header-style', $theme_uri . '/assets/css/templates/header.css', $common_style_deps, $header_style_ver );
 		wp_enqueue_style( 'footer-style', $theme_uri . '/assets/css/templates/footer.css', $common_style_deps, $footer_style_ver );
@@ -3122,15 +3125,16 @@ function handle_comment_delete() {
 	}
 	add_shortcode('subscription_management', 'subscription_management_shortcode');
 	
-	// Проверяем, используется ли шаблон "Личный кабинет"
+	// Проверяем, используется ли шаблон «Личный кабинет» / WooCommerce account — одна шапка header.php.
+	function yoga_is_lk_shell() {
+		return is_page_template( 'templates-page/lk.php' )
+			|| is_page( 'my-account' )
+			|| ( function_exists( 'is_account_page' ) && is_account_page() );
+	}
+
 // Переопределяем стандартный get_header()
 	function custom_get_header() {
-		// 200 слов в минуту
-		if (is_page_template('templates-page/lk.php') || is_page('my-account') || (function_exists('is_account_page') && is_account_page())) {
-			locate_template('header-lk.php', true);
-			} else {
-			locate_template('header.php', true);
-		}
+		locate_template( 'header.php', true );
 	}
 	
 	// Добавление AJAX обработчиков

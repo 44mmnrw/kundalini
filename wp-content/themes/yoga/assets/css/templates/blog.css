@@ -424,7 +424,7 @@
   transition: color 0.3s ease, opacity 0s;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-blog {
     padding-bottom: 5.625rem;  }
   .blog-main__image {
@@ -440,7 +440,7 @@
   .blog-articles__more .btn {
     margin-top: 2.5rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: var(--yoga-below-xl)) {
   .blog-form form {
     flex-wrap: wrap;
   }
@@ -495,7 +495,7 @@
   .blog-article-item__image img {
     height: 10.6875rem;  }
 }
-@media (max-width: 991px) {
+@media (max-width: var(--yoga-below-lg)) {
   .section-blog {
     overflow: hidden;
     width: 100%;

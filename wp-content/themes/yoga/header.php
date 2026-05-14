@@ -1,7 +1,8 @@
 <?php
-	/**
-		* The header for our theme
-	*/
+/**
+ * The header for our theme: главный сайт и ЛК — одна разметка, переключение через yoga_is_lk_shell().
+ */
+$is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -20,27 +21,115 @@
 		<?php wp_head(); ?>
 	</head>
 	
-	<body <?php body_class('body body_main'); ?> id="body">
+	<body <?php body_class( $is_lk_shell ? 'body body_lk' : 'body body_main' ); ?> id="body">
+<?php if ( $is_lk_shell ) : ?>
 		<header id="header" class="header animated fadeIn slow delay-200ms">
 			<div class="container">
 				<div class="row">
-					<div class="header-content">
-						<div class="header-main">
-							<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
-							</a>
-							<nav class="main-menu">
-								<?php
-									wp_nav_menu( array(
+					<div class="lk-header-main">
+						<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
+							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
+						</a>
+						<?php
+							$current_user = wp_get_current_user();
+							$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
+							$user_display_name = trim((string) $current_user->display_name);
+							$user_login = trim((string) $current_user->user_login);
+							$user_source_name = $user_first_name !== '' ? $user_first_name : ($user_display_name !== '' ? $user_display_name : $user_login);
+							if ($user_source_name === '') {
+								$user_source_name = 'U';
+							}
+							if (function_exists('mb_substr') && function_exists('mb_strtoupper')) {
+								$user_initial = mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8');
+							} else {
+								$user_initial = strtoupper(substr($user_source_name, 0, 1));
+							}
+							$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
+							$user_avatar_html = $user_avatar_id > 0
+								? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
+									'class' => 'lk-login-btn__avatar',
+									'alt' => '',
+									'loading' => 'lazy',
+									'decoding' => 'async',
+								))
+								: '';
+						?>
+						<div class="notification-icon" role="button" tabindex="0" aria-expanded="false" aria-controls="lk-notifications-popup">
+							<svg class="notification-icon__img" aria-hidden="true">
+								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>"></use>
+							</svg>
+							<span>0</span>
+							<div class="lk-notifications-popup" id="lk-notifications-popup" aria-hidden="true">
+								<div class="lk-notifications-popup__title">Уведомления</div>
+								<div class="lk-notifications-popup__empty">Ничего нет...</div>
+							</div>
+						</div>
+						<?php
+							$tariff = get_current_user_tariff();
+							$tariff_name = '';
+							if (is_array($tariff) && !empty($tariff['product_name'])) {
+								$tariff_name = (string) $tariff['product_name'];
+							}
+						?>
+						<div class="personal-status<?php echo $tariff_name === '' ? ' personal-status_empty' : ''; ?>">
+							<svg class="personal-status__img" aria-hidden="true">
+								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
+							</svg>
+							<?php if ($tariff_name !== '') : ?>
+							<span><?php echo esc_html($tariff_name); ?></span>
+							<?php endif; ?>
+						</div>
+						<div class="lk-header-main__actions">
+							<div class="lk-header-main__buttons">
+								<div class="lk-login-btn">
+									<?php if ($user_avatar_html) : ?>
+										<?php echo $user_avatar_html; ?>
+									<?php else : ?>
+										<span><?php echo esc_html($user_initial); ?></span>
+									<?php endif; ?>
+								</div>
+							</div>
+							<div class="lk-burger" role="button" tabindex="0" aria-label="<?php esc_attr_e('Меню', 'yoga'); ?>">
+								<svg aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url( get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines' ); ?>"></use>
+								</svg>
+							</div>
+						</div>
+					</div>
+					<div class="lk-header-menu">
+						<nav>
+							<?php
+								wp_nav_menu(array(
 									'theme_location' => 'primary',
 									'container' => false,
 									'menu_class' => '',
 									'items_wrap' => '<ul>%3$s</ul>',
-									'walker' => new Custom_Menu_Walker()
-									) );
-								?>
-							</nav>
-						</div>
+								));
+							?>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</header>
+<?php else : ?>
+		<header id="header" class="header animated fadeIn slow delay-200ms">
+			<div class="container">
+				<div class="row">
+					<div class="header-content">
+						<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
+							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
+						</a>
+						<nav class="main-menu">
+							<?php
+								wp_nav_menu(array(
+									'theme_location' => 'primary',
+									'container' => false,
+									'menu_class' => '',
+									'items_wrap' => '<ul>%3$s</ul>',
+									'walker' => new Custom_Menu_Walker(),
+								));
+							?>
+						</nav>
 						<div class="header-lk<?php echo is_user_logged_in() ? ' header-lk--logged' : ''; ?>">
 							<?php
 							$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
@@ -135,28 +224,38 @@
 									</svg>
 								</a>
 							</div>
-							<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon login-icon_logged" aria-label="<?php echo esc_attr__('Личный кабинет', 'yoga'); ?>">
-								<?php if ($user_avatar_html) : ?>
-									<?php echo $user_avatar_html; ?>
-								<?php else : ?>
-									<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
-								<?php endif; ?>
-							</a>
+							<div class="header-lk__trailing">
+								<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon login-icon_logged" aria-label="<?php echo esc_attr__('Личный кабинет', 'yoga'); ?>">
+									<?php if ($user_avatar_html) : ?>
+										<?php echo $user_avatar_html; ?>
+									<?php else : ?>
+										<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
+									<?php endif; ?>
+								</a>
+								<div class="burger">
+									<svg aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url( get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines' ); ?>"></use>
+									</svg>
+								</div>
+							</div>
 							<?php else : ?>
-							<div class="login-icon modal-call_login">
-								<svg aria-hidden="true" focusable="false">
-									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
-								</svg>
+							<div class="header-lk__trailing">
+								<div class="login-icon modal-call_login">
+									<svg aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
+									</svg>
+								</div>
+								<div class="burger">
+									<svg aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url( get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines' ); ?>"></use>
+									</svg>
+								</div>
 							</div>
 							<?php endif; ?>
-							<div class="burger modal-call">
-								<svg aria-hidden="true" focusable="false">
-									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-icon'); ?>"></use>
-								</svg>
-							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</header>
+<?php endif; ?>
 	<main>			

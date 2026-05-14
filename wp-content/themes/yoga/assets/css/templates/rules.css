@@ -29,7 +29,7 @@
   background: var(--color-black);
 }
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-rules {
     padding-bottom: 5.625rem;  }
   .rules h3 {

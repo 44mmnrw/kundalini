@@ -2,7 +2,7 @@
 	/**
 		* Template Name: Личный кабинет
 	*/
-	include(get_template_directory() . '/header-lk.php');
+	get_header();
 	
 	if (!is_user_logged_in()) {
 		echo '<div class="container">';

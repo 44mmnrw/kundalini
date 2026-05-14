@@ -6,7 +6,7 @@
   display: none;
 }
 
-@media (min-width: 992px) {
+@media (min-width: var(--yoga-bp-lg)) {
   /* Не display:none: нативные input внутри остаются связаны с label[for] в .section-library и получают change → AJAX. */
   .library-filters-screen {
     display: block !important;
@@ -26,7 +26,7 @@
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: var(--yoga-below-lg)) {
   .library-filters-screen {
     display: block;
     position: fixed;

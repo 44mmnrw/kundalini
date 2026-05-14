@@ -46,19 +46,19 @@
   text-decoration: none;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: var(--yoga-below-tight-desktop)) {
   .section-notfound {
     padding-top: 0.75rem;    padding-bottom: 5.625rem;    background: url(../../img/404-bg.png) no-repeat center 0px/996px auto;
   }
   .notfound__media {
     width: 34.25rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: var(--yoga-below-xl)) {
   .section-notfound {
     background: url(../../img/404-bg.png) no-repeat center 0px/902px auto;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: var(--yoga-below-lg)) {
   .section-notfound {
     background: url(../../img/404-bg.png) no-repeat center 0px/calc(100% - 100px) auto;
   }

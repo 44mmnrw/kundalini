@@ -147,7 +147,8 @@ footer .container {
   }
 }
 
-@media (max-width: 1320px) {
+/* В условии @media нельзя использовать var() (см. breakpoints.css для чисел). */
+@media (max-width: 1319px) {
   .footer_big .footer-main {
     margin-top: 0.25rem;  }
   .footer-main {
@@ -155,7 +156,7 @@ footer .container {
   .footer-menu-item {
     padding-left: 0.7812rem;    padding-right: 0.7812rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .logo-footer {
     display: none;
   }
@@ -169,7 +170,7 @@ footer .container {
   .footer-rules {
     font-size: 0.875rem;  }
 }
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .footer-main {
     flex-wrap: wrap;
     padding-top: 1.25rem;    padding-bottom: 1.25rem;  }
@@ -211,8 +212,8 @@ footer .container {
     border-top-left-radius: 2.5rem;    border-top-right-radius: 2.5rem;  }
 }
 
-/* Планшет 576–991: сетка на .footer-nav-cluster */
-@media (max-width: 991px) and (min-width: 576px) {
+/* Планшет sm…below-lg: сетка на .footer-nav-cluster */
+@media (max-width: 1023px) and (min-width: 640px) {
   .footer-main {
     padding-top: 0.9375rem;
     padding-bottom: 0.9375rem;
@@ -317,7 +318,7 @@ footer .container {
   .footer_lk .container {
     max-width: calc(100% - 2.5rem);  }
 }
-@media (max-width: 1320px) {
+@media (max-width: 1319px) {
   .footer_lk {
     padding-left: 0.3125rem;    width: calc(100% - 15.9375rem);  }
   .footer_lk .footer-menu-item {
@@ -327,7 +328,7 @@ footer .container {
   .footer-rules {
     font-size: 0.9375rem;  }
 }
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .footer_lk {
     padding-left: 0px;
     padding-right: 0px;
