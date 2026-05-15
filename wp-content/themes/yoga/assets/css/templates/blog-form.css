@@ -1,7 +1,21 @@
 /* Section-blog-form */
 .section-blog-form {
-  padding-top: 0.3125rem;  background: #fff;
+  padding-top: 0.3125rem;
+  background: #fff;
   transition: box-shadow 0.3s ease;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.section-blog-form > .container {
+  display: block;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.section-blog-form .row {
+  min-width: 0;
 }
 .section-blog-form.active {
   position: fixed;
@@ -14,7 +28,15 @@
     top: 5.125rem;  }
 }
 @media (max-width: var(--yoga-below-lg)) {
+  /* overflow-x: hidden обрезал горизонтальный скролл рубрик */
   .section-blog-form {
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+}
+@media (max-width: 1024px) {
+  .section-blog-form {
+    overflow-x: visible;
+    overflow-y: visible;
   }
 }
