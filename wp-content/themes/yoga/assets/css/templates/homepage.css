@@ -762,6 +762,7 @@
 
   .whyme-item__plate .whyme-item__number {
     left: calc(286 * 100% / var(--whyme-vb-w));
+    top: calc(var(--whyme-num-y) * 100% / var(--whyme-vb-h) + 1px);
   }
 }
 
