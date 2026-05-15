@@ -1547,6 +1547,20 @@
     height: 12.5rem;
   }
 }
+/* Один слайд в слайдере при ширине <640px — выше блок под портретные фото */
+@media (max-width: 639px) {
+  .popular-practice {
+    min-height: auto;
+  }
+  .popular-practice img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    max-height: none;
+    object-fit: cover;
+    object-position: center top;
+  }
+}
 @media (max-width: 575px) {
   .section-popular-practices {
     margin-top: 0px;
@@ -1560,11 +1574,6 @@
     padding: 1.25rem;
     padding-bottom: 1.375rem;
     min-height: auto;
-  }
-  .popular-practice img {
-    width: 100%;
-    height: 11.625rem;
-    object-fit: cover;
   }
 }
 
