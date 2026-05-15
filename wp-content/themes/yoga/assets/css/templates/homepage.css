@@ -599,7 +599,7 @@
   position: absolute;
   z-index: 3;
   left: calc(var(--whyme-num-x) * 100% / var(--whyme-vb-w));
-  top: calc(var(--whyme-num-y) * 100% / var(--whyme-vb-h));
+  top: calc(var(--whyme-num-y) * 100% / var(--whyme-vb-h) - 2px);
   transform: translateX(-100%);
   right: auto;
   width: auto;
@@ -780,7 +780,7 @@
 @media (min-width: 768px) {
   .whyme-item__plate .whyme-item__number {
     left: calc(258 * 100% / var(--whyme-vb-w) + 3px);
-    top: calc(76 * 100% / var(--whyme-vb-h) - 6px);
+    top: calc(76 * 100% / var(--whyme-vb-h) - 8px);
     transform: translate(-50%, -50%);
     text-align: center;
     line-height: 1;
