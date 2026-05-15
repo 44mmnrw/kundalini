@@ -43,21 +43,32 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	
-	$('.main-menu-active-item').hover(function () {
-		$(this).toggleClass("active");
-		$('.modal-menu').toggleClass("active");
-	});      
-	
-	$('.modal-menu').hover(function () {
-		$(this).addClass("active");
-		$('.main-menu-active-item').addClass("active");
-	});  
-	
-	$('.modal-menu').mouseleave(function () {
-		$(this).removeClass("active");
-		$('.main-menu-active-item').removeClass("active");
-	});  
+	/* Библиотека практик: пункт и .modal-menu не соседи (зазор до fixed-панели).
+	 * Один обработчик .hover() вызывается и на enter, и на leave → toggle гасит меню при уходе с пункта.
+	 * Закрытие с задержкой + отмена при наведении на панель. */
+	var yogaLibraryMenuCloseTimer = null;
+	function yogaOpenLibraryMenu() {
+		if (yogaLibraryMenuCloseTimer) {
+			clearTimeout(yogaLibraryMenuCloseTimer);
+			yogaLibraryMenuCloseTimer = null;
+		}
+		$('.main-menu-active-item').addClass('active');
+		$('.modal-menu').addClass('active');
+	}
+	function yogaScheduleCloseLibraryMenu() {
+		if (yogaLibraryMenuCloseTimer) {
+			clearTimeout(yogaLibraryMenuCloseTimer);
+		}
+		yogaLibraryMenuCloseTimer = setTimeout(function () {
+			$('.main-menu-active-item').removeClass('active');
+			$('.modal-menu').removeClass('active');
+			yogaLibraryMenuCloseTimer = null;
+		}, 320);
+	}
+	$('.main-menu-active-item').on('mouseenter', yogaOpenLibraryMenu);
+	$('.main-menu-active-item').on('mouseleave', yogaScheduleCloseLibraryMenu);
+	$('.modal-menu').on('mouseenter', yogaOpenLibraryMenu);
+	$('.modal-menu').on('mouseleave', yogaScheduleCloseLibraryMenu);
 	
 	// Кастомные «чекбоксы» (не мобильный оверлей библиотеки — там свой перехват по строке)
 	$(document).on('click', '.checkbox:not(.library-filters-screen__box):not(.library-filter-faux-checkbox)', function () {
