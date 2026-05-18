@@ -40,6 +40,16 @@ $practices = new WP_Query(array(
 ));
 
 $practices_count = (int) $practices->found_posts;
+
+$parent_term_archive_url = get_term_link($parent_term);
+$parent_term_link_attr = ($parent_term instanceof WP_Term && ! is_wp_error($parent_term_archive_url))
+	? ' data-link="' . esc_attr($parent_term_archive_url) . '"'
+	: '';
+
+$current_term_archive_url = get_term_link($current_term);
+$current_term_link_attr = (! is_wp_error($current_term_archive_url))
+	? ' data-link="' . esc_attr($current_term_archive_url) . '"'
+	: '';
 ?>
 
 <section class="section-kriyi section-practice-category" id="section-kriyi">
@@ -51,15 +61,21 @@ $practices_count = (int) $practices->found_posts;
 						<div class="form-search">
 							<div class="form-categories">
 								<div class="form-categories__value">
-									<span data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
+									<span<?php echo $parent_term_link_attr; ?> data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
 										<?php echo esc_html($parent_term->name); ?>
 									</span>
-									<span class="active" data-target="<?php echo esc_attr((string) $current_term->term_id); ?>">
+									<span class="active"<?php echo $current_term_link_attr; ?> data-target="<?php echo esc_attr((string) $current_term->term_id); ?>">
 										<?php echo esc_html($current_term->name); ?>
 									</span>
 									<?php if (!empty($sibling_terms) && !is_wp_error($sibling_terms)) : ?>
 										<?php foreach ($sibling_terms as $sibling_term) : ?>
-											<span data-target="<?php echo esc_attr((string) $sibling_term->term_id); ?>">
+											<?php
+											$sibling_archive_url = get_term_link($sibling_term);
+											$sibling_link_attr = (! is_wp_error($sibling_archive_url))
+												? ' data-link="' . esc_attr($sibling_archive_url) . '"'
+												: '';
+											?>
+											<span<?php echo $sibling_link_attr; ?> data-target="<?php echo esc_attr((string) $sibling_term->term_id); ?>">
 												<?php echo esc_html($sibling_term->name); ?>
 											</span>
 										<?php endforeach; ?>
@@ -78,15 +94,21 @@ $practices_count = (int) $practices->found_posts;
 							</label>
 							<div class="form-search-list"></div>
 							<div class="form-cat-list">
-								<div class="form-cat-list__item" data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
+								<div class="form-cat-list__item"<?php echo $parent_term_link_attr; ?> data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
 									<span><?php echo esc_html($parent_term->name); ?></span>
 								</div>
-								<div class="form-cat-list__item active" data-target="<?php echo esc_attr((string) $current_term->term_id); ?>">
+								<div class="form-cat-list__item active"<?php echo $current_term_link_attr; ?> data-target="<?php echo esc_attr((string) $current_term->term_id); ?>">
 									<span><?php echo esc_html($current_term->name); ?></span>
 								</div>
 								<?php if (!empty($sibling_terms) && !is_wp_error($sibling_terms)) : ?>
 									<?php foreach ($sibling_terms as $sibling_term) : ?>
-										<div class="form-cat-list__item" data-target="<?php echo esc_attr((string) $sibling_term->term_id); ?>">
+										<?php
+										$sibling_archive_url = get_term_link($sibling_term);
+										$sibling_item_link_attr = (! is_wp_error($sibling_archive_url))
+											? ' data-link="' . esc_attr($sibling_archive_url) . '"'
+											: '';
+										?>
+										<div class="form-cat-list__item"<?php echo $sibling_item_link_attr; ?> data-target="<?php echo esc_attr((string) $sibling_term->term_id); ?>">
 											<span><?php echo esc_html($sibling_term->name); ?></span>
 										</div>
 									<?php endforeach; ?>
@@ -223,9 +245,12 @@ $practices_count = (int) $practices->found_posts;
 						while ($practices->have_posts()) :
 							$practices->the_post();
 							$count++;
+							$practice_level_raw = function_exists('yoga_get_practice_level_raw_for_cards')
+								? yoga_get_practice_level_raw_for_cards((int) get_the_ID())
+								: '';
 							$practice_level = function_exists('yoga_normalize_practice_level_label')
-								? yoga_normalize_practice_level_label(get_field('level') ?: 'новичок')
-								: (get_field('level') ?: 'новичок');
+								? yoga_normalize_practice_level_label($practice_level_raw !== '' ? $practice_level_raw : 'новичок')
+								: ($practice_level_raw !== '' ? $practice_level_raw : 'новичок');
 							$practice_description = get_field('short_description') ?: get_the_excerpt();
 							$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 							$user_id = get_current_user_id();

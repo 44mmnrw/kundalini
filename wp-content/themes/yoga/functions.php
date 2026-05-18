@@ -1821,21 +1821,24 @@ function handle_comment_delete() {
 			$query->the_post();
 			$card_data = yoga_get_practice_type_card_data(get_the_ID());
 			$library_variant_class = $card_data['class'];
-			$library_term_name = $card_data['term_name'];
 			$library_term_image_url = $card_data['image_url'];
+			$practice_level_raw = function_exists('yoga_get_practice_level_raw_for_cards')
+				? yoga_get_practice_level_raw_for_cards((int) get_the_ID())
+				: '';
+			$practice_level_label = function_exists('yoga_normalize_practice_level_label')
+				? yoga_normalize_practice_level_label($practice_level_raw !== '' ? $practice_level_raw : 'новичок')
+				: ($practice_level_raw !== '' ? $practice_level_raw : 'новичок');
 			?>
             <div class="library-item<?php echo $library_variant_class ? ' ' . esc_attr($library_variant_class) : ''; ?>">
                 <div class="library-item__bg"></div>
                 <div class="library-item__cat">
-                    <?php
-						echo esc_html($library_term_name);
-					?>
+                    <?php echo esc_html($practice_level_label); ?>
                     <a href="<?php the_permalink(); ?>" target="_blank"></a>
 				</div>
                 <p class="library-item__text"><?php echo get_the_excerpt(); ?></p>
                 <div class="library-item__img">
                     <?php if ($library_term_image_url) : ?>
-						<img src="<?php echo esc_url($library_term_image_url); ?>" alt="<?php echo esc_attr($library_term_name); ?>">
+						<img src="<?php echo esc_url($library_term_image_url); ?>" alt="<?php the_title_attribute(); ?>">
 					<?php elseif (has_post_thumbnail()) : ?>
 						<?php the_post_thumbnail('medium'); ?>
 					<?php endif; ?>
@@ -1994,7 +1997,10 @@ function handle_comment_delete() {
         $item_count = 0;
         while ($query->have_posts()) : $query->the_post();
 		$item_count++;
-		$practice_level = yoga_normalize_practice_level_label(get_field('level') ?: 'новичок');
+		$practice_level_raw_k = function_exists('yoga_get_practice_level_raw_for_cards')
+			? yoga_get_practice_level_raw_for_cards((int) get_the_ID())
+			: '';
+		$practice_level = yoga_normalize_practice_level_label($practice_level_raw_k !== '' ? $practice_level_raw_k : 'новичок');
 		$practice_description = get_field('short_description') ?: get_the_excerpt();
 		$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
@@ -3701,6 +3707,56 @@ function handle_comment_delete() {
 			}
 
 			return yoga_normalize_practice_level_label((string) $term->name);
+		}
+	}
+
+	if (!function_exists('yoga_get_practice_level_raw_for_cards')) {
+		/**
+		 * Уровень для карточек в списках: ACF practice_level (как на странице практики),
+		 * затем legacy level, затем таксономия practice-difficulty.
+		 */
+		function yoga_get_practice_level_raw_for_cards(int $post_id): string {
+			if ($post_id <= 0) {
+				return '';
+			}
+			if (function_exists('get_field')) {
+				foreach (array('practice_level', 'level') as $acf_key) {
+					$val = get_field($acf_key, $post_id);
+					if (is_array($val)) {
+						if (!empty($val['label'])) {
+							$val = trim((string) $val['label']);
+						} elseif (!empty($val['value'])) {
+							$val = trim((string) $val['value']);
+						} else {
+							continue;
+						}
+					} else {
+						if ($val === null || $val === '') {
+							continue;
+						}
+						$val = trim((string) $val);
+					}
+					if ($val !== '') {
+						return $val;
+					}
+				}
+			}
+			$terms = wp_get_post_terms($post_id, 'practice-difficulty');
+			if (!empty($terms) && !is_wp_error($terms)) {
+				foreach ($terms as $term) {
+					if (!($term instanceof WP_Term)) {
+						continue;
+					}
+					if (function_exists('yoga_get_practice_difficulty_label')) {
+						$label = yoga_get_practice_difficulty_label($term);
+						if ($label !== '') {
+							return $label;
+						}
+					}
+					return trim((string) $term->name);
+				}
+			}
+			return '';
 		}
 	}
 
