@@ -245,7 +245,7 @@ jQuery(document).ready(function($) {
 		$(this).closest('.form').find('.input:invalid').closest('.form').addClass("disabled");
 	});   
 	
-	$(".section-subscription .form").submit(function(e) {
+	$(".section-subscription .form:not(.subscription-form)").submit(function(e) {
 		e.preventDefault();
 		$(this).closest('.subscription').addClass("succes");
 	});
@@ -2038,6 +2038,20 @@ jQuery(document).ready(function($) {
 	});
 	
 	
+	function yogaSubscriptionAjaxMessage(payload, fallback) {
+		if (!payload || typeof payload !== 'object') {
+			return fallback;
+		}
+		const nested = payload.data;
+		if (nested && typeof nested === 'object' && typeof nested.message === 'string') {
+			return nested.message;
+		}
+		if (typeof payload.message === 'string') {
+			return payload.message;
+		}
+		return fallback;
+	}
+
 	function subscribeUser(email, nonce, form) {
 		const button = form.querySelector('.form-btn');
 		const originalHtml = button.innerHTML;
@@ -2060,10 +2074,11 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				showSubscriptionSuccess(data.message);
+				const msg = yogaSubscriptionAjaxMessage(data, 'Подписка оформлена!');
+				showSubscriptionSuccess(msg, form);
 				form.reset();
 				} else {
-				showSubscriptionError(data.message);
+				showSubscriptionError(yogaSubscriptionAjaxMessage(data, 'Не удалось оформить подписку.'));
 			}
 		})
 		.catch(error => {
@@ -2076,15 +2091,16 @@ jQuery(document).ready(function($) {
 		});
 	}
 	
-	function showSubscriptionSuccess(message) {
-		const successElement = document.querySelector('.form__succes');
-		if (successElement) {
+	function showSubscriptionSuccess(message, form) {
+		const subscription = form ? form.closest('.subscription') : null;
+		const successElement = subscription
+			? subscription.querySelector('.form__succes')
+			: document.querySelector('.section-subscription .form__succes');
+		if (subscription) {
+			subscription.classList.add('succes');
+		}
+		if (successElement && message) {
 			successElement.textContent = message;
-			successElement.style.display = 'block';
-			
-			setTimeout(() => {
-				successElement.style.display = 'none';
-			}, 5000);
 		}
 	}
 	
