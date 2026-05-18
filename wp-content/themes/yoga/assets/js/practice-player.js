@@ -22,8 +22,8 @@ function initializePracticeSystem() {
     // Создаем контейнер для полноэкранного режима аудио
     createAudioFullscreenContainer();
 
-    // Инициализация Plyr
-    const players = Plyr.setup('.exercise-player audio, .exercise-player video', {
+    /** Plyr только через `new Plyr` внутри цикла по версиям. Глобальный `Plyr.setup` здесь давал второй init на том же `<audio>/<video>` и ломал forEach до версии «без медиа». */
+    const plyrAudioOptions = {
         controls: [
             'play-large',
             'play',
@@ -39,20 +39,10 @@ function initializePracticeSystem() {
         hideControls: false,
         autoplay: false,
         debug: false
-    });
-
-    // Axecode.tech: пустой список плееров — нормально, если у упражнений нет медиа (таймеры всё равно нужны).
-    if (!Array.isArray(players)) {
-        console.warn('Plyr.setup returned unexpected value');
-        return;
-    }
-    if (players.length === 0) {
-        console.warn('Plyr: нет элементов audio/video на странице — инициализируем только таймеры');
-    }
+    };
 
     // Axecode.tech: Этап 2 стабилизации - отмечаем успешную однократную инициализацию.
     window.practiceSystemInitialized = true;
-    console.log('Plyr global setup players:', players.length);
 
     // Обработка переключателей версий
     document.querySelectorAll('.exercise-switches__item').forEach(switchItem => {
@@ -90,6 +80,8 @@ function initializePracticeSystem() {
         const exerciseId = exercise.dataset.exerciseId;
         
         exercise.querySelectorAll('.exercise-item').forEach(version => {
+            try {
+
             const versionType = version.dataset.version;
             const timerDisplay = version.querySelector('.timer-display');
             const playPauseBtn = version.querySelector('.timer-play-pause');
@@ -130,7 +122,7 @@ function initializePracticeSystem() {
                             clickToPlay: true,
                             hideControls: false
                         }
-                        : {};
+                        : plyrAudioOptions;
                     player = new Plyr(mediaElement, playerOptions);
                     
                     // Сохраняем ссылку на плеер для глобального доступа
@@ -419,6 +411,9 @@ function initializePracticeSystem() {
             }
 
             updateTimerDisplay();
+            } catch (err) {
+                console.warn('Practice: ошибка инициализации версии', exercise.dataset.exerciseId, version.dataset.version, err);
+            }
         });
     });
 

@@ -33,7 +33,7 @@
 
 <?php if (isset($step['exercise_items']) && !empty($step['exercise_items'])): ?>
 
-<?php foreach ($step['exercise_items'] as $exercise): ?>
+<?php foreach ($step['exercise_items'] as $ex_idx => $exercise): ?>
 <?php
 	$has_modifications = $exercise['has_modifications'] ?? false;
 	$title = $exercise['title'] ?? '';
@@ -67,7 +67,7 @@
 	}
 ?>
 
-<div class="praktika-exercise" data-exercise-id="<?php echo esc_attr($index); ?>">
+<div class="praktika-exercise" data-exercise-id="<?php echo esc_attr($index . '-' . $ex_idx); ?>">
     <!-- Основная версия -->
     <div class="exercise-item active" data-version="main">
         <div class="exercise-item__info">
