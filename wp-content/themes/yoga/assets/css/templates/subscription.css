@@ -6,7 +6,7 @@
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 100% auto;
-  padding-top: 5.5rem;  padding-bottom: 0.5rem;}
+  padding-top: var(--header-bar-height);  padding-bottom: 0.5rem;}
 
 .section-subscription .container {
   background-color: transparent;

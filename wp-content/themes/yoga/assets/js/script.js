@@ -1018,11 +1018,7 @@ jQuery(document).ready(function($) {
 		$(this).find('.lk-form-safe__text').addClass("active");
 	});
 	
-	$('.lk-questions > .btn').click(function () {
-		$(this).find('span').toggleClass("active");
-		$('.lk-questions-item_other').toggleClass("hidden");
-		
-	});
+	/* «Показать еще» для вопросов ЛК — см. делегированный обработчик .show-more-questions во втором $(document).ready */
 	
 	$('.lk-questions-form .input').keydown(function () {
 		var el = this;
@@ -3347,18 +3343,24 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-	// Показать/скрыть дополнительные вопросы
-	$('.show-more-questions').on('click', function() {
-		var $hiddenItems = $('.lk-questions-item.hidden');
+	// Показать/скрыть дополнительные вопросы (делегирование; скрытый span с absolute не должен перехватывать клик — см. lk.css pointer-events)
+	$(document).on('click', '.lk-questions .show-more-questions', function(e) {
+		e.preventDefault();
 		var $btn = $(this);
-		
-		if ($btn.find('span.active').text() === 'Показать еще') {
-			$hiddenItems.slideDown(300).removeClass('hidden');
+		var $wrap = $btn.closest('.lk-questions');
+		var $hiddenItems = $wrap.find('.lk-questions-item.hidden');
+		var label = $.trim($btn.find('span.active').text());
+
+		if (label === 'Показать еще') {
+			$hiddenItems.removeClass('hidden').css('display', 'none').slideDown(300);
 			$btn.find('span').toggleClass('active');
-			} else {
-			$hiddenItems.slideUp(300).addClass('hidden');
-			$btn.find('span').toggleClass('active');
+			return;
 		}
+
+		$hiddenItems.slideUp(300, function() {
+			$(this).addClass('hidden').removeAttr('style');
+		});
+		$btn.find('span').toggleClass('active');
 	});
 	
 	// Функция показа уведомлений

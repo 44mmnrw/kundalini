@@ -15,6 +15,8 @@
   --transition-base: 0.4s ease;
   /* Горизонтальный отступ от края вьюпорта до контента (в том числе max-width .container) */
   --container-inline-gutter: 10px;
+  /* Полоса шапки (#header): 12px + ряд ~48px + 12px = 4.5rem; нижний разделитель — box-shadow (не border). */
+  --header-bar-height: 4.5rem;
 }
 
 html {
@@ -54,7 +56,7 @@ body {
   width: 100%;
   max-width: 125rem;  text-align: left;
   font-weight: 100;
-  padding-top: 5.5rem;  min-height: 100vh;
+  padding-top: var(--header-bar-height);  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--color-white);
@@ -76,7 +78,7 @@ footer {
 }
 
 .body-header-fixed {
-  padding-top: 4.375rem;}
+  padding-top: var(--header-bar-height);}
 
 .container {
   width: 75rem;
@@ -456,7 +458,7 @@ input::-moz-placeholder {
 
 @media (max-width: 1319px) {
   body {
-    padding-top: 5.125rem;  }
+    padding-top: var(--header-bar-height);  }
   .container {
     width: 70rem;  }
 }
@@ -466,7 +468,7 @@ input::-moz-placeholder {
 }
 @media (max-width: 1024px) {
   body {
-    padding-top: 4.75rem;  }
+    padding-top: var(--header-bar-height);  }
   .container {
     width: 45rem;  }
 }
@@ -480,7 +482,7 @@ input::-moz-placeholder {
 }
 @media (max-width: 575px) {
   body {
-    padding-top: 4.5625rem;  }
+    padding-top: var(--header-bar-height);  }
 }
 @media (max-width: 350px) {
   .btn span {
