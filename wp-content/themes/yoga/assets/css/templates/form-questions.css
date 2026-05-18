@@ -133,7 +133,7 @@
   color: #fff;
 }
 
-@media (max-width: var(--yoga-below-tight-desktop)) {
+@media (max-width: 1319px) {
   .section-form-questions {
     padding-top: 3.75rem;    padding-bottom: 5.625rem;  }
   .form-questions h3 {
@@ -147,7 +147,7 @@
   .form-questions-textarea textarea {
     height: 9.625rem;  }
 }
-@media (max-width: var(--yoga-below-xl)) {
+@media (max-width: 1279px) {
   .section-form-questions {
     padding-top: 3.125rem;  }
   .form-questions {
@@ -166,7 +166,7 @@
     z-index: -1;
   }
 }
-@media (max-width: var(--yoga-below-lg)) {
+@media (max-width: 1024px) {
   .section-form-questions {
     padding-top: 7.25rem;  }
   .form-questions {
@@ -240,6 +240,162 @@
     line-height: 1.5em;
   }
 }
+
+/* Single practice: форма «Остались вопросы?» — Figma question_form_mobile (588:14576) */
+.section-form-questions_practice .form-questions__badge {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .section-form-questions_practice {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+    padding-left: var(--container-inline-gutter, 10px);
+    padding-right: var(--container-inline-gutter, 10px);
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .row {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .section-form-questions_practice .form-questions {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    left: auto;
+    transform: none;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 1.875rem;
+    overflow: visible;
+    padding: 5.25rem 0.625rem 2.5rem;
+    background: var(--color-green);
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .form-questions::before {
+    display: none;
+  }
+
+  .section-form-questions_practice .form-questions__badge {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 2;
+    width: 4.5rem;
+    height: 4.5rem;
+    pointer-events: none;
+    transform: translate(-50%, -42%);
+  }
+
+  .section-form-questions_practice .form-questions__badge-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .section-form-questions_practice .form-questions h3 {
+    font-size: 1.625rem;
+    line-height: 1.1;
+  }
+
+  .section-form-questions_practice .form-questions p {
+    font-size: 1rem;
+    line-height: normal;
+    margin-top: 0.625rem;
+  }
+
+  .section-form-questions_practice .form-questions__main {
+    max-width: 100%;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .form-questions__main-text {
+    max-width: 18.75rem;
+  }
+
+  .section-form-questions_practice .form-questions__main-form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0.625rem;
+    align-items: stretch;
+    width: 100%;
+    margin-top: 2.75rem;
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .form-questions__main-form input.input {
+    width: 100%;
+    margin-top: 0;
+    height: 3.8125rem;
+    line-height: 3.8125rem;
+    padding-left: 1.875rem;
+    padding-right: 0.625rem;
+    font-size: 1.125rem;
+    border-radius: 6.25rem;
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .form-questions-textarea {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .section-form-questions_practice .form-questions-textarea textarea.input {
+    height: 11.25rem;
+    border-radius: 1.25rem;
+    padding: 1.0625rem 0.625rem 0.625rem 1.875rem;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    box-sizing: border-box;
+  }
+
+  .section-form-questions_practice .form-questions-textarea .btn {
+    right: 1.1875rem;
+    bottom: 1.1875rem;
+    width: 2.5625rem;
+    height: 2.5625rem;
+  }
+
+  .section-form-questions_practice .form-questions__succes {
+    max-width: 18.75rem;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .section-form-questions_practice .form-questions {
+    width: 100%;
+    min-width: 0;
+    left: auto;
+    transform: none;
+  }
+
+  .section-form-questions_practice .form-questions__main {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 /* Section-form-questions_contacts — макет Figma «Контакты»: SVG из sprite.svg, без PNG-фонов */
 .section-form-questions_contacts {
   padding-top: 3rem;
@@ -460,20 +616,20 @@
   height: 2.25rem;
 }
 
-@media (max-width: var(--yoga-below-tight-desktop)) {
+@media (max-width: 1319px) {
   .section-form-questions_contacts {
     padding-top: 2.25rem;
     padding-bottom: 5.625rem;
   }
 }
 
-@media (max-width: var(--yoga-below-xl)) {
+@media (max-width: 1279px) {
   .section-form-questions_contacts .contacts-form-layout__decor--oval {
     opacity: 0.85;
   }
 }
 
-@media (max-width: var(--yoga-below-lg)) {
+@media (max-width: 1024px) {
   .section-form-questions_contacts .contacts-form-layout__intro {
     max-width: 36.25rem;
     text-align: left;
