@@ -205,10 +205,12 @@
 
 .filter-btn {
   position: relative;
+  z-index: 25;
   flex-shrink: 0;
   width: var(--library-search-row-height);  height: var(--library-search-row-height);  border-radius: 0.4375rem;  border: 1px solid var(--color-violet);
   background: var(--color-violet);
   cursor: pointer;
+  touch-action: manipulation;
   transition: 0.4s ease;
 }
 .filter-btn span {
@@ -220,7 +222,8 @@
   background: var(--color-pink);
   transition: 0.4s ease;
   opacity: 0;
-  pointer-events: auto;
+  /* Счётчик скрыт — не перехватывать тап по иконке фильтра */
+  pointer-events: none;
 }
 .filter-btn span.active {
   opacity: 1;
@@ -234,6 +237,7 @@
   transform: translate(-50%, -50%) rotate(-90deg) scale(0);
   width: 1.375rem;
   height: auto;
+  pointer-events: none;
   transition: 0.4s ease;
 }
 .filter-btn__icon.active {

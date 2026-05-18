@@ -84,8 +84,16 @@ $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.s
                 $social_links = get_field('contacts_social_links', 'option');
                 if ($social_links) :
                     foreach ($social_links as $social) :
+                        $social_url_raw = isset($social['social_url']) ? trim((string) $social['social_url']) : '';
+                        $social_alt_raw = isset($social['social_alt']) ? strtolower((string) $social['social_alt']) : '';
+                        $is_mail_item = stripos($social_url_raw, 'mailto:') === 0
+                            || strpos($social_alt_raw, 'mail') !== false
+                            || strpos($social_alt_raw, 'почт') !== false
+                            || strpos($social_alt_raw, 'e-mail') !== false
+                            || strpos($social_alt_raw, 'email') !== false;
+                        $item_modifier = $is_mail_item ? ' contacts-social__item--mail' : '';
                         ?>
-                        <a href="<?php echo esc_url($social['social_url']); ?>" class="contacts-social__item" target="_blank" rel="noopener noreferrer">
+                        <a href="<?php echo esc_url($social['social_url']); ?>" class="contacts-social__item<?php echo esc_attr($item_modifier); ?>" target="_blank" rel="noopener noreferrer">
                             <img src="<?php echo esc_url($social['social_icon']); ?>" alt="<?php echo esc_attr($social['social_alt']); ?>">
                         </a>
                     <?php

@@ -6,8 +6,8 @@
   width: 100%;
   position: relative;
   border-radius: 1.875rem;  overflow: hidden;
-  background: url(../../img/form-questions-bg.png) no-repeat center top/100% auto;
   padding-left: 1.875rem;  padding-right: 1.875rem;  padding-top: 5.375rem;  padding-bottom: 3.125rem;}
+
 .form-questions.active .form-questions__main {
   opacity: 0;
   pointer-events: none;
@@ -150,9 +150,6 @@
 @media (max-width: 1279px) {
   .section-form-questions {
     padding-top: 3.125rem;  }
-  .form-questions {
-    background-size: 100% auto;
-  }
   .form-questions::after {
     content: "";
     display: block;
@@ -404,8 +401,9 @@
   --contacts-form-panel-half: 31.75rem;
   /* Половина max-width текста над формой — якорь для восьмиконечной звезды справа от подзаголовка */
   --contacts-intro-half: 15.1875rem;
-  /* Панель формы над овалом; звёзды и бейдж поверх карточки */
+  /* Панель формы ниже декора по бокам; овал поверх карточки; звёзды и бейдж выше */
   --contacts-z-panel: 1;
+  --contacts-z-oval: 2;
   --contacts-z-decor: 3;
   --contacts-z-badge: 4;
 }
@@ -449,19 +447,29 @@
   background: none;
 }
 
+/* Общие секции у .form-questions задают ::before (form-questions-before.png) и ::after; на контактах это лишнее */
+.section-form-questions_contacts .contacts-form-layout__scene.form-questions::before,
+.section-form-questions_contacts .contacts-form-layout__scene.form-questions::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .section-form-questions_contacts .contacts-form-layout__decor {
   position: absolute;
   pointer-events: none;
 }
 
-/* Звёзды поверх формы; овал — под карточкой (перекрытие по верху) */
+/* Звёзды поверх овала и карточки; овал — поверх карточки по краю сцены */
 .section-form-questions_contacts .contacts-form-layout__decor--star-four,
 .section-form-questions_contacts .contacts-form-layout__decor--star {
   z-index: var(--contacts-z-decor);
 }
 
 .section-form-questions_contacts .contacts-form-layout__decor--oval {
-  z-index: 0;
+  z-index: var(--contacts-z-oval);
 }
 
 /* Сдвиг вверх: подзаголовок вне .contacts-form-layout__scene, margin сцены + низ блока текста ≈ 4rem */
@@ -475,21 +483,21 @@
 
 /* Справа от центрированного подзаголовка (узкий intro), не от правого края формы */
 .section-form-questions_contacts .contacts-form-layout__decor--star-eight {
-  left: calc(50% + var(--contacts-intro-half) + 1.125rem);
+  left: calc(50% + var(--contacts-intro-half) + 1.125rem + 200px);
   right: auto;
   transform: none;
-  top: -4.125rem;
+  top: calc(-4.125rem - 50px);
   width: 3.1875rem;
   height: 3.1875rem;
 }
 
 .section-form-questions_contacts .contacts-form-layout__decor--oval {
-  left: calc(50% + var(--contacts-form-panel-half) - 2.5rem);
+  left: calc(50% + var(--contacts-form-panel-half) - 9.375rem);
   right: auto;
-  top: 1.5rem;
+  top: -0.875rem;
   width: 3.625rem;
   height: 7.1875rem;
-  transform: rotate(-17deg);
+  transform: rotate(-4deg);
 }
 
 .section-form-questions_contacts .contacts-form-layout__decor-svg {
@@ -652,35 +660,42 @@
 
   .section-form-questions_contacts .contacts-form-layout__decor--star-eight {
     left: auto;
-    right: 0.25rem;
+    right: calc(0.25rem - 200px);
     transform: none;
-    top: -3.75rem;
+    top: calc(-3.75rem - 50px);
   }
 
   .section-form-questions_contacts .contacts-form-layout__decor--oval {
     left: auto;
-    right: 0;
-    top: 1.35rem;
+    right: 4.75rem;
+    top: -0.6875rem;
     opacity: 0.92;
+    transform: rotate(-4deg);
   }
 }
 
 @media (max-width: 767px) {
+  /* Декор и бейдж на мобильных скрыты */
+  .section-form-questions_contacts .contacts-form-layout__decor,
+  .section-form-questions_contacts .contacts-form-layout__badge {
+    display: none !important;
+  }
+
+  .section-form-questions_contacts .contacts-social__item--mail,
+  .section-form-questions_contacts .contacts-social__item[href^="mailto:"],
+  .section-form-questions_contacts .contacts-social__item[href^="MAILTO:"] {
+    display: none !important;
+  }
+
   .section-form-questions_contacts .contacts-form-layout__row--inputs > .input {
     flex: 1 1 100%;
     min-width: 100%;
   }
 
   .section-form-questions_contacts .contacts-form-layout__form.form-questions__main-form {
-    padding-top: 4.25rem;
+    padding-top: 2rem;
     padding-left: 1rem;
     padding-right: 1rem;
-  }
-
-  .section-form-questions_contacts .contacts-form-layout__badge {
-    transform: translate(-50%, -38%);
-    width: 4.5rem;
-    height: 4.5rem;
   }
 
   .section-form-questions_contacts .contacts-form-layout__textarea.form-questions-textarea {
@@ -699,31 +714,11 @@
     margin-top: 1.25rem;
   }
 
-  .section-form-questions_contacts .contacts-form-layout__decor--star-four {
-    left: 0.05rem;
-    top: -3.25rem;
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .section-form-questions_contacts .contacts-form-layout__decor--star-eight {
-    right: 0.05rem;
-    top: -3.25rem;
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .section-form-questions_contacts .contacts-form-layout__decor--oval {
-    width: 3rem;
-    height: 5.75rem;
-    opacity: 0.88;
-  }
-
   .section-form-questions_contacts .contacts-form-layout__intro p {
     margin-top: 0.5rem;
   }
 
   .section-form-questions_contacts .contacts-form-layout__form.form-questions__main-form {
-    padding-top: 3.75rem;
+    padding-top: 1.875rem;
   }
 }
