@@ -1992,46 +1992,51 @@ jQuery(document).ready(function($) {
 		});
 	} */
 	
-	// Обработка формы подписки с специфической структурой
-	document.addEventListener('DOMContentLoaded', function() {
+	// Обработка формы подписки (DOM уже готов в этом jQuery.ready — второй DOMContentLoaded уже не сработает)
+	(function initSubscriptionForms() {
 		const subscriptionForms = document.querySelectorAll('.subscription-form');
-		const subscriptionButtons = document.querySelectorAll('#subscription-btn');
-		
-		// Обработка клика по label
-		const formButtons = document.querySelectorAll('.form-btn');
-		formButtons.forEach(button => {
+
+		document.querySelectorAll('.subscription-form .form-btn').forEach(button => {
 			button.addEventListener('click', function(e) {
 				e.preventDefault();
 				const form = this.closest('.subscription-form');
+				if (!form) {
+					return;
+				}
 				const emailInput = form.querySelector('input[type="email"]');
-				const nonce = form.querySelector('input[name="subscription_nonce_field"]').value;
-				
+				const nonceField = form.querySelector('input[name="subscription_nonce_field"]');
+				if (!emailInput || !nonceField) {
+					return;
+				}
+				const nonce = nonceField.value;
+
 				if (!isValidSubscriptionEmail(emailInput.value)) {
 					showSubscriptionError('Пожалуйста, введите корректный email (не более 30 символов)');
 					return;
 				}
 
-				// AJAX отправка
 				subscribeUser(emailInput.value.trim(), nonce, form);
 			});
 		});
-		
-		// Также обрабатываем отправку формы по Enter
+
 		subscriptionForms.forEach(form => {
 			form.addEventListener('submit', function(e) {
 				e.preventDefault();
 				const emailInput = this.querySelector('input[type="email"]');
-				const nonce = this.querySelector('input[name="subscription_nonce_field"]').value;
-				
+				const nonceField = this.querySelector('input[name="subscription_nonce_field"]');
+				if (!emailInput || !nonceField) {
+					return;
+				}
+
 				if (!isValidSubscriptionEmail(emailInput.value)) {
 					showSubscriptionError('Пожалуйста, введите корректный email (не более 30 символов)');
 					return;
 				}
 
-				subscribeUser(emailInput.value.trim(), nonce, this);
+				subscribeUser(emailInput.value.trim(), nonceField.value, this);
 			});
 		});
-	});
+	})();
 	
 	
 	function yogaSubscriptionAjaxMessage(payload, fallback) {
