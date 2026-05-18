@@ -1244,16 +1244,50 @@ function handle_comment_delete() {
 	add_action('wp_ajax_process_subscription', 'process_subscription');
 	add_action('wp_ajax_nopriv_process_subscription', 'process_subscription');
 	
+	function yoga_subscription_email_domain_is_valid(string $email): bool {
+		$at_pos = strrpos($email, '@');
+		if ($at_pos === false || $at_pos >= strlen($email) - 1) {
+			return false;
+		}
+		$domain = strtolower(substr($email, $at_pos + 1));
+		if ($domain === '' || strpos($domain, '.') === false) {
+			return false;
+		}
+
+		if (!function_exists('checkdnsrr')) {
+			return true;
+		}
+
+		return checkdnsrr($domain, 'MX')
+			|| checkdnsrr($domain, 'A')
+			|| checkdnsrr($domain, 'AAAA');
+	}
+
 	function process_subscription() {
 		if (!wp_verify_nonce($_POST['nonce'], 'subscription_nonce')) {
 			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 		}
-		
-		$email = sanitize_email($_POST['email']);
+
+		$raw_email = isset($_POST['email']) ? wp_unslash((string) $_POST['email']) : '';
+		$raw_trimmed = trim($raw_email);
+		$email_len = function_exists('mb_strlen')
+			? mb_strlen($raw_trimmed, 'UTF-8')
+			: strlen($raw_trimmed);
+		if ($email_len > 30) {
+			wp_send_json_error(array('message' => 'Email не должен превышать 30 символов'));
+		}
+
+		$email = sanitize_email($raw_trimmed);
 		if (!is_email($email)) {
 			wp_send_json_error(array('message' => 'Пожалуйста, введите корректный email'));
 		}
-		
+
+		if (!yoga_subscription_email_domain_is_valid($email)) {
+			wp_send_json_error(array(
+				'message' => 'Такого почтового домена не существует или он не принимает почту. Проверьте адрес.',
+			));
+		}
+
 		$saved = save_subscription_email($email);
 		
 		if ($saved) {

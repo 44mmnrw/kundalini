@@ -2010,14 +2010,13 @@ jQuery(document).ready(function($) {
 				const emailInput = form.querySelector('input[type="email"]');
 				const nonce = form.querySelector('input[name="subscription_nonce_field"]').value;
 				
-				// Валидация email
-				if (!isValidEmail(emailInput.value)) {
-					showSubscriptionError('Пожалуйста, введите корректный email');
+				if (!isValidSubscriptionEmail(emailInput.value)) {
+					showSubscriptionError('Пожалуйста, введите корректный email (не более 30 символов)');
 					return;
 				}
-				
+
 				// AJAX отправка
-				subscribeUser(emailInput.value, nonce, form);
+				subscribeUser(emailInput.value.trim(), nonce, form);
 			});
 		});
 		
@@ -2028,12 +2027,12 @@ jQuery(document).ready(function($) {
 				const emailInput = this.querySelector('input[type="email"]');
 				const nonce = this.querySelector('input[name="subscription_nonce_field"]').value;
 				
-				if (!isValidEmail(emailInput.value)) {
-					showSubscriptionError('Пожалуйста, введите корректный email');
+				if (!isValidSubscriptionEmail(emailInput.value)) {
+					showSubscriptionError('Пожалуйста, введите корректный email (не более 30 символов)');
 					return;
 				}
-				
-				subscribeUser(emailInput.value, nonce, this);
+
+				subscribeUser(emailInput.value.trim(), nonce, this);
 			});
 		});
 	});
@@ -2311,6 +2310,15 @@ jQuery(document).ready(function($) {
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
+	}
+
+	/** Форма подписки: до 30 символов и базовый формат email (итог проверяет сервер через is_email). */
+	function isValidSubscriptionEmail(email) {
+		const trimmed = (email || '').trim();
+		if (trimmed.length < 1 || trimmed.length > 30) {
+			return false;
+		}
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
 	}
 
     function getLibraryDefaultTermId() {
