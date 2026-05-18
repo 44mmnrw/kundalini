@@ -23,10 +23,16 @@ $practice_form_title = get_the_title(get_the_ID());
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));
 ?>
-<section class="section-form-questions" id="section-form-questions">
+<section class="section-form-questions section-form-questions_practice" id="section-form-questions">
 	<div class="container">
         <div class="row">
+			<?php $practice_form_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg'); ?>
 			<div class="form-questions">
+				<div class="form-questions__badge" aria-hidden="true">
+					<svg class="form-questions__badge-svg" viewBox="0 0 48 48" focusable="false">
+						<use href="<?php echo $practice_form_sprite_href; ?>#contacts-form-badge"></use>
+					</svg>
+				</div>
 				<div class="form-questions__main">
 					<div class="form-questions__main-text">
 						<h3>
