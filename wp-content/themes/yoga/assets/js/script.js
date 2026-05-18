@@ -662,6 +662,19 @@ jQuery(document).ready(function($) {
 		slidesToShow: 1,
 		slidesToScroll: 1
 	});
+
+	/* После смены ширины контейнера (мобильная вёрстка) slick оставляет старую геометрию списка */
+	var exerciseSliderLayoutTimer;
+	function refreshExerciseSliders() {
+		$('.exercise-slider_active.slick-initialized').each(function () {
+			$(this).slick('setPosition');
+		});
+	}
+	requestAnimationFrame(refreshExerciseSliders);
+	$(window).on('resize orientationchange', function () {
+		clearTimeout(exerciseSliderLayoutTimer);
+		exerciseSliderLayoutTimer = setTimeout(refreshExerciseSliders, 150);
+	});
 	
 	/* $('.exercise-switches__item').click(function () {
 		
@@ -2147,6 +2160,12 @@ jQuery(document).ready(function($) {
 		// Валидация
 		if (!name || !email || !message) {
 			alert('Пожалуйста, заполните все поля');
+			return;
+		}
+
+		const phoneField = form.querySelector('[name="contacts_phone"]');
+		if (phoneField && phoneField.required && (!phone || !String(phone).trim())) {
+			alert('Пожалуйста, укажите телефон');
 			return;
 		}
 		

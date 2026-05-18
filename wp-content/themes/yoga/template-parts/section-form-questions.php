@@ -7,61 +7,102 @@ if (is_user_logged_in()) {
     $contacts_prefill_name = (string) ($current_user->display_name ?? '');
     $contacts_prefill_email = (string) ($current_user->user_email ?? '');
 }
+
+$yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
 ?>
 <section class="section-form-questions section-form-questions_contacts" id="section-form-questions">
     <div class="container">
-        <div class="row">
-            <div class="form-questions">
-                <div class="form-questions__main">
-                    <div class="form-questions__main-text">
-                        <h3><?php echo esc_html(get_field('contacts_title', 'option') ?: 'Мы на связи!'); ?></h3>
-                        <p><?php echo esc_html(get_field('contacts_description', 'option') ?: 'Если у вас есть вопросы или нужна помощь, оставьте сообщение, мы вам ответим в ближайшее время.'); ?></p>
-                    </div>
-                    
-                    <form action="#" class="form-questions__main-form contacts-form" method="post">
+        <div class="contacts-form-layout">
+            <div class="contacts-form-layout__intro form-questions__main-text">
+                <h3><?php echo esc_html(get_field('contacts_title', 'option') ?: 'Мы на связи!'); ?></h3>
+                <p><?php echo esc_html(get_field('contacts_description', 'option') ?: 'Если у вас есть вопросы или нужна помощь, оставьте сообщение, мы вам ответим в ближайшее время.'); ?></p>
+            </div>
+
+            <div class="contacts-form-layout__scene form-questions" aria-hidden="false">
+                <div class="contacts-form-layout__decor contacts-form-layout__decor--star-four">
+                    <svg class="contacts-form-layout__decor-svg" focusable="false" aria-hidden="true">
+                        <use href="<?php echo $yoga_sprite_href; ?>#contacts-star-four"></use>
+                    </svg>
+                </div>
+                <div class="contacts-form-layout__decor contacts-form-layout__decor--star contacts-form-layout__decor--star-eight">
+                    <svg class="contacts-form-layout__decor-svg contacts-form-layout__decor-svg--star" focusable="false" aria-hidden="true">
+                        <use href="<?php echo $yoga_sprite_href; ?>#contacts-star-eight"></use>
+                    </svg>
+                </div>
+                <div class="contacts-form-layout__decor contacts-form-layout__decor--oval">
+                    <svg class="contacts-form-layout__decor-svg" focusable="false" aria-hidden="true">
+                        <use href="<?php echo $yoga_sprite_href; ?>#contacts-decor-oval"></use>
+                    </svg>
+                </div>
+
+                <div class="contacts-form-layout__badge" aria-hidden="true">
+                    <svg class="contacts-form-layout__badge-svg" viewBox="0 0 48 48" focusable="false">
+                        <use href="<?php echo $yoga_sprite_href; ?>#contacts-form-badge"></use>
+                    </svg>
+                </div>
+
+                <div class="contacts-form-layout__panel form-questions__main">
+                    <form action="#" class="form-questions__main-form contacts-form contacts-form-layout__form" method="post">
                         <?php wp_nonce_field('contacts_nonce', 'contacts_nonce_field'); ?>
-                        
-                        <input type="text" name="contacts_name" class="input" required value="<?php echo esc_attr($contacts_prefill_name); ?>"
-                               placeholder="<?php echo esc_attr(get_field('contacts_placeholder_name', 'option') ?: 'Имя'); ?>">
-                        
-                        <input type="email" name="contacts_email" class="input" required value="<?php echo esc_attr($contacts_prefill_email); ?>"
-                               placeholder="<?php echo esc_attr(get_field('contacts_placeholder_email', 'option') ?: 'E-mail'); ?>">
-                        
-                        <input type="tel" name="contacts_phone" class="input input_phone" required>
-                        
-                        <div class="form-questions-textarea">
+
+                        <div class="contacts-form-layout__row contacts-form-layout__row--inputs">
+                            <input type="text" name="contacts_name" class="input" required value="<?php echo esc_attr($contacts_prefill_name); ?>"
+                                   placeholder="<?php echo esc_attr(get_field('contacts_placeholder_name', 'option') ?: 'Имя'); ?>">
+
+                            <input type="email" name="contacts_email" class="input" required value="<?php echo esc_attr($contacts_prefill_email); ?>"
+                                   placeholder="<?php echo esc_attr(get_field('contacts_placeholder_email', 'option') ?: 'E-mail'); ?>">
+
+                            <input type="tel" name="contacts_phone" class="input input_phone" required autocomplete="tel">
+                        </div>
+
+                        <div class="form-questions-textarea contacts-form-layout__textarea">
                             <textarea name="contacts_message" placeholder="<?php echo esc_attr(get_field('contacts_placeholder_message', 'option') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
-                            
+
                             <input type="submit" id="form-questions-submit" style="display: none;">
-                            
-                            <?php 
+
+                            <?php
                             $btn_icon = get_field('contacts_btn_icon', 'option');
-                            if ($btn_icon) : ?>
-                                <label for="form-questions-submit" class="btn">
-                                    <img src="<?php echo esc_url($btn_icon); ?>" alt="Отправить">
+                            if ($btn_icon) :
+                                ?>
+                                <label for="form-questions-submit" class="btn contacts-form-layout__submit">
+                                    <img src="<?php echo esc_url($btn_icon); ?>" alt="">
                                 </label>
                             <?php else : ?>
-                                <label for="form-questions-submit" class="btn">
-                                    <span>→</span>
+                                <label for="form-questions-submit" class="btn contacts-form-layout__submit contacts-form-layout__submit--sprite" aria-label="<?php esc_attr_e('Отправить сообщение', 'yoga'); ?>">
+                                    <svg class="contacts-form-layout__submit-icon" viewBox="0 0 205.8 205.8" focusable="false" aria-hidden="true">
+                                        <use href="<?php echo $yoga_sprite_href; ?>#hundreds-practices-arrow-hover"></use>
+                                    </svg>
                                 </label>
                             <?php endif; ?>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-        
-        <div class="row">
-            <div class="contacts-social">
-                <?php 
+
+            <div class="contacts-social contacts-form-layout__social">
+                <?php
                 $social_links = get_field('contacts_social_links', 'option');
-                if ($social_links) : 
-                    foreach ($social_links as $social) : ?>
+                if ($social_links) :
+                    foreach ($social_links as $social) :
+                        ?>
                         <a href="<?php echo esc_url($social['social_url']); ?>" class="contacts-social__item" target="_blank" rel="noopener noreferrer">
                             <img src="<?php echo esc_url($social['social_icon']); ?>" alt="<?php echo esc_attr($social['social_alt']); ?>">
                         </a>
-                    <?php endforeach; 
-                endif; ?>
+                    <?php
+                    endforeach;
+                else :
+                    ?>
+                    <a href="https://t.me/" class="contacts-social__item contacts-social__item--sprite" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                        <svg viewBox="0 0 36 36" focusable="false" aria-hidden="true">
+                            <use href="<?php echo $yoga_sprite_href; ?>#social-telegram"></use>
+                        </svg>
+                    </a>
+                    <a href="https://www.youtube.com/" class="contacts-social__item contacts-social__item--sprite" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                        <svg viewBox="0 0 36 36" focusable="false" aria-hidden="true">
+                            <use href="<?php echo $yoga_sprite_href; ?>#social-youtube"></use>
+                        </svg>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
