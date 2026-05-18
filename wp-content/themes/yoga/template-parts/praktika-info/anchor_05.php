@@ -1,7 +1,7 @@
 <?php
 	/**
-		* Template Part: Anchor 05 - Техника выполнения
-	*/
+	 * Шаблон: якорь 05 — техника выполнения
+	 */
 	
 	if (!isset($section['steps']) || empty($section['steps'])) {
 		return;
@@ -10,7 +10,7 @@
 	$steps = $section['steps'];
 
 	if (!function_exists('yoga_get_timing_label_short')) {
-		function yoga_get_timing_label_short($index) {
+		function yoga_get_timing_label_short(int $index): string {
 			if ($index === 0) {
 				return 'мин.';
 			}
@@ -50,8 +50,8 @@
 	$duration_mod = $exercise['duration_mod'] ?? 180;
 	$gallery = $exercise['gallery'] ?? [];
 	$gallery_mod = $exercise['gallery_mod'] ?? [];
-	$content =  $exercise['content'] ?? []; // Контент будет через WYSIWYG
-	$content_mod =  $exercise['content_mod'] ?? []; // Контент модификации
+	$content =  $exercise['content'] ?? []; // Основной контент из поля WYSIWYG
+	$content_mod =  $exercise['content_mod'] ?? []; // Контент модификации (WYSIWYG)
 	$allow_fullscreen = true;
 	$restrict_scrub = false;
 	$auto_play = true;
@@ -107,9 +107,9 @@
 				<?php if (!empty($timing)): ?>
 				<div>
 					<b>Время:</b> 
-					<?php foreach ($timing as $index => $value): ?>
-					<?php if ($index > 0): ?>, <?php endif; ?>
-					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($index)); ?></span>
+					<?php foreach ($timing as $timing_idx => $value): ?>
+					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
+					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
 					<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
 					<span class="exercise-time-unit">мин.</span>
 					<?php endforeach; ?>
@@ -126,7 +126,7 @@
             <?php if (!empty($gallery)): ?>
             <?php 
                 $slider_class = 'exercise-slider';
-                // Добавляем класс _active если изображений больше одного
+                // Добавляем класс _active, если изображений больше одного
                 if (count($gallery) > 1) {
                     $slider_class .= ' exercise-slider_active';
 				}
@@ -169,7 +169,7 @@
 					</button>
 					<?php endforeach; ?>
 					<?php else: ?>
-					<!-- Дефолтные значения, если timing не заполнен -->
+					<!-- Значения по умолчанию, если длительности не заданы -->
 					<button type="button" class="btn btn_min timer-preset" data-duration="180">
 						<span>3 мин.</span>
 					</button>
@@ -263,9 +263,9 @@
 				<?php if (!empty($timing_mod)): ?>
 				<div>
 					<b>Время:</b> 
-					<?php foreach ($timing_mod as $index => $value): ?>
-					<?php if ($index > 0): ?>, <?php endif; ?>
-					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($index)); ?></span>
+					<?php foreach ($timing_mod as $timing_idx => $value): ?>
+					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
+					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
 					<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
 					<span class="exercise-time-unit">мин.</span>
 					<?php endforeach; ?>
@@ -326,7 +326,7 @@
 					</button>
 					<?php endforeach; ?>
 					<?php else: ?>
-					<!-- Дефолтные значения, если timing не заполнен -->
+					<!-- Значения по умолчанию, если длительности не заданы -->
 					<button type="button" class="btn btn_min timer-preset" data-duration="180">
 						<span>3 мин.</span>
 					</button>

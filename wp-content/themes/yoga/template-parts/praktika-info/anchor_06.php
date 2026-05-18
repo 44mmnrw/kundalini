@@ -1,8 +1,15 @@
+<?php
+/**
+ * Подключается из section-praktika.php внутри цикла practice_sections.
+ *
+ * @var array $section Текущая строка гибкого контента (ACF), макет anchor_06.
+ */
+?>
 <span class="praktika-menu-anchor" id="<?php echo esc_attr($section['anchor_id']); ?>"></span>
 <div class="praktika-comments">
     <h3><?php echo esc_html($section['title']); ?></h3>
     
-    <!-- Упрощенная форма комментариев -->
+    <!-- Упрощённая форма комментариев -->
     <div class="comment-form-main">
     <form id="custom-comment-form" class="comment-form">
         <textarea name="comment" class="input textarea-resize" placeholder="Оставьте комментарий" rows="1" required></textarea>
@@ -32,7 +39,14 @@
                 $comments_by_parent[$comment->comment_parent][] = $comment;
             }
             
-            // Функция для рекурсивного вывода
+            // Функция рекурсивного вывода
+            /**
+             * Рекурсивный вывод дерева комментариев.
+             *
+             * @param int|string $parent_id ID родительского комментария
+             * @param array<int|string, WP_Comment[]> $comments_by_parent Комментарии, сгруппированные по родителю
+             * @param int $depth Уровень вложенности
+             */
             function display_comments($parent_id, $comments_by_parent, $depth = 0) {
                 if (!isset($comments_by_parent[$parent_id])) return;
                 
