@@ -447,6 +447,13 @@
   border-top: 1px solid rgba(31, 31, 31, 0.12);
 }
 
+.post-comments-yoga__title {
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  font-size: 1.5rem;
+  margin: 0 0 1.25rem;
+}
+
 .post-comments .comments-title,
 .post-comments .comment-reply-title {
   font-family: "Mulish-SemiBold", sans-serif;

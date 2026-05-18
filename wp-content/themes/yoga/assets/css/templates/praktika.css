@@ -890,10 +890,39 @@ display: block !important;
 .praktika-comment-item__edit .input {
   width: 100%;
 }
-.praktika-comment-item__edit .btn {
-  margin-top: 0.3125rem;}
 .praktika-comment-item__edit.hidden {
   display: none;
+}
+
+/* Редактирование своего комментария — по макету Figma comment_edit (246:4137): колонка, кнопка справа снизу */
+.answer-main_comment-edit {
+  flex-direction: column;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 0.3125rem;
+}
+.answer-main_comment-edit textarea {
+  width: 100%;
+  align-self: stretch;
+  min-height: 3.125rem;
+}
+.praktika-comment-item__edit:not(.hidden) .answer-main_comment-edit .btn_comment-update {
+  opacity: 1;
+  pointer-events: auto;
+  margin-left: 0;
+  margin-top: 0;
+  min-width: 7.6875rem;
+  width: auto;
+  height: 2.375rem;
+  line-height: 2.375rem;
+  padding-left: 0.9375rem;
+  padding-right: 0.9375rem;
+  border-radius: 6.25rem;
+  font-size: 1rem;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  background: var(--color-violet);
+  color: #fff;
 }
 
 .your-comm {
@@ -913,17 +942,29 @@ display: block !important;
 
 .your-comm__btn {
   position: relative;
-  width: 1rem;  height: 1rem;  margin-left: 1.25rem;  cursor: pointer;
-  opacity: 0.6;
+  margin-left: 1.25rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.85;
   transition: 0.4s ease;
+  font: inherit;
+  color: var(--color-violet);
 }
-.your-comm__btn img {
+.your-comm__btn_edit {
+  padding: 0.3125rem;
+  margin-left: 0.75rem;
+  color: var(--color-violet);
+}
+.your-comm__btn_del {
+  padding: 0.3125rem;
+  color: var(--color-violet);
+}
+.your-comm__btn-icon {
   display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
+  width: 1rem;
+  height: 1rem;
 }
 .your-comm__btn:hover {
   opacity: 1;
@@ -1314,10 +1355,14 @@ display: block !important;
     margin-left: 0px;
     margin-right: 1.25rem;  }
   .praktika-comment-item__edit {
-    padding-bottom: 0.625rem;  }
-  .praktika-comment-item__edit .btn {
-    position: absolute;
-    right: 1.25rem;    bottom: 1.25rem;  }
+    padding-bottom: 0.625rem;
+    position: relative;
+  }
+  .praktika-comment-item__edit .btn_comment-update {
+    position: relative;
+    right: auto;
+    bottom: auto;
+  }
 }
 @media (max-width: 575px) {
   .section-praktika > .container {
