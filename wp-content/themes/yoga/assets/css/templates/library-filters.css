@@ -6,7 +6,8 @@
   display: none;
 }
 
-@media (min-width: var(--yoga-bp-lg)) {
+/* Литералы в условии: Safari и часть движков не применяют @media с var(); иначе экран фильтров вечно display:none */
+@media (min-width: 1025px) {
   /* Не display:none: нативные input внутри остаются связаны с label[for] в .section-library и получают change → AJAX. */
   .library-filters-screen {
     display: block !important;
@@ -26,7 +27,7 @@
   }
 }
 
-@media (max-width: var(--yoga-below-lg)) {
+@media (max-width: 1024px) {
   .library-filters-screen {
     display: block;
     position: fixed;

@@ -254,25 +254,28 @@ jQuery(document).ready(function($) {
 	
 	/* Section-library */
 	
-	$('.filter-btn').click(function () {
-		var $lib = $(this).closest('.section-library');
-		if ($lib.length && $(window).width() < yogaViewportBp.lg && $('#library-filters-screen').length) {
-			$(this).toggleClass('active');
-			if ($(this).hasClass('active')) {
+	/* Делегирование: надёжнее на мобилке; z-index у .filter-btn выше .form-search (20), иначе тапы уходят в строку поиска */
+	$(document).on('click', '.library-form-main .filter-btn, .kriyi-form-main .filter-btn', function () {
+		var $btn = $(this);
+		var $lib = $btn.closest('.section-library');
+		var $screen = $('#library-filters-screen');
+		if ($lib.length && $(window).width() < yogaViewportBp.lg && $screen.length) {
+			$btn.toggleClass('active');
+			if ($btn.hasClass('active')) {
 				openLibraryFiltersScreen();
 			} else {
 				closeLibraryFiltersScreen();
 			}
 			return;
 		}
-		$(this).toggleClass("active");
-		const $contextForm = $(this).closest('form');
+		$btn.toggleClass('active');
+		var $contextForm = $btn.closest('form');
 		if ($contextForm.length) {
-			$contextForm.find('.filter').first().toggleClass("active");
+			$contextForm.find('.filter').first().toggleClass('active');
 		} else {
-			$('.filter').toggleClass("active");
+			$('.filter').toggleClass('active');
 		}
-	}); 
+	});
 	
 	
 	if ($(window).width() >= yogaViewportBp.lg ) {
