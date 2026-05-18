@@ -733,33 +733,6 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
-	$('.praktika-comment > .praktika-comment-item .answer-btn').click(function () {
-		if (typeof yoga_ajax !== 'undefined' && !yoga_ajax.user_logged_in) {
-			alert('Для ответа необходимо авторизоваться');
-			return;
-		}
-
-		var commentId = $(this).closest('.praktika-comment').attr('id').replace('comment-', '');
-		toggleReplyForm(commentId);
-	});
-	
-	$('.sub-answer > .praktika-comment-item .answer-btn').click(function () {
-		if (typeof yoga_ajax !== 'undefined' && !yoga_ajax.user_logged_in) {
-			alert('Для ответа необходимо авторизоваться');
-			return;
-		}
-
-		var commentId = $(this).closest('.praktika-comment').attr('id').replace('comment-', '');
-		toggleReplyForm(commentId);
-	});
-	
-	
-	$('.your-comm__btn_edit').click(function () {
-		$(this).closest('.praktika-comment-item').find('.praktika-comment-item__text').addClass("hidden");
-		$(this).closest('.praktika-comment-item').find('.praktika-comment-item__edit').removeClass("hidden");
-		
-		$(this).closest('.praktika-comment-item').find('.praktika-comment-item__edit .textarea-resize').focus();
-	});
 	
 	$('.praktika-comment-item__edit .textarea-resize').focus(function () {
 		var el = this;
@@ -769,12 +742,6 @@ jQuery(document).ready(function($) {
 		}, 1);
 	}); 
 	
-	
-	$('.praktika-comment-item__edit .btn').click(function () {
-		$(this).closest('.praktika-comment-item').find('.praktika-comment-item__text').removeClass("hidden");
-		$(this).closest('.praktika-comment-item__edit').addClass("hidden");
-		
-	});
 	
 	$(".comment-form-main form, .praktika-comment__answer, .praktika-comment-item__edit").submit(function(e) {
 		e.preventDefault();
@@ -3741,7 +3708,7 @@ jQuery(document).ready(function($) {
 
     // Обработчики для кнопок ответа
     $(document).on('click', '.answer-btn', function() {
-        if (!yoga_ajax.user_logged_in) {
+        if (typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in) {
             alert('Для ответа необходимо авторизоваться');
             return;
         }
@@ -3768,8 +3735,8 @@ jQuery(document).ready(function($) {
         submitReply(parentId);
     });
 
-    // Обработчики для кнопок обновления комментариев
-    $(document).on('click', '.praktika-comment-item__edit .btn', function() {
+    // Обработчики для кнопки «Обновить» в режиме редактирования
+    $(document).on('click', '.praktika-comment-item__edit .btn_comment-update', function() {
         var commentId = $(this).closest('.praktika-comment-item__edit').attr('id').replace('edit-form-', '');
         updateComment(commentId);
     });
@@ -3792,12 +3759,41 @@ function toggleReplyForm(commentId) {
     $form.find('.textarea-resize').trigger('focus');
 }
 
+function closeAllPracticeCommentEdits() {
+    jQuery('.praktika-comment-item__edit').each(function () {
+        var $form = jQuery(this);
+        $form.addClass('hidden');
+        $form.find('.answer-main_comment-edit').removeClass('active');
+        $form.closest('.praktika-comment-item').find('.praktika-comment-item__text').removeClass('hidden');
+    });
+}
+
 function toggleEditForm(commentId) {
     var $form = jQuery('#edit-form-' + commentId);
-    $form.toggleClass('hidden');
-    
-    // Скрываем другие открытые формы редактирования
-    jQuery('.praktika-comment-item__edit').not($form).addClass('hidden');
+    var $item = $form.closest('.praktika-comment-item');
+    var $text = $item.find('.praktika-comment-item__text');
+    var $main = $form.find('.answer-main_comment-edit');
+    var wasHidden = $form.hasClass('hidden');
+
+    jQuery('.praktika-comment-item__edit').each(function () {
+        var $o = jQuery(this);
+        if (!$o.is($form)) {
+            $o.addClass('hidden');
+            $o.find('.answer-main_comment-edit').removeClass('active');
+            $o.closest('.praktika-comment-item').find('.praktika-comment-item__text').removeClass('hidden');
+        }
+    });
+
+    if (wasHidden) {
+        $form.removeClass('hidden');
+        $main.addClass('active');
+        $text.addClass('hidden');
+        $form.find('.textarea-resize').trigger('focus');
+    } else {
+        $form.addClass('hidden');
+        $main.removeClass('active');
+        $text.removeClass('hidden');
+    }
 }
 
 function submitReply(parentId) {
@@ -3853,7 +3849,7 @@ function updateComment(commentId) {
         } else {
             alert('Ошибка при обновлении комментария: ' + (response.data || 'Неизвестная ошибка'));
         }
-    }).fail(function() {
+    }, 'json').fail(function() {
         alert('Ошибка соединения');
     });
 }
@@ -3875,7 +3871,7 @@ function deleteComment(commentId) {
         } else {
             alert('Ошибка при удалении комментария: ' + (response.data || 'Неизвестная ошибка'));
         }
-    }).fail(function() {
+    }, 'json').fail(function() {
         alert('Ошибка соединения');
     });
 }
@@ -3887,7 +3883,7 @@ jQuery(document).on('click', function(e) {
     }
     
     if (!jQuery(e.target).closest('.praktika-comment-item__edit, .your-comm__btn_edit').length) {
-        jQuery('.praktika-comment-item__edit').addClass('hidden');
+        closeAllPracticeCommentEdits();
     }
 });
 

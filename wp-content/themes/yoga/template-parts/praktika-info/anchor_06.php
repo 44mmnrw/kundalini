@@ -23,52 +23,6 @@
 
     <!-- Список комментариев -->
     <div class="comments-items">
-        <?php
-        $comments = get_comments(array(
-            'post_id' => get_the_ID(),
-            'status' => 'approve',
-            'order' => 'ASC'
-        ));
-        
-        if ($comments) {
-            echo '<div class="praktika-comments-list">';
-            
-            // Организуем комментарии по родителям
-            $comments_by_parent = array();
-            foreach ($comments as $comment) {
-                $comments_by_parent[$comment->comment_parent][] = $comment;
-            }
-            
-            // Функция рекурсивного вывода
-            /**
-             * Рекурсивный вывод дерева комментариев.
-             *
-             * @param int|string $parent_id ID родительского комментария
-             * @param array<int|string, WP_Comment[]> $comments_by_parent Комментарии, сгруппированные по родителю
-             * @param int $depth Уровень вложенности
-             */
-            function display_comments($parent_id, $comments_by_parent, $depth = 0) {
-                if (!isset($comments_by_parent[$parent_id])) return;
-                
-                foreach ($comments_by_parent[$parent_id] as $comment) {
-                    custom_comment_template($comment, array('max_depth' => 5), $depth);
-                    
-                    // Выводим дочерние комментарии
-                    if ($depth < 4) {
-                        echo '<div class="praktika-comment__sub-answers">';
-                        display_comments($comment->comment_ID, $comments_by_parent, $depth + 1);
-                        echo '</div>';
-                    }
-                }
-            }
-            
-            // Выводим корневые комментарии
-            display_comments(0, $comments_by_parent);
-            
-            echo '</div>';
-        } else {
-            echo '<p>Пока нет комментариев. Будьте первым!</p>';
-        }
-        ?>
+        <?php yoga_render_threaded_ajax_comments_list((int) get_the_ID()); ?>
     </div>
 </div>

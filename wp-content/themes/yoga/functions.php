@@ -618,6 +618,12 @@
 		if ($is_post_single) {
 			wp_enqueue_style( 'post-style', $theme_uri . '/assets/css/templates/post.css', $common_style_deps, $post_style_ver );
 			wp_enqueue_style( 'popular-articles-style', $theme_uri . '/assets/css/templates/popular-articles.css', $common_style_deps, $popular_articles_style_ver );
+			wp_enqueue_style(
+				'yoga-blog-comments',
+				$theme_uri . '/assets/css/templates/praktika.css',
+				array( 'post-style' ),
+				$praktika_style_ver
+			);
 		}
 		if ($is_404_template) {
 			wp_enqueue_style( 'notfound-style', $theme_uri . '/assets/css/templates/notfound.css', $common_style_deps, $notfound_style_ver );
@@ -827,12 +833,86 @@ if (!function_exists('yoga_get_user_avatar_html')) {
 	}
 }
 
+/**
+ * Комментарий оставлен текущим залогиненным пользователем (по user_id или по email для legacy).
+ */
+function yoga_comment_is_owned_by_logged_in_user(WP_Comment $comment): bool {
+	if (!is_user_logged_in()) {
+		return false;
+	}
+	$current_id = (int) get_current_user_id();
+	if ($current_id <= 0) {
+		return false;
+	}
+	$comment_uid = (int) $comment->user_id;
+	if ($comment_uid > 0 && $comment_uid === $current_id) {
+		return true;
+	}
+	$user = wp_get_current_user();
+	if (!$user || trim((string) $user->user_email) === '') {
+		return false;
+	}
+	$c_email = trim((string) $comment->comment_author_email);
+	return $c_email !== '' && strcasecmp($c_email, trim((string) $user->user_email)) === 0;
+}
+
+/**
+ * После wp_new_comment/wp_insert_comment иногда остаётся user_id = 0 или пустой email — чиним привязку к автору.
+ */
+function yoga_practice_comment_fix_author_binding(int $comment_id, int $author_user_id): void {
+	if ($comment_id <= 0 || $author_user_id <= 0) {
+		return;
+	}
+	$c = get_comment($comment_id);
+	if (!$c instanceof WP_Comment) {
+		return;
+	}
+	$user = get_userdata($author_user_id);
+	if (!$user) {
+		return;
+	}
+	$updates = array('comment_ID' => $comment_id);
+	if ((int) $c->user_id !== $author_user_id) {
+		$updates['user_id'] = $author_user_id;
+	}
+	$email = trim((string) $user->user_email);
+	if ($email !== '' && strcasecmp(trim((string) $c->comment_author_email), $email) !== 0) {
+		$updates['comment_author_email'] = $email;
+	}
+	if (count($updates) > 1) {
+		wp_update_comment($updates);
+	}
+}
+
+/**
+ * Типы записей, где включён единый AJAX-блок комментариев (практика, блог).
+ */
+function yoga_ajax_comment_supported_post_types(): array {
+	return array('practice', 'post');
+}
+
+/**
+ * Разрешить редактирование/удаление своего комментария без current_user_can('edit_comment'):
+ * для CPT practice/post у автора часто нет edit_post на родительской записи.
+ */
+function yoga_user_can_manage_own_theme_comment(int $comment_id): bool {
+	$c = get_comment($comment_id);
+	if (!$c instanceof WP_Comment) {
+		return false;
+	}
+	$post = get_post((int) $c->comment_post_ID);
+	if (!$post instanceof WP_Post || !in_array($post->post_type, yoga_ajax_comment_supported_post_types(), true)) {
+		return false;
+	}
+	return yoga_comment_is_owned_by_logged_in_user($c);
+}
+
 // Определяем автора
 // Axecode.tech: шаблон комментария с разделением собственных/чужих действий.
 // Зачем: один рендер-блок для списка, редактирования и ответа без дублирования HTML.
 function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
-    $is_own_comment = (is_user_logged_in() && get_current_user_id() == $comment->user_id);
+    $is_own_comment = yoga_comment_is_owned_by_logged_in_user($comment);
     $comment_user_id = (int) $comment->user_id;
     $comment_author_name = trim((string) $comment->comment_author);
 
@@ -849,6 +929,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $comment_avatar_html = $comment_user_id > 0
         ? yoga_get_user_avatar_html($comment_user_id, 60, 'avatar')
         : get_avatar($comment, 60, '', '', array('class' => 'avatar'));
+    $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
     ?>
     <div class="praktika-comment <?php echo ($depth > 0) ? 'sub-answer' : ''; ?>" id="comment-<?php comment_ID(); ?>">
         <div class="praktika-comment-item <?php echo $is_own_comment ? 'praktika-comment-item_own' : ''; ?>">
@@ -864,16 +945,20 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                 </span>
                 <div class="praktika-comment-item__main-action">
                     <?php if ($is_own_comment): ?>
-                       <!-- <div class="your-comm">
-                            <div class="your-comm__btn your-comm__btn_edit" onclick="toggleEditForm(<?php echo $comment->comment_ID; ?>)">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/edit-icon.png" alt="Редактировать">
-                            </div>
-                            <div class="your-comm__btn your-comm__btn_del" onclick="deleteComment(<?php echo $comment->comment_ID; ?>)">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/del-icon.png" alt="Удалить">
-                            </div>
-                        </div>-->
+                        <div class="your-comm">
+                            <button type="button" class="your-comm__btn your-comm__btn_edit" aria-label="<?php esc_attr_e('Редактировать комментарий', 'yoga'); ?>">
+                                <svg class="your-comm__btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                    <use href="<?php echo esc_url($yoga_sprite_href); ?>#comment-edit"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="your-comm__btn your-comm__btn_del" aria-label="<?php esc_attr_e('Удалить комментарий', 'yoga'); ?>">
+                                <svg class="your-comm__btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                    <use href="<?php echo esc_url($yoga_sprite_href); ?>#comment-delete"></use>
+                                </svg>
+                            </button>
+                        </div>
                     <?php else: ?>
-                        <div class="answer-btn" onclick="toggleReplyForm(<?php echo $comment->comment_ID; ?>)">
+                        <div class="answer-btn" role="button" tabindex="0">
                             <span>Ответить</span>
                         </div>
                     <?php endif; ?>
@@ -899,13 +984,12 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
             </div>
             
             <!-- Форма редактирования (только для своих комментариев) -->
-            <!-- Форма редактирования (только для своих комментариев) -->
             <?php if ($is_own_comment): ?>
             <form class="praktika-comment-item__edit hidden" id="edit-form-<?php echo $comment->comment_ID; ?>">
-                <div class="answer-main">
+                <div class="answer-main answer-main_comment-edit">
                     <textarea name="comment_content" class="input textarea-resize" rows="1"><?php echo esc_textarea($comment->comment_content); ?></textarea>
-                    <button type="button" class="btn" onclick="updateComment(<?php echo $comment->comment_ID; ?>)">
-                        Обновить
+                    <button type="button" class="btn btn_comment-update">
+                        <?php esc_html_e('Обновить', 'yoga'); ?>
                     </button>
                 </div>
             </form>
@@ -928,6 +1012,46 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     <?php
 }
 
+/**
+ * Дерево комментариев для AJAX-блока (практика и запись блога).
+ */
+function yoga_render_threaded_ajax_comments_list(int $post_id): void {
+	if ($post_id <= 0) {
+		return;
+	}
+	$comments = get_comments(array(
+		'post_id' => $post_id,
+		'status' => 'approve',
+		'order' => 'ASC',
+	));
+	if (empty($comments)) {
+		echo '<p>' . esc_html__('Пока нет комментариев. Будьте первым!', 'yoga') . '</p>';
+		return;
+	}
+	echo '<div class="praktika-comments-list">';
+	$comments_by_parent = array();
+	foreach ($comments as $comment) {
+		if ($comment instanceof WP_Comment) {
+			$comments_by_parent[(int) $comment->comment_parent][] = $comment;
+		}
+	}
+	$display_comments_tree = static function ($parent_id, $comments_by_parent, $depth = 0) use (&$display_comments_tree) {
+		if (!isset($comments_by_parent[$parent_id])) {
+			return;
+		}
+		foreach ($comments_by_parent[$parent_id] as $comment) {
+			custom_comment_template($comment, array('max_depth' => 5), $depth);
+			if ($depth < 4) {
+				echo '<div class="praktika-comment__sub-answers">';
+				$display_comments_tree((int) $comment->comment_ID, $comments_by_parent, $depth + 1);
+				echo '</div>';
+			}
+		}
+	};
+	$display_comments_tree(0, $comments_by_parent);
+	echo '</div>';
+}
+
 // Обновление комментариев (только для зарегистрированных пользователей)
 add_action('wp_ajax_submit_custom_comment', 'handle_custom_comment');
 add_action('wp_ajax_nopriv_submit_custom_comment', 'handle_custom_comment');
@@ -941,8 +1065,9 @@ function handle_custom_comment() {
     $post_id = isset($_POST['post_id']) ? (int) $_POST['post_id'] : 0;
     $comment_content = isset($_POST['comment']) ? sanitize_textarea_field($_POST['comment']) : '';
 
-    if ($post_id <= 0 || !get_post($post_id)) {
-        wp_send_json_error('Некорректная практика для комментария');
+    $target_post = $post_id > 0 ? get_post($post_id) : null;
+    if (!$target_post instanceof WP_Post || !in_array($target_post->post_type, yoga_ajax_comment_supported_post_types(), true)) {
+        wp_send_json_error('Комментирование для этой записи недоступно');
     }
 
     if ($comment_content === '') {
@@ -950,7 +1075,7 @@ function handle_custom_comment() {
     }
 
     if (!comments_open($post_id)) {
-        wp_send_json_error('Комментирование для этой практики закрыто');
+        wp_send_json_error('Комментирование для этой записи закрыто');
     }
 
     if (!is_user_logged_in() && get_option('comment_registration')) {
@@ -979,14 +1104,14 @@ function handle_custom_comment() {
         'comment_author' => $comment_author,
         'comment_author_email' => $comment_author_email,
         'comment_author_url' => '',
-        'user_id' => $user_id,
+        'user_id' => (int) $user_id,
         'comment_approved' => 1
     );
     
-    // Разрешить комментарии для custom post type 'practice'
     $comment_id = wp_new_comment($comment_data, true);
     
     if (!is_wp_error($comment_id) && $comment_id) {
+        yoga_practice_comment_fix_author_binding((int) $comment_id, is_user_logged_in() ? (int) get_current_user_id() : 0);
         wp_send_json_success('Комментарий добавлен');
     } else {
         $error_message = is_wp_error($comment_id)
@@ -997,6 +1122,7 @@ function handle_custom_comment() {
         if (!$error_message) {
             $fallback_comment_id = wp_insert_comment($comment_data);
             if ($fallback_comment_id) {
+                yoga_practice_comment_fix_author_binding((int) $fallback_comment_id, is_user_logged_in() ? (int) get_current_user_id() : 0);
                 wp_send_json_success('Комментарий добавлен');
             }
         }
@@ -1041,8 +1167,9 @@ function handle_comment_reply() {
     $parent_id = isset($_POST['parent_id']) ? (int) $_POST['parent_id'] : 0;
     $content = isset($_POST['content']) ? sanitize_textarea_field($_POST['content']) : '';
 
-    if ($post_id <= 0 || !get_post($post_id)) {
-        wp_send_json_error('Некорректная практика для ответа');
+    $reply_post = $post_id > 0 ? get_post($post_id) : null;
+    if (!$reply_post instanceof WP_Post || !in_array($reply_post->post_type, yoga_ajax_comment_supported_post_types(), true)) {
+        wp_send_json_error('Ответ на комментарий для этой записи недоступен');
     }
 
     $parent_comment = $parent_id > 0 ? get_comment($parent_id) : null;
@@ -1059,7 +1186,7 @@ function handle_comment_reply() {
     }
 
     if (!comments_open($post_id)) {
-        wp_send_json_error('Комментирование для этой практики закрыто');
+        wp_send_json_error('Комментирование для этой записи закрыто');
     }
     
     $comment_data = array(
@@ -1068,13 +1195,14 @@ function handle_comment_reply() {
         'comment_parent' => $parent_id,
         'comment_author' => $comment_author,
         'comment_author_email' => $comment_author_email,
-        'user_id' => $user_id,
+        'user_id' => (int) $user_id,
         'comment_approved' => 1,
     );
     
     $comment_id = wp_insert_comment($comment_data);
     
     if ($comment_id) {
+        yoga_practice_comment_fix_author_binding((int) $comment_id, (int) $user_id);
         wp_send_json_success('Ответ добавлен');
     } else {
         wp_send_json_error('Ошибка при добавлении ответа');
@@ -1091,9 +1219,8 @@ function handle_comment_update() {
     
     $comment_id = intval($_POST['comment_id']);
     $comment = get_comment($comment_id);
-    
-    // Обработка AJAX формы контактов
-    if (!current_user_can('edit_comment', $comment_id) || $comment->user_id != get_current_user_id()) {
+
+    if (!$comment instanceof WP_Comment || !yoga_user_can_manage_own_theme_comment($comment_id)) {
         wp_send_json_error('Недостаточно прав для редактирования комментария');
     }
     
@@ -1120,9 +1247,8 @@ function handle_comment_delete() {
     }
     
     $comment_id = intval($_POST['comment_id']);
-    
-    // Валидация и санитизация данных
-    if (!current_user_can('edit_comment', $comment_id) || get_comment($comment_id)->user_id != get_current_user_id()) {
+
+    if (!yoga_user_can_manage_own_theme_comment($comment_id)) {
         wp_send_json_error('Недостаточно прав для удаления комментария');
     }
     
@@ -1140,7 +1266,7 @@ function handle_comment_delete() {
 	// Отправка email администратору
 	function enable_comments_for_practice(bool $open, int $post_id): bool {
 		$post = get_post($post_id);
-		if ($post->post_type == 'practice') {
+		if ($post instanceof WP_Post && $post->post_type === 'practice') {
 			return true;
 		}
 		return $open;
