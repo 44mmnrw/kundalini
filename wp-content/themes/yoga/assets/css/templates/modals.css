@@ -191,14 +191,14 @@
   width: 100%;
   position: fixed;
   left: 0px;
-  top: 5.5rem;  padding-top: 1.125rem;  border-top: 2px solid var(--color-green);
+  top: var(--header-bar-height);  padding-top: 1.125rem;  border-top: 2px solid var(--color-green);
   background: #fff;
   z-index: 8;
   box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
   transform: translateY(-150%);
   transition: all 0.6s ease;
   pointer-events: none;
-  max-height: calc(100vh - 5.625rem);  overflow-y: auto;
+  max-height: calc(100vh - var(--header-bar-height) - 0.125rem);  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--color-violet) #E8E8E8;
 }
@@ -321,7 +321,7 @@
 
 @media (max-width: 1319px) {
   .modal-menu {
-    top: 5.125rem;  }
+    top: var(--header-bar-height);  }
   .modal-menu-column nav {
     padding-top: 1rem;  }
   .modal-menu-item {
@@ -462,7 +462,7 @@
     color: #fff;
   }
   .modal-mobile-menu-lk .mobile-menu-back {
-    width: 1.25rem;    height: 1.25rem;    top: 5.125rem;    left: 2.5rem;    background: transparent;
+    width: 1.25rem;    height: 1.25rem;    top: var(--header-bar-height);    left: 2.5rem;    background: transparent;
   }
   .modal-mobile-menu-lk .sidebar-menu {
     padding-top: 0px;
@@ -748,7 +748,7 @@
     color: var(--color-black);
   }
   .modal-mobile-menu .mobile-menu__slide_main {
-    padding-top: 5.5rem;
+    padding-top: var(--header-bar-height);
     padding-left: var(--mm-menu-inline-gutter);
     padding-right: var(--mm-menu-inline-gutter);
   }
