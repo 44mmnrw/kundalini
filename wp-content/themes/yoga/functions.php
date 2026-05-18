@@ -2297,6 +2297,27 @@ function handle_comment_delete() {
 		}
 	}
 	add_action('wp_enqueue_scripts', 'theme_enqueue_checkout_scripts');
+
+	/**
+	 * Чекаут WooCommerce: для авторизованных подставить имя и фамилию из метаполей профиля (как в ЛК).
+	 */
+	add_filter('woocommerce_checkout_get_value', 'yoga_wc_checkout_prefill_names_from_profile', 10, 2);
+	function yoga_wc_checkout_prefill_names_from_profile($value, string $input) {
+		if (!function_exists('is_user_logged_in') || !is_user_logged_in()) {
+			return $value;
+		}
+		if ($value !== null && $value !== '' && trim((string) $value) !== '') {
+			return $value;
+		}
+		$user_id = get_current_user_id();
+		if ($input === 'billing_first_name') {
+			return trim((string) get_user_meta($user_id, 'first_name', true));
+		}
+		if ($input === 'billing_last_name') {
+			return trim((string) get_user_meta($user_id, 'last_name', true));
+		}
+		return $value;
+	}
 	
 	// Добавляем возможности для пользователей
 	add_action('template_redirect', 'fix_checkout_issues');

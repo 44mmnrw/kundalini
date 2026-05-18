@@ -538,8 +538,13 @@
   border-radius: 0;
   --whyme-vb-w: 320;
   --whyme-vb-h: 298;
-  --whyme-num-x: 244;
-  --whyme-num-y: 56;
+  /*
+   * Центр выреза в координатах viewBox wyme_*.svg (идентичный path).
+   * Вырез по кромке: y от 52.346 до 84.564 → середина 68.455; x от 235.659 до 320 → середина 277.829.
+   * При object-fit:fill процент left/top масштабируются как доля viewBox — отступ сверху/снизу относительно выреза совпадает на всех экранах.
+   */
+  --whyme-notch-cx: 277.829;
+  --whyme-notch-cy: 68.455;
 }
 
 .whyme-item *:not(.whyme-item__shape):not(.whyme-item__star):not(.whyme-item__star-img):not(.whyme-item__number):not(.whyme-item__plate) {
@@ -598,18 +603,21 @@
 .whyme-item__plate .whyme-item__number {
   position: absolute;
   z-index: 3;
-  left: calc(var(--whyme-num-x) * 100% / var(--whyme-vb-w));
-  top: calc(var(--whyme-num-y) * 100% / var(--whyme-vb-h) - 2px);
-  transform: translateX(-100%);
+  left: calc(var(--whyme-notch-cx) * 100% / var(--whyme-vb-w));
+  top: calc(var(--whyme-notch-cy) * 100% / var(--whyme-vb-h));
+  /* Центрируем по вырезу; половина по вертикали — по bounding-box текста */
+  transform: translate(-50%, -50%);
   right: auto;
   width: auto;
   min-width: 0;
   max-width: none;
   min-height: 0;
-  display: block;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   font-size: 1.125rem;
-  line-height: 1.4;
+  line-height: 1;
   font-family: "Mulish-SemiBold", sans-serif;
   font-weight: normal;
   color: var(--color-black);
@@ -716,6 +724,7 @@
     margin-top: 1.75rem;
     overflow: hidden;
     padding: 2.625rem 1.25rem 1.5625rem;
+    /* Центр номера совпадает с базовым (геометрия SVG одна на все брейкпоинты) */
     /* Высота пластины = ширина × 298/320; иначе absolute-пластина выступает ниже блока и наезжает на следующую карточку */
     min-height: calc(100cqw * 298 / 320);
   }
@@ -760,12 +769,7 @@
     height: 8.8125rem;
   }
 
-  .whyme-item__plate .whyme-item__number {
-    left: calc(286 * 100% / var(--whyme-vb-w));
-    top: calc(var(--whyme-num-y) * 100% / var(--whyme-vb-h) + 1px);
-  }
 }
-
 @media (max-width: 575px) {
   .section-whyme {
     padding-top: 0;
@@ -777,16 +781,8 @@
   }
 }
 
-/* Планшет 768px+ и десктоп: номер и звёзды как на большой сетке */
+/* Звёзды по вариантам карточки (координаты из макета); номер — общая система notch-cx/notch-cy выше */
 @media (min-width: 768px) {
-  .whyme-item__plate .whyme-item__number {
-    left: calc(258 * 100% / var(--whyme-vb-w) + 3px);
-    top: calc(76 * 100% / var(--whyme-vb-h) - 8px);
-    transform: translate(-50%, -50%);
-    text-align: center;
-    line-height: 1;
-  }
-
   .whyme-item_green .whyme-item__plate .whyme-item__star {
     left: calc(279.5 * 100% / 387);
     top: calc(166.265 * 100% / 383);
