@@ -25,7 +25,7 @@
   justify-content: space-between;
   align-items: center;
   /* Те же значения, что у .library-form-main в library.css — иначе .form-search / .filter-btn без высоты и ширины */
-  --library-search-row-height: 4.0625rem;
+  --library-search-row-height: 4.9375rem;
 }
 
 .sorting {
@@ -402,7 +402,7 @@ body.tax-practice-type .practice-notification {
 }
 @media (max-width: 575px) {
   .kriyi-form-main {
-    --library-search-row-height: 3.125rem;
+    --library-search-row-height: 3.75rem;
   }
   .section-kriyi.section-practice-category {
     min-height: calc(100vh - 14rem);
