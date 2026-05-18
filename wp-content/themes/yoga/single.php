@@ -233,11 +233,19 @@ if (have_posts()) :
 
                 <div class="row">
                     <div class="post-layout">
-                        <article class="post-main" id="post-<?php the_ID(); ?>">
-                            <div class="entry-content post-main__content">
-                                <?php echo $article_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                            </div>
-                        </article>
+                        <div class="post-layout__primary">
+                            <article class="post-main" id="post-<?php the_ID(); ?>">
+                                <div class="entry-content post-main__content">
+                                    <?php echo $article_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                </div>
+                            </article>
+
+                            <?php if (comments_open() || get_comments_number()) : ?>
+                                <div class="post-comments">
+                                    <?php comments_template(); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
 
                         <aside class="post-author">
                             <div class="post-author-fixed">

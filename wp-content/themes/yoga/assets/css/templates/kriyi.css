@@ -1,7 +1,7 @@
 /* Template: taxonomy kriyi */
 .section-kriyi {
-  overflow-x: hidden;
-  overflow-y: visible;
+  /* см. library.css .section-library — overflow-x на секции обрезает выпадающие списки категорий/поиска */
+  overflow: visible;
   padding-top: 1.5rem;  padding-bottom: 7.5rem;}
 
 .section-kriyi.section-practice-category {
@@ -24,6 +24,8 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
+  /* Те же значения, что у .library-form-main в library.css — иначе .form-search / .filter-btn без высоты и ширины */
+  --library-search-row-height: 4.0625rem;
 }
 
 .sorting {
@@ -399,6 +401,9 @@ body.tax-practice-type .practice-notification {
     height: 9.6875rem;  }
 }
 @media (max-width: 575px) {
+  .kriyi-form-main {
+    --library-search-row-height: 3.125rem;
+  }
   .section-kriyi.section-practice-category {
     min-height: calc(100vh - 14rem);
   }

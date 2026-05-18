@@ -77,7 +77,7 @@
                     }
                     ?>
                 </ul>
-                <h2>
+                <h2 class="ways-heading">
                     <?php
                     if (is_home() || is_front_page()) {
                         echo 'Главная';

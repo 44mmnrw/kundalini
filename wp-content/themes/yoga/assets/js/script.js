@@ -296,14 +296,19 @@ jQuery(document).ready(function($) {
 	
 	
 	jQuery(function($){
-		$(document).mouseup(function (e){ // событие клика по веб-документу
-			var div = $(".form-search .input, .form-search-list__item"); // тут указываем ID элемента
-			var val = div.val();
-			if (!div.is(e.target) // если клик был не по нашему блоку
-				&& div.has(e.target).length === 0 ) { // и не по его дочерним элементам
-				$('.form-search-list').removeClass("active");
-				$('.form-search').removeClass("active");
+		$(document).on('mouseup', function (e) {
+			/* Закрываем все выпадающие части виджета поиска только при клике ВНЕ .form-search
+			 * (внутрь входят инпут, подсказки и список категорий .form-cat-list).
+			 * Раньше проверялись только инпут и .form-search-list__item — при открытом списке категорий
+			 * снимался .active только с .form-search, а .form-cat-list оставался active → «ломалась» строка поиска
+			 * после клика по практике или другому месту страницы. */
+			if ($(e.target).closest('.form-search').length) {
+				return;
 			}
+			$('.form-search-list').removeClass('active');
+			$('.form-search').removeClass('active');
+			$('.form-cat-list').removeClass('active');
+			$('.form-categories').removeClass('active');
 		});
 	});
 	
@@ -311,49 +316,60 @@ jQuery(document).ready(function($) {
 	$('.form-search .input').keyup(function(){
 		var $this = $(this),
 		vall = $this.val();
+		var $search = $(this).closest('.form-search');
+		var $form = $(this).closest('form');
 		
 		if(vall.length >= 1){
-			$(this).closest('.form-search').find('.form-search-list').addClass("active");
-			$('.form-search').addClass("active");
-			$('.form-cat-list').removeClass("active");
-			$('.filter-item').removeClass("active");
-			$('.filter-item__list').removeClass("active");
+			$search.find('.form-search-list').addClass("active");
+			$search.addClass("active");
+			$search.find('.form-cat-list').removeClass("active");
+			$search.find('.form-categories').removeClass("active");
+			if ($form.length) {
+				$form.find('.filter-item').removeClass("active");
+				$form.find('.filter-item__list').removeClass("active");
+			}
 			}else {
-			$(this).closest('.form-search').find('.form-search-list').removeClass("active");
-			$('.form-search').removeClass("active");
+			$search.find('.form-search-list').removeClass("active");
+			$search.removeClass("active");
 		}
 	});
 	
 	
 	$('.form-search-list__item').click(function () {
-		$(this).closest('.form-search').removeClass("active");
+		var $search = $(this).closest('.form-search');
+		$search.removeClass("active");
 		$(this).closest('.form-search-list').removeClass("active");
 		var libsearchtext = $(this).find('span').text();
-		$('.form-search').find('.input').val(libsearchtext);
+		$search.find('.input').val(libsearchtext);
 	}); 
 	
 	
 	$('.form-categories').click(function () {
+		var $search = $(this).closest('.form-search');
+		var $form = $(this).closest('form');
 		$(this).toggleClass("active");
-		$('.form-search').toggleClass("active");
-		$('.form-cat-list').toggleClass("active");
-		$('.form-search-list').removeClass("active");
-		$('.filter-item').removeClass("active");
-		$('.filter-item__list').removeClass("active");
+		$search.toggleClass("active");
+		$search.find('.form-cat-list').toggleClass("active");
+		$search.find('.form-search-list').removeClass("active");
+		if ($form.length) {
+			$form.find('.filter-item').removeClass("active");
+			$form.find('.filter-item__list').removeClass("active");
+		}
 	}); 
 	
 	
 	
 	$('.form-cat-list__item').click(function () {
-		$(this).closest('.form-search').removeClass("active");
-		$(this).closest('.form-search').find('.form-categories').removeClass("active");
+		var $search = $(this).closest('.form-search');
+		$search.removeClass("active");
+		$search.find('.form-categories').removeClass("active");
 		$(this).closest('.form-cat-list').removeClass("active");
 		$(this).closest('.form-cat-list').find('.form-cat-list__item').removeClass("active");
 		$(this).addClass("active");
 		
 		var libcat = $(this).attr('data-target');
-		$('.form-categories__value span').removeClass("active");
-		$('.form-categories__value span[data-target=' + libcat + ']').addClass("active");
+		$search.find('.form-categories__value span').removeClass("active");
+		$search.find('.form-categories__value span[data-target=' + libcat + ']').addClass("active");
 	}); 
 	
 	
@@ -2526,6 +2542,25 @@ jQuery(document).ready(function($) {
         });
     }
 	
+	/** Заголовок h2 в #section-ways синхронизировать с выбранной категорией practice-type (AJAX без перезагрузки). */
+	function syncPracticeTaxonomyPageHeading() {
+		var $active = $('.section-library .form-categories__value span.active').first();
+		if (!$active.length) {
+			$active = $('.section-kriyi .form-categories__value span.active').first();
+		}
+		if (!$active.length) {
+			return;
+		}
+		var title = $.trim($active.text());
+		if (!title) {
+			return;
+		}
+		var $h = $('#section-ways .ways-heading');
+		if ($h.length) {
+			$h.text(title);
+		}
+	}
+
 	// Функция для установки активного элемента по term ID
 	function setActiveLibraryTerm(termId) {
 		// Убираем активный класс у всех элементов
@@ -2534,14 +2569,43 @@ jQuery(document).ready(function($) {
 		// Добавляем активный класс элементам с соответствующим data-target
 		$(`.section-library .form-categories__value span[data-target="${termId}"]`).addClass('active');
 		$(`.section-library .form-cat-list__item[data-target="${termId}"]`).addClass('active');
+		syncPracticeTaxonomyPageHeading();
 	}
 	
-	// Обработчики кликов
-	$(document).on('click', '.section-library .form-cat-list__item', function() {
-		const targetTerm = $(this).data('target');
-		setActiveLibraryTerm(targetTerm);
+	// Выбор подкатегории в поиске библиотеки → переход на URL архива термина (список практик),
+	// а не подмена сетки AJAX тем же видом карточек library-item.
+	$(document).on('click', '.section-library .form-cat-list__item', function(e) {
+		e.preventDefault();
+		var $item = $(this);
+		var rawLink = ($item.attr('data-link') || '').trim();
+		if (!rawLink) {
+			var $a = $item.find('a[href]').first();
+			rawLink = ($a.attr('href') || '').trim();
+		}
+		if (rawLink && rawLink !== '#') {
+			try {
+				var targetUrl = new URL(rawLink, window.location.href);
+				var cur = new URL(window.location.href);
+				var normPath = function (pathname) {
+					var p = pathname.replace(/\/+$/, '');
+					return p === '' ? '/' : p;
+				};
+				var same = normPath(targetUrl.pathname) === normPath(cur.pathname) && targetUrl.search === cur.search;
+				if (same) {
+					var $search = $item.closest('.form-search');
+					$search.removeClass('active');
+					$search.find('.form-categories').removeClass('active');
+					$search.find('.form-cat-list').removeClass('active');
+					setActiveLibraryTerm($item.data('target'));
+					return;
+				}
+			} catch (ignore) {}
+			window.location.href = rawLink;
+			return;
+		}
+		setActiveLibraryTerm($item.data('target'));
 		loadLibraryPractices();
-        requestLibrarySuggestions();
+		requestLibrarySuggestions();
 	});
 	
 	// Также можно вызвать при загрузке страницы для установки начального активного элемента
@@ -2551,6 +2615,8 @@ jQuery(document).ready(function($) {
 		getLibraryDefaultTermId();
 		if (initialActiveTerm) {
 			setActiveLibraryTerm(initialActiveTerm);
+		} else {
+			syncPracticeTaxonomyPageHeading();
 		}
 		var libCount = $('.section-library .library .library-item').length;
 		if ($('.library-filters-apply-count').length && libCount) {
@@ -2854,13 +2920,36 @@ jQuery(document).ready(function($) {
         // Добавляем активный класс элементам с соответствующим data-target
         $(`.section-kriyi .form-categories__value span[data-target="${termId}"]`).addClass('active');
         $(`.section-kriyi .form-cat-list__item[data-target="${termId}"]`).addClass('active');
+        syncPracticeTaxonomyPageHeading();
 	}
 	
-    // Обработчики кликов по категориям
+    // Обработчики кликов по категориям: переход на канонический URL архива (роутинг), иначе остаёмся на странице с AJAX.
     $(document).on('click', '.section-kriyi .form-categories__value span, .section-kriyi .form-cat-list__item', function(e) {
         e.preventDefault();
-        const targetTerm = $(this).data('target');
-        setActiveTerm(targetTerm);
+        var $el = $(this);
+        var rawLink = ($el.attr('data-link') || '').trim();
+        if (rawLink && rawLink !== '#') {
+            try {
+                var targetUrl = new URL(rawLink, window.location.href);
+                var cur = new URL(window.location.href);
+                var normPath = function (pathname) {
+                    var p = pathname.replace(/\/+$/, '');
+                    return p === '' ? '/' : p;
+                };
+                var same = normPath(targetUrl.pathname) === normPath(cur.pathname) && targetUrl.search === cur.search;
+                if (same) {
+                    var $search = $el.closest('.form-search');
+                    $search.removeClass('active');
+                    $search.find('.form-categories').removeClass('active');
+                    $search.find('.form-cat-list').removeClass('active');
+                    setActiveTerm($el.data('target'));
+                    return;
+                }
+            } catch (ignore) {}
+            window.location.href = rawLink;
+            return;
+        }
+        setActiveTerm($el.data('target'));
         loadPractices();
         requestPracticeSuggestions();
 	});

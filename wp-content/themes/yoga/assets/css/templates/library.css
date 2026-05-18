@@ -1,8 +1,14 @@
 /* Section-library */
 .section-library {
-  overflow-x: hidden;
-  overflow-y: visible;
+  /* Не задавать overflow-x: hidden здесь: при overflow-y: visible браузер всё равно считает вертикальную ось как auto и обрезает выпадающие списки поиска */
+  overflow: visible;
   padding-top: 1.5rem;  padding-bottom: 7.5rem;}
+
+/* Ширина .library шире контейнера — клип только здесь, не у всей секции */
+.library-x-clip {
+  width: 100%;
+  overflow-x: hidden;
+}
 
 .library-form {
   display: block;
@@ -44,15 +50,26 @@
 
 .form-search {
   display: flex;
+  align-items: stretch;
   position: relative;
   padding-left: 0.4375rem;  width: calc(100% - var(--library-search-row-height) - 1.25rem);  border: 1px solid var(--color-black);
   border-radius: 0.4375rem;  cursor: pointer;
   z-index: 20;
   transition: 0.4s ease;
+  box-sizing: border-box;
+  /* Одна высота строки: иначе блок категории (розовый) может стать выше инпута и «вылезти» из рамки */
+  height: var(--library-search-row-height);
+  /* не hidden — иначе обрезаются выпадающие .form-search-list / .form-cat-list */
+  overflow: visible;
 }
 .form-search input {
-  width: 100%;
-  padding-left: 1.25rem;  padding-right: 5.3125rem;  height: var(--library-search-row-height);  line-height: var(--library-search-row-height);  border-radius: 0.4375rem;  border: 0px solid #fff !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  align-self: stretch;
+  height: auto;
+  min-height: 0;
+  padding-left: 1.25rem;  padding-right: 5.3125rem;  line-height: 1.25;  border-radius: 0 0.4375rem 0.4375rem 0;  border: 0px solid #fff !important;
   color: var(--color-black);
 }
 .form-search input::placeholder {
@@ -106,10 +123,17 @@
 
 .form-categories {
   position: relative;
-  padding: 0.875rem;  padding-left: 1.5625rem;  padding-right: 1.5625rem;  background: var(--color-pink);
-  margin-top: auto;
-  margin-bottom: auto;
-  border-radius: 0.1875rem;}
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  max-height: 100%;
+  padding: 0 1.5625rem;  background: var(--color-pink);
+  border-radius: 0.1875rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: 0;}
 .form-categories.active .form-categories__value span.active {
   opacity: 1;
 }
@@ -118,21 +142,43 @@
 }
 
 .form-categories__value {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   text-align: center;
-  padding-right: 1.375rem;}
+  padding-right: 1.375rem;
+  min-width: 0;
+  width: 100%;}
 .form-categories__value span {
   display: block;
   font-size: 1.125rem;  color: var(--color-black);
   position: absolute;
+  left: 0;
+  right: 1.375rem;
+  top: 50%;
+  transform: translateY(-50%);
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .form-categories__value span.active {
   position: relative;
+  left: auto;
+  right: auto;
+  top: auto;
+  transform: none;
+  visibility: visible;
   opacity: 1;
   color: var(--color-black);
   transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 .form-categories__value::after {
   content: "";

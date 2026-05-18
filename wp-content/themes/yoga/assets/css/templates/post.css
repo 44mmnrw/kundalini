@@ -51,8 +51,14 @@
   justify-content: space-between;
   padding-top: 2.5rem;}
 
+.post-layout__primary {
+  width: calc(100% - 19.0625rem);
+  flex-shrink: 0;
+  min-width: 0;
+}
+
 .post-main {
-  width: calc(100% - 19.0625rem);}
+  width: 100%;}
 .post-main > :first-child {
   margin-top: 0 !important;
 }
@@ -435,6 +441,73 @@
   opacity: 0.7;
 }
 
+.post-comments {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(31, 31, 31, 0.12);
+}
+
+.post-comments .comments-title,
+.post-comments .comment-reply-title {
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  font-size: 1.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.post-comments .comment-list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+.post-comments .comment-body {
+  margin-bottom: 1.25rem;
+}
+
+.post-comments .comment-form label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.post-comments .comment-form input[type="text"],
+.post-comments .comment-form input[type="email"],
+.post-comments .comment-form input[type="url"],
+.post-comments .comment-form textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(31, 31, 31, 0.2);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.post-comments .comment-form textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.post-comments .form-submit .submit {
+  font-family: "Mulish-SemiBold", sans-serif;
+  cursor: pointer;
+  padding: 0.75rem 1.5rem;
+  border: 0;
+  border-radius: 2rem;
+  background: var(--color-violet);
+  color: #fff;
+}
+
+.post-comments .comment-notes,
+.post-comments .logged-in-as {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
 @media (max-width: var(--yoga-below-tight-desktop)) {
   .section-post {
     padding-top: 1.4375rem;    padding-bottom: 5.75rem;  }
@@ -446,7 +519,7 @@
     font-size: 1.5rem;  }
 }
 @media (max-width: var(--yoga-below-xl)) {
-  .post-main {
+  .post-layout__primary {
     width: calc(100% - 17.5rem);  }
   .post-author {
     width: 16.25rem;  }
@@ -462,7 +535,7 @@
   .post-layout {
     flex-wrap: wrap;
   }
-  .post-main {
+  .post-layout__primary {
     width: 100%;
   }
   .post-author {

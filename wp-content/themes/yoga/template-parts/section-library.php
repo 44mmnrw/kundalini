@@ -100,8 +100,9 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 
 							<div class="form-cat-list">
 								<?php if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-type') : ?>
-									<div class="form-cat-list__item active" data-target="<?php echo esc_attr((string) $default_library_term_id); ?>">
-										<a href="<?php echo esc_url(get_term_link($current_term)); ?>">
+									<?php $library_parent_term_link = get_term_link($current_term); ?>
+									<div class="form-cat-list__item active" data-target="<?php echo esc_attr((string) $default_library_term_id); ?>"<?php echo ! is_wp_error($library_parent_term_link) ? ' data-link="' . esc_url($library_parent_term_link) . '"' : ''; ?>>
+										<a href="<?php echo esc_url(is_wp_error($library_parent_term_link) ? '#' : $library_parent_term_link); ?>">
 											<span><?php echo esc_html($current_term->name); ?></span>
 										</a>
 									</div>
@@ -184,7 +185,8 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 		</div>
 
 		<div class="row">
-			<div class="library" id="practice-list">
+			<div class="library-x-clip">
+				<div class="library" id="practice-list">
 				<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 					<?php foreach ($category_terms as $term) : ?>
 						<?php
@@ -245,6 +247,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 				<?php else : ?>
 					<p>Категории практик не найдены.</p>
 				<?php endif; ?>
+				</div>
 			</div>
 		</div>
 	</div>
