@@ -357,6 +357,73 @@
   width: calc(100% + 1.25rem);  min-width: calc(100% + 1.25rem);  flex-wrap: wrap;
   padding-top: 0.625rem;}
 
+/* Результаты поиска — сетка карточек по макету Figma (node 486:7103): 3 колонки, gap 20px */
+.section-blog--search-results .blog-main {
+  display: none !important;
+}
+
+.section-blog--search-results .blog-articles {
+  padding-top: 1.25rem;
+}
+
+@media (min-width: 1025px) {
+  .section-blog--search-results .blog-articles__items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+    min-width: 0;
+    padding-top: 0;
+    overflow: visible;
+  }
+
+  .section-blog--search-results .blog-article-item {
+    width: auto;
+    min-width: 0;
+    margin-right: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+  }
+
+  /* Заголовок карточки — h5 в макете (20px, Mulish Bold) */
+  .section-blog--search-results .blog-article-item h4 {
+    font-family: "Mulish-Bold", sans-serif;
+    font-weight: normal;
+    font-size: 1.25rem;
+    line-height: 1.1;
+    min-height: 4.125rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .section-blog--search-results .blog-articles__items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+    min-width: 0;
+    justify-content: stretch;
+    overflow: visible;
+  }
+
+  .section-blog--search-results .blog-article-item {
+    width: auto;
+    margin-right: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 575px) {
+  .section-blog--search-results .blog-articles__items {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section-blog--search-results .blog-article-item {
+    width: auto;
+  }
+}
+
 .blog-article-item {
   display: flex;
   flex-direction: column;

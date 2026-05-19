@@ -65,44 +65,57 @@ if ($category_filter_term_id) {
     );
 }
 
-// Верхний блок "Новое": 2 релевантных поста (по дате среди выборки поиска / рубрики).
-$latest_posts_query = new WP_Query(array_merge($query_common, array(
-    'posts_per_page' => 2,
-)));
-
 $main_post = null;
 $secondary_post = null;
 $exclude_ids = array();
 
-if (!empty($latest_posts_query->posts)) {
-    $main_post = isset($latest_posts_query->posts[0]) ? $latest_posts_query->posts[0]->ID : null;
-    $secondary_post = isset($latest_posts_query->posts[1]) ? $latest_posts_query->posts[1]->ID : null;
-    $exclude_ids = array_filter(array($main_post, $secondary_post));
+/**
+ * Результаты поиска (макет Figma — одна сетка карточек): без блока «Новое», все посты в grid.
+ */
+if ($is_blog_search_ui) {
+    $current_posts = new WP_Query(array_merge($query_common, array(
+        'posts_per_page' => $posts_count,
+    )));
+    $blog_posts_total = (int) $current_posts->found_posts;
+} else {
+    // Верхний блок «Новое»: 2 поста; ниже — остальные без дублей.
+    $latest_posts_query = new WP_Query(array_merge($query_common, array(
+        'posts_per_page' => 2,
+    )));
+
+    if (!empty($latest_posts_query->posts)) {
+        $main_post = isset($latest_posts_query->posts[0]) ? $latest_posts_query->posts[0]->ID : null;
+        $secondary_post = isset($latest_posts_query->posts[1]) ? $latest_posts_query->posts[1]->ID : null;
+        $exclude_ids = array_filter(array($main_post, $secondary_post));
+    }
+
+    $blog_posts_total = (int) $latest_posts_query->found_posts;
+
+    $current_posts = new WP_Query(array_merge($query_common, array(
+        'posts_per_page' => $posts_count,
+        'post__not_in' => $exclude_ids,
+    )));
 }
 
-$blog_posts_total = (int) $latest_posts_query->found_posts;
 $blog_count_label = 'Всего статей:';
 $blog_count_value = $blog_posts_total;
 
 if ($is_blog_search_ui) {
     $blog_count_label = 'Найдено статей:';
-    $blog_count_value = $blog_posts_total;
 }
-
-// Нижний список: остальные посты той же выборки.
-$current_posts = new WP_Query(array_merge($query_common, array(
-    'posts_per_page' => $posts_count,
-    'post__not_in' => $exclude_ids,
-)));
 ?>
 
-<section class="section-blog" id="section-blog">
+<section class="section-blog<?php echo $is_blog_search_ui ? ' section-blog--search-results' : ''; ?>" id="section-blog">
     <div class="container">
         <div class="row">
             <div class="blog-result">
                 <h3>
                     <?php
-                    echo esc_html($is_blog_search_ui ? 'Результаты поиска' : ($new_title ?: 'Новое'));
+                    if ($is_blog_search_ui) {
+                        echo esc_html($search_q !== '' ? $search_q : 'Результаты поиска');
+                    } else {
+                        echo esc_html($new_title ?: 'Новое');
+                    }
                     ?>
                 </h3>
                 <b class="<?php echo $is_blog_search_ui ? 'active' : ''; ?>">
@@ -111,6 +124,7 @@ $current_posts = new WP_Query(array_merge($query_common, array(
             </div>
         </div>
         
+        <?php if (!$is_blog_search_ui) : ?>
         <div class="row">
             <div class="blog-main">
                 <?php if ($main_post) : ?>
@@ -194,6 +208,7 @@ $current_posts = new WP_Query(array_merge($query_common, array(
                 </div>
             </div>
         </div>
+        <?php endif; ?>
         
         <div class="row">
             <div class="blog-articles">
