@@ -27,13 +27,29 @@ $practice_form_title = get_the_title(get_the_ID());
 	<div class="container">
         <div class="row">
 			<?php $practice_form_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg'); ?>
-			<div class="form-questions">
-				<div class="form-questions__badge" aria-hidden="true">
-					<svg class="form-questions__badge-svg" viewBox="0 0 48 48" focusable="false">
+			<div class="form-questions practice-form-layout">
+				<!-- Декор — Figma question_form 246:4302 (sprite) -->
+				<div class="practice-form-layout__decor practice-form-layout__decor--oval" aria-hidden="true">
+					<svg class="practice-form-layout__decor-svg" focusable="false" aria-hidden="true">
+						<use href="<?php echo $practice_form_sprite_href; ?>#contacts-decor-oval"></use>
+					</svg>
+				</div>
+				<div class="practice-form-layout__decor practice-form-layout__decor--star-four" aria-hidden="true">
+					<svg class="practice-form-layout__decor-svg" focusable="false" aria-hidden="true">
+						<use href="<?php echo $practice_form_sprite_href; ?>#contacts-star-four"></use>
+					</svg>
+				</div>
+				<div class="practice-form-layout__decor practice-form-layout__decor--star-eight" aria-hidden="true">
+					<svg class="practice-form-layout__decor-svg practice-form-layout__decor-svg--star-eight" focusable="false" aria-hidden="true">
+						<use href="<?php echo $practice_form_sprite_href; ?>#contacts-star-eight"></use>
+					</svg>
+				</div>
+				<div class="form-questions__badge practice-form-layout__badge" aria-hidden="true">
+					<svg class="form-questions__badge-svg practice-form-layout__badge-svg" viewBox="0 0 48 48" focusable="false">
 						<use href="<?php echo $practice_form_sprite_href; ?>#contacts-form-badge"></use>
 					</svg>
 				</div>
-				<div class="form-questions__main">
+				<div class="form-questions__main practice-form-layout__panel">
 					<div class="form-questions__main-text">
 						<h3>
 							Остались вопросы?
@@ -68,8 +84,10 @@ $practice_form_title = get_the_title(get_the_ID());
 						<div class="form-questions-textarea">
 							<textarea name="contacts_message" id="" placeholder="Ваш вопрос" required class="input"></textarea>
 							<input type="submit" id="form-questions-submit">
-							<label for="form-questions-submit" class="btn">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="">
+							<label for="form-questions-submit" class="btn practice-form-layout__submit practice-form-layout__submit--sprite" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
+								<svg class="practice-form-layout__submit-icon" viewBox="0 0 205.8 205.8" focusable="false" aria-hidden="true">
+									<use href="<?php echo $practice_form_sprite_href; ?>#hundreds-practices-arrow-hover"></use>
+								</svg>
 							</label>
 						</div>
 					</form>

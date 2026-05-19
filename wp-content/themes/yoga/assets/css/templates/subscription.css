@@ -2,7 +2,7 @@
 .section-subscription {
   position: relative;
   background-color: var(--color-black);
-  background-image: url(../../img/subscription-bg.png);
+  background-image: url(../../svg/subscribe.svg);
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 100% auto;
