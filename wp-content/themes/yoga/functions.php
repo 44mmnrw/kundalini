@@ -662,7 +662,7 @@
 			$is_about_template ||
 			$is_tariffs_template
 		) {
-			wp_enqueue_style( 'ways-style', $theme_uri . '/assets/css/templates/ways.css', $common_style_deps, $ways_style_ver );
+			wp_enqueue_style( 'ways-style', $theme_uri . '/assets/css/templates/ways.css', array( 'specification-style' ), $ways_style_ver );
 		}
 		wp_enqueue_style( 'mulish-style', $theme_uri . '/assets/css/mulish.css', array(), '1.0.0' );
 		wp_enqueue_style( 'animate-style', $theme_uri . '/assets/css/animate.css', array(), '1.0.0' );

@@ -77,6 +77,9 @@
                     }
                     ?>
                 </ul>
+                <?php
+                /*
+                ?>
                 <h2 class="ways-heading">
                     <?php
                     if (is_home() || is_front_page()) {
@@ -104,6 +107,9 @@
                     }
                     ?>
                 </h2>
+                <?php
+                */
+                ?>
             </div>
         </div>
     </div>

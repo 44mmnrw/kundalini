@@ -523,6 +523,12 @@
   height: auto;
 }
 
+@media (min-width: 1025px) {
+  .section-form-questions_contacts .contacts-form-layout__badge {
+    top: 35px;
+  }
+}
+
 .section-form-questions_contacts .contacts-form-layout__panel.form-questions__main {
   position: relative;
   z-index: var(--contacts-z-panel);
