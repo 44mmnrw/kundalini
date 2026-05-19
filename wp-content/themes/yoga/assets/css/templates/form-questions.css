@@ -186,6 +186,14 @@
     padding-top: 3.375rem;  }
   .form-questions-textarea textarea {
     height: 11.25rem;  }
+  .section-form-questions_practice .form-questions {
+    background-color: var(--color-green);
+    background-image: url(../../svg/subscribe.svg);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100% 100%;
+    padding-bottom: calc(2.5rem + 50px);
+  }
 }
 @media (max-width: 767px) {
   .form-questions h3 {
@@ -238,6 +246,177 @@
   }
 }
 
+/* Single practice: десктоп — карточка из subscribe.svg + декор из sprite (без подложки color-grey) */
+@media (min-width: 1025px) {
+  /* Десктоп — Figma question_form (246:4302): lime-карточка subscribe.svg + декор из sprite */
+  .section-form-questions_practice .form-questions.practice-form-layout {
+    position: relative;
+    max-width: 75.0625rem;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: visible;
+    padding-left: 8.58%;
+    padding-right: 8.58%;
+    padding-top: 5.5625rem;
+    padding-bottom: calc(3.75rem + 50px);
+    min-height: 31.9375rem;
+    border-radius: 1.875rem;
+    background-image: url(../../svg/subscribe.svg);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100% 100%;
+  }
+
+  .section-form-questions_practice .practice-form-layout__decor {
+    position: absolute;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .section-form-questions_practice .practice-form-layout__decor--oval {
+    z-index: 2;
+    left: 3.3125rem;
+    top: -25px;
+    width: 2.8875rem;
+    height: 11.55rem;
+    transform: rotate(1.16deg);
+  }
+
+  .section-form-questions_practice .practice-form-layout__decor--star-four {
+    left: 5.125rem;
+    top: 8.125rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
+  }
+
+  .section-form-questions_practice .practice-form-layout__decor--star-eight {
+    left: auto;
+    right: 14.3125rem;
+    top: 8.25rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
+  }
+
+  .section-form-questions_practice .practice-form-layout__decor-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .section-form-questions_practice .form-questions__badge.practice-form-layout__badge {
+    display: block;
+    position: absolute;
+    left: auto;
+    right: 0;
+    top: calc(0.75rem + 35px);
+    transform: none;
+    width: 3.875rem;
+    height: 3.875rem;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .section-form-questions_practice .form-questions__badge-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .section-form-questions_practice .practice-form-layout__panel.form-questions__main {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+    width: 100%;
+  }
+
+  .section-form-questions_practice .form-questions__main-text {
+    max-width: 36.875rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-form-questions_practice .form-questions h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .section-form-questions_practice .form-questions p {
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .section-form-questions_practice .form-questions__main-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3125rem 1.25rem;
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: none;
+    justify-content: stretch;
+  }
+
+  .section-form-questions_practice .form-questions__main-form input.input {
+    width: 100%;
+    margin: 0;
+    height: 3.8125rem;
+    padding-left: 1.875rem;
+    padding-right: 1rem;
+    border-radius: 6.25rem;
+    box-sizing: border-box;
+    line-height: normal;
+  }
+
+  .section-form-questions_practice .form-questions-textarea {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .section-form-questions_practice .form-questions-textarea textarea.input {
+    height: 11.25rem;
+    border-radius: 1.25rem;
+    padding: 1.0625rem 5rem 1rem 1.875rem;
+    box-sizing: border-box;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .section-form-questions_practice .form-questions-textarea .btn {
+    right: 1.1875rem;
+    bottom: 1.1875rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .section-form-questions_practice .practice-form-layout__decor {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1279px) and (min-width: 1025px) {
+  .section-form-questions_practice .form-questions::after {
+    display: none;
+  }
+}
+
+/* Иконка отправки на странице практики — sprite (все ширины экрана) */
+.section-form-questions_practice .practice-form-layout__submit--sprite .practice-form-layout__submit-icon {
+  width: 72%;
+  height: 72%;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.section-form-questions_practice .practice-form-layout__submit.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Single practice: форма «Остались вопросы?» — Figma question_form_mobile (588:14576) */
 .section-form-questions_practice .form-questions__badge {
   display: none;
@@ -275,8 +454,12 @@
     margin-right: 0;
     border-radius: 1.875rem;
     overflow: visible;
-    padding: 5.25rem 0.625rem 2.5rem;
-    background: var(--color-green);
+    padding: 5.25rem 0.625rem calc(2.5rem + 50px);
+    background-color: var(--color-green);
+    background-image: url(../../svg/subscribe.svg);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100% 100%;
     box-sizing: border-box;
   }
 
@@ -293,7 +476,7 @@
     width: 4.5rem;
     height: 4.5rem;
     pointer-events: none;
-    transform: translate(-50%, -42%);
+    transform: translate(-50%, calc(-52% + 35px));
   }
 
   .section-form-questions_practice .form-questions__badge-svg {
