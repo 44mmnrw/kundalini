@@ -5,6 +5,7 @@
 
 .faq {
   display: flex;
+  align-items: stretch;
   width: 100%;
   justify-content: space-between;
 }
@@ -145,9 +146,22 @@
 }
 
 .faq__form {
-  width: 24.1875rem;  padding-top: 0.8125rem;}
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  min-height: min-content;
+  width: 24.1875rem;
+  padding-top: 0.8125rem;
+}
 .faq__form .form-questions {
+  box-sizing: border-box;
   position: relative;
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  /* иначе flex min-height:auto может дать высоту < контента — лайм обрезается, поля уезжают на белый фон */
+  min-height: min-content;
+  overflow: visible;
   padding-left: 1.5625rem;
   padding-right: 1.5625rem;
   padding-top: 3.125rem;
@@ -157,6 +171,9 @@
 .faq__form-card-bg {
   position: absolute;
   inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
   z-index: 0;
   pointer-events: none;
   border-radius: 1.875rem;
@@ -164,8 +181,13 @@
 }
 .faq__form-card-bg img {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: none;
+  /* img + svg: браузеры часто ведут себя как preserveAspectRatio=meet если в svg не задано none */
   object-fit: fill;
   object-position: center top;
 }
@@ -282,8 +304,10 @@
     padding-top: 3.75rem;
     padding-left: 3.75rem;
     padding-right: 3.75rem;
-    /* не наследовать заливку от общего .form-questions ≤1024 (form-questions.css) — жёлтый только в faq_quest.svg */
-    background: transparent;
+    padding-bottom: 2.5rem;
+    overflow: visible;
+    /* Планшет + мобилка (колонка на всю ширину): лайм под SVG, чтобы не было белых полей и обрыва заливки */
+    background: var(--color-green);
   }
   .faq__form .form-questions__badge.faq__form-badge {
     left: 50%;
