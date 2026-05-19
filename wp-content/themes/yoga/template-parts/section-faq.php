@@ -8,6 +8,8 @@
         $faq_prefill_name = (string) ($current_user->display_name ?? '');
         $faq_prefill_email = (string) ($current_user->user_email ?? '');
     }
+    $faq_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
+    $faq_quest_svg_url = esc_url(get_template_directory_uri() . '/assets/svg/faq_quest.svg');
     ?>
     <div class="container">
         <div class="row">
@@ -48,6 +50,14 @@
                 </div>
                 <div class="faq__form">
                     <div class="form-questions animated fadeIn delay-200ms">
+                        <div class="faq__form-card-bg" aria-hidden="true">
+                            <img src="<?php echo $faq_quest_svg_url; ?>" alt="" width="387" height="483" decoding="async">
+                        </div>
+                        <div class="form-questions__badge faq__form-badge" aria-hidden="true">
+                            <svg class="form-questions__badge-svg faq__form-badge-svg" viewBox="0 0 48 48" focusable="false">
+                                <use href="<?php echo $faq_sprite_href; ?>#contacts-form-badge"></use>
+                            </svg>
+                        </div>
                         <div class="form-questions__main">
                             <div class="form-questions__main-text">
                                 <h4>

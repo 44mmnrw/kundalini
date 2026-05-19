@@ -147,7 +147,31 @@
 .faq__form {
   width: 24.1875rem;  padding-top: 0.8125rem;}
 .faq__form .form-questions {
-  padding-left: 1.5625rem;  padding-right: 1.5625rem;  padding-top: 3.125rem;  background-image: url(../../img/faq-form-bg.png);
+  position: relative;
+  padding-left: 1.5625rem;
+  padding-right: 1.5625rem;
+  padding-top: 3.125rem;
+  background: transparent;
+}
+/* Фон карточки — только lime из faq_quest.svg; блок тянется на всю высоту контента (иначе на планшете «обрывался» бы по высоте картинки) */
+.faq__form-card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 1.875rem;
+  overflow: hidden;
+}
+.faq__form-card-bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center top;
+}
+.faq__form .form-questions__main {
+  position: relative;
+  z-index: 1;
 }
 .faq__form .form-questions h4 {
   line-height: 1.1em;
@@ -156,25 +180,24 @@
   font-size: 1rem;  line-height: 1.25em;
   text-align: left;
   margin-top: 0.875rem;}
-.faq__form .form-questions::before {
-  content: "";
+.faq__form .form-questions__badge.faq__form-badge {
   display: block;
   position: absolute;
-  right: 0px;
-  top: 0px;
-  width: 3.875rem;  height: 3.875rem;  border-radius: 50%;
-  background: url(../../img/faq-form-before.png) no-repeat center center/100% auto;
+  right: 0;
+  top: 0;
+  width: 3.875rem;
+  height: 3.875rem;
+  pointer-events: none;
+  z-index: 2;
+}
+.faq__form .faq__form-badge-svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .faq__form .form-questions::after {
-  content: "";
-  z-index: -1;
-  display: block;
-  position: absolute;
-  left: 0px;
-  bottom: 0px;
-  width: 100%;
-  height: 50%;
-  border-bottom-left-radius: 1.875rem;  border-bottom-right-radius: 1.875rem;  background: var(--color-green);
+  content: none;
+  display: none;
 }
 .faq__form .form-questions__main-form {
   margin-top: 1.25rem;}
@@ -219,9 +242,11 @@
   .faq__form .form-questions {
     padding-left: 1.25rem;    padding-right: 1.25rem;    overflow: visible;
   }
-  .faq__form .form-questions::before {
+  .faq__form .form-questions__badge.faq__form-badge {
     top: -1px;
-    width: 3.125rem;    height: 3.375rem;  }
+    width: 3.125rem;
+    height: 3.375rem;
+  }
 }
 @media (max-width: 1024px) {
   .section-faq {
@@ -254,13 +279,19 @@
     padding-top: 0px;
   }
   .faq__form .form-questions {
-    padding-top: 3.75rem;    padding-left: 3.75rem;    padding-right: 3.75rem;    background: var(--color-green);
+    padding-top: 3.75rem;
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
+    /* не наследовать заливку от общего .form-questions ≤1024 (form-questions.css) — жёлтый только в faq_quest.svg */
+    background: transparent;
   }
-  .faq__form .form-questions::before {
-    top: -2.25rem;    width: 4.5rem;    height: 4.5rem;    background-image: url(../../img/faq-form-before_mob.png);
-  }
-  .faq__form .form-questions::after {
-    display: none;
+  .faq__form .form-questions__badge.faq__form-badge {
+    left: 50%;
+    right: auto;
+    top: -2.25rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    transform: translateX(-50%);
   }
   .faq__form .form-questions h4 {
     text-align: center;
