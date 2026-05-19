@@ -78,8 +78,10 @@
                     ?>
                 </ul>
                 <?php
-                /*
+                /** На странице «Контакты» заголовок под крошками не показываем */
+                $yoga_hide_ways_heading = is_page_template('templates-page/contacts.php');
                 ?>
+                <?php if (!$yoga_hide_ways_heading) : ?>
                 <h2 class="ways-heading">
                     <?php
                     if (is_home() || is_front_page()) {
@@ -107,9 +109,7 @@
                     }
                     ?>
                 </h2>
-                <?php
-                */
-                ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
