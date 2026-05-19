@@ -378,7 +378,7 @@
   .main {
     padding-left: 1.25rem;    padding-right: 1.25rem;    padding-top: 2.1875rem;    padding-bottom: 22.125rem;  }
   .main__info h2 {
-    text-transform: none;
+    text-transform: uppercase;
     text-align: left;
   }
   .main__info .main__info-text {
