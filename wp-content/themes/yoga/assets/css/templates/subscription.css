@@ -2,10 +2,6 @@
 .section-subscription {
   position: relative;
   background-color: var(--color-black);
-  background-image: url(../../svg/subscribe.svg);
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100% auto;
   padding-top: var(--header-bar-height);  padding-bottom: 0.5rem;}
 
 .section-subscription .container {
@@ -215,8 +211,7 @@
 
 @media (max-width: var(--yoga-below-tight-desktop)) {
   .section-subscription {
-    padding-top: 4.25rem;    background-size: 1380px auto;
-  }
+    padding-top: 4.25rem;  }
   .subscription {
     max-width: 56.375rem;  }
   .subscription h2 u {
