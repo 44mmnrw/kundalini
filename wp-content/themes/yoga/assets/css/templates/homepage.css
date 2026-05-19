@@ -1039,6 +1039,9 @@
   left: auto;
   right: auto;
   margin-left: 0;
+  -webkit-transform: translateY(14px);
+  -ms-transform: translateY(14px);
+  transform: translateY(14px);
 }
 
 .reviews__head .slick-next {
