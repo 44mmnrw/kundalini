@@ -30,17 +30,34 @@
 .ways li:last-child {
   pointer-events: none;
 }
-.ways h2 {
+/* Заголовок под крошками: глобальный h2 из specification.css (# по ID перебивает margin/size/center) */
+#section-ways h2.ways-heading {
+  box-sizing: border-box;
+  margin-top: 2.125rem;
+  margin-bottom: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
   text-align: left;
-  margin-top: 2.125rem;}
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+  font-size: 2.25rem;
+  line-height: 1.15;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-black);
+  word-wrap: break-word;
+}
 
 .ways-item {
   font-size: 0.875rem;  font-family: "Mulish-Regular", sans-serif;
 }
 
 @media (max-width: var(--yoga-below-tight-desktop)) {
-  .ways h2 {
-    margin-top: 1.75rem;  }
+  #section-ways h2.ways-heading {
+    font-size: 2rem;
+    margin-top: 1.75rem;
+  }
 }
 @media (max-width: var(--yoga-below-lg)) {
   .ways {
@@ -67,8 +84,9 @@
   }
 }
 @media (max-width: 575px) {
-  .ways h2 {
-    word-wrap: break-word;
+  #section-ways h2.ways-heading {
+    font-size: 1.625rem;
+    line-height: 1.25;
     margin-top: 1.25rem;
   }
 }
@@ -80,7 +98,7 @@
     padding-top: 0;
   }
 
-  .single-practice .ways h2 {
+  .single-practice #section-ways h2.ways-heading {
     font-family: "Mulish-Bold", sans-serif;
     font-weight: normal;
     font-size: 1.6875rem;
@@ -94,7 +112,7 @@
 }
 
 @media (max-width: 767px) {
-  .single-practice .ways h2 {
+  .single-practice #section-ways h2.ways-heading {
     margin-top: 0.9375rem;
   }
 
@@ -105,7 +123,7 @@
 }
 
 @media (max-width: 575px) {
-  .single-practice .ways h2 {
+  .single-practice #section-ways h2.ways-heading {
     margin-top: 0.75rem;
   }
 }
