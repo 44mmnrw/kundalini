@@ -515,7 +515,8 @@
   opacity: 0.8;
 }
 
-@media (max-width: var(--yoga-below-tight-desktop)) {
+/* литералы вместо var() в @media — см. breakpoints.css (надёжная мобилка Safari и др.) */
+@media (max-width: 1319px) {
   .section-post {
     padding-top: 1.4375rem;    padding-bottom: 5.75rem;  }
   .post-layout {
@@ -525,7 +526,7 @@
   .post-main h4 {
     font-size: 1.5rem;  }
 }
-@media (max-width: var(--yoga-below-xl)) {
+@media (max-width: 1279px) {
   .post-layout__primary {
     width: calc(100% - 17.5rem);  }
   .post-author {
@@ -535,12 +536,14 @@
   .post-author-social {
     width: calc(100% + 0.625rem);    min-width: calc(100% + 0.625rem);    margin-left: -0.3125rem;  }
 }
-@media (max-width: var(--yoga-below-lg)) {
+@media (max-width: 1024px) {
   .post-intro {
     max-width: 100%;
   }
   .post-layout {
-    flex-wrap: wrap;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
   }
   .post-layout__primary {
     width: 100%;
@@ -548,9 +551,12 @@
   .post-author {
     width: 100%;
     margin-top: 1.875rem;    height: auto;
+    order: 0;
+    flex-shrink: 0;
   }
   .post-author-fixed {
     width: 100% !important;
+    max-width: 100%;
     position: unset !important;
     transform: none !important;
     top: auto !important;
