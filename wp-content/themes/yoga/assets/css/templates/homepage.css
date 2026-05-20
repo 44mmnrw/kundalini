@@ -353,7 +353,8 @@
     width: 18.625rem;
     right: calc(50% - 0.25rem);
     transform: translateX(50%);
-    bottom: 6.375rem;
+    /* Верх кнопки .main__info .btn = её bottom (2.1875rem) + высота .btn (4.4375rem) — без зазора под картинкой */
+    bottom: calc(2.1875rem + 4.4375rem);
   }
 }
 @media (max-width: 767px) {
@@ -372,7 +373,7 @@
   }
   .main__img {
     width: 16.375rem;    right: calc(50% - 0.25rem);    transform: translateX(50%);
-    bottom: 6.125rem;  }
+  }
 }
 @media (max-width: 575px) {
   .main {
@@ -434,7 +435,9 @@
     top: 7.6875rem;    bottom: auto;
     width: 2.3125rem;    height: 2.3125rem;  }
   .main__img {
-    bottom: 5.9375rem;  }
+    /* Как у кнопки: bottom 1.25rem + высота .btn */
+    bottom: calc(1.25rem + 4.4375rem);
+  }
 }
 
 /* Section-advantages */

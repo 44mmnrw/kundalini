@@ -1143,60 +1143,81 @@ jQuery(document).ready(function($) {
 	});
 	
 	
-	/* Section-post */
-	
-	$( document ).ready(function() {
-		
-		
-		var block_pos_03 = $('.post-author').offset()?.top || $('.post-author-fixed').offset()?.top || 0;
-		var wrap_pos_03 = $('.post-layout').offset()?.top || 0;
-		// позиция контейнера
-		var block_height_03 = $('.post-author-fixed').outerHeight();
-		// высота блока
-		var wrap_height_03 = $('.post-layout').outerHeight();
-		// высота контейнера
-		var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;
-		
-		
-		$(window).scroll(function () {
-			if (!$('.post-author-fixed').length || !block_height_03 || !wrap_height_03) {
+	/* Section-post — липкая колонка автора только на ширине > lg (≤1024: вертикальная вёрстка, без sticky) */
+	$(document).ready(function () {
+		var $postAside = $('.post-author-fixed');
+		if (!$postAside.length) {
+			return;
+		}
+
+		function postStickyIsDesktop() {
+			return $(window).width() >= yogaViewportBp.lg;
+		}
+
+		function postAsideClearSticky() {
+			$postAside.attr('style', '');
+		}
+
+		var block_pos_03 = 0;
+		var wrap_pos_03 = 0;
+		var block_height_03 = 0;
+
+		function postAsideRefreshMetrics() {
+			if (!$postAside.length) {
 				return;
 			}
-			
-			var wrap_height_03 = $('.post-layout').outerHeight();
-			// высота контейнера
-			var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;   
-			
-			if ($(window).scrollTop() > pos_absolute_03 - 105) {
-				// Если страницу прокрутили дальше, чем высота родителя минус высота фикс. блока, то стопорим блок
-				$('.post-author-fixed').css({
-					'position': 'absolute',
-					'top': 'calc(100% + 0px)',
-					'transform': 'translateY(-100%)',
-					
-				});
+			block_height_03 = $postAside.outerHeight();
+			var $author = $('.post-author');
+			block_pos_03 = ($author.offset()?.top) || ($postAside.offset()?.top) || 0;
+			wrap_pos_03 = $('.post-layout').offset()?.top || 0;
+		}
+
+		postAsideRefreshMetrics();
+
+		$(window).on('resize', function () {
+			postAsideRefreshMetrics();
+			if (!postStickyIsDesktop()) {
+				postAsideClearSticky();
 			}
-			else if ($(window).scrollTop() > block_pos_03 - 105) {
-				// Если страницу прокрутили дальше, чем находится наш блок, то мы этот блок фиксируем и отображаем сверху
-				$('.post-author-fixed').css({
-					'position': 'fixed',
-					'top': '105px',
-					'transform': 'translateY(0%)',
-				});
-				
-				} else {
-				// Если же позиция скролла меньше (выше), чем наш блок, то возвращаем все назад
-				$('.post-author-fixed').css({
-					'position': 'absolute',
-					'top': '0px',
-					'transform': 'translateY(0%)',
-					
-				});
-			}
-			
 		});
-		
-	}); 
+
+		$(window).scroll(function () {
+			if (!postStickyIsDesktop()) {
+				postAsideClearSticky();
+				return;
+			}
+
+			postAsideRefreshMetrics();
+			var wrap_height_03 = $('.post-layout').outerHeight();
+
+			if (!block_height_03 || !wrap_height_03) {
+				return;
+			}
+
+			var pos_absolute_03 = wrap_pos_03 + wrap_height_03 - block_height_03;
+			var st = $(window).scrollTop();
+
+			if (st > pos_absolute_03 - 105) {
+				$postAside.css({
+					position: 'absolute',
+					top: 'calc(100% + 0px)',
+					transform: 'translateY(-100%)'
+				});
+			} else if (st > block_pos_03 - 105) {
+				$postAside.css({
+					position: 'fixed',
+					top: '105px',
+					transform: 'translateY(0%)'
+				});
+			} else {
+				$postAside.css({
+					position: 'absolute',
+					top: '0px',
+					transform: 'translateY(0%)'
+				});
+			}
+		});
+	});
 	
 	
 	

@@ -28,15 +28,17 @@
 			
 			<form action="#" class="form subscription-form" method="post">
 			<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
-			<input type="email" name="subscription_email" class="input" maxlength="30" placeholder="<?php echo esc_attr(get_field('subscription_placeholder', 'option') ?: 'Ваша эл. почта'); ?>" required>
-			
-			<button type="submit" id="subscription-btn" style="display: none;"></button>
-			
-			<label for="subscription-btn" class="form-btn">
-				<svg class="subscription-btn-icon" aria-hidden="true" focusable="false">
-					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
-				</svg>
-			</label>
+				<div class="subscription-form-field">
+					<input type="email" name="subscription_email" class="input" maxlength="30" placeholder="<?php echo esc_attr(get_field('subscription_placeholder', 'option') ?: 'Ваша эл. почта'); ?>" required>
+
+					<button type="submit" id="subscription-btn" style="display: none;"></button>
+
+					<label for="subscription-btn" class="form-btn">
+						<svg class="subscription-btn-icon" aria-hidden="true" focusable="false">
+							<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+						</svg>
+					</label>
+				</div>
 				</form>
                 
                 <span class="form__succes">

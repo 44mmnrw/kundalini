@@ -619,6 +619,11 @@
   border-radius: 0;
   overflow: visible;
   background: none;
+  /* Не наследовать «общую» секцию формы .form-questions (100vw/center/transform) — даёт полоску/артефакт по нижнему краю */
+  display: block;
+  left: auto;
+  transform: none;
+  min-width: 0;
 }
 
 /* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
@@ -771,11 +776,7 @@
   width: 100%;
   flex-wrap: wrap;
   padding-top: 1rem;
-  border-top: 1px solid rgba(246, 246, 249, 0.35);
-}
-
-.section-form-questions_contacts .contacts-form-layout__social.contacts-social {
-  border-top-color: rgba(31, 31, 31, 0.08);
+  /* без border-top — иначе на десктопе заметная серая полоска между карточкой формы и иконками */
 }
 
 .contacts-social__item {
