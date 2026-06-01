@@ -12,6 +12,7 @@
 	require_once get_template_directory() . '/inc/integrations/acf.php';
 	require_once get_template_directory() . '/inc/ajax/payments.php';
 	require_once get_template_directory() . '/inc/ajax/favorites.php';
+	require_once get_template_directory() . '/inc/admin/practice-duplicate.php';
 	// Подключение стилей и скриптов
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 
