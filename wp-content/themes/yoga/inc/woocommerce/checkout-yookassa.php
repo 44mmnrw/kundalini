@@ -95,6 +95,87 @@ if (!function_exists('yoga_get_checkout_yookassa_gateway_id')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_get_merchant_payment_method_types')) {
+	/**
+	 * Список type из API /me (кэш плагина ЮKassa).
+	 *
+	 * @return string[]
+	 */
+	function yoga_yookassa_get_merchant_payment_method_types(): array {
+		$cached = get_transient('yoga_yookassa_merchant_payment_methods');
+		if (is_array($cached)) {
+			return $cached;
+		}
+
+		$types = array();
+		if (class_exists('YooKassaAdmin')) {
+			$shop_info = YooKassaAdmin::getShopInfo();
+			if (is_array($shop_info) && !empty($shop_info['payment_methods']) && is_array($shop_info['payment_methods'])) {
+				$types = array_values(array_map('strval', $shop_info['payment_methods']));
+			}
+		}
+
+		if ($types === array()) {
+			$types = array('bank_card', 'yoo_money');
+		}
+
+		set_transient('yoga_yookassa_merchant_payment_methods', $types, HOUR_IN_SECONDS);
+
+		return $types;
+	}
+}
+
+if (!function_exists('yoga_yookassa_is_merchant_type_available')) {
+	function yoga_yookassa_is_merchant_type_available(string $api_type): bool {
+		if ($api_type === '') {
+			return false;
+		}
+
+		return in_array($api_type, yoga_yookassa_get_merchant_payment_method_types(), true);
+	}
+}
+
+if (!function_exists('yoga_filter_checkout_payment_methods_for_merchant')) {
+	/**
+	 * @param array<int, array<string, mixed>> $methods
+	 * @return array<int, array<string, mixed>>
+	 */
+	function yoga_filter_checkout_payment_methods_for_merchant(array $methods): array {
+		$enabled = yoga_yookassa_get_merchant_payment_method_types();
+		$map     = yoga_yookassa_payment_type_map();
+		$seen    = array();
+		$out     = array();
+
+		foreach ($methods as $method) {
+			$id  = (string) ($method['id'] ?? '');
+			$api = $map[$id] ?? '';
+
+			if ($api === '' || !in_array($api, $enabled, true)) {
+				continue;
+			}
+			if (in_array($api, $seen, true)) {
+				continue;
+			}
+
+			$seen[] = $api;
+			$out[]  = $method;
+		}
+
+		if ($out !== array()) {
+			return $out;
+		}
+
+		foreach ($methods as $method) {
+			if (($method['id'] ?? '') === 'bank_card') {
+				return array($method);
+			}
+		}
+
+		return $methods;
+	}
+}
+add_filter('yoga_checkout_payment_methods', 'yoga_filter_checkout_payment_methods_for_merchant');
+
 if (!function_exists('yoga_get_selected_yookassa_payment_type')) {
 	function yoga_get_selected_yookassa_payment_type(): string {
 		if (empty($_POST['yoga_checkout_payment_type'])) {
@@ -103,8 +184,13 @@ if (!function_exists('yoga_get_selected_yookassa_payment_type')) {
 
 		$selected = sanitize_key(wp_unslash($_POST['yoga_checkout_payment_type']));
 		$map      = yoga_yookassa_payment_type_map();
+		$api_type = $map[$selected] ?? '';
 
-		return $map[$selected] ?? '';
+		if ($api_type === '' || !yoga_yookassa_is_merchant_type_available($api_type)) {
+			return '';
+		}
+
+		return $api_type;
 	}
 }
 
@@ -229,6 +315,61 @@ function yoga_yookassa_checkout_missing_gateway_notice(): void {
 		'error'
 	);
 }
+
+if (!function_exists('yoga_yookassa_capture_api_error_response')) {
+	function yoga_yookassa_capture_api_error_response(array $response, array $args, string $url): array {
+		if (!function_exists('WC') || !WC()->session || !function_exists('yoga_is_theme_checkout_context') || !yoga_is_theme_checkout_context()) {
+			return $response;
+		}
+
+		if (strpos($url, 'api.yookassa.ru') === false && strpos($url, 'yoomoney.ru') === false) {
+			return $response;
+		}
+
+		if (strpos($url, '/payments') === false) {
+			return $response;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code($response);
+		if ($code < 400) {
+			return $response;
+		}
+
+		$body = json_decode((string) wp_remote_retrieve_body($response), true);
+		if (is_array($body) && !empty($body['description'])) {
+			WC()->session->set('yoga_yookassa_api_error', (string) $body['description']);
+		}
+
+		return $response;
+	}
+}
+add_filter('http_response', 'yoga_yookassa_capture_api_error_response', 10, 3);
+
+if (!function_exists('yoga_yookassa_append_api_error_to_notices')) {
+	function yoga_yookassa_append_api_error_to_notices(array $notices): array {
+		if (empty($notices['error']) || !function_exists('WC') || !WC()->session) {
+			return $notices;
+		}
+
+		$api_error = (string) WC()->session->get('yoga_yookassa_api_error');
+		if ($api_error === '') {
+			return $notices;
+		}
+
+		foreach ($notices['error'] as $key => $notice) {
+			$text = is_array($notice) ? (string) ($notice['notice'] ?? '') : (string) $notice;
+			if (strpos($text, 'Платеж не прошел') !== false || strpos($text, 'Платеж не прошёл') !== false) {
+				$notices['error'][$key]['notice'] = $text . ' ' . esc_html($api_error);
+				break;
+			}
+		}
+
+		WC()->session->__unset('yoga_yookassa_api_error');
+
+		return $notices;
+	}
+}
+add_filter('woocommerce_get_notices', 'yoga_yookassa_append_api_error_to_notices');
 
 add_action('wp_enqueue_scripts', 'yoga_enqueue_yookassa_checkout_bridge', 25);
 function yoga_enqueue_yookassa_checkout_bridge(): void {

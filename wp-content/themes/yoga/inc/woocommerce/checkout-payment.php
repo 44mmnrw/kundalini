@@ -17,19 +17,19 @@ if (!function_exists('yoga_get_checkout_payment_methods')) {
 
 		return array(
 			array(
+				'id'        => 'bank_card',
+				'label'     => __('Банковская карта', 'yoga'),
+				'icon'      => $svg_base . 'card.svg',
+				'icon_bg'   => 'muted',
+				'line_icon' => true,
+			),
+			array(
 				'id'          => 'sbp',
 				'label'       => 'СБП',
 				'icon'        => $svg_base . 'sbp.svg',
 				'icon_active' => $svg_base . 'sbp.svg',
 				'icon_bg'     => 'light',
 				'line_icon'   => true,
-			),
-			array(
-				'id'        => 'bank_card',
-				'label'     => __('Банковская карта', 'yoga'),
-				'icon'      => $svg_base . 'card.svg',
-				'icon_bg'   => 'muted',
-				'line_icon' => true,
 			),
 			array(
 				'id'      => 'sberpay', // API ЮKassa: sberbank
@@ -56,6 +56,8 @@ if (!function_exists('yoga_get_checkout_payment_methods')) {
 				'icon_bg' => 'light',
 			),
 		);
+
+		return apply_filters('yoga_checkout_payment_methods', $methods);
 	}
 }
 
@@ -66,7 +68,8 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 		}
 
 		$methods = yoga_get_checkout_payment_methods();
-		$default_id = 'sbp';
+		$default_id = !empty($methods) ? (string) $methods[0]['id'] : 'bank_card';
+		$type_map = function_exists('yoga_yookassa_payment_type_map') ? yoga_yookassa_payment_type_map() : array();
 		$gateway_id = function_exists('yoga_get_checkout_yookassa_gateway_id') ? yoga_get_checkout_yookassa_gateway_id() : '';
 		?>
 		<div class="yoga-checkout-block yoga-checkout-block_payment">
@@ -84,7 +87,7 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 							class="yoga-checkout-payment__input"
 							name="yoga_checkout_payment_type"
 							value="<?php echo esc_attr($method_id); ?>"
-							data-yookassa-type="<?php echo esc_attr((string) $method['id']); ?>"
+							data-yookassa-type="<?php echo esc_attr((string) ($type_map[$method_id] ?? $method_id)); ?>"
 							<?php checked($is_default); ?>
 						>
 						<span class="yoga-checkout-payment__icon yoga-checkout-payment__icon--<?php echo esc_attr($icon_bg); ?>" aria-hidden="true">

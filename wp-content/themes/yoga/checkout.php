@@ -3,6 +3,14 @@
  * Оформление подписки (/checkout/).
  */
 
+if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
+	$success_template = get_template_directory() . '/payment-success.php';
+	if (is_readable($success_template)) {
+		load_template($success_template);
+		return;
+	}
+}
+
 if (function_exists('yoga_handle_cart_mutation_request')) {
 	yoga_handle_cart_mutation_request();
 }

@@ -18,6 +18,7 @@
 	require_once get_template_directory() . '/inc/woocommerce/checkout-template.php';
 	require_once get_template_directory() . '/inc/woocommerce/checkout-payment.php';
 	require_once get_template_directory() . '/inc/woocommerce/checkout-yookassa.php';
+	require_once get_template_directory() . '/inc/woocommerce/payment-success.php';
 	// Подключение стилей и скриптов
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 	require_once get_template_directory() . '/inc/auth/login-modal.php';
@@ -533,6 +534,7 @@
 		$subscription_style_ver = file_exists($theme_dir . '/assets/css/templates/subscription.css') ? filemtime($theme_dir . '/assets/css/templates/subscription.css') : '1.0.0';
 		$ways_style_ver = file_exists($theme_dir . '/assets/css/templates/ways.css') ? filemtime($theme_dir . '/assets/css/templates/ways.css') : '1.0.0';
 		$checkout_style_ver = file_exists($theme_dir . '/assets/css/templates/checkout.css') ? filemtime($theme_dir . '/assets/css/templates/checkout.css') : '1.0.0';
+		$payment_success_style_ver = file_exists($theme_dir . '/assets/css/templates/payment-success.css') ? filemtime($theme_dir . '/assets/css/templates/payment-success.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
 		
@@ -564,6 +566,7 @@
 			$subscription_style_ver = time();
 			$ways_style_ver = time();
 			$checkout_style_ver = time();
+			$payment_success_style_ver = time();
 			$main_script_ver = time();
 			$practice_player_script_ver = time();
 		}
@@ -582,7 +585,9 @@
 		$is_archive_page = is_archive();
 		$is_post_single = is_singular('post');
 		$is_practice_single = is_singular('practice');
-		$is_checkout_page = function_exists('is_checkout') && is_checkout();
+		$is_order_received = function_exists('yoga_is_order_received_request') && yoga_is_order_received_request();
+		$is_checkout_page = function_exists('is_checkout') && is_checkout() && !$is_order_received;
+		$is_payment_success_page = function_exists('yoga_is_payment_success_screen') && yoga_is_payment_success_screen();
 		$common_style_deps = array('main-style');
 
 		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
@@ -660,6 +665,9 @@
 		if ($is_checkout_page) {
 			wp_enqueue_style( 'tariffs-style', $theme_uri . '/assets/css/templates/tariffs.css', $common_style_deps, $tariffs_style_ver );
 			wp_enqueue_style( 'checkout-style', $theme_uri . '/assets/css/templates/checkout.css', array_merge( $common_style_deps, array( 'tariffs-style' ) ), $checkout_style_ver );
+		}
+		if ($is_payment_success_page) {
+			wp_enqueue_style( 'payment-success-style', $theme_uri . '/assets/css/templates/payment-success.css', $common_style_deps, $payment_success_style_ver );
 		}
 		if ($is_homepage || $is_archive_page || $is_post_single || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'subscription-style', $theme_uri . '/assets/css/templates/subscription.css', $common_style_deps, $subscription_style_ver );
