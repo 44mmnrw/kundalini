@@ -5,16 +5,36 @@
 		return typeof yogaYooKassa !== 'undefined' ? yogaYooKassa : {};
 	}
 
+	function getForm() {
+		return $('form.checkout.woocommerce-checkout');
+	}
+
 	function ensureGateway($form) {
 		var gatewayId = getConfig().gatewayId;
-		if (!gatewayId) {
-			return;
+		if (!gatewayId || !$form.length) {
+			return false;
+		}
+
+		var $hidden = $form.find('input.yoga-checkout-payment-method');
+		if ($hidden.length) {
+			$hidden.val(gatewayId);
+		} else {
+			$form.append(
+				$('<input>', {
+					type: 'hidden',
+					name: 'payment_method',
+					'class': 'yoga-checkout-payment-method',
+					value: gatewayId,
+				})
+			);
 		}
 
 		var $gateway = $form.find('#payment input[name="payment_method"][value="' + gatewayId + '"]');
 		if ($gateway.length) {
 			$gateway.prop('checked', true).trigger('change');
 		}
+
+		return true;
 	}
 
 	function getSelectedType() {
@@ -58,18 +78,27 @@
 		ensureGateway($form);
 		syncWidgetMethod($form);
 
-		$form.on('change', 'input[name="yoga_checkout_payment_type"]', function () {
+		$form.off('change.yogaYooKassa', 'input[name="yoga_checkout_payment_type"]');
+		$form.on('change.yogaYooKassa', 'input[name="yoga_checkout_payment_type"]', function () {
 			ensureGateway($form);
 			syncWidgetMethod($form);
 		});
 	}
 
 	$(function () {
-		var $form = $('form.checkout.woocommerce-checkout');
+		var $form = getForm();
 		init($form);
 
 		$(document.body).on('updated_checkout', function () {
-			init($form);
+			init(getForm());
+		});
+
+		$(document.body).on('checkout_place_order', function () {
+			ensureGateway(getForm());
+		});
+
+		$form.on('submit', function () {
+			ensureGateway($form);
 		});
 	});
 })(jQuery);

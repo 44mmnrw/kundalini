@@ -67,6 +67,7 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 
 		$methods = yoga_get_checkout_payment_methods();
 		$default_id = 'sbp';
+		$gateway_id = function_exists('yoga_get_checkout_yookassa_gateway_id') ? yoga_get_checkout_yookassa_gateway_id() : '';
 		?>
 		<div class="yoga-checkout-block yoga-checkout-block_payment">
 			<h3 class="yoga-checkout-block__title"><?php esc_html_e('Способ оплаты', 'yoga'); ?></h3>
@@ -120,6 +121,10 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 				</span>
 				<span class="yoga-checkout-checkbox__text"><?php esc_html_e('Сохранить метод оплаты для будущих покупок', 'yoga'); ?></span>
 			</label>
+
+			<?php if ($gateway_id !== '') : ?>
+				<input type="hidden" name="payment_method" class="yoga-checkout-payment-method" value="<?php echo esc_attr($gateway_id); ?>">
+			<?php endif; ?>
 
 			<div class="yoga-checkout-wc-payment" aria-hidden="true">
 				<?php woocommerce_checkout_payment(); ?>
