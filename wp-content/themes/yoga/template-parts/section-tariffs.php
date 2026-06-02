@@ -120,9 +120,9 @@
                 <?php endif; ?>
               </div>
               
-              <form class="cart" action="<?php echo esc_url(wc_get_cart_url()); ?>" method="post" enctype='multipart/form-data'>
-                <?php 
-                  // Скрытое поле для добавления в корзину
+              <form class="cart" action="<?php echo esc_url(function_exists('yoga_get_tariff_form_action_url') ? yoga_get_tariff_form_action_url() : home_url('/checkout/')); ?>" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="yoga_add_tariff" value="1">
+                <?php
                   if ($product->is_type('variable') && $current_product_id != $product_id) {
                     // Для вариаций
                 ?>

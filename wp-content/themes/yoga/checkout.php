@@ -1,54 +1,48 @@
 <?php
 /**
- * Template Name: Checkout Page
+ * Оформление подписки (/checkout/).
  */
 
-get_header(); ?>
+if (function_exists('yoga_handle_cart_mutation_request')) {
+	yoga_handle_cart_mutation_request();
+}
 
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <?php
-            // Убедимся, что WooCommerce загружен
-            if (class_exists('WooCommerce')) {
+get_header();
 
-                // Инициализируем сессию/корзину максимально безопасно (защита от 5xx на checkout)
-                if (function_exists('WC')) {
-                    $wc = WC();
+if (function_exists('yoga_ensure_wc_cart_session')) {
+	yoga_ensure_wc_cart_session();
+}
 
-                    if ($wc && isset($wc->session) && $wc->session && method_exists($wc->session, 'has_session') && !$wc->session->has_session()) {
-                        $wc->session->set_customer_session_cookie(true);
-                    }
+$wc_cart = function_exists('WC') && WC()->cart ? WC()->cart : null;
+$is_empty = !$wc_cart || $wc_cart->is_empty();
+?>
 
-                    if ((!isset($wc->cart) || !$wc->cart) && function_exists('wc_load_cart')) {
-                        wc_load_cart();
-                    }
-                }
-
-                // Выводим уведомления, только если функция доступна
-                if (function_exists('wc_print_notices')) {
-                    wc_print_notices();
-                }
-
-                $cart = function_exists('WC') ? WC()->cart : null;
-                $has_cart_items = $cart && method_exists($cart, 'is_empty') ? !$cart->is_empty() : false;
-
-                // Проверяем корзину
-                if (!$has_cart_items) {
-                    echo '<div class="alert alert-info">';
-                    echo '<p>Ваша корзина пуста.</p>';
-                    echo '<a href="' . esc_url(wc_get_page_permalink('shop')) . '" class="btn btn-primary">Вернуться в магазин</a>';
-                    echo '</div>';
-                } else {
-                    // Используем стандартную функцию WooCommerce
-                    echo do_shortcode('[woocommerce_checkout]');
-                }
-            } else {
-                echo '<p>WooCommerce не активирован.</p>';
-            }
-            ?>
-        </div>
-    </div>
-</div>
+<?php if ($is_empty) : ?>
+	<section class="section-checkout section-checkout_empty" id="section-checkout">
+		<div class="container">
+			<div class="row">
+				<div class="yoga-checkout yoga-checkout_empty">
+					<h1 class="yoga-checkout__title"><?php esc_html_e('КОРЗИНА', 'yoga'); ?></h1>
+					<p class="yoga-checkout-empty__text"><?php esc_html_e('Выберите тариф, чтобы оформить подписку.', 'yoga'); ?></p>
+					<?php
+					$tariffs_url = home_url('/product-category/tariffs/');
+					$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+					if ($tariffs_term && !is_wp_error($tariffs_term)) {
+						$term_link = get_term_link($tariffs_term);
+						if (!is_wp_error($term_link)) {
+							$tariffs_url = $term_link;
+						}
+					}
+					?>
+					<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt">
+						<span><?php echo esc_html(function_exists('yoga_get_purchase_cta_text') ? yoga_get_purchase_cta_text() : __('Выбрать тариф', 'yoga')); ?></span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+<?php else : ?>
+	<?php get_template_part('template-parts/section', 'checkout'); ?>
+<?php endif; ?>
 
 <?php get_footer(); ?>

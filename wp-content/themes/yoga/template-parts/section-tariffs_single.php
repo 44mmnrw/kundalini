@@ -1,5 +1,5 @@
 <?php
 /**
- * ACF tariff fields registration moved to inc/integrations/acf.php
- * and is attached to acf/init.
+ * Страница «Тарифы» — тот же блок, что на главной (section-tariffs.php).
  */
+get_template_part('template-parts/section', 'tariffs');

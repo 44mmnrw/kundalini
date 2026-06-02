@@ -78,6 +78,22 @@ if (!function_exists('yoga_register_tariff_fields')) {
                     'type' => 'text',
                     'default_value' => '/месяц',
                 ),
+                array(
+                    'key' => 'field_tariff_practices',
+                    'label' => 'Практики в тарифе',
+                    'name' => 'tariff_practices',
+                    'type' => 'relationship',
+                    'post_type' => array(
+                        0 => 'practice',
+                    ),
+                    'filters' => array(
+                        0 => 'search',
+                    ),
+                    'return_format' => 'id',
+                    'min' => 0,
+                    'max' => '',
+                    'elements' => '',
+                ),
             ),
             'location' => array(
                 array(

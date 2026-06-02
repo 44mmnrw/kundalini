@@ -204,6 +204,9 @@
       <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.1426 1.33333H14.4759V2.66667H1.14258V1.33333H4.47591L5.59199 0H10.0265L11.1426 1.33333ZM4.25435 16C3.27648 16 2.47656 15.2019 2.47656 14.2262V4H13.1432V14.2262C13.1432 15.2019 12.3433 16 11.3655 16H4.25435Z"/>
     </g>
   </symbol>
+  <symbol id="checkout-trash" viewBox="0 0 20 20" fill="none">
+    <path d="M8.33333 9.16666V14.1667M11.6667 9.16666V14.1667M15.8333 4.99999V16.6667C15.8333 17.5871 15.0871 18.3333 14.1667 18.3333H5.83333C4.91286 18.3333 4.16667 17.5871 4.16667 16.6667V4.99999M2.5 4.99999H17.5M6.66667 4.99999V3.33332C6.66667 2.41285 7.41286 1.66666 8.33333 1.66666H11.6667C12.5871 1.66666 13.3333 2.41285 13.3333 3.33332V4.99999" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
 
   <!-- Add new icons here as <symbol id="icon-name" viewBox="...">...</symbol> -->
 </svg>

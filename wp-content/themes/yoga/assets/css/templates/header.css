@@ -9,7 +9,7 @@
   --header-desktop-logo-h: 2rem;
   /* Figma desktop: 53px между логотипом и навигацией */
   --header-desktop-logo-nav-gap: calc(53 / 16 * 1rem);
-  --header-desktop-nav-item-gap: clamp(0.8125rem, 1.45vw + 0.35rem, calc(35 / 16 * 1rem));
+  --header-desktop-nav-item-gap: clamp(0.625rem, 1.1vw + 0.2rem, 1.5rem);
   /* Figma: 20px между CTA и иконкой входа */
   --header-desktop-lk-gap: 1.25rem;
   /* Figma header_mobile: 12px */
@@ -416,6 +416,7 @@ header > .container > .row > .header-content {
     align-items: center;
     gap: 0.625rem;
     flex-shrink: 0;
+    min-width: max-content;
   }
 
   .header-lk--logged .header-lk-tariff-cta {
@@ -457,6 +458,17 @@ header > .container > .row > .header-content {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .header-rate-pill_inactive {
+    width: max-content;
+    max-width: none;
+    flex-shrink: 0;
+  }
+
+  .header-rate-pill_inactive span {
+    overflow: visible;
+    text-overflow: unset;
   }
 
   .header-lk .notification-icon_header .notification-icon__img {
@@ -525,7 +537,7 @@ header > .container > .row > .header-content {
 @supports (width: 1cqi) {
   @media (min-width: 1025px) {
     .header-content {
-      --header-desktop-nav-item-gap: clamp(0.8125rem, 3.5cqi + 0.25rem, calc(35 / 16 * 1rem));
+      --header-desktop-nav-item-gap: clamp(0.625rem, 2.6cqi + 0.1rem, 1.5rem);
     }
   }
 }
@@ -540,10 +552,15 @@ header > .container > .row > .header-content {
     gap: 0.4375rem;
   }
 
-  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill {
-    max-width: 10.5rem;
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill:not(.header-rate-pill_inactive) {
+    max-width: 12.75rem;
     padding: 0.25rem 0.625rem;
     font-size: 0.9375rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill_inactive {
+    max-width: none;
+    font-size: 1rem;
   }
 
   .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill__icon {
@@ -564,8 +581,12 @@ header > .container > .row > .header-content {
 
 /* Очень узкая колонка nav: только пилюля; шрифт и gap меню не трогаем */
 @container nav-slot (max-width: 28rem) {
-  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill {
-    max-width: 9rem;
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill:not(.header-rate-pill_inactive) {
+    max-width: 11.75rem;
+  }
+
+  .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill_inactive {
+    max-width: none;
   }
 }
 
