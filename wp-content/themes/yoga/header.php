@@ -144,11 +144,11 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							if (!$has_paid_tariff) :
 								if (is_user_logged_in()) : ?>
 							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white header-lk-tariff-cta">
-								<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
+								<span><?php esc_html_e('Подписка не активна', 'yoga'); ?></span>
 							</a>
 								<?php else : ?>
 							<div class="btn btn_white modal-call_login">
-								<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
+								<span><?php esc_html_e('Подписка не активна', 'yoga'); ?></span>
 							</div>
 								<?php endif;
 							endif;
@@ -190,9 +190,11 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 									$tariff_product_name = (string) $tariff_row['product_name'];
 								}
 								$pill_href = $tariffs_url;
-								$pill_label = yoga_get_purchase_cta_text();
+								$pill_label = __('Подписка не активна', 'yoga');
+								$pill_classes = 'header-rate-pill header-rate-pill_inactive';
 								if ($tariff_product_name !== '') {
 									$pill_label = $tariff_product_name;
+									$pill_classes = 'header-rate-pill';
 									if ($lk_page_url !== '') {
 										$pill_href = trailingslashit($lk_page_url) . '#lk-slide-settings';
 									}
@@ -203,7 +205,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								$sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
 								?>
 							<div class="header-lk-logged-desktop">
-								<a class="header-rate-pill" href="<?php echo esc_url($pill_href); ?>">
+								<a class="<?php echo esc_attr($pill_classes); ?>" href="<?php echo esc_url($pill_href); ?>">
 									<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
 										<use href="<?php echo esc_url($sprite_uri); ?>#personal-status-crown"></use>
 									</svg>

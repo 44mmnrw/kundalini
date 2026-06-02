@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
@@ -13,6 +13,11 @@
 	require_once get_template_directory() . '/inc/ajax/payments.php';
 	require_once get_template_directory() . '/inc/ajax/favorites.php';
 	require_once get_template_directory() . '/inc/admin/practice-duplicate.php';
+	require_once get_template_directory() . '/inc/woocommerce/cart-helpers.php';
+	require_once get_template_directory() . '/inc/woocommerce/tariff-cart.php';
+	require_once get_template_directory() . '/inc/woocommerce/checkout-template.php';
+	require_once get_template_directory() . '/inc/woocommerce/checkout-payment.php';
+	require_once get_template_directory() . '/inc/woocommerce/checkout-yookassa.php';
 	// Подключение стилей и скриптов
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 
@@ -526,6 +531,7 @@
 		$tariffs_style_ver = file_exists($theme_dir . '/assets/css/templates/tariffs.css') ? filemtime($theme_dir . '/assets/css/templates/tariffs.css') : '1.0.0';
 		$subscription_style_ver = file_exists($theme_dir . '/assets/css/templates/subscription.css') ? filemtime($theme_dir . '/assets/css/templates/subscription.css') : '1.0.0';
 		$ways_style_ver = file_exists($theme_dir . '/assets/css/templates/ways.css') ? filemtime($theme_dir . '/assets/css/templates/ways.css') : '1.0.0';
+		$checkout_style_ver = file_exists($theme_dir . '/assets/css/templates/checkout.css') ? filemtime($theme_dir . '/assets/css/templates/checkout.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
 		
@@ -556,6 +562,7 @@
 			$tariffs_style_ver = time();
 			$subscription_style_ver = time();
 			$ways_style_ver = time();
+			$checkout_style_ver = time();
 			$main_script_ver = time();
 			$practice_player_script_ver = time();
 		}
@@ -574,6 +581,7 @@
 		$is_archive_page = is_archive();
 		$is_post_single = is_singular('post');
 		$is_practice_single = is_singular('practice');
+		$is_checkout_page = function_exists('is_checkout') && is_checkout();
 		$common_style_deps = array('main-style');
 
 		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
@@ -647,6 +655,10 @@
 
 		if ($is_homepage || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'tariffs-style', $theme_uri . '/assets/css/templates/tariffs.css', $common_style_deps, $tariffs_style_ver );
+		}
+		if ($is_checkout_page) {
+			wp_enqueue_style( 'tariffs-style', $theme_uri . '/assets/css/templates/tariffs.css', $common_style_deps, $tariffs_style_ver );
+			wp_enqueue_style( 'checkout-style', $theme_uri . '/assets/css/templates/checkout.css', array_merge( $common_style_deps, array( 'tariffs-style' ) ), $checkout_style_ver );
 		}
 		if ($is_homepage || $is_archive_page || $is_post_single || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'subscription-style', $theme_uri . '/assets/css/templates/subscription.css', $common_style_deps, $subscription_style_ver );
@@ -2366,52 +2378,6 @@ function handle_comment_delete() {
 		wp_send_json_success(array('items' => $items));
 	}
 	
-	// Подключаем скрипты и стили WooCommerce
-	add_action('template_redirect', 'handle_tariff_add_to_cart');
-	function handle_tariff_add_to_cart() {
-	if (!function_exists('WC') || !function_exists('wc_get_checkout_url')) {
-		return;
-	}
-
-		// Подключаем скрипты для checkout
-		if (isset($_POST['add-to-cart']) && is_numeric($_POST['add-to-cart']) && isset($_POST['woocommerce-add-to-cart-nonce'])) {
-			
-			// Убедимся, что все необходимые скрипты загружены
-			if (!wp_verify_nonce($_POST['woocommerce-add-to-cart-nonce'], 'woocommerce-add-to-cart')) {
-				return;
-			}
-			
-			$product_id = intval($_POST['add-to-cart']);
-			
-			if (has_term('tariffs', 'product_cat', $product_id)) {
-				// Проверяем и исправляем возможные проблемы с checkout
-				WC()->cart->empty_cart();
-				
-				// Убедимся, что сессия WooCommerce активна
-				$added = WC()->cart->add_to_cart($product_id);
-				
-				if ($added) {
-					// Отладочная информация
-					wp_redirect(wc_get_checkout_url());
-					exit;
-				}
-			}
-		}
-	}
-	
-	// Исправление nonce проверки для checkout
-	add_filter('woocommerce_add_to_cart_redirect', 'disable_standard_redirect_for_tariffs', 10, 1);
-	function disable_standard_redirect_for_tariffs(string $url): string {
-		if (isset($_POST['add-to-cart']) && is_numeric($_POST['add-to-cart'])) {
-			$product_id = intval($_POST['add-to-cart']);
-			if (has_term('tariffs', 'product_cat', $product_id)) {
-				return ''; // Временно отключаем проверку для тестирования
-			}
-		}
-		return $url;
-	}
-	
-	
 	// Альтернативное решение: создаем свою обработку checkout
 	function theme_woocommerce_support() {
 		add_theme_support('woocommerce');
@@ -2455,14 +2421,13 @@ function handle_comment_delete() {
 	// Добавляем возможности для пользователей
 	add_action('template_redirect', 'fix_checkout_issues');
 	function fix_checkout_issues() {
-	if (!function_exists('is_checkout') || !function_exists('WC')) {
+	if (!function_exists('WC')) {
 		return;
 	}
 
-		if (is_checkout() && WC()->cart && !WC()->cart->is_empty()) {
-			// Обработка обновления профиля
-			if (WC()->session && !WC()->session->has_session()) {
-				WC()->session->set_customer_session_cookie(true);
+		if (function_exists('yoga_is_theme_checkout_context') && yoga_is_theme_checkout_context()) {
+			if (function_exists('yoga_ensure_wc_cart_session')) {
+				yoga_ensure_wc_cart_session();
 			}
 		}
 	}

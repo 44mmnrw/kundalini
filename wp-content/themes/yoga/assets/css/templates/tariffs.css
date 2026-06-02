@@ -80,8 +80,9 @@
   margin-top: 0px;}
 .tariff .check-list__text {
   font-size: 1rem;  line-height: 1.28em;}
-/* Кнопка CTA в карточке — Figma 593:15474 */
-.tariff .btn.btn_icon {
+/* Кнопка CTA в карточке тарифа и на checkout — Figma 593:15474 */
+.tariff .btn.btn_icon,
+.yoga-checkout-summary__submit.btn.btn_icon {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -95,7 +96,8 @@
   padding: 0.9375rem 1.25rem;
   margin-top: auto;
   white-space: nowrap;}
-.tariff .btn.btn_icon span {
+.tariff .btn.btn_icon span,
+.yoga-checkout-summary__submit.btn.btn_icon span {
   display: block;
   flex: 0 1 auto;
   min-width: 0px;
@@ -107,7 +109,8 @@
   font-family: "Mulish-SemiBold", sans-serif;
   font-weight: normal;
   white-space: nowrap;}
-.tariff .btn .btn-icon {
+.tariff .btn .btn-icon,
+.yoga-checkout-summary__submit.btn .btn-icon {
   position: relative;
   right: auto;
   top: auto;
@@ -117,9 +120,11 @@
   flex-shrink: 0;
   width: 1.875rem;
   height: 1.875rem;}
-.tariff .btn:hover .btn-icon {
+.tariff .btn:hover .btn-icon,
+.yoga-checkout-summary__submit.btn:hover .btn-icon {
   transform: rotate(0deg);}
-.tariff .btn .btn-icon svg {
+.tariff .btn .btn-icon svg,
+.yoga-checkout-summary__submit.btn .btn-icon svg {
   width: 0.914625rem;
   height: 0.914625rem;}
 .tariff form.cart {
