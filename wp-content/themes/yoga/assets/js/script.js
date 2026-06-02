@@ -1356,12 +1356,47 @@ jQuery(document).ready(function($) {
 	});   
 	
 	
-	// Переключение слайдов формы входа/регистрации (Вход / Регистрация / Восстановление пароля)
-	$('.ml-sl-switch').on('click', function () {
-		var mlsw = $(this).attr('data-target');
-		$('.modal-login-inner__slide').removeClass("active");
-		$('.modal-login-inner__slide[data-target=' + mlsw + ']').addClass("active");
+	function yogaOpenLoginModal(slideTarget) {
+		$('.overlay').addClass('active');
+		$('.body').addClass('body-fixed');
+		$('.modal').removeClass('active');
+		$('.modal-login').addClass('active');
+		if (slideTarget) {
+			yogaSwitchLoginSlide(slideTarget);
+		}
+	}
+
+	function yogaSwitchLoginSlide(target) {
+		if (!target) {
+			return;
+		}
+		$('.modal-login-inner__slide').removeClass('active');
+		$('.modal-login-inner__slide[data-target="' + target + '"]').addClass('active');
+	}
+
+	$(document).on('click', '.ml-sl-switch', function (e) {
+		e.preventDefault();
+		yogaSwitchLoginSlide($(this).attr('data-target'));
 	});
+
+	$(document).on('click', '.yoga-form-login-message a', function (e) {
+		e.preventDefault();
+		yogaSwitchLoginSlide('3');
+	});
+
+	(function yogaMaybeOpenLoginModalFromUrl() {
+		var params = new URLSearchParams(window.location.search);
+		var openLogin = params.get('open_login');
+		var isLostPasswordPath = /\/lost-password\/?$/i.test(window.location.pathname);
+
+		if (openLogin === 'recovery' || isLostPasswordPath) {
+			yogaOpenLoginModal('3');
+			if (openLogin) {
+				var cleanUrl = window.location.pathname + window.location.hash;
+				window.history.replaceState({}, document.title, cleanUrl);
+			}
+		}
+	})();
 	
 	$(".modal-login .form").submit(function(e) {
 		e.preventDefault();

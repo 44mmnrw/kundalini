@@ -54,11 +54,9 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     Войти через
                 </a>
                 <div class="loggin-additional">
-                    <div class="loggin-additional__item ml-sl-switch" data-target="3">
-                        <span>
-                            Забыли пароль?
-                        </span>
-                    </div>
+                    <button type="button" class="loggin-additional__item ml-sl-switch" data-target="3">
+                        Забыли пароль?
+                    </button>
                 </div>
                 <div class="loggin-back loggin-back_mob">
                     <span class="loggin-back__link ml-sl-switch" data-target="2">

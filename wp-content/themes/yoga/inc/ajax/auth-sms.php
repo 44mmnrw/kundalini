@@ -60,7 +60,14 @@ if (!function_exists('handle_yoga_email_login')) {
             'remember'      => true,
         ), false);
         if (is_wp_error($user)) {
-            yoga_ajax_error(yoga_sanitize_ajax_notice_html($user->get_error_message()), 'auth_failed', 401);
+            if ($user->get_error_code() === 'incorrect_password') {
+                yoga_ajax_error(
+                    __('Неверный пароль. Нажмите «Забыли пароль?» ниже, чтобы восстановить доступ.', 'yoga'),
+                    'auth_failed',
+                    401
+                );
+            }
+            yoga_ajax_error(wp_strip_all_tags($user->get_error_message()), 'auth_failed', 401);
         }
         yoga_ajax_success('Успешный вход');
     }
