@@ -20,6 +20,7 @@
 	require_once get_template_directory() . '/inc/woocommerce/checkout-yookassa.php';
 	// Подключение стилей и скриптов
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
+	require_once get_template_directory() . '/inc/auth/login-modal.php';
 
 	// Стили
 		// Скрипты (jQuery уже входит в состав WordPress)
