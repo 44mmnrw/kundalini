@@ -1,0 +1,165 @@
+/* Успешная оплата — Figma node 1989:15056 */
+
+.section-payment-success {
+	padding-top: 2.5rem;
+	padding-bottom: 7.5rem;
+}
+
+.yoga-payment-success {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.25rem;
+	width: 100%;
+	max-width: 33.125rem;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.yoga-payment-success__icon {
+	position: relative;
+	width: 4.1875rem;
+	height: 4.1875rem;
+	flex-shrink: 0;
+}
+
+.yoga-payment-success__icon-circle {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.yoga-payment-success__icon-check {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 1.875rem;
+	height: 1.875rem;
+	transform: translate(-50%, -50%);
+}
+
+.yoga-payment-success__title {
+	margin: 0;
+	width: 100%;
+	font-family: "Mulish-Bold", sans-serif;
+	font-weight: normal;
+	font-size: 3.125rem;
+	line-height: 1.3;
+	text-transform: uppercase;
+	color: var(--color-black);
+}
+
+.yoga-payment-success__lead {
+	margin: 0;
+	max-width: 33.125rem;
+	font-family: "Mulish-Regular", sans-serif;
+	font-size: 1.125rem;
+	line-height: 1.5;
+	color: var(--color-black);
+}
+
+.yoga-payment-success__tariff {
+	font-family: "Mulish-Bold", sans-serif;
+	font-weight: normal;
+	color: var(--color-violet);
+}
+
+.yoga-payment-success__panel {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.3125rem;
+	width: 100%;
+	padding: 1.25rem;
+	border-radius: 0.625rem;
+	background: var(--color-grey);
+}
+
+.yoga-payment-success__panel-label {
+	margin: 0;
+	font-family: "Mulish-Regular", sans-serif;
+	font-size: 1rem;
+	line-height: normal;
+	color: #646464;
+}
+
+.yoga-payment-success__panel-value {
+	margin: 0;
+	font-family: "Mulish-Bold", sans-serif;
+	font-weight: normal;
+	font-size: 1.25rem;
+	line-height: 1.1;
+	color: var(--color-black);
+}
+
+.yoga-payment-success__btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	max-width: 33.125rem;
+	min-height: 3.25rem;
+	margin-top: 0.5rem;
+	padding: 1rem 0.9375rem;
+	border-radius: 9.375rem;
+	background: var(--color-black);
+	border: none;
+	text-decoration: none;
+}
+
+.yoga-payment-success__btn span {
+	font-family: "Mulish-Medium", sans-serif;
+	font-size: 1rem;
+	line-height: normal;
+	color: var(--color-white);
+}
+
+.yoga-payment-success__btn:hover,
+.yoga-payment-success__btn:focus-visible {
+	background: var(--color-violet);
+}
+
+.yoga-payment-success__help {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
+	width: 100%;
+	max-width: 33.125rem;
+	padding-top: 0.625rem;
+	font-family: "Mulish-Regular", sans-serif;
+	font-size: 1rem;
+	line-height: normal;
+	color: #646464;
+}
+
+.yoga-payment-success__help p {
+	margin: 0;
+}
+
+.yoga-payment-success__email {
+	color: var(--color-violet);
+	text-decoration: underline;
+	text-underline-position: from-font;
+}
+
+.yoga-payment-success__email:hover,
+.yoga-payment-success__email:focus-visible {
+	color: var(--color-black);
+}
+
+@media (max-width: 767px) {
+	.section-payment-success {
+		padding-top: 1.5rem;
+		padding-bottom: 4rem;
+	}
+
+	.yoga-payment-success__title {
+		font-size: 2rem;
+	}
+
+	.yoga-payment-success__lead {
+		font-size: 1rem;
+	}
+}

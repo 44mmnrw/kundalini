@@ -65,6 +65,9 @@ if (!function_exists('yoga_product_is_tariff')) {
 
 if (!function_exists('yoga_is_theme_checkout_context')) {
 	function yoga_is_theme_checkout_context(): bool {
+		if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
+			return false;
+		}
 		if (function_exists('is_order_received_page') && is_order_received_page()) {
 			return false;
 		}

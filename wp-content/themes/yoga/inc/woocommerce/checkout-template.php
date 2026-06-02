@@ -29,10 +29,10 @@ function yoga_cart_url_is_checkout(string $url): string {
 
 add_filter('template_include', 'yoga_checkout_page_template', 99);
 function yoga_checkout_page_template(string $template): string {
-	if (!function_exists('is_checkout') || !is_checkout()) {
+	if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
 		return $template;
 	}
-	if (function_exists('is_order_received_page') && is_order_received_page()) {
+	if (!function_exists('is_checkout') || !is_checkout()) {
 		return $template;
 	}
 	if (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url()) {
