@@ -1446,20 +1446,28 @@ p.login-rules a:hover {
   width: 100%;
   display: flex;
   margin-top: 0.875rem;}
-.loggin-additional__item {
+.loggin-additional__item,
+.yoga-form-login-message .yoga-login-forgot-link {
   margin-left: auto;
   margin-right: auto;
-  padding: 0;
-  border: none;
-  background: transparent;
   font-family: "Mulish-Medium", sans-serif;
   font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
   color: var(--color-black);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
   transition: 0.4s ease;
 }
-.loggin-additional__item:hover {
+.loggin-additional__item {
+  display: inline-block;
+}
+.yoga-form-login-message .yoga-login-forgot-link {
+  margin-left: 0;
+  margin-right: 0;
+}
+.loggin-additional__item:hover,
+.yoga-form-login-message .yoga-login-forgot-link:hover {
   color: #646464;
 }
 .login-smartcaptcha {

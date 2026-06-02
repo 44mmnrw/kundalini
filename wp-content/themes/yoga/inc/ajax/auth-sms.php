@@ -61,8 +61,12 @@ if (!function_exists('handle_yoga_email_login')) {
         ), false);
         if (is_wp_error($user)) {
             if ($user->get_error_code() === 'incorrect_password') {
+                $forgot_link = sprintf(
+                    '<a href="#" class="ml-sl-switch yoga-login-forgot-link" data-target="3">%s</a>',
+                    esc_html__('Забыли пароль?', 'yoga')
+                );
                 yoga_ajax_error(
-                    __('Неверный пароль. Нажмите «Забыли пароль?» ниже, чтобы восстановить доступ.', 'yoga'),
+                    esc_html__('Неверный пароль.', 'yoga') . ' ' . $forgot_link,
                     'auth_failed',
                     401
                 );

@@ -1372,16 +1372,19 @@ jQuery(document).ready(function($) {
 		}
 		$('.modal-login-inner__slide').removeClass('active');
 		$('.modal-login-inner__slide[data-target="' + target + '"]').addClass('active');
+		$('.yoga-form-login-message').removeClass('is-visible').empty();
+
+		if (target === '3') {
+			var $loginEmail = $('.yoga-form-login input[name="log"]').val();
+			if ($loginEmail) {
+				$('.yoga-form-recovery input[name="user_login"]').val($loginEmail);
+			}
+		}
 	}
 
-	$(document).on('click', '.ml-sl-switch', function (e) {
+	$(document).on('click', '.modal-login .ml-sl-switch', function (e) {
 		e.preventDefault();
 		yogaSwitchLoginSlide($(this).attr('data-target'));
-	});
-
-	$(document).on('click', '.yoga-form-login-message a', function (e) {
-		e.preventDefault();
-		yogaSwitchLoginSlide('3');
 	});
 
 	(function yogaMaybeOpenLoginModalFromUrl() {
