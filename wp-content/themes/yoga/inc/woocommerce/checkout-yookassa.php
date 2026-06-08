@@ -215,6 +215,50 @@ if (!function_exists('yoga_get_selected_yookassa_payment_type')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_redirect_confirmation_types')) {
+	/**
+	 * Способы, которые API принимает только с confirmation.type=redirect.
+	 *
+	 * @return string[]
+	 */
+	function yoga_yookassa_redirect_confirmation_types(): array {
+		return array('sbp', 'sberbank', 'tinkoff_bank');
+	}
+}
+
+if (!function_exists('yoga_yookassa_set_checkout_order')) {
+	function yoga_yookassa_set_checkout_order(WC_Order $order): void {
+		$GLOBALS['yoga_yookassa_checkout_order'] = $order;
+	}
+}
+add_action('woocommerce_checkout_create_order', 'yoga_yookassa_set_checkout_order', 1, 1);
+
+if (!function_exists('yoga_yookassa_clear_checkout_order')) {
+	function yoga_yookassa_clear_checkout_order(): void {
+		unset($GLOBALS['yoga_yookassa_checkout_order']);
+	}
+}
+add_action('woocommerce_checkout_order_processed', 'yoga_yookassa_clear_checkout_order', 999);
+
+if (!function_exists('yoga_yookassa_get_checkout_order')) {
+	function yoga_yookassa_get_checkout_order(): ?WC_Order {
+		$order = $GLOBALS['yoga_yookassa_checkout_order'] ?? null;
+
+		return $order instanceof WC_Order ? $order : null;
+	}
+}
+
+if (!function_exists('yoga_yookassa_get_return_url_for_order')) {
+	function yoga_yookassa_get_return_url_for_order(WC_Order $order): string {
+		$pattern = '?yookassa=returnUrl&yookassa-order-id=%s';
+		if (class_exists('YooKassaGateway') && method_exists('YooKassaGateway', 'getReturnUrlPattern')) {
+			$pattern = YooKassaGateway::getReturnUrlPattern();
+		}
+
+		return get_site_url(null, sprintf($pattern, $order->get_order_key()));
+	}
+}
+
 if (!function_exists('yoga_yookassa_create_payment_data')) {
 	/**
 	 * @return \YooKassa\Model\PaymentData\AbstractPaymentData|null
@@ -254,6 +298,27 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 		}
 
 		$paymentRequest->setPaymentMethodData($payment_data);
+
+		if (in_array($type, yoga_yookassa_redirect_confirmation_types(), true)) {
+			$order = yoga_yookassa_get_checkout_order();
+			if ($order instanceof WC_Order && method_exists($paymentRequest, 'setConfirmation')) {
+				$paymentRequest->setConfirmation(
+					array(
+						'type'      => 'redirect',
+						'returnUrl' => yoga_yookassa_get_return_url_for_order($order),
+					)
+				);
+			}
+
+			if (method_exists($paymentRequest, 'setSavePaymentMethod')) {
+				$paymentRequest->setSavePaymentMethod(false);
+			}
+		}
+
+		// СБП не поддерживает двухстадийные платежи (capture=false / hold).
+		if ($type === 'sbp' && method_exists($paymentRequest, 'setCapture')) {
+			$paymentRequest->setCapture(true);
+		}
 
 		return $paymentRequest;
 	}
@@ -445,8 +510,23 @@ if (!function_exists('yoga_yookassa_capture_api_error_response')) {
 		}
 
 		$body = json_decode((string) wp_remote_retrieve_body($response), true);
-		if (is_array($body) && !empty($body['description'])) {
-			WC()->session->set('yoga_yookassa_api_error', (string) $body['description']);
+		if (!is_array($body)) {
+			return $response;
+		}
+
+		$parts = array();
+		if (!empty($body['description'])) {
+			$parts[] = (string) $body['description'];
+		}
+		if (!empty($body['parameter'])) {
+			$parts[] = 'Параметр: ' . (string) $body['parameter'];
+		}
+		if (!empty($body['code'])) {
+			$parts[] = 'Код: ' . (string) $body['code'];
+		}
+
+		if ($parts !== array()) {
+			WC()->session->set('yoga_yookassa_api_error', implode('. ', $parts));
 		}
 
 		return $response;
@@ -465,12 +545,21 @@ if (!function_exists('yoga_yookassa_append_api_error_to_notices')) {
 			return $notices;
 		}
 
+		$appended = false;
 		foreach ($notices['error'] as $key => $notice) {
 			$text = is_array($notice) ? (string) ($notice['notice'] ?? '') : (string) $notice;
 			if (strpos($text, 'Платеж не прошел') !== false || strpos($text, 'Платеж не прошёл') !== false) {
 				$notices['error'][$key]['notice'] = $text . ' ' . esc_html($api_error);
+				$appended = true;
 				break;
 			}
+		}
+
+		if (!$appended) {
+			$notices['error'][] = array(
+				'notice' => esc_html($api_error),
+				'data'   => array(),
+			);
 		}
 
 		WC()->session->__unset('yoga_yookassa_api_error');
