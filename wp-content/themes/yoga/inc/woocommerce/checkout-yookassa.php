@@ -296,7 +296,23 @@ if (!function_exists('yoga_get_checkout_payment_type_slug')) {
 
 		$order = yoga_yookassa_get_checkout_order();
 		if ($order instanceof WC_Order) {
-			return sanitize_key((string) $order->get_meta('_yoga_checkout_payment_type'));
+			$meta_slug = sanitize_key((string) $order->get_meta('_yoga_checkout_payment_type'));
+			if ($meta_slug !== '') {
+				return $meta_slug;
+			}
+		}
+
+		if (function_exists('WC') && WC()->session) {
+			$pending_order_id = absint(WC()->session->get('order_awaiting_payment'));
+			if ($pending_order_id > 0) {
+				$pending_order = wc_get_order($pending_order_id);
+				if ($pending_order instanceof WC_Order) {
+					$meta_slug = sanitize_key((string) $pending_order->get_meta('_yoga_checkout_payment_type'));
+					if ($meta_slug !== '') {
+						return $meta_slug;
+					}
+				}
+			}
 		}
 
 		return '';
@@ -480,10 +496,6 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 		$paymentRequest->setPaymentMethodData($payment_data);
 
 		if (in_array($type, yoga_yookassa_redirect_confirmation_types(), true)) {
-			if (method_exists($paymentRequest, 'setCapture')) {
-				$paymentRequest->setCapture(true);
-			}
-
 			$order = yoga_yookassa_get_checkout_order();
 			if ($order instanceof WC_Order && method_exists($paymentRequest, 'setConfirmation')) {
 				$paymentRequest->setConfirmation(
@@ -512,9 +524,14 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 			}
 		}
 
-		// СБП не поддерживает двухстадийные платежи (capture=false / hold).
-		if ($type === 'sbp' && method_exists($paymentRequest, 'setCapture')) {
-			$paymentRequest->setCapture(true);
+		// СБП: capture=true обязателен, холд запрещён (документация ЮKassa).
+		if ($type === 'sbp') {
+			if (method_exists($paymentRequest, 'setCapture')) {
+				$paymentRequest->setCapture(true);
+			}
+			if (method_exists($paymentRequest, 'setSavePaymentMethod')) {
+				$paymentRequest->setSavePaymentMethod(false);
+			}
 		}
 
 		return $paymentRequest;

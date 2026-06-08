@@ -72,6 +72,7 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		 * T-Pay / СБП / SberPay: самостоятельная интеграция (redirect + payment_method_data).
 		 *
 		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank#create-payment
+		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
 		 *
 		 * @param WC_Order $order
 		 */
@@ -92,10 +93,41 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			if (
 				function_exists('yoga_yookassa_redirect_confirmation_types')
 				&& in_array($type, yoga_yookassa_redirect_confirmation_types(), true)
-				&& class_exists('YooKassa\Model\ConfirmationType')
 			) {
-				$this->confirmationType = \YooKassa\Model\ConfirmationType::REDIRECT;
+				if (class_exists('YooKassa\Model\ConfirmationType')) {
+					$this->confirmationType = \YooKassa\Model\ConfirmationType::REDIRECT;
+				}
+
+				// СБП не поддерживает save_payment_method (см. документацию ЮKassa).
+				$this->savePaymentMethod = false;
 			}
+		}
+
+		/**
+		 * СБП: обязательно capture=true; подписка/холд ломают создание платежа.
+		 *
+		 * @param WC_Order $order
+		 * @return \YooKassa\Request\Payments\CreatePaymentRequestBuilder
+		 */
+		protected function getBuilder($order) {
+			$type = function_exists('yoga_get_selected_yookassa_payment_type_for_api')
+				? yoga_get_selected_yookassa_payment_type_for_api()
+				: '';
+
+			$saved_subscribe = $this->subscribe;
+			if ($type === 'sbp') {
+				$this->subscribe = false;
+			}
+
+			$builder = parent::getBuilder($order);
+
+			if ($type === 'sbp' && method_exists($builder, 'setCapture')) {
+				$builder->setCapture(true);
+			}
+
+			$this->subscribe = $saved_subscribe;
+
+			return $builder;
 		}
 
 		/**
