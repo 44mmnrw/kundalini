@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 if (!function_exists('yoga_yookassa_format_api_error')) {
 	function yoga_yookassa_format_api_error($error): string {
 		if ($error instanceof WP_Error) {
-			return trim((string) $error->get_error_message());
+			return yoga_yookassa_translate_api_error_message(trim((string) $error->get_error_message()));
 		}
 
 		if ($error instanceof Exception) {
@@ -29,15 +29,29 @@ if (!function_exists('yoga_yookassa_format_api_error')) {
 						$parts[] = 'Код: ' . (string) $body['code'];
 					}
 					if ($parts !== array()) {
-						return implode('. ', $parts);
+						return yoga_yookassa_translate_api_error_message(implode('. ', $parts));
 					}
 				}
 			}
 
-			return $message;
+			return yoga_yookassa_translate_api_error_message($message);
 		}
 
 		return '';
+	}
+}
+
+if (!function_exists('yoga_yookassa_translate_api_error_message')) {
+	function yoga_yookassa_translate_api_error_message(string $message): string {
+		if ($message === '') {
+			return '';
+		}
+
+		if (stripos($message, 'Payment method is not available') !== false) {
+			return __('Этот способ оплаты не подключён в ЮKassa. Выберите другой на странице оплаты или подключите его в личном кабинете ЮKassa.', 'yoga');
+		}
+
+		return $message;
 	}
 }
 
@@ -48,7 +62,20 @@ if (!function_exists('yoga_yookassa_store_api_error')) {
 			return;
 		}
 
-		WC()->session->set('yoga_yookassa_api_error', $message);
+		WC()->session->set('yoga_yookassa_api_error', yoga_yookassa_translate_api_error_message($message));
+	}
+}
+
+if (!function_exists('yoga_yookassa_should_fallback_to_smart_payment')) {
+	function yoga_yookassa_should_fallback_to_smart_payment($result): bool {
+		if (!is_wp_error($result)) {
+			return false;
+		}
+
+		$message = (string) $result->get_error_message();
+
+		return stripos($message, 'Payment method is not available') !== false
+			|| stripos($message, 'не подключён') !== false;
 	}
 }
 
@@ -59,25 +86,46 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
 		 */
 		public function createPayment($order) {
-			$builder        = $this->getBuilder($order);
-			$paymentRequest = $builder->build();
-			$paymentRequest = apply_filters('woocommerce_yookassa_create_payment_request', $paymentRequest);
+			$result = $this->attemptCreatePayment($order, false);
 
-			if (class_exists('YooKassaHandler') && YooKassaHandler::isReceiptEnabled()) {
-				$receipt = $paymentRequest->getReceipt();
-				if ($receipt instanceof \YooKassa\Model\Receipt) {
-					$receipt->normalize($paymentRequest->getAmount());
+			if (yoga_yookassa_should_fallback_to_smart_payment($result)) {
+				if (function_exists('WC') && WC()->session) {
+					WC()->session->__unset('yoga_yookassa_api_error');
 				}
+
+				return $this->attemptCreatePayment($order, true);
 			}
 
-			$serializer     = new \YooKassa\Request\Payments\CreatePaymentRequestSerializer();
-			$serializedData = $serializer->serialize($paymentRequest);
-			if (class_exists('YooKassaLogger')) {
-				YooKassaLogger::info('Create payment request: ' . json_encode($serializedData));
-				YooKassaLogger::sendHeka(array('payment.request.init'));
-			}
+			return $result;
+		}
+
+		/**
+		 * @param WC_Order $order
+		 * @param bool     $smart_payment_fallback Умный платёж без payment_method_data.
+		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
+		 */
+		private function attemptCreatePayment($order, bool $smart_payment_fallback) {
+			$GLOBALS['yoga_yookassa_smart_payment_fallback'] = $smart_payment_fallback;
 
 			try {
+				$builder        = $this->getBuilder($order);
+				$paymentRequest = $builder->build();
+				$paymentRequest = apply_filters('woocommerce_yookassa_create_payment_request', $paymentRequest);
+
+				if (class_exists('YooKassaHandler') && YooKassaHandler::isReceiptEnabled()) {
+					$receipt = $paymentRequest->getReceipt();
+					if ($receipt instanceof \YooKassa\Model\Receipt) {
+						$receipt->normalize($paymentRequest->getAmount());
+					}
+				}
+
+				$serializer     = new \YooKassa\Request\Payments\CreatePaymentRequestSerializer();
+				$serializedData = $serializer->serialize($paymentRequest);
+				if (class_exists('YooKassaLogger')) {
+					YooKassaLogger::info('Create payment request: ' . json_encode($serializedData));
+					YooKassaLogger::sendHeka(array('payment.request.init'));
+				}
+
 				$response = $this->getApiClient()->createPayment($paymentRequest);
 				if (class_exists('YooKassaLogger')) {
 					YooKassaLogger::info('Create payment response: ' . json_encode($response->toArray()));
@@ -99,28 +147,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 				}
 
 				return new WP_Error($e->getCode(), $e->getMessage());
+			} finally {
+				unset($GLOBALS['yoga_yookassa_smart_payment_fallback']);
 			}
-		}
-
-		/**
-		 * @param int $order_id
-		 * @return array
-		 */
-		public function process_payment($order_id) {
-			$result = parent::process_payment($order_id);
-
-			if (($result['result'] ?? '') === 'failure' && function_exists('wc_add_notice') && function_exists('WC') && WC()->session) {
-				$api_error = (string) WC()->session->get('yoga_yookassa_api_error');
-				if ($api_error !== '') {
-					wc_add_notice(
-						__('Платеж не прошел. Попробуйте еще или выберите другой способ оплаты', 'yookassa') . ' ' . esc_html($api_error),
-						'error'
-					);
-					WC()->session->__unset('yoga_yookassa_api_error');
-				}
-			}
-
-			return $result;
 		}
 	}
 }
