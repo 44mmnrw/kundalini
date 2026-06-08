@@ -214,75 +214,6 @@ if (!function_exists('yoga_yookassa_apply_gateway_to_posted_checkout_data')) {
 }
 add_filter('woocommerce_checkout_posted_data', 'yoga_yookassa_apply_gateway_to_posted_checkout_data', 5);
 
-if (!function_exists('yoga_yookassa_validate_selected_payment_method')) {
-	function yoga_yookassa_validate_selected_payment_method(WP_Error $errors, array $data): void {
-		if (!yoga_yookassa_is_checkout_payment_request()) {
-			return;
-		}
-
-		$slug = '';
-		if (!empty($data['yoga_checkout_payment_type'])) {
-			$slug = sanitize_key((string) $data['yoga_checkout_payment_type']);
-		}
-		$api_type = yoga_map_checkout_payment_type_to_api($slug);
-		if ($api_type === '') {
-			return;
-		}
-
-		yoga_yookassa_get_merchant_payment_method_types(true);
-		if (yoga_yookassa_is_merchant_type_available($api_type)) {
-			return;
-		}
-
-		$errors->add(
-			'payment',
-			sprintf(
-				/* translators: %s: payment method name */
-				__('«%s» не подключён в ЮKassa для этого магазина. Подключите способ в личном кабинете ЮKassa или выберите другой.', 'yoga'),
-				yoga_yookassa_get_payment_method_label($api_type)
-			)
-		);
-	}
-}
-add_action('woocommerce_after_checkout_validation', 'yoga_yookassa_validate_selected_payment_method', 10, 2);
-
-if (!function_exists('yoga_filter_checkout_payment_methods_for_merchant')) {
-	/**
-	 * В UI показываем только способы, подключённые в ЮKassa.
-	 *
-	 * @param array<int, array<string, mixed>> $methods
-	 * @return array<int, array<string, mixed>>
-	 */
-	function yoga_filter_checkout_payment_methods_for_merchant(array $methods): array {
-		$enabled = yoga_yookassa_get_merchant_payment_method_types();
-		if ($enabled === array()) {
-			return $methods;
-		}
-
-		$map  = yoga_yookassa_payment_type_map();
-		$seen = array();
-		$out  = array();
-
-		foreach ($methods as $method) {
-			$id  = (string) ($method['id'] ?? '');
-			$api = $map[$id] ?? '';
-
-			if ($api === '' || !in_array($api, $enabled, true)) {
-				continue;
-			}
-			if (in_array($api, $seen, true)) {
-				continue;
-			}
-
-			$seen[] = $api;
-			$out[]  = $method;
-		}
-
-		return $out !== array() ? $out : $methods;
-	}
-}
-add_filter('yoga_checkout_payment_methods', 'yoga_filter_checkout_payment_methods_for_merchant');
-
 if (!function_exists('yoga_save_checkout_payment_type_to_order')) {
 	function yoga_save_checkout_payment_type_to_order(WC_Order $order): void {
 		$slug = yoga_get_checkout_payment_type_slug();
@@ -409,10 +340,6 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 
 		$type = yoga_get_selected_yookassa_payment_type_for_api();
 		if ($type === '') {
-			return $paymentRequest;
-		}
-
-		if (!yoga_yookassa_is_merchant_type_available($type)) {
 			return $paymentRequest;
 		}
 
