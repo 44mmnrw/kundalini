@@ -45,10 +45,6 @@ if (!function_exists('yoga_yookassa_bootstrap_epl_gateway')) {
 			return;
 		}
 
-		if (get_option('yookassa_pay_mode') === '0') {
-			return;
-		}
-
 		if (get_option('woocommerce_yookassa_epl_settings', false) !== false) {
 			return;
 		}
@@ -135,6 +131,16 @@ if (!function_exists('yoga_yookassa_is_merchant_type_available')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_is_checkout_payment_request')) {
+	function yoga_yookassa_is_checkout_payment_request(): bool {
+		if (!empty($_REQUEST['wc-ajax']) && $_REQUEST['wc-ajax'] === 'checkout') {
+			return true;
+		}
+
+		return function_exists('yoga_is_theme_checkout_context') && yoga_is_theme_checkout_context();
+	}
+}
+
 if (!function_exists('yoga_get_checkout_payment_type_slug')) {
 	function yoga_get_checkout_payment_type_slug(): string {
 		if (!empty($_POST['yoga_checkout_payment_type'])) {
@@ -142,7 +148,15 @@ if (!function_exists('yoga_get_checkout_payment_type_slug')) {
 		}
 
 		if (function_exists('WC') && WC()->session) {
-			return sanitize_key((string) WC()->session->get('yoga_yookassa_payment_type'));
+			$session_type = sanitize_key((string) WC()->session->get('yoga_yookassa_payment_type'));
+			if ($session_type !== '') {
+				return $session_type;
+			}
+		}
+
+		$order = yoga_yookassa_get_checkout_order();
+		if ($order instanceof WC_Order) {
+			return sanitize_key((string) $order->get_meta('_yoga_checkout_payment_type'));
 		}
 
 		return '';
@@ -162,6 +176,27 @@ if (!function_exists('yoga_store_checkout_payment_type_in_session')) {
 	}
 }
 add_action('woocommerce_checkout_process', 'yoga_store_checkout_payment_type_in_session', 1);
+
+if (!function_exists('yoga_yookassa_apply_gateway_to_posted_checkout_data')) {
+	/**
+	 * До валидации WC: СБП / T-Pay / SberPay должны идти через EPL (redirect), не виджет.
+	 */
+	function yoga_yookassa_apply_gateway_to_posted_checkout_data(array $data): array {
+		if (empty($data['yoga_checkout_payment_type'])) {
+			return $data;
+		}
+
+		$slug = sanitize_key((string) $data['yoga_checkout_payment_type']);
+		$api  = yoga_map_checkout_payment_type_to_api($slug);
+		if ($api !== '' && in_array($api, yoga_yookassa_redirect_confirmation_types(), true)) {
+			yoga_yookassa_ensure_epl_gateway_enabled();
+			$data['payment_method'] = 'yookassa_epl';
+		}
+
+		return $data;
+	}
+}
+add_filter('woocommerce_checkout_posted_data', 'yoga_yookassa_apply_gateway_to_posted_checkout_data', 5);
 
 if (!function_exists('yoga_save_checkout_payment_type_to_order')) {
 	function yoga_save_checkout_payment_type_to_order(WC_Order $order): void {
@@ -300,7 +335,7 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 		$paymentRequest->setPaymentMethodData($payment_data);
 
 		if (in_array($type, yoga_yookassa_redirect_confirmation_types(), true)) {
-			$order = yoga_yookassa_get_checkout_order();
+		$order = yoga_yookassa_get_checkout_order();
 			if ($order instanceof WC_Order && method_exists($paymentRequest, 'setConfirmation')) {
 				$paymentRequest->setConfirmation(
 					array(
@@ -308,6 +343,19 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 						'returnUrl' => yoga_yookassa_get_return_url_for_order($order),
 					)
 				);
+			} elseif (function_exists('WC') && WC()->session) {
+				$pending_order_id = absint(WC()->session->get('order_awaiting_payment'));
+				if ($pending_order_id > 0) {
+					$pending_order = wc_get_order($pending_order_id);
+					if ($pending_order instanceof WC_Order && method_exists($paymentRequest, 'setConfirmation')) {
+						$paymentRequest->setConfirmation(
+							array(
+								'type'      => 'redirect',
+								'returnUrl' => yoga_yookassa_get_return_url_for_order($pending_order),
+							)
+						);
+					}
+				}
 			}
 
 			if (method_exists($paymentRequest, 'setSavePaymentMethod')) {
@@ -324,6 +372,88 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 	}
 }
 add_filter('woocommerce_yookassa_create_payment_request', 'yoga_yookassa_apply_payment_type_to_request', 20);
+
+if (!function_exists('yoga_yookassa_ensure_epl_gateway_enabled')) {
+	function yoga_yookassa_ensure_epl_gateway_enabled(): void {
+		yoga_yookassa_bootstrap_epl_gateway();
+
+		$settings = get_option('woocommerce_yookassa_epl_settings', array());
+		if (!is_array($settings)) {
+			$settings = array();
+		}
+
+		if (($settings['enabled'] ?? '') === 'yes') {
+			return;
+		}
+
+		$settings['enabled'] = 'yes';
+		update_option('woocommerce_yookassa_epl_settings', $settings);
+	}
+}
+
+if (!function_exists('yoga_yookassa_needs_redirect_gateway')) {
+	function yoga_yookassa_needs_redirect_gateway(): bool {
+		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
+
+		return $api_type !== '' && in_array($api_type, yoga_yookassa_redirect_confirmation_types(), true);
+	}
+}
+
+if (!function_exists('yoga_yookassa_add_epl_gateway_for_redirect_methods')) {
+	/**
+	 * СБП / T-Pay / SberPay требуют redirect — подключаем EPL даже в режиме виджета.
+	 */
+	function yoga_yookassa_add_epl_gateway_for_redirect_methods(array $methods): array {
+		if (!yoga_yookassa_needs_redirect_gateway()) {
+			return $methods;
+		}
+
+		if (!in_array('YooKassaGatewayEPL', $methods, true)) {
+			$methods[] = 'YooKassaGatewayEPL';
+		}
+
+		return $methods;
+	}
+}
+add_filter('woocommerce_payment_gateways', 'yoga_yookassa_add_epl_gateway_for_redirect_methods', 50);
+
+if (!function_exists('yoga_yookassa_capture_payment_api_response')) {
+	function yoga_yookassa_capture_payment_api_response(array $response, array $args, string $url): array {
+		if (!function_exists('WC') || !WC()->session || !yoga_yookassa_is_checkout_payment_request()) {
+			return $response;
+		}
+
+		if (
+			(strpos($url, 'api.yookassa.ru') === false && strpos($url, 'yoomoney.ru') === false)
+			|| strpos($url, '/payments') === false
+		) {
+			return $response;
+		}
+
+		$method = strtoupper((string) ($args['method'] ?? 'GET'));
+		if ($method !== 'POST') {
+			return $response;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code($response);
+		if ($code !== 200) {
+			return $response;
+		}
+
+		$body = json_decode((string) wp_remote_retrieve_body($response), true);
+		if (!is_array($body)) {
+			return $response;
+		}
+
+		$confirmation = $body['confirmation'] ?? null;
+		if (is_array($confirmation) && !empty($confirmation['confirmation_url'])) {
+			WC()->session->set('yoga_yookassa_confirmation_url', (string) $confirmation['confirmation_url']);
+		}
+
+		return $response;
+	}
+}
+add_filter('http_response', 'yoga_yookassa_capture_payment_api_response', 10, 3);
 
 if (!function_exists('yoga_yookassa_get_payment_confirmation_redirect_url')) {
 	/**
@@ -367,12 +497,23 @@ if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_success')) {
 			return $result;
 		}
 
+		$confirmation_url = '';
+		if (function_exists('WC') && WC()->session) {
+			$confirmation_url = (string) WC()->session->get('yoga_yookassa_confirmation_url');
+			if ($confirmation_url !== '') {
+				WC()->session->__unset('yoga_yookassa_confirmation_url');
+			}
+		}
+
 		$order = wc_get_order($order_id);
-		if (!$order instanceof WC_Order) {
+		if ($confirmation_url === '' && $order instanceof WC_Order) {
+			$confirmation_url = yoga_yookassa_get_payment_confirmation_redirect_url($order);
+		}
+
+		if ($confirmation_url === '' && $order instanceof WC_Order && yoga_yookassa_needs_redirect_gateway()) {
 			return $result;
 		}
 
-		$confirmation_url = yoga_yookassa_get_payment_confirmation_redirect_url($order);
 		if ($confirmation_url !== '') {
 			$result['redirect'] = $confirmation_url;
 		}
@@ -380,7 +521,7 @@ if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_success')) {
 		return $result;
 	}
 }
-add_filter('woocommerce_payment_successful_result', 'yoga_yookassa_redirect_confirmation_url_on_success', 20, 2);
+add_filter('woocommerce_payment_successful_result', 'yoga_yookassa_redirect_confirmation_url_on_success', 5, 2);
 
 if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_pay_page')) {
 	/**
@@ -415,7 +556,7 @@ add_action('template_redirect', 'yoga_yookassa_redirect_confirmation_url_on_pay_
 
 if (!function_exists('yoga_yookassa_force_checkout_payment_method')) {
 	function yoga_yookassa_force_checkout_payment_method(): void {
-		if (!function_exists('yoga_is_theme_checkout_context') || !yoga_is_theme_checkout_context()) {
+		if (!yoga_yookassa_is_checkout_payment_request()) {
 			return;
 		}
 
@@ -436,7 +577,16 @@ function yoga_yookassa_checkout_payment_gateways(array $gateways): array {
 	}
 
 	$yookassa_id = '';
-	foreach (yoga_yookassa_gateway_candidates() as $candidate) {
+	$candidates  = yoga_yookassa_gateway_candidates();
+
+	if (yoga_yookassa_needs_redirect_gateway() && isset($gateways['yookassa_epl'])) {
+		$yookassa_id = 'yookassa_epl';
+	}
+
+	foreach ($candidates as $candidate) {
+		if ($yookassa_id !== '') {
+			break;
+		}
 		if (isset($gateways[$candidate])) {
 			$yookassa_id = $candidate;
 			break;
@@ -492,7 +642,7 @@ function yoga_yookassa_checkout_missing_gateway_notice(): void {
 
 if (!function_exists('yoga_yookassa_capture_api_error_response')) {
 	function yoga_yookassa_capture_api_error_response(array $response, array $args, string $url): array {
-		if (!function_exists('WC') || !WC()->session || !function_exists('yoga_is_theme_checkout_context') || !yoga_is_theme_checkout_context()) {
+		if (!function_exists('WC') || !WC()->session || !yoga_yookassa_is_checkout_payment_request()) {
 			return $response;
 		}
 
@@ -593,8 +743,9 @@ function yoga_enqueue_yookassa_checkout_bridge(): void {
 		'yoga-checkout-yookassa',
 		'yogaYooKassa',
 		array(
-			'gatewayId' => yoga_get_checkout_yookassa_gateway_id(),
-			'typeMap'   => yoga_yookassa_payment_type_map(),
+			'gatewayId'     => yoga_get_checkout_yookassa_gateway_id(),
+			'typeMap'       => yoga_yookassa_payment_type_map(),
+			'redirectTypes' => yoga_yookassa_redirect_confirmation_types(),
 		)
 	);
 }
