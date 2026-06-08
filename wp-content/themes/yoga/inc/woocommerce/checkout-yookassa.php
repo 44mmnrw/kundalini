@@ -18,7 +18,7 @@ if (!function_exists('yoga_yookassa_payment_type_map')) {
 			'sberpay'      => 'sberbank',
 			'tinkoff_bank' => 'tinkoff_bank',
 			'yoo_money'    => 'yoo_money',
-			'yandex_pay'   => 'bank_card',
+			// 'yandex_pay'   => 'bank_card',
 		);
 	}
 }
@@ -134,47 +134,6 @@ if (!function_exists('yoga_yookassa_is_merchant_type_available')) {
 		return in_array($api_type, yoga_yookassa_get_merchant_payment_method_types(), true);
 	}
 }
-
-if (!function_exists('yoga_filter_checkout_payment_methods_for_merchant')) {
-	/**
-	 * @param array<int, array<string, mixed>> $methods
-	 * @return array<int, array<string, mixed>>
-	 */
-	function yoga_filter_checkout_payment_methods_for_merchant(array $methods): array {
-		$enabled = yoga_yookassa_get_merchant_payment_method_types();
-		$map     = yoga_yookassa_payment_type_map();
-		$seen    = array();
-		$out     = array();
-
-		foreach ($methods as $method) {
-			$id  = (string) ($method['id'] ?? '');
-			$api = $map[$id] ?? '';
-
-			if ($api === '' || !in_array($api, $enabled, true)) {
-				continue;
-			}
-			if (in_array($api, $seen, true)) {
-				continue;
-			}
-
-			$seen[] = $api;
-			$out[]  = $method;
-		}
-
-		if ($out !== array()) {
-			return $out;
-		}
-
-		foreach ($methods as $method) {
-			if (($method['id'] ?? '') === 'bank_card') {
-				return array($method);
-			}
-		}
-
-		return $methods;
-	}
-}
-add_filter('yoga_checkout_payment_methods', 'yoga_filter_checkout_payment_methods_for_merchant');
 
 if (!function_exists('yoga_get_checkout_payment_type_slug')) {
 	function yoga_get_checkout_payment_type_slug(): string {
