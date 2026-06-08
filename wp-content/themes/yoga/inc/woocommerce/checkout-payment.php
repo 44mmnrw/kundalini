@@ -37,12 +37,12 @@ if (!function_exists('yoga_get_checkout_payment_methods')) {
 				'icon'    => $svg_base . 'SberPay.svg',
 				'icon_bg' => 'light',
 			),
-			array(
-				'id'      => 'yandex_pay',
-				'label'   => 'Yandex Pay',
-				'icon'    => $svg_base . 'Yandex_Pay.svg',
-				'icon_bg' => 'light',
-			),
+			// array(
+			// 	'id'      => 'yandex_pay',
+			// 	'label'   => 'Yandex Pay',
+			// 	'icon'    => $svg_base . 'Yandex_Pay.svg',
+			// 	'icon_bg' => 'light',
+			// ),
 			array(
 				'id'      => 'tinkoff_bank',
 				'label'   => 'T-Pay',
