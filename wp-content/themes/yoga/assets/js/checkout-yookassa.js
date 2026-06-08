@@ -94,7 +94,9 @@
 		});
 
 		$(document.body).on('checkout_place_order', function () {
-			ensureGateway(getForm());
+			var $form = getForm();
+			ensureGateway($form);
+			syncWidgetMethod($form);
 		});
 
 		$form.on('submit', function () {

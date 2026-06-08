@@ -15,7 +15,7 @@ if (!function_exists('yoga_get_checkout_payment_methods')) {
 		$base = get_template_directory_uri() . '/assets/images/checkout/';
 		$svg_base = get_template_directory_uri() . '/assets/svg/';
 
-		return array(
+		$methods = array(
 			array(
 				'id'        => 'bank_card',
 				'label'     => __('Банковская карта', 'yoga'),
