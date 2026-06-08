@@ -239,6 +239,94 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 }
 add_filter('woocommerce_yookassa_create_payment_request', 'yoga_yookassa_apply_payment_type_to_request', 20);
 
+if (!function_exists('yoga_yookassa_get_payment_confirmation_redirect_url')) {
+	/**
+	 * СБП и ряд способов оплаты требуют confirmation.type=redirect (страница ЮKassa с QR).
+	 *
+	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
+	 */
+	function yoga_yookassa_get_payment_confirmation_redirect_url(WC_Order $order): string {
+		$payment_id = (string) $order->get_transaction_id();
+		if ($payment_id === '' || !class_exists('YooKassaClientFactory')) {
+			return '';
+		}
+
+		try {
+			$payment = YooKassaClientFactory::getYooKassaClient()->getPaymentInfo($payment_id);
+		} catch (Exception $e) {
+			return '';
+		}
+
+		$confirmation = $payment->getConfirmation();
+		if (!$confirmation || !method_exists($confirmation, 'getType')) {
+			return '';
+		}
+
+		if ($confirmation->getType() !== 'redirect') {
+			return '';
+		}
+
+		return method_exists($confirmation, 'getConfirmationUrl')
+			? (string) $confirmation->getConfirmationUrl()
+			: '';
+	}
+}
+
+if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_success')) {
+	/**
+	 * В режиме виджета плагин ведёт на order-pay, хотя СБП ждёт redirect на confirmation_url.
+	 */
+	function yoga_yookassa_redirect_confirmation_url_on_success(array $result, int $order_id): array {
+		if (($result['result'] ?? '') !== 'success') {
+			return $result;
+		}
+
+		$order = wc_get_order($order_id);
+		if (!$order instanceof WC_Order) {
+			return $result;
+		}
+
+		$confirmation_url = yoga_yookassa_get_payment_confirmation_redirect_url($order);
+		if ($confirmation_url !== '') {
+			$result['redirect'] = $confirmation_url;
+		}
+
+		return $result;
+	}
+}
+add_filter('woocommerce_payment_successful_result', 'yoga_yookassa_redirect_confirmation_url_on_success', 20, 2);
+
+if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_pay_page')) {
+	/**
+	 * Fallback: прямой заход на order-pay (обновление страницы, повтор оплаты).
+	 */
+	function yoga_yookassa_redirect_confirmation_url_on_pay_page(): void {
+		if (!function_exists('is_checkout_pay_page') || !is_checkout_pay_page()) {
+			return;
+		}
+
+		global $wp;
+		$order_id = isset($wp->query_vars['order-pay']) ? absint($wp->query_vars['order-pay']) : 0;
+		if ($order_id <= 0) {
+			return;
+		}
+
+		$order = wc_get_order($order_id);
+		if (!$order instanceof WC_Order) {
+			return;
+		}
+
+		$confirmation_url = yoga_yookassa_get_payment_confirmation_redirect_url($order);
+		if ($confirmation_url === '') {
+			return;
+		}
+
+		wp_safe_redirect($confirmation_url);
+		exit;
+	}
+}
+add_action('template_redirect', 'yoga_yookassa_redirect_confirmation_url_on_pay_page', 1);
+
 if (!function_exists('yoga_yookassa_force_checkout_payment_method')) {
 	function yoga_yookassa_force_checkout_payment_method(): void {
 		if (!function_exists('yoga_is_theme_checkout_context') || !yoga_is_theme_checkout_context()) {
