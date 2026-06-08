@@ -34,7 +34,12 @@
 	}
 
 	function ensureWooGatewaySelected($form) {
-		var $gateway = $form.find('#payment input[name="payment_method"]').first();
+		var gatewayId = $form.find('input.yoga-checkout-payment-method').val();
+		if (!gatewayId) {
+			return;
+		}
+
+		var $gateway = $form.find('#payment input[name="payment_method"][value="' + gatewayId + '"]');
 		if ($gateway.length && !$gateway.is(':checked')) {
 			$gateway.prop('checked', true).trigger('change');
 		}
