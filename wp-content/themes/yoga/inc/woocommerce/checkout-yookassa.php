@@ -25,16 +25,92 @@ if (!function_exists('yoga_yookassa_payment_type_map')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_widget_payment_types')) {
+	/**
+	 * Способы, которые оплачиваются через виджет (на сайте), не через «умный платёж».
+	 *
+	 * @return string[]
+	 */
+	function yoga_yookassa_widget_payment_types(): array {
+		return array('bank_card', 'yoo_money');
+	}
+}
+
 if (!function_exists('yoga_yookassa_gateway_candidates')) {
 	/**
 	 * @return string[]
 	 */
 	function yoga_yookassa_gateway_candidates(): array {
-		if (get_option('yookassa_pay_mode') === '0') {
-			return array('yookassa_widget', 'yookassa_epl');
+		return array('yookassa_widget', 'yookassa_epl');
+	}
+}
+
+if (!function_exists('yoga_yookassa_is_custom_checkout_payment_flow')) {
+	function yoga_yookassa_is_custom_checkout_payment_flow(): bool {
+		if (yoga_yookassa_is_checkout_payment_request()) {
+			return true;
 		}
 
-		return array('yookassa_epl', 'yookassa_widget');
+		return function_exists('yoga_is_theme_checkout_context') && yoga_is_theme_checkout_context();
+	}
+}
+
+if (!function_exists('yoga_resolve_checkout_yookassa_gateway_id')) {
+	/**
+	 * Виджет — карта/ЮMoney на сайте; EPL — T-Pay/СБП/SberPay и явные типы (не умный платёж).
+	 *
+	 * @param array<string, WC_Payment_Gateway>|null $gateways Уже отфильтрованный список (без повторного get_available).
+	 */
+	function yoga_resolve_checkout_yookassa_gateway_id(?array $gateways = null): string {
+		if (!function_exists('WC') || !WC()->payment_gateways()) {
+			return '';
+		}
+
+		if ($gateways === null) {
+			$gateways = WC()->payment_gateways()->payment_gateways();
+			$gateways = array_filter(
+				$gateways,
+				static function ($gateway): bool {
+					return is_object($gateway) && method_exists($gateway, 'is_available') && $gateway->is_available();
+				}
+			);
+		}
+
+		$available = $gateways;
+		$api_type  = yoga_get_selected_yookassa_payment_type_for_api();
+
+		if (yoga_yookassa_needs_redirect_gateway()) {
+			return isset($available['yookassa_epl']) ? 'yookassa_epl' : '';
+		}
+
+		if ($api_type !== '' && in_array($api_type, yoga_yookassa_widget_payment_types(), true)) {
+			if (isset($available['yookassa_widget'])) {
+				return 'yookassa_widget';
+			}
+		}
+
+		if ($api_type !== '' && isset($available['yookassa_epl'])) {
+			return 'yookassa_epl';
+		}
+
+		foreach (yoga_yookassa_gateway_candidates() as $gateway_id) {
+			if (isset($available[$gateway_id])) {
+				return $gateway_id;
+			}
+		}
+
+		foreach ($available as $gateway_id => $gateway) {
+			if (
+				strpos($gateway_id, 'yookassa') === 0
+				&& is_object($gateway)
+				&& property_exists($gateway, 'pluginKey')
+				&& $gateway->pluginKey === 'yookassa'
+			) {
+				return $gateway_id;
+			}
+		}
+
+		return '';
 	}
 }
 
@@ -66,6 +142,10 @@ add_action('init', 'yoga_yookassa_bootstrap_epl_gateway', 20);
 
 if (!function_exists('yoga_get_checkout_yookassa_gateway_id')) {
 	function yoga_get_checkout_yookassa_gateway_id(): string {
+		if (yoga_yookassa_is_custom_checkout_payment_flow()) {
+			return yoga_resolve_checkout_yookassa_gateway_id();
+		}
+
 		if (!function_exists('WC') || !WC()->payment_gateways()) {
 			return '';
 		}
@@ -74,17 +154,6 @@ if (!function_exists('yoga_get_checkout_yookassa_gateway_id')) {
 
 		foreach (yoga_yookassa_gateway_candidates() as $gateway_id) {
 			if (isset($available[$gateway_id])) {
-				return $gateway_id;
-			}
-		}
-
-		foreach ($available as $gateway_id => $gateway) {
-			if (
-				strpos($gateway_id, 'yookassa') === 0
-				&& is_object($gateway)
-				&& property_exists($gateway, 'pluginKey')
-				&& $gateway->pluginKey === 'yookassa'
-			) {
 				return $gateway_id;
 			}
 		}
@@ -230,11 +299,12 @@ if (!function_exists('yoga_yookassa_apply_gateway_to_posted_checkout_data')) {
 			return $data;
 		}
 
-		$slug = sanitize_key((string) $data['yoga_checkout_payment_type']);
-		$api  = yoga_map_checkout_payment_type_to_api($slug);
-		if ($api !== '' && in_array($api, yoga_yookassa_redirect_confirmation_types(), true)) {
-			yoga_yookassa_ensure_epl_gateway_enabled();
-			$data['payment_method'] = 'yookassa_epl';
+		yoga_yookassa_ensure_epl_gateway_enabled();
+		yoga_yookassa_ensure_widget_gateway_enabled();
+
+		$gateway_id = yoga_resolve_checkout_yookassa_gateway_id();
+		if ($gateway_id !== '') {
+			$data['payment_method'] = $gateway_id;
 		}
 
 		return $data;
@@ -366,11 +436,6 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 			return $paymentRequest;
 		}
 
-		// Повтор без payment_method_data — сценарий «Умный платёж» (документация ЮKassa).
-		if (!empty($GLOBALS['yoga_yookassa_smart_payment_fallback'])) {
-			return $paymentRequest;
-		}
-
 		$type = yoga_get_selected_yookassa_payment_type_for_api();
 		if ($type === '') {
 			return $paymentRequest;
@@ -440,6 +505,47 @@ if (!function_exists('yoga_yookassa_ensure_epl_gateway_enabled')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_bootstrap_widget_gateway')) {
+	function yoga_yookassa_bootstrap_widget_gateway(): void {
+		if (!get_option('yookassa_shop_id')) {
+			return;
+		}
+
+		if (get_option('woocommerce_yookassa_widget_settings', false) !== false) {
+			return;
+		}
+
+		update_option(
+			'woocommerce_yookassa_widget_settings',
+			array(
+				'enabled'             => 'yes',
+				'title'               => '',
+				'description'         => '',
+				'save_payment_method' => 'no',
+			)
+		);
+	}
+}
+add_action('init', 'yoga_yookassa_bootstrap_widget_gateway', 20);
+
+if (!function_exists('yoga_yookassa_ensure_widget_gateway_enabled')) {
+	function yoga_yookassa_ensure_widget_gateway_enabled(): void {
+		yoga_yookassa_bootstrap_widget_gateway();
+
+		$settings = get_option('woocommerce_yookassa_widget_settings', array());
+		if (!is_array($settings)) {
+			$settings = array();
+		}
+
+		if (($settings['enabled'] ?? '') === 'yes') {
+			return;
+		}
+
+		$settings['enabled'] = 'yes';
+		update_option('woocommerce_yookassa_widget_settings', $settings);
+	}
+}
+
 if (!function_exists('yoga_yookassa_needs_redirect_gateway')) {
 	function yoga_yookassa_needs_redirect_gateway(): bool {
 		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
@@ -460,7 +566,7 @@ if (!function_exists('yoga_yookassa_user_selected_redirect_payment_type')) {
 
 if (!function_exists('yoga_yookassa_register_payment_gateways')) {
 	/**
-	 * EPL всегда в списке (нужен для СБП / T-Pay / SberPay с redirect).
+	 * Виджет + EPL: карта через виджет, T-Pay/СБП через EPL с явным типом (не умный платёж).
 	 */
 	function yoga_yookassa_register_payment_gateways(array $methods): array {
 		if (!get_option('yookassa_shop_id')) {
@@ -468,13 +574,19 @@ if (!function_exists('yoga_yookassa_register_payment_gateways')) {
 		}
 
 		yoga_yookassa_bootstrap_epl_gateway();
+		yoga_yookassa_bootstrap_widget_gateway();
 
 		$gateway_class = class_exists('Yoga_YooKassa_Gateway_EPL') ? 'Yoga_YooKassa_Gateway_EPL' : 'YooKassaGatewayEPL';
-		$has_custom      = in_array('Yoga_YooKassa_Gateway_EPL', $methods, true);
-		$has_epl         = in_array('YooKassaGatewayEPL', $methods, true);
+		$has_custom    = in_array('Yoga_YooKassa_Gateway_EPL', $methods, true);
+		$has_epl       = in_array('YooKassaGatewayEPL', $methods, true);
+		$has_widget    = in_array('YooKassaWidgetGateway', $methods, true);
 
 		if (!$has_custom && !$has_epl) {
 			$methods[] = $gateway_class;
+		}
+
+		if (!$has_widget) {
+			$methods[] = 'YooKassaWidgetGateway';
 		}
 
 		foreach ($methods as $index => $class_name) {
@@ -644,42 +756,12 @@ add_action('woocommerce_checkout_process', 'yoga_yookassa_force_checkout_payment
 
 add_filter('woocommerce_available_payment_gateways', 'yoga_yookassa_checkout_payment_gateways', 20);
 function yoga_yookassa_checkout_payment_gateways(array $gateways): array {
-	if (!function_exists('yoga_is_theme_checkout_context') || !yoga_is_theme_checkout_context()) {
+	if (!yoga_yookassa_is_custom_checkout_payment_flow()) {
 		return $gateways;
 	}
 
-	$yookassa_id = '';
-	$candidates  = yoga_yookassa_gateway_candidates();
-
-	if (yoga_yookassa_needs_redirect_gateway() && isset($gateways['yookassa_epl'])) {
-		$yookassa_id = 'yookassa_epl';
-	}
-
-	foreach ($candidates as $candidate) {
-		if ($yookassa_id !== '') {
-			break;
-		}
-		if (isset($gateways[$candidate])) {
-			$yookassa_id = $candidate;
-			break;
-		}
-	}
-
-	if ($yookassa_id === '') {
-		foreach ($gateways as $gateway_id => $gateway) {
-			if (
-				strpos($gateway_id, 'yookassa') === 0
-				&& is_object($gateway)
-				&& property_exists($gateway, 'pluginKey')
-				&& $gateway->pluginKey === 'yookassa'
-			) {
-				$yookassa_id = $gateway_id;
-				break;
-			}
-		}
-	}
-
-	if ($yookassa_id === '') {
+	$yookassa_id = yoga_resolve_checkout_yookassa_gateway_id($gateways);
+	if ($yookassa_id === '' || !isset($gateways[$yookassa_id])) {
 		return $gateways;
 	}
 
@@ -825,6 +907,7 @@ function yoga_enqueue_yookassa_checkout_bridge(): void {
 			'gatewayId'     => yoga_get_checkout_yookassa_gateway_id(),
 			'typeMap'       => yoga_yookassa_payment_type_map(),
 			'redirectTypes' => yoga_yookassa_redirect_confirmation_types(),
+			'widgetTypes'   => yoga_yookassa_widget_payment_types(),
 		)
 	);
 }
