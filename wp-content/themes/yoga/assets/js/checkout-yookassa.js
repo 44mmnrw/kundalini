@@ -122,6 +122,7 @@
 
 		$form.on('submit', function () {
 			ensureGateway($form);
+			syncWidgetMethod($form);
 		});
 	});
 })(jQuery);

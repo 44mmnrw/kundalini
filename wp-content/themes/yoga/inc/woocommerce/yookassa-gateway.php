@@ -69,15 +69,42 @@ if (!function_exists('yoga_yookassa_store_api_error')) {
 if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayEPL')) {
 	class Yoga_YooKassa_Gateway_EPL extends YooKassaGatewayEPL {
 		/**
+		 * T-Pay / СБП / SberPay: самостоятельная интеграция (redirect + payment_method_data).
+		 *
+		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank#create-payment
+		 *
+		 * @param WC_Order $order
+		 */
+		private function yoga_prepare_manual_payment(WC_Order $order): void {
+			$GLOBALS['yoga_yookassa_checkout_order'] = $order;
+
+			if (!function_exists('yoga_get_selected_yookassa_payment_type_for_api')) {
+				return;
+			}
+
+			$type = yoga_get_selected_yookassa_payment_type_for_api();
+			if ($type === '') {
+				return;
+			}
+
+			$this->paymentMethod = $type;
+
+			if (
+				function_exists('yoga_yookassa_redirect_confirmation_types')
+				&& in_array($type, yoga_yookassa_redirect_confirmation_types(), true)
+				&& class_exists('YooKassa\Model\ConfirmationType')
+			) {
+				$this->confirmationType = \YooKassa\Model\ConfirmationType::REDIRECT;
+			}
+		}
+
+		/**
 		 * @param WC_Order $order
 		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
 		 */
 		public function createPayment($order) {
-			if (function_exists('yoga_get_selected_yookassa_payment_type_for_api')) {
-				$type = yoga_get_selected_yookassa_payment_type_for_api();
-				if ($type !== '') {
-					$this->paymentMethod = $type;
-				}
+			if ($order instanceof WC_Order) {
+				$this->yoga_prepare_manual_payment($order);
 			}
 
 			try {
@@ -121,6 +148,42 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 
 				return new WP_Error($e->getCode(), $e->getMessage());
 			}
+		}
+
+		/**
+		 * @param int $order_id
+		 * @return array
+		 */
+		public function process_payment($order_id) {
+			$order = wc_get_order($order_id);
+			if ($order instanceof WC_Order) {
+				$this->yoga_prepare_manual_payment($order);
+			}
+
+			$result = parent::process_payment($order_id);
+
+			if (($result['result'] ?? '') !== 'failure' || !function_exists('WC') || !WC()->session) {
+				return $result;
+			}
+
+			$api_error = trim((string) WC()->session->get('yoga_yookassa_api_error'));
+			if ($api_error === '' || !function_exists('wc_get_notices')) {
+				return $result;
+			}
+
+			$notices = wc_get_notices('error');
+			if ($notices === array()) {
+				return $result;
+			}
+
+			$base_notice = __('Платеж не прошел. Попробуйте еще или выберите другой способ оплаты', 'yookassa');
+			$full_notice = $base_notice . ' ' . $api_error;
+
+			wc_clear_notices();
+			wc_add_notice($full_notice, 'error');
+			WC()->session->__unset('yoga_yookassa_api_error');
+
+			return $result;
 		}
 	}
 }
