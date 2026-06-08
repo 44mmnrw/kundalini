@@ -72,6 +72,12 @@ if (!function_exists('yoga_yookassa_should_fallback_to_smart_payment')) {
 			return false;
 		}
 
+		// T-Pay / СБП / SberPay: только прямой redirect на confirmation_url, без умного платежа.
+		if (function_exists('yoga_yookassa_user_selected_redirect_payment_type')
+			&& yoga_yookassa_user_selected_redirect_payment_type()) {
+			return false;
+		}
+
 		$message = (string) $result->get_error_message();
 
 		return stripos($message, 'Payment method is not available') !== false
