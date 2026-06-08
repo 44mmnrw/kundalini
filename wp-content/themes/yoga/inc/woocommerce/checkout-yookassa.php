@@ -143,7 +143,35 @@ if (!function_exists('yoga_yookassa_is_merchant_type_available')) {
 			return false;
 		}
 
-		return in_array($api_type, yoga_yookassa_get_merchant_payment_method_types(), true);
+		$types = yoga_yookassa_get_merchant_payment_method_types();
+		if ($types === array()) {
+			return false;
+		}
+
+		return in_array($api_type, $types, true);
+	}
+}
+
+if (!function_exists('yoga_yookassa_can_use_specific_payment_type')) {
+	/**
+	 * Можно ли передать выбранный тип в API (иначе — умный платёж без payment_method_data).
+	 */
+	function yoga_yookassa_can_use_specific_payment_type(string $api_type = ''): bool {
+		if ($api_type === '') {
+			$api_type = yoga_get_selected_yookassa_payment_type_for_api();
+		}
+
+		if ($api_type === '') {
+			return false;
+		}
+
+		static $refreshed = false;
+		if (!$refreshed && yoga_yookassa_is_checkout_payment_request()) {
+			yoga_yookassa_get_merchant_payment_method_types(true);
+			$refreshed = true;
+		}
+
+		return yoga_yookassa_is_merchant_type_available($api_type);
 	}
 }
 
@@ -338,8 +366,13 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 			return $paymentRequest;
 		}
 
+		// Повтор без payment_method_data — сценарий «Умный платёж» (документация ЮKassa).
+		if (!empty($GLOBALS['yoga_yookassa_smart_payment_fallback'])) {
+			return $paymentRequest;
+		}
+
 		$type = yoga_get_selected_yookassa_payment_type_for_api();
-		if ($type === '') {
+		if ($type === '' || !yoga_yookassa_can_use_specific_payment_type($type)) {
 			return $paymentRequest;
 		}
 
@@ -351,7 +384,7 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 		$paymentRequest->setPaymentMethodData($payment_data);
 
 		if (in_array($type, yoga_yookassa_redirect_confirmation_types(), true)) {
-		$order = yoga_yookassa_get_checkout_order();
+			$order = yoga_yookassa_get_checkout_order();
 			if ($order instanceof WC_Order && method_exists($paymentRequest, 'setConfirmation')) {
 				$paymentRequest->setConfirmation(
 					array(
@@ -411,7 +444,9 @@ if (!function_exists('yoga_yookassa_needs_redirect_gateway')) {
 	function yoga_yookassa_needs_redirect_gateway(): bool {
 		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
 
-		return $api_type !== '' && in_array($api_type, yoga_yookassa_redirect_confirmation_types(), true);
+		return $api_type !== ''
+			&& in_array($api_type, yoga_yookassa_redirect_confirmation_types(), true)
+			&& yoga_yookassa_can_use_specific_payment_type($api_type);
 	}
 }
 
@@ -723,19 +758,26 @@ if (!function_exists('yoga_yookassa_append_api_error_to_notices')) {
 			return $notices;
 		}
 
-		$appended = false;
+		if (function_exists('yoga_yookassa_translate_api_error_message')) {
+			$api_error = yoga_yookassa_translate_api_error_message($api_error);
+		}
+
+		$base_notice = __('Платеж не прошел. Попробуйте еще или выберите другой способ оплаты', 'yookassa');
+		$full_notice = $base_notice . ' ' . $api_error;
+		$updated     = false;
+
 		foreach ($notices['error'] as $key => $notice) {
 			$text = is_array($notice) ? (string) ($notice['notice'] ?? '') : (string) $notice;
 			if (strpos($text, 'Платеж не прошел') !== false || strpos($text, 'Платеж не прошёл') !== false) {
-				$notices['error'][$key]['notice'] = $text . ' ' . esc_html($api_error);
-				$appended = true;
+				$notices['error'][$key]['notice'] = $full_notice;
+				$updated = true;
 				break;
 			}
 		}
 
-		if (!$appended) {
+		if (!$updated) {
 			$notices['error'][] = array(
-				'notice' => esc_html($api_error),
+				'notice' => $full_notice,
 				'data'   => array(),
 			);
 		}
