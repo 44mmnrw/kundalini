@@ -9,8 +9,21 @@
 		return $('form.checkout.woocommerce-checkout');
 	}
 
+	function resolveGatewayId() {
+		var config = getConfig();
+		var gatewayId = config.gatewayId || '';
+		var redirectTypes = config.redirectTypes || [];
+		var selectedType = getSelectedType();
+
+		if (selectedType && redirectTypes.indexOf(selectedType) !== -1) {
+			return 'yookassa_epl';
+		}
+
+		return gatewayId;
+	}
+
 	function ensureGateway($form) {
-		var gatewayId = getConfig().gatewayId;
+		var gatewayId = resolveGatewayId();
 		if (!gatewayId || !$form.length) {
 			return false;
 		}
