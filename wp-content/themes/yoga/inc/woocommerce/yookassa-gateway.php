@@ -66,25 +66,6 @@ if (!function_exists('yoga_yookassa_store_api_error')) {
 	}
 }
 
-if (!function_exists('yoga_yookassa_should_fallback_to_smart_payment')) {
-	function yoga_yookassa_should_fallback_to_smart_payment($result): bool {
-		if (!is_wp_error($result)) {
-			return false;
-		}
-
-		// T-Pay / СБП / SberPay: только прямой redirect на confirmation_url, без умного платежа.
-		if (function_exists('yoga_yookassa_user_selected_redirect_payment_type')
-			&& yoga_yookassa_user_selected_redirect_payment_type()) {
-			return false;
-		}
-
-		$message = (string) $result->get_error_message();
-
-		return stripos($message, 'Payment method is not available') !== false
-			|| stripos($message, 'не подключён') !== false;
-	}
-}
-
 if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayEPL')) {
 	class Yoga_YooKassa_Gateway_EPL extends YooKassaGatewayEPL {
 		/**
@@ -92,26 +73,12 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
 		 */
 		public function createPayment($order) {
-			$result = $this->attemptCreatePayment($order, false);
-
-			if (yoga_yookassa_should_fallback_to_smart_payment($result)) {
-				if (function_exists('WC') && WC()->session) {
-					WC()->session->__unset('yoga_yookassa_api_error');
+			if (function_exists('yoga_get_selected_yookassa_payment_type_for_api')) {
+				$type = yoga_get_selected_yookassa_payment_type_for_api();
+				if ($type !== '') {
+					$this->paymentMethod = $type;
 				}
-
-				return $this->attemptCreatePayment($order, true);
 			}
-
-			return $result;
-		}
-
-		/**
-		 * @param WC_Order $order
-		 * @param bool     $smart_payment_fallback Умный платёж без payment_method_data.
-		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
-		 */
-		private function attemptCreatePayment($order, bool $smart_payment_fallback) {
-			$GLOBALS['yoga_yookassa_smart_payment_fallback'] = $smart_payment_fallback;
 
 			try {
 				$builder        = $this->getBuilder($order);
@@ -153,8 +120,6 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 				}
 
 				return new WP_Error($e->getCode(), $e->getMessage());
-			} finally {
-				unset($GLOBALS['yoga_yookassa_smart_payment_fallback']);
 			}
 		}
 	}

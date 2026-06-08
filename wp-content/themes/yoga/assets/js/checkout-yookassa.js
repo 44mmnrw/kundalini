@@ -11,15 +11,23 @@
 
 	function resolveGatewayId() {
 		var config = getConfig();
-		var gatewayId = config.gatewayId || '';
 		var redirectTypes = config.redirectTypes || [];
+		var widgetTypes = config.widgetTypes || ['bank_card', 'yoo_money'];
 		var selectedType = getSelectedType();
 
 		if (selectedType && redirectTypes.indexOf(selectedType) !== -1) {
 			return 'yookassa_epl';
 		}
 
-		return gatewayId;
+		if (selectedType && widgetTypes.indexOf(selectedType) !== -1) {
+			return 'yookassa_widget';
+		}
+
+		if (selectedType) {
+			return 'yookassa_epl';
+		}
+
+		return config.gatewayId || 'yookassa_widget';
 	}
 
 	function ensureGateway($form) {
