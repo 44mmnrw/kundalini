@@ -372,7 +372,7 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 		}
 
 		$type = yoga_get_selected_yookassa_payment_type_for_api();
-		if ($type === '' || !yoga_yookassa_can_use_specific_payment_type($type)) {
+		if ($type === '') {
 			return $paymentRequest;
 		}
 
@@ -445,8 +445,16 @@ if (!function_exists('yoga_yookassa_needs_redirect_gateway')) {
 		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
 
 		return $api_type !== ''
-			&& in_array($api_type, yoga_yookassa_redirect_confirmation_types(), true)
-			&& yoga_yookassa_can_use_specific_payment_type($api_type);
+			&& in_array($api_type, yoga_yookassa_redirect_confirmation_types(), true);
+	}
+}
+
+if (!function_exists('yoga_yookassa_user_selected_redirect_payment_type')) {
+	function yoga_yookassa_user_selected_redirect_payment_type(): bool {
+		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
+
+		return $api_type !== ''
+			&& in_array($api_type, yoga_yookassa_redirect_confirmation_types(), true);
 	}
 }
 
@@ -520,9 +528,10 @@ add_filter('http_response', 'yoga_yookassa_capture_payment_api_response', 10, 3)
 
 if (!function_exists('yoga_yookassa_get_payment_confirmation_redirect_url')) {
 	/**
-	 * СБП и ряд способов оплаты требуют confirmation.type=redirect (страница ЮKassa с QR).
+	 * СБП, T-Pay и SberPay требуют confirmation.type=redirect.
 	 *
 	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
+	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank
 	 */
 	function yoga_yookassa_get_payment_confirmation_redirect_url(WC_Order $order): string {
 		$payment_id = (string) $order->get_transaction_id();
