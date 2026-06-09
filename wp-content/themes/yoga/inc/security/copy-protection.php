@@ -44,30 +44,6 @@ if (!function_exists('yoga_copy_protection_selectors')) {
 	}
 }
 
-if (!function_exists('yoga_copy_protection_message')) {
-	/**
-	 * @return string
-	 */
-	function yoga_copy_protection_message(): string {
-		return (string) apply_filters(
-			'yoga_copy_protection_message',
-			__('Копирование текста на этом сайте запрещено', 'yoga')
-		);
-	}
-}
-
-if (!function_exists('yoga_copy_protection_save_message')) {
-	/**
-	 * @return string
-	 */
-	function yoga_copy_protection_save_message(): string {
-		return (string) apply_filters(
-			'yoga_copy_protection_save_message',
-			__('Сохранение страницы запрещено', 'yoga')
-		);
-	}
-}
-
 if (!function_exists('yoga_copy_protection_offline_message')) {
 	/**
 	 * @return string
@@ -160,11 +136,9 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 			'yoga-copy-protection',
 			'yogaCopyProtection',
 			array(
-				'enabled'         => true,
-				'selectors'       => array_values($selectors),
-				'message'         => yoga_copy_protection_message(),
-				'saveMessage'     => yoga_copy_protection_save_message(),
-				'offlineMessage'  => yoga_copy_protection_offline_message(),
+				'enabled'        => true,
+				'selectors'      => array_values($selectors),
+				'offlineMessage' => yoga_copy_protection_offline_message(),
 			)
 		);
 	}

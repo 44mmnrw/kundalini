@@ -7,11 +7,7 @@
 	}
 
 	var selectors = config.selectors;
-	var message = config.message || 'Копирование текста на этом сайте запрещено';
-	var saveMessage = config.saveMessage || 'Сохранение страницы запрещено';
 	var offlineMessage = config.offlineMessage || 'Контент доступен только на сайте. Сохранённая копия страницы недоступна.';
-	var toastEl = null;
-	var toastTimer = null;
 	var isOfflinePage = window.location.protocol === 'file:';
 
 	function getElement(node) {
@@ -64,29 +60,6 @@
 		return false;
 	}
 
-	function showNotice(noticeText) {
-		if (!toastEl) {
-			toastEl = document.createElement('div');
-			toastEl.className = 'yoga-copy-protection-toast';
-			toastEl.setAttribute('role', 'status');
-			toastEl.setAttribute('aria-live', 'polite');
-			document.body.appendChild(toastEl);
-		}
-
-		toastEl.textContent = noticeText || message;
-		toastEl.classList.add('is-visible');
-
-		if (toastTimer) {
-			window.clearTimeout(toastTimer);
-		}
-
-		toastTimer = window.setTimeout(function () {
-			if (toastEl) {
-				toastEl.classList.remove('is-visible');
-			}
-		}, 2400);
-	}
-
 	function blockIfProtected(event, target) {
 		var el = getElement(target || event.target);
 		if (!isProtectedTarget(el) && !selectionTouchesProtectedArea()) {
@@ -94,7 +67,6 @@
 		}
 
 		event.preventDefault();
-		showNotice(message);
 	}
 
 	function replaceOfflineProtectedContent() {
@@ -142,7 +114,6 @@
 
 		event.preventDefault();
 		event.stopPropagation();
-		showNotice(saveMessage);
 	}
 
 	initOfflineGuard();
@@ -186,7 +157,6 @@
 
 		if (isProtectedTarget(getElement(active)) || selectionTouchesProtectedArea()) {
 			event.preventDefault();
-			showNotice(message);
 		}
 	}, true);
 

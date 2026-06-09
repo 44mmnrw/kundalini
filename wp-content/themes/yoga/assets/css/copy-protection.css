@@ -28,31 +28,6 @@
 	user-select: text;
 }
 
-.yoga-copy-protection-toast {
-	position: fixed;
-	left: 50%;
-	bottom: 32px;
-	z-index: 100000;
-	max-width: min(92vw, 420px);
-	padding: 14px 20px;
-	border-radius: 12px;
-	background: rgba(24, 24, 24, 0.92);
-	color: #fff;
-	font-size: 14px;
-	line-height: 1.4;
-	text-align: center;
-	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
-	opacity: 0;
-	transform: translate(-50%, 12px);
-	transition: opacity 0.25s ease, transform 0.25s ease;
-	pointer-events: none;
-}
-
-.yoga-copy-protection-toast.is-visible {
-	opacity: 1;
-	transform: translate(-50%, 0);
-}
-
 html.yoga-copy-offline .praktika-info,
 html.yoga-copy-offline .post-main__content,
 html.yoga-copy-offline .rules,
