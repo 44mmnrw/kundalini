@@ -10,7 +10,7 @@
 	// Зачем: не держим bootstrap/hooks ACF в template-parts и централизуем
 	// все регистрации на acf/init, чтобы избежать побочных эффектов ранней загрузки.
 	require_once get_template_directory() . '/inc/integrations/acf.php';
-	require_once get_template_directory() . '/inc/practice-access.php';
+	require_once get_template_directory() . '/inc/practice-visibility.php';
 	require_once get_template_directory() . '/inc/ajax/payments.php';
 	require_once get_template_directory() . '/inc/ajax/favorites.php';
 	require_once get_template_directory() . '/inc/admin/practice-duplicate.php';
@@ -2154,18 +2154,11 @@ function handle_comment_delete() {
 		$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
 		$hidden_class = ($item_count > 10) ? 'hidden' : '';
-		$practice_id = (int) get_the_ID();
-		$can_access = function_exists('yoga_user_can_access_practice')
-			? yoga_user_can_access_practice($practice_id)
-			: true;
-		$card_url = function_exists('yoga_get_practice_card_url')
-			? yoga_get_practice_card_url($practice_id)
-			: get_permalink();
 	?>
 	
-	<div class="kriyi-item <?php echo $hidden_class; ?><?php echo $can_access ? '' : ' kriyi-item--locked'; ?>">
+	<div class="kriyi-item <?php echo $hidden_class; ?>">
 		<div class="kriyi-item__inner">
-			<a href="<?php echo esc_url($card_url); ?>"></a>
+			<a href="<?php the_permalink(); ?>"></a>
 			<span class="kriya-level"><?php echo esc_html($practice_level); ?></span>
 			<div class="kriya-info">
 				<h3><?php the_title(); ?></h3>
