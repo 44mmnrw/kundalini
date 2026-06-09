@@ -16,6 +16,11 @@ if ($practice_level_slug !== '') {
 	}
 }
 
+$sections = get_field('practice_sections');
+if (!is_array($sections)) {
+	$sections = array();
+}
+
 if ($difficulty_term_id <= 0) {
 	$difficulty_terms = get_terms(array(
 		'taxonomy' => 'practice-difficulty',
@@ -107,15 +112,23 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                 <div class="praktika__main">
                         <div class="praktika-info">
 							<?php
-								$sections = get_field('practice_sections');
-								if (function_exists('yoga_filter_practice_sections_for_viewer')) {
-									$sections = yoga_filter_practice_sections_for_viewer($sections);
-								}
 								if ($sections) {
-									foreach ($sections as $section) {
-										$layout = $section['acf_fc_layout'];
-										$anchor_id = $section['anchor_id'];
-										
+									foreach ($sections as $section_index => $section) {
+										$layout = (string) ($section['acf_fc_layout'] ?? '');
+										$anchor_id = function_exists('yoga_get_practice_section_anchor_id')
+											? yoga_get_practice_section_anchor_id($section, (int) $section_index)
+											: ($section['anchor_id'] ?? ('anchor_0' . ($section_index + 1)));
+										$section_can_view = !function_exists('yoga_can_view_practice_section_layout')
+											|| yoga_can_view_practice_section_layout($layout);
+
+										if (!$section_can_view) {
+											$section_title = function_exists('yoga_get_practice_section_display_title')
+												? yoga_get_practice_section_display_title($section, $layout)
+												: ($section['section_title'] ?? $layout);
+											include locate_template('template-parts/praktika-info/section-paywall.php');
+											continue;
+										}
+
 										switch ($layout) {
 											
 											case 'anchor_01':
@@ -176,12 +189,22 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										// Меню навигации по секциям
 										if ($sections) {
 											foreach ($sections as $index => $section) {
-												$section_id = $section['anchor_id'] ?: 'anchor_0' . ($index + 1);
-												$section_title = $section['section_title'];
+												$menu_layout = (string) ($section['acf_fc_layout'] ?? '');
+												$section_id = function_exists('yoga_get_practice_section_anchor_id')
+													? yoga_get_practice_section_anchor_id($section, (int) $index)
+													: ($section['anchor_id'] ?: 'anchor_0' . ($index + 1));
+												$section_title = function_exists('yoga_get_practice_section_display_title')
+													? yoga_get_practice_section_display_title($section, $menu_layout)
+													: ($section['section_title'] ?? '');
+												$menu_locked = function_exists('yoga_can_view_practice_section_layout')
+													&& !yoga_can_view_practice_section_layout($menu_layout);
 											?>
-                                            <li>
+                                            <li<?php echo $menu_locked ? ' class="praktika-menu__item--locked"' : ''; ?>>
                                                 <a class="ref" href="#<?php echo esc_attr($section_id); ?>">
                                                     <?php echo esc_html($section_title); ?>
+                                                    <?php if ($menu_locked) : ?>
+														<span class="praktika-menu__lock" aria-hidden="true"></span>
+													<?php endif; ?>
 												</a>
 											</li>
                                             <?php
