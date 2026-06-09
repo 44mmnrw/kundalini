@@ -147,6 +147,40 @@ function yoga_store_payment_success_order_on_payment($order_id): void {
 	yoga_store_payment_success_order_in_session((int) $order_id);
 }
 
+if (!function_exists('yoga_order_contains_tariff_product')) {
+	function yoga_order_contains_tariff_product(WC_Order $order): bool {
+		if (!function_exists('yoga_product_is_tariff')) {
+			return false;
+		}
+
+		foreach ($order->get_items() as $item) {
+			$product_id = (int) $item->get_product_id();
+			if ($product_id > 0 && yoga_product_is_tariff($product_id)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
+if (!function_exists('yoga_finalize_tariff_order_after_payment')) {
+	/**
+	 * Тариф: доступ считается по оплаченному заказу — переводим в completed и фиксируем дату.
+	 */
+	function yoga_finalize_tariff_order_after_payment(int $order_id): void {
+		$order = wc_get_order($order_id);
+		if (!$order instanceof WC_Order || !yoga_order_contains_tariff_product($order)) {
+			return;
+		}
+
+		if ($order->has_status('processing')) {
+			$order->update_status('completed', __('Тариф активирован после оплаты.', 'yoga'));
+		}
+	}
+}
+add_action('woocommerce_payment_complete', 'yoga_finalize_tariff_order_after_payment', 15, 1);
+
 if (!function_exists('yoga_get_payment_success_order')) {
 	/**
 	 * @return WC_Order|null
@@ -359,6 +393,194 @@ if (!function_exists('yoga_configure_yookassa_success_redirect')) {
 	}
 }
 add_action('init', 'yoga_configure_yookassa_success_redirect', 20);
+
+if (!function_exists('yoga_yookassa_register_return_query_vars')) {
+	function yoga_yookassa_register_return_query_vars(array $vars): array {
+		$vars[] = 'yookassa-order-id';
+
+		return $vars;
+	}
+}
+add_filter('query_vars', 'yoga_yookassa_register_return_query_vars');
+
+if (!function_exists('yoga_yookassa_get_return_order_key')) {
+	function yoga_yookassa_get_return_order_key(): string {
+		if (!empty($_GET['yookassa-order-id'])) {
+			return wc_clean(wp_unslash((string) $_GET['yookassa-order-id']));
+		}
+
+		$query_var = get_query_var('yookassa-order-id');
+
+		return $query_var !== '' ? wc_clean((string) $query_var) : '';
+	}
+}
+
+if (!function_exists('yoga_yookassa_is_return_url_request')) {
+	function yoga_yookassa_is_return_url_request(): bool {
+		if (yoga_yookassa_get_return_order_key() !== '') {
+			return true;
+		}
+
+		return isset($_GET['yookassa']) && sanitize_key(wp_unslash((string) $_GET['yookassa'])) === 'returnurl';
+	}
+}
+
+if (!function_exists('yoga_yookassa_get_order_by_key')) {
+	function yoga_yookassa_get_order_by_key(string $order_key): ?WC_Order {
+		if ($order_key === '' || !function_exists('wc_get_order_id_by_order_key')) {
+			return null;
+		}
+
+		$order_id = wc_get_order_id_by_order_key($order_key);
+		if ($order_id <= 0) {
+			return null;
+		}
+
+		$order = wc_get_order($order_id);
+
+		return $order instanceof WC_Order ? $order : null;
+	}
+}
+
+if (!function_exists('yoga_yookassa_payment_is_successful')) {
+	/**
+	 * @param \YooKassa\Model\PaymentInterface $payment
+	 */
+	function yoga_yookassa_payment_is_successful($payment): bool {
+		if (!class_exists('YooKassa\Model\PaymentStatus')) {
+			return false;
+		}
+
+		$metadata = $payment->getMetadata();
+		if (
+			$metadata
+			&& method_exists($metadata, 'offsetExists')
+			&& $metadata->offsetExists('subscribe_trial')
+			&& in_array(
+				$payment->getStatus(),
+				array(
+					\YooKassa\Model\PaymentStatus::CANCELED,
+					\YooKassa\Model\PaymentStatus::WAITING_FOR_CAPTURE,
+				),
+				true
+			)
+		) {
+			return true;
+		}
+
+		if (in_array(
+			$payment->getStatus(),
+			array(
+				\YooKassa\Model\PaymentStatus::SUCCEEDED,
+				\YooKassa\Model\PaymentStatus::WAITING_FOR_CAPTURE,
+			),
+			true
+		)) {
+			return true;
+		}
+
+		return $payment->getStatus() === \YooKassa\Model\PaymentStatus::PENDING
+			&& method_exists($payment, 'getPaid')
+			&& $payment->getPaid();
+	}
+}
+
+if (!function_exists('yoga_yookassa_sync_order_payment_status')) {
+	/**
+	 * Завершает заказ в WC, если ЮKassa уже приняла платёж (активирует подписку).
+	 */
+	function yoga_yookassa_sync_order_payment_status(WC_Order $order): bool {
+		if ($order->is_paid()) {
+			return true;
+		}
+
+		$payment_id = (string) $order->get_transaction_id();
+		if ($payment_id === '' || !class_exists('YooKassaClientFactory')) {
+			return false;
+		}
+
+		try {
+			$payment = YooKassaClientFactory::getYooKassaClient()->getPaymentInfo($payment_id);
+		} catch (Exception $e) {
+			return false;
+		}
+
+		if (!yoga_yookassa_payment_is_successful($payment)) {
+			return false;
+		}
+
+		if (!class_exists('YooKassaHandler')) {
+			return (bool) $order->payment_complete($payment_id);
+		}
+
+		$metadata = $payment->getMetadata();
+		if (
+			$metadata
+			&& method_exists($metadata, 'offsetExists')
+			&& $metadata->offsetExists('subscribe_trial')
+		) {
+			YooKassaHandler::competeSubscribe($order, $payment);
+
+			return $order->is_paid();
+		}
+
+		return (bool) YooKassaHandler::completeOrder($order, $payment);
+	}
+}
+
+if (!function_exists('yoga_yookassa_get_payment_success_redirect_url')) {
+	function yoga_yookassa_get_payment_success_redirect_url(WC_Order $order): string {
+		return add_query_arg(
+			array(
+				'order' => $order->get_id(),
+				'key'   => $order->get_order_key(),
+			),
+			yoga_get_payment_success_page_url()
+		);
+	}
+}
+
+if (!function_exists('yoga_yookassa_handle_payment_return')) {
+	/**
+	 * Синхронизация оплаты при return URL. Редирект на /payment-success/ — у плагина ЮKassa.
+	 */
+	function yoga_yookassa_handle_payment_return(): void {
+		if (!yoga_yookassa_is_return_url_request()) {
+			return;
+		}
+
+		$order = yoga_yookassa_get_order_by_key(yoga_yookassa_get_return_order_key());
+		if (!$order instanceof WC_Order) {
+			return;
+		}
+
+		yoga_yookassa_sync_order_payment_status($order);
+		yoga_store_payment_success_order_in_session($order->get_id());
+	}
+}
+add_action('template_redirect', 'yoga_yookassa_handle_payment_return', 1);
+
+if (!function_exists('yoga_yookassa_sync_order_before_success_screen')) {
+	function yoga_yookassa_sync_order_before_success_screen(): void {
+		if (yoga_yookassa_is_return_url_request()) {
+			return;
+		}
+
+		$order = yoga_get_payment_success_order_from_request();
+		if (!$order instanceof WC_Order) {
+			return;
+		}
+
+		if (!$order->is_paid()) {
+			yoga_yookassa_sync_order_payment_status($order);
+		}
+
+		if (function_exists('yoga_repair_order_tariff_line_items')) {
+			yoga_repair_order_tariff_line_items($order);
+		}
+	}
+}
+add_action('template_redirect', 'yoga_yookassa_sync_order_before_success_screen', 4);
 
 add_action('template_redirect', 'yoga_redirect_order_received_to_payment_success', 5);
 function yoga_redirect_order_received_to_payment_success(): void {
