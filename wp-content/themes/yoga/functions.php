@@ -6,6 +6,7 @@
 	require_once get_template_directory() . '/inc/core/ajax-responses.php';
 	require_once get_template_directory() . '/inc/core/dependencies.php';
 	require_once get_template_directory() . '/inc/security/smartcaptcha.php';
+	require_once get_template_directory() . '/inc/security/copy-protection.php';
 	// Axecode.tech: интеграция ACF вынесена в /inc/integrations/acf.php.
 	// Зачем: не держим bootstrap/hooks ACF в template-parts и централизуем
 	// все регистрации на acf/init, чтобы избежать побочных эффектов ранней загрузки.
