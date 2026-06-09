@@ -281,6 +281,56 @@ if (!function_exists('yoga_register_theme_cta_fields')) {
 
 add_action('acf/init', 'yoga_register_theme_cta_fields');
 
+if (!function_exists('yoga_register_guest_practice_sections_fields')) {
+	function yoga_register_guest_practice_sections_fields() {
+		if (!function_exists('acf_add_local_field_group')) {
+			return;
+		}
+
+		$choices = function_exists('yoga_get_practice_section_layout_choices')
+			? yoga_get_practice_section_layout_choices()
+			: array(
+				'anchor_01' => 'Anchor 01 — О крийе',
+				'anchor_02' => 'Anchor 02 — Эффекты крийи',
+				'anchor_03' => 'Anchor 03 — Философия практики',
+				'anchor_04' => 'Anchor 04 — Рекомендации',
+				'anchor_05' => 'Anchor 05 — Техника выполнения',
+				'anchor_06' => 'Anchor 06 — Комментарии',
+			);
+
+		acf_add_local_field_group(
+			array(
+				'key'                   => 'group_guest_practice_sections',
+				'title'                 => 'Практики: секции для гостей',
+				'fields'                => array(
+					array(
+						'key'           => 'field_guest_practice_sections',
+						'label'         => 'Секции, видимые гостям',
+						'name'          => 'guest_practice_sections',
+						'type'          => 'checkbox',
+						'instructions'  => 'Только для неавторизованных. Отметьте якоря (Anchor 01–06), которые гость увидит на странице практики. Если ничего не выбрано — гостю показываются все секции. Авторизованные пользователи всегда видят все секции.',
+						'choices'       => $choices,
+						'layout'        => 'vertical',
+						'return_format' => 'value',
+					),
+				),
+				'location'              => array(
+					array(
+						array(
+							'param'    => 'options_page',
+							'operator' => '==',
+							'value'    => 'theme-general-settings',
+						),
+					),
+				),
+				'menu_order'            => 6,
+			)
+		);
+	}
+}
+
+add_action('acf/init', 'yoga_register_guest_practice_sections_fields', 15);
+
 if (!function_exists('yoga_register_theme_smartcaptcha_fields')) {
     function yoga_register_theme_smartcaptcha_fields() {
         if (!function_exists('acf_add_local_field_group')) {

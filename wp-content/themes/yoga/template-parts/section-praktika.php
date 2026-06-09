@@ -108,6 +108,9 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                         <div class="praktika-info">
 							<?php
 								$sections = get_field('practice_sections');
+								if (function_exists('yoga_filter_practice_sections_for_viewer')) {
+									$sections = yoga_filter_practice_sections_for_viewer($sections);
+								}
 								if ($sections) {
 									foreach ($sections as $section) {
 										$layout = $section['acf_fc_layout'];

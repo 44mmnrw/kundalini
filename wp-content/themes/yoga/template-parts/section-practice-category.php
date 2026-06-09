@@ -256,17 +256,10 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 							$user_id = get_current_user_id();
 							$is_favorite = in_array(get_the_ID(), get_user_meta($user_id, 'favorite_practices', true) ?: array(), true);
 							$hidden_class = ($count > 10) ? 'hidden' : '';
-							$practice_id = (int) get_the_ID();
-							$can_access = function_exists('yoga_user_can_access_practice')
-								? yoga_user_can_access_practice($practice_id)
-								: true;
-							$card_url = function_exists('yoga_get_practice_card_url')
-								? yoga_get_practice_card_url($practice_id)
-								: get_permalink();
 							?>
-							<div class="kriyi-item <?php echo esc_attr($hidden_class); ?><?php echo $can_access ? '' : ' kriyi-item--locked'; ?>">
+							<div class="kriyi-item <?php echo esc_attr($hidden_class); ?>">
 								<div class="kriyi-item__inner">
-									<a href="<?php echo esc_url($card_url); ?>"></a>
+									<a href="<?php the_permalink(); ?>"></a>
 									<span class="kriya-level"><?php echo esc_html($practice_level); ?></span>
 									<div class="kriya-info">
 										<h3><?php the_title(); ?></h3>
