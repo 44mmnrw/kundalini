@@ -1,6 +1,9 @@
 # Ignore everything by default
 /*
 
+# Локальные инструкции и скрипты деплоя (не в репозиторий)
+/deploy/
+
 # Keep gitignore itself
 !/.gitignore
 

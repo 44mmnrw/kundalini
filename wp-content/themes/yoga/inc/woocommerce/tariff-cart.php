@@ -180,6 +180,128 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 add_action('woocommerce_init', 'yoga_ensure_wc_cart_session', 1);
 add_filter('woocommerce_checkout_redirect_empty_cart', '__return_false');
 
+if (!function_exists('yoga_guess_tariff_product_for_order_total')) {
+	/**
+	 * Подбор тарифа по сумме заказа (fallback, если позиции не сохранились в БД).
+	 */
+	function yoga_guess_tariff_product_for_order_total(WC_Order $order): ?WC_Product {
+		$total = (float) $order->get_total();
+		if ($total <= 0 || !function_exists('wc_get_products')) {
+			return null;
+		}
+
+		$products = wc_get_products(
+			array(
+				'category' => array('tariffs'),
+				'limit'    => -1,
+				'status'   => 'publish',
+			)
+		);
+
+		foreach ($products as $product) {
+			if (!$product instanceof WC_Product) {
+				continue;
+			}
+			if (!yoga_product_is_tariff((int) $product->get_id())) {
+				continue;
+			}
+			if (abs((float) $product->get_price() - $total) < 0.01) {
+				return $product;
+			}
+		}
+
+		return null;
+	}
+}
+
+if (!function_exists('yoga_sync_order_items_from_cart')) {
+	function yoga_sync_order_items_from_cart(WC_Order $order): bool {
+		if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+			return false;
+		}
+
+		foreach ($order->get_items() as $item_id => $item) {
+			$order->remove_item((int) $item_id);
+		}
+
+		foreach (WC()->cart->get_cart() as $values) {
+			$product = $values['data'] ?? null;
+			if (!$product instanceof WC_Product) {
+				continue;
+			}
+
+			$order->add_product(
+				$product,
+				max(1, (int) ($values['quantity'] ?? 1)),
+				array(
+					'variation' => $values['variation'] ?? array(),
+					'totals'    => array(
+						'subtotal'     => $values['line_subtotal'] ?? 0,
+						'total'        => $values['line_total'] ?? 0,
+						'subtotal_tax' => $values['line_subtotal_tax'] ?? 0,
+						'tax'          => $values['line_tax'] ?? 0,
+					),
+				)
+			);
+		}
+
+		$order->calculate_totals();
+		$order->save();
+
+		return count($order->get_items()) > 0;
+	}
+}
+
+if (!function_exists('yoga_repair_order_tariff_line_items')) {
+	/**
+	 * Восстанавливает позицию тарифа в заказе, если сумма есть, а line items пустые.
+	 */
+	function yoga_repair_order_tariff_line_items(WC_Order $order): bool {
+		if (count($order->get_items()) > 0) {
+			return true;
+		}
+
+		if (yoga_sync_order_items_from_cart($order)) {
+			return true;
+		}
+
+		$product = yoga_guess_tariff_product_for_order_total($order);
+		if (!$product instanceof WC_Product) {
+			return false;
+		}
+
+		$order->add_product($product, 1);
+		$order->calculate_totals();
+		$order->save();
+
+		return count($order->get_items()) > 0;
+	}
+}
+
+add_action('woocommerce_checkout_process', 'yoga_validate_checkout_has_tariff_in_cart', 1);
+function yoga_validate_checkout_has_tariff_in_cart(): void {
+	if (!function_exists('WC') || !WC()->cart || !function_exists('wc_add_notice')) {
+		return;
+	}
+
+	if (WC()->cart->is_empty()) {
+		wc_add_notice(__('Добавьте тариф в корзину перед оплатой.', 'yoga'), 'error');
+	}
+}
+
+add_action('woocommerce_checkout_order_created', 'yoga_ensure_checkout_order_tariff_line_items', 20, 1);
+function yoga_ensure_checkout_order_tariff_line_items(WC_Order $order): void {
+	yoga_repair_order_tariff_line_items($order);
+}
+
+add_action('woocommerce_payment_complete', 'yoga_repair_order_tariff_line_items_on_payment', 5, 1);
+function yoga_repair_order_tariff_line_items_on_payment(int $order_id): void {
+	$order = wc_get_order($order_id);
+	if ($order instanceof WC_Order) {
+		yoga_repair_order_tariff_line_items($order);
+	}
+}
+
 add_action('template_redirect', 'yoga_checkout_nocache_headers', 0);
 function yoga_checkout_nocache_headers(): void {
 	if (function_exists('yoga_is_theme_checkout_context') && yoga_is_theme_checkout_context()) {

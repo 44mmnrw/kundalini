@@ -10,6 +10,7 @@
 	// Зачем: не держим bootstrap/hooks ACF в template-parts и централизуем
 	// все регистрации на acf/init, чтобы избежать побочных эффектов ранней загрузки.
 	require_once get_template_directory() . '/inc/integrations/acf.php';
+	require_once get_template_directory() . '/inc/practice-access.php';
 	require_once get_template_directory() . '/inc/ajax/payments.php';
 	require_once get_template_directory() . '/inc/ajax/favorites.php';
 	require_once get_template_directory() . '/inc/admin/practice-duplicate.php';
@@ -2153,11 +2154,18 @@ function handle_comment_delete() {
 		$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
 		$hidden_class = ($item_count > 10) ? 'hidden' : '';
+		$practice_id = (int) get_the_ID();
+		$can_access = function_exists('yoga_user_can_access_practice')
+			? yoga_user_can_access_practice($practice_id)
+			: true;
+		$card_url = function_exists('yoga_get_practice_card_url')
+			? yoga_get_practice_card_url($practice_id)
+			: get_permalink();
 	?>
 	
-	<div class="kriyi-item <?php echo $hidden_class; ?>">
+	<div class="kriyi-item <?php echo $hidden_class; ?><?php echo $can_access ? '' : ' kriyi-item--locked'; ?>">
 		<div class="kriyi-item__inner">
-			<a href="<?php the_permalink(); ?>"></a>
+			<a href="<?php echo esc_url($card_url); ?>"></a>
 			<span class="kriya-level"><?php echo esc_html($practice_level); ?></span>
 			<div class="kriya-info">
 				<h3><?php the_title(); ?></h3>
@@ -3176,12 +3184,26 @@ function handle_comment_delete() {
 	
 	// Функция для получения сохраненных карт
 	function get_user_active_subscription() {
-		if (!is_user_logged_in()) return false;
-		
+		if (!is_user_logged_in()) {
+			return false;
+		}
+
+		// Основной источник — оплаченные заказы тарифов (тот же, что в header.php).
+		if (function_exists('get_current_user_tariff')) {
+			$tariff = get_current_user_tariff();
+			if (is_array($tariff) && !empty($tariff['product_name'])) {
+				return array(
+					'id'         => (int) ($tariff['order_id'] ?? 0),
+					'name'       => (string) $tariff['product_name'],
+					'start_date' => !empty($tariff['order_date']) ? (string) $tariff['order_date'] : '',
+					'end_date'   => !empty($tariff['access_end_date']) ? (string) $tariff['access_end_date'] : '',
+					'status'     => 'active',
+				);
+			}
+		}
+
 		$user_id = get_current_user_id();
-		
-		// Шорткод для отображения управления подпиской
-		// Обработчик для добавления карты
+
 		if (class_exists('WC_Subscriptions') && function_exists('wcs_get_users_subscriptions')) {
 			$subscriptions = wcs_get_users_subscriptions($user_id);
 			
@@ -3353,12 +3375,16 @@ function handle_comment_delete() {
 		
 		if (!$user_id) return false;
 		if (!yoga_has_woocommerce() || !function_exists('wc_get_orders')) return false;
+
+		$paid_statuses = function_exists('wc_get_is_paid_statuses')
+			? wc_get_is_paid_statuses()
+			: array('processing', 'completed');
 		
 		$orders = wc_get_orders(array(
         'customer_id' => $user_id,
-        'status' => 'completed',
+        'status' => $paid_statuses,
         'limit' => -1,
-        'orderby' => 'date_completed',
+        'orderby' => 'date_paid',
         'order' => 'DESC'
 		));
 		
@@ -3369,10 +3395,34 @@ function handle_comment_delete() {
 		foreach ($orders as $order) {
 			foreach ($order->get_items() as $item) {
 				$product = $item->get_product();
-				$product_id = $product->get_id();
-				$period = get_field('price_period', $product_id);
-				if ($period) {
-					$order_date = $order->get_date_completed()->getTimestamp();
+				if (!$product) {
+					continue;
+				}
+				$product_id   = (int) $product->get_id();
+				$parent_id    = $product->is_type('variation') ? (int) $product->get_parent_id() : $product_id;
+				$is_tariff    = function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id);
+				$period       = get_field('price_period', $product_id);
+				if (!$period && $parent_id > 0) {
+					$period = get_field('price_period', $parent_id);
+				}
+				if (!$period && $is_tariff) {
+					$period = 'month';
+				}
+				if ($period || $is_tariff) {
+					if (!$period) {
+						$period = 'month';
+					}
+					$order_date_obj = $order->get_date_completed();
+					if (!$order_date_obj) {
+						$order_date_obj = $order->get_date_paid();
+					}
+					if (!$order_date_obj) {
+						$order_date_obj = $order->get_date_created();
+					}
+					if (!$order_date_obj) {
+						continue;
+					}
+					$order_date = $order_date_obj->getTimestamp();
 					$access_duration = calculate_access_duration($period);
 					$access_end = $order_date + $access_duration;
 					
@@ -3383,7 +3433,7 @@ function handle_comment_delete() {
                         'product_name' => $product->get_name(),
                         'period' => $period,
                         'order_id' => $order->get_id(),
-                        'order_date' => $order->get_date_completed()->format('d.m.Y'),
+                        'order_date' => $order_date_obj->format('d.m.Y'),
                         'access_end' => $access_end,
                         'access_end_date' => date('d.m.Y H:i', $access_end),
                         'remaining_time' => $access_end - $current_time
@@ -3425,13 +3475,21 @@ function handle_comment_delete() {
 		// Axecode.tech: нормализация периода доступа в секунды.
 		// Зачем: поддержка форматов "30", "30d", "2m", "1y" и безопасный fallback по умолчанию.
 		function calculate_access_duration(string $period): int {
-			$period = trim((string) $period);
+			$period = strtolower(trim((string) $period));
 
 			if ($period === '') {
 				return 30 * DAY_IN_SECONDS;
 			}
 
-			if (preg_match('/^(\\\\d+)\\\\s*([dwmy])?$/i', $period, $matches)) {
+			if ($period === 'month') {
+				return 30 * DAY_IN_SECONDS;
+			}
+
+			if ($period === 'year') {
+				return 365 * DAY_IN_SECONDS;
+			}
+
+			if (preg_match('/^(\d+)\s*([dwmy])?$/i', $period, $matches)) {
 				$value = (int) $matches[1];
 				$unit = isset($matches[2]) ? strtolower($matches[2]) : 'd';
 
