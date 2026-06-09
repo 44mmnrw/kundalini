@@ -248,33 +248,6 @@ if (!function_exists('yoga_yookassa_is_merchant_type_available')) {
 	}
 }
 
-if (!function_exists('yoga_yookassa_filter_checkout_payment_methods')) {
-	/**
-	 * На checkout показываем только способы, подключённые у мерчанта в ЮKassa.
-	 */
-	function yoga_yookassa_filter_checkout_payment_methods(array $methods): array {
-		$merchant_types = yoga_yookassa_get_merchant_payment_method_types();
-		if ($merchant_types === array()) {
-			return $methods;
-		}
-
-		$map = yoga_yookassa_payment_type_map();
-
-		return array_values(
-			array_filter(
-				$methods,
-				static function (array $method) use ($merchant_types, $map): bool {
-					$slug     = (string) ($method['id'] ?? '');
-					$api_type = (string) ($map[$slug] ?? $slug);
-
-					return $api_type !== '' && in_array($api_type, $merchant_types, true);
-				}
-			)
-		);
-	}
-}
-add_filter('yoga_checkout_payment_methods', 'yoga_yookassa_filter_checkout_payment_methods', 20);
-
 if (!function_exists('yoga_yookassa_clear_merchant_methods_cache')) {
 	function yoga_yookassa_clear_merchant_methods_cache(): void {
 		delete_transient('yoga_yookassa_merchant_payment_methods');
