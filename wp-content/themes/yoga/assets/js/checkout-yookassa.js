@@ -91,6 +91,22 @@
 		});
 	}
 
+	function syncSavePaymentCheckbox($form) {
+		var redirectTypes = getConfig().redirectTypes || [];
+		var selectedType = getSelectedType();
+		var isRedirect = selectedType && redirectTypes.indexOf(selectedType) !== -1;
+		var $wrap = $form.find('.yoga-checkout-checkbox');
+
+		if (!$wrap.length) {
+			return;
+		}
+
+		$wrap.toggle(!isRedirect);
+		if (isRedirect) {
+			$wrap.find('input[name="yoga_save_payment_method"]').prop('checked', false);
+		}
+	}
+
 	function init($form) {
 		if (!$form.length) {
 			return;
@@ -98,11 +114,13 @@
 
 		ensureGateway($form);
 		syncWidgetMethod($form);
+		syncSavePaymentCheckbox($form);
 
 		$form.off('change.yogaYooKassa', 'input[name="yoga_checkout_payment_type"]');
 		$form.on('change.yogaYooKassa', 'input[name="yoga_checkout_payment_type"]', function () {
 			ensureGateway($form);
 			syncWidgetMethod($form);
+			syncSavePaymentCheckbox($form);
 		});
 	}
 

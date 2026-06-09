@@ -248,6 +248,71 @@ if (!function_exists('yoga_yookassa_is_merchant_type_available')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_filter_checkout_payment_methods')) {
+	/**
+	 * На checkout показываем только способы, подключённые у мерчанта в ЮKassa.
+	 */
+	function yoga_yookassa_filter_checkout_payment_methods(array $methods): array {
+		$merchant_types = yoga_yookassa_get_merchant_payment_method_types();
+		if ($merchant_types === array()) {
+			return $methods;
+		}
+
+		$map = yoga_yookassa_payment_type_map();
+
+		return array_values(
+			array_filter(
+				$methods,
+				static function (array $method) use ($merchant_types, $map): bool {
+					$slug     = (string) ($method['id'] ?? '');
+					$api_type = (string) ($map[$slug] ?? $slug);
+
+					return $api_type !== '' && in_array($api_type, $merchant_types, true);
+				}
+			)
+		);
+	}
+}
+add_filter('yoga_checkout_payment_methods', 'yoga_yookassa_filter_checkout_payment_methods', 20);
+
+if (!function_exists('yoga_yookassa_clear_merchant_methods_cache')) {
+	function yoga_yookassa_clear_merchant_methods_cache(): void {
+		delete_transient('yoga_yookassa_merchant_payment_methods');
+	}
+}
+add_action('update_option_yookassa_shop_id', 'yoga_yookassa_clear_merchant_methods_cache');
+add_action('update_option_yookassa_secret_key', 'yoga_yookassa_clear_merchant_methods_cache');
+
+if (!function_exists('yoga_yookassa_validate_selected_payment_type')) {
+	function yoga_yookassa_validate_selected_payment_type(): void {
+		if (!yoga_yookassa_is_checkout_payment_request() || !function_exists('wc_add_notice')) {
+			return;
+		}
+
+		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
+		if ($api_type === '') {
+			return;
+		}
+
+		yoga_yookassa_get_merchant_payment_method_types(true);
+
+		if (yoga_yookassa_is_merchant_type_available($api_type)) {
+			return;
+		}
+
+		$label = yoga_yookassa_get_payment_method_label($api_type);
+		wc_add_notice(
+			sprintf(
+				/* translators: %s payment method label */
+				__('Способ оплаты «%s» не подключён в личном кабинете ЮKassa для этого магазина.', 'yoga'),
+				$label
+			),
+			'error'
+		);
+	}
+}
+add_action('woocommerce_checkout_process', 'yoga_yookassa_validate_selected_payment_type', 6);
+
 if (!function_exists('yoga_yookassa_can_use_specific_payment_type')) {
 	/**
 	 * Можно ли передать выбранный тип в API (иначе — умный платёж без payment_method_data).

@@ -68,7 +68,10 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 		}
 
 		$methods = yoga_get_checkout_payment_methods();
-		$default_id = !empty($methods) ? (string) $methods[0]['id'] : 'bank_card';
+		if ($methods === array()) {
+			return;
+		}
+		$default_id = (string) $methods[0]['id'];
 		$type_map = function_exists('yoga_yookassa_payment_type_map') ? yoga_yookassa_payment_type_map() : array();
 		$gateway_id = function_exists('yoga_get_checkout_yookassa_gateway_id') ? yoga_get_checkout_yookassa_gateway_id() : '';
 		?>
