@@ -1,0 +1,96 @@
+.yoga-copy-protected .praktika-info,
+.yoga-copy-protected .post-main__content,
+.yoga-copy-protected .rules,
+.yoga-copy-protected .question__sub,
+.yoga-copy-protected .about-text {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
+.yoga-copy-protected .praktika-info img,
+.yoga-copy-protected .post-main__content img,
+.yoga-copy-protected .rules img,
+.yoga-copy-protected .question__sub img,
+.yoga-copy-protected .about-text img {
+	-webkit-user-drag: none;
+	user-drag: none;
+	pointer-events: auto;
+}
+
+.yoga-copy-protected [data-yoga-copy-allow],
+.yoga-copy-protected [data-yoga-copy-allow] * {
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+.yoga-copy-protection-toast {
+	position: fixed;
+	left: 50%;
+	bottom: 32px;
+	z-index: 100000;
+	max-width: min(92vw, 420px);
+	padding: 14px 20px;
+	border-radius: 12px;
+	background: rgba(24, 24, 24, 0.92);
+	color: #fff;
+	font-size: 14px;
+	line-height: 1.4;
+	text-align: center;
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+	opacity: 0;
+	transform: translate(-50%, 12px);
+	transition: opacity 0.25s ease, transform 0.25s ease;
+	pointer-events: none;
+}
+
+.yoga-copy-protection-toast.is-visible {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+html.yoga-copy-offline .praktika-info,
+html.yoga-copy-offline .post-main__content,
+html.yoga-copy-offline .rules,
+html.yoga-copy-offline .question__sub,
+html.yoga-copy-offline .about-text {
+	visibility: hidden;
+}
+
+html.yoga-copy-offline .praktika-info[data-yoga-offline-replaced="1"],
+html.yoga-copy-offline .post-main__content[data-yoga-offline-replaced="1"],
+html.yoga-copy-offline .rules[data-yoga-offline-replaced="1"],
+html.yoga-copy-offline .question__sub[data-yoga-offline-replaced="1"],
+html.yoga-copy-offline .about-text[data-yoga-offline-replaced="1"] {
+	visibility: visible;
+}
+
+.yoga-copy-offline-notice {
+	margin: 0;
+	padding: 24px;
+	border-radius: 12px;
+	background: #f5f5f5;
+	color: #333;
+	font-size: 16px;
+	line-height: 1.5;
+	text-align: center;
+}
+
+@media print {
+	.yoga-copy-protected .praktika-info,
+	.yoga-copy-protected .post-main__content,
+	.yoga-copy-protected .rules,
+	.yoga-copy-protected .question__sub,
+	.yoga-copy-protected .about-text,
+	html.yoga-copy-printing .praktika-info,
+	html.yoga-copy-printing .post-main__content,
+	html.yoga-copy-printing .rules,
+	html.yoga-copy-printing .question__sub,
+	html.yoga-copy-printing .about-text {
+		display: none !important;
+	}
+}
