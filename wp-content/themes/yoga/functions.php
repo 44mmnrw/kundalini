@@ -3326,9 +3326,9 @@ function handle_comment_delete() {
 			</div>
             
             <div class="subscription-actions">
-                <button class="btn btn-renew">Продлить подписку</button>
-                <button class="btn btn-cancel">Отменить подписку</button>
+                <a href="<?php echo esc_url(home_url('/lk/')); ?>#lk-slide-settings" class="btn btn-renew">Настройки подписки</a>
 			</div>
+            <p class="description">Чтобы отменить автопродление, удалите карту с пометкой «Для автопродления» в разделе «Способы оплаты».</p>
             <?php
 				} else {
 			?>
@@ -3439,8 +3439,12 @@ function handle_comment_delete() {
 				$product_id   = (int) $product->get_id();
 				$parent_id    = $product->is_type('variation') ? (int) $product->get_parent_id() : $product_id;
 				$is_tariff    = function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id);
-				$period       = get_field('price_period', $product_id);
-				if (!$period && $parent_id > 0) {
+				$period       = function_exists('yoga_get_product_price_period')
+					? yoga_get_product_price_period($product_id)
+					: (string) get_field('price_period', $product_id);
+				if (!$period && $parent_id > 0 && function_exists('yoga_get_product_price_period')) {
+					$period = yoga_get_product_price_period($parent_id);
+				} elseif (!$period && $parent_id > 0) {
 					$period = get_field('price_period', $parent_id);
 				}
 				if (!$period && $is_tariff) {
@@ -3523,8 +3527,24 @@ function handle_comment_delete() {
 				return 30 * DAY_IN_SECONDS;
 			}
 
+			if ($period === 'day') {
+				return DAY_IN_SECONDS;
+			}
+
+			if ($period === '3months') {
+				return 90 * DAY_IN_SECONDS;
+			}
+
+			if ($period === '6months') {
+				return 180 * DAY_IN_SECONDS;
+			}
+
 			if ($period === 'year') {
 				return 365 * DAY_IN_SECONDS;
+			}
+
+			if ($period === 'lifetime') {
+				return 100 * 365 * DAY_IN_SECONDS;
 			}
 
 			if (preg_match('/^(\d+)\s*([dwmy])?$/i', $period, $matches)) {

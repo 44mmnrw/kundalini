@@ -547,6 +547,16 @@
   cursor: pointer;
 }
 
+.lk-settings-item_card {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.lk-settings-item_card:hover,
+.lk-settings-item_card:focus-visible {
+  background: rgba(145, 83, 225, 0.12);
+  outline: none;
+}
+
 .lk-settings-item__col-action {
   display: flex;
 }
@@ -571,12 +581,22 @@
   width: 0.5625rem;}
 
 .lk-settings-item__col-action-options {
-  margin-right: 0.625rem;  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin-right: 0.625rem;
+  margin-top: auto;
   margin-bottom: auto;
+  cursor: pointer;
+  pointer-events: none;
 }
 .lk-settings-item__col-action-options img {
   display: block;
-  width: 0.25rem;}
+  width: 0.25rem;
+  pointer-events: none;
+}
 
 .lk-settings-item_addcard {
   width: auto;

@@ -28,3 +28,7 @@
 !/wp-content/plugins/wp-yandex-metrika/includes/
 /wp-content/plugins/wp-yandex-metrika/includes/*
 !/wp-content/plugins/wp-yandex-metrika/includes/class.ya-metrika-woocommerce.php
+
+# Custom plugin: tariff auto-renewal (YooKassa)
+!/wp-content/plugins/yoga-tariff-renewal/
+!/wp-content/plugins/yoga-tariff-renewal/**

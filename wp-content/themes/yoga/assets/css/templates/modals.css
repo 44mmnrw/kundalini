@@ -1898,18 +1898,78 @@ p.login-rules a:hover {
   width: calc(100% - 3.125rem);  padding-bottom: 0.125rem;}
 .card-info__text span {
   display: block;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  font-family: "Mulish-Regular", sans-serif;
   color: #E8E8E8;
   opacity: 0.5;
 }
 .card-info__text b {
   display: block;
-  margin-top: 0.25rem;  font-size: 1.75rem;  font-family: "Mulish-Bold", sans-serif;
+  margin-top: 0.25rem;
+  font-size: 1.75rem;
+  line-height: 1.75rem;
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
   color: #fff;
 }
 
 .card-info__img {
   display: block;
   width: 3.125rem;}
+
+.card-info__brand {
+  display: none;
+  width: 100%;
+  height: auto;
+}
+.card-info__brand.is-active {
+  display: block;
+}
+.card-info__brand--mastercard.is-active {
+  max-height: 2.4375rem;
+}
+.card-info__brand--mir.is-active {
+  max-height: 0.9375rem;
+}
+.card-info__brand--visa.is-active {
+  max-height: 1rem;
+}
+
+.modal-default_card .delcomm {
+  padding-left: 1.5625rem;
+  padding-right: 1.5625rem;
+}
+
+#ytr-modal-cancel-subscription.active,
+#ytr-modal-cancel-subscription-confirm.active,
+#ytr-modal-cancel-subscription-success.active {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10001 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+#ytr-modal-cancel-subscription:not(.active),
+#ytr-modal-cancel-subscription-confirm:not(.active),
+#ytr-modal-cancel-subscription-success:not(.active) {
+  pointer-events: none !important;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm {
+  min-height: 18.4375rem;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm__succes {
+  padding-top: 6.0625rem;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm__succes b {
+  line-height: 1.1;
+}
 
 .modal-default_carddel .delcomm {
   padding-right: 3.4375rem;}
@@ -1953,6 +2013,10 @@ p.login-rules a:hover {
   }
   .modal-default_card {
     padding-top: 1.5625rem;  }
+  .modal-default_card .delcomm {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
   .modal-default_card .delcomm-buttons .btn {
     width: calc(50% - 0.3125rem);    margin-bottom: 0px;
     padding-left: 0.3125rem;    padding-right: 0.3125rem;    white-space: nowrap;

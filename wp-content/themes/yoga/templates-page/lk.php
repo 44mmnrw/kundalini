@@ -500,31 +500,47 @@
 									<div class="lk-settings-part lk-settings-part_cards">
 										<p class="lk-settings-item__col-text" style="margin-bottom: 1rem;">
 											Полные данные карты на сайте не хранятся. После оплаты тарифа через ЮKassa здесь отображается только маска (бренд и последние 4 цифры).
+											<?php if ($current_subscription) : ?>
+												<br>Чтобы отключить автопродление, удалите карту с пометкой «Для автопродления». Доступ сохранится до <?php echo esc_html(date('d.m.Y', strtotime($current_subscription['end_date']))); ?>.
+											<?php endif; ?>
 										</p>
 										<?php
 											$saved_cards = get_user_saved_cards();
+											$ytr_auto_renew = class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id);
 											if (!empty($saved_cards)) {
 												foreach ($saved_cards as $card) {
 													$icon_type = preg_replace('/[^a-z0-9_-]/', '', (string) ($card['type'] ?? 'default'));
 													if ($icon_type === '') {
 														$icon_type = 'default';
 													}
+													$is_auto_card = !empty($card['is_auto'])
+														|| ($ytr_auto_renew && count($saved_cards) === 1);
 												?>
-												<div class="lk-settings-item lk-settings-item_action">
+												<div
+													class="lk-settings-item lk-settings-item_card"
+													role="button"
+													tabindex="0"
+													data-card-id="<?php echo esc_attr($card['id']); ?>"
+													data-is-auto="<?php echo $is_auto_card ? '1' : '0'; ?>"
+													data-last4="<?php echo esc_attr($card['last4']); ?>"
+													data-brand-name="<?php echo esc_attr($card['brand']); ?>"
+													data-icon-type="<?php echo esc_attr($icon_type); ?>"
+													aria-label="<?php echo esc_attr(sprintf(__('Управление картой %s', 'yoga'), $card['brand'] . ' •••• ' . $card['last4'])); ?>"
+												>
 													<div class="lk-settings-item__col">
 														<div class="lk-settings-item__col-icon">
 															<?php yoga_lk_render_payment_card_icon($icon_type, (string) $card['brand']); ?>
 														</div>
 														<p class="lk-settings-item__col-text">
 															<?php echo esc_html($card['brand'] . ' •••• ' . $card['last4']); ?>
-															<?php if (!empty($card['is_auto'])) : ?>
+															<?php if ($is_auto_card) : ?>
 																<br><small>Для автопродления</small>
 															<?php endif; ?>
 														</p>
 													</div>
 													<div class="lk-settings-item__col">
 														<div class="lk-settings-item__col-action">
-															<div class="lk-settings-item__col-action-options" data-card-id="<?php echo esc_attr($card['id']); ?>">
+															<div class="lk-settings-item__col-action-options" aria-hidden="true">
 																<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-options.png'); ?>" alt="">
 															</div>
 														</div>
@@ -551,7 +567,7 @@
 												<div class="lk-settings-item__col-icon">
 													<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-icon_add.png'); ?>" alt="">
 												</div>
-												<p class="lk-settings-item__col-text">Оплатить тариф картой</p>
+												<p class="lk-settings-item__col-text">Добавить карту</p>
 											</div>
 											<div class="lk-settings-item__col"></div>
 										</a>
