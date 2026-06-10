@@ -3663,16 +3663,7 @@ jQuery(document).ready(function($) {
 			$cardItem: $cardItem
 		};
 
-		var isAutoCard = cardData.isAuto
-			|| $cardItem.text().toLowerCase().indexOf('для автопродления') !== -1;
-
-		if (isAutoCard) {
-			ytrOpenCancelSubscriptionModal($trigger, cardData);
-			return;
-		}
-
-		$('#ytr-modal-cancel-delcomm').removeClass('active');
-		ytrOpenLkModal($('#ytr-modal-cancel-subscription-confirm'));
+		ytrOpenCancelSubscriptionModal($trigger, cardData);
 	}
 
 	$(document).on('click', '.lk-settings-item_card', function(e) {
