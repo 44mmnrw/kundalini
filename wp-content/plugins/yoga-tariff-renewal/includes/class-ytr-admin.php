@@ -83,7 +83,9 @@ final class YTR_Admin {
 		}
 
 		$health     = YTR_Cron::get_health();
-		$cron_url   = site_url('wp-cron.php?doing_wp_cron');
+		$cron_url   = YTR_Cron::get_wp_cron_url();
+		$cron_php   = YTR_Cron::get_wp_cron_php_path();
+		$crontab    = YTR_Cron::get_crontab_examples();
 		$auto_users = class_exists('YTR_User') ? YTR_User::get_auto_renew_user_ids() : array();
 		?>
 		<div class="wrap">
@@ -105,7 +107,7 @@ final class YTR_Admin {
 				</div>
 			<?php endif; ?>
 
-			<?php self::render_cron_status($health, $cron_url); ?>
+			<?php self::render_cron_status($health, $cron_url, $cron_php, $crontab); ?>
 
 			<p>
 				<?php
@@ -186,8 +188,9 @@ final class YTR_Admin {
 
 	/**
 	 * @param array<string, mixed> $health
+	 * @param array{php:string,curl:string} $crontab
 	 */
-	private static function render_cron_status(array $health, string $cron_url): void {
+	private static function render_cron_status(array $health, string $cron_url, string $cron_php, array $crontab): void {
 		$status = (string) ($health['status'] ?? 'warning');
 		$last_stats = is_array($health['last_stats'] ?? null) ? $health['last_stats'] : array();
 		?>
@@ -277,13 +280,29 @@ final class YTR_Admin {
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e('URL для системного cron', 'yoga-tariff-renewal'); ?></th>
+						<th><?php esc_html_e('Путь wp-cron.php (PHP CLI)', 'yoga-tariff-renewal'); ?></th>
+						<td><code><?php echo esc_html($cron_php); ?></code></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('URL для curl', 'yoga-tariff-renewal'); ?></th>
 						<td><code><?php echo esc_html($cron_url); ?></code></td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e('Пример crontab', 'yoga-tariff-renewal'); ?></th>
+						<th><?php esc_html_e('Crontab (рекомендуется)', 'yoga-tariff-renewal'); ?></th>
 						<td>
-							<code><?php echo esc_html('*/5 * * * * curl -s ' . $cron_url . ' >/dev/null 2>&1'); ?></code>
+							<code><?php echo esc_html($crontab['php']); ?></code>
+							<p class="description">
+								<?php esc_html_e('Запуск через PHP CLI. Не используйте curl с путём к файлу — curl не выполняет PHP.', 'yoga-tariff-renewal'); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Crontab (альтернатива)', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<code><?php echo esc_html($crontab['curl']); ?></code>
+							<p class="description">
+								<?php esc_html_e('HTTP-запрос к сайту. Нужен полный URL https://…, не путь /var/www/…', 'yoga-tariff-renewal'); ?>
+							</p>
 						</td>
 					</tr>
 				</tbody>

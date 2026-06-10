@@ -272,4 +272,25 @@ final class YTR_Cron {
 
 		return human_time_diff($timestamp, current_time('timestamp')) . ' ' . __('назад', 'yoga-tariff-renewal');
 	}
+
+	public static function get_wp_cron_php_path(): string {
+		return trailingslashit(ABSPATH) . 'wp-cron.php';
+	}
+
+	public static function get_wp_cron_url(): string {
+		return site_url('wp-cron.php?doing_wp_cron');
+	}
+
+	/**
+	 * @return array{php:string,curl:string}
+	 */
+	public static function get_crontab_examples(): array {
+		$php_path = self::get_wp_cron_php_path();
+		$cron_url = self::get_wp_cron_url();
+
+		return array(
+			'php'  => '*/5 * * * * cd ' . untrailingslashit(ABSPATH) . ' && php wp-cron.php >/dev/null 2>&1',
+			'curl' => '*/5 * * * * curl -s ' . $cron_url . ' >/dev/null 2>&1',
+		);
+	}
 }
