@@ -42,6 +42,17 @@ final class YTR_Admin {
 		register_setting('ytr_settings', 'ytr_max_retry_days', array('type' => 'integer', 'default' => 7));
 		register_setting(
 			'ytr_settings',
+			'ytr_card_bind_amount',
+			array(
+				'type'              => 'number',
+				'default'           => 1,
+				'sanitize_callback' => static function ($value): float {
+					return max(1.0, round((float) $value, 2));
+				},
+			)
+		);
+		register_setting(
+			'ytr_settings',
 			YTR_Cron::OPTION_INTERVAL,
 			array(
 				'type'              => 'string',
@@ -156,6 +167,15 @@ final class YTR_Admin {
 						<th scope="row"><?php esc_html_e('Повторы после истечения (дней)', 'yoga-tariff-renewal'); ?></th>
 						<td>
 							<input type="number" min="1" max="30" name="ytr_max_retry_days" value="<?php echo esc_attr((string) get_option('ytr_max_retry_days', 7)); ?>">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e('Сумма привязки карты (₽)', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<input type="number" min="1" max="100" step="0.01" name="ytr_card_bind_amount" value="<?php echo esc_attr((string) get_option('ytr_card_bind_amount', 1)); ?>">
+							<p class="description">
+								<?php esc_html_e('Списывается при привязке карты в ЛК через ЮKassa (save_payment_method). Минимум 1 ₽.', 'yoga-tariff-renewal'); ?>
+							</p>
 						</td>
 					</tr>
 				</table>

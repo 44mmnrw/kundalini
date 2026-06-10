@@ -55,6 +55,101 @@ final class YTR_YooKassa {
 	}
 
 	/**
+	 * Платёж для привязки карты в ЛК (redirect + save_payment_method).
+	 *
+	 * @return array{success:bool,payment_id:string,status:string,message:string,confirmation_url:string}
+	 */
+	public static function create_card_binding_payment(WC_Order $order): array {
+		$empty = array(
+			'success'            => false,
+			'payment_id'         => '',
+			'status'             => 'error',
+			'message'            => '',
+			'confirmation_url'   => '',
+		);
+
+		if (!self::is_configured()) {
+			$empty['message'] = __('ЮKassa не настроена', 'yoga-tariff-renewal');
+			return $empty;
+		}
+
+		if (!class_exists('YooKassa\Request\Payments\CreatePaymentRequest') || !class_exists('YooKassaClientFactory')) {
+			$empty['message'] = __('SDK ЮKassa не найден', 'yoga-tariff-renewal');
+			return $empty;
+		}
+
+		$return_url = function_exists('yoga_yookassa_get_return_url_for_order')
+			? yoga_yookassa_get_return_url_for_order($order)
+			: $order->get_checkout_order_received_url();
+
+		try {
+			$total = (float) $order->get_total();
+			$builder = \YooKassa\Request\Payments\CreatePaymentRequest::builder()
+				->setAmount(number_format($total, 2, '.', ''))
+				->setCapture(true)
+				->setSavePaymentMethod(true)
+				->setDescription(
+					sprintf(
+						/* translators: %d: order id */
+						__('Привязка карты (заказ #%d)', 'yoga-tariff-renewal'),
+						$order->get_id()
+					)
+				)
+				->setMetadata(self::build_binding_metadata($order))
+				->setConfirmation(
+					array(
+						'type'       => 'redirect',
+						'return_url' => $return_url,
+					)
+				);
+
+			if (class_exists('YooKassa\Model\PaymentData\PaymentDataFactory')) {
+				$factory = new \YooKassa\Model\PaymentData\PaymentDataFactory();
+				$builder->setPaymentMethodData($factory->factory('bank_card'));
+			}
+
+			if (class_exists('YooKassaHandler')) {
+				YooKassaHandler::setReceiptIfNeeded($builder, $order);
+			}
+
+			$payment_request = $builder->build();
+			$response        = YooKassaClientFactory::getYooKassaClient()->createPayment($payment_request);
+		} catch (Exception $e) {
+			$empty['message'] = $e->getMessage();
+			return $empty;
+		}
+
+		$payment_id = method_exists($response, 'getId') ? (string) $response->getId() : '';
+		$status     = method_exists($response, 'getStatus') ? (string) $response->getStatus() : '';
+		$confirm_url = '';
+
+		if (method_exists($response, 'getConfirmation')) {
+			$confirmation = $response->getConfirmation();
+			if ($confirmation && method_exists($confirmation, 'getConfirmationUrl')) {
+				$confirm_url = (string) $confirmation->getConfirmationUrl();
+			}
+		}
+
+		if ($payment_id !== '') {
+			$order->set_transaction_id($payment_id);
+			$order->save();
+		}
+
+		if ($confirm_url === '') {
+			$empty['message'] = __('ЮKassa не вернула ссылку для ввода карты', 'yoga-tariff-renewal');
+			return $empty;
+		}
+
+		return array(
+			'success'           => true,
+			'payment_id'        => $payment_id,
+			'status'            => $status,
+			'message'           => '',
+			'confirmation_url'  => $confirm_url,
+		);
+	}
+
+	/**
 	 * @return array{success:bool, payment_id:string, status:string, message:string}
 	 */
 	public static function charge_renewal(WC_Order $order, string $payment_method_id): array {
@@ -181,5 +276,17 @@ final class YTR_YooKassa {
 		}
 
 		return $metadata;
+	}
+
+	/**
+	 * @return array<string, string|int>
+	 */
+	private static function build_binding_metadata(WC_Order $order): array {
+		return array(
+			'order_id'          => (string) $order->get_id(),
+			'wp_user_id'        => (int) $order->get_customer_id(),
+			'ytr_card_binding'  => '1',
+			'cms_name'          => 'yoga_tariff_renewal',
+		);
 	}
 }

@@ -9,6 +9,8 @@ final class YTR_LK {
 
 	public static function init(): void {
 		add_action('wp_ajax_ytr_cancel_auto_renew', array(__CLASS__, 'ajax_cancel_auto_renew'));
+		add_action('wp_ajax_ytr_bind_card_start', array(__CLASS__, 'ajax_bind_card_start'));
+		add_action('wp_ajax_add_payment_method', array(__CLASS__, 'ajax_bind_card_start'), 5);
 	}
 
 	public static function cancel_auto_renew(int $user_id): bool {
@@ -53,6 +55,45 @@ final class YTR_LK {
 				'message' => $end !== ''
 					? sprintf('Автопродление отключено. Доступ сохранится до %s.', $end)
 					: 'Автопродление отключено. Доступ сохранится до конца оплаченного периода.',
+			)
+		);
+	}
+
+	public static function ajax_bind_card_start(): void {
+		if (!is_user_logged_in()) {
+			wp_send_json_error(array('message' => __('Необходима авторизация', 'yoga-tariff-renewal')), 401);
+		}
+
+		if (
+			!isset($_POST['security'])
+			|| !wp_verify_nonce(sanitize_text_field(wp_unslash((string) $_POST['security'])), 'yoga_ajax_nonce')
+		) {
+			wp_send_json_error(array('message' => __('Ошибка безопасности', 'yoga-tariff-renewal')), 403);
+		}
+
+		if (!class_exists('YTR_Card_Binding')) {
+			wp_send_json_error(array('message' => __('Модуль привязки карты недоступен', 'yoga-tariff-renewal')), 500);
+		}
+
+		$result = YTR_Card_Binding::start_for_user(get_current_user_id());
+		if (empty($result['success'])) {
+			wp_send_json_error(
+				array(
+					'message' => (string) ($result['message'] ?? __('Не удалось начать привязку карты', 'yoga-tariff-renewal')),
+				),
+				400
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'redirect_url' => (string) $result['redirect_url'],
+				'order_id'     => (int) $result['order_id'],
+				'message'      => sprintf(
+					/* translators: %s: amount in rubles */
+					__('Перенаправляем на страницу ЮKassa для привязки карты (%s ₽).', 'yoga-tariff-renewal'),
+					number_format(YTR_Card_Binding::get_bind_amount(), 0, '', ' ')
+				),
 			)
 		);
 	}
