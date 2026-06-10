@@ -6,9 +6,13 @@ if (!defined('ABSPATH')) {
 
 if (!function_exists('handle_add_payment_method')) {
     /**
-     * Номер карты на сайт не принимаем (PCI DSS). Карта сохраняется только через ЮKassa при оплате.
+     * Привязка карты — YTR_Card_Binding (плагин yoga-tariff-renewal, ajax ytr_bind_card_start).
      */
     function handle_add_payment_method() {
+        if (class_exists('YTR_LK')) {
+            return;
+        }
+
         if (!yoga_require_woocommerce_for_ajax()) {
             return;
         }
@@ -18,8 +22,8 @@ if (!function_exists('handle_add_payment_method')) {
         }
 
         yoga_ajax_error(
-            'Карту нельзя добавить вручную. Оплатите тариф банковской картой через ЮKassa — маска карты сохранится автоматически.',
-            'manual_card_disabled',
+            'Привязка карты недоступна. Установите и активируйте плагин автопродления тарифов.',
+            'card_binding_unavailable',
             400
         );
     }

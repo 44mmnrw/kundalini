@@ -499,7 +499,7 @@
 									<h2>Способы оплаты</h2>
 									<div class="lk-settings-part lk-settings-part_cards">
 										<p class="lk-settings-item__col-text" style="margin-bottom: 1rem;">
-											Полные данные карты на сайте не хранятся. После оплаты тарифа через ЮKassa здесь отображается только маска (бренд и последние 4 цифры).
+											Полные данные карты на сайте не хранятся. Карту можно привязать через ЮKassa кнопкой «Добавить карту» или она сохранится автоматически при оплате тарифа с галочкой сохранения способа оплаты.
 											<?php if ($current_subscription) : ?>
 												<br>Чтобы отключить автопродление, удалите карту с пометкой «Для автопродления». Доступ сохранится до <?php echo esc_html(date('d.m.Y', strtotime($current_subscription['end_date']))); ?>.
 											<?php endif; ?>
@@ -549,28 +549,16 @@
 												<?php
 												}
 											} else {
-												echo '<p>У вас нет сохранённых карт. Оплатите тариф банковской картой — она появится здесь автоматически.</p>';
-											}
-
-											$tariffs_url = home_url('/product-category/tariffs/');
-											$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
-											if ($tariffs_term && !is_wp_error($tariffs_term)) {
-												$term_link = get_term_link($tariffs_term);
-												if (!is_wp_error($term_link)) {
-													$tariffs_url = $term_link;
-												}
+												echo '<p>У вас нет сохранённых карт. Нажмите «Добавить карту» для привязки через ЮKassa или оплатите тариф банковской картой.</p>';
 											}
 										?>
 
-										<a href="<?php echo esc_url($tariffs_url); ?>" class="lk-settings-item lk-settings-item_addcard" id="add-new-card">
-											<div class="lk-settings-item__col">
-												<div class="lk-settings-item__col-icon">
-													<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-icon_add.png'); ?>" alt="">
-												</div>
-												<p class="lk-settings-item__col-text">Добавить карту</p>
-											</div>
-											<div class="lk-settings-item__col"></div>
-										</a>
+										<button type="button" class="lk-add-card js-ytr-bind-card" id="add-new-card">
+											<span class="lk-add-card__icon" aria-hidden="true">
+												<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-icon_add.png'); ?>" alt="" width="50" height="50">
+											</span>
+											<span class="lk-add-card__text">Добавить карту</span>
+										</button>
 									</div>
 								</div>
 							</div>

@@ -10,6 +10,14 @@ final class YTR_Changelog {
 	 */
 	public static function get_entries(): array {
 		return array(
+			'1.2.0' => array(
+				'date'  => '2026-06-10',
+				'items' => array(
+					__('Привязка карты в ЛК: кнопка «Добавить карту» создаёт платёж ЮKassa с save_payment_method и возвращает в кабинет.', 'yoga-tariff-renewal'),
+					__('После привязки карта сохраняется в ЛК; при активном тарифе автоматически включается автопродление.', 'yoga-tariff-renewal'),
+					__('Настройка суммы привязки карты (по умолчанию 1 ₽).', 'yoga-tariff-renewal'),
+				),
+			),
 			'1.1.1' => array(
 				'date'  => '2026-06-10',
 				'items' => array(

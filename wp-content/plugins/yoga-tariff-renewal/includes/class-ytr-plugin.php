@@ -14,6 +14,8 @@ require_once YTR_PLUGIN_DIR . 'includes/class-ytr-renewal.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-cron.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-admin.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-changelog.php';
+require_once YTR_PLUGIN_DIR . 'includes/class-ytr-card-binding.php';
+require_once YTR_PLUGIN_DIR . 'includes/class-ytr-lk.php';
 
 final class YTR_Plugin {
 	private static ?self $instance = null;
@@ -31,6 +33,8 @@ final class YTR_Plugin {
 		YTR_Cron::init();
 		YTR_Admin::init();
 		YTR_Saved_Cards::init();
+		YTR_Card_Binding::init();
+		YTR_LK::init();
 
 		add_action('woocommerce_payment_complete', array($this, 'on_payment_complete'), 30, 1);
 		add_action('woocommerce_order_status_completed', array($this, 'on_order_completed'), 30, 1);
@@ -54,7 +58,16 @@ final class YTR_Plugin {
 
 	private function maybe_activate_auto_renew_from_order(int $order_id): void {
 		$order = wc_get_order($order_id);
-		if (!$order instanceof WC_Order || !YTR_Tariff::order_contains_tariff($order)) {
+		if (!$order instanceof WC_Order) {
+			return;
+		}
+
+		if (class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order)) {
+			YTR_Card_Binding::complete_binding($order);
+			return;
+		}
+
+		if (!YTR_Tariff::order_contains_tariff($order)) {
 			return;
 		}
 

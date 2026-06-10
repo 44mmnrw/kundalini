@@ -1819,7 +1819,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
-	$(".modal-addnewcard .form").submit(function(e) {
+	$(".modal-addnewcard .form").not("#ytr-bind-card-form").submit(function(e) {
 		e.preventDefault();
 		$('.modal-addnewcard').removeClass("active");
 		$('.modal-default_cardsucces').addClass("active");
@@ -1828,11 +1828,11 @@ jQuery(document).ready(function($) {
 	
 	
 	
-	$('.input-card-custom .input').on('input keyup change', function () {
+	$('.input-card-custom .input').not('#ytr-bind-card-form .input').on('input keyup change', function () {
 		const requiredCount = 3;
 		let filledCount = 0;
 		
-		$('.input-card-custom .input').each(function () {
+		$('.modal-addnewcard .form').not('#ytr-bind-card-form').find('.input-card-custom .input').each(function () {
 			const val = $(this).val();
 			// Проверим, нет ли символов маски (_) и поле не пустое
 			if (val && val.indexOf('_') === -1) {
@@ -1841,9 +1841,9 @@ jQuery(document).ready(function($) {
 		});
 		
 		if (filledCount === requiredCount) {
-			$('.modal-addnewcard .btn').addClass('active');
+			$('.modal-addnewcard .form').not('#ytr-bind-card-form').find('.btn').addClass('active');
 			} else {
-			$('.modal-addnewcard .btn').removeClass('active');
+			$('.modal-addnewcard .form').not('#ytr-bind-card-form').find('.btn').removeClass('active');
 		}
 	});
 	
@@ -3141,6 +3141,7 @@ jQuery(document).ready(function($) {
     	$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success')
     		.removeClass('active')
     		.attr('aria-hidden', 'true');
+    	$('#ytr-modal-bind-card').removeClass('active').attr('aria-hidden', 'true');
     	$('#ytr-modal-cancel-delcomm').removeClass('active');
 
     	if (!$('.modal.active').length) {
@@ -3554,6 +3555,7 @@ jQuery(document).ready(function($) {
 	function ytrCloseLkModals() {
 		$('.overlay').removeClass('active');
 		$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success').removeClass('active').attr('aria-hidden', 'true');
+		$('#ytr-modal-bind-card').removeClass('active').attr('aria-hidden', 'true');
 		$('#ytr-modal-cancel-delcomm').removeClass('active');
 		$('.modal-filter').removeClass('active');
 		$('.modal-login').removeClass('active');
