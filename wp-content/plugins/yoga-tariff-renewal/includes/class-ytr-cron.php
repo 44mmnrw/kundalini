@@ -161,7 +161,7 @@ final class YTR_Cron {
 	 * @param array{processed:int,succeeded:int,failed:int,skipped:int} $stats
 	 */
 	public static function record_run(array $stats, string $source = 'cron'): void {
-		update_option(self::OPTION_LAST_RUN, current_time('timestamp'), false);
+		update_option(self::OPTION_LAST_RUN, time(), false);
 		update_option(self::OPTION_LAST_STATS, $stats, false);
 		update_option(self::OPTION_LAST_SOURCE, sanitize_key($source), false);
 	}
@@ -186,7 +186,7 @@ final class YTR_Cron {
 	 * }
 	 */
 	public static function get_health(): array {
-		$now              = current_time('timestamp');
+		$now              = time();
 		$interval         = self::get_interval_seconds();
 		$next_run         = (int) wp_next_scheduled(self::HOOK);
 		$last_run         = (int) get_option(self::OPTION_LAST_RUN, 0);
@@ -194,7 +194,9 @@ final class YTR_Cron {
 		$last_source      = (string) get_option(self::OPTION_LAST_SOURCE, '');
 		$wp_cron_disabled = defined('DISABLE_WP_CRON') && DISABLE_WP_CRON;
 		$is_scheduled     = $next_run > 0;
-		$is_overdue       = $is_scheduled && $next_run < ($now - MINUTE_IN_SECONDS);
+		// wp_next_scheduled() хранит UTC unix time — сравниваем только с time(), не с current_time().
+		$overdue_grace    = max(2 * MINUTE_IN_SECONDS, (int) min($interval / 4, 15 * MINUTE_IN_SECONDS));
+		$is_overdue       = $is_scheduled && $next_run < ($now - $overdue_grace);
 		$is_stale         = $last_run <= 0 || ($now - $last_run) > ($interval * 2);
 		$plugin_enabled   = self::is_enabled();
 
@@ -223,7 +225,7 @@ final class YTR_Cron {
 		} elseif ($is_overdue) {
 			$status         = 'warning';
 			$status_label   = __('Ожидает запуска', 'yoga-tariff-renewal');
-			$status_message = __('Запланированное время прошло, но плагин ещё не зафиксировал новый запуск. Проверьте системный cron или дождитесь ближайшего хита сайта.', 'yoga-tariff-renewal');
+			$status_message = __('Время запуска прошло, но wp-cron.php ещё не обработал очередь. Это нормально на 2–15 минут между системными cron. Если «просрочено» держится часами — проверьте crontab.', 'yoga-tariff-renewal');
 		} elseif ($is_stale && $last_run <= 0) {
 			$status         = 'warning';
 			$status_label   = __('Ещё не запускался', 'yoga-tariff-renewal');
@@ -270,7 +272,7 @@ final class YTR_Cron {
 			return '—';
 		}
 
-		return human_time_diff($timestamp, current_time('timestamp')) . ' ' . __('назад', 'yoga-tariff-renewal');
+		return human_time_diff($timestamp, time()) . ' ' . __('назад', 'yoga-tariff-renewal');
 	}
 
 	public static function get_wp_cron_php_path(): string {
