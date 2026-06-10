@@ -10,6 +10,13 @@ final class YTR_Changelog {
 	 */
 	public static function get_entries(): array {
 		return array(
+			'1.2.1' => array(
+				'date'  => '2026-06-10',
+				'items' => array(
+					__('Режим заглушки: имитация привязки карты и автопродления до подключения автоплатежей в ЮKassa.', 'yoga-tariff-renewal'),
+					__('Понятное сообщение об ошибке forbidden / recurring payments.', 'yoga-tariff-renewal'),
+				),
+			),
 			'1.2.0' => array(
 				'date'  => '2026-06-10',
 				'items' => array(

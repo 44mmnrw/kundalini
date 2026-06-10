@@ -142,6 +142,13 @@ final class YTR_Saved_Cards {
 	/**
 	 * @param array<string, mixed> $card_data
 	 */
+	public static function upsert_card_for_user(int $user_id, array $card_data): void {
+		self::upsert_card($user_id, $card_data);
+	}
+
+	/**
+	 * @param array<string, mixed> $card_data
+	 */
 	private static function upsert_card(int $user_id, array $card_data): void {
 		$cards   = self::get_cards($user_id);
 		$card_id = (string) ($card_data['id'] ?? '');
