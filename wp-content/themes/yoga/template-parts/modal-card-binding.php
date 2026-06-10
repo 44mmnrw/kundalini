@@ -60,9 +60,10 @@ $img_uri = get_template_directory_uri() . '/assets/img';
 					>
 				</div>
 			</div>
-			<button type="submit" class="btn" id="ytr-bind-card-submit">
+			<button type="submit" id="ytr-bind-card-submit" class="ytr-bind-card-submit-native" tabindex="-1" aria-hidden="true"></button>
+			<label for="ytr-bind-card-submit" class="btn ytr-bind-card-btn" id="ytr-bind-card-btn">
 				<span><?php esc_html_e('Добавить карту', 'yoga'); ?></span>
-			</button>
+			</label>
 		</form>
 	</div>
 </div>
