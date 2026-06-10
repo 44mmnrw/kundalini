@@ -2182,35 +2182,51 @@ p.login-rules a:hover {
   border-color: #383838;
 }
 
-#ytr-modal-bind-card .btn {
+/* Figma 2113:23352 — disabled pill button */
+#ytr-modal-bind-card .ytr-bind-card-submit-native {
+  display: none !important;
+}
+
+#ytr-modal-bind-card .ytr-bind-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  min-height: 4.4375rem;
   margin-top: 0.625rem;
+  padding: 1.75rem 1.25rem;
+  line-height: 1;
   background: #e8e8e8;
   opacity: 0.6;
   pointer-events: none;
+  cursor: default;
 }
 
-#ytr-modal-bind-card .btn span {
+#ytr-modal-bind-card .ytr-bind-card-btn span {
   color: #646464;
   font-family: "Mulish-SemiBold", sans-serif;
   font-size: 0.9375rem;
   line-height: 1;
+  text-transform: uppercase;
 }
 
-#ytr-modal-bind-card .btn.active {
+#ytr-modal-bind-card .ytr-bind-card-btn.active {
   opacity: 1;
   pointer-events: auto;
+  cursor: pointer;
   background: var(--color-black);
 }
 
-#ytr-modal-bind-card .btn.active span {
+#ytr-modal-bind-card .ytr-bind-card-btn.active span {
   color: var(--color-green);
 }
 
-#ytr-modal-bind-card .btn.active:hover {
+#ytr-modal-bind-card .ytr-bind-card-btn.active:hover {
   background: var(--color-violet);
 }
 
-#ytr-modal-bind-card .btn.active:hover span {
+#ytr-modal-bind-card .ytr-bind-card-btn.active:hover span {
   color: var(--color-green);
 }
 

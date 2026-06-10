@@ -189,7 +189,7 @@
 	$(function () {
 		$modal = $('#ytr-modal-bind-card');
 		$form = $('#ytr-bind-card-form');
-		$submitBtn = $('#ytr-bind-card-submit');
+		$submitBtn = $('#ytr-bind-card-btn');
 
 		handleReturnStatus();
 
@@ -205,6 +205,12 @@
 					return;
 				}
 				startCardBinding($submitBtn);
+			});
+
+			$submitBtn.on('click', function (e) {
+				if (!$submitBtn.hasClass('active') || $submitBtn.hasClass('is-loading')) {
+					e.preventDefault();
+				}
 			});
 
 			$form.on('focus input blur keyup change', '.input-card-custom .input', function () {
