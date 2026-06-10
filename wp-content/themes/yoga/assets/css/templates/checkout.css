@@ -358,7 +358,8 @@
 	background: #f7f7f7;
 }
 
-.yoga-checkout-payment__icon-img {
+.yoga-checkout-payment__icon-img,
+.yoga-checkout-payment__icon-svg {
 	display: block;
 	width: 1.5rem;
 	height: 1.5rem;

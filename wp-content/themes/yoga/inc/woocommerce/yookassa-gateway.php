@@ -55,6 +55,78 @@ if (!function_exists('yoga_yookassa_translate_api_error_message')) {
 	}
 }
 
+if (!function_exists('yoga_yookassa_create_payment_with_body')) {
+	/**
+	 * Создание платежа по готовому JSON (для alfa_pay — тип ещё не в SDK плагина).
+	 *
+	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/alfa-pay
+	 *
+	 * @return \YooKassa\Request\Payments\CreatePaymentResponse|WP_Error
+	 */
+	function yoga_yookassa_create_payment_with_body(array $serialized_data) {
+		$shop_id = (string) get_option('yookassa_shop_id', '');
+		$secret  = (string) get_option('yookassa_secret_key', '');
+
+		if ($shop_id === '' || $secret === '') {
+			return new WP_Error('yoga_yookassa_config', __('Не заданы ключи ЮKassa.', 'yoga'));
+		}
+
+		if (class_exists('YooKassaLogger')) {
+			YooKassaLogger::info('Create payment request (alfa_pay): ' . wp_json_encode($serialized_data));
+			YooKassaLogger::sendHeka(array('payment.request.init'));
+		}
+
+		$idempotence_key = function_exists('wp_generate_uuid4') ? wp_generate_uuid4() : uniqid('yoga_', true);
+
+		$response = wp_remote_post(
+			'https://api.yookassa.ru/v3/payments',
+			array(
+				'timeout' => 45,
+				'headers' => array(
+					'Authorization'   => 'Basic ' . base64_encode($shop_id . ':' . $secret, true),
+					'Idempotence-Key' => $idempotence_key,
+					'Content-Type'    => 'application/json',
+				),
+				'body' => wp_json_encode($serialized_data),
+			)
+		);
+
+		if (is_wp_error($response)) {
+			yoga_yookassa_store_api_error($response);
+
+			return $response;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code($response);
+		$body = json_decode((string) wp_remote_retrieve_body($response), true);
+
+		if ($code < 200 || $code >= 300 || !is_array($body)) {
+			$message = is_array($body) ? (string) ($body['description'] ?? 'API error') : 'API error';
+			if (is_array($body) && !empty($body['parameter'])) {
+				$message .= '. Параметр: ' . (string) $body['parameter'];
+			}
+			if (is_array($body) && !empty($body['code'])) {
+				$message .= '. Код: ' . (string) $body['code'];
+			}
+
+			yoga_yookassa_store_api_error(new WP_Error('yookassa_api', $message));
+
+			return new WP_Error('yookassa_api', yoga_yookassa_translate_api_error_message($message));
+		}
+
+		if (!class_exists('YooKassa\Request\Payments\CreatePaymentResponse')) {
+			return new WP_Error('yoga_sdk', 'YooKassa SDK missing');
+		}
+
+		if (class_exists('YooKassaLogger')) {
+			YooKassaLogger::info('Create payment response (alfa_pay): ' . wp_json_encode($body));
+			YooKassaLogger::sendHeka(array('payment.request.success'));
+		}
+
+		return new \YooKassa\Request\Payments\CreatePaymentResponse($body);
+	}
+}
+
 if (!function_exists('yoga_yookassa_store_api_error')) {
 	function yoga_yookassa_store_api_error($error): void {
 		$message = yoga_yookassa_format_api_error($error);
@@ -69,10 +141,11 @@ if (!function_exists('yoga_yookassa_store_api_error')) {
 if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayEPL')) {
 	class Yoga_YooKassa_Gateway_EPL extends YooKassaGatewayEPL {
 		/**
-		 * T-Pay / СБП / SberPay: самостоятельная интеграция (redirect + payment_method_data).
+		 * T-Pay / СБП / SberPay / Alfa Pay: самостоятельная интеграция (redirect + payment_method_data).
 		 *
 		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank#create-payment
 		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
+		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/alfa-pay
 		 *
 		 * @param WC_Order $order
 		 */
@@ -114,14 +187,20 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 				? yoga_get_selected_yookassa_payment_type_for_api()
 				: '';
 
-			$saved_subscribe = $this->subscribe;
-			if ($type === 'sbp') {
+			$saved_subscribe      = $this->subscribe;
+			$saved_payment_method = $this->paymentMethod;
+			if (in_array($type, array('sbp', 'alfa_pay'), true)) {
 				$this->subscribe = false;
+			}
+			// SDK плагина не знает alfa_pay — не передаём тип в factory при сборке билдера.
+			if ($type === 'alfa_pay') {
+				$this->paymentMethod = '';
 			}
 
 			$builder = parent::getBuilder($order);
+			$this->paymentMethod = $saved_payment_method;
 
-			if ($type === 'sbp' && method_exists($builder, 'setCapture')) {
+			if (in_array($type, array('sbp', 'alfa_pay'), true) && method_exists($builder, 'setCapture')) {
 				$builder->setCapture(true);
 			}
 
@@ -151,14 +230,24 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 					}
 				}
 
+				$api_type = function_exists('yoga_get_selected_yookassa_payment_type_for_api')
+					? yoga_get_selected_yookassa_payment_type_for_api()
+					: '';
+
 				$serializer     = new \YooKassa\Request\Payments\CreatePaymentRequestSerializer();
 				$serializedData = $serializer->serialize($paymentRequest);
-				if (class_exists('YooKassaLogger')) {
-					YooKassaLogger::info('Create payment request: ' . json_encode($serializedData));
-					YooKassaLogger::sendHeka(array('payment.request.init'));
-				}
 
-				$response = $this->getApiClient()->createPayment($paymentRequest);
+				if ($api_type === 'alfa_pay') {
+					$serializedData['payment_method_data'] = array('type' => 'alfa_pay');
+					$response                                = yoga_yookassa_create_payment_with_body($serializedData);
+				} else {
+					if (class_exists('YooKassaLogger')) {
+						YooKassaLogger::info('Create payment request: ' . json_encode($serializedData));
+						YooKassaLogger::sendHeka(array('payment.request.init'));
+					}
+
+					$response = $this->getApiClient()->createPayment($paymentRequest);
+				}
 				if (class_exists('YooKassaLogger')) {
 					YooKassaLogger::info('Create payment response: ' . json_encode($response->toArray()));
 					YooKassaLogger::sendHeka(array('payment.request.success'));

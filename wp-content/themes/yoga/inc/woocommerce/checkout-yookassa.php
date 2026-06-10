@@ -18,9 +18,9 @@ if (!function_exists('yoga_yookassa_payment_type_map')) {
 			'sbp'          => 'sbp',
 			'bank_card'    => 'bank_card',
 			'sberpay'      => 'sberbank',
+			'alfa_pay'     => 'alfa_pay',
 			'tinkoff_bank' => 'tinkoff_bank',
 			'yoo_money'    => 'yoo_money',
-			// 'yandex_pay'   => 'bank_card',
 		);
 	}
 }
@@ -225,6 +225,7 @@ if (!function_exists('yoga_yookassa_get_payment_method_label')) {
 			'sbp'          => 'СБП',
 			'tinkoff_bank' => 'T-Pay',
 			'sberbank'     => 'SberPay',
+			'alfa_pay'     => 'Alfa Pay',
 			'bank_card'    => __('Банковская карта', 'yoga'),
 			'yoo_money'    => 'YooMoney',
 		);
@@ -456,7 +457,7 @@ if (!function_exists('yoga_yookassa_redirect_confirmation_types')) {
 	 * @return string[]
 	 */
 	function yoga_yookassa_redirect_confirmation_types(): array {
-		return array('sbp', 'sberbank', 'tinkoff_bank');
+		return array('sbp', 'sberbank', 'alfa_pay', 'tinkoff_bank');
 	}
 }
 
@@ -527,11 +528,11 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 		}
 
 		$payment_data = yoga_yookassa_create_payment_data($type);
-		if ($payment_data === null) {
+		if ($payment_data !== null) {
+			$paymentRequest->setPaymentMethodData($payment_data);
+		} elseif ($type !== 'alfa_pay') {
 			return $paymentRequest;
 		}
-
-		$paymentRequest->setPaymentMethodData($payment_data);
 
 		if (in_array($type, yoga_yookassa_redirect_confirmation_types(), true)) {
 			$order = yoga_yookassa_get_checkout_order();
@@ -562,8 +563,8 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 			}
 		}
 
-		// СБП: capture=true обязателен, холд запрещён (документация ЮKassa).
-		if ($type === 'sbp') {
+		// СБП / Alfa Pay: capture=true обязателен, холд запрещён (документация ЮKassa).
+		if (in_array($type, array('sbp', 'alfa_pay'), true)) {
 			if (method_exists($paymentRequest, 'setCapture')) {
 				$paymentRequest->setCapture(true);
 			}
@@ -730,10 +731,11 @@ add_filter('http_response', 'yoga_yookassa_capture_payment_api_response', 10, 3)
 
 if (!function_exists('yoga_yookassa_get_payment_confirmation_redirect_url')) {
 	/**
-	 * СБП, T-Pay и SberPay требуют confirmation.type=redirect.
+	 * СБП, T-Pay, SberPay и Alfa Pay требуют confirmation.type=redirect.
 	 *
 	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
 	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank
+	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/alfa-pay
 	 */
 	function yoga_yookassa_get_payment_confirmation_redirect_url(WC_Order $order): string {
 		$payment_id = (string) $order->get_transaction_id();
