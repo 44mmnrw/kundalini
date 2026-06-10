@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Ширины viewport — те же числа, что в assets/css/breakpoints.css (Tailwind sm/md/lg/xl/2xl + tight-desktop).
  * @type {{sm:number,md:number,lg:number,xl:number,xxl:number,tightDesktop:number}}
  */
@@ -1672,7 +1672,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	
-	$('.modal-default_delcomm .btn_white, .modal-default_carddel .btn_white').click(function () {
+	$('.modal-default_delcomm .btn_white, .modal-default_carddel .btn_white').not('#ytr-modal-cancel-subscription-back, #ytr-modal-cancel-subscription-keep').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
 		$('.modal-filter').removeClass("active");
@@ -1681,7 +1681,7 @@ jQuery(document).ready(function($) {
 		$('.body').removeClass("body-fixed");
 	});
 	
-	$('.modal-default_delcomm .btn_dark, .modal-default_carddel .btn_dark').click(function () {
+	$('.modal-default_delcomm .btn_dark, .modal-default_carddel .btn_dark').not('#ytr-modal-cancel-subscription-delete').click(function () {
 		$(this).closest('.delcomm').addClass("active");
 	});
 	
@@ -1789,7 +1789,7 @@ jQuery(document).ready(function($) {
 		$('.modal-addnewcard').addClass("active");
 	});
 	
-	$('.modal-default_card .btn_white').click(function () {
+	$('.modal-default_card .btn_white').not('#ytr-modal-cancel-subscription-keep').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
 		$('.modal-filter').removeClass("active");
@@ -1799,7 +1799,7 @@ jQuery(document).ready(function($) {
 		$('.body').removeClass("body-fixed");
 	});
 	
-	$('.modal-default_card .btn_dark').click(function () {
+	$('.modal-default_card .btn_dark').not('#ytr-modal-cancel-subscription-next').click(function () {
 		$('.modal-default_card').removeClass("active");
 	});
 	
@@ -3137,6 +3137,20 @@ jQuery(document).ready(function($) {
     applyLkDeepLinkHash();
     $(window).on('hashchange', applyLkDeepLinkHash);
 
+    function ytrResetLkOverlayState() {
+    	$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success')
+    		.removeClass('active')
+    		.attr('aria-hidden', 'true');
+    	$('#ytr-modal-cancel-delcomm').removeClass('active');
+
+    	if (!$('.modal.active').length) {
+    		$('.overlay').removeClass('active');
+    		$('.body').removeClass('body-fixed');
+    	}
+    }
+
+    ytrResetLkOverlayState();
+
     // Переключение между слайдами
     $('.sidebar-menu__item').on('click', function() {
         var target = $(this).data('target');
@@ -3501,9 +3515,12 @@ jQuery(document).ready(function($) {
 		}, 3000);
 	}
 	
-	// Управление настройками подписки
-	$('.lk-settings-item_action').on('click', function() {
+	// Управление настройками подписки — только пункты с data-target (например «Карты»)
+	$('.lk-settings-item_action[data-target]').on('click', function() {
 		var target = $(this).data('target');
+		if (!target) {
+			return;
+		}
 		$('.lk-settings__slide').removeClass('active');
 		$('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
 	});
@@ -3516,38 +3533,195 @@ jQuery(document).ready(function($) {
 	
 	// Карты сохраняются через ЮKassa при оплате — ручной ввод в ЛК отключён.
 
-	// Удаление карты
-	$('.lk-settings-item__col-action-options').on('click', function(e) {
-		e.stopPropagation();
-		
-		var cardId = $(this).data('card-id');
-		var $cardItem = $(this).closest('.lk-settings-item');
-		
-		if (confirm('Вы уверены, что хотите удалить эту карту?')) {
-			$.ajax({
-				url: yoga_ajax.ajax_url,
-				type: 'POST',
-				data: {
-					action: 'remove_payment_method',
-					card_id: cardId,
-					security: yoga_ajax.nonce
-				},
-				success: function(response) {
-					if (response.success) {
+	// Удаление карты / отмена подписки через модальное окно
+	var ytrPendingCardDelete = null;
+
+	function ytrOpenLkModal($modal) {
+		if (!$modal || !$modal.length) {
+			return false;
+		}
+
+		$('.modal').not($modal).removeClass('active').attr('aria-hidden', 'true');
+		if ($modal.parent()[0] !== document.body) {
+			$modal.appendTo('body');
+		}
+		$('.overlay').addClass('active');
+		$modal.addClass('active').attr('aria-hidden', 'false');
+		$('.body').addClass('body-fixed');
+		return true;
+	}
+
+	function ytrCloseLkModals() {
+		$('.overlay').removeClass('active');
+		$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success').removeClass('active').attr('aria-hidden', 'true');
+		$('#ytr-modal-cancel-delcomm').removeClass('active');
+		$('.modal-filter').removeClass('active');
+		$('.modal-login').removeClass('active');
+		$('.modal-mobile-menu').removeClass('active');
+		$('.modal-mobile-menu-lk').removeClass('active');
+		$('.body').removeClass('body-fixed');
+		ytrPendingCardDelete = null;
+	}
+
+	function ytrSetModalCardBrand(iconType) {
+		var type = String(iconType || 'default').toLowerCase();
+		var $icons = $('#ytr-modal-card-brand .card-info__brand');
+		var matched = false;
+
+		$icons.each(function() {
+			var isMatch = $(this).data('brand') === type;
+			$(this).prop('hidden', !isMatch).toggleClass('is-active', isMatch);
+			if (isMatch) {
+				matched = true;
+			}
+		});
+
+		if (!matched) {
+			var $fallback = $icons.filter('[data-brand="visa"]').first();
+			$icons.prop('hidden', true).removeClass('is-active');
+			$fallback.prop('hidden', false).addClass('is-active');
+		}
+	}
+
+	function ytrGetCardTriggerData($trigger) {
+		return {
+			cardId: String($trigger.attr('data-card-id') || $trigger.data('cardId') || ''),
+			isAuto: String($trigger.attr('data-is-auto') || $trigger.data('isAuto') || '0') === '1',
+			last4: String($trigger.attr('data-last4') || $trigger.data('last4') || '0000'),
+			brandName: String($trigger.attr('data-brand-name') || $trigger.data('brandName') || 'Карта'),
+			iconType: String($trigger.attr('data-icon-type') || $trigger.data('iconType') || 'visa'),
+		};
+	}
+
+	function ytrFormatBrandName(name) {
+		var value = String(name || '').trim();
+		return value.toLowerCase() === 'mir' ? 'Мир' : value;
+	}
+
+	function ytrOpenCancelSubscriptionModal($trigger, cardData) {
+		var data = cardData || ytrGetCardTriggerData($trigger);
+		$('#ytr-modal-card-brand-name').text(ytrFormatBrandName(data.brandName));
+		$('#ytr-modal-card-number').text('**' + data.last4);
+		ytrSetModalCardBrand(data.iconType);
+		ytrOpenLkModal($('#ytr-modal-cancel-subscription'));
+	}
+
+	function ytrRemoveSavedCard(cardId, $cardItem, onSuccess) {
+		if (typeof yoga_ajax === 'undefined') {
+			return;
+		}
+
+		$.ajax({
+			url: yoga_ajax.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'remove_payment_method',
+				card_id: cardId,
+				security: yoga_ajax.nonce
+			},
+			success: function(response) {
+				if (response.success) {
+					if ($cardItem && $cardItem.length) {
 						$cardItem.slideUp(300, function() {
 							$(this).remove();
 						});
-						showNotification(response.data);
-						} else {
-						showNotification(response.data, 'error');
 					}
+					if (typeof onSuccess === 'function') {
+						onSuccess(response);
+					}
+				} else {
+					var err = response.data && response.data.message ? response.data.message : 'Не удалось удалить карту';
+					showNotification(err, 'error');
 				}
+			},
+			error: function() {
+				showNotification('Ошибка запроса', 'error');
+			}
+		});
+	}
+
+	function ytrHandleSavedCardClick($trigger) {
+		var cardData = ytrGetCardTriggerData($trigger);
+		var $cardItem = $trigger.hasClass('lk-settings-item_card')
+			? $trigger
+			: $trigger.closest('.lk-settings-item_card, .lk-settings-item');
+		var $cancelModal = $('#ytr-modal-cancel-subscription');
+
+		if (!$cancelModal.length) {
+			if (!confirm('Вы уверены, что хотите удалить эту карту?')) {
+				return;
+			}
+			ytrRemoveSavedCard(cardData.cardId, $cardItem, function(response) {
+				var notice = response.data && response.data.message ? response.data.message : response.data;
+				showNotification(notice);
 			});
+			return;
+		}
+
+		ytrPendingCardDelete = {
+			cardId: cardData.cardId,
+			$cardItem: $cardItem
+		};
+
+		var isAutoCard = cardData.isAuto
+			|| $cardItem.text().toLowerCase().indexOf('для автопродления') !== -1;
+
+		if (isAutoCard) {
+			ytrOpenCancelSubscriptionModal($trigger, cardData);
+			return;
+		}
+
+		$('#ytr-modal-cancel-delcomm').removeClass('active');
+		ytrOpenLkModal($('#ytr-modal-cancel-subscription-confirm'));
+	}
+
+	$(document).on('click', '.lk-settings-item_card', function(e) {
+		e.stopPropagation();
+		ytrHandleSavedCardClick($(this));
+	});
+
+	$(document).on('keydown', '.lk-settings-item_card', function(e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			ytrHandleSavedCardClick($(this));
 		}
 	});
-	
-	
-	
+
+	$('.lk-settings-item_action[data-target="2"]').on('click', function() {
+		ytrCloseLkModals();
+		ytrResetLkOverlayState();
+	});
+
+	$('#ytr-modal-cancel-subscription-keep, #ytr-modal-cancel-subscription-back').on('click', function() {
+		ytrCloseLkModals();
+	});
+
+	$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success').find('.modal-close').on('click', function() {
+		ytrCloseLkModals();
+	});
+
+	$('#ytr-modal-cancel-subscription-next').on('click', function() {
+		$('#ytr-modal-cancel-subscription').removeClass('active').attr('aria-hidden', 'true');
+		$('#ytr-modal-cancel-delcomm').removeClass('active');
+		ytrOpenLkModal($('#ytr-modal-cancel-subscription-confirm'));
+	});
+
+	$('#ytr-modal-cancel-subscription-delete').on('click', function(e) {
+		e.stopImmediatePropagation();
+		if (!ytrPendingCardDelete || typeof yoga_ajax === 'undefined') {
+			return;
+		}
+
+		var pending = ytrPendingCardDelete;
+		var $btn = $(this);
+		$btn.prop('disabled', true);
+
+		ytrRemoveSavedCard(pending.cardId, pending.$cardItem, function() {
+			$btn.prop('disabled', false);
+			$('#ytr-modal-cancel-subscription-confirm').removeClass('active').attr('aria-hidden', 'true');
+			ytrOpenLkModal($('#ytr-modal-cancel-subscription-success'));
+		});
+	});
 	// Показать/скрыть дополнительные статьи
 	document.querySelectorAll('.blog-articles__more .btn').forEach(btn => {
 		btn.addEventListener('click', function() {

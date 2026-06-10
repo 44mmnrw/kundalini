@@ -254,20 +254,20 @@ if (!function_exists('yoga_get_order_subscription_end_timestamp')) {
 		$base_ts = $start ? $start->getTimestamp() : time();
 
 		foreach ($order->get_items() as $item) {
-			$product_id = $item->get_product_id();
+			$product_id = (int) ($item->get_variation_id() ?: $item->get_product_id());
 			if ($product_id <= 0 || !function_exists('get_field')) {
 				continue;
 			}
 			$period = (string) get_field('price_period', $product_id);
-			if ($period === 'year') {
-				return (int) strtotime('+1 year', $base_ts);
+			if ($period === '' && function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id)) {
+				$period = 'month';
 			}
-			if ($period === 'month') {
-				return (int) strtotime('+1 month', $base_ts);
+			if ($period !== '' && function_exists('calculate_access_duration')) {
+				return (int) ($base_ts + calculate_access_duration($period));
 			}
 		}
 
-		return (int) strtotime('+1 year', $base_ts);
+		return (int) ($base_ts + (function_exists('calculate_access_duration') ? calculate_access_duration('year') : 365 * DAY_IN_SECONDS));
 	}
 }
 

@@ -5,7 +5,9 @@
         <?php
           // Получаем данные из ACF
           $tariffs_title = get_field('tariffs_title', get_the_ID()) ?: 'тарифы';
-          $tariffs_periods = get_field('tariffs_periods', get_the_ID()) ?: get_field('tariffs_periods', 'options');
+          $tariffs_periods = function_exists('yoga_get_tariffs_periods')
+            ? yoga_get_tariffs_periods(get_the_ID())
+            : (get_field('tariffs_periods', get_the_ID()) ?: get_field('tariffs_periods', 'options'));
           
           // Получаем продукты из категории тарифов
           $tariff_products = wc_get_products(array(
@@ -23,7 +25,7 @@
             $period_index = 1;
             foreach ($tariffs_periods as $period) : 
               $period_name = $period['period_name'] ?? '';
-              $period_slug = $period['period_slug'] ?? '';
+              $period_slug = yoga_normalize_tariff_period_slug((string) ($period['period_slug'] ?? ''));
               $is_active = $period['period_active'] ?? false;
           ?>
           <div class="switches-item <?php echo $is_active ? 'active' : ''; ?>" data-target="<?php echo esc_attr($period_index); ?>">
@@ -42,7 +44,7 @@
             // Создаем слайды для каждого периода
             $period_index = 1;
             foreach ($tariffs_periods as $period) : 
-              $period_slug = $period['period_slug'] ?? '';
+              $period_slug = yoga_normalize_tariff_period_slug((string) ($period['period_slug'] ?? ''));
               $is_active = $period['period_active'] ?? false;
           ?>
           <div class="tariffs-items__slide <?php echo $is_active ? 'active' : ''; ?>" data-target="<?php echo esc_attr($period_index); ?>">
@@ -57,28 +59,21 @@
               $current_product_id = $product_id;
               $current_price = '';
               $current_price_text = '';
-              
-              if ($product->is_type('variable')) {
-                $variations = $product->get_available_variations();
-                foreach ($variations as $variation) {
-                  $variation_period = get_field('price_period', $variation['variation_id']);
-                  if ($variation_period === $period_slug) {
-                    $current_product_id = $variation['variation_id'];
-                    $current_price = $variation['display_price'];
-                    $current_price_text = get_field('price_text', $variation['variation_id']);
-                    break;
-                  }
-                }
-              } else {
-                $product_period = get_field('price_period', $product_id);
-                if ($product_period === $period_slug) {
-                  $current_price = $product->get_price();
-                  $current_price_text = get_field('price_text', $product_id);
-                }
+              $attribute_period = $period_slug;
+
+              $offer = function_exists('yoga_find_tariff_offer_for_period')
+                ? yoga_find_tariff_offer_for_period($product, $period_slug)
+                : null;
+
+              if ($offer) {
+                $current_product_id = $offer['product_id'];
+                $current_price = $offer['price'];
+                $current_price_text = $offer['price_text'];
+                $attribute_period = $offer['attribute_period'];
               }
               
-              // Пропускаем продукты без цены для этого периода
-              if (empty($current_price)) continue;
+              // Пропускаем продукты без предложения для этого периода
+              if ($offer === null) continue;
               $current_price_text = trim((string) $current_price_text);
               $tariff_card_index++;
               $tariff_visual_index = (($tariff_card_index - 1) % 4) + 1;
@@ -128,7 +123,7 @@
                 ?>
                 <input type="hidden" name="add-to-cart" value="<?php echo absint($product_id); ?>">
                 <input type="hidden" name="variation_id" value="<?php echo absint($current_product_id); ?>">
-                <input type="hidden" name="attribute_pa_period" value="<?php echo esc_attr($period_slug); ?>">
+                <input type="hidden" name="attribute_pa_period" value="<?php echo esc_attr($attribute_period); ?>">
                 <?php
                   } else {
                     // Для простых продуктов

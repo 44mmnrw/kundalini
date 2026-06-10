@@ -47,9 +47,14 @@ if (!function_exists('handle_remove_payment_method')) {
 
         $user_id = get_current_user_id();
         $card_id = sanitize_text_field(wp_unslash((string) $_POST['card_id']));
+        $had_auto_renew = class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id);
 
         if (class_exists('YTR_Saved_Cards') && YTR_Saved_Cards::remove_card($user_id, $card_id)) {
-            yoga_ajax_success('Карта удалена');
+            $message = 'Карта удалена';
+            if ($had_auto_renew && class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id)) {
+                $message = 'Карта удалена. Автопродление отключено — доступ сохранится до конца оплаченного периода.';
+            }
+            yoga_ajax_success($message);
         }
 
         yoga_ajax_error('Карта не найдена', 'card_not_found', 404);

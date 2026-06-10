@@ -78,6 +78,7 @@ $is_lk_shell = is_page_template('templates-page/lk.php')
 	|| (function_exists('is_account_page') && is_account_page());
 if ($is_lk_shell) {
 	get_template_part('template-parts/modal', 'mobile-menu-lk');
+	get_template_part('template-parts/modal', 'subscription-cancel');
 }
 ?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_cardsucces">
 	<div class="modal-close">
