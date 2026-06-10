@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Yoga Tariff Renewal
  * Description: Автопродление тарифов через ЮKassa (рекуррентные платежи без WooCommerce Subscriptions).
- * Version: 1.0.0
+ * Version: 1.1.1
  * Author: AxeCode.Tech
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-define('YTR_VERSION', '1.1.0');
+define('YTR_VERSION', '1.1.1');
 define('YTR_PLUGIN_FILE', __FILE__);
 define('YTR_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('YTR_PLUGIN_URL', plugin_dir_url(__FILE__));

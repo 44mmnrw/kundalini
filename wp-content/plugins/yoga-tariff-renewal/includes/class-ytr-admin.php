@@ -21,7 +21,7 @@ final class YTR_Admin {
 		wp_enqueue_style('ytr-admin');
 		wp_add_inline_style(
 			'ytr-admin',
-			'.ytr-cron-status{margin:1em 0;padding:1em 1.25em;border-left:4px solid #72aee6;background:#fff}.ytr-cron-status--ok{border-left-color:#00a32a}.ytr-cron-status--warning{border-left-color:#dba617}.ytr-cron-status--error{border-left-color:#d63638}.ytr-cron-status--disabled{border-left-color:#a7aaad}.ytr-cron-status__title{margin:0 0 .5em;font-size:14px}.ytr-cron-status__badge{display:inline-block;padding:.15em .55em;border-radius:999px;font-size:12px;font-weight:600;line-height:1.5}.ytr-cron-status__badge--ok{background:#edfaef;color:#007017}.ytr-cron-status__badge--warning{background:#fcf9e8;color:#8a6d00}.ytr-cron-status__badge--error{background:#fcf0f1;color:#8a2424}.ytr-cron-status__badge--disabled{background:#f0f0f1;color:#50575e}.ytr-cron-table{margin-top:1em}.ytr-cron-table th{width:260px;font-weight:600}'
+			'.ytr-cron-status{margin:1em 0;padding:1em 1.25em;border-left:4px solid #72aee6;background:#fff}.ytr-cron-status--ok{border-left-color:#00a32a}.ytr-cron-status--warning{border-left-color:#dba617}.ytr-cron-status--error{border-left-color:#d63638}.ytr-cron-status--disabled{border-left-color:#a7aaad}.ytr-cron-status__title{margin:0 0 .5em;font-size:14px}.ytr-cron-status__badge{display:inline-block;padding:.15em .55em;border-radius:999px;font-size:12px;font-weight:600;line-height:1.5}.ytr-cron-status__badge--ok{background:#edfaef;color:#007017}.ytr-cron-status__badge--warning{background:#fcf9e8;color:#8a6d00}.ytr-cron-status__badge--error{background:#fcf0f1;color:#8a2424}.ytr-cron-status__badge--disabled{background:#f0f0f1;color:#50575e}.ytr-cron-table{margin-top:1em}.ytr-cron-table th{width:260px;font-weight:600}.ytr-changelog{max-width:720px}.ytr-changelog__version{margin:1.25em 0 .35em;font-size:14px}.ytr-changelog__list{margin:0 0 .5em 1.25em;list-style:disc}.ytr-changelog__list li{margin:.25em 0}'
 		);
 	}
 
@@ -182,6 +182,53 @@ final class YTR_Admin {
 				<?php esc_html_e('В ЛК ЮKassa для боевого магазина должны быть подключены автоплатежи.', 'yoga-tariff-renewal'); ?>
 				<a href="https://yookassa.ru/developers/payment-acceptance/scenario-extensions/recurring-payments/basics" target="_blank" rel="noopener noreferrer">Документация</a>
 			</p>
+
+			<?php self::render_changelog(); ?>
+		</div>
+		<?php
+	}
+
+	private static function render_changelog(): void {
+		if (!class_exists('YTR_Changelog')) {
+			return;
+		}
+
+		$entries = YTR_Changelog::get_entries();
+		if ($entries === array()) {
+			return;
+		}
+		?>
+		<hr>
+		<h2>
+			<?php
+			printf(
+				/* translators: %s: plugin version */
+				esc_html__('История версий (текущая: %s)', 'yoga-tariff-renewal'),
+				esc_html(defined('YTR_VERSION') ? YTR_VERSION : '')
+			);
+			?>
+		</h2>
+		<div class="ytr-changelog">
+			<?php foreach ($entries as $version => $entry) : ?>
+				<h3 class="ytr-changelog__version">
+					<?php
+					echo esc_html(
+						sprintf(
+							'%s — %s',
+							(string) $version,
+							(string) ($entry['date'] ?? '')
+						)
+					);
+					?>
+				</h3>
+				<?php if (!empty($entry['items']) && is_array($entry['items'])) : ?>
+					<ul class="ytr-changelog__list">
+						<?php foreach ($entry['items'] as $item) : ?>
+							<li><?php echo esc_html((string) $item); ?></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
+			<?php endforeach; ?>
 		</div>
 		<?php
 	}

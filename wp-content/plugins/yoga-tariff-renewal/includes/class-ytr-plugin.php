@@ -13,6 +13,7 @@ require_once YTR_PLUGIN_DIR . 'includes/class-ytr-orders.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-renewal.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-cron.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-admin.php';
+require_once YTR_PLUGIN_DIR . 'includes/class-ytr-changelog.php';
 
 final class YTR_Plugin {
 	private static ?self $instance = null;
