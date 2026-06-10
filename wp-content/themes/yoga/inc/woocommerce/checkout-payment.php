@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 
 if (!function_exists('yoga_get_checkout_payment_methods')) {
 	/**
-	 * @return array<int, array{id: string, label: string, icon: string, icon_active?: string, icon_bg: string}>
+	 * @return array<int, array{id: string, label: string, icon?: string, icon_sprite?: string, icon_active?: string, icon_bg: string}>
 	 */
 	function yoga_get_checkout_payment_methods(): array {
 		$base = get_template_directory_uri() . '/assets/images/checkout/';
@@ -37,12 +37,12 @@ if (!function_exists('yoga_get_checkout_payment_methods')) {
 				'icon'    => $svg_base . 'SberPay.svg',
 				'icon_bg' => 'light',
 			),
-			// array(
-			// 	'id'      => 'yandex_pay',
-			// 	'label'   => 'Yandex Pay',
-			// 	'icon'    => $svg_base . 'Yandex_Pay.svg',
-			// 	'icon_bg' => 'light',
-			// ),
+			array(
+				'id'          => 'alfa_pay',
+				'label'       => 'Alfa Pay',
+				'icon_sprite' => 'alfa-pay',
+				'icon_bg'     => 'light',
+			),
 			array(
 				'id'      => 'tinkoff_bank',
 				'label'   => 'T-Pay',
@@ -71,9 +71,10 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 		if ($methods === array()) {
 			return;
 		}
-		$default_id = (string) $methods[0]['id'];
-		$type_map = function_exists('yoga_yookassa_payment_type_map') ? yoga_yookassa_payment_type_map() : array();
-		$gateway_id = function_exists('yoga_get_checkout_yookassa_gateway_id') ? yoga_get_checkout_yookassa_gateway_id() : '';
+		$default_id   = (string) $methods[0]['id'];
+		$type_map     = function_exists('yoga_yookassa_payment_type_map') ? yoga_yookassa_payment_type_map() : array();
+		$gateway_id   = function_exists('yoga_get_checkout_yookassa_gateway_id') ? yoga_get_checkout_yookassa_gateway_id() : '';
+		$sprite_href  = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
 		?>
 		<div class="yoga-checkout-block yoga-checkout-block_payment">
 			<h3 class="yoga-checkout-block__title"><?php esc_html_e('Способ оплаты', 'yoga'); ?></h3>
@@ -94,25 +95,31 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 							<?php checked($is_default); ?>
 						>
 						<span class="yoga-checkout-payment__icon yoga-checkout-payment__icon--<?php echo esc_attr($icon_bg); ?>" aria-hidden="true">
-							<img
-								class="yoga-checkout-payment__icon-img yoga-checkout-payment__icon-img--default"
-								src="<?php echo esc_url($method['icon']); ?>"
-								alt=""
-								width="24"
-								height="24"
-								loading="lazy"
-								decoding="async"
-							>
-							<?php if (!empty($method['icon_active'])) : ?>
+							<?php if (!empty($method['icon_sprite'])) : ?>
+								<svg class="yoga-checkout-payment__icon-svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+									<use href="<?php echo $sprite_href; ?>#<?php echo esc_attr((string) $method['icon_sprite']); ?>"></use>
+								</svg>
+							<?php else : ?>
 								<img
-									class="yoga-checkout-payment__icon-img yoga-checkout-payment__icon-img--active"
-									src="<?php echo esc_url($method['icon_active']); ?>"
+									class="yoga-checkout-payment__icon-img yoga-checkout-payment__icon-img--default"
+									src="<?php echo esc_url((string) ($method['icon'] ?? '')); ?>"
 									alt=""
 									width="24"
 									height="24"
 									loading="lazy"
 									decoding="async"
 								>
+								<?php if (!empty($method['icon_active'])) : ?>
+									<img
+										class="yoga-checkout-payment__icon-img yoga-checkout-payment__icon-img--active"
+										src="<?php echo esc_url($method['icon_active']); ?>"
+										alt=""
+										width="24"
+										height="24"
+										loading="lazy"
+										decoding="async"
+									>
+								<?php endif; ?>
 							<?php endif; ?>
 						</span>
 						<span class="yoga-checkout-payment__label"><?php echo esc_html($method['label']); ?></span>
