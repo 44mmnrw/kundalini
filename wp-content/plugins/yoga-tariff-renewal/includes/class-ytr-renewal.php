@@ -28,7 +28,12 @@ final class YTR_Renewal {
 			'skipped'   => 0,
 		);
 
-		if (!self::is_enabled() || !YTR_YooKassa::is_configured()) {
+		if (!self::is_enabled()) {
+			return $stats;
+		}
+
+		$stub_mode = class_exists('YTR_Stub') && YTR_Stub::is_enabled();
+		if (!$stub_mode && !YTR_YooKassa::is_configured()) {
 			return $stats;
 		}
 

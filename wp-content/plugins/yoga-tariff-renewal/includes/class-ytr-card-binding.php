@@ -35,15 +35,31 @@ final class YTR_Card_Binding {
 			return self::fail(__('Необходима авторизация', 'yoga-tariff-renewal'));
 		}
 
-		if (!class_exists('YTR_YooKassa') || !YTR_YooKassa::is_configured()) {
-			return self::fail(__('ЮKassa не настроена', 'yoga-tariff-renewal'));
-		}
-
 		self::cancel_stale_pending_orders($user_id);
 
 		$order = self::create_binding_order($user_id);
 		if (is_wp_error($order)) {
 			return self::fail($order->get_error_message());
+		}
+
+		if (class_exists('YTR_Stub') && YTR_Stub::is_enabled()) {
+			YTR_Stub::complete_binding_order($order);
+
+			return array(
+				'success'      => true,
+				'redirect_url' => self::get_lk_url(
+					array(
+						'ytr_card' => 'success',
+						'ytr_stub' => '1',
+					)
+				),
+				'order_id'     => $order->get_id(),
+				'message'      => '',
+			);
+		}
+
+		if (!class_exists('YTR_YooKassa') || !YTR_YooKassa::is_configured()) {
+			return self::fail(__('ЮKassa не настроена', 'yoga-tariff-renewal'));
 		}
 
 		$result = YTR_YooKassa::create_card_binding_payment($order);
@@ -130,6 +146,10 @@ final class YTR_Card_Binding {
 			if (function_exists('yoga_yookassa_sync_order_payment_status')) {
 				yoga_yookassa_sync_order_payment_status($order);
 			}
+		}
+
+		if (class_exists('YTR_Stub') && YTR_Stub::is_enabled()) {
+			return YTR_Stub::complete_binding_order($order);
 		}
 
 		if (!$order->is_paid()) {
@@ -226,7 +246,8 @@ final class YTR_Card_Binding {
 			array(
 				'ajaxUrl' => admin_url('admin-ajax.php'),
 				'nonce'   => wp_create_nonce('yoga_ajax_nonce'),
-				'amount'  => self::get_bind_amount(),
+				'amount'   => self::get_bind_amount(),
+				'stubMode' => class_exists('YTR_Stub') && YTR_Stub::is_enabled(),
 			)
 		);
 	}

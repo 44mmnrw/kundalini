@@ -5,6 +5,24 @@ if (!defined('ABSPATH')) {
 }
 
 final class YTR_YooKassa {
+	public static function humanize_api_error(string $message): string {
+		$lower = strtolower($message);
+
+		if (
+			str_contains($lower, 'recurring')
+			|| str_contains($lower, 'forbidden')
+			|| str_contains($lower, "can't make recurring")
+			|| str_contains($lower, 'repeat payments')
+		) {
+			return __(
+				'Автоплатежи не подключены в магазине ЮKassa. Обратитесь к менеджеру ЮKassa через личный кабинет (чат поддержки) с запросом: «Подключить автоплатежи и сохранение способа оплаты (save_payment_method)». Без этой опции привязка карты и автопродление недоступны.',
+				'yoga-tariff-renewal'
+			);
+		}
+
+		return $message;
+	}
+
 	public static function is_configured(): bool {
 		if (get_option('yookassa_access_token', '') !== '') {
 			return true;
@@ -115,7 +133,7 @@ final class YTR_YooKassa {
 			$payment_request = $builder->build();
 			$response        = YooKassaClientFactory::getYooKassaClient()->createPayment($payment_request);
 		} catch (Exception $e) {
-			$empty['message'] = $e->getMessage();
+			$empty['message'] = self::humanize_api_error($e->getMessage());
 			return $empty;
 		}
 
@@ -153,6 +171,14 @@ final class YTR_YooKassa {
 	 * @return array{success:bool, payment_id:string, status:string, message:string}
 	 */
 	public static function charge_renewal(WC_Order $order, string $payment_method_id): array {
+		if (
+			class_exists('YTR_Stub')
+			&& YTR_Stub::is_enabled()
+			&& YTR_Stub::is_stub_payment_method($payment_method_id)
+		) {
+			return YTR_Stub::stub_charge_renewal($order);
+		}
+
 		if (!self::is_configured()) {
 			return array(
 				'success'     => false,
@@ -200,7 +226,7 @@ final class YTR_YooKassa {
 				'success'     => false,
 				'payment_id'  => '',
 				'status'      => 'error',
-				'message'     => $e->getMessage(),
+				'message'     => self::humanize_api_error($e->getMessage()),
 			);
 		}
 

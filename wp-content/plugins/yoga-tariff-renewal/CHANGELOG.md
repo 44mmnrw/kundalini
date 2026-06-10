@@ -1,5 +1,10 @@
 # История версий — Yoga Tariff Renewal
 
+## 1.2.1 — 2026-06-10
+
+- Режим заглушки (`ytr_stub_recurring`): привязка карты и автопродление без `save_payment_method` в ЮKassa.
+- Сообщение на русском при ошибке forbidden / recurring payments.
+
 ## 1.2.0 — 2026-06-10
 
 - Привязка карты в ЛК: «Добавить карту» → платёж ЮKassa с `save_payment_method` → возврат в кабинет.

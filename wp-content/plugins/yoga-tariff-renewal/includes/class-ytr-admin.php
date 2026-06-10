@@ -42,6 +42,17 @@ final class YTR_Admin {
 		register_setting('ytr_settings', 'ytr_max_retry_days', array('type' => 'integer', 'default' => 7));
 		register_setting(
 			'ytr_settings',
+			YTR_Stub::OPTION,
+			array(
+				'type'              => 'string',
+				'default'           => 'no',
+				'sanitize_callback' => static function ($value): string {
+					return $value === 'yes' ? 'yes' : 'no';
+				},
+			)
+		);
+		register_setting(
+			'ytr_settings',
 			'ytr_card_bind_amount',
 			array(
 				'type'              => 'number',
@@ -120,6 +131,15 @@ final class YTR_Admin {
 
 			<?php self::render_cron_status($health, $cron_url, $cron_php, $crontab); ?>
 
+			<?php if (class_exists('YTR_Stub') && YTR_Stub::is_enabled()) : ?>
+				<div class="notice notice-error">
+					<p>
+						<strong><?php esc_html_e('Включён режим заглушки', 'yoga-tariff-renewal'); ?></strong>
+						<?php esc_html_e('Привязка карты и автопродление имитируются без ЮKassa save_payment_method. Отключите после подключения автоплатежей в ЮKassa.', 'yoga-tariff-renewal'); ?>
+					</p>
+				</div>
+			<?php endif; ?>
+
 			<p>
 				<?php
 				printf(
@@ -140,6 +160,18 @@ final class YTR_Admin {
 								<input type="checkbox" name="ytr_enabled" value="yes" <?php checked(get_option('ytr_enabled', 'yes'), 'yes'); ?>>
 								<?php esc_html_e('Автоматически продлевать тарифы', 'yoga-tariff-renewal'); ?>
 							</label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e('Режим заглушки', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<label>
+								<input type="checkbox" name="<?php echo esc_attr(YTR_Stub::OPTION); ?>" value="yes" <?php checked(get_option(YTR_Stub::OPTION, 'no'), 'yes'); ?>>
+								<?php esc_html_e('Имитировать привязку карты и автопродление (для верификации до подключения автоплатежей ЮKassa)', 'yoga-tariff-renewal'); ?>
+							</label>
+							<p class="description">
+								<?php esc_html_e('Не обращается к ЮKassa с save_payment_method. Сохраняет тестовую карту Visa •••• 4242 и включает автопродление в ЛК. Снимите галочку после одобрения рекуррентов.', 'yoga-tariff-renewal'); ?>
+							</p>
 						</td>
 					</tr>
 					<tr>
@@ -198,10 +230,22 @@ final class YTR_Admin {
 				<li><?php esc_html_e('Перед окончанием срока cron создаёт заказ и списывает оплату.', 'yoga-tariff-renewal'); ?></li>
 				<li><?php esc_html_e('Новый оплаченный заказ продлевает доступ через get_current_user_tariff().', 'yoga-tariff-renewal'); ?></li>
 			</ol>
-			<p>
-				<?php esc_html_e('В ЛК ЮKassa для боевого магазина должны быть подключены автоплатежи.', 'yoga-tariff-renewal'); ?>
-				<a href="https://yookassa.ru/developers/payment-acceptance/scenario-extensions/recurring-payments/basics" target="_blank" rel="noopener noreferrer">Документация</a>
-			</p>
+			<div class="notice notice-warning" style="margin-top:1.5rem;padding:12px 16px;">
+				<p><strong><?php esc_html_e('Автоплатежи в ЮKassa обязательны', 'yoga-tariff-renewal'); ?></strong></p>
+				<p>
+					<?php esc_html_e('Если при привязке карты или оплате тарифа появляется ошибка «This store can\'t make recurring payments / forbidden» — в магазине не подключены рекуррентные платежи. Это настраивается только через менеджера ЮKassa, не в коде сайта.', 'yoga-tariff-renewal'); ?>
+				</p>
+				<ol style="list-style:decimal;padding-left:1.25rem;">
+					<li><?php esc_html_e('Личный кабинет ЮKassa → чат с менеджером.', 'yoga-tariff-renewal'); ?></li>
+					<li><?php esc_html_e('Запрос: подключить автоплатежи и save_payment_method для банковских карт.', 'yoga-tariff-renewal'); ?></li>
+					<li><?php esc_html_e('После подтверждения — повторить привязку карты в ЛК или оплату тарифа с галочкой сохранения карты.', 'yoga-tariff-renewal'); ?></li>
+				</ol>
+				<p>
+					<a href="https://yookassa.ru/docs/support/payments/extra/autopayment" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Справка ЮKassa: автоплатежи', 'yoga-tariff-renewal'); ?></a>
+					&nbsp;·&nbsp;
+					<a href="https://yookassa.ru/developers/payment-acceptance/scenario-extensions/recurring-payments/basics" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Документация API', 'yoga-tariff-renewal'); ?></a>
+				</p>
+			</div>
 
 			<?php self::render_changelog(); ?>
 		</div>

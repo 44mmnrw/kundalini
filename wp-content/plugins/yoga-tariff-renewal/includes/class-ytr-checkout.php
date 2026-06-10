@@ -102,6 +102,10 @@ final class YTR_Checkout {
 	 * @return \YooKassa\Request\Payments\CreatePaymentRequest
 	 */
 	public static function maybe_save_payment_method($payment_request) {
+		if (class_exists('YTR_Stub') && YTR_Stub::is_enabled()) {
+			return $payment_request;
+		}
+
 		if (!self::should_save_payment_method()) {
 			return $payment_request;
 		}

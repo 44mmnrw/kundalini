@@ -14,6 +14,7 @@ require_once YTR_PLUGIN_DIR . 'includes/class-ytr-renewal.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-cron.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-admin.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-changelog.php';
+require_once YTR_PLUGIN_DIR . 'includes/class-ytr-stub.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-card-binding.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-lk.php';
 
@@ -76,6 +77,11 @@ final class YTR_Plugin {
 		}
 
 		if ($order->get_meta('_ytr_auto_renew_opt_in') !== 'yes') {
+			return;
+		}
+
+		if (class_exists('YTR_Stub') && YTR_Stub::is_enabled()) {
+			YTR_Stub::activate_from_tariff_order($order);
 			return;
 		}
 

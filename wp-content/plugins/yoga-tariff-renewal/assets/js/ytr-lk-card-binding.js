@@ -59,12 +59,17 @@
 		openPaymentMethodsSlide();
 
 		if (status === 'success') {
-			notify('Карта привязана. Если у вас активный тариф, автопродление включено.');
+			if (params.get('ytr_stub') === '1') {
+				notify('Карта привязана (тестовый режим). После подключения автоплатежей в ЮKassa заглушку отключат.');
+			} else {
+				notify('Карта привязана. Если у вас активный тариф, автопродление включено.');
+			}
 		} else if (status === 'failed') {
 			notify('Не удалось привязать карту. Попробуйте ещё раз или оплатите тариф с галочкой сохранения карты.', 'error');
 		}
 
 		params.delete('ytr_card');
+		params.delete('ytr_stub');
 		var query = params.toString();
 		var nextUrl = window.location.pathname + (query ? '?' + query : '') + window.location.hash;
 		window.history.replaceState({}, document.title, nextUrl);
@@ -75,8 +80,17 @@
 		return val !== '' && val.indexOf('_') === -1;
 	}
 
+	function isStubMode() {
+		return !!getConfig().stubMode;
+	}
+
 	function updateSubmitState() {
 		if (!$form || !$submitBtn) {
+			return;
+		}
+
+		if (isStubMode()) {
+			$submitBtn.addClass('active');
 			return;
 		}
 
@@ -111,6 +125,9 @@
 		}
 
 		resetBindCardForm();
+		if (isStubMode()) {
+			$submitBtn.addClass('active');
+		}
 		$('.overlay').addClass('active');
 		$('.body').addClass('body-fixed');
 		$modal.addClass('active').attr('aria-hidden', 'false');
