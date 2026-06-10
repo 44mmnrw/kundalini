@@ -221,6 +221,9 @@ final class YTR_Admin {
 							if (!empty($health['is_overdue'])) {
 								echo ' ';
 								echo '<span style="color:#8a2424;">(' . esc_html__('просрочено', 'yoga-tariff-renewal') . ')</span>';
+							} elseif ((int) ($health['next_run'] ?? 0) > 0 && (int) ($health['next_run'] ?? 0) < time()) {
+								echo ' ';
+								echo '<span class="description">(' . esc_html__('в очереди WP Cron', 'yoga-tariff-renewal') . ')</span>';
 							}
 							?>
 						</td>
