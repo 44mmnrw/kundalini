@@ -9,6 +9,20 @@ final class YTR_Admin {
 		add_action('admin_menu', array(__CLASS__, 'register_menu'));
 		add_action('admin_init', array(__CLASS__, 'register_settings'));
 		add_action('admin_post_ytr_run_renewals', array(__CLASS__, 'handle_manual_run'));
+		add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_assets'));
+	}
+
+	public static function enqueue_assets(string $hook): void {
+		if ($hook !== 'woocommerce_page_ytr-settings') {
+			return;
+		}
+
+		wp_register_style('ytr-admin', false, array(), YTR_VERSION);
+		wp_enqueue_style('ytr-admin');
+		wp_add_inline_style(
+			'ytr-admin',
+			'.ytr-cron-status{margin:1em 0;padding:1em 1.25em;border-left:4px solid #72aee6;background:#fff}.ytr-cron-status--ok{border-left-color:#00a32a}.ytr-cron-status--warning{border-left-color:#dba617}.ytr-cron-status--error{border-left-color:#d63638}.ytr-cron-status--disabled{border-left-color:#a7aaad}.ytr-cron-status__title{margin:0 0 .5em;font-size:14px}.ytr-cron-status__badge{display:inline-block;padding:.15em .55em;border-radius:999px;font-size:12px;font-weight:600;line-height:1.5}.ytr-cron-status__badge--ok{background:#edfaef;color:#007017}.ytr-cron-status__badge--warning{background:#fcf9e8;color:#8a6d00}.ytr-cron-status__badge--error{background:#fcf0f1;color:#8a2424}.ytr-cron-status__badge--disabled{background:#f0f0f1;color:#50575e}.ytr-cron-table{margin-top:1em}.ytr-cron-table th{width:260px;font-weight:600}'
+		);
 	}
 
 	public static function register_menu(): void {
@@ -26,6 +40,15 @@ final class YTR_Admin {
 		register_setting('ytr_settings', 'ytr_enabled', array('type' => 'string', 'default' => 'yes'));
 		register_setting('ytr_settings', 'ytr_days_before', array('type' => 'integer', 'default' => 1));
 		register_setting('ytr_settings', 'ytr_max_retry_days', array('type' => 'integer', 'default' => 7));
+		register_setting(
+			'ytr_settings',
+			YTR_Cron::OPTION_INTERVAL,
+			array(
+				'type'              => 'string',
+				'default'           => '60',
+				'sanitize_callback' => array('YTR_Cron', 'sanitize_interval'),
+			)
+		);
 	}
 
 	public static function handle_manual_run(): void {
@@ -36,16 +59,17 @@ final class YTR_Admin {
 		check_admin_referer('ytr_run_renewals');
 
 		$stats = YTR_Renewal::process_due_renewals();
+		YTR_Cron::record_run($stats, 'manual');
 
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'       => 'ytr-settings',
-					'ytr_ran'    => '1',
-					'processed'  => $stats['processed'],
-					'succeeded'  => $stats['succeeded'],
-					'failed'     => $stats['failed'],
-					'skipped'    => $stats['skipped'],
+					'page'      => 'ytr-settings',
+					'ytr_ran'   => '1',
+					'processed' => $stats['processed'],
+					'succeeded' => $stats['succeeded'],
+					'failed'    => $stats['failed'],
+					'skipped'   => $stats['skipped'],
 				),
 				admin_url('admin.php')
 			)
@@ -58,7 +82,9 @@ final class YTR_Admin {
 			return;
 		}
 
-		$next = wp_next_scheduled(YTR_Cron::HOOK);
+		$health     = YTR_Cron::get_health();
+		$cron_url   = site_url('wp-cron.php?doing_wp_cron');
+		$auto_users = class_exists('YTR_User') ? YTR_User::get_auto_renew_user_ids() : array();
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e('Автопродление тарифов (ЮKassa)', 'yoga-tariff-renewal'); ?></h1>
@@ -79,25 +105,16 @@ final class YTR_Admin {
 				</div>
 			<?php endif; ?>
 
+			<?php self::render_cron_status($health, $cron_url); ?>
+
 			<p>
 				<?php
-				echo $next
-					? esc_html(sprintf(__('Следующий cron: %s (интервал: каждый час)', 'yoga-tariff-renewal'), wp_date('d.m.Y H:i', $next)))
-					: esc_html__('Cron не запланирован. Сохраните настройки или деактивируйте/активируйте плагин.', 'yoga-tariff-renewal');
-				?>
-			</p>
-			<p>
-				<?php
-				$auto_users = class_exists('YTR_User') ? YTR_User::get_auto_renew_user_ids() : array();
 				printf(
 					esc_html__('Пользователей с автопродлением: %d. ЮKassa: %s.', 'yoga-tariff-renewal'),
 					count($auto_users),
-					class_exists('YTR_YooKassa') && YTR_YooKassa::is_configured() ? 'OK' : 'не настроена'
+					class_exists('YTR_YooKassa') && YTR_YooKassa::is_configured() ? 'OK' : esc_html__('не настроена', 'yoga-tariff-renewal')
 				);
 				?>
-			</p>
-			<p class="description">
-				<?php esc_html_e('На production добавьте системный cron: curl -s https://ваш-сайт.ru/wp-cron.php?doing_wp_cron каждые 5–15 минут, либо DISABLE_WP_CRON + wp cron event run ytr_daily_renewal_check.', 'yoga-tariff-renewal'); ?>
 			</p>
 
 			<form method="post" action="options.php">
@@ -110,6 +127,21 @@ final class YTR_Admin {
 								<input type="checkbox" name="ytr_enabled" value="yes" <?php checked(get_option('ytr_enabled', 'yes'), 'yes'); ?>>
 								<?php esc_html_e('Автоматически продлевать тарифы', 'yoga-tariff-renewal'); ?>
 							</label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e('Частота проверки cron', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<select name="<?php echo esc_attr(YTR_Cron::OPTION_INTERVAL); ?>">
+								<?php foreach (YTR_Cron::get_interval_definitions() as $key => $definition) : ?>
+									<option value="<?php echo esc_attr($key); ?>" <?php selected(YTR_Cron::get_interval_key(), $key); ?>>
+										<?php echo esc_html($definition['label']); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">
+								<?php esc_html_e('Как часто плагин проверяет пользователей, которым пора продлить тариф. После сохранения расписание пересоздаётся автоматически.', 'yoga-tariff-renewal'); ?>
+							</p>
 						</td>
 					</tr>
 					<tr>
@@ -148,6 +180,114 @@ final class YTR_Admin {
 				<?php esc_html_e('В ЛК ЮKassa для боевого магазина должны быть подключены автоплатежи.', 'yoga-tariff-renewal'); ?>
 				<a href="https://yookassa.ru/developers/payment-acceptance/scenario-extensions/recurring-payments/basics" target="_blank" rel="noopener noreferrer">Документация</a>
 			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * @param array<string, mixed> $health
+	 */
+	private static function render_cron_status(array $health, string $cron_url): void {
+		$status = (string) ($health['status'] ?? 'warning');
+		$last_stats = is_array($health['last_stats'] ?? null) ? $health['last_stats'] : array();
+		?>
+		<div class="ytr-cron-status ytr-cron-status--<?php echo esc_attr($status); ?>">
+			<p class="ytr-cron-status__title">
+				<strong><?php esc_html_e('Статус WP Cron', 'yoga-tariff-renewal'); ?></strong>
+				<span class="ytr-cron-status__badge ytr-cron-status__badge--<?php echo esc_attr($status); ?>">
+					<?php echo esc_html((string) ($health['status_label'] ?? '')); ?>
+				</span>
+			</p>
+			<p><?php echo esc_html((string) ($health['status_message'] ?? '')); ?></p>
+
+			<table class="widefat striped ytr-cron-table">
+				<tbody>
+					<tr>
+						<th><?php esc_html_e('Событие', 'yoga-tariff-renewal'); ?></th>
+						<td><code><?php echo esc_html(YTR_Cron::HOOK); ?></code></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Интервал плагина', 'yoga-tariff-renewal'); ?></th>
+						<td><?php echo esc_html((string) ($health['interval_label'] ?? '')); ?></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Следующий запуск', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<?php
+							echo esc_html(YTR_Cron::format_timestamp((int) ($health['next_run'] ?? 0)));
+							if (!empty($health['is_overdue'])) {
+								echo ' ';
+								echo '<span style="color:#8a2424;">(' . esc_html__('просрочено', 'yoga-tariff-renewal') . ')</span>';
+							}
+							?>
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Последний запуск плагина', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<?php
+							echo esc_html(YTR_Cron::format_timestamp((int) ($health['last_run'] ?? 0)));
+							if ((int) ($health['last_run'] ?? 0) > 0) {
+								echo ' <span class="description">(' . esc_html(YTR_Cron::format_ago((int) $health['last_run'])) . ')</span>';
+							}
+							?>
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Источник последнего запуска', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<?php
+							$source = (string) ($health['last_source'] ?? '');
+							if ($source === 'manual') {
+								esc_html_e('Ручной запуск из админки', 'yoga-tariff-renewal');
+							} elseif ($source === 'cron') {
+								esc_html_e('WP Cron', 'yoga-tariff-renewal');
+							} else {
+								echo '—';
+							}
+							?>
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Результат последнего запуска', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<?php
+							if ($last_stats) {
+								printf(
+									esc_html__('обработано %1$d, успешно %2$d, ошибок %3$d, пропущено %4$d', 'yoga-tariff-renewal'),
+									(int) ($last_stats['processed'] ?? 0),
+									(int) ($last_stats['succeeded'] ?? 0),
+									(int) ($last_stats['failed'] ?? 0),
+									(int) ($last_stats['skipped'] ?? 0)
+								);
+							} else {
+								echo '—';
+							}
+							?>
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('DISABLE_WP_CRON', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<?php
+							echo !empty($health['wp_cron_disabled'])
+								? esc_html__('Да — WP Cron по HTTP отключён, нужен системный cron', 'yoga-tariff-renewal')
+								: esc_html__('Нет — cron запускается при посещениях сайта', 'yoga-tariff-renewal');
+							?>
+						</td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('URL для системного cron', 'yoga-tariff-renewal'); ?></th>
+						<td><code><?php echo esc_html($cron_url); ?></code></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e('Пример crontab', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<code><?php echo esc_html('*/5 * * * * curl -s ' . $cron_url . ' >/dev/null 2>&1'); ?></code>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		<?php
 	}
