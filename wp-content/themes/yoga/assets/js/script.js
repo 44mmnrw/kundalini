@@ -3514,83 +3514,8 @@ jQuery(document).ready(function($) {
 		$('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
 	});
 	
-	// Добавление новой карты
-	$('#add-new-card').on('click', function() {
-		$('.add-card-form').slideToggle();
-	});
-	
-	$('.btn-cancel').on('click', function() {
-		$('.add-card-form').slideUp();
-	});
+	// Карты сохраняются через ЮKassa при оплате — ручной ввод в ЛК отключён.
 
-	function initStripeElementsForLk() {
-		var $cardForm = $('#add-card-form');
-		if (!$cardForm.length) {
-			return;
-		}
-
-		if (typeof Stripe === 'undefined') {
-			return;
-		}
-
-		if ($cardForm.data('stripeInitialized')) {
-			return;
-		}
-
-		var stripeKey = ($cardForm.data('stripe-key') || '').toString().trim();
-		if (!stripeKey) {
-			return;
-		}
-
-		var stripe = Stripe(stripeKey);
-		var elements = stripe.elements();
-		var cardNumber = elements.create('cardNumber');
-		var cardExpiry = elements.create('cardExpiry');
-		var cardCvc = elements.create('cardCvc');
-
-		cardNumber.mount('#card-number-element');
-		cardExpiry.mount('#card-expiry-element');
-		cardCvc.mount('#card-cvc-element');
-
-		$cardForm.data('stripeInitialized', true);
-
-		$cardForm.off('submit.lkStripe').on('submit.lkStripe', function(e) {
-			e.preventDefault();
-
-			stripe.createPaymentMethod({
-				type: 'card',
-				card: cardNumber,
-				billing_details: {}
-			}).then(function(result) {
-				if (result.error) {
-					showNotification(result.error.message, 'error');
-					return;
-				}
-
-				$.ajax({
-					url: yoga_ajax.ajax_url,
-					type: 'POST',
-					data: {
-						action: 'add_payment_method',
-						payment_method_id: result.paymentMethod.id,
-						security: yoga_ajax.nonce
-					},
-					success: function(response) {
-						if (response.success) {
-							showNotification('Карта успешно добавлена');
-							$('.add-card-form').slideUp();
-							location.reload();
-						} else {
-							showNotification(response.data, 'error');
-						}
-					}
-				});
-			});
-		});
-	}
-
-	initStripeElementsForLk();
-	
 	// Удаление карты
 	$('.lk-settings-item__col-action-options').on('click', function(e) {
 		e.stopPropagation();

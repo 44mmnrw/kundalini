@@ -531,6 +531,18 @@
   margin: auto;
 }
 
+.lk-settings-item__col-icon svg.lk-payment-card-icon {
+  display: block;
+  width: auto;
+  height: 0.9375rem;
+  max-width: 3.125rem;
+  margin: auto;
+}
+
+.lk-settings-item__col-icon svg.lk-payment-card-icon--mastercard {
+  height: 1.25rem;
+}
+
 .lk-settings-item_action {
   cursor: pointer;
 }

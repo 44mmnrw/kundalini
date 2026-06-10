@@ -498,67 +498,63 @@
 									</div>
 									<h2>Способы оплаты</h2>
 									<div class="lk-settings-part lk-settings-part_cards">
+										<p class="lk-settings-item__col-text" style="margin-bottom: 1rem;">
+											Полные данные карты на сайте не хранятся. После оплаты тарифа через ЮKassa здесь отображается только маска (бренд и последние 4 цифры).
+										</p>
 										<?php
 											$saved_cards = get_user_saved_cards();
 											if (!empty($saved_cards)) {
 												foreach ($saved_cards as $card) {
+													$icon_type = preg_replace('/[^a-z0-9_-]/', '', (string) ($card['type'] ?? 'default'));
+													if ($icon_type === '') {
+														$icon_type = 'default';
+													}
 												?>
 												<div class="lk-settings-item lk-settings-item_action">
 													<div class="lk-settings-item__col">
 														<div class="lk-settings-item__col-icon">
-															<img src="<?php echo get_template_directory_uri() . '/assets/img/lk-payment-icon_' . $card['type'] . '.png'; ?>" alt="<?php echo $card['brand']; ?>">
+															<?php yoga_lk_render_payment_card_icon($icon_type, (string) $card['brand']); ?>
 														</div>
 														<p class="lk-settings-item__col-text">
-															<?php echo $card['brand'] . ' **' . $card['last4']; ?>
+															<?php echo esc_html($card['brand'] . ' •••• ' . $card['last4']); ?>
+															<?php if (!empty($card['is_auto'])) : ?>
+																<br><small>Для автопродления</small>
+															<?php endif; ?>
 														</p>
 													</div>
 													<div class="lk-settings-item__col">
 														<div class="lk-settings-item__col-action">
-															<div class="lk-settings-item__col-action-options" data-card-id="<?php echo $card['id']; ?>">
-																<img src="<?php echo get_template_directory_uri(); ?>/assets/img/lk-payment-options.png" alt="">
+															<div class="lk-settings-item__col-action-options" data-card-id="<?php echo esc_attr($card['id']); ?>">
+																<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-options.png'); ?>" alt="">
 															</div>
 														</div>
 													</div>
 												</div>
 												<?php
 												}
-												} else {
-												echo '<p>У вас нет сохраненных карт.</p>';
+											} else {
+												echo '<p>У вас нет сохранённых карт. Оплатите тариф банковской картой — она появится здесь автоматически.</p>';
+											}
+
+											$tariffs_url = home_url('/product-category/tariffs/');
+											$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+											if ($tariffs_term && !is_wp_error($tariffs_term)) {
+												$term_link = get_term_link($tariffs_term);
+												if (!is_wp_error($term_link)) {
+													$tariffs_url = $term_link;
+												}
 											}
 										?>
-										
-										<div class="lk-settings-item lk-settings-item_addcard" id="add-new-card">
+
+										<a href="<?php echo esc_url($tariffs_url); ?>" class="lk-settings-item lk-settings-item_addcard" id="add-new-card">
 											<div class="lk-settings-item__col">
 												<div class="lk-settings-item__col-icon">
-													<img src="<?php echo get_template_directory_uri(); ?>/assets/img/lk-payment-icon_add.png" alt="">
+													<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-icon_add.png'); ?>" alt="">
 												</div>
-												<p class="lk-settings-item__col-text">Добавить карту</p>
+												<p class="lk-settings-item__col-text">Оплатить тариф картой</p>
 											</div>
 											<div class="lk-settings-item__col"></div>
-										</div>
-										
-										<!-- Форма добавления новой карты -->
-										<div class="add-card-form" style="display: none;">
-											<form id="add-card-form" data-stripe-key="<?php echo esc_attr((string) get_option('stripe_publishable_key')); ?>">
-												<?php wp_nonce_field('add_payment_method', 'payment_nonce'); ?>
-												<div class="form-row">
-													<label>Номер карты</label>
-													<div id="card-number-element" class="stripe-input"></div>
-												</div>
-												<div class="form-row">
-													<label>Срок действия</label>
-													<div id="card-expiry-element" class="stripe-input"></div>
-												</div>
-												<div class="form-row">
-													<label>CVC</label>
-													<div id="card-cvc-element" class="stripe-input"></div>
-												</div>
-												<div class="form-actions">
-													<button type="submit" class="btn">Сохранить карту</button>
-													<button type="button" class="btn btn-cancel">Отмена</button>
-												</div>
-											</form>
-										</div>
+										</a>
 									</div>
 								</div>
 							</div>

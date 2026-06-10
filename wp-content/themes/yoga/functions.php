@@ -3254,14 +3254,58 @@ function handle_comment_delete() {
 		return $order_history;
 	}
 	
-	// Обработчик для удаления карты
+	// Сохранённые карты для ЛК (только маска + токен ЮKassa, без PAN/CVC).
 	function get_user_saved_cards() {
-		if (!is_user_logged_in()) return array();
-		
+		if (!is_user_logged_in()) {
+			return array();
+		}
+
 		$user_id = get_current_user_id();
-		$saved_cards = get_user_meta($user_id, 'saved_payment_cards', true);
-		
-		return $saved_cards ?: array();
+
+		if (class_exists('YTR_Saved_Cards')) {
+			return YTR_Saved_Cards::get_cards_for_lk($user_id);
+		}
+
+		return array();
+	}
+
+	if (!function_exists('yoga_lk_render_payment_card_icon')) {
+		/**
+		 * Иконка платёжной системы в ЛК (спрайт или PNG-fallback).
+		 */
+		function yoga_lk_render_payment_card_icon(string $type, string $brand = ''): void {
+			$type = preg_replace('/[^a-z0-9_-]/', '', $type);
+			if ($type === '') {
+				$type = 'default';
+			}
+
+			$sprite_icons = array(
+				'mir'        => array(
+					'id'       => 'lk-payment-mir',
+					'viewBox'  => '0 0 50 15',
+				),
+				'mastercard' => array(
+					'id'       => 'lk-payment-mastercard',
+					'viewBox'  => '0 0 50 39',
+				),
+				'visa'       => array(
+					'id'       => 'lk-payment-visa',
+					'viewBox'  => '0 0 50 16',
+				),
+			);
+
+			if (isset($sprite_icons[ $type ])) {
+				$icon       = $sprite_icons[ $type ];
+				$sprite_url = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $icon['id']);
+				echo '<svg class="lk-payment-card-icon lk-payment-card-icon--' . esc_attr($type) . '" viewBox="' . esc_attr($icon['viewBox']) . '" aria-hidden="true" focusable="false">';
+				echo '<use href="' . $sprite_url . '" width="100%" height="100%"></use>';
+				echo '</svg>';
+				return;
+			}
+
+			$icon_url = get_template_directory_uri() . '/assets/img/lk-payment-icon_' . $type . '.png';
+			echo '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr($brand) . '">';
+		}
 	}
 	
 	// Функция для подключения разных header'ов
