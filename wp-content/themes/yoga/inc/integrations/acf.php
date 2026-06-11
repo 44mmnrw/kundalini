@@ -223,7 +223,7 @@ if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 						'label'         => 'Секции, видимые гостям',
 						'name'          => 'guest_practice_sections',
 						'type'          => 'checkbox',
-						'instructions'  => 'Для гостей и пользователей без активного тарифа. Отметьте якоря (Anchor 01–06), которые они увидят. Если ничего не выбрано — показываются все секции. С оплаченным тарифом — всегда все секции.',
+						'instructions'  => 'Для гостей и пользователей без активного тарифа. Отметьте якоря (Anchor 01–06), которые они увидят. Если ничего не выбрано — показываются все секции. Отдельную практику можно открыть полностью в её карточке: «Доступ для гостей». С оплаченным тарифом — всегда все секции.',
 						'choices'       => $choices,
 						'layout'        => 'vertical',
 						'return_format' => 'value',
@@ -245,6 +245,45 @@ if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 }
 
 add_action('acf/init', 'yoga_register_guest_practice_sections_fields', 15);
+
+if (!function_exists('yoga_register_practice_guest_access_fields')) {
+	function yoga_register_practice_guest_access_fields() {
+		if (!function_exists('acf_add_local_field_group')) {
+			return;
+		}
+
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_practice_guest_access',
+				'title'    => 'Доступ для гостей',
+				'fields'   => array(
+					array(
+						'key'           => 'field_practice_open_for_guests',
+						'label'         => 'Открыть полностью для гостей',
+						'name'          => 'practice_open_for_guests',
+						'type'          => 'true_false',
+						'ui'            => 1,
+						'default_value' => 0,
+						'instructions'  => 'Если включено, гости и пользователи без активного тарифа увидят все секции этой практики, несмотря на ограничения в «Настройки темы» → «Секции, видимые гостям».',
+					),
+				),
+				'location' => array(
+					array(
+						array(
+							'param'    => 'post_type',
+							'operator' => '==',
+							'value'    => 'practice',
+						),
+					),
+				),
+				'position' => 'side',
+				'menu_order' => 2,
+			)
+		);
+	}
+}
+
+add_action('acf/init', 'yoga_register_practice_guest_access_fields', 15);
 
 if (!function_exists('yoga_register_theme_smartcaptcha_fields')) {
     function yoga_register_theme_smartcaptcha_fields() {
