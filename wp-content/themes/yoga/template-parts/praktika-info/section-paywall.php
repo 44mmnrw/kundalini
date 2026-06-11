@@ -12,7 +12,14 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-$tariffs_url = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_page_url() : home_url('/');
+$tariffs_url     = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_page_url() : home_url('/');
+$practice_id     = (int) get_the_ID();
+$paywall_label   = function_exists('yoga_get_section_paywall_label')
+	? yoga_get_section_paywall_label()
+	: __('Доступно по подписке', 'yoga');
+$paywall_text    = function_exists('yoga_get_section_paywall_text')
+	? yoga_get_section_paywall_text($practice_id)
+	: __('Оформите тариф, чтобы открыть этот раздел практики.', 'yoga');
 ?>
 <span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
 <div class="praktika-section-paywall">
@@ -25,10 +32,10 @@ $tariffs_url = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_p
 				<circle cx="24" cy="31" r="3" fill="currentColor"/>
 			</svg>
 		</div>
-		<p class="praktika-section-paywall__label"><?php esc_html_e('Доступно по подписке', 'yoga'); ?></p>
-		<p class="praktika-section-paywall__text">
-			<?php esc_html_e('Оформите тариф, чтобы открыть этот раздел практики.', 'yoga'); ?>
-		</p>
+		<div class="praktika-section-paywall__copy">
+			<p class="praktika-section-paywall__label"><?php echo esc_html($paywall_label); ?></p>
+			<p class="praktika-section-paywall__text"><?php echo esc_html($paywall_text); ?></p>
+		</div>
 		<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt praktika-section-paywall__cta">
 			<span><?php echo esc_html(function_exists('yoga_get_purchase_cta_text') ? yoga_get_purchase_cta_text() : __('Выбрать тариф', 'yoga')); ?></span>
 		</a>

@@ -113,7 +113,7 @@ if (!function_exists('yoga_viewer_has_full_practice_sections')) {
 	/**
 	 * Полный доступ ко всем якорям — только при активном оплаченном тарифе.
 	 */
-	function yoga_viewer_has_full_practice_sections(?int $user_id = null): bool {
+	function yoga_viewer_has_full_practice_sections(?int $user_id = null, ?int $practice_id = null): bool {
 		if (!function_exists('get_current_user_tariff')) {
 			return false;
 		}
@@ -127,21 +127,62 @@ if (!function_exists('yoga_viewer_has_full_practice_sections')) {
 		}
 
 		$tariff = get_current_user_tariff($user_id);
+		if (!is_array($tariff) || empty($tariff['product_id'])) {
+			return false;
+		}
 
-		return is_array($tariff) && !empty($tariff['product_id']);
+		if ($practice_id === null) {
+			$practice_id = (int) get_the_ID();
+		}
+
+		if (
+			$practice_id > 0
+			&& function_exists('yoga_user_can_access_practice')
+			&& !yoga_user_can_access_practice($user_id, $practice_id)
+		) {
+			return false;
+		}
+
+		return true;
+	}
+}
+
+if (!function_exists('yoga_practice_is_fully_open_for_guests')) {
+	/**
+	 * Практика полностью открыта гостям (перекрывает ограничение из «Настройки темы»).
+	 */
+	function yoga_practice_is_fully_open_for_guests(?int $practice_id = null): bool {
+		if ($practice_id === null) {
+			$practice_id = (int) get_the_ID();
+		}
+
+		if ($practice_id <= 0 || get_post_type($practice_id) !== 'practice' || !function_exists('get_field')) {
+			return false;
+		}
+
+		return (bool) get_field('practice_open_for_guests', $practice_id);
 	}
 }
 
 if (!function_exists('yoga_should_apply_guest_practice_section_filter')) {
 	/**
-	 * Ограничение из «Настройки темы» для гостей и пользователей без тарифа.
+	 * Ограничение из «Настройки темы» для гостей, пользователей без тарифа
+	 * и подписчиков, у которых практики нет в tariff_practices их тарифа.
 	 */
-	function yoga_should_apply_guest_practice_section_filter(): bool {
+	function yoga_should_apply_guest_practice_section_filter(?int $practice_id = null): bool {
 		if (!yoga_guest_practice_section_filter_enabled()) {
 			return false;
 		}
 
-		return !yoga_viewer_has_full_practice_sections();
+		if (yoga_viewer_has_full_practice_sections(null, $practice_id)) {
+			return false;
+		}
+
+		if (yoga_practice_is_fully_open_for_guests($practice_id)) {
+			return false;
+		}
+
+		return true;
 	}
 }
 
@@ -149,17 +190,17 @@ if (!function_exists('yoga_can_view_practice_section_layout')) {
 	/**
 	 * Можно ли показать layout practice_sections текущему посетителю.
 	 */
-	function yoga_can_view_practice_section_layout(string $layout): bool {
+	function yoga_can_view_practice_section_layout(string $layout, ?int $practice_id = null): bool {
 		$layout = sanitize_key($layout);
 		if ($layout === '') {
 			return false;
 		}
 
-		if (yoga_viewer_has_full_practice_sections()) {
+		if (yoga_viewer_has_full_practice_sections(null, $practice_id)) {
 			return true;
 		}
 
-		if (!yoga_should_apply_guest_practice_section_filter()) {
+		if (!yoga_should_apply_guest_practice_section_filter($practice_id)) {
 			return true;
 		}
 
@@ -172,7 +213,7 @@ if (!function_exists('yoga_filter_practice_sections_for_viewer')) {
 	 * @param array<int, array<string, mixed>>|null $sections
 	 * @return array<int, array<string, mixed>>
 	 */
-	function yoga_filter_practice_sections_for_viewer($sections): array {
+	function yoga_filter_practice_sections_for_viewer($sections, ?int $practice_id = null): array {
 		if (!is_array($sections) || $sections === array()) {
 			return array();
 		}
@@ -180,9 +221,9 @@ if (!function_exists('yoga_filter_practice_sections_for_viewer')) {
 		return array_values(
 			array_filter(
 				$sections,
-				static function (array $section): bool {
+				static function (array $section) use ($practice_id): bool {
 					$layout = sanitize_key((string) ($section['acf_fc_layout'] ?? ''));
-					return yoga_can_view_practice_section_layout($layout);
+					return yoga_can_view_practice_section_layout($layout, $practice_id);
 				}
 			)
 		);

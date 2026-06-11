@@ -20,6 +20,7 @@ $sections = get_field('practice_sections');
 if (!is_array($sections)) {
 	$sections = array();
 }
+$practice_id = (int) get_the_ID();
 
 if ($difficulty_term_id <= 0) {
 	$difficulty_terms = get_terms(array(
@@ -119,7 +120,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 											? yoga_get_practice_section_anchor_id($section, (int) $section_index)
 											: ($section['anchor_id'] ?? ('anchor_0' . ($section_index + 1)));
 										$section_can_view = !function_exists('yoga_can_view_practice_section_layout')
-											|| yoga_can_view_practice_section_layout($layout);
+											|| yoga_can_view_practice_section_layout($layout, $practice_id);
 
 										if (!$section_can_view) {
 											$section_title = function_exists('yoga_get_practice_section_display_title')
@@ -186,7 +187,6 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                             <nav>
                                 <ul>
                                     <?php
-										// Меню навигации по секциям
 										if ($sections) {
 											foreach ($sections as $index => $section) {
 												$menu_layout = (string) ($section['acf_fc_layout'] ?? '');
@@ -197,7 +197,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 													? yoga_get_practice_section_display_title($section, $menu_layout)
 													: ($section['section_title'] ?? '');
 												$menu_locked = function_exists('yoga_can_view_practice_section_layout')
-													&& !yoga_can_view_practice_section_layout($menu_layout);
+													&& !yoga_can_view_practice_section_layout($menu_layout, $practice_id);
 											?>
                                             <li<?php echo $menu_locked ? ' class="praktika-menu__item--locked"' : ''; ?>>
                                                 <a class="ref" href="#<?php echo esc_attr($section_id); ?>">
@@ -219,13 +219,49 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 								</ul>
                             </nav>
                             <?php
-								$download_file = get_field('practice_download');
-								if ($download_file) {
-								?>
-                                <a href="<?php echo esc_url($download_file); ?>" download class="btn">
-                                    <span>Cкачать протокол практики</span>
-								</a>
-                                <?php
+								$practice_id = (int) get_the_ID();
+								if (
+									$practice_id > 0
+									&& function_exists('yoga_get_practice_download_source')
+									&& yoga_get_practice_download_source($practice_id) !== null
+									&& function_exists('yoga_viewer_has_full_practice_sections')
+									&& yoga_viewer_has_full_practice_sections(null, $practice_id)
+								) {
+									$user_id            = get_current_user_id();
+									$already_downloaded = function_exists('yoga_user_has_downloaded_practice')
+										&& yoga_user_has_downloaded_practice($user_id, $practice_id);
+									$can_download       = function_exists('yoga_user_can_download_practice')
+										&& yoga_user_can_download_practice($user_id, $practice_id);
+									$download_classes   = 'praktika-download';
+									if (!$can_download) {
+										$download_classes .= ' praktika-download--exhausted';
+									}
+									?>
+                                <div
+                                    class="<?php echo esc_attr($download_classes); ?>"
+                                    data-practice-id="<?php echo esc_attr((string) $practice_id); ?>"
+                                    data-download-url="<?php echo esc_url(yoga_get_practice_download_url($practice_id)); ?>"
+                                    data-can-download="<?php echo $can_download ? '1' : '0'; ?>"
+                                    data-already-downloaded="<?php echo $already_downloaded ? '1' : '0'; ?>"
+                                >
+                                        <?php if ($can_download) : ?>
+                                    <a href="<?php echo esc_url(yoga_get_practice_download_url($practice_id)); ?>" class="btn praktika-download__btn">
+                                        <span><?php echo esc_html__('Скачать протокол практики', 'yoga'); ?></span>
+                                    </a>
+                                        <?php else :
+                                            $disabled_label = $already_downloaded
+                                                ? yoga_get_practice_already_downloaded_message()
+                                                : __('Скачать протокол практики', 'yoga');
+                                            ?>
+                                    <span class="btn praktika-download__btn" aria-disabled="true">
+                                        <span><?php echo esc_html($disabled_label); ?></span>
+                                    </span>
+                                            <?php if (!$already_downloaded) : ?>
+                                    <p class="praktika-download__note"><?php echo esc_html(yoga_get_download_limit_exceeded_message()); ?></p>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                </div>
+                                        <?php
 								}
 							?>
 						</div>

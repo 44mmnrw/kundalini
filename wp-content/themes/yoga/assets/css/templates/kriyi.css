@@ -151,6 +151,23 @@
   display: none;
 }
 
+.kriyi-item--tariff-locked .kriyi-item__inner {
+  border-color: rgba(31, 31, 31, 0.45);
+}
+.kriyi-item--tariff-locked .kriya-level,
+.kriyi-item--tariff-locked .kriya-info {
+  opacity: 0.65;
+}
+.kriyi-item--tariff-locked .kriya-media {
+  filter: grayscale(100%);
+}
+.kriyi-item--tariff-locked .kriya-btn {
+  background: #e8e8e8;
+}
+.kriyi-item--tariff-locked .kriya-fav {
+  pointer-events: none;
+}
+
 .kriyi-item__inner {
   display: flex;
   align-items: center;
