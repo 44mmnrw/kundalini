@@ -165,6 +165,9 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 
 		if ($added) {
 			yoga_persist_cart();
+			if (function_exists('wc_clear_notices')) {
+				wc_clear_notices();
+			}
 			wp_safe_redirect($checkout_url);
 			exit;
 		}
@@ -179,6 +182,121 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 
 add_action('woocommerce_init', 'yoga_ensure_wc_cart_session', 1);
 add_filter('woocommerce_checkout_redirect_empty_cart', '__return_false');
+
+if (!function_exists('yoga_is_tariff_add_to_cart_request')) {
+	function yoga_is_tariff_add_to_cart_request(): bool {
+		if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+			return false;
+		}
+
+		if (empty($_POST['yoga_add_tariff']) || !isset($_POST['add-to-cart'])) {
+			return false;
+		}
+
+		$product_id = absint($_POST['add-to-cart']);
+		if ($product_id <= 0) {
+			return false;
+		}
+
+		return function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id);
+	}
+}
+
+/**
+ * WooCommerce на wp_loaded:20 сам обрабатывает add-to-cart и пишет «added to your cart».
+ * Наш обработчик — на :99. На проде/локалке поведение может отличаться из‑за настроек WC в БД,
+ * но сообщение в любом случае лишнее: сразу редирект на /checkout/.
+ */
+add_action('wp_loaded', 'yoga_prevent_wc_default_tariff_add_to_cart', 19);
+function yoga_prevent_wc_default_tariff_add_to_cart(): void {
+	if (!yoga_is_tariff_add_to_cart_request() || !class_exists('WC_Form_Handler')) {
+		return;
+	}
+
+	remove_action('wp_loaded', array('WC_Form_Handler', 'add_to_cart_action'), 20);
+}
+
+if (!function_exists('yoga_normalize_add_to_cart_product_ids')) {
+	/**
+	 * WC передаёт [ id => qty ] или [ 0 => id ].
+	 *
+	 * @param mixed $products
+	 * @return int[]
+	 */
+	function yoga_normalize_add_to_cart_product_ids($products): array {
+		if (!is_array($products) || $products === array()) {
+			return array();
+		}
+
+		$keys = array_keys($products);
+		if ($keys === range(0, count($products) - 1)) {
+			return array_values(array_filter(array_map('intval', $products)));
+		}
+
+		return array_values(array_filter(array_map('intval', $keys)));
+	}
+}
+
+if (!function_exists('yoga_suppress_tariff_add_to_cart_message')) {
+	/**
+	 * @param string $message
+	 * @param mixed  $products
+	 * @return string
+	 */
+	function yoga_suppress_tariff_add_to_cart_message($message, $products): string {
+		$product_ids = yoga_normalize_add_to_cart_product_ids($products);
+		if ($product_ids === array()) {
+			return $message;
+		}
+
+		foreach ($product_ids as $product_id) {
+			if (!function_exists('yoga_product_is_tariff') || !yoga_product_is_tariff($product_id)) {
+				return $message;
+			}
+		}
+
+		return '';
+	}
+}
+
+add_filter('wc_add_to_cart_message_html', 'yoga_suppress_tariff_add_to_cart_message', 10, 2);
+
+if (!function_exists('yoga_clear_tariff_add_to_cart_success_notices')) {
+	/**
+	 * wc_add_to_cart_message() добавляет notice даже с пустым HTML — убираем для тарифов.
+	 */
+	function yoga_clear_tariff_add_to_cart_success_notices(
+		string $cart_item_key,
+		int $product_id,
+		int $quantity,
+		int $variation_id
+	): void {
+		unset($cart_item_key, $quantity);
+
+		$check_id = $variation_id > 0 ? (int) wp_get_post_parent_id($variation_id) : $product_id;
+		if ($check_id <= 0) {
+			$check_id = $product_id;
+		}
+
+		if (!function_exists('yoga_product_is_tariff') || !yoga_product_is_tariff($check_id)) {
+			return;
+		}
+
+		if (!function_exists('WC') || !WC()->session) {
+			return;
+		}
+
+		$notices = WC()->session->get('wc_notices', array());
+		if (empty($notices['success'])) {
+			return;
+		}
+
+		unset($notices['success']);
+		WC()->session->set('wc_notices', $notices);
+	}
+}
+
+add_action('woocommerce_add_to_cart', 'yoga_clear_tariff_add_to_cart_success_notices', 1000, 4);
 
 if (!function_exists('yoga_guess_tariff_product_for_order_total')) {
 	/**
