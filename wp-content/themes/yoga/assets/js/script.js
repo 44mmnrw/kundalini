@@ -1398,6 +1398,10 @@ jQuery(document).ready(function($) {
 				var cleanUrl = window.location.pathname + window.location.hash;
 				window.history.replaceState({}, document.title, cleanUrl);
 			}
+		} else if (openLogin === 'checkout') {
+			yogaOpenLoginModal('1');
+			var cleanCheckoutUrl = window.location.pathname + window.location.hash;
+			window.history.replaceState({}, document.title, cleanCheckoutUrl);
 		}
 	})();
 	

@@ -631,6 +631,10 @@
 	color: #646464;
 }
 
+.yoga-checkout_auth .btn {
+	min-width: 12rem;
+}
+
 /* РЎРєСЂС‹РІР°РµРј РґРµС„РѕР»С‚РЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ WooCommerce, РµСЃР»Рё РѕРЅР° РїРѕРїР°РґС‘С‚ РІ СЂР°Р·РјРµС‚РєСѓ */
 .section-checkout .shop_table,
 .section-checkout .cart-collaterals,

@@ -124,3 +124,65 @@ function yoga_checkout_billing_placeholders(array $data): array {
 
 	return $data;
 }
+
+add_filter('pre_option_woocommerce_enable_guest_checkout', 'yoga_disable_guest_checkout');
+function yoga_disable_guest_checkout($value) {
+	return 'no';
+}
+
+if (!function_exists('yoga_checkout_allows_guest_payment')) {
+	function yoga_checkout_allows_guest_payment(): bool {
+		return false;
+	}
+}
+
+if (!function_exists('yoga_get_checkout_login_url')) {
+	function yoga_get_checkout_login_url(): string {
+		$url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout/');
+
+		return add_query_arg('open_login', 'checkout', $url);
+	}
+}
+
+add_action('template_redirect', 'yoga_require_login_for_checkout', 6);
+function yoga_require_login_for_checkout(): void {
+	if (is_user_logged_in()) {
+		return;
+	}
+
+	if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
+		return;
+	}
+
+	if (!function_exists('yoga_is_theme_checkout_context') || !yoga_is_theme_checkout_context()) {
+		return;
+	}
+
+	if (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url()) {
+		return;
+	}
+
+	if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+		return;
+	}
+
+	if (isset($_GET['open_login']) && sanitize_key(wp_unslash((string) $_GET['open_login'])) === 'checkout') {
+		return;
+	}
+
+	wp_safe_redirect(yoga_get_checkout_login_url());
+	exit;
+}
+
+add_action('woocommerce_checkout_process', 'yoga_validate_checkout_user_logged_in', 0);
+function yoga_validate_checkout_user_logged_in(): void {
+	if (is_user_logged_in()) {
+		return;
+	}
+
+	if (!function_exists('wc_add_notice')) {
+		return;
+	}
+
+	wc_add_notice(__('Для оплаты необходимо войти или зарегистрироваться.', 'yoga'), 'error');
+}
