@@ -168,7 +168,11 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 			if (function_exists('wc_clear_notices')) {
 				wc_clear_notices();
 			}
-			wp_safe_redirect($checkout_url);
+			$redirect_url = $checkout_url;
+			if (!is_user_logged_in() && function_exists('yoga_get_checkout_login_url')) {
+				$redirect_url = yoga_get_checkout_login_url();
+			}
+			wp_safe_redirect($redirect_url);
 			exit;
 		}
 

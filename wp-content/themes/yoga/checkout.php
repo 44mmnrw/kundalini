@@ -49,6 +49,44 @@ $is_empty = !$wc_cart || $wc_cart->is_empty();
 			</div>
 		</div>
 	</section>
+<?php elseif (!is_user_logged_in()) : ?>
+	<?php
+	$tariff_name = '';
+	if ($wc_cart) {
+		foreach ($wc_cart->get_cart() as $cart_item) {
+			$product = $cart_item['data'] ?? null;
+			if ($product instanceof WC_Product) {
+				$tariff_name = $product->get_name();
+				break;
+			}
+		}
+	}
+	?>
+	<section class="section-checkout section-checkout_empty section-checkout_auth" id="section-checkout">
+		<div class="container">
+			<div class="row">
+				<div class="yoga-checkout yoga-checkout_empty yoga-checkout_auth">
+					<h1 class="yoga-checkout__title"><?php esc_html_e('КОРЗИНА', 'yoga'); ?></h1>
+					<p class="yoga-checkout-empty__text">
+						<?php
+						if ($tariff_name !== '') {
+							printf(
+								/* translators: %s: tariff name */
+								esc_html__('Тариф «%s» выбран. Для оплаты войдите в аккаунт или зарегистрируйтесь.', 'yoga'),
+								esc_html($tariff_name)
+							);
+						} else {
+							esc_html_e('Для оплаты подписки войдите в аккаунт или зарегистрируйтесь.', 'yoga');
+						}
+						?>
+					</p>
+					<button type="button" class="btn btn_alt modal-call_login">
+						<span><?php esc_html_e('Войти', 'yoga'); ?></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</section>
 <?php else : ?>
 	<?php get_template_part('template-parts/section', 'checkout'); ?>
 <?php endif; ?>
