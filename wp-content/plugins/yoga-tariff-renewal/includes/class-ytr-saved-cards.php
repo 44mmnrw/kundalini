@@ -33,6 +33,10 @@ final class YTR_Saved_Cards {
 
 		// Только заказы с явным согласием или привязкой в ЛК — не все тарифы подряд.
 		self::sync_cards_for_user(get_current_user_id(), true);
+
+		if (class_exists('YTR_LK')) {
+			YTR_LK::maybe_backfill_auto_renew(get_current_user_id());
+		}
 	}
 
 	/**
@@ -137,7 +141,47 @@ final class YTR_Saved_Cards {
 			$order->save();
 		}
 
+		self::maybe_enable_auto_renew_from_order($order, $user_id, $card_data);
+
 		return true;
+	}
+
+	/**
+	 * Карта сохранена в ЮKassa — включаем автопродление, если пользователь не отказался явно.
+	 *
+	 * @param array<string, mixed> $card_data
+	 */
+	private static function maybe_enable_auto_renew_from_order(WC_Order $order, int $user_id, array $card_data): void {
+		if (
+			$user_id <= 0
+			|| !class_exists('YTR_User')
+			|| empty($card_data['recurring'])
+			|| (string) ($card_data['payment_method_id'] ?? '') === ''
+		) {
+			return;
+		}
+
+		if ($order->get_meta('_ytr_auto_renew_opt_in') === 'no') {
+			return;
+		}
+
+		$product_id = YTR_Tariff::get_tariff_product_id_from_order($order);
+		if ($product_id <= 0) {
+			$tariff = YTR_Tariff::get_active_tariff($user_id);
+			if (is_array($tariff) && !empty($tariff['product_id'])) {
+				$product_id = (int) $tariff['product_id'];
+			}
+		}
+
+		if ($product_id <= 0) {
+			return;
+		}
+
+		YTR_User::enable_auto_renew(
+			$user_id,
+			$product_id,
+			(string) $card_data['payment_method_id']
+		);
 	}
 
 	/**
@@ -170,6 +214,10 @@ final class YTR_Saved_Cards {
 
 		if (self::get_cards($user_id) === array()) {
 			self::sync_cards_for_user($user_id, true);
+		}
+
+		if (class_exists('YTR_LK')) {
+			YTR_LK::maybe_backfill_auto_renew($user_id);
 		}
 
 		$auto_method = class_exists('YTR_User') ? YTR_User::get_payment_method_id($user_id) : '';
@@ -354,10 +402,28 @@ final class YTR_Saved_Cards {
 		}
 
 		$method = $payment->getPaymentMethod();
-		if (!$method || !method_exists($method, 'getType') || $method->getType() !== 'bank_card') {
+		if (!$method || !method_exists($method, 'getType')) {
 			return null;
 		}
 
+		$method_type = (string) $method->getType();
+		if ($method_type === 'bank_card') {
+			return self::build_bank_card_from_payment($method, $payment, $order);
+		}
+
+		if ($method_type === 'yoo_money') {
+			return self::build_yoo_money_from_payment($method, $payment, $order);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param object $method
+	 * @param object $payment
+	 * @return array<string, mixed>|null
+	 */
+	private static function build_bank_card_from_payment($method, $payment, WC_Order $order): ?array {
 		if (!method_exists($method, 'getCard')) {
 			return null;
 		}
@@ -372,13 +438,55 @@ final class YTR_Saved_Cards {
 			return null;
 		}
 
-		$brand    = method_exists($card, 'getCardType') ? (string) $card->getCardType() : 'Card';
-		$exp_m    = method_exists($card, 'getExpiryMonth') ? (string) $card->getExpiryMonth() : '';
-		$exp_y    = method_exists($card, 'getExpiryYear') ? (string) $card->getExpiryYear() : '';
+		$brand = method_exists($card, 'getCardType') ? (string) $card->getCardType() : 'Card';
+		$exp_m = method_exists($card, 'getExpiryMonth') ? (string) $card->getExpiryMonth() : '';
+		$exp_y = method_exists($card, 'getExpiryYear') ? (string) $card->getExpiryYear() : '';
+
+		return self::finalize_saved_method_entry($method, $payment, $order, array(
+			'brand'     => self::format_brand_for_display(self::normalize_brand($brand)),
+			'last4'     => $last4,
+			'type'      => self::icon_slug_from_brand($brand),
+			'exp_month' => $exp_m,
+			'exp_year'  => $exp_y,
+		));
+	}
+
+	/**
+	 * @param object $method
+	 * @param object $payment
+	 * @return array<string, mixed>|null
+	 */
+	private static function build_yoo_money_from_payment($method, $payment, WC_Order $order): ?array {
+		$account = method_exists($method, 'getAccountNumber') ? (string) $method->getAccountNumber() : '';
+		if ($account === '') {
+			return null;
+		}
+
+		$digits = preg_replace('/\D+/', '', $account);
+		$last4  = strlen($digits) >= 4 ? substr($digits, -4) : $digits;
+		if ($last4 === '') {
+			return null;
+		}
+
+		return self::finalize_saved_method_entry($method, $payment, $order, array(
+			'brand'     => 'YooMoney',
+			'last4'     => $last4,
+			'type'      => 'yoo_money',
+			'exp_month' => '',
+			'exp_year'  => '',
+		));
+	}
+
+	/**
+	 * @param object $method
+	 * @param object $payment
+	 * @param array<string, string> $display
+	 * @return array<string, mixed>|null
+	 */
+	private static function finalize_saved_method_entry($method, $payment, WC_Order $order, array $display): ?array {
 		$saved      = method_exists($method, 'getSaved') && $method->getSaved();
 		$is_binding = class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order);
 
-		// В ЛК попадают только карты, которые ЮKassa пометила saved=true (или привязка в ЛК).
 		if (!$saved && !$is_binding) {
 			return null;
 		}
@@ -389,11 +497,11 @@ final class YTR_Saved_Cards {
 		return array(
 			'id'                => $method_id !== '' ? $method_id : ('pay_' . $payment_id),
 			'payment_method_id' => $method_id,
-			'brand'             => self::format_brand_for_display(self::normalize_brand($brand)),
-			'last4'             => $last4,
-			'type'              => self::icon_slug_from_brand($brand),
-			'exp_month'         => $exp_m,
-			'exp_year'          => $exp_y,
+			'brand'             => (string) ($display['brand'] ?? __('Способ оплаты', 'yoga-tariff-renewal')),
+			'last4'             => (string) ($display['last4'] ?? ''),
+			'type'              => (string) ($display['type'] ?? 'default'),
+			'exp_month'         => (string) ($display['exp_month'] ?? ''),
+			'exp_year'          => (string) ($display['exp_year'] ?? ''),
 			'recurring'         => $saved,
 			'order_id'          => $order->get_id(),
 			'saved_at'          => time(),
@@ -435,6 +543,9 @@ final class YTR_Saved_Cards {
 		}
 		if (str_contains($key, 'maestro')) {
 			return 'maestro';
+		}
+		if (str_contains($key, 'yoo') || str_contains($key, 'money')) {
+			return 'yoo_money';
 		}
 
 		return 'default';

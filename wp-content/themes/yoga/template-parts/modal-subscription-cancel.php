@@ -90,7 +90,42 @@ $brand_icons = array(
 	</div>
 	<div class="delcomm active">
 		<div class="delcomm__succes">
-			<b>Карта удалена</b>
+			<b id="ytr-modal-cancel-subscription-success-text">Карта удалена</b>
+		</div>
+	</div>
+</div>
+
+<div class="modal modal-default modal-default_carddel" id="ytr-modal-unsubscribe" aria-hidden="true">
+	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+	</div>
+	<div class="delcomm active">
+		<div class="delcomm__main">
+			<h3><?php esc_html_e('Отмена подписки', 'yoga'); ?></h3>
+			<p>
+				<?php esc_html_e('Автопродление будет отключено. Доступ к платным материалам сохранится до', 'yoga'); ?>
+				<strong id="ytr-unsubscribe-end-date">—</strong>.
+			</p>
+			<p><?php esc_html_e('После этой даты тариф не продлится автоматически.', 'yoga'); ?></p>
+			<div class="delcomm-buttons">
+				<button type="button" class="btn btn_white" id="ytr-unsubscribe-keep">
+					<span><?php esc_html_e('Оставить подписку', 'yoga'); ?></span>
+				</button>
+				<button type="button" class="btn btn_dark" id="ytr-unsubscribe-confirm">
+					<span><?php esc_html_e('Отменить автопродление', 'yoga'); ?></span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal modal-default modal-default_cardsucces" id="ytr-modal-unsubscribe-success" aria-hidden="true">
+	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+	</div>
+	<div class="delcomm active">
+		<div class="delcomm__succes">
+			<b id="ytr-unsubscribe-success-text"><?php esc_html_e('Автопродление отключено', 'yoga'); ?></b>
 		</div>
 	</div>
 </div>

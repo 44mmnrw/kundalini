@@ -1995,7 +1995,9 @@ p.login-rules a:hover {
 
 #ytr-modal-cancel-subscription.active,
 #ytr-modal-cancel-subscription-confirm.active,
-#ytr-modal-cancel-subscription-success.active {
+#ytr-modal-cancel-subscription-success.active,
+#ytr-modal-unsubscribe.active,
+#ytr-modal-unsubscribe-success.active {
   position: fixed !important;
   left: 50% !important;
   top: 50% !important;
@@ -2007,7 +2009,9 @@ p.login-rules a:hover {
 
 #ytr-modal-cancel-subscription:not(.active),
 #ytr-modal-cancel-subscription-confirm:not(.active),
-#ytr-modal-cancel-subscription-success:not(.active) {
+#ytr-modal-cancel-subscription-success:not(.active),
+#ytr-modal-unsubscribe:not(.active),
+#ytr-modal-unsubscribe-success:not(.active) {
   pointer-events: none !important;
 }
 
