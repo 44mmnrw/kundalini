@@ -101,6 +101,10 @@ final class YTR_YooKassa {
 			: $order->get_checkout_order_received_url();
 
 		try {
+			if (class_exists('YTR_Checkout')) {
+				YTR_Checkout::ensure_order_billing_phone($order);
+			}
+
 			$total = (float) $order->get_total();
 			$builder = \YooKassa\Request\Payments\CreatePaymentRequest::builder()
 				->setAmount(number_format($total, 2, '.', ''))
@@ -131,6 +135,10 @@ final class YTR_YooKassa {
 			}
 
 			$payment_request = $builder->build();
+			if (class_exists('YTR_Checkout')) {
+				YTR_Checkout::apply_merchant_customer_id_to_builder($payment_request, $order);
+			}
+
 			$response        = YooKassaClientFactory::getYooKassaClient()->createPayment($payment_request);
 		} catch (Exception $e) {
 			$empty['message'] = self::humanize_api_error($e->getMessage());

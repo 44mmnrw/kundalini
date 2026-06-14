@@ -141,6 +141,80 @@ if (!function_exists('yoga_yookassa_store_api_error')) {
 if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayEPL')) {
 	class Yoga_YooKassa_Gateway_EPL extends YooKassaGatewayEPL {
 		/**
+		 * @param WC_Order|null $order
+		 */
+		protected function yoga_resolve_save_order($order = null): ?WC_Order {
+			if ($order instanceof WC_Order) {
+				return $order;
+			}
+
+			if (class_exists('YTR_Checkout')) {
+				$resolved = YTR_Checkout::resolve_checkout_order();
+				if ($resolved instanceof WC_Order) {
+					return $resolved;
+				}
+			}
+
+			return null;
+		}
+
+		protected function prepareSubscription() {
+			parent::prepareSubscription();
+			$this->yoga_sync_save_from_checkout($this->yoga_resolve_save_order(null));
+		}
+
+		/**
+		 * @param WC_Order|null $order
+		 */
+		protected function yoga_sync_save_from_checkout($order): void {
+			if (!$order instanceof WC_Order || !class_exists('YTR_Checkout')) {
+				return;
+			}
+
+			YTR_Checkout::ensure_order_billing_phone($order);
+
+			if (YTR_Checkout::order_ready_for_save($order)) {
+				$this->savePaymentMethod = true;
+			}
+		}
+
+		/**
+		 * Галочка «Сохранить карту»: только явно включаем save (false в API не передаём).
+		 *
+		 * @param WC_Order $order
+		 */
+		private function yoga_apply_save_preference(WC_Order $order): void {
+			if (!class_exists('YTR_Checkout')) {
+				return;
+			}
+
+			$this->savePaymentMethod = false;
+			YTR_Checkout::ensure_order_billing_phone($order);
+
+			if (!YTR_Checkout::order_ready_for_save($order)) {
+				return;
+			}
+
+			$type = function_exists('yoga_get_selected_yookassa_payment_type_for_api')
+				? yoga_get_selected_yookassa_payment_type_for_api()
+				: '';
+
+			$redirect_types = function_exists('yoga_yookassa_redirect_confirmation_types')
+				? yoga_yookassa_redirect_confirmation_types()
+				: array();
+
+			if (in_array($type, $redirect_types, true)) {
+				return;
+			}
+
+			if ($type !== '' && !in_array($type, array('bank_card', 'yoo_money'), true)) {
+				return;
+			}
+
+			$this->savePaymentMethod = true;
+		}
+
+		/**
 		 * T-Pay / СБП / SberPay / Alfa Pay: самостоятельная интеграция (redirect + payment_method_data).
 		 *
 		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank#create-payment
@@ -183,6 +257,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		 * @return \YooKassa\Request\Payments\CreatePaymentRequestBuilder
 		 */
 		protected function getBuilder($order) {
+			if ($order instanceof WC_Order) {
+				$this->yoga_apply_save_preference($order);
+			}
+
 			$type = function_exists('yoga_get_selected_yookassa_payment_type_for_api')
 				? yoga_get_selected_yookassa_payment_type_for_api()
 				: '';
@@ -204,6 +282,14 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 				$builder->setCapture(true);
 			}
 
+			if (
+				$order instanceof WC_Order
+				&& class_exists('YTR_Checkout')
+				&& YTR_Checkout::order_ready_for_save($order)
+			) {
+				YTR_Checkout::apply_merchant_customer_id_to_builder($builder, $order);
+			}
+
 			$this->subscribe = $saved_subscribe;
 
 			return $builder;
@@ -214,6 +300,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
 		 */
 		public function createPayment($order) {
+			if ($order instanceof WC_Order && class_exists('YTR_Checkout')) {
+				YTR_Checkout::ensure_order_billing_phone($order);
+			}
+
 			if ($order instanceof WC_Order) {
 				$this->yoga_prepare_manual_payment($order);
 			}
@@ -278,6 +368,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		public function process_payment($order_id) {
 			$order = wc_get_order($order_id);
 			if ($order instanceof WC_Order) {
+				if (class_exists('YTR_Checkout')) {
+					YTR_Checkout::ensure_order_billing_phone($order);
+				}
 				$this->yoga_prepare_manual_payment($order);
 			}
 
@@ -305,6 +398,104 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			WC()->session->__unset('yoga_yookassa_api_error');
 
 			return $result;
+		}
+	}
+}
+
+if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidgetGateway')) {
+	class Yoga_YooKassa_Gateway_Widget extends YooKassaWidgetGateway {
+		/**
+		 * @param WC_Order|null $order
+		 */
+		protected function yoga_resolve_save_order($order = null): ?WC_Order {
+			if ($order instanceof WC_Order) {
+				return $order;
+			}
+
+			if (class_exists('YTR_Checkout')) {
+				$resolved = YTR_Checkout::resolve_checkout_order();
+				if ($resolved instanceof WC_Order) {
+					return $resolved;
+				}
+			}
+
+			return null;
+		}
+
+		protected function prepareSubscription() {
+			parent::prepareSubscription();
+			$this->yoga_sync_save_from_checkout($this->yoga_resolve_save_order(null));
+		}
+
+		/**
+		 * @param WC_Order|null $order
+		 */
+		protected function yoga_sync_save_from_checkout($order): void {
+			if (!$order instanceof WC_Order || !class_exists('YTR_Checkout')) {
+				return;
+			}
+
+			YTR_Checkout::ensure_order_billing_phone($order);
+
+			if (YTR_Checkout::order_ready_for_save($order)) {
+				$this->savePaymentMethod = true;
+			}
+		}
+
+		/**
+		 * @param WC_Order $order
+		 */
+		private function yoga_apply_save_preference(WC_Order $order): void {
+			if (!class_exists('YTR_Checkout')) {
+				return;
+			}
+
+			$this->savePaymentMethod = false;
+			YTR_Checkout::ensure_order_billing_phone($order);
+
+			if (!YTR_Checkout::order_ready_for_save($order)) {
+				return;
+			}
+
+			$this->savePaymentMethod = true;
+		}
+
+		/**
+		 * @param int $order_id
+		 * @return array
+		 */
+		public function process_payment($order_id) {
+			$order = wc_get_order($order_id);
+			if ($order instanceof WC_Order) {
+				$GLOBALS['yoga_yookassa_checkout_order'] = $order;
+				if (class_exists('YTR_Checkout')) {
+					YTR_Checkout::ensure_order_billing_phone($order);
+				}
+			}
+
+			return parent::process_payment($order_id);
+		}
+
+		/**
+		 * @param WC_Order $order
+		 * @return \YooKassa\Request\Payments\CreatePaymentRequestBuilder
+		 */
+		protected function getBuilder($order) {
+			if ($order instanceof WC_Order) {
+				$this->yoga_apply_save_preference($order);
+			}
+
+			$builder = parent::getBuilder($order);
+
+			if (
+				$order instanceof WC_Order
+				&& class_exists('YTR_Checkout')
+				&& YTR_Checkout::order_ready_for_save($order)
+			) {
+				YTR_Checkout::apply_merchant_customer_id_to_builder($builder, $order);
+			}
+
+			return $builder;
 		}
 	}
 }

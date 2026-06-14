@@ -18,16 +18,25 @@ $order_button_text = apply_filters('woocommerce_order_button_text', __('Опла
 $prefill_first = '';
 $prefill_last = '';
 $prefill_email = '';
+$prefill_phone = '';
 if (is_user_logged_in()) {
 	$user = wp_get_current_user();
 	$prefill_first = (string) $user->first_name;
 	$prefill_last = (string) $user->last_name;
 	$prefill_email = (string) $user->user_email;
+	$prefill_phone = (string) get_user_meta($user->ID, 'phone', true);
+	if ($prefill_phone === '') {
+		$prefill_phone = (string) get_user_meta($user->ID, 'billing_phone', true);
+	}
 }
 if (WC()->checkout) {
 	$prefill_first = $prefill_first !== '' ? $prefill_first : (string) WC()->checkout->get_value('billing_first_name');
 	$prefill_last = $prefill_last !== '' ? $prefill_last : (string) WC()->checkout->get_value('billing_last_name');
 	$prefill_email = $prefill_email !== '' ? $prefill_email : (string) WC()->checkout->get_value('billing_email');
+	$prefill_phone = $prefill_phone !== '' ? $prefill_phone : (string) WC()->checkout->get_value('billing_phone');
+}
+if ($prefill_phone === '' && class_exists('YTR_Checkout')) {
+	$prefill_phone = YTR_Checkout::resolve_checkout_phone();
 }
 
 $line_subtotal = (float) $wc_cart->get_subtotal();
@@ -146,6 +155,16 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 										</span>
 										<input type="email" class="yoga-checkout-field__input" name="billing_email" value="<?php echo esc_attr($prefill_email); ?>" placeholder="<?php esc_attr_e('Электронная почта', 'yoga'); ?>" autocomplete="email" required>
 									</label>
+									<label class="yoga-checkout-field yoga-checkout-field_full">
+										<span class="yoga-checkout-field__icon" aria-hidden="true">
+											<svg class="yoga-checkout-field__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+												<path d="M6.5 3h11a2.5 2.5 0 0 1 2.5 2.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13A2.5 2.5 0 0 1 6.5 3Z" stroke="currentColor" stroke-width="1.2"/>
+												<path d="M9 7h6M9 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+											</svg>
+										</span>
+										<input type="tel" class="yoga-checkout-field__input input_phone" name="billing_phone" value="<?php echo esc_attr($prefill_phone); ?>" placeholder="<?php esc_attr_e('Телефон', 'yoga'); ?>" autocomplete="tel" required>
+									</label>
+									<p class="yoga-checkout-field__hint"><?php esc_html_e('Нужен для сохранения карты и автоплатежей.', 'yoga'); ?></p>
 								</div>
 							</div>
 

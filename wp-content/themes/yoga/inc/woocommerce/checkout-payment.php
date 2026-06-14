@@ -127,8 +127,9 @@ if (!function_exists('yoga_render_checkout_payment_block')) {
 				<?php endforeach; ?>
 			</div>
 
+			<input type="hidden" name="yoga_save_payment_method" id="yoga_save_payment_method_hidden" value="1">
 			<label class="yoga-checkout-checkbox">
-				<input type="checkbox" class="yoga-checkout-checkbox__input" name="yoga_save_payment_method" value="1" checked>
+				<input type="checkbox" class="yoga-checkout-checkbox__input yoga-save-payment-method-cb" value="1" checked>
 				<span class="yoga-checkout-checkbox__box" aria-hidden="true">
 					<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.2 5.8 10.5 11.5 3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
 				</span>
