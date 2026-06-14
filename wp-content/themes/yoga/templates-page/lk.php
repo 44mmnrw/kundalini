@@ -416,6 +416,49 @@
 											</div>
 										</div>
 									</div>
+
+									<?php
+									if (class_exists('YTR_LK')) {
+										YTR_LK::maybe_backfill_auto_renew($user_id);
+									}
+									$ytr_auto_renew_active = class_exists('YTR_LK')
+										? YTR_LK::user_has_renewable_payment_setup($user_id)
+										: (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id));
+									if ($current_subscription && $ytr_auto_renew_active) :
+										$subscription_end_label = date('d.m.Y', strtotime($current_subscription['end_date']));
+									?>
+									<div class="lk-settings-part lk-settings-part_cancel">
+										<button
+											type="button"
+											class="btn lk-cancel-subscription-btn"
+											id="ytr-cancel-subscription-btn"
+											data-access-end="<?php echo esc_attr($subscription_end_label); ?>"
+										>
+											<span><?php esc_html_e('Отмена подписки', 'yoga'); ?></span>
+										</button>
+										<p class="lk-settings-item__col-text lk-cancel-subscription-hint">
+											<?php
+											printf(
+												/* translators: %s: subscription end date */
+												esc_html__('Отключит автопродление. Доступ сохранится до %s.', 'yoga'),
+												esc_html($subscription_end_label)
+											);
+											?>
+										</p>
+									</div>
+									<?php elseif ($current_subscription) : ?>
+									<div class="lk-settings-part lk-settings-part_cancel">
+										<p class="lk-settings-item__col-text lk-cancel-subscription-hint">
+											<?php
+											printf(
+												/* translators: %s: subscription end date */
+												esc_html__('Автопродление не настроено. Доступ сохранится до %s.', 'yoga'),
+												esc_html(date('d.m.Y', strtotime($current_subscription['end_date'])))
+											);
+											?>
+										</p>
+									</div>
+									<?php endif; ?>
 									
 									<div class="lk-settings-part">
 										<h4>Способы оплаты</h4>

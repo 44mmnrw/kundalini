@@ -1676,7 +1676,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	
-	$('.modal-default_delcomm .btn_white, .modal-default_carddel .btn_white').not('#ytr-modal-cancel-subscription-back, #ytr-modal-cancel-subscription-keep').click(function () {
+	$('.modal-default_delcomm .btn_white, .modal-default_carddel .btn_white').not('#ytr-modal-cancel-subscription-back, #ytr-modal-cancel-subscription-keep, #ytr-unsubscribe-keep').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
 		$('.modal-filter').removeClass("active");
@@ -1685,7 +1685,7 @@ jQuery(document).ready(function($) {
 		$('.body').removeClass("body-fixed");
 	});
 	
-	$('.modal-default_delcomm .btn_dark, .modal-default_carddel .btn_dark').not('#ytr-modal-cancel-subscription-delete').click(function () {
+	$('.modal-default_delcomm .btn_dark, .modal-default_carddel .btn_dark').not('#ytr-modal-cancel-subscription-delete, #ytr-unsubscribe-confirm').click(function () {
 		$(this).closest('.delcomm').addClass("active");
 	});
 	
@@ -3142,7 +3142,7 @@ jQuery(document).ready(function($) {
     $(window).on('hashchange', applyLkDeepLinkHash);
 
     function ytrResetLkOverlayState() {
-    	$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success')
+    	$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success, #ytr-modal-unsubscribe, #ytr-modal-unsubscribe-success')
     		.removeClass('active')
     		.attr('aria-hidden', 'true');
     	$('#ytr-modal-bind-card').removeClass('active').attr('aria-hidden', 'true');
@@ -3568,7 +3568,7 @@ jQuery(document).ready(function($) {
 
 	function ytrCloseLkModals() {
 		$('.overlay').removeClass('active');
-		$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success').removeClass('active').attr('aria-hidden', 'true');
+		$('#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success, #ytr-modal-unsubscribe, #ytr-modal-unsubscribe-success').removeClass('active').attr('aria-hidden', 'true');
 		$('#ytr-modal-bind-card').removeClass('active').attr('aria-hidden', 'true');
 		$('#ytr-modal-cancel-delcomm').removeClass('active');
 		$('.modal-filter').removeClass('active');
@@ -3723,10 +3723,80 @@ jQuery(document).ready(function($) {
 		var $btn = $(this);
 		$btn.prop('disabled', true);
 
-		ytrRemoveSavedCard(pending.cardId, pending.$cardItem, function() {
+		ytrRemoveSavedCard(pending.cardId, pending.$cardItem, function(response) {
 			$btn.prop('disabled', false);
+			var notice = response.data && response.data.message ? response.data.message : (response.data || 'Карта удалена');
+			$('#ytr-modal-cancel-subscription-success-text').text(notice);
 			$('#ytr-modal-cancel-subscription-confirm').removeClass('active').attr('aria-hidden', 'true');
 			ytrOpenLkModal($('#ytr-modal-cancel-subscription-success'));
+			ytrUpdateCardsCount();
+		});
+	});
+
+	function ytrUpdateCardsCount() {
+		var count = $('.lk-settings-part_cards .lk-settings-item_card').length;
+		$('.lk-settings-item_action[data-target="2"] .lk-settings-item__col-action-numbers span').text(count);
+	}
+
+	function ytrRemoveAutoRenewCardsFromDom() {
+		$('.lk-settings-item_card[data-is-auto="1"]').slideUp(300, function() {
+			$(this).remove();
+			ytrUpdateCardsCount();
+		});
+	}
+
+	$('#ytr-cancel-subscription-btn').on('click', function() {
+		var endDate = String($(this).data('accessEnd') || $(this).attr('data-access-end') || '—');
+		$('#ytr-unsubscribe-end-date').text(endDate);
+		ytrOpenLkModal($('#ytr-modal-unsubscribe'));
+	});
+
+	$('#ytr-unsubscribe-keep, #ytr-modal-unsubscribe .modal-close').on('click', function() {
+		ytrCloseLkModals();
+	});
+
+	$('#ytr-modal-unsubscribe-success .modal-close').on('click', function() {
+		ytrCloseLkModals();
+		location.reload();
+	});
+
+	$('#ytr-unsubscribe-confirm').on('click', function() {
+		if (typeof yoga_ajax === 'undefined') {
+			return;
+		}
+
+		var $btn = $(this);
+		$btn.prop('disabled', true);
+
+		$.ajax({
+			url: yoga_ajax.ajax_url,
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				action: 'ytr_cancel_auto_renew',
+				security: yoga_ajax.nonce
+			},
+			success: function(response) {
+				$btn.prop('disabled', false);
+				if (!response.success) {
+					var err = response.data && response.data.message ? response.data.message : 'Не удалось отменить автопродление';
+					showNotification(err, 'error');
+					return;
+				}
+
+				var message = response.data && response.data.message ? response.data.message : 'Автопродление отключено';
+				$('#ytr-unsubscribe-success-text').text(message);
+				$('#ytr-modal-unsubscribe').removeClass('active').attr('aria-hidden', 'true');
+				$('#ytr-cancel-subscription-btn').closest('.lk-settings-part_cancel').remove();
+				if (response.data && response.data.card_removed) {
+					ytrRemoveAutoRenewCardsFromDom();
+				}
+				ytrOpenLkModal($('#ytr-modal-unsubscribe-success'));
+			},
+			error: function() {
+				$btn.prop('disabled', false);
+				showNotification('Ошибка запроса', 'error');
+			}
 		});
 	});
 	// Показать/скрыть дополнительные статьи

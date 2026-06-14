@@ -14,18 +14,188 @@ final class YTR_LK {
 	}
 
 	public static function cancel_auto_renew(int $user_id): bool {
-		if ($user_id <= 0 || !YTR_User::is_auto_renew_enabled($user_id)) {
-			return false;
+		$result = self::cancel_subscription($user_id);
+
+		return !empty($result['success']);
+	}
+
+	/**
+	 * Отмена автопродления: отключает списания, убирает способ оплаты для автоплатежей из ЛК.
+	 * Доступ к тарифу сохраняется до конца оплаченного периода.
+	 *
+	 * @return array{success:bool,message:string,access_end:string,card_removed:bool}
+	 */
+	public static function cancel_subscription(int $user_id): array {
+		$fail = static function (string $message): array {
+			return array(
+				'success'      => false,
+				'message'      => $message,
+				'access_end'   => '',
+				'card_removed' => false,
+			);
+		};
+
+		if ($user_id <= 0) {
+			return $fail(__('Необходима авторизация', 'yoga-tariff-renewal'));
 		}
+
+		if (!self::user_has_renewable_payment_setup($user_id)) {
+			return $fail(__('Автопродление уже отключено', 'yoga-tariff-renewal'));
+		}
+
+		$access_end = '';
+		if (function_exists('get_current_user_tariff')) {
+			$tariff = get_current_user_tariff($user_id);
+			if (is_array($tariff) && !empty($tariff['access_end_date'])) {
+				$access_end = (string) $tariff['access_end_date'];
+			}
+		}
+
+		$payment_method_id = YTR_User::get_payment_method_id($user_id);
 
 		YTR_User::disable_auto_renew($user_id);
 		update_user_meta($user_id, self::META_CANCELLED_AT, time());
 
-		return true;
+		$card_removed = self::remove_auto_renew_saved_method($user_id, $payment_method_id);
+		if (!$card_removed) {
+			$card_removed = self::remove_all_recurring_saved_methods($user_id);
+		}
+
+		$message = $access_end !== ''
+			? sprintf(
+				/* translators: %s: access end date */
+				__('Автопродление отключено. Доступ сохранится до %s.', 'yoga-tariff-renewal'),
+				$access_end
+			)
+			: __('Автопродление отключено. Доступ сохранится до конца оплаченного периода.', 'yoga-tariff-renewal');
+
+		return array(
+			'success'      => true,
+			'message'      => $message,
+			'access_end'   => $access_end,
+			'card_removed' => $card_removed,
+		);
+	}
+
+	private static function remove_auto_renew_saved_method(int $user_id, string $payment_method_id): bool {
+		if ($user_id <= 0 || $payment_method_id === '' || !class_exists('YTR_Saved_Cards')) {
+			return false;
+		}
+
+		foreach (YTR_Saved_Cards::get_cards($user_id) as $card) {
+			if (!is_array($card)) {
+				continue;
+			}
+
+			$card_id = (string) ($card['id'] ?? '');
+			$card_pm = (string) ($card['payment_method_id'] ?? '');
+
+			if ($card_id === '' || ($card_pm !== $payment_method_id && $card_id !== $payment_method_id)) {
+				continue;
+			}
+
+			return YTR_Saved_Cards::remove_card($user_id, $card_id);
+		}
+
+		return false;
+	}
+
+	private static function remove_all_recurring_saved_methods(int $user_id): bool {
+		if ($user_id <= 0 || !class_exists('YTR_Saved_Cards')) {
+			return false;
+		}
+
+		$removed = false;
+
+		foreach (YTR_Saved_Cards::get_cards($user_id) as $card) {
+			if (!is_array($card) || empty($card['recurring'])) {
+				continue;
+			}
+
+			$card_id = (string) ($card['id'] ?? '');
+			if ($card_id === '') {
+				continue;
+			}
+
+			if (YTR_Saved_Cards::remove_card($user_id, $card_id)) {
+				$removed = true;
+			}
+		}
+
+		return $removed;
 	}
 
 	public static function is_auto_renew_active_for_user(int $user_id): bool {
-		return $user_id > 0 && YTR_User::is_auto_renew_enabled($user_id);
+		return $user_id > 0 && self::user_has_renewable_payment_setup($user_id);
+	}
+
+	/**
+	 * Есть сохранённый в ЮKassa способ оплаты для автопродления (meta или карта в ЛК).
+	 */
+	public static function user_has_renewable_payment_setup(int $user_id): bool {
+		if ($user_id <= 0) {
+			return false;
+		}
+
+		if (YTR_User::is_auto_renew_enabled($user_id)) {
+			return true;
+		}
+
+		if (!class_exists('YTR_Saved_Cards')) {
+			return false;
+		}
+
+		foreach (YTR_Saved_Cards::get_cards($user_id) as $card) {
+			if (!is_array($card) || empty($card['recurring'])) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Восстанавливает флаг автопродления, если в ЛК уже есть recurring-карта от ЮKassa.
+	 */
+	public static function maybe_backfill_auto_renew(int $user_id): void {
+		if ($user_id <= 0 || YTR_User::is_auto_renew_enabled($user_id) || !class_exists('YTR_Saved_Cards')) {
+			return;
+		}
+
+		$product_id = 0;
+		if (function_exists('get_current_user_tariff')) {
+			$tariff = get_current_user_tariff($user_id);
+			if (is_array($tariff) && !empty($tariff['product_id'])) {
+				$product_id = (int) $tariff['product_id'];
+			}
+		}
+
+		if ($product_id <= 0 && class_exists('YTR_Tariff')) {
+			$tariff = YTR_Tariff::get_active_tariff($user_id);
+			if (is_array($tariff) && !empty($tariff['product_id'])) {
+				$product_id = (int) $tariff['product_id'];
+			}
+		}
+
+		if ($product_id <= 0) {
+			return;
+		}
+
+		foreach (YTR_Saved_Cards::get_cards($user_id) as $card) {
+			if (!is_array($card) || empty($card['recurring'])) {
+				continue;
+			}
+
+			$payment_method_id = (string) ($card['payment_method_id'] ?? '');
+			if ($payment_method_id === '') {
+				continue;
+			}
+
+			YTR_User::enable_auto_renew($user_id, $product_id, $payment_method_id);
+			return;
+		}
 	}
 
 	public static function ajax_cancel_auto_renew(): void {
@@ -41,20 +211,22 @@ final class YTR_LK {
 		}
 
 		$user_id = get_current_user_id();
-		if (!self::cancel_auto_renew($user_id)) {
-			wp_send_json_error(array('message' => 'Автопродление уже отключено или не было включено'), 400);
-		}
+		$result  = self::cancel_subscription($user_id);
 
-		$tariff = function_exists('get_current_user_tariff') ? get_current_user_tariff($user_id) : false;
-		$end    = is_array($tariff) && !empty($tariff['access_end_date'])
-			? (string) $tariff['access_end_date']
-			: '';
+		if (empty($result['success'])) {
+			wp_send_json_error(
+				array(
+					'message' => (string) ($result['message'] ?? __('Не удалось отменить автопродление', 'yoga-tariff-renewal')),
+				),
+				400
+			);
+		}
 
 		wp_send_json_success(
 			array(
-				'message' => $end !== ''
-					? sprintf('Автопродление отключено. Доступ сохранится до %s.', $end)
-					: 'Автопродление отключено. Доступ сохранится до конца оплаченного периода.',
+				'message'      => (string) $result['message'],
+				'access_end'   => (string) $result['access_end'],
+				'card_removed' => !empty($result['card_removed']),
 			)
 		);
 	}

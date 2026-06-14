@@ -468,6 +468,52 @@
   pointer-events: auto;
 }
 
+.lk-settings-part_cancel {
+  margin-top: 1.5rem;
+}
+
+.lk-cancel-subscription-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 20rem;
+  min-height: 3.75rem;
+  height: auto;
+  line-height: 1;
+  padding: 0.9375rem 1.25rem;
+  background: var(--color-black);
+  border: 1px solid var(--color-black);
+}
+
+.lk-cancel-subscription-btn span {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1;
+  letter-spacing: -0.154px;
+  text-transform: uppercase;
+  text-align: center;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-weight: normal;
+  white-space: nowrap;
+  color: var(--color-green);
+}
+
+.lk-cancel-subscription-btn:hover {
+  background: var(--color-green);
+  border-color: var(--color-green);
+}
+
+.lk-cancel-subscription-btn:hover span {
+  color: var(--color-black);
+}
+
+.lk-cancel-subscription-hint {
+  margin-top: 0.75rem;
+  opacity: 0.75;
+  font-size: 1rem;
+}
+
 .lk-settings-part {
   width: 100%;
   padding-top: 0.9375rem;}

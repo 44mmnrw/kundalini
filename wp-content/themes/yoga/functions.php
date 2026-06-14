@@ -3316,6 +3316,11 @@ function handle_comment_delete() {
 				return;
 			}
 
+			if ($type === 'yoo_money') {
+				echo '<img class="lk-payment-card-icon lk-payment-card-icon--yoo_money" src="' . esc_url(get_template_directory_uri() . '/assets/svg/YooMoney.svg') . '" alt="YooMoney" width="50" height="16">';
+				return;
+			}
+
 			$icon_url = get_template_directory_uri() . '/assets/img/lk-payment-icon_' . $type . '.png';
 			echo '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr($brand) . '">';
 		}
