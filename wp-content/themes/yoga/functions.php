@@ -2576,10 +2576,17 @@ function handle_comment_delete() {
 			}
 			
 			wp_update_user($user_data);
-			
-			// Обработка загрузки аватара
-			if (!empty($_POST['phone'])) {
-				update_user_meta($user_id, 'phone', sanitize_text_field($_POST['phone']));
+
+			if (isset($_POST['phone'])) {
+				$phone = sanitize_text_field(wp_unslash($_POST['phone']));
+				$digits = preg_replace('/\D+/', '', $phone);
+				if ($phone === '' || strlen($digits) < 10) {
+					delete_user_meta($user_id, 'phone');
+					delete_user_meta($user_id, 'billing_phone');
+				} else {
+					update_user_meta($user_id, 'phone', $phone);
+					update_user_meta($user_id, 'billing_phone', $phone);
+				}
 			}
 			
 			if (!empty($_POST['birthdate'])) {
@@ -2631,7 +2638,7 @@ function handle_comment_delete() {
 				}
 			}
 			
-			wp_send_json_success($result);
+			wp_send_json_success('Данные успешно сохранены');
 			
 			} catch (Exception $e) {
 			wp_send_json_error('Не удалось обновить профиль. Попробуйте еще раз.', 500);
