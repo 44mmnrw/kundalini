@@ -3197,7 +3197,17 @@ jQuery(document).ready(function($) {
 		var formData = new FormData(this);
 		formData.append('action', 'update_user_profile');
 		formData.append('nonce', yoga_ajax.nonce);
-		
+
+		// Пустой или неполный телефон (маска) не отправляем на сервер
+		var $phoneInput = $form.find('input[name="phone"]');
+		if ($phoneInput.length) {
+			var phoneVal = $phoneInput.val() || '';
+			var phoneDigits = phoneVal.replace(/\D/g, '');
+			if (phoneDigits.length < 10) {
+				formData.set('phone', '');
+			}
+		}
+
 		$.ajax({
 			url: yoga_ajax.ajax_url,
 			type: 'POST',

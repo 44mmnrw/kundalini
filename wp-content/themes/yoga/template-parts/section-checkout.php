@@ -162,7 +162,7 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 												<path d="M9 7h6M9 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
 											</svg>
 										</span>
-										<input type="tel" class="yoga-checkout-field__input input_phone" name="billing_phone" value="<?php echo esc_attr($prefill_phone); ?>" placeholder="<?php esc_attr_e('Телефон', 'yoga'); ?>" autocomplete="tel" required>
+										<input type="tel" class="yoga-checkout-field__input input_phone" name="billing_phone" value="<?php echo esc_attr($prefill_phone); ?>" autocomplete="tel" required>
 									</label>
 									<p class="yoga-checkout-field__hint"><?php esc_html_e('Нужен для сохранения карты и автоплатежей.', 'yoga'); ?></p>
 								</div>
