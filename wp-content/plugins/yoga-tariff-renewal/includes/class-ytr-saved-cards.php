@@ -14,6 +14,71 @@ final class YTR_Saved_Cards {
 	public static function init(): void {
 		add_action('woocommerce_payment_complete', array(__CLASS__, 'sync_from_order_id'), 25, 1);
 		add_action('woocommerce_order_status_completed', array(__CLASS__, 'sync_from_order_id'), 25, 1);
+		add_action('woocommerce_order_status_processing', array(__CLASS__, 'sync_from_order_id'), 25, 1);
+		add_action('template_redirect', array(__CLASS__, 'maybe_sync_cards_on_lk'), 5);
+	}
+
+	public static function maybe_sync_cards_on_lk(): void {
+		if (!is_user_logged_in()) {
+			return;
+		}
+
+		$is_lk = is_page_template('templates-page/lk.php')
+			|| (function_exists('is_account_page') && is_account_page())
+			|| is_page('my-account');
+
+		if (!$is_lk) {
+			return;
+		}
+
+		// Только заказы с явным согласием или привязкой в ЛК — не все тарифы подряд.
+		self::sync_cards_for_user(get_current_user_id(), true);
+	}
+
+	/**
+	 * Подтягивает карты из оплаченных заказов ЮKassa в meta для ЛК.
+	 *
+	 * @param bool $opt_in_only Только _ytr_auto_renew_opt_in=yes или привязка карты.
+	 */
+	public static function sync_cards_for_user(int $user_id, bool $opt_in_only = true): void {
+		if ($user_id <= 0) {
+			return;
+		}
+
+		$query_args = array(
+			'customer_id' => $user_id,
+			'limit'       => 20,
+			'orderby'     => 'date',
+			'order'       => 'DESC',
+			'status'      => array('completed', 'processing'),
+		);
+
+		if ($opt_in_only) {
+			$query_args['meta_query'] = array(
+				'relation' => 'OR',
+				array(
+					'key'     => '_ytr_auto_renew_opt_in',
+					'value'   => 'yes',
+					'compare' => '=',
+				),
+				array(
+					'key'     => '_ytr_auto_renew_opt_in',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'   => YTR_Card_Binding::ORDER_META,
+					'value' => 'yes',
+				),
+			);
+		}
+
+		$orders = wc_get_orders($query_args);
+
+		foreach ($orders as $order) {
+			if ($order instanceof WC_Order) {
+				self::sync_from_order($order);
+			}
+		}
 	}
 
 	public static function sync_from_order_id(int $order_id): void {
@@ -33,6 +98,10 @@ final class YTR_Saved_Cards {
 			return false;
 		}
 
+		if (!self::order_allows_card_sync($order)) {
+			return false;
+		}
+
 		$payment_id = (string) $order->get_transaction_id();
 		if ($payment_id === '' || !class_exists('YooKassaClientFactory')) {
 			return false;
@@ -46,10 +115,27 @@ final class YTR_Saved_Cards {
 
 		$card_data = self::build_card_from_payment($payment, $order);
 		if ($card_data === null) {
+			if ($order->get_meta('_ytr_auto_renew_opt_in') === 'yes') {
+				$method = $payment->getPaymentMethod();
+				$saved  = $method && method_exists($method, 'getSaved') && $method->getSaved();
+				if (!$saved) {
+					$order->add_order_note(
+						__(
+							'Карта не сохранена в ЮKassa (save_payment_method). Проверьте телефон на checkout и что в магазине подключены автоплатежи.',
+							'yoga-tariff-renewal'
+						)
+					);
+				}
+			}
 			return false;
 		}
 
 		self::upsert_card($user_id, $card_data);
+
+		if ($order->get_meta('_ytr_auto_renew_opt_in') === '' && !empty($card_data['recurring'])) {
+			$order->update_meta_data('_ytr_auto_renew_opt_in', 'yes');
+			$order->save();
+		}
 
 		return true;
 	}
@@ -76,6 +162,16 @@ final class YTR_Saved_Cards {
 	 * @return array<int, array<string, string>>
 	 */
 	public static function get_cards_for_lk(int $user_id): array {
+		if ($user_id <= 0) {
+			return array();
+		}
+
+		self::prune_cards_from_declined_orders($user_id);
+
+		if (self::get_cards($user_id) === array()) {
+			self::sync_cards_for_user($user_id, true);
+		}
+
 		$auto_method = class_exists('YTR_User') ? YTR_User::get_payment_method_id($user_id) : '';
 		$result      = array();
 
@@ -180,6 +276,76 @@ final class YTR_Saved_Cards {
 	}
 
 	/**
+	 * Убирает из ЛК карты, ошибочно подтянутые с заказов без согласия (opt-in = no).
+	 */
+	public static function prune_cards_from_declined_orders(int $user_id): void {
+		if ($user_id <= 0) {
+			return;
+		}
+
+		$cards = self::get_cards($user_id);
+		if ($cards === array()) {
+			return;
+		}
+
+		$next = array();
+
+		foreach ($cards as $card) {
+			if (!is_array($card)) {
+				continue;
+			}
+
+			$order_id = (int) ($card['order_id'] ?? 0);
+			if ($order_id <= 0) {
+				$next[] = $card;
+				continue;
+			}
+
+			$order = wc_get_order($order_id);
+			if (!$order instanceof WC_Order) {
+				$next[] = $card;
+				continue;
+			}
+
+			if (class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order)) {
+				$next[] = $card;
+				continue;
+			}
+
+			if ($order->get_meta('_ytr_auto_renew_opt_in') === 'yes') {
+				$next[] = $card;
+				continue;
+			}
+
+			// Пустая meta + карта реально saved в ЮKassa — оставляем (meta могла не записаться).
+			if ($order->get_meta('_ytr_auto_renew_opt_in') === '' && !empty($card['recurring'])) {
+				$next[] = $card;
+			}
+		}
+
+		if (count($next) !== count($cards)) {
+			update_user_meta($user_id, self::META_KEY, $next);
+		}
+	}
+
+	private static function order_allows_card_sync(WC_Order $order): bool {
+		if (class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order)) {
+			return true;
+		}
+
+		$opt_in = (string) $order->get_meta('_ytr_auto_renew_opt_in');
+		if ($opt_in === 'no') {
+			return false;
+		}
+		if ($opt_in === 'yes') {
+			return true;
+		}
+
+		// Meta пустая, но ЮKassa сохранила карту — показываем в ЛК (build_card проверит saved=true).
+		return YTR_Tariff::order_contains_tariff($order);
+	}
+
+	/**
 	 * @return array<string, mixed>|null
 	 */
 	private static function build_card_from_payment($payment, WC_Order $order): ?array {
@@ -209,8 +375,15 @@ final class YTR_Saved_Cards {
 		$brand    = method_exists($card, 'getCardType') ? (string) $card->getCardType() : 'Card';
 		$exp_m    = method_exists($card, 'getExpiryMonth') ? (string) $card->getExpiryMonth() : '';
 		$exp_y    = method_exists($card, 'getExpiryYear') ? (string) $card->getExpiryYear() : '';
-		$saved    = method_exists($method, 'getSaved') && $method->getSaved();
-		$method_id = ($saved && method_exists($method, 'getId')) ? (string) $method->getId() : '';
+		$saved      = method_exists($method, 'getSaved') && $method->getSaved();
+		$is_binding = class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order);
+
+		// В ЛК попадают только карты, которые ЮKassa пометила saved=true (или привязка в ЛК).
+		if (!$saved && !$is_binding) {
+			return null;
+		}
+
+		$method_id  = ($saved && method_exists($method, 'getId')) ? (string) $method->getId() : '';
 		$payment_id = method_exists($payment, 'getId') ? (string) $payment->getId() : '';
 
 		return array(

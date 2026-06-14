@@ -113,6 +113,19 @@ function yoga_checkout_billing_placeholders(array $data): array {
 	);
 
 	foreach ($placeholders as $key => $value) {
+		if ($key === 'billing_phone' && is_user_logged_in()) {
+			$user_phone = trim((string) get_user_meta(get_current_user_id(), 'phone', true));
+			if ($user_phone === '') {
+				$user_phone = trim((string) get_user_meta(get_current_user_id(), 'billing_phone', true));
+			}
+			if ($user_phone !== '') {
+				if (empty($data[$key])) {
+					$data[$key] = $user_phone;
+				}
+				continue;
+			}
+		}
+
 		if (empty($data[$key])) {
 			$data[$key] = $value;
 		}

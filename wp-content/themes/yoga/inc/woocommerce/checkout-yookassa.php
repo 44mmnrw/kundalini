@@ -377,7 +377,13 @@ if (!function_exists('yoga_yookassa_apply_gateway_to_posted_checkout_data')) {
 	 * До валидации WC: СБП / T-Pay / SberPay должны идти через EPL (redirect), не виджет.
 	 */
 	function yoga_yookassa_apply_gateway_to_posted_checkout_data(array $data): array {
-		if (!empty($data['yoga_checkout_payment_type']) && function_exists('WC') && WC()->session) {
+		if (!empty($_POST['yoga_checkout_payment_type'])) {
+			$slug = sanitize_key(wp_unslash((string) $_POST['yoga_checkout_payment_type']));
+			$data['yoga_checkout_payment_type'] = $slug;
+			if (function_exists('WC') && WC()->session) {
+				WC()->session->set('yoga_yookassa_payment_type', $slug);
+			}
+		} elseif (!empty($data['yoga_checkout_payment_type']) && function_exists('WC') && WC()->session) {
 			WC()->session->set(
 				'yoga_yookassa_payment_type',
 				sanitize_key((string) $data['yoga_checkout_payment_type'])
@@ -619,6 +625,33 @@ if (!function_exists('yoga_yookassa_bootstrap_widget_gateway')) {
 }
 add_action('init', 'yoga_yookassa_bootstrap_widget_gateway', 20);
 
+if (!function_exists('yoga_yookassa_widget_settings_respect_save_checkbox')) {
+	/**
+	 * Виджет ЮKassa читает save_payment_method из настроек шлюза — подставляем галочку чекаута.
+	 *
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	function yoga_yookassa_widget_settings_respect_save_checkbox($value) {
+		if (!function_exists('is_checkout') || !is_checkout()) {
+			return $value;
+		}
+
+		if (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('order-received')) {
+			return $value;
+		}
+
+		if (!is_array($value) || !class_exists('YTR_Checkout')) {
+			return $value;
+		}
+
+		$value['save_payment_method'] = YTR_Checkout::should_save_payment_method() ? 'yes' : 'no';
+
+		return $value;
+	}
+}
+add_filter('option_woocommerce_yookassa_widget_settings', 'yoga_yookassa_widget_settings_respect_save_checkbox');
+
 if (!function_exists('yoga_yookassa_ensure_widget_gateway_enabled')) {
 	function yoga_yookassa_ensure_widget_gateway_enabled(): void {
 		yoga_yookassa_bootstrap_widget_gateway();
@@ -683,6 +716,9 @@ if (!function_exists('yoga_yookassa_register_payment_gateways')) {
 		foreach ($methods as $index => $class_name) {
 			if ($class_name === 'YooKassaGatewayEPL' && class_exists('Yoga_YooKassa_Gateway_EPL')) {
 				$methods[$index] = 'Yoga_YooKassa_Gateway_EPL';
+			}
+			if ($class_name === 'YooKassaWidgetGateway' && class_exists('Yoga_YooKassa_Gateway_Widget')) {
+				$methods[$index] = 'Yoga_YooKassa_Gateway_Widget';
 			}
 		}
 

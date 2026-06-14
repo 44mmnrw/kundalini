@@ -117,6 +117,9 @@ final class YTR_Card_Binding {
 		$order->set_billing_first_name((string) get_user_meta($user_id, 'billing_first_name', true));
 		$order->set_billing_last_name((string) get_user_meta($user_id, 'billing_last_name', true));
 		$order->set_billing_phone((string) get_user_meta($user_id, 'billing_phone', true));
+		if (class_exists('YTR_Checkout')) {
+			YTR_Checkout::ensure_order_billing_phone($order);
+		}
 		$order->set_payment_method('yookassa_epl');
 		$order->set_payment_method_title(__('ЮKassa (привязка карты)', 'yoga-tariff-renewal'));
 

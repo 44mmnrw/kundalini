@@ -103,8 +103,18 @@
 
 		$wrap.toggle(!isRedirect);
 		if (isRedirect) {
-			$wrap.find('input[name="yoga_save_payment_method"]').prop('checked', false);
+			$wrap.find('.yoga-save-payment-method-cb').prop('checked', false);
 		}
+		syncSavePaymentHidden($form);
+	}
+
+	function syncSavePaymentHidden($form) {
+		var $hidden = $form.find('#yoga_save_payment_method_hidden');
+		var $cb = $form.find('.yoga-save-payment-method-cb');
+		if (!$hidden.length || !$cb.length) {
+			return;
+		}
+		$hidden.val($cb.is(':checked') ? '1' : '0');
 	}
 
 	function init($form) {
@@ -122,6 +132,10 @@
 			syncWidgetMethod($form);
 			syncSavePaymentCheckbox($form);
 		});
+
+		$form.on('change.yogaYooKassaSave', '.yoga-save-payment-method-cb', function () {
+			syncSavePaymentHidden($form);
+		});
 	}
 
 	$(function () {
@@ -136,11 +150,13 @@
 			var $form = getForm();
 			ensureGateway($form);
 			syncWidgetMethod($form);
+			syncSavePaymentHidden($form);
 		});
 
 		$form.on('submit', function () {
 			ensureGateway($form);
 			syncWidgetMethod($form);
+			syncSavePaymentHidden($form);
 		});
 	});
 })(jQuery);

@@ -509,22 +509,28 @@ if (!function_exists('yoga_yookassa_sync_order_payment_status')) {
 			return false;
 		}
 
+		$completed = false;
 		if (!class_exists('YooKassaHandler')) {
-			return (bool) $order->payment_complete($payment_id);
+			$completed = (bool) $order->payment_complete($payment_id);
+		} else {
+			$metadata = $payment->getMetadata();
+			if (
+				$metadata
+				&& method_exists($metadata, 'offsetExists')
+				&& $metadata->offsetExists('subscribe_trial')
+			) {
+				YooKassaHandler::competeSubscribe($order, $payment);
+				$completed = $order->is_paid();
+			} else {
+				$completed = (bool) YooKassaHandler::completeOrder($order, $payment);
+			}
 		}
 
-		$metadata = $payment->getMetadata();
-		if (
-			$metadata
-			&& method_exists($metadata, 'offsetExists')
-			&& $metadata->offsetExists('subscribe_trial')
-		) {
-			YooKassaHandler::competeSubscribe($order, $payment);
-
-			return $order->is_paid();
+		if ($completed && class_exists('YTR_Saved_Cards') && $order->get_meta('_ytr_auto_renew_opt_in') === 'yes') {
+			YTR_Saved_Cards::sync_from_order($order);
 		}
 
-		return (bool) YooKassaHandler::completeOrder($order, $payment);
+		return $completed;
 	}
 }
 
@@ -573,6 +579,8 @@ if (!function_exists('yoga_yookassa_sync_order_before_success_screen')) {
 
 		if (!$order->is_paid()) {
 			yoga_yookassa_sync_order_payment_status($order);
+		} elseif (class_exists('YTR_Saved_Cards') && $order->get_meta('_ytr_auto_renew_opt_in') === 'yes') {
+			YTR_Saved_Cards::sync_from_order($order);
 		}
 
 		if (function_exists('yoga_repair_order_tariff_line_items')) {
