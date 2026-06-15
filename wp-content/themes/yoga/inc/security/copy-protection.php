@@ -34,7 +34,6 @@ if (!function_exists('yoga_copy_protection_selectors')) {
 	function yoga_copy_protection_selectors(): array {
 		$selectors = array(
 			'.praktika-info',
-			'.post-main__content',
 			'.rules',
 			'.question__sub',
 			'.about-text',

@@ -1,5 +1,4 @@
 .yoga-copy-protected .praktika-info,
-.yoga-copy-protected .post-main__content,
 .yoga-copy-protected .rules,
 .yoga-copy-protected .question__sub,
 .yoga-copy-protected .about-text {
@@ -11,7 +10,6 @@
 }
 
 .yoga-copy-protected .praktika-info img,
-.yoga-copy-protected .post-main__content img,
 .yoga-copy-protected .rules img,
 .yoga-copy-protected .question__sub img,
 .yoga-copy-protected .about-text img {
@@ -29,7 +27,6 @@
 }
 
 html.yoga-copy-offline .praktika-info,
-html.yoga-copy-offline .post-main__content,
 html.yoga-copy-offline .rules,
 html.yoga-copy-offline .question__sub,
 html.yoga-copy-offline .about-text {
@@ -37,7 +34,6 @@ html.yoga-copy-offline .about-text {
 }
 
 html.yoga-copy-offline .praktika-info[data-yoga-offline-replaced="1"],
-html.yoga-copy-offline .post-main__content[data-yoga-offline-replaced="1"],
 html.yoga-copy-offline .rules[data-yoga-offline-replaced="1"],
 html.yoga-copy-offline .question__sub[data-yoga-offline-replaced="1"],
 html.yoga-copy-offline .about-text[data-yoga-offline-replaced="1"] {
@@ -57,12 +53,10 @@ html.yoga-copy-offline .about-text[data-yoga-offline-replaced="1"] {
 
 @media print {
 	.yoga-copy-protected .praktika-info,
-	.yoga-copy-protected .post-main__content,
 	.yoga-copy-protected .rules,
 	.yoga-copy-protected .question__sub,
 	.yoga-copy-protected .about-text,
 	html.yoga-copy-printing .praktika-info,
-	html.yoga-copy-printing .post-main__content,
 	html.yoga-copy-printing .rules,
 	html.yoga-copy-printing .question__sub,
 	html.yoga-copy-printing .about-text {
