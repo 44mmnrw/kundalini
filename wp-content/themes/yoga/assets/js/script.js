@@ -545,20 +545,28 @@ jQuery(document).ready(function($) {
 			sections = [];
 			$menuLinks.each(function () {
 				var $link = $(this);
+				var sectionKey = String($link.attr('data-section-key') || '').trim();
 				var href = $link.attr('href');
-				if (!href || href === '#') {
-					return;
+				var $target = $();
+
+				if (sectionKey !== '') {
+					if (sectionKey === 'section-form-questions') {
+						$target = $('#section-form-questions').first();
+					} else {
+						$target = $section.find('.js-praktika-section-marker[data-section-key="' + sectionKey + '"]').first();
+					}
 				}
 
-				var $target = $(href);
-				if (!$target.length) {
-					return;
+				if ((!$target || !$target.length) && href && href !== '#') {
+					$target = $(href);
 				}
 
-				sections.push({
-					$link: $link,
-					$target: $target
-				});
+				if ($target && $target.length) {
+					sections.push({
+						$link: $link,
+						$target: $target
+					});
+				}
 			});
 
 			rebuildSectionOffsets();
@@ -658,12 +666,22 @@ jQuery(document).ready(function($) {
 		}
 
 		$menuLinks.on('click.praktikaMenuSync', function (e) {
+			var sectionKey = String($(this).attr('data-section-key') || '').trim();
 			var href = $(this).attr('href');
-			if (!href || href === '#') {
-				return;
+			var $target = $();
+
+			if (sectionKey !== '') {
+				if (sectionKey === 'section-form-questions') {
+					$target = $('#section-form-questions').first();
+				} else {
+					$target = $section.find('.js-praktika-section-marker[data-section-key="' + sectionKey + '"]').first();
+				}
 			}
 
-			var $target = $(href);
+			if ((!$target || !$target.length) && href && href !== '#') {
+				$target = $(href);
+			}
+
 			if (!$target.length) {
 				return;
 			}

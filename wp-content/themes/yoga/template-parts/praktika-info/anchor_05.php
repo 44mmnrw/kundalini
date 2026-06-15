@@ -31,7 +31,7 @@
 	}
 ?>
 
-<span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
+<span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 <?php foreach ($steps as $index => $step): ?>
 <?php if (isset($step['section_title']) && $step['section_title']): ?>
 <h3 class="mtb"><?php echo esc_html($step['section_title']); ?></h3>

@@ -21,7 +21,7 @@ $paywall_text    = function_exists('yoga_get_section_paywall_text')
 	? yoga_get_section_paywall_text($practice_id)
 	: __('Оформите тариф, чтобы открыть этот раздел практики.', 'yoga');
 ?>
-<span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
+<span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 <div class="praktika-section-paywall">
 	<h3 class="praktika-section-paywall__title mtb"><?php echo esc_html($section_title); ?></h3>
 	<div class="praktika-section-paywall__card" role="status" aria-live="polite">
