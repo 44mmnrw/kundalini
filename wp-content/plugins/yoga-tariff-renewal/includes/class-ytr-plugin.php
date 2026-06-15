@@ -13,7 +13,6 @@ require_once YTR_PLUGIN_DIR . 'includes/class-ytr-orders.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-renewal.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-cron.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-admin.php';
-require_once YTR_PLUGIN_DIR . 'includes/class-ytr-changelog.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-stub.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-card-binding.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-lk.php';
@@ -87,6 +86,10 @@ final class YTR_Plugin {
 
 		$user_id = (int) $order->get_customer_id();
 		if ($user_id <= 0) {
+			return;
+		}
+
+		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
 			return;
 		}
 

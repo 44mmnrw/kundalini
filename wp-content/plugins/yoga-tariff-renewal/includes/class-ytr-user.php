@@ -12,7 +12,24 @@ final class YTR_User {
 	public const META_LAST_RENEWAL_TRY    = '_ytr_last_renewal_attempt';
 
 	public static function is_auto_renew_enabled(int $user_id): bool {
-		return get_user_meta($user_id, self::META_AUTO_RENEW, true) === 'yes';
+		if (get_user_meta($user_id, self::META_AUTO_RENEW, true) !== 'yes') {
+			return false;
+		}
+
+		if (self::get_payment_method_id($user_id) === '') {
+			return false;
+		}
+
+		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function has_auto_renew_meta(int $user_id): bool {
+		return get_user_meta($user_id, self::META_AUTO_RENEW, true) === 'yes'
+			|| self::get_payment_method_id($user_id) !== '';
 	}
 
 	public static function enable_auto_renew(int $user_id, int $product_id, string $payment_method_id): void {
@@ -20,11 +37,19 @@ final class YTR_User {
 		update_user_meta($user_id, self::META_TARIFF_PRODUCT_ID, $product_id);
 		update_user_meta($user_id, self::META_PAYMENT_METHOD_ID, sanitize_text_field($payment_method_id));
 		update_user_meta($user_id, self::META_RENEWAL_FAILURES, 0);
+
+		if (class_exists('YTR_LK')) {
+			delete_user_meta($user_id, YTR_LK::META_CANCELLED_AT);
+		}
 	}
 
-	public static function disable_auto_renew(int $user_id): void {
+	public static function disable_auto_renew(int $user_id, bool $mark_cancelled = false): void {
 		update_user_meta($user_id, self::META_AUTO_RENEW, 'no');
 		delete_user_meta($user_id, self::META_PAYMENT_METHOD_ID);
+
+		if ($mark_cancelled && class_exists('YTR_LK')) {
+			update_user_meta($user_id, YTR_LK::META_CANCELLED_AT, time());
+		}
 	}
 
 	public static function get_payment_method_id(int $user_id): string {

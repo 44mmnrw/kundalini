@@ -38,6 +38,10 @@ final class YTR_Renewal {
 		}
 
 		foreach (YTR_User::get_auto_renew_user_ids() as $user_id) {
+			if (class_exists('YTR_Saved_Cards')) {
+				YTR_Saved_Cards::sync_renewal_state($user_id);
+			}
+
 			if (!self::user_needs_renewal($user_id)) {
 				++$stats['skipped'];
 				continue;
@@ -62,6 +66,10 @@ final class YTR_Renewal {
 	}
 
 	public static function user_needs_renewal(int $user_id): bool {
+		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
+			return false;
+		}
+
 		if (!YTR_User::is_auto_renew_enabled($user_id)) {
 			return false;
 		}
@@ -89,6 +97,23 @@ final class YTR_Renewal {
 	 * @return array{success:bool, message:string, order_id:int}
 	 */
 	public static function renew_user(int $user_id): array {
+		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
+			YTR_User::disable_auto_renew($user_id);
+			return array(
+				'success'  => false,
+				'message'  => __('Автопродление отключено пользователем', 'yoga-tariff-renewal'),
+				'order_id' => 0,
+			);
+		}
+
+		if (!self::user_needs_renewal($user_id)) {
+			return array(
+				'success'  => false,
+				'message'  => __('Автопродление не активно', 'yoga-tariff-renewal'),
+				'order_id' => 0,
+			);
+		}
+
 		YTR_User::record_renewal_attempt($user_id);
 
 		$product_id = YTR_User::get_tariff_product_id($user_id);
