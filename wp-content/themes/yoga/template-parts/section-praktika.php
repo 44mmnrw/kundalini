@@ -258,14 +258,15 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                                         <span><?php echo esc_html__('Скачать протокол практики', 'yoga'); ?></span>
                                     </a>
                                         <?php else :
-                                            $disabled_label = $already_downloaded
-                                                ? yoga_get_practice_already_downloaded_message()
-                                                : __('Скачать протокол практики', 'yoga');
+                                            $limit_reached = $downloads_remaining !== null && (int) $downloads_remaining <= 0;
+                                            $disabled_label = $limit_reached
+                                                ? __('Скачать протокол практики', 'yoga')
+                                                : yoga_get_practice_already_downloaded_message();
                                             ?>
                                     <span class="btn praktika-download__btn" aria-disabled="true">
                                         <span><?php echo esc_html($disabled_label); ?></span>
                                     </span>
-                                            <?php if (!$already_downloaded) : ?>
+                                            <?php if ($limit_reached) : ?>
                                     <p class="praktika-download__note"><?php echo esc_html(yoga_get_download_limit_exceeded_message()); ?></p>
                                             <?php endif; ?>
                                         <?php endif; ?>
