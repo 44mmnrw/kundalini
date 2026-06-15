@@ -634,7 +634,18 @@ jQuery(document).ready(function($) {
 				return;
 			}
 
-			var probeY = ($(window).scrollTop() || 0) + getScrollOffset() + 20;
+			var scrollTop = $(window).scrollTop() || 0;
+			var viewportHeight = $(window).height() || 0;
+			var documentHeight = $(document).height() || 0;
+			var probeY = scrollTop + getScrollOffset() + 20;
+
+			// На самом низу страницы всегда активируем последний пункт
+			// (иначе высокий offset шапки может не дать "дотянуться" до последнего якоря).
+			if (scrollTop + viewportHeight >= documentHeight - 4) {
+				setActive(sections.length - 1);
+				return;
+			}
+
 			var nextIndex = resolveIndexByProbe(probeY);
 
 			setActive(nextIndex);
