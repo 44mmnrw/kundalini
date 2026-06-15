@@ -421,6 +421,17 @@
   color: var(--color-black);
   opacity: 0.75;
 }
+.praktika-download__remaining {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--color-black);
+  opacity: 0.75;
+}
+.praktika-download__remaining span {
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
 .praktika-menu-anchor {
   height: 1px;
   overflow: hidden;
