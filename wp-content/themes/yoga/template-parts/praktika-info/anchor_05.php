@@ -1,11 +1,17 @@
 <?php
 	/**
 	 * Шаблон: якорь 05 — техника выполнения
+	 *
+	 * @var string $anchor_id
 	 */
 	
 	if (!isset($section['steps']) || empty($section['steps'])) {
 		return;
 	}
+
+	$anchor_id = isset($anchor_id) && $anchor_id !== ''
+		? (string) $anchor_id
+		: 'anchor_05';
 	
 	$steps = $section['steps'];
 
@@ -25,7 +31,7 @@
 	}
 ?>
 
-<span class="praktika-menu-anchor" id="anchor_05"></span>
+<span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
 <?php foreach ($steps as $index => $step): ?>
 <?php if (isset($step['section_title']) && $step['section_title']): ?>
 <h3 class="mtb"><?php echo esc_html($step['section_title']); ?></h3>
