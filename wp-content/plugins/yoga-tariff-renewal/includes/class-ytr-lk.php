@@ -9,8 +9,41 @@ final class YTR_LK {
 
 	public static function init(): void {
 		add_action('wp_ajax_ytr_cancel_auto_renew', array(__CLASS__, 'ajax_cancel_auto_renew'));
+		add_action('wp_ajax_ytr_remove_payment_method', array(__CLASS__, 'ajax_remove_payment_method'));
+		add_action('wp_ajax_remove_payment_method', array(__CLASS__, 'ajax_remove_payment_method'), 5);
 		add_action('wp_ajax_ytr_bind_card_start', array(__CLASS__, 'ajax_bind_card_start'));
 		add_action('wp_ajax_add_payment_method', array(__CLASS__, 'ajax_bind_card_start'), 5);
+		add_action('wp_enqueue_scripts', array(__CLASS__, 'enqueue_assets'), 35);
+	}
+
+	public static function enqueue_assets(): void {
+		$is_lk = is_page_template('templates-page/lk.php')
+			|| is_page('my-account')
+			|| (function_exists('is_account_page') && is_account_page());
+
+		if (!$is_lk) {
+			return;
+		}
+
+		$js_path = YTR_PLUGIN_DIR . 'assets/js/ytr-lk-modals.js';
+		$js_ver  = file_exists($js_path) ? (string) filemtime($js_path) : YTR_VERSION;
+
+		wp_enqueue_script(
+			'ytr-lk-modals',
+			YTR_PLUGIN_URL . 'assets/js/ytr-lk-modals.js',
+			array('jquery'),
+			$js_ver,
+			true
+		);
+
+		wp_localize_script(
+			'ytr-lk-modals',
+			'ytrLkModals',
+			array(
+				'ajaxUrl' => admin_url('admin-ajax.php'),
+				'nonce'   => wp_create_nonce('yoga_ajax_nonce'),
+			)
+		);
 	}
 
 	public static function was_auto_renew_cancelled(int $user_id): bool {
@@ -94,6 +127,13 @@ final class YTR_LK {
 				$access_end = (string) $tariff['access_end_date'];
 			}
 		}
+		if ($access_end === '' && function_exists('get_user_active_subscription')) {
+			$subscription = get_user_active_subscription();
+			if (is_array($subscription) && !empty($subscription['end_date'])) {
+				$timestamp = strtotime((string) $subscription['end_date']);
+				$access_end = $timestamp ? date('d.m.Y', $timestamp) : (string) $subscription['end_date'];
+			}
+		}
 
 		$payment_method_id = YTR_User::get_payment_method_id($user_id);
 
@@ -103,18 +143,21 @@ final class YTR_LK {
 		if (!$card_removed) {
 			$card_removed = self::remove_all_recurring_saved_methods($user_id);
 		}
+		if (!$card_removed) {
+			$card_removed = self::remove_all_saved_cards($user_id);
+		}
 
 		$message = $access_end !== ''
 			? sprintf(
 				/* translators: %s: access end date */
 				__(
-					'Автопродление отключено. Доступ сохранится до %s — тариф не продлится автоматически.',
+					'Автопродление отключено. Доступ сохранится до %s. Тариф не продлится автоматически.',
 					'yoga-tariff-renewal'
 				),
 				$access_end
 			)
 			: __(
-				'Автопродление отключено. Доступ сохранится до конца оплаченного периода — тариф не продлится автоматически.',
+				'Автопродление отключено. Доступ сохранится до конца оплаченного периода. Тариф не продлится автоматически.',
 				'yoga-tariff-renewal'
 			);
 
@@ -174,6 +217,31 @@ final class YTR_LK {
 		return $removed;
 	}
 
+	private static function remove_all_saved_cards(int $user_id): bool {
+		if ($user_id <= 0 || !class_exists('YTR_Saved_Cards')) {
+			return false;
+		}
+
+		$removed = false;
+
+		foreach (YTR_Saved_Cards::get_cards($user_id) as $card) {
+			if (!is_array($card)) {
+				continue;
+			}
+
+			$card_id = (string) ($card['id'] ?? '');
+			if ($card_id === '') {
+				continue;
+			}
+
+			if (YTR_Saved_Cards::remove_card($user_id, $card_id)) {
+				$removed = true;
+			}
+		}
+
+		return $removed;
+	}
+
 	public static function is_auto_renew_active_for_user(int $user_id): bool {
 		return $user_id > 0 && self::user_has_renewable_payment_setup($user_id);
 	}
@@ -186,23 +254,11 @@ final class YTR_LK {
 			return false;
 		}
 
-		if (YTR_User::is_auto_renew_enabled($user_id)) {
-			return true;
-		}
-
-		if (!class_exists('YTR_Saved_Cards')) {
+		if (self::was_auto_renew_cancelled($user_id)) {
 			return false;
 		}
 
-		foreach (YTR_Saved_Cards::get_cards($user_id) as $card) {
-			if (!is_array($card) || empty($card['recurring'])) {
-				continue;
-			}
-
-			return true;
-		}
-
-		return false;
+		return YTR_User::is_auto_renew_enabled($user_id);
 	}
 
 	/**
@@ -282,6 +338,41 @@ final class YTR_LK {
 				'card_removed' => !empty($result['card_removed']),
 			)
 		);
+	}
+
+	public static function ajax_remove_payment_method(): void {
+		if (!is_user_logged_in()) {
+			wp_send_json_error(array('message' => __('Необходима авторизация', 'yoga-tariff-renewal')), 401);
+		}
+
+		if (
+			!isset($_POST['security'])
+			|| (
+				!wp_verify_nonce(sanitize_text_field(wp_unslash((string) $_POST['security'])), 'yoga_ajax_nonce')
+				&& !wp_verify_nonce(sanitize_text_field(wp_unslash((string) $_POST['security'])), 'remove_payment_method')
+			)
+		) {
+			wp_send_json_error(array('message' => __('Ошибка безопасности', 'yoga-tariff-renewal')), 403);
+		}
+
+		if (!class_exists('YTR_Saved_Cards')) {
+			wp_send_json_error(array('message' => __('Модуль карт недоступен', 'yoga-tariff-renewal')), 500);
+		}
+
+		$user_id = get_current_user_id();
+		$card_id = sanitize_text_field(wp_unslash((string) ($_POST['card_id'] ?? '')));
+		$had_auto_renew = class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id);
+
+		if (!YTR_Saved_Cards::remove_card($user_id, $card_id)) {
+			wp_send_json_error(array('message' => __('Карта не найдена', 'yoga-tariff-renewal')), 404);
+		}
+
+		$message = __('Карта удалена', 'yoga-tariff-renewal');
+		if ($had_auto_renew && class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id)) {
+			$message = __('Карта удалена. Автопродление отключено. Доступ сохранится до конца оплаченного периода.', 'yoga-tariff-renewal');
+		}
+
+		wp_send_json_success(array('message' => $message));
 	}
 
 	public static function ajax_bind_card_start(): void {

@@ -418,9 +418,6 @@
 									</div>
 
 									<?php
-									if (class_exists('YTR_LK')) {
-										YTR_LK::maybe_backfill_auto_renew($user_id);
-									}
 									$ytr_auto_renew_active = class_exists('YTR_LK')
 										? YTR_LK::user_has_renewable_payment_setup($user_id)
 										: (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id));
