@@ -637,7 +637,11 @@ jQuery(document).ready(function($) {
 			var scrollTop = $(window).scrollTop() || 0;
 			var viewportHeight = $(window).height() || 0;
 			var documentHeight = $(document).height() || 0;
-			var probeY = scrollTop + getScrollOffset() + 20;
+			var headerProbe = getScrollOffset() + 20;
+			// Смещаем точку активации глубже в экран, чтобы секция
+			// переключалась не "по касанию шапки", а когда реально вошла в viewport.
+			var viewportProbe = Math.floor(viewportHeight * 0.35);
+			var probeY = scrollTop + Math.max(headerProbe, viewportProbe);
 
 			// На самом низу страницы всегда активируем последний пункт
 			// (иначе высокий offset шапки может не дать "дотянуться" до последнего якоря).

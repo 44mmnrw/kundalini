@@ -213,6 +213,16 @@ final class YTR_Saved_Cards {
 			return;
 		}
 
+		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
+			$cancelled_at = (int) get_user_meta($user_id, YTR_LK::META_CANCELLED_AT, true);
+			$created_at   = $order->get_date_created();
+
+			// После ручной отмены не включаем автопродление от старых заказов.
+			if ($cancelled_at <= 0 || !$created_at || $created_at->getTimestamp() <= $cancelled_at) {
+				return;
+			}
+		}
+
 		$product_id = YTR_Tariff::get_tariff_product_id_from_order($order);
 		if ($product_id <= 0) {
 			$tariff = YTR_Tariff::get_active_tariff($user_id);
