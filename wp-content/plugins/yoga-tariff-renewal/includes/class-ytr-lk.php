@@ -13,6 +13,47 @@ final class YTR_LK {
 		add_action('wp_ajax_add_payment_method', array(__CLASS__, 'ajax_bind_card_start'), 5);
 	}
 
+	public static function was_auto_renew_cancelled(int $user_id): bool {
+		if ($user_id <= 0) {
+			return false;
+		}
+
+		return (string) get_user_meta($user_id, self::META_CANCELLED_AT, true) !== '';
+	}
+
+	/**
+	 * Текст статуса автопродления для блока в настройках подписки.
+	 */
+	public static function get_auto_renew_status_text(int $user_id, string $access_end_date): string {
+		if ($user_id <= 0 || $access_end_date === '') {
+			return '';
+		}
+
+		if (self::user_has_renewable_payment_setup($user_id)) {
+			return '';
+		}
+
+		if (self::was_auto_renew_cancelled($user_id) || (class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id))) {
+			return sprintf(
+				/* translators: %s: access end date */
+				__(
+					'Доступ сохранится до %s. Тариф не продлится автоматически, списаний не будет.',
+					'yoga-tariff-renewal'
+				),
+				$access_end_date
+			);
+		}
+
+		return sprintf(
+			/* translators: %s: access end date */
+			__(
+				'Доступ сохранится до %s. Чтобы включить автопродление, оплатите тариф с галочкой сохранения способа оплаты.',
+				'yoga-tariff-renewal'
+			),
+			$access_end_date
+		);
+	}
+
 	public static function cancel_auto_renew(int $user_id): bool {
 		$result = self::cancel_subscription($user_id);
 
@@ -64,10 +105,16 @@ final class YTR_LK {
 		$message = $access_end !== ''
 			? sprintf(
 				/* translators: %s: access end date */
-				__('Автопродление отключено. Доступ сохранится до %s.', 'yoga-tariff-renewal'),
+				__(
+					'Автопродление отключено. Доступ сохранится до %s — тариф не продлится автоматически.',
+					'yoga-tariff-renewal'
+				),
 				$access_end
 			)
-			: __('Автопродление отключено. Доступ сохранится до конца оплаченного периода.', 'yoga-tariff-renewal');
+			: __(
+				'Автопродление отключено. Доступ сохранится до конца оплаченного периода — тариф не продлится автоматически.',
+				'yoga-tariff-renewal'
+			);
 
 		return array(
 			'success'      => true,
@@ -161,6 +208,10 @@ final class YTR_LK {
 	 */
 	public static function maybe_backfill_auto_renew(int $user_id): void {
 		if ($user_id <= 0 || YTR_User::is_auto_renew_enabled($user_id) || !class_exists('YTR_Saved_Cards')) {
+			return;
+		}
+
+		if (self::was_auto_renew_cancelled($user_id)) {
 			return;
 		}
 

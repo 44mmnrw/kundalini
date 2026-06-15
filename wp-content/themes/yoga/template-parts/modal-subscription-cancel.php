@@ -126,6 +126,9 @@ $brand_icons = array(
 	<div class="delcomm active">
 		<div class="delcomm__succes">
 			<b id="ytr-unsubscribe-success-text"><?php esc_html_e('Автопродление отключено', 'yoga'); ?></b>
+			<p id="ytr-unsubscribe-success-hint" class="ytr-unsubscribe-success-hint">
+				<?php esc_html_e('Следующее списание не будет выполнено. Доступ сохранится до конца оплаченного периода.', 'yoga'); ?>
+			</p>
 		</div>
 	</div>
 </div>
