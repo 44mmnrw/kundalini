@@ -434,7 +434,7 @@
 											id="ytr-cancel-subscription-btn"
 											data-access-end="<?php echo esc_attr($subscription_end_label); ?>"
 										>
-											<span><?php esc_html_e('Отмена подписки', 'yoga'); ?></span>
+											<span><?php esc_html_e('Отменить автопродление', 'yoga'); ?></span>
 										</button>
 										<p class="lk-settings-item__col-text lk-cancel-subscription-hint">
 											<?php
