@@ -2015,6 +2015,32 @@ p.login-rules a:hover {
   pointer-events: none !important;
 }
 
+#ytr-modal-unsubscribe .delcomm-buttons {
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+#ytr-modal-unsubscribe .delcomm-buttons .btn,
+#ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_dark,
+#ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_white {
+  width: calc(50% - 0.3125rem);
+  height: auto;
+  min-height: 3.25rem;
+  line-height: 1.2;
+  padding: 0.625rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#ytr-modal-unsubscribe .delcomm-buttons .btn span {
+  display: block;
+  white-space: normal;
+  line-height: 1.2;
+  text-align: center;
+}
+
 #ytr-modal-cancel-subscription-success .delcomm {
   min-height: 18.4375rem;
 }
@@ -2117,6 +2143,11 @@ p.login-rules a:hover {
     width: 100%;
   }
   .modal-default_carddel .delcomm .btn_white {
+    width: 100%;
+  }
+  #ytr-modal-unsubscribe .delcomm-buttons .btn,
+  #ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_dark,
+  #ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_white {
     width: 100%;
   }
   .modal-default_cardsucces .delcomm {
