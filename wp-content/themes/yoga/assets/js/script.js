@@ -519,19 +519,20 @@ jQuery(document).ready(function($) {
 	function initPraktikaMenuSync() {
 		var $section = $('.section-praktika');
 		var $menu = $section.find('.praktika-menu').first();
-		var $menuFixed = $menu.find('.praktika-fixed').first();
 		var $menuLinks = $menu.find('nav ul li a.ref[href^="#"]');
+		var $content = $section.find('.praktika-info').first();
 
-		if (!$section.length || !$menu.length || !$menuFixed.length || !$menuLinks.length) {
+		if (!$section.length || !$menu.length || !$menuLinks.length) {
 			return;
 		}
 
 		var sections = [];
+		var sectionOffsets = [];
 		var currentActive = -1;
 		var rafScheduled = false;
 		var suppressSpyUntil = 0;
-		var desktopBreakpoint = 1280;
-		var stickyTopOffset = 105;
+		var recalcRafScheduled = false;
+		var contentResizeObserver = null;
 
 		function getScrollOffset() {
 			var $header = $('.header').first();
@@ -559,6 +560,15 @@ jQuery(document).ready(function($) {
 					$target: $target
 				});
 			});
+
+			rebuildSectionOffsets();
+		}
+
+		function rebuildSectionOffsets() {
+			sectionOffsets = [];
+			for (var i = 0; i < sections.length; i++) {
+				sectionOffsets.push(sections[i].$target.offset().top || 0);
+			}
 		}
 
 		function setActive(index) {
@@ -576,6 +586,36 @@ jQuery(document).ready(function($) {
 			sections[next].$link.addClass('active');
 		}
 
+		function resolveIndexByProbe(probeY) {
+			if (!sectionOffsets.length) {
+				return 0;
+			}
+
+			if (probeY <= sectionOffsets[0]) {
+				return 0;
+			}
+
+			var last = sectionOffsets.length - 1;
+			if (probeY >= sectionOffsets[last]) {
+				return last;
+			}
+
+			var lo = 0;
+			var hi = last;
+			var mid = 0;
+
+			while (lo <= hi) {
+				mid = Math.floor((lo + hi) / 2);
+				if (sectionOffsets[mid] <= probeY) {
+					lo = mid + 1;
+				} else {
+					hi = mid - 1;
+				}
+			}
+
+			return Math.max(0, hi);
+		}
+
 		function resolveActiveByScroll() {
 			if (!sections.length) {
 				return;
@@ -587,91 +627,14 @@ jQuery(document).ready(function($) {
 			}
 
 			var probeY = ($(window).scrollTop() || 0) + getScrollOffset() + 20;
-			var nextIndex = 0;
-
-			for (var i = 0; i < sections.length; i++) {
-				var top = sections[i].$target.offset().top;
-				if (probeY >= top) {
-					nextIndex = i;
-				} else {
-					break;
-				}
-			}
+			var nextIndex = resolveIndexByProbe(probeY);
 
 			setActive(nextIndex);
-		}
-
-		function updateSticky() {
-			if ($(window).width() < desktopBreakpoint) {
-				$menuFixed.css({
-					position: '',
-					top: '',
-					left: '',
-					right: '',
-					width: '',
-					transform: ''
-				});
-				return;
-			}
-
-			var menuTop = $menu.offset().top;
-			var menuHeight = $menu.outerHeight();
-			var fixedHeight = $menuFixed.outerHeight();
-			var scrollTop = $(window).scrollTop() || 0;
-
-			if (!menuTop || !menuHeight || !fixedHeight || fixedHeight >= menuHeight) {
-				$menuFixed.css({
-					position: 'absolute',
-					top: 0,
-					left: '',
-					right: '',
-					width: '',
-					transform: 'none'
-				});
-				return;
-			}
-
-			var startPin = menuTop - stickyTopOffset;
-			var stopPin = menuTop + menuHeight - fixedHeight - stickyTopOffset;
-
-			if (scrollTop <= startPin) {
-				$menuFixed.css({
-					position: 'absolute',
-					top: 0,
-					left: '',
-					right: '',
-					width: '',
-					transform: 'none'
-				});
-				return;
-			}
-
-			if (scrollTop >= stopPin) {
-				$menuFixed.css({
-					position: 'absolute',
-					top: (menuHeight - fixedHeight) + 'px',
-					left: '',
-					right: '',
-					width: '',
-					transform: 'none'
-				});
-				return;
-			}
-
-			$menuFixed.css({
-				position: 'fixed',
-				top: stickyTopOffset + 'px',
-				left: $menu.offset().left + 'px',
-				right: 'auto',
-				width: $menu.outerWidth() + 'px',
-				transform: 'none'
-			});
 		}
 
 		function onFrame() {
 			rafScheduled = false;
 			resolveActiveByScroll();
-			updateSticky();
 		}
 
 		function requestUpdate() {
@@ -680,6 +643,18 @@ jQuery(document).ready(function($) {
 			}
 			rafScheduled = true;
 			window.requestAnimationFrame(onFrame);
+		}
+
+		function requestRecalc() {
+			if (recalcRafScheduled) {
+				return;
+			}
+			recalcRafScheduled = true;
+			window.requestAnimationFrame(function () {
+				recalcRafScheduled = false;
+				rebuildSectionOffsets();
+				requestUpdate();
+			});
 		}
 
 		$menuLinks.on('click.praktikaMenuSync', function (e) {
@@ -707,15 +682,28 @@ jQuery(document).ready(function($) {
 			}
 
 			var destination = Math.max(0, $target.offset().top - getScrollOffset());
-			suppressSpyUntil = Date.now() + 450;
-			$('html, body').stop(true).animate({ scrollTop: destination }, 420);
+			var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			var duration = reduceMotion ? 0 : 420;
+			suppressSpyUntil = Date.now() + duration + 80;
+			$('html, body').stop(true).animate({ scrollTop: destination }, duration);
 		});
 
 		rebuildSections();
 		resolveActiveByScroll();
-		updateSticky();
 
-		$(window).on('scroll.praktikaMenuSync resize.praktikaMenuSync orientationchange.praktikaMenuSync load.praktikaMenuSync', requestUpdate);
+		$(window).on('scroll.praktikaMenuSync resize.praktikaMenuSync orientationchange.praktikaMenuSync load.praktikaMenuSync', function (e) {
+			if (e.type !== 'scroll') {
+				requestRecalc();
+			}
+			requestUpdate();
+		});
+
+		if (window.ResizeObserver && $content.length) {
+			contentResizeObserver = new ResizeObserver(function () {
+				requestRecalc();
+			});
+			contentResizeObserver.observe($content[0]);
+		}
 	}
 
 	initPraktikaMenuSync();

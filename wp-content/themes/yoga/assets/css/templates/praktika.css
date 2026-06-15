@@ -360,8 +360,8 @@
 }
 
 .praktika-fixed {
-  position: absolute;
-  top: 0;
+  position: sticky;
+  top: 6.5625rem;
   left: 0;
   right: 0;
   width: 100%;
