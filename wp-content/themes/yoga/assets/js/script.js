@@ -516,34 +516,32 @@ jQuery(document).ready(function($) {
 		$(this).find('.praktika-fav__icon img').toggleClass("active");
 	}); */
 	
-	$(".praktika-menu nav ul li a").click(function () {
-		var elementClick = $(this).attr("href");
-		var $target = $(elementClick);
-		if (!$target.length) {
-			return false;
-		}
+	function initPraktikaMenuSync() {
+		var $section = $('.section-praktika');
+		var $menu = $section.find('.praktika-menu').first();
+		var $menuFixed = $menu.find('.praktika-fixed').first();
+		var $menuLinks = $menu.find('nav ul li a.ref[href^="#"]');
 
-		var destination = $target.offset().top - 80;
-		$('html, body').animate({ scrollTop: destination }, 800);
-		return false;
-	});
-
-	function initPraktikaMenuScrollSpy() {
-		var $menuLinks = $('.praktika-menu nav ul li a.ref[href^="#"]');
-		if (!$menuLinks.length) {
+		if (!$section.length || !$menu.length || !$menuFixed.length || !$menuLinks.length) {
 			return;
 		}
 
-		var trackedSections = [];
-		var topOffset = 120;
-		var currentActiveIndex = 0;
-		var pendingActiveIndex = null;
-		var pendingStartedAt = 0;
-		var switchDelayMs = 500;
+		var sections = [];
+		var currentActive = -1;
+		var rafScheduled = false;
+		var suppressSpyUntil = 0;
+		var desktopBreakpoint = 1280;
+		var stickyTopOffset = 105;
 
-		function rebuildTrackedSections() {
-			trackedSections = [];
+		function getScrollOffset() {
+			var $header = $('.header').first();
+			var headerHeight = $header.length ? ($header.outerHeight() || 0) : 0;
+			var minOffset = $(window).width() < 1025 ? 70 : 95;
+			return Math.max(minOffset, headerHeight + 10);
+		}
 
+		function rebuildSections() {
+			sections = [];
 			$menuLinks.each(function () {
 				var $link = $(this);
 				var href = $link.attr('href');
@@ -551,127 +549,176 @@ jQuery(document).ready(function($) {
 					return;
 				}
 
-				var $anchor = $(href);
-				if (!$anchor.length) {
+				var $target = $(href);
+				if (!$target.length) {
 					return;
 				}
 
-				trackedSections.push({
+				sections.push({
 					$link: $link,
-					$anchor: $anchor
+					$target: $target
 				});
 			});
 		}
 
-		function getSectionBounds(index) {
-			var currentTop = trackedSections[index].$anchor.offset().top;
-			var sectionBottom = $(document).height();
-
-			if (index < trackedSections.length - 1) {
-				sectionBottom = trackedSections[index + 1].$anchor.offset().top;
-			} else {
-				var $questions = $('#section-form-questions');
-				if ($questions.length) {
-					sectionBottom = $questions.offset().top + $questions.outerHeight();
-				}
-			}
-
-			if (sectionBottom <= currentTop) {
-				sectionBottom = currentTop + 1;
-			}
-
-			return {
-				top: currentTop,
-				bottom: sectionBottom
-			};
-		}
-
-		function applyActiveIndex(nextIndex) {
-			if (!trackedSections.length) {
+		function setActive(index) {
+			if (!sections.length) {
 				return;
 			}
 
-			var safeIndex = Math.max(0, Math.min(nextIndex, trackedSections.length - 1));
-			pendingActiveIndex = null;
-			pendingStartedAt = 0;
-			currentActiveIndex = safeIndex;
+			var next = Math.max(0, Math.min(index, sections.length - 1));
+			if (next === currentActive) {
+				return;
+			}
+
+			currentActive = next;
 			$menuLinks.removeClass('active');
-			trackedSections[safeIndex].$link.addClass('active');
+			sections[next].$link.addClass('active');
 		}
 
-		function setActiveByVisibleArea() {
-			if (!trackedSections.length) {
-				return;
-			}
-
-			var scrollTop = $(window).scrollTop();
-			var probeY = scrollTop + topOffset + 1;
-			var targetIndex = 0;
-
-			for (var i = 0; i < trackedSections.length; i++) {
-				var bounds = getSectionBounds(i);
-				if (probeY >= bounds.top && probeY < bounds.bottom) {
-					targetIndex = i;
-					break;
-				}
-
-				if (probeY >= bounds.bottom) {
-					targetIndex = i;
-				}
-			}
-
-			if (targetIndex === currentActiveIndex) {
-				pendingActiveIndex = null;
-				pendingStartedAt = 0;
+		function resolveActiveByScroll() {
+			if (!sections.length) {
 				return;
 			}
 
 			var now = Date.now();
-			if (pendingActiveIndex !== targetIndex) {
-				pendingActiveIndex = targetIndex;
-				pendingStartedAt = now;
+			if (now < suppressSpyUntil) {
 				return;
 			}
 
-			if (now - pendingStartedAt >= switchDelayMs) {
-				applyActiveIndex(targetIndex);
+			var probeY = ($(window).scrollTop() || 0) + getScrollOffset() + 20;
+			var nextIndex = 0;
+
+			for (var i = 0; i < sections.length; i++) {
+				var top = sections[i].$target.offset().top;
+				if (probeY >= top) {
+					nextIndex = i;
+				} else {
+					break;
+				}
 			}
+
+			setActive(nextIndex);
 		}
 
-		var ticking = false;
-		function requestRepaint() {
-			if (ticking) {
+		function updateSticky() {
+			if ($(window).width() < desktopBreakpoint) {
+				$menuFixed.css({
+					position: '',
+					top: '',
+					left: '',
+					right: '',
+					width: '',
+					transform: ''
+				});
 				return;
 			}
 
-			ticking = true;
-			window.requestAnimationFrame(function () {
-				ticking = false;
-				setActiveByVisibleArea();
+			var menuTop = $menu.offset().top;
+			var menuHeight = $menu.outerHeight();
+			var fixedHeight = $menuFixed.outerHeight();
+			var scrollTop = $(window).scrollTop() || 0;
+
+			if (!menuTop || !menuHeight || !fixedHeight || fixedHeight >= menuHeight) {
+				$menuFixed.css({
+					position: 'absolute',
+					top: 0,
+					left: '',
+					right: '',
+					width: '',
+					transform: 'none'
+				});
+				return;
+			}
+
+			var startPin = menuTop - stickyTopOffset;
+			var stopPin = menuTop + menuHeight - fixedHeight - stickyTopOffset;
+
+			if (scrollTop <= startPin) {
+				$menuFixed.css({
+					position: 'absolute',
+					top: 0,
+					left: '',
+					right: '',
+					width: '',
+					transform: 'none'
+				});
+				return;
+			}
+
+			if (scrollTop >= stopPin) {
+				$menuFixed.css({
+					position: 'absolute',
+					top: (menuHeight - fixedHeight) + 'px',
+					left: '',
+					right: '',
+					width: '',
+					transform: 'none'
+				});
+				return;
+			}
+
+			$menuFixed.css({
+				position: 'fixed',
+				top: stickyTopOffset + 'px',
+				left: $menu.offset().left + 'px',
+				right: 'auto',
+				width: $menu.outerWidth() + 'px',
+				transform: 'none'
 			});
 		}
 
-		rebuildTrackedSections();
-		var initialIndex = 0;
-		$menuLinks.each(function (index) {
-			if ($(this).hasClass('active')) {
-				initialIndex = index;
-			}
-		});
-		applyActiveIndex(initialIndex);
-		setActiveByVisibleArea();
+		function onFrame() {
+			rafScheduled = false;
+			resolveActiveByScroll();
+			updateSticky();
+		}
 
-		$menuLinks.on('click.praktikaMenuSpy', function () {
-			var clickedIndex = $menuLinks.index(this);
-			if (clickedIndex >= 0) {
-				applyActiveIndex(clickedIndex);
+		function requestUpdate() {
+			if (rafScheduled) {
+				return;
 			}
+			rafScheduled = true;
+			window.requestAnimationFrame(onFrame);
+		}
+
+		$menuLinks.on('click.praktikaMenuSync', function (e) {
+			var href = $(this).attr('href');
+			if (!href || href === '#') {
+				return;
+			}
+
+			var $target = $(href);
+			if (!$target.length) {
+				return;
+			}
+
+			e.preventDefault();
+
+			var index = -1;
+			for (var i = 0; i < sections.length; i++) {
+				if (sections[i].$target.is($target)) {
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0) {
+				setActive(index);
+			}
+
+			var destination = Math.max(0, $target.offset().top - getScrollOffset());
+			suppressSpyUntil = Date.now() + 450;
+			$('html, body').stop(true).animate({ scrollTop: destination }, 420);
 		});
 
-		$(window).on('scroll.praktikaMenuSpy resize.praktikaMenuSpy', requestRepaint);
+		rebuildSections();
+		resolveActiveByScroll();
+		updateSticky();
+
+		$(window).on('scroll.praktikaMenuSync resize.praktikaMenuSync orientationchange.praktikaMenuSync load.praktikaMenuSync', requestUpdate);
 	}
 
-	initPraktikaMenuScrollSpy();
+	initPraktikaMenuSync();
 	
 	
 	$('.exercise-slider_active').slick({
@@ -751,104 +798,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	
-	$(document).ready(function () {
-		var $praktikaMenu = $('.praktika-menu');
-		var $praktikaFixed = $('.praktika-fixed');
-		if (!$praktikaFixed.length || !$praktikaMenu.length) {
-			return;
-		}
-
-		var block_pos_03 = 0;
-		var block_height_03 = 0;
-
-		function praktikaClearFixedInline() {
-			$praktikaFixed.css({
-				position: '',
-				top: '',
-				transform: '',
-				width: '',
-				left: '',
-				right: ''
-			});
-		}
-
-		function refreshPraktikaFixedAnchors() {
-			praktikaClearFixedInline();
-			block_pos_03 = $praktikaFixed.offset()?.top || 0;
-			block_height_03 = $praktikaFixed.outerHeight() || 0;
-		}
-
-		function praktikaFixedCssAbsTop() {
-			return {
-				position: 'absolute',
-				top: '0px',
-				transform: 'translateY(0%)',
-				width: '',
-				left: '',
-				right: ''
-			};
-		}
-
-		function praktikaFixedCssAbsBottom() {
-			return {
-				position: 'absolute',
-				top: 'calc(100% + 0px)',
-				transform: 'translateY(-100%)',
-				width: '',
-				left: '',
-				right: ''
-			};
-		}
-
-		function praktikaFixedCssFixedPin() {
-			var w = $praktikaMenu.outerWidth() || 0;
-			var l = $praktikaMenu.offset()?.left || 0;
-			return {
-				position: 'fixed',
-				top: '105px',
-				transform: 'translateY(0%)',
-				width: w + 'px',
-				left: l + 'px',
-				right: 'auto'
-			};
-		}
-
-		function praktikaFixedApplyScrollLogic() {
-			if ($(window).width() < yogaViewportBp.xl) {
-				praktikaClearFixedInline();
-				return;
-			}
-
-			block_height_03 = $praktikaFixed.outerHeight() || 0;
-			var wrap_height_03 = $praktikaMenu.outerHeight() || 0;
-			var wrapTop = $praktikaMenu.offset()?.top || 0;
-			var pos_absolute_03 = wrapTop + wrap_height_03 - block_height_03;
-			var scrollTop = $(window).scrollTop();
-
-			if (scrollTop > pos_absolute_03 - 105) {
-				$praktikaFixed.css(praktikaFixedCssAbsBottom());
-			} else if (scrollTop > block_pos_03 - 105) {
-				$praktikaFixed.css(praktikaFixedCssFixedPin());
-			} else {
-				$praktikaFixed.css(praktikaFixedCssAbsTop());
-			}
-		}
-
-		refreshPraktikaFixedAnchors();
-
-		$(window).on('scroll', praktikaFixedApplyScrollLogic);
-		$(window).on('resize orientationchange', function () {
-			refreshPraktikaFixedAnchors();
-			praktikaFixedApplyScrollLogic();
-		});
-
-		$(window).on('load', function () {
-			refreshPraktikaFixedAnchors();
-			praktikaFixedApplyScrollLogic();
-		});
-
-		praktikaFixedApplyScrollLogic();
-	});
+	
 	
 	
 	/* Section-form-questions */
