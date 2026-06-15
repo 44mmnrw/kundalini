@@ -67,7 +67,13 @@ if (!function_exists('yoga_get_practice_section_display_title')) {
 if (!function_exists('yoga_get_practice_section_anchor_id')) {
 	function yoga_get_practice_section_anchor_id(array $section, int $index): string {
 		if (!empty($section['anchor_id'])) {
-			return sanitize_html_class((string) $section['anchor_id']);
+			$base = sanitize_html_class((string) $section['anchor_id']);
+			if ($base === '') {
+				$base = 'anchor';
+			}
+
+			// Гарантируем уникальность even при одинаковых кастомных anchor_id.
+			return $base . '-' . ($index + 1);
 		}
 
 		return 'anchor_0' . ($index + 1);

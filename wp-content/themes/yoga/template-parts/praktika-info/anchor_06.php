@@ -3,9 +3,13 @@
  * Подключается из section-praktika.php внутри цикла practice_sections.
  *
  * @var array $section Текущая строка гибкого контента (ACF), макет anchor_06.
+ * @var string $anchor_id
  */
+$anchor_id = isset($anchor_id) && $anchor_id !== ''
+	? (string) $anchor_id
+	: (string) ($section['anchor_id'] ?? 'anchor_06');
 ?>
-<span class="praktika-menu-anchor" id="<?php echo esc_attr($section['anchor_id']); ?>"></span>
+<span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
 <div class="praktika-comments">
     <h3><?php echo esc_html($section['title']); ?></h3>
     
