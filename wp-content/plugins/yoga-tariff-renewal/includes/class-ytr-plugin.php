@@ -89,10 +89,6 @@ final class YTR_Plugin {
 			return;
 		}
 
-		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
-			return;
-		}
-
 		$product_id = YTR_Tariff::get_tariff_product_id_from_order($order);
 		if ($product_id <= 0) {
 			return;
@@ -105,6 +101,7 @@ final class YTR_Plugin {
 		}
 
 		YTR_User::enable_auto_renew($user_id, $product_id, $payment_method_id);
+		YTR_Saved_Cards::clear_sync_pause($user_id);
 		YTR_Saved_Cards::sync_from_order($order);
 		$order->add_order_note(__('Автопродление тарифа включено.', 'yoga-tariff-renewal'));
 	}

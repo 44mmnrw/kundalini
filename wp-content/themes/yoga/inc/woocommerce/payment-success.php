@@ -528,6 +528,9 @@ if (!function_exists('yoga_yookassa_sync_order_payment_status')) {
 
 		if ($completed && class_exists('YTR_Saved_Cards') && $order->get_meta('_ytr_auto_renew_opt_in') === 'yes') {
 			YTR_Saved_Cards::sync_from_order($order);
+			if (class_exists('YTR_LK')) {
+				YTR_LK::maybe_sync_auto_renew_from_latest_order((int) $order->get_customer_id());
+			}
 		}
 
 		return $completed;
@@ -581,6 +584,9 @@ if (!function_exists('yoga_yookassa_sync_order_before_success_screen')) {
 			yoga_yookassa_sync_order_payment_status($order);
 		} elseif (class_exists('YTR_Saved_Cards') && $order->get_meta('_ytr_auto_renew_opt_in') === 'yes') {
 			YTR_Saved_Cards::sync_from_order($order);
+			if (class_exists('YTR_LK')) {
+				YTR_LK::maybe_sync_auto_renew_from_latest_order((int) $order->get_customer_id());
+			}
 		}
 
 		if (function_exists('yoga_repair_order_tariff_line_items')) {

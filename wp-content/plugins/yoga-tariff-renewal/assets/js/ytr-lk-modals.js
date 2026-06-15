@@ -4,9 +4,10 @@
 	var config = typeof ytrLkModals !== 'undefined' ? ytrLkModals : {};
 	var pendingCardDelete = null;
 
-	var modalSelectors = [
-		'#ytr-modal-remove-card',
-		'#ytr-modal-remove-card-success',
+	var cardModalSelectors =
+		'#ytr-modal-cancel-subscription, #ytr-modal-cancel-subscription-confirm, #ytr-modal-cancel-subscription-success';
+	var allModalSelectors = [
+		cardModalSelectors,
 		'#ytr-modal-unsubscribe',
 		'#ytr-modal-unsubscribe-success',
 		'#ytr-modal-bind-card',
@@ -47,11 +48,8 @@
 			return false;
 		}
 
-		if ($modal.is('#ytr-modal-remove-card, #ytr-modal-unsubscribe')) {
+		if ($modal.is('#ytr-modal-unsubscribe, #ytr-modal-cancel-subscription-confirm')) {
 			$modal.find('.delcomm').removeClass('active');
-		}
-		if ($modal.is('#ytr-modal-remove-card-success, #ytr-modal-unsubscribe-success')) {
-			$modal.find('.delcomm').addClass('active');
 		}
 
 		$('.modal').not($modal).removeClass('active').attr('aria-hidden', 'true');
@@ -66,7 +64,8 @@
 
 	function closeModals() {
 		$('.overlay').removeClass('active');
-		$(modalSelectors).removeClass('active').attr('aria-hidden', 'true');
+		$(allModalSelectors).removeClass('active').attr('aria-hidden', 'true');
+		$('#ytr-modal-cancel-delcomm').removeClass('active');
 		$('.modal-filter').removeClass('active');
 		$('.modal-login').removeClass('active');
 		$('.modal-mobile-menu').removeClass('active');
@@ -82,14 +81,36 @@
 	function getCardData($trigger) {
 		return {
 			cardId: String($trigger.attr('data-card-id') || $trigger.data('cardId') || ''),
+			isAuto: String($trigger.attr('data-is-auto') || $trigger.data('isAuto') || '0') === '1',
 			last4: String($trigger.attr('data-last4') || $trigger.data('last4') || '0000'),
 			brandName: String($trigger.attr('data-brand-name') || $trigger.data('brandName') || 'Карта'),
+			iconType: String($trigger.attr('data-icon-type') || $trigger.data('iconType') || 'visa'),
 		};
 	}
 
 	function formatBrandName(name) {
 		var value = String(name || '').trim();
 		return value.toLowerCase() === 'mir' ? 'Мир' : value;
+	}
+
+	function setModalCardBrand(iconType) {
+		var type = String(iconType || 'default').toLowerCase();
+		var $icons = $('#ytr-modal-card-brand .card-info__brand');
+		var matched = false;
+
+		$icons.each(function () {
+			var isMatch = $(this).data('brand') === type;
+			$(this).prop('hidden', !isMatch).toggleClass('is-active', isMatch);
+			if (isMatch) {
+				matched = true;
+			}
+		});
+
+		if (!matched) {
+			var $fallback = $icons.filter('[data-brand="visa"]').first();
+			$icons.prop('hidden', true).removeClass('is-active');
+			$fallback.prop('hidden', false).addClass('is-active');
+		}
 	}
 
 	function updateCardsCount() {
@@ -107,6 +128,13 @@
 		}
 
 		$('.lk-settings-part_cards .lk-settings-item_card').slideUp(300, function () {
+			$(this).remove();
+			updateCardsCount();
+		});
+	}
+
+	function removeAutoRenewCardsFromDom() {
+		$('.lk-settings-item_card[data-is-auto="1"]').slideUp(300, function () {
 			$(this).remove();
 			updateCardsCount();
 		});
@@ -135,6 +163,12 @@
 		ajaxPost('ytr_remove_payment_method', { card_id: cardId })
 			.done(function (response) {
 				if (response && response.success) {
+					if ($cardItem && $cardItem.length) {
+						$cardItem.slideUp(300, function () {
+							$(this).remove();
+							updateCardsCount();
+						});
+					}
 					if (typeof onSuccess === 'function') {
 						onSuccess(response);
 					}
@@ -152,12 +186,11 @@
 			});
 	}
 
-	function openRemoveCardModal(cardData) {
-		var label = formatBrandName(cardData.brandName) + ' •••• ' + cardData.last4;
-		$('#ytr-remove-card-label').text(
-			'Карта ' + label + ' будет удалена. Автопродление отключится.'
-		);
-		openModal($('#ytr-modal-remove-card'));
+	function openCardPreviewModal(cardData) {
+		$('#ytr-modal-card-brand-name').text(formatBrandName(cardData.brandName));
+		$('#ytr-modal-card-number').text('**' + cardData.last4);
+		setModalCardBrand(cardData.iconType);
+		openModal($('#ytr-modal-cancel-subscription'));
 	}
 
 	function handleSavedCardClick($trigger) {
@@ -170,15 +203,14 @@
 			return;
 		}
 
-		if (!$('#ytr-modal-remove-card').length) {
-			if (!window.confirm('Удалить эту карту?')) {
+		if (!$('#ytr-modal-cancel-subscription').length) {
+			if (!window.confirm('Вы уверены, что хотите удалить эту карту?')) {
 				return;
 			}
 			removeSavedCard(cardData.cardId, $cardItem, function (response) {
 				var notice =
 					response.data && response.data.message ? response.data.message : 'Карта удалена';
 				notify(notice);
-				removeCardFromDom($cardItem);
 			});
 			return;
 		}
@@ -187,7 +219,7 @@
 			cardId: cardData.cardId,
 			$cardItem: $cardItem,
 		};
-		openRemoveCardModal(cardData);
+		openCardPreviewModal(cardData);
 	}
 
 	function renderAutoRenewStatusOff(message, accessEnd) {
@@ -243,15 +275,24 @@
 			closeModals();
 		});
 
-		$('#ytr-remove-card-cancel, #ytr-modal-remove-card .modal-close').on('click', function () {
+		$('#ytr-modal-cancel-subscription-keep, #ytr-modal-cancel-subscription-back').on('click', function () {
 			closeModals();
 		});
 
-		$('#ytr-modal-remove-card-success .modal-close').on('click', function () {
-			closeModals();
+		$(cardModalSelectors)
+			.find('.modal-close')
+			.on('click', function () {
+				closeModals();
+			});
+
+		$('#ytr-modal-cancel-subscription-next').on('click', function () {
+			$('#ytr-modal-cancel-subscription').removeClass('active').attr('aria-hidden', 'true');
+			$('#ytr-modal-cancel-delcomm').removeClass('active');
+			openModal($('#ytr-modal-cancel-subscription-confirm'));
 		});
 
-		$('#ytr-remove-card-confirm').on('click', function () {
+		$('#ytr-modal-cancel-subscription-delete').on('click', function (e) {
+			e.stopImmediatePropagation();
 			if (!pendingCardDelete) {
 				return;
 			}
@@ -260,15 +301,14 @@
 			var $btn = $(this);
 			$btn.prop('disabled', true);
 
-			removeSavedCard(pending.cardId, null, function (response) {
+			removeSavedCard(pending.cardId, pending.$cardItem, function (response) {
 				$btn.prop('disabled', false);
 				var notice =
 					response.data && response.data.message ? response.data.message : 'Карта удалена';
-				$('#ytr-remove-card-success-text').text(notice);
-				$('#ytr-modal-remove-card').removeClass('active').attr('aria-hidden', 'true');
-				removeCardFromDom(pending.$cardItem);
-				openModal($('#ytr-modal-remove-card-success'));
+				$('#ytr-modal-cancel-subscription-success-text').text(notice);
+				$('#ytr-modal-cancel-subscription-confirm').removeClass('active').attr('aria-hidden', 'true');
 				pendingCardDelete = null;
+				openModal($('#ytr-modal-cancel-subscription-success'));
 			});
 		});
 
@@ -291,7 +331,7 @@
 
 		$('#ytr-unsubscribe-confirm').on('click', function (e) {
 			e.preventDefault();
-			e.stopPropagation();
+			e.stopImmediatePropagation();
 
 			var $btn = $(this);
 			$btn.prop('disabled', true);
@@ -326,7 +366,9 @@
 					$('#ytr-modal-unsubscribe').removeClass('active').attr('aria-hidden', 'true');
 					renderAutoRenewStatusOff(message, accessEnd);
 					hideCancelAutoRenewButton();
-					removeCardFromDom();
+					if (response.data && response.data.card_removed) {
+						removeAutoRenewCardsFromDom();
+					}
 					openModal($('#ytr-modal-unsubscribe-success'));
 				})
 				.fail(function () {
@@ -338,7 +380,7 @@
 		$('.overlay').on('click.ytrLkModals', function () {
 			if (
 				$(
-					'#ytr-modal-remove-card.active, #ytr-modal-remove-card-success.active, #ytr-modal-unsubscribe.active, #ytr-modal-unsubscribe-success.active'
+					'#ytr-modal-cancel-subscription.active, #ytr-modal-cancel-subscription-confirm.active, #ytr-modal-cancel-subscription-success.active, #ytr-modal-unsubscribe.active, #ytr-modal-unsubscribe-success.active'
 				).length
 			) {
 				closeModals();

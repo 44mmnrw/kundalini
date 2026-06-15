@@ -1993,8 +1993,9 @@ p.login-rules a:hover {
   padding-right: 1.5625rem;
 }
 
-#ytr-modal-remove-card.active,
-#ytr-modal-remove-card-success.active,
+#ytr-modal-cancel-subscription.active,
+#ytr-modal-cancel-subscription-confirm.active,
+#ytr-modal-cancel-subscription-success.active,
 #ytr-modal-unsubscribe.active,
 #ytr-modal-unsubscribe-success.active {
   position: fixed !important;
@@ -2006,22 +2007,23 @@ p.login-rules a:hover {
   pointer-events: auto !important;
 }
 
-#ytr-modal-remove-card:not(.active),
-#ytr-modal-remove-card-success:not(.active),
+#ytr-modal-cancel-subscription:not(.active),
+#ytr-modal-cancel-subscription-confirm:not(.active),
+#ytr-modal-cancel-subscription-success:not(.active),
 #ytr-modal-unsubscribe:not(.active),
 #ytr-modal-unsubscribe-success:not(.active) {
   pointer-events: none !important;
 }
 
-#ytr-modal-remove-card .delcomm-buttons,
+#ytr-modal-cancel-subscription-confirm .delcomm-buttons,
 #ytr-modal-unsubscribe .delcomm-buttons {
   flex-wrap: wrap;
   gap: 0.625rem;
 }
 
-#ytr-modal-remove-card .delcomm-buttons .btn,
-#ytr-modal-remove-card.modal-default_carddel .delcomm .btn_dark,
-#ytr-modal-remove-card.modal-default_carddel .delcomm .btn_white,
+#ytr-modal-cancel-subscription-confirm .delcomm-buttons .btn,
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_dark,
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_white,
 #ytr-modal-unsubscribe .delcomm-buttons .btn,
 #ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_dark,
 #ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_white {
@@ -2036,7 +2038,7 @@ p.login-rules a:hover {
   overflow: hidden;
 }
 
-#ytr-modal-remove-card .delcomm-buttons .btn span,
+#ytr-modal-cancel-subscription-confirm .delcomm-buttons .btn span,
 #ytr-modal-unsubscribe .delcomm-buttons .btn span {
   display: block;
   white-space: normal;
