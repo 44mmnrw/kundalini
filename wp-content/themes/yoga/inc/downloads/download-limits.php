@@ -299,10 +299,6 @@ if (!function_exists('yoga_user_can_download_practice')) {
 			return false;
 		}
 
-		if (yoga_user_has_downloaded_practice($user_id, $practice_id)) {
-			return false;
-		}
-
 		$limit = yoga_get_user_download_limit($user_id);
 		if ($limit === null) {
 			return true;
@@ -315,6 +311,11 @@ if (!function_exists('yoga_user_can_download_practice')) {
 if (!function_exists('yoga_record_practice_download')) {
 	function yoga_record_practice_download(int $user_id, int $practice_id): void {
 		if ($user_id <= 0 || $practice_id <= 0) {
+			return;
+		}
+
+		// Повторные скачивания в текущем периоде не должны повторно расходовать лимит.
+		if (yoga_user_has_downloaded_practice($user_id, $practice_id)) {
 			return;
 		}
 

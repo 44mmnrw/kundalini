@@ -56,12 +56,17 @@ if (!function_exists('yoga_handle_practice_download')) {
 		$user_id = get_current_user_id();
 
 		if (!yoga_user_can_download_practice($user_id, $practice_id)) {
-			$error_message = yoga_user_has_downloaded_practice($user_id, $practice_id)
-				? yoga_get_practice_already_downloaded_message()
-				: yoga_get_download_limit_exceeded_message();
-			$error_code    = yoga_user_has_downloaded_practice($user_id, $practice_id)
-				? 'already_downloaded'
-				: 'limit_exceeded';
+			$remaining = function_exists('yoga_get_user_downloads_remaining')
+				? yoga_get_user_downloads_remaining($user_id)
+				: null;
+			$limit_reached = $remaining !== null && (int) $remaining <= 0;
+
+			$error_message = $limit_reached
+				? yoga_get_download_limit_exceeded_message()
+				: __('Скачивание недоступно для текущего тарифа.', 'yoga');
+			$error_code    = $limit_reached
+				? 'limit_exceeded'
+				: 'download_denied';
 
 			yoga_download_abort($error_message, 403, $error_code);
 		}

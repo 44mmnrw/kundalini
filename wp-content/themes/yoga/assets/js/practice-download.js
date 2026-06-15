@@ -43,32 +43,27 @@
 	}
 
 	function setExhaustedState($root, alreadyDownloaded) {
-		var wasDownloadable = $root.attr('data-can-download') === '1';
 		var rawRemaining = String($root.attr('data-remaining-downloads') || '');
 		var remainingIsUnlimited = rawRemaining === 'unlimited';
 		var remainingValue = parseInt(rawRemaining, 10);
+		var remainingText = remainingIsUnlimited
+			? (i18n.unlimitedLabel || 'безлимит')
+			: String(Math.max(0, isNaN(remainingValue) ? 0 : remainingValue));
 
-		if (!remainingIsUnlimited && !isNaN(remainingValue)) {
-			if (alreadyDownloaded && wasDownloadable) {
-				remainingValue = Math.max(0, remainingValue - 1);
-			} else if (!alreadyDownloaded) {
-				remainingValue = 0;
-			}
-		}
-
-		var label = alreadyDownloaded
-			? (i18n.downloadedLabel || 'Протокол уже скачан')
-			: (i18n.downloadLabel || 'Скачать протокол практики');
-
-		var html = '<span class="btn praktika-download__btn" aria-disabled="true"><span></span></span>';
 		$root.addClass('praktika-download--exhausted')
 			.attr('data-can-download', '0')
-			.attr('data-already-downloaded', alreadyDownloaded ? '1' : '0')
-			.attr('data-remaining-downloads', remainingIsUnlimited ? 'unlimited' : String(Math.max(0, isNaN(remainingValue) ? 0 : remainingValue)))
-			.html(html);
-		$root.find('.praktika-download__btn span').first().text(label);
+			.attr('data-remaining-downloads', remainingIsUnlimited ? 'unlimited' : '0');
 
-		if (!alreadyDownloaded && i18n.limitExceededMessage) {
+		if ($root.find('a.praktika-download__btn').length) {
+			$root.find('a.praktika-download__btn').replaceWith(
+				'<span class="btn praktika-download__btn" aria-disabled="true"><span>' +
+				(i18n.downloadLabel || 'Скачать протокол практики') +
+				'</span></span>'
+			);
+		}
+
+		$root.find('.praktika-download__note').remove();
+		if (i18n.limitExceededMessage) {
 			$root.append(
 				$('<p>', {
 					class: 'praktika-download__note',
@@ -77,19 +72,39 @@
 			);
 		}
 
-		var remainingText = remainingIsUnlimited
-			? (i18n.unlimitedLabel || 'безлимит')
-			: String(Math.max(0, isNaN(remainingValue) ? 0 : remainingValue));
-		$root.append(
-			$('<p>', {
-				class: 'praktika-download__remaining',
-				html:
-					(i18n.remainingDownloadsLabel || 'Осталось скачиваний:') +
-					' <span>' +
-					remainingText +
-					'</span>',
-			})
-		);
+		var $remaining = $root.find('.praktika-download__remaining');
+		if ($remaining.length) {
+			$remaining.find('span').text(remainingText);
+		}
+	}
+
+	function updateRemainingAfterDownload($root) {
+		var rawRemaining = String($root.attr('data-remaining-downloads') || '');
+		if (rawRemaining === 'unlimited') {
+			return;
+		}
+
+		var remainingValue = parseInt(rawRemaining, 10);
+		if (isNaN(remainingValue)) {
+			remainingValue = 0;
+		}
+
+		var wasDownloaded = $root.attr('data-already-downloaded') === '1';
+		if (!wasDownloaded) {
+			remainingValue = Math.max(0, remainingValue - 1);
+			$root.attr('data-remaining-downloads', String(remainingValue));
+		}
+
+		$root.attr('data-already-downloaded', '1');
+
+		var $remaining = $root.find('.praktika-download__remaining');
+		if ($remaining.length) {
+			$remaining.find('span').text(String(remainingValue));
+		}
+
+		if (remainingValue <= 0) {
+			setExhaustedState($root, false);
+		}
 	}
 
 	function setLoadingState($btn, isLoading) {
@@ -174,11 +189,11 @@
 			})
 			.then(function (result) {
 				triggerBlobDownload(result.blob, result.filename);
-				setExhaustedState($root, true);
+				updateRemainingAfterDownload($root);
 			})
 			.catch(function (error) {
-				if (error && (error.limitExceeded || error.alreadyDownloaded)) {
-					setExhaustedState($root, !!error.alreadyDownloaded);
+				if (error && error.limitExceeded) {
+					setExhaustedState($root, false);
 					return;
 				}
 				window.alert((error && error.message) || i18n.errorMessage || 'Не удалось скачать файл.');
