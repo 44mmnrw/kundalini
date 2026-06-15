@@ -3007,23 +3007,68 @@ jQuery(document).ready(function($) {
 });
 
 jQuery(document).ready(function($) {
+	var LK_LAST_SLIDE_KEY = 'yoga_lk_last_slide';
+
+	function persistLkSlide(target) {
+		var value = String(target || '').trim();
+		if (value === '') {
+			return;
+		}
+		try {
+			window.sessionStorage.setItem(LK_LAST_SLIDE_KEY, value);
+		} catch (e) {
+			// ignore storage errors
+		}
+	}
+
+	function readPersistedLkSlide() {
+		try {
+			return String(window.sessionStorage.getItem(LK_LAST_SLIDE_KEY) || '').trim();
+		} catch (e) {
+			return '';
+		}
+	}
+
+	function getCurrentLkSlideTarget() {
+		var activeSlide = String($('.lk-slide.active').attr('data-target') || '').trim();
+		if (activeSlide !== '') {
+			return activeSlide;
+		}
+		return String($('.sidebar-menu__item.active').attr('data-target') || '').trim();
+	}
+
     function switchLkSlide(target) {
+        var normalizedTarget = String(target || '').trim();
+        if (normalizedTarget === '') {
+            return;
+        }
+
         $('.lk-slide').removeClass('active');
-        $('.lk-slide[data-target="' + target + '"]').addClass('active');
+        $('.lk-slide[data-target="' + normalizedTarget + '"]').addClass('active');
         $('.sidebar-menu__item').removeClass('active');
-        $('.sidebar-menu__item[data-target="' + target + '"]').addClass('active');
+        $('.sidebar-menu__item[data-target="' + normalizedTarget + '"]').addClass('active');
+		persistLkSlide(normalizedTarget);
     }
 
     function applyLkDeepLinkHash() {
         var raw = window.location.hash.replace(/^#/, '');
         if (raw === 'lk-slide-favorites') {
             switchLkSlide('3');
+			return true;
         } else if (raw === 'lk-slide-settings') {
             switchLkSlide('6');
+			return true;
         }
+		return false;
     }
 
-    applyLkDeepLinkHash();
+    var hashApplied = applyLkDeepLinkHash();
+	if (!hashApplied) {
+		var persistedTarget = readPersistedLkSlide();
+		if (persistedTarget !== '') {
+			switchLkSlide(persistedTarget);
+		}
+	}
     $(window).on('hashchange', applyLkDeepLinkHash);
 
     // Переключение между слайдами
@@ -3036,6 +3081,13 @@ jQuery(document).ready(function($) {
     $('.lk-login-btn').on('click', function() {
         switchLkSlide(1);
     });
+
+	$(window).on('pagehide beforeunload', function () {
+		var activeTarget = getCurrentLkSlideTarget();
+		if (activeTarget !== '') {
+			persistLkSlide(activeTarget);
+		}
+	});
     
     // Отправка формы через AJAX
 	$('#profile-form').on('submit', function(e) {

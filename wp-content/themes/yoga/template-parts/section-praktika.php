@@ -234,6 +234,12 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										&& yoga_user_has_downloaded_practice($user_id, $practice_id);
 									$can_download       = function_exists('yoga_user_can_download_practice')
 										&& yoga_user_can_download_practice($user_id, $practice_id);
+									$downloads_remaining = function_exists('yoga_get_user_downloads_remaining')
+										? yoga_get_user_downloads_remaining($user_id)
+										: null;
+									$remaining_label = $downloads_remaining === null
+										? __('безлимит', 'yoga')
+										: (string) max(0, (int) $downloads_remaining);
 									$download_classes   = 'praktika-download';
 									if (!$can_download) {
 										$download_classes .= ' praktika-download--exhausted';
@@ -245,6 +251,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                                     data-download-url="<?php echo esc_url(yoga_get_practice_download_url($practice_id)); ?>"
                                     data-can-download="<?php echo $can_download ? '1' : '0'; ?>"
                                     data-already-downloaded="<?php echo $already_downloaded ? '1' : '0'; ?>"
+                                    data-remaining-downloads="<?php echo $downloads_remaining === null ? 'unlimited' : esc_attr((string) max(0, (int) $downloads_remaining)); ?>"
                                 >
                                         <?php if ($can_download) : ?>
                                     <a href="<?php echo esc_url(yoga_get_practice_download_url($practice_id)); ?>" class="btn praktika-download__btn">
@@ -262,6 +269,10 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
                                     <p class="praktika-download__note"><?php echo esc_html(yoga_get_download_limit_exceeded_message()); ?></p>
                                             <?php endif; ?>
                                         <?php endif; ?>
+									<p class="praktika-download__remaining">
+										<?php echo esc_html__('Осталось скачиваний:', 'yoga'); ?>
+										<span><?php echo esc_html($remaining_label); ?></span>
+									</p>
                                 </div>
                                         <?php
 								}
