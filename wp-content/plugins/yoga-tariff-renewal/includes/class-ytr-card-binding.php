@@ -37,6 +37,15 @@ final class YTR_Card_Binding {
 
 		self::cancel_stale_pending_orders($user_id);
 
+		if (class_exists('YTR_Checkout') && !YTR_Checkout::has_valid_checkout_phone(YTR_Checkout::resolve_checkout_phone($user_id))) {
+			return self::fail(
+				__(
+					'Укажите телефон в профиле (Мои данные), чтобы привязать карту для автоплатежей.',
+					'yoga-tariff-renewal'
+				)
+			);
+		}
+
 		$order = self::create_binding_order($user_id);
 		if (is_wp_error($order)) {
 			return self::fail($order->get_error_message());
@@ -172,7 +181,14 @@ final class YTR_Card_Binding {
 			? YTR_YooKassa::resolve_payment_method_id_for_order($order)
 			: '';
 
-		if ($payment_method_id === '') {
+		if ($payment_method_id === '' && class_exists('YTR_Saved_Cards')) {
+			$payment_method_id = YTR_Saved_Cards::resolve_payment_method_id_for_order($user_id, (int) $order->get_id());
+		}
+
+		$card_synced = class_exists('YTR_Saved_Cards')
+			&& YTR_Saved_Cards::user_has_card_from_order($user_id, (int) $order->get_id());
+
+		if ($payment_method_id === '' && !$card_synced) {
 			$order->add_order_note(__('Привязка карты: способ оплаты не сохранён в ЮKassa.', 'yoga-tariff-renewal'));
 			return false;
 		}
@@ -185,9 +201,11 @@ final class YTR_Card_Binding {
 			}
 		}
 
-		if ($product_id > 0 && class_exists('YTR_User')) {
+		if ($product_id > 0 && class_exists('YTR_User') && $payment_method_id !== '') {
 			YTR_User::enable_auto_renew($user_id, $product_id, $payment_method_id);
 			$order->add_order_note(__('Карта привязана. Автопродление тарифа включено.', 'yoga-tariff-renewal'));
+		} elseif ($card_synced) {
+			$order->add_order_note(__('Карта привязана для будущих автоплатежей.', 'yoga-tariff-renewal'));
 		} else {
 			$order->add_order_note(__('Карта привязана для будущих автоплатежей.', 'yoga-tariff-renewal'));
 		}

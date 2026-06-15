@@ -446,17 +446,29 @@
 											?>
 										</p>
 									</div>
-									<?php elseif ($current_subscription) : ?>
-									<div class="lk-settings-part lk-settings-part_cancel">
-										<p class="lk-settings-item__col-text lk-cancel-subscription-hint">
-											<?php
-											printf(
-												/* translators: %s: subscription end date */
-												esc_html__('Автопродление не настроено. Доступ сохранится до %s.', 'yoga'),
-												esc_html(date('d.m.Y', strtotime($current_subscription['end_date'])))
-											);
-											?>
-										</p>
+									<?php elseif ($current_subscription) :
+										$subscription_end_label = date('d.m.Y', strtotime($current_subscription['end_date']));
+										$ytr_status_text      = class_exists('YTR_LK')
+											? YTR_LK::get_auto_renew_status_text($user_id, $subscription_end_label)
+											: '';
+										$ytr_status_off       = class_exists('YTR_LK') && (
+											YTR_LK::was_auto_renew_cancelled($user_id)
+											|| (class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id))
+										);
+									?>
+									<div class="lk-settings-part lk-settings-part_cancel" id="ytr-auto-renew-status">
+										<div class="lk-auto-renew-status<?php echo $ytr_status_off ? ' lk-auto-renew-status_off' : ''; ?>" role="status">
+											<p class="lk-auto-renew-status__title">
+												<?php
+												echo $ytr_status_off
+													? esc_html__('Автопродление отключено', 'yoga')
+													: esc_html__('Автопродление не подключено', 'yoga');
+												?>
+											</p>
+											<?php if ($ytr_status_text !== '') : ?>
+												<p class="lk-auto-renew-status__text"><?php echo esc_html($ytr_status_text); ?></p>
+											<?php endif; ?>
+										</div>
 									</div>
 									<?php endif; ?>
 									

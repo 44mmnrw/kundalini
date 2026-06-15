@@ -197,7 +197,57 @@ final class YTR_Saved_Cards {
 			return array();
 		}
 
-		return array_values(array_filter($cards, 'is_array'));
+		$cards = array_values(array_filter($cards, 'is_array'));
+		if (count($cards) <= 1) {
+			return $cards;
+		}
+
+		$primary = self::pick_primary_card($cards);
+		update_user_meta($user_id, self::META_KEY, array($primary));
+
+		return array($primary);
+	}
+
+	public static function user_has_card_from_order(int $user_id, int $order_id): bool {
+		if ($user_id <= 0 || $order_id <= 0) {
+			return false;
+		}
+
+		foreach (self::get_cards($user_id) as $card) {
+			if (!is_array($card)) {
+				continue;
+			}
+
+			if ((int) ($card['order_id'] ?? 0) === $order_id) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static function resolve_payment_method_id_for_order(int $user_id, int $order_id): string {
+		if ($user_id <= 0 || $order_id <= 0) {
+			return '';
+		}
+
+		foreach (self::get_cards($user_id) as $card) {
+			if (!is_array($card) || (int) ($card['order_id'] ?? 0) !== $order_id) {
+				continue;
+			}
+
+			$payment_method_id = (string) ($card['payment_method_id'] ?? '');
+			if ($payment_method_id !== '') {
+				return $payment_method_id;
+			}
+
+			$card_id = (string) ($card['id'] ?? '');
+			if ($card_id !== '' && !str_starts_with($card_id, 'pay_')) {
+				return $card_id;
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -294,28 +344,97 @@ final class YTR_Saved_Cards {
 	 * @param array<string, mixed> $card_data
 	 */
 	private static function upsert_card(int $user_id, array $card_data): void {
-		$cards   = self::get_cards($user_id);
-		$card_id = (string) ($card_data['id'] ?? '');
-		$next    = array();
-		$found   = false;
+		$cards    = self::get_cards($user_id);
+		$existing = isset($cards[0]) && is_array($cards[0]) ? $cards[0] : null;
 
-		foreach ($cards as $card) {
-			if (!is_array($card)) {
-				continue;
+		if ($existing !== null) {
+			if (self::cards_match_identity($existing, $card_data)) {
+				$card_data = self::merge_card_records($existing, $card_data);
+			} elseif (!self::is_newer_card($card_data, $existing)) {
+				return;
 			}
-			if ((string) ($card['id'] ?? '') === $card_id) {
-				$next[]  = array_merge($card, $card_data);
-				$found   = true;
-				continue;
-			}
-			$next[] = $card;
 		}
 
-		if (!$found) {
-			$next[] = $card_data;
+		update_user_meta($user_id, self::META_KEY, array($card_data));
+	}
+
+	/**
+	 * @param array<string, mixed> $existing
+	 * @param array<string, mixed> $incoming
+	 * @return array<string, mixed>
+	 */
+	private static function merge_card_records(array $existing, array $incoming): array {
+		$merged = array_merge($existing, $incoming);
+
+		$existing_pm = (string) ($existing['payment_method_id'] ?? '');
+		$incoming_pm = (string) ($incoming['payment_method_id'] ?? '');
+		if ($incoming_pm !== '') {
+			$merged['payment_method_id'] = $incoming_pm;
+			$merged['id']                = $incoming_pm;
+		} elseif ($existing_pm !== '') {
+			$merged['payment_method_id'] = $existing_pm;
+			$merged['id']                = $existing_pm;
 		}
 
-		update_user_meta($user_id, self::META_KEY, $next);
+		if (!empty($incoming['recurring'])) {
+			$merged['recurring'] = true;
+		}
+
+		return $merged;
+	}
+
+	/**
+	 * @param array<string, mixed> $a
+	 * @param array<string, mixed> $b
+	 */
+	private static function cards_match_identity(array $a, array $b): bool {
+		$last4_a = (string) ($a['last4'] ?? '');
+		$last4_b = (string) ($b['last4'] ?? '');
+		if ($last4_a === '' || $last4_b === '' || $last4_a !== $last4_b) {
+			return false;
+		}
+
+		$type_a = strtolower((string) ($a['type'] ?? ''));
+		$type_b = strtolower((string) ($b['type'] ?? ''));
+		if ($type_a !== '' && $type_b !== '' && $type_a === $type_b) {
+			return true;
+		}
+
+		return strtolower((string) ($a['brand'] ?? '')) === strtolower((string) ($b['brand'] ?? ''));
+	}
+
+	/**
+	 * @param array<string, mixed> $incoming
+	 * @param array<string, mixed> $existing
+	 */
+	private static function is_newer_card(array $incoming, array $existing): bool {
+		$incoming_order = (int) ($incoming['order_id'] ?? 0);
+		$existing_order = (int) ($existing['order_id'] ?? 0);
+		if ($incoming_order !== $existing_order) {
+			return $incoming_order > $existing_order;
+		}
+
+		return (int) ($incoming['saved_at'] ?? 0) >= (int) ($existing['saved_at'] ?? 0);
+	}
+
+	/**
+	 * @param array<int, array<string, mixed>> $cards
+	 * @return array<string, mixed>
+	 */
+	private static function pick_primary_card(array $cards): array {
+		usort(
+			$cards,
+			static function (array $a, array $b): int {
+				$order_cmp = (int) ($b['order_id'] ?? 0) <=> (int) ($a['order_id'] ?? 0);
+				if ($order_cmp !== 0) {
+					return $order_cmp;
+				}
+
+				return (int) ($b['saved_at'] ?? 0) <=> (int) ($a['saved_at'] ?? 0);
+			}
+		);
+
+		return $cards[0];
 	}
 
 	private static function is_yookassa_order(WC_Order $order): bool {

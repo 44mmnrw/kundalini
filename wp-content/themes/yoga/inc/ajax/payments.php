@@ -56,7 +56,7 @@ if (!function_exists('handle_remove_payment_method')) {
         if (class_exists('YTR_Saved_Cards') && YTR_Saved_Cards::remove_card($user_id, $card_id)) {
             $message = 'Карта удалена';
             if ($had_auto_renew && class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id)) {
-                $message = 'Карта удалена. Автопродление отключено — доступ сохранится до конца оплаченного периода.';
+                $message = 'Карта удалена. Автопродление отключено. Доступ сохранится до конца оплаченного периода.';
             }
             yoga_ajax_success($message);
         }

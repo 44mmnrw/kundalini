@@ -3772,6 +3772,26 @@ jQuery(document).ready(function($) {
 		location.reload();
 	});
 
+	function ytrRenderAutoRenewStatusOff(message, accessEnd) {
+		var endDate = accessEnd || '—';
+		var detail = message || ('Доступ сохранится до ' + endDate + '. Тариф не продлится автоматически, списаний не будет.');
+		var html = ''
+			+ '<div class="lk-auto-renew-status lk-auto-renew-status_off" role="status">'
+			+ '<p class="lk-auto-renew-status__title">Автопродление отключено</p>'
+			+ '<p class="lk-auto-renew-status__text">' + $('<div>').text(detail).html() + '</p>'
+			+ '</div>';
+
+		var $wrap = $('#ytr-auto-renew-status');
+		if ($wrap.length) {
+			$wrap.html(html);
+			return;
+		}
+
+		$('.lk-settings-part_cancel').first().replaceWith(
+			$('<div class="lk-settings-part lk-settings-part_cancel" id="ytr-auto-renew-status"></div>').html(html)
+		);
+	}
+
 	$('#ytr-unsubscribe-confirm').on('click', function(e) {
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -3799,9 +3819,15 @@ jQuery(document).ready(function($) {
 				}
 
 				var message = response.data && response.data.message ? response.data.message : 'Автопродление отключено';
-				$('#ytr-unsubscribe-success-text').text(message);
+				var accessEnd = response.data && response.data.access_end ? response.data.access_end : '';
+				$('#ytr-unsubscribe-success-text').text('Автопродление отключено');
+				if (accessEnd !== '') {
+					$('#ytr-unsubscribe-success-hint').text(
+						'Доступ сохранится до ' + accessEnd + '. Тариф не продлится автоматически, списаний не будет.'
+					);
+				}
 				$('#ytr-modal-unsubscribe').removeClass('active').attr('aria-hidden', 'true');
-				$('#ytr-cancel-subscription-btn').closest('.lk-settings-part_cancel').remove();
+				ytrRenderAutoRenewStatusOff(message, accessEnd);
 				if (response.data && response.data.card_removed) {
 					ytrRemoveAutoRenewCardsFromDom();
 				}
