@@ -172,7 +172,7 @@ final class YTR_LK {
 	}
 
 	/**
-	 * Отмена автопродления: отключает списания, убирает способ оплаты для автоплатежей из ЛК.
+	 * Отмена автопродления: отключает списания, но сохраняет карту в ЛК.
 	 * Доступ к тарифу сохраняется до конца оплаченного периода.
 	 *
 	 * @return array{success:bool,message:string,access_end:string,card_removed:bool}
@@ -213,17 +213,7 @@ final class YTR_LK {
 			}
 		}
 
-		$payment_method_id = YTR_User::get_payment_method_id($user_id);
-
 		YTR_User::disable_auto_renew($user_id, true);
-
-		$card_removed = self::remove_auto_renew_saved_method($user_id, $payment_method_id);
-		if (!$card_removed) {
-			$card_removed = self::remove_all_recurring_saved_methods($user_id);
-		}
-		if (!$card_removed) {
-			$card_removed = self::remove_all_saved_cards($user_id);
-		}
 
 		$message = $access_end !== ''
 			? sprintf(
@@ -243,7 +233,7 @@ final class YTR_LK {
 			'success'      => true,
 			'message'      => $message,
 			'access_end'   => $access_end,
-			'card_removed' => $card_removed,
+			'card_removed' => false,
 		);
 	}
 
