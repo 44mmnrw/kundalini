@@ -67,6 +67,10 @@ final class YTR_LK {
 			return;
 		}
 
+		if (self::was_auto_renew_cancelled($user_id)) {
+			return;
+		}
+
 		if (YTR_User::is_auto_renew_enabled($user_id)) {
 			return;
 		}
@@ -340,6 +344,10 @@ final class YTR_LK {
 	 */
 	public static function maybe_backfill_auto_renew(int $user_id): void {
 		if ($user_id <= 0 || YTR_User::is_auto_renew_enabled($user_id) || !class_exists('YTR_Saved_Cards')) {
+			return;
+		}
+
+		if (self::was_auto_renew_cancelled($user_id)) {
 			return;
 		}
 
