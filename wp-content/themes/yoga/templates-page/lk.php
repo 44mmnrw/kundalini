@@ -448,10 +448,7 @@
 										$ytr_status_text      = class_exists('YTR_LK')
 											? YTR_LK::get_auto_renew_status_text($user_id, $subscription_end_label)
 											: '';
-										$ytr_status_off       = class_exists('YTR_LK') && (
-											YTR_LK::was_auto_renew_cancelled($user_id)
-											|| (class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id))
-										);
+										$ytr_status_off       = class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id);
 									?>
 									<div class="lk-settings-part lk-settings-part_cancel" id="ytr-auto-renew-status">
 										<div class="lk-auto-renew-status<?php echo $ytr_status_off ? ' lk-auto-renew-status_off' : ''; ?>" role="status">

@@ -11,6 +11,8 @@ if (!defined('ABSPATH')) {
 final class YTR_Saved_Cards {
 	public const META_KEY = '_ytr_saved_cards';
 	public const REMOVAL_SNAPSHOT_META = '_ytr_removed_card_snapshot';
+	public const REMOVED_CARDS_META = '_ytr_removed_cards';
+	public const SYNC_PAUSED_AT_META = '_ytr_cards_sync_paused_at';
 
 	public static function init(): void {
 		add_action('woocommerce_payment_complete', array(__CLASS__, 'sync_from_order_id'), 25, 1);
@@ -32,12 +34,18 @@ final class YTR_Saved_Cards {
 			return;
 		}
 
-		// Только заказы с явным согласием или привязкой в ЛК — не все тарифы подряд.
-		self::sync_cards_for_user(get_current_user_id(), true);
-		self::sync_renewal_state(get_current_user_id());
+		$user_id = get_current_user_id();
+
+		self::sync_cards_for_user($user_id, true);
 
 		if (class_exists('YTR_LK')) {
-			YTR_LK::maybe_backfill_auto_renew(get_current_user_id());
+			YTR_LK::maybe_sync_auto_renew_from_latest_order($user_id);
+		}
+
+		self::sync_renewal_state($user_id);
+
+		if (class_exists('YTR_LK')) {
+			YTR_LK::maybe_backfill_auto_renew($user_id);
 		}
 	}
 
@@ -46,11 +54,6 @@ final class YTR_Saved_Cards {
 	 */
 	public static function sync_renewal_state(int $user_id): void {
 		if ($user_id <= 0 || !class_exists('YTR_User')) {
-			return;
-		}
-
-		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
-			YTR_User::disable_auto_renew($user_id);
 			return;
 		}
 
@@ -68,7 +71,8 @@ final class YTR_Saved_Cards {
 			}
 		}
 
-		YTR_User::disable_auto_renew($user_id, true);
+		// Сиротские флаги без карты — сбрасываем, но не помечаем как отмену пользователем.
+		YTR_User::disable_auto_renew($user_id, false);
 	}
 
 	/**
@@ -78,6 +82,10 @@ final class YTR_Saved_Cards {
 	 */
 	public static function sync_cards_for_user(int $user_id, bool $opt_in_only = true): void {
 		if ($user_id <= 0) {
+			return;
+		}
+
+		if (self::is_historical_sync_paused($user_id) && self::get_cards($user_id) === array()) {
 			return;
 		}
 
@@ -127,6 +135,10 @@ final class YTR_Saved_Cards {
 	public static function sync_from_order(WC_Order $order): bool {
 		$user_id = (int) $order->get_customer_id();
 		if ($user_id <= 0) {
+			return false;
+		}
+
+		if (self::is_historical_sync_paused($user_id) && !self::order_can_resume_card_sync($order)) {
 			return false;
 		}
 
@@ -198,10 +210,6 @@ final class YTR_Saved_Cards {
 		}
 
 		if ($order->get_meta('_ytr_auto_renew_opt_in') === 'no') {
-			return;
-		}
-
-		if (class_exists('YTR_LK') && YTR_LK::was_auto_renew_cancelled($user_id)) {
 			return;
 		}
 
@@ -302,7 +310,7 @@ final class YTR_Saved_Cards {
 
 		self::prune_cards_from_declined_orders($user_id);
 
-		if (self::get_cards($user_id) === array()) {
+		if (self::get_cards($user_id) === array() && !self::is_historical_sync_paused($user_id)) {
 			self::sync_cards_for_user($user_id, true);
 		}
 
@@ -349,7 +357,7 @@ final class YTR_Saved_Cards {
 		$next    = array();
 
 		foreach ($cards as $card) {
-			if (!is_array($card) || (string) ($card['id'] ?? '') !== $card_id) {
+			if (!is_array($card) || !self::card_matches_identifier($card, $card_id)) {
 				$next[] = $card;
 				continue;
 			}
@@ -362,13 +370,27 @@ final class YTR_Saved_Cards {
 
 		update_user_meta($user_id, self::META_KEY, $next);
 
-		self::mark_user_removed_card($user_id, $removed);
+		self::pause_historical_sync($user_id);
+		self::append_removed_card($user_id, $removed);
 
 		if (class_exists('YTR_User')) {
 			YTR_User::disable_auto_renew($user_id, true);
 		}
 
 		return true;
+	}
+
+	/**
+	 * Разрешает синхронизацию карт после новой привязки или оплаты с сохранением карты.
+	 */
+	public static function clear_sync_pause(int $user_id): void {
+		if ($user_id <= 0) {
+			return;
+		}
+
+		delete_user_meta($user_id, self::SYNC_PAUSED_AT_META);
+		delete_user_meta($user_id, self::REMOVAL_SNAPSHOT_META);
+		delete_user_meta($user_id, self::REMOVED_CARDS_META);
 	}
 
 	/**
@@ -402,7 +424,10 @@ final class YTR_Saved_Cards {
 		}
 
 		update_user_meta($user_id, self::META_KEY, array($card_data));
-		self::maybe_clear_user_removal_snapshot($user_id, $card_data);
+
+		if (self::order_can_resume_card_sync(wc_get_order((int) ($card_data['order_id'] ?? 0)))) {
+			self::clear_sync_pause($user_id);
+		}
 	}
 
 	/**
@@ -453,24 +478,107 @@ final class YTR_Saved_Cards {
 	/**
 	 * @param array<string, mixed> $card
 	 */
-	private static function mark_user_removed_card(int $user_id, array $card): void {
-		if ($user_id <= 0) {
-			return;
+	private static function card_matches_identifier(array $card, string $card_id): bool {
+		if ($card_id === '') {
+			return false;
 		}
 
-		update_user_meta(
-			$user_id,
-			self::REMOVAL_SNAPSHOT_META,
-			array(
-				'order_id'          => (int) ($card['order_id'] ?? 0),
-				'payment_method_id' => (string) ($card['payment_method_id'] ?? ''),
-				'id'                => (string) ($card['id'] ?? ''),
-				'last4'             => (string) ($card['last4'] ?? ''),
-				'type'              => (string) ($card['type'] ?? ''),
-				'brand'             => (string) ($card['brand'] ?? ''),
-				'removed_at'        => time(),
-			)
+		if ((string) ($card['id'] ?? '') === $card_id) {
+			return true;
+		}
+
+		$payment_method_id = (string) ($card['payment_method_id'] ?? '');
+
+		return $payment_method_id !== '' && $payment_method_id === $card_id;
+	}
+
+	private static function pause_historical_sync(int $user_id): void {
+		update_user_meta($user_id, self::SYNC_PAUSED_AT_META, time());
+	}
+
+	public static function is_historical_sync_paused(int $user_id): bool {
+		return $user_id > 0 && (int) get_user_meta($user_id, self::SYNC_PAUSED_AT_META, true) > 0;
+	}
+
+	private static function order_can_resume_card_sync(?WC_Order $order): bool {
+		if (!$order instanceof WC_Order) {
+			return false;
+		}
+
+		if (class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order)) {
+			return true;
+		}
+
+		if ($order->get_meta('_ytr_auto_renew_opt_in') !== 'yes') {
+			return false;
+		}
+
+		$user_id = (int) $order->get_customer_id();
+		$paused_at = (int) get_user_meta($user_id, self::SYNC_PAUSED_AT_META, true);
+		if ($paused_at <= 0) {
+			return true;
+		}
+
+		$created = $order->get_date_created();
+
+		return $created && $created->getTimestamp() > $paused_at;
+	}
+
+	/**
+	 * @param array<string, mixed> $card
+	 */
+	private static function append_removed_card(int $user_id, array $card): void {
+		$entry = array(
+			'order_id'          => (int) ($card['order_id'] ?? 0),
+			'payment_method_id' => (string) ($card['payment_method_id'] ?? ''),
+			'id'                => (string) ($card['id'] ?? ''),
+			'last4'             => (string) ($card['last4'] ?? ''),
+			'type'              => (string) ($card['type'] ?? ''),
+			'brand'             => (string) ($card['brand'] ?? ''),
+			'removed_at'        => time(),
 		);
+
+		update_user_meta($user_id, self::REMOVAL_SNAPSHOT_META, $entry);
+
+		$blocklist = get_user_meta($user_id, self::REMOVED_CARDS_META, true);
+		if (!is_array($blocklist)) {
+			$blocklist = array();
+		}
+
+		foreach ($blocklist as $blocked) {
+			if (!is_array($blocked)) {
+				continue;
+			}
+			if (self::cards_match_identity($blocked, $entry)) {
+				return;
+			}
+			if (
+				$entry['payment_method_id'] !== ''
+				&& (string) ($blocked['payment_method_id'] ?? '') === $entry['payment_method_id']
+			) {
+				return;
+			}
+			if ($entry['id'] !== '' && (string) ($blocked['id'] ?? '') === $entry['id']) {
+				return;
+			}
+		}
+
+		$blocklist[] = $entry;
+		update_user_meta($user_id, self::REMOVED_CARDS_META, $blocklist);
+	}
+
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function get_removed_cards_blocklist(int $user_id): array {
+		$blocklist = get_user_meta($user_id, self::REMOVED_CARDS_META, true);
+		if (is_array($blocklist) && $blocklist !== array()) {
+			return array_values(array_filter($blocklist, 'is_array'));
+		}
+
+		$snapshot = self::get_user_removal_snapshot($user_id);
+
+		return $snapshot !== null ? array($snapshot) : array();
 	}
 
 	/**
@@ -490,32 +598,20 @@ final class YTR_Saved_Cards {
 	 * @param array<string, mixed> $card_data
 	 */
 	private static function should_skip_order_sync(int $user_id, WC_Order $order, array $card_data): bool {
-		$snapshot = self::get_user_removal_snapshot($user_id);
-		if ($snapshot === null) {
-			return false;
-		}
-
-		$order_id          = (int) $order->get_id();
-		$snapshot_order_id = (int) ($snapshot['order_id'] ?? 0);
-
-		if ($snapshot_order_id > 0 && $order_id === $snapshot_order_id) {
+		if (self::is_historical_sync_paused($user_id) && !self::order_can_resume_card_sync($order)) {
 			return true;
 		}
 
-		if ($snapshot_order_id > 0 && $order_id <= $snapshot_order_id) {
-			if (self::cards_match_identity($snapshot, $card_data)) {
-				return true;
-			}
+		if (
+			$order->get_meta('_ytr_auto_renew_opt_in') === 'yes'
+			&& $order->get_meta('_ytr_renewal') !== 'yes'
+			&& self::order_can_resume_card_sync($order)
+		) {
+			return false;
+		}
 
-			$snapshot_pm = (string) ($snapshot['payment_method_id'] ?? '');
-			$card_pm     = (string) ($card_data['payment_method_id'] ?? '');
-			if ($snapshot_pm !== '' && $card_pm !== '' && $snapshot_pm === $card_pm) {
-				return true;
-			}
-
-			$snapshot_id = (string) ($snapshot['id'] ?? '');
-			$card_id     = (string) ($card_data['id'] ?? '');
-			if ($snapshot_id !== '' && $card_id !== '' && $snapshot_id === $card_id) {
+		foreach (self::get_removed_cards_blocklist($user_id) as $blocked) {
+			if (self::card_entry_matches_order_sync($blocked, $order, $card_data)) {
 				return true;
 			}
 		}
@@ -524,20 +620,32 @@ final class YTR_Saved_Cards {
 	}
 
 	/**
+	 * @param array<string, mixed> $blocked
 	 * @param array<string, mixed> $card_data
 	 */
-	private static function maybe_clear_user_removal_snapshot(int $user_id, array $card_data): void {
-		$snapshot = self::get_user_removal_snapshot($user_id);
-		if ($snapshot === null) {
-			return;
+	private static function card_entry_matches_order_sync(array $blocked, WC_Order $order, array $card_data): bool {
+		$order_id = (int) $order->get_id();
+		if ((int) ($blocked['order_id'] ?? 0) > 0 && (int) ($blocked['order_id'] ?? 0) === $order_id) {
+			return true;
 		}
 
-		$order_id          = (int) ($card_data['order_id'] ?? 0);
-		$snapshot_order_id = (int) ($snapshot['order_id'] ?? 0);
-
-		if ($order_id > $snapshot_order_id || !self::cards_match_identity($snapshot, $card_data)) {
-			delete_user_meta($user_id, self::REMOVAL_SNAPSHOT_META);
+		if (self::cards_match_identity($blocked, $card_data)) {
+			return true;
 		}
+
+		$blocked_pm = (string) ($blocked['payment_method_id'] ?? '');
+		$card_pm    = (string) ($card_data['payment_method_id'] ?? '');
+		if ($blocked_pm !== '' && $card_pm !== '' && $blocked_pm === $card_pm) {
+			return true;
+		}
+
+		$blocked_id = (string) ($blocked['id'] ?? '');
+		$card_id    = (string) ($card_data['id'] ?? '');
+		if ($blocked_id !== '' && $card_id !== '' && $blocked_id === $card_id) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

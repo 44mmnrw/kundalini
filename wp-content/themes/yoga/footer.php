@@ -81,7 +81,18 @@ if ($is_lk_shell) {
 	get_template_part('template-parts/modal', 'subscription-cancel');
 	get_template_part('template-parts/modal', 'card-binding');
 }
-?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_formsucces">
+?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_cardsucces">
+	<div class="modal-close">
+        <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
+	</div>
+	<div class="delcomm active">
+        <div class="delcomm__succes">
+			<b>
+				Карта добавлена
+			</b>
+		</div>
+	</div>
+</div><div class="modal modal-default modal-default_formsucces">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</div>

@@ -55,6 +55,76 @@ final class YTR_LK {
 	}
 
 	/**
+	 * Включает автопродление по последнему оплаченному тарифу с галочкой сохранения карты.
+	 */
+	public static function maybe_sync_auto_renew_from_latest_order(int $user_id): void {
+		if (
+			$user_id <= 0
+			|| !class_exists('YTR_User')
+			|| !class_exists('YTR_Tariff')
+			|| !class_exists('YTR_YooKassa')
+		) {
+			return;
+		}
+
+		if (YTR_User::is_auto_renew_enabled($user_id)) {
+			return;
+		}
+
+		$orders = wc_get_orders(
+			array(
+				'customer_id' => $user_id,
+				'limit'       => 10,
+				'orderby'     => 'date',
+				'order'       => 'DESC',
+				'status'      => array('processing', 'completed'),
+			)
+		);
+
+		foreach ($orders as $order) {
+			if (!$order instanceof WC_Order) {
+				continue;
+			}
+
+			if (!YTR_Tariff::order_contains_tariff($order)) {
+				continue;
+			}
+
+			if ($order->get_meta('_ytr_renewal') === 'yes') {
+				continue;
+			}
+
+			if ($order->get_meta('_ytr_auto_renew_opt_in') !== 'yes') {
+				continue;
+			}
+
+			$product_id = YTR_Tariff::get_tariff_product_id_from_order($order);
+			if ($product_id <= 0) {
+				continue;
+			}
+
+			$payment_method_id = YTR_YooKassa::resolve_payment_method_id_for_order($order);
+			if ($payment_method_id === '') {
+				continue;
+			}
+
+			YTR_User::enable_auto_renew($user_id, $product_id, $payment_method_id);
+
+			if (class_exists('YTR_Saved_Cards')) {
+				YTR_Saved_Cards::clear_sync_pause($user_id);
+				YTR_Saved_Cards::sync_from_order($order);
+			}
+
+			return;
+		}
+	}
+
+	/** @deprecated Use maybe_sync_auto_renew_from_latest_order() */
+	public static function maybe_reactivate_auto_renew_after_repurchase(int $user_id): void {
+		self::maybe_sync_auto_renew_from_latest_order($user_id);
+	}
+
+	/**
 	 * Текст статуса автопродления для блока в настройках подписки.
 	 */
 	public static function get_auto_renew_status_text(int $user_id, string $access_end_date): string {
@@ -66,7 +136,7 @@ final class YTR_LK {
 			return '';
 		}
 
-		if (self::was_auto_renew_cancelled($user_id) || (class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id))) {
+		if (self::was_auto_renew_cancelled($user_id)) {
 			return sprintf(
 				/* translators: %s: access end date */
 				__(
@@ -77,14 +147,18 @@ final class YTR_LK {
 			);
 		}
 
-		return sprintf(
-			/* translators: %s: access end date */
-			__(
-				'Доступ сохранится до %s. Чтобы включить автопродление, оплатите тариф с галочкой сохранения способа оплаты.',
-				'yoga-tariff-renewal'
-			),
-			$access_end_date
-		);
+		if (class_exists('YTR_User') && !YTR_User::is_auto_renew_enabled($user_id)) {
+			return sprintf(
+				/* translators: %s: access end date */
+				__(
+					'Доступ сохранится до %s. Чтобы включить автопродление, оплатите тариф с галочкой сохранения способа оплаты.',
+					'yoga-tariff-renewal'
+				),
+				$access_end_date
+			);
+		}
+
+		return '';
 	}
 
 	public static function cancel_auto_renew(int $user_id): bool {
@@ -266,10 +340,6 @@ final class YTR_LK {
 	 */
 	public static function maybe_backfill_auto_renew(int $user_id): void {
 		if ($user_id <= 0 || YTR_User::is_auto_renew_enabled($user_id) || !class_exists('YTR_Saved_Cards')) {
-			return;
-		}
-
-		if (self::was_auto_renew_cancelled($user_id)) {
 			return;
 		}
 
