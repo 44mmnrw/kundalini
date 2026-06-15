@@ -9,7 +9,7 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
 	? (string) $anchor_id
 	: (string) ($section['anchor_id'] ?? 'anchor_06');
 ?>
-<span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
+<span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 <div class="praktika-comments">
     <h3><?php echo esc_html($section['title']); ?></h3>
     

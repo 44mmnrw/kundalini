@@ -6,7 +6,7 @@
  * @var string $anchor_id То же, что $section['anchor_id'], задаётся перед подключением.
  */
 ?>
-<span class="praktika-menu-anchor" id="<?php echo esc_attr($anchor_id); ?>"></span>
+<span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 <h3><?php echo esc_html($section['main_title']); ?></h3>
 
 	<?php echo apply_filters('the_content', $section['content']); ?>

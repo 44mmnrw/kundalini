@@ -119,6 +119,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										$anchor_id = function_exists('yoga_get_practice_section_anchor_id')
 											? yoga_get_practice_section_anchor_id($section, (int) $section_index)
 											: ($section['anchor_id'] ?? ('anchor_0' . ($section_index + 1)));
+										$section_key = 'section-' . ($section_index + 1);
 										$section_can_view = !function_exists('yoga_can_view_practice_section_layout')
 											|| yoga_can_view_practice_section_layout($layout, $practice_id);
 
@@ -193,6 +194,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 												$section_id = function_exists('yoga_get_practice_section_anchor_id')
 													? yoga_get_practice_section_anchor_id($section, (int) $index)
 													: ($section['anchor_id'] ?: 'anchor_0' . ($index + 1));
+												$section_key = 'section-' . ($index + 1);
 												$section_title = function_exists('yoga_get_practice_section_display_title')
 													? yoga_get_practice_section_display_title($section, $menu_layout)
 													: ($section['section_title'] ?? '');
@@ -200,7 +202,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 													&& !yoga_can_view_practice_section_layout($menu_layout, $practice_id);
 											?>
                                             <li<?php echo $menu_locked ? ' class="praktika-menu__item--locked"' : ''; ?>>
-                                                <a class="ref" href="#<?php echo esc_attr($section_id); ?>">
+                                                <a class="ref" href="#<?php echo esc_attr($section_id); ?>" data-section-key="<?php echo esc_attr($section_key); ?>">
                                                     <?php echo esc_html($section_title); ?>
                                                     <?php if ($menu_locked) : ?>
 														<span class="praktika-menu__lock" aria-hidden="true"></span>
@@ -212,7 +214,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										}
 									?>
                                     <li>
-                                        <a class="ref" href="#section-form-questions">
+                                        <a class="ref" href="#section-form-questions" data-section-key="section-form-questions">
                                             Задать вопрос
 										</a>
 									</li>
