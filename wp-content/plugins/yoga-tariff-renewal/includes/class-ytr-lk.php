@@ -80,7 +80,10 @@ final class YTR_LK {
 			return $fail(__('Необходима авторизация', 'yoga-tariff-renewal'));
 		}
 
-		if (!self::user_has_renewable_payment_setup($user_id)) {
+		if (
+			!self::user_has_renewable_payment_setup($user_id)
+			&& !YTR_User::has_auto_renew_meta($user_id)
+		) {
 			return $fail(__('Автопродление уже отключено', 'yoga-tariff-renewal'));
 		}
 
@@ -94,8 +97,7 @@ final class YTR_LK {
 
 		$payment_method_id = YTR_User::get_payment_method_id($user_id);
 
-		YTR_User::disable_auto_renew($user_id);
-		update_user_meta($user_id, self::META_CANCELLED_AT, time());
+		YTR_User::disable_auto_renew($user_id, true);
 
 		$card_removed = self::remove_auto_renew_saved_method($user_id, $payment_method_id);
 		if (!$card_removed) {
