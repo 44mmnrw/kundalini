@@ -99,7 +99,7 @@ $brand_icons = array(
 	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
 		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
 	</div>
-	<div class="delcomm active">
+	<div class="delcomm">
 		<div class="delcomm__main">
 			<h3><?php esc_html_e('Отмена подписки', 'yoga'); ?></h3>
 			<p>

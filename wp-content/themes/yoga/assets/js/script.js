@@ -3556,6 +3556,10 @@ jQuery(document).ready(function($) {
 			return false;
 		}
 
+		if ($modal.is('#ytr-modal-unsubscribe, #ytr-modal-cancel-subscription-confirm')) {
+			$modal.find('.delcomm').removeClass('active');
+		}
+
 		$('.modal').not($modal).removeClass('active').attr('aria-hidden', 'true');
 		if ($modal.parent()[0] !== document.body) {
 			$modal.appendTo('body');
@@ -3578,6 +3582,14 @@ jQuery(document).ready(function($) {
 		$('.body').removeClass('body-fixed');
 		ytrPendingCardDelete = null;
 	}
+
+	window.ytrCloseLkModals = ytrCloseLkModals;
+
+	$('.overlay').on('click.ytrLkModals', function() {
+		if ($('#ytr-modal-unsubscribe.active, #ytr-modal-unsubscribe-success.active, #ytr-modal-cancel-subscription.active, #ytr-modal-cancel-subscription-confirm.active, #ytr-modal-cancel-subscription-success.active').length) {
+			ytrCloseLkModals();
+		}
+	});
 
 	function ytrSetModalCardBrand(iconType) {
 		var type = String(iconType || 'default').toLowerCase();
@@ -3760,7 +3772,9 @@ jQuery(document).ready(function($) {
 		location.reload();
 	});
 
-	$('#ytr-unsubscribe-confirm').on('click', function() {
+	$('#ytr-unsubscribe-confirm').on('click', function(e) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
 		if (typeof yoga_ajax === 'undefined') {
 			return;
 		}
