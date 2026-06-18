@@ -12,12 +12,17 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-$tariffs_url     = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_page_url() : home_url('/');
-$practice_id     = (int) get_the_ID();
-$paywall_label   = function_exists('yoga_get_section_paywall_label')
-	? yoga_get_section_paywall_label()
-	: __('Доступно по подписке', 'yoga');
-$paywall_text    = function_exists('yoga_get_section_paywall_text')
+$tariffs_url          = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_page_url() : home_url('/');
+$practice_id          = (int) get_the_ID();
+$section_tariff_label = function_exists('yoga_get_practice_section_allowed_tariff_label')
+	? yoga_get_practice_section_allowed_tariff_label(is_array($section ?? null) ? $section : array())
+	: '';
+$paywall_label        = $section_tariff_label !== ''
+	? $section_tariff_label
+	: (function_exists('yoga_get_section_paywall_label')
+		? yoga_get_section_paywall_label()
+		: __('Доступно по подписке', 'yoga'));
+$paywall_text         = function_exists('yoga_get_section_paywall_text')
 	? yoga_get_section_paywall_text($practice_id)
 	: __('Оформите тариф, чтобы открыть этот раздел практики.', 'yoga');
 ?>

@@ -158,6 +158,116 @@ if (!function_exists('yoga_get_practice_section_allowed_tariff_ids')) {
 	}
 }
 
+if (!function_exists('yoga_normalize_practice_section_tariff_display_name')) {
+	function yoga_normalize_practice_section_tariff_display_name(string $name): string {
+		$name = trim(wp_strip_all_tags($name));
+		if ($name === '') {
+			return '';
+		}
+
+		$name = html_entity_decode($name, ENT_QUOTES, get_bloginfo('charset') ?: 'UTF-8');
+		$name = preg_replace('/\s+/u', ' ', $name);
+		$period_pattern = '(?:на\s+)?(?:\d+\s*)?(?:месяц(?:а|ев)?|мес\.?|год(?:а)?|годовой|месячный|month|year|monthly|yearly|annual|annually)';
+		$patterns = array(
+			'/\s*[\(\[]\s*' . $period_pattern . '\s*[\)\]]\s*$/iu',
+			'/\s*[-–—\/|,;:]+\s*' . $period_pattern . '\s*$/iu',
+			'/\s+' . $period_pattern . '\s*$/iu',
+		);
+
+		foreach ($patterns as $pattern) {
+			$normalized = preg_replace($pattern, '', $name);
+			if (is_string($normalized) && trim($normalized) !== '') {
+				$name = trim($normalized);
+			}
+		}
+
+		return trim(preg_replace('/\s+/u', ' ', $name) ?: $name);
+	}
+}
+
+if (!function_exists('yoga_get_practice_section_tariff_name_key')) {
+	function yoga_get_practice_section_tariff_name_key(string $name): string {
+		$name = yoga_normalize_practice_section_tariff_display_name($name);
+		$name = str_replace(array('Ё', 'ё'), array('Е', 'е'), $name);
+		$name = function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
+		return trim(preg_replace('/\s+/u', ' ', $name) ?: $name);
+	}
+}
+
+if (!function_exists('yoga_get_practice_section_allowed_tariff_names')) {
+	/**
+	 * @param array<string, mixed> $section
+	 * @return string[]
+	 */
+	function yoga_get_practice_section_allowed_tariff_names(array $section): array {
+		$tariff_ids = yoga_get_practice_section_allowed_tariff_ids($section);
+		if ($tariff_ids === array()) {
+			return array();
+		}
+
+		$names = array();
+		foreach ($tariff_ids as $tariff_id) {
+			$tariff_id = (int) $tariff_id;
+			if ($tariff_id <= 0) {
+				continue;
+			}
+
+			$root_id = function_exists('yoga_get_tariff_product_root_id')
+				? yoga_get_tariff_product_root_id($tariff_id)
+				: $tariff_id;
+			$display_id = $root_id > 0 ? $root_id : $tariff_id;
+
+			$name = '';
+			if (function_exists('wc_get_product')) {
+				$product = wc_get_product($display_id);
+				if ($product) {
+					$name = (string) $product->get_name();
+				}
+			}
+
+			if ($name === '') {
+				$name = get_the_title($display_id);
+			}
+
+			$name = yoga_normalize_practice_section_tariff_display_name((string) $name);
+			if ($name !== '') {
+				$key = yoga_get_practice_section_tariff_name_key($name);
+				if ($key !== '' && !isset($names[$key])) {
+					$names[$key] = $name;
+				}
+			}
+		}
+
+		return array_values($names);
+	}
+}
+
+if (!function_exists('yoga_get_practice_section_allowed_tariff_label')) {
+	/**
+	 * @param array<string, mixed> $section
+	 */
+	function yoga_get_practice_section_allowed_tariff_label(array $section): string {
+		$names = yoga_get_practice_section_allowed_tariff_names($section);
+		if ($names === array()) {
+			return '';
+		}
+
+		if (count($names) === 1) {
+			return sprintf(
+				/* translators: %s: tariff name */
+				__('Доступно на тарифе %s', 'yoga'),
+				$names[0]
+			);
+		}
+
+		return sprintf(
+			/* translators: %s: comma-separated tariff names */
+			__('Доступно на тарифах: %s', 'yoga'),
+			implode(', ', $names)
+		);
+	}
+}
+
 if (!function_exists('yoga_get_viewer_active_tariff_ids')) {
 	/**
 	 * @return array<int>
@@ -194,6 +304,59 @@ if (!function_exists('yoga_get_viewer_active_tariff_ids')) {
 	}
 }
 
+if (!function_exists('yoga_get_tariff_display_name_by_id')) {
+	function yoga_get_tariff_display_name_by_id(int $tariff_id): string {
+		if ($tariff_id <= 0) {
+			return '';
+		}
+
+		$name = '';
+		if (function_exists('wc_get_product')) {
+			$product = wc_get_product($tariff_id);
+			if ($product) {
+				$name = (string) $product->get_name();
+			}
+		}
+
+		if ($name === '') {
+			$name = get_the_title($tariff_id);
+		}
+
+		return function_exists('yoga_normalize_practice_section_tariff_display_name')
+			? yoga_normalize_practice_section_tariff_display_name((string) $name)
+			: trim(wp_strip_all_tags((string) $name));
+	}
+}
+
+if (!function_exists('yoga_get_viewer_active_tariff_name_keys')) {
+	/**
+	 * @return string[]
+	 */
+	function yoga_get_viewer_active_tariff_name_keys(?int $user_id = null): array {
+		$tariff_ids = yoga_get_viewer_active_tariff_ids($user_id);
+		if ($tariff_ids === array()) {
+			return array();
+		}
+
+		$keys = array();
+		foreach ($tariff_ids as $tariff_id) {
+			$name = yoga_get_tariff_display_name_by_id((int) $tariff_id);
+			if ($name === '') {
+				continue;
+			}
+
+			$key = function_exists('yoga_get_practice_section_tariff_name_key')
+				? yoga_get_practice_section_tariff_name_key($name)
+				: strtolower($name);
+			if ($key !== '') {
+				$keys[$key] = $key;
+			}
+		}
+
+		return array_values($keys);
+	}
+}
+
 if (!function_exists('yoga_can_view_practice_section')) {
 	/**
 	 * @param array<string, mixed> $section
@@ -209,7 +372,23 @@ if (!function_exists('yoga_can_view_practice_section')) {
 			return false;
 		}
 
-		return array_intersect($allowed_tariff_ids, $viewer_tariff_ids) !== array();
+		if (array_intersect($allowed_tariff_ids, $viewer_tariff_ids) !== array()) {
+			return true;
+		}
+
+		$allowed_name_keys = array();
+		foreach (yoga_get_practice_section_allowed_tariff_names($section) as $name) {
+			$key = yoga_get_practice_section_tariff_name_key($name);
+			if ($key !== '') {
+				$allowed_name_keys[$key] = $key;
+			}
+		}
+
+		if ($allowed_name_keys === array()) {
+			return false;
+		}
+
+		return array_intersect($allowed_name_keys, yoga_get_viewer_active_tariff_name_keys($user_id)) !== array();
 	}
 }
 
@@ -307,14 +486,6 @@ if (!function_exists('yoga_viewer_has_full_practice_sections')) {
 
 		if ($practice_id === null) {
 			$practice_id = (int) get_the_ID();
-		}
-
-		if (
-			$practice_id > 0
-			&& function_exists('yoga_user_can_access_practice')
-			&& !yoga_user_can_access_practice($user_id, $practice_id)
-		) {
-			return false;
 		}
 
 		return true;
