@@ -261,13 +261,21 @@ if (!function_exists('yoga_get_practice_questions_hidden_tariff_ids')) {
 
 if (!function_exists('yoga_can_view_practice_questions_form')) {
 	function yoga_can_view_practice_questions_form(?int $user_id = null): bool {
-		$hidden_tariff_ids = yoga_get_practice_questions_hidden_tariff_ids();
-		if ($hidden_tariff_ids === array()) {
-			return true;
+		if ($user_id === null) {
+			$user_id = get_current_user_id();
+		}
+
+		if ($user_id <= 0) {
+			return false;
 		}
 
 		$viewer_tariff_ids = yoga_get_viewer_active_tariff_ids($user_id);
 		if ($viewer_tariff_ids === array()) {
+			return false;
+		}
+
+		$hidden_tariff_ids = yoga_get_practice_questions_hidden_tariff_ids();
+		if ($hidden_tariff_ids === array()) {
 			return true;
 		}
 
