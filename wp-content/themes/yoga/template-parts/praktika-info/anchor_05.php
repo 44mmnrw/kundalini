@@ -212,7 +212,9 @@
 						data-yoga-copy-allow="1"
 						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
 					>
-						<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+						<span class="exercise-slider__media">
+							<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+						</span>
 					</a>
 				</div>
                 <?php endforeach; ?>
@@ -379,7 +381,9 @@
 						data-yoga-copy-allow="1"
 						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
 					>
-						<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+						<span class="exercise-slider__media">
+							<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+						</span>
 					</a>
 				</div>
                 <?php endforeach; ?>
