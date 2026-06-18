@@ -54,8 +54,12 @@
 	$media_file_mod = $exercise['media_file_mod'] ?? [];
 	$duration = $exercise['duration'] ?? 180;
 	$duration_mod = $exercise['duration_mod'] ?? 180;
-	$gallery = $exercise['gallery'] ?? [];
-	$gallery_mod = $exercise['gallery_mod'] ?? [];
+	$gallery = array_values(array_filter($exercise['gallery'] ?? [], static function ($image): bool {
+		return is_array($image) && !empty($image['url']);
+	}));
+	$gallery_mod = array_values(array_filter($exercise['gallery_mod'] ?? [], static function ($image): bool {
+		return is_array($image) && !empty($image['url']);
+	}));
 	$content =  $exercise['content'] ?? []; // Основной контент из поля WYSIWYG
 	$content_mod =  $exercise['content_mod'] ?? []; // Контент модификации (WYSIWYG)
 	$allow_fullscreen = true;
@@ -140,11 +144,9 @@
             
             <div class="<?php echo esc_attr($slider_class); ?>">
                 <?php foreach ($gallery as $image): ?>
-                <?php if (isset($image['url'])): ?>
                 <div class="exercise-slider__item">
                     <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
 				</div>
-                <?php endif; ?>
                 <?php endforeach; ?>
 			</div>
             <?php endif; ?>
@@ -295,11 +297,9 @@
 			?>
             <div class="<?php echo esc_attr($slider_class_mod); ?>">
                 <?php foreach ($gallery_mod as $image): ?>
-                <?php if (isset($image['url'])): ?>
                 <div class="exercise-slider__item">
                     <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
 				</div>
-                <?php endif; ?>
                 <?php endforeach; ?>
 			</div>
             <?php endif; ?>
