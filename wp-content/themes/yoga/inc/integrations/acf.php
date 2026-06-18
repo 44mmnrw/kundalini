@@ -305,6 +305,14 @@ if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 
 		$field['delay'] = 1;
 
+		$post_id = isset($_GET['post']) ? (int) $_GET['post'] : 0;
+		$post_type = $post_id > 0 ? get_post_type($post_id) : '';
+		if ($post_type === 'practice') {
+			$field['toolbar'] = 'full';
+			$field['media_upload'] = 1;
+			$field['tabs'] = 'all';
+		}
+
 		return $field;
 	}
 }
