@@ -19,10 +19,13 @@ if (is_array($practice_form_terms) && ! is_wp_error($practice_form_terms) && $pr
 		: strtolower($raw_practice_type);
 }
 $practice_form_title = get_the_title(get_the_ID());
+$show_practice_questions_form = !function_exists('yoga_can_view_practice_questions_form')
+	|| yoga_can_view_practice_questions_form(get_current_user_id());
 	
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));
 ?>
+<?php if ($show_practice_questions_form) : ?>
 <section class="section-form-questions section-form-questions_practice" id="section-form-questions">
 	<div class="container">
         <div class="row">
@@ -109,5 +112,6 @@ $practice_form_title = get_the_title(get_the_ID());
 		</div>
 	</div>
 </section>
+<?php endif; ?>
 <?php
 get_footer(); ?>

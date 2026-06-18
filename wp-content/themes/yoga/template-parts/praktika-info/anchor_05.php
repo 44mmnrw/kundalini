@@ -46,15 +46,16 @@
 				$alt = '';
 
 				if (is_array($image)) {
-					$url = trim((string) ($image['url'] ?? ''));
+					$image_id = (int) ($image['ID'] ?? $image['id'] ?? 0);
+					if ($image_id > 0) {
+						$url = (string) wp_get_attachment_image_url($image_id, 'full');
+					} else {
+						$url = trim((string) ($image['url'] ?? ''));
+					}
 					$alt = (string) ($image['alt'] ?? '');
 
-					if ($url === '') {
-						$image_id = (int) ($image['ID'] ?? $image['id'] ?? 0);
-						if ($image_id > 0) {
-							$url = (string) wp_get_attachment_image_url($image_id, 'full');
-							$alt = $alt !== '' ? $alt : (string) get_post_meta($image_id, '_wp_attachment_image_alt', true);
-						}
+					if ($image_id > 0 && $alt === '') {
+						$alt = (string) get_post_meta($image_id, '_wp_attachment_image_alt', true);
 					}
 				} elseif (is_numeric($image)) {
 					$image_id = (int) $image;
@@ -104,6 +105,8 @@
 	$duration_mod = $exercise['duration_mod'] ?? 180;
 	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array());
 	$gallery_mod = yoga_normalize_practice_exercise_gallery($exercise['gallery_mod'] ?? array());
+	$show_timer = !empty($timing);
+	$show_timer_mod = !empty($timing_mod);
 	$content =  $exercise['content'] ?? []; // Основной контент из поля WYSIWYG
 	$content_mod =  $exercise['content_mod'] ?? []; // Контент модификации (WYSIWYG)
 	$allow_fullscreen = true;
@@ -180,6 +183,9 @@
             <?php if (!empty($gallery)): ?>
             <?php 
                 $slider_class = 'exercise-slider';
+                if (!$show_timer) {
+                    $slider_class .= ' exercise-slider_full';
+				}
                 // Добавляем класс _active, если изображений больше одного
                 if (count($gallery) > 1) {
                     $slider_class .= ' exercise-slider_active';
@@ -195,6 +201,7 @@
 			</div>
             <?php endif; ?>
             
+            <?php if ($show_timer): ?>
             <div class="exercise-timer" data-version="main">
                 <div class="timer-main">
                     <b class="timer-main__title">Таймер</b>
@@ -220,17 +227,6 @@
 						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 					</button>
 					<?php endforeach; ?>
-					<?php else: ?>
-					<!-- Значения по умолчанию, если длительности не заданы -->
-					<button type="button" class="btn btn_min timer-preset" data-duration="180">
-						<span>3 мин.</span>
-					</button>
-					<button type="button" class="btn btn_min timer-preset" data-duration="420">
-						<span>7 мин.</span>
-					</button>
-					<button type="button" class="btn btn_min timer-preset" data-duration="660">
-						<span>11 мин.</span>
-					</button>
 					<?php endif; ?>
 					
 					<button type="button" class="btn timer-play-pause">
@@ -241,6 +237,7 @@
 					</button>
 				</div>
 			</div>
+            <?php endif; ?>
 		</div>
         
         <div class="player">
@@ -334,6 +331,9 @@
             <?php if (!empty($gallery_mod)): ?>
             <?php 
                 $slider_class_mod = 'exercise-slider';
+                if (!$show_timer_mod) {
+                    $slider_class_mod .= ' exercise-slider_full';
+				}
                 if (count($gallery_mod) > 1) {
                     $slider_class_mod .= ' exercise-slider_active';
 				}
@@ -350,6 +350,7 @@
             
             
             
+            <?php if ($show_timer_mod): ?>
             <div class="exercise-timer" data-version="mod">
                 <div class="timer-main">
                     <b class="timer-main__title">Таймер</b>
@@ -375,17 +376,6 @@
 						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 					</button>
 					<?php endforeach; ?>
-					<?php else: ?>
-					<!-- Значения по умолчанию, если длительности не заданы -->
-					<button type="button" class="btn btn_min timer-preset" data-duration="180">
-						<span>3 мин.</span>
-					</button>
-					<button type="button" class="btn btn_min timer-preset" data-duration="420">
-						<span>7 мин.</span>
-					</button>
-					<button type="button" class="btn btn_min timer-preset" data-duration="660">
-						<span>11 мин.</span>
-					</button>
 					<?php endif; ?>
 					
 					<button type="button" class="btn timer-play-pause">
@@ -396,6 +386,7 @@
 					</button>
 				</div>
 			</div>
+            <?php endif; ?>
 			
 		</div>
 		
