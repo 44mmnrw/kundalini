@@ -655,6 +655,11 @@ display: block !important;
   border-radius: 1.875rem;
   overflow: hidden;
 }
+.exercise-slider:not(.exercise-slider_active) .slick-prev,
+.exercise-slider:not(.exercise-slider_active) .slick-next,
+.exercise-slider:not(.exercise-slider_active) .slick-dots {
+  display: none !important;
+}
 .exercise-slider .slick-prev, .exercise-slider .slick-next {
   position: absolute;
   top: 50%;
@@ -715,16 +720,22 @@ display: block !important;
 
 .exercise-slider__item {
   width: 100%;
+  border-radius: 1.875rem;
+  background: var(--color-grey);
 }
 .exercise-slider__lightbox {
   display: block;
   width: 100%;
+  border-radius: inherit;
+  background: inherit;
   cursor: zoom-in;
 }
 .exercise-slider__item img {
   display: block;
   width: 100%;
-  height: 21.9375rem;  border-radius: 1.875rem;  object-fit: cover;
+  height: 21.9375rem;  border-radius: 1.875rem;  object-fit: contain;
+  object-position: center center;
+  background: inherit;
 }
 
 .exercise-timer {
