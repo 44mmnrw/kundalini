@@ -12,11 +12,21 @@
 </h3>
 
 <div class="praktika-text">
-	<?php echo wp_kses_post($section['intro_text'] ?? ''); ?>
+	<?php
+		$intro_html = wp_kses_post($section['intro_text'] ?? '');
+		echo function_exists('yoga_practice_content_images_lightbox')
+			? yoga_practice_content_images_lightbox($intro_html)
+			: $intro_html;
+	?>
 </div>
 
 <div class="praktika-quote">
-	<?php echo apply_filters('the_content', $section['quote_text']); ?>
+	<?php
+		$quote_html = apply_filters('the_content', $section['quote_text']);
+		echo function_exists('yoga_practice_content_images_lightbox')
+			? yoga_practice_content_images_lightbox($quote_html)
+			: $quote_html;
+	?>
 	<span class="praktika-quote__author">
 		<?php echo esc_html($section['quote_author']); ?>
 	</span>

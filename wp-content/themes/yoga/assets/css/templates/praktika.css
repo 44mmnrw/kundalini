@@ -200,6 +200,79 @@
 .praktika-info p .ref:hover {
   text-decoration: none;
 }
+.praktika-text::after,
+.exercise-content::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.praktika-info img {
+  max-width: 100%;
+  height: auto;
+}
+.praktika-info .aligncenter {
+  display: block;
+  margin: 1.5625rem auto;
+}
+.praktika-info .alignleft {
+  float: left;
+  margin: 0.375rem 1.5625rem 1rem 0;
+}
+.praktika-info .alignright {
+  float: right;
+  margin: 0.375rem 0 1rem 1.5625rem;
+}
+.praktika-info figure.aligncenter,
+.praktika-info .wp-caption.aligncenter {
+  text-align: center;
+}
+.praktika-info figure.alignleft,
+.praktika-info .wp-caption.alignleft {
+  max-width: 50%;
+}
+.praktika-info figure.alignright,
+.praktika-info .wp-caption.alignright {
+  max-width: 50%;
+}
+.praktika-info .wp-caption-text {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  opacity: 0.75;
+}
+.praktika-info .praktika-lightbox-link {
+  max-width: 100%;
+  cursor: zoom-in;
+}
+.praktika-info .praktika-lightbox-link.aligncenter {
+  display: table;
+  width: auto;
+  max-width: 100%;
+  margin: 1.5625rem auto;
+}
+.praktika-info .praktika-lightbox-link.alignleft {
+  display: block;
+  float: left;
+  width: auto;
+  max-width: 50%;
+  margin: 0.375rem 1.5625rem 1rem 0;
+}
+.praktika-info .praktika-lightbox-link.alignright {
+  display: block;
+  float: right;
+  width: auto;
+  max-width: 50%;
+  margin: 0.375rem 0 1rem 1.5625rem;
+}
+.praktika-info .praktika-lightbox-link img {
+  display: block;
+}
+.praktika-info .praktika-lightbox-link.aligncenter img.aligncenter,
+.praktika-info .praktika-lightbox-link.alignleft img.alignleft,
+.praktika-info .praktika-lightbox-link.alignright img.alignright {
+  float: none;
+  margin: 0;
+}
 .praktika-info ul {
   margin-top: 1.5625rem;}
 .praktika-info ul li {
@@ -221,6 +294,22 @@
 }
 .praktika-info ul li .ref:hover {
   text-decoration: none;
+}
+.praktika-info ol {
+  margin-top: 1.5625rem;
+  padding-left: 1.6875rem;
+  list-style: decimal outside;
+}
+.praktika-info ol li {
+  display: list-item;
+  list-style: decimal outside;
+  font-size: 1.125rem;
+  line-height: 1.71em;
+  padding-left: 0.25rem;
+}
+.praktika-info ol li::before {
+  content: none;
+  display: none;
 }
 .praktika-info h3.mtb {
   margin-top: 3.75rem;}
@@ -492,6 +581,20 @@ display: block !important;
 }
 .exercise-item__info-details div {
   margin-top: 0.3125rem;}
+.exercise-item__info-details p {
+  display: inline;
+  margin: 0;
+  font: inherit;
+  line-height: inherit;
+}
+.exercise-item__info-details p + p {
+  display: block;
+  margin-top: 0.375rem;
+}
+.exercise-item__info-details ul,
+.exercise-item__info-details ol {
+  margin-top: 0.5rem;
+}
 .exercise-item__info-details b {
   font-family: "Mulish-Bold", sans-serif;
   font-weight: normal;
@@ -612,6 +715,11 @@ display: block !important;
 
 .exercise-slider__item {
   width: 100%;
+}
+.exercise-slider__lightbox {
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
 }
 .exercise-slider__item img {
   display: block;
@@ -1317,6 +1425,26 @@ display: block !important;
     font-size: 1.625rem;  }
   .praktika-info h3 {
     font-size: 1.625rem;  }
+  .praktika-info .alignleft,
+  .praktika-info .alignright {
+    float: none;
+    display: block;
+    max-width: 100%;
+    margin: 1.25rem auto;
+  }
+  .praktika-info .praktika-lightbox-link.alignleft,
+  .praktika-info .praktika-lightbox-link.alignright {
+    float: none;
+    display: table;
+    max-width: 100%;
+    margin: 1.25rem auto;
+  }
+  .praktika-info figure.alignleft,
+  .praktika-info figure.alignright,
+  .praktika-info .wp-caption.alignleft,
+  .praktika-info .wp-caption.alignright {
+    max-width: 100%;
+  }
   .praktika-quote {
     padding-left: 1.5625rem;    padding-right: 1.5625rem;    padding-bottom: 3.4375rem;  }
   .praktika-quote__author {

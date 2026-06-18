@@ -1780,6 +1780,16 @@ jQuery(document).ready(function($) {
 	
 	// Обработка формы подписки
 	jQuery(document).ready(function($) {
+		if ($.fn.fancybox) {
+			$('[data-fancybox^="practice-"]').fancybox({
+				loop: true,
+				buttons: [
+					'zoom',
+					'close'
+				]
+			});
+		}
+
 		$('#subscription-form').on('submit', function(e) {
 			e.preventDefault();
 			

@@ -19,7 +19,9 @@
 }
 
 .yoga-copy-protected [data-yoga-copy-allow],
-.yoga-copy-protected [data-yoga-copy-allow] * {
+.yoga-copy-protected [data-yoga-copy-allow] *,
+.yoga-copy-protected [data-fancybox],
+.yoga-copy-protected [data-fancybox] * {
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;

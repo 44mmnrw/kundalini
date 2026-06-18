@@ -13,6 +13,7 @@
 	require_once get_template_directory() . '/inc/integrations/acf.php';
 	require_once get_template_directory() . '/inc/practice-tariff-access.php';
 	require_once get_template_directory() . '/inc/practice-visibility.php';
+	require_once get_template_directory() . '/inc/practice-content.php';
 	require_once get_template_directory() . '/inc/downloads/download-limits.php';
 	require_once get_template_directory() . '/inc/downloads/download-handler.php';
 	require_once get_template_directory() . '/inc/ajax/payments.php';
@@ -3994,7 +3995,6 @@ function handle_comment_delete() {
 			return '';
 		}
 	}
-
 
 
 

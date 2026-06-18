@@ -105,6 +105,8 @@
 	$duration_mod = $exercise['duration_mod'] ?? 180;
 	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array());
 	$gallery_mod = yoga_normalize_practice_exercise_gallery($exercise['gallery_mod'] ?? array());
+	$gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-main';
+	$gallery_mod_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-mod';
 	$show_timer = !empty($timing);
 	$show_timer_mod = !empty($timing_mod);
 	$content =  $exercise['content'] ?? []; // Основной контент из поля WYSIWYG
@@ -155,7 +157,11 @@
                     <b><?php echo esc_html($item['title']); ?>:</b> 
                     <?php endif; ?>
                     <?php if (!empty($item['description'])): ?>
-                    <?php echo esc_html($item['description']); ?>
+                    <?php
+						echo function_exists('yoga_practice_format_rich_text')
+							? yoga_practice_format_rich_text($item['description'])
+							: wp_kses_post(wpautop((string) $item['description']));
+					?>
                     <?php endif; ?>
 				</div>
                 <?php endforeach; ?>
@@ -174,7 +180,11 @@
 				<?php endif; ?>
                 
                 <?php if ($details): ?>
-                <div><b>Доп. детали:</b> <?php echo esc_html($details); ?></div>
+                <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
+					echo function_exists('yoga_practice_format_rich_text')
+						? yoga_practice_format_rich_text($details)
+						: wp_kses_post(wpautop((string) $details));
+				?></div>
                 <?php endif; ?>
 			</div>
 		</div>
@@ -195,7 +205,15 @@
             <div class="<?php echo esc_attr($slider_class); ?>">
                 <?php foreach ($gallery as $image): ?>
                 <div class="exercise-slider__item">
-                    <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+                    <a
+						href="<?php echo esc_url($image['url']); ?>"
+						class="exercise-slider__lightbox"
+						data-fancybox="<?php echo esc_attr($gallery_fancybox); ?>"
+						data-yoga-copy-allow="1"
+						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
+					>
+						<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+					</a>
 				</div>
                 <?php endforeach; ?>
 			</div>
@@ -269,7 +287,11 @@
         
         <?php if ($content): ?>
         <div class="exercise-content">
-            <?php echo apply_filters('the_content', $content); ?>
+            <?php
+				echo function_exists('yoga_practice_format_rich_text')
+					? yoga_practice_format_rich_text($content, true)
+					: apply_filters('the_content', $content);
+			?>
 		</div>
         <?php endif; ?>
 	</div>
@@ -303,7 +325,11 @@
                     <b><?php echo esc_html($item['title']); ?>:</b> 
                     <?php endif; ?>
                     <?php if (!empty($item['description'])): ?>
-                    <?php echo esc_html($item['description']); ?>
+                    <?php
+						echo function_exists('yoga_practice_format_rich_text')
+							? yoga_practice_format_rich_text($item['description'])
+							: wp_kses_post(wpautop((string) $item['description']));
+					?>
                     <?php endif; ?>
 				</div>
                 <?php endforeach; ?>
@@ -322,7 +348,11 @@
 				<?php endif; ?>
                 
                 <?php if ($details): ?>
-                <div><b>Доп. детали:</b> <?php echo esc_html($details); ?></div>
+                <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
+					echo function_exists('yoga_practice_format_rich_text')
+						? yoga_practice_format_rich_text($details)
+						: wp_kses_post(wpautop((string) $details));
+				?></div>
                 <?php endif; ?>
 			</div>
 		</div>
@@ -342,7 +372,15 @@
             <div class="<?php echo esc_attr($slider_class_mod); ?>">
                 <?php foreach ($gallery_mod as $image): ?>
                 <div class="exercise-slider__item">
-                    <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+                    <a
+						href="<?php echo esc_url($image['url']); ?>"
+						class="exercise-slider__lightbox"
+						data-fancybox="<?php echo esc_attr($gallery_mod_fancybox); ?>"
+						data-yoga-copy-allow="1"
+						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
+					>
+						<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+					</a>
 				</div>
                 <?php endforeach; ?>
 			</div>
@@ -418,7 +456,11 @@
 			
         <?php if ($content_mod): ?>
         <div class="exercise-content">
-            <?php echo apply_filters('the_content', $content_mod); ?>
+            <?php
+				echo function_exists('yoga_practice_format_rich_text')
+					? yoga_practice_format_rich_text($content_mod, true)
+					: apply_filters('the_content', $content_mod);
+			?>
 		</div>
         <?php endif; ?>
 	</div>
