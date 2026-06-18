@@ -64,6 +64,10 @@ $library_path = function_exists('yoga_get_practice_primary_term_path')
 $library_url = $library_path !== ''
 	? home_url('/library/' . trim($library_path, '/') . '/')
 	: home_url('/library/');
+$section_praktika_classes = array('section-praktika');
+if (!empty($section_praktika_extra_class)) {
+	$section_praktika_classes[] = sanitize_html_class((string) $section_praktika_extra_class);
+}
 
 if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 	// Используем универсальный параметр difficulty, чтобы не попадать в 404 на некоторых rewrite-настройках.
@@ -74,7 +78,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 	$same_level_url = $library_url;
 }
 ?>
-<section class="section-praktika" id="section-praktika">
+<section class="<?php echo esc_attr(implode(' ', $section_praktika_classes)); ?>" id="section-praktika">
     <div class="container">
         <div class="row">
             <div class="praktika">

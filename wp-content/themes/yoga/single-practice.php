@@ -21,9 +21,11 @@ if (is_array($practice_form_terms) && ! is_wp_error($practice_form_terms) && $pr
 $practice_form_title = get_the_title(get_the_ID());
 $show_practice_questions_form = !function_exists('yoga_can_view_practice_questions_form')
 	|| yoga_can_view_practice_questions_form(get_current_user_id());
+$section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-praktika_no-questions';
 	
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));
+	unset($section_praktika_extra_class);
 ?>
 <?php if ($show_practice_questions_form) : ?>
 <section class="section-form-questions section-form-questions_practice" id="section-form-questions">
