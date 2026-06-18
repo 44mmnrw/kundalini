@@ -207,11 +207,18 @@
   clear: both;
 }
 .praktika-info img {
+  width: 100%;
   max-width: 100%;
   height: auto;
 }
+.praktika-info .alignleft,
+.praktika-info .alignright {
+  width: auto;
+  max-width: 50%;
+}
 .praktika-info .aligncenter {
   display: block;
+  width: 100%;
   margin: 1.5625rem auto;
 }
 .praktika-info .alignleft {
@@ -224,6 +231,7 @@
 }
 .praktika-info figure.aligncenter,
 .praktika-info .wp-caption.aligncenter {
+  width: 100% !important;
   text-align: center;
 }
 .praktika-info figure.alignleft,
@@ -241,12 +249,14 @@
   opacity: 0.75;
 }
 .praktika-info .praktika-lightbox-link {
+  display: block;
+  width: 100%;
   max-width: 100%;
   cursor: zoom-in;
 }
 .praktika-info .praktika-lightbox-link.aligncenter {
-  display: table;
-  width: auto;
+  display: block;
+  width: 100%;
   max-width: 100%;
   margin: 1.5625rem auto;
 }
@@ -266,6 +276,7 @@
 }
 .praktika-info .praktika-lightbox-link img {
   display: block;
+  width: 100%;
 }
 .praktika-info .praktika-lightbox-link.aligncenter img.aligncenter,
 .praktika-info .praktika-lightbox-link.alignleft img.alignleft,
@@ -720,22 +731,33 @@ display: block !important;
 
 .exercise-slider__item {
   width: 100%;
-  border-radius: 1.875rem;
-  background: var(--color-grey);
 }
 .exercise-slider__lightbox {
   display: block;
   width: 100%;
-  border-radius: inherit;
-  background: inherit;
+  border-radius: 1.875rem;
   cursor: zoom-in;
+}
+.exercise-slider__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 21.9375rem;
+  border-radius: 1.875rem;
+  overflow: hidden;
+  background: var(--color-grey);
 }
 .exercise-slider__item img {
   display: block;
-  width: 100%;
-  height: 21.9375rem;  border-radius: 1.875rem;  object-fit: contain;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 1.875rem;
+  object-fit: contain;
   object-position: center center;
-  background: inherit;
+  background: transparent;
 }
 
 .exercise-timer {
@@ -1244,7 +1266,7 @@ display: block !important;
     margin-top: 1.25rem;  }
   .praktika-quote {
     padding-left: 3.75rem;    padding-right: 3.75rem;  }
-  .exercise-slider__item img {
+  .exercise-slider__media {
     height: 20.9375rem;  }
   .praktika-comments {
     padding-top: 2.5rem;  }
@@ -1256,7 +1278,7 @@ display: block !important;
     width: calc(100% - 15.625rem);  }
   .praktika-info {
     width: calc(100% - 15.625rem);  }
-  .exercise-slider__item img {
+  .exercise-slider__media {
     height: 18.875rem;  }
   .exercise-timer {
     width: calc(40% + 0px);
@@ -1363,7 +1385,7 @@ display: block !important;
     order: 2;
     box-sizing: border-box;
   }
-  .exercise-slider__item img {
+  .exercise-slider__media {
     height: 19.75rem;
   }
 }
@@ -1505,7 +1527,7 @@ display: block !important;
   .exercise-slider .slick-list {
     width: 100% !important;
   }
-  .exercise-slider__item img {
+  .exercise-slider__media {
     height: 26.125rem;  }
   /* Таймер — макет Figma timer_mobile (588:12786): карточка 311×полная ширина, отступы 30/15/30 */
   .exercise-timer {
@@ -1685,8 +1707,13 @@ display: block !important;
     border-radius: 1.25rem;  }
   .praktika-exercise i {
     font-size: 1rem;  }
+  .exercise-slider__lightbox,
+  .exercise-slider__media {
+    border-radius: 1.25rem;  }
   .exercise-slider__item img {
-    border-radius: 1.25rem;    height: 14.875rem;  }
+    border-radius: 1.25rem;  }
+  .exercise-slider__media {
+    height: 14.875rem;  }
   .player {
     margin-top: 0.625rem;  }
   .exercise-switches {
