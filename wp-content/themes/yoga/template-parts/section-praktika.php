@@ -226,11 +226,13 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 											}
 										}
 									?>
+									<?php if (!function_exists('yoga_can_view_practice_questions_form') || yoga_can_view_practice_questions_form(get_current_user_id())) : ?>
                                     <li>
                                         <a class="ref" href="#section-form-questions" data-section-key="section-form-questions">
                                             Задать вопрос
 										</a>
 									</li>
+									<?php endif; ?>
 								</ul>
                             </nav>
                             <?php

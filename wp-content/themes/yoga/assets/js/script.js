@@ -742,12 +742,21 @@ jQuery(document).ready(function($) {
 	initPraktikaMenuSync();
 	
 	
-	$('.exercise-slider_active').slick({
-		infinite: true,
-		dots: true,
-		arrows: true,
-		slidesToShow: 1,
-		slidesToScroll: 1
+	$('.exercise-slider_active').each(function () {
+		var $slider = $(this);
+
+		if ($slider.hasClass('slick-initialized')) {
+			return;
+		}
+
+		$slider.slick({
+			infinite: false,
+			dots: true,
+			arrows: true,
+			slide: '.exercise-slider__item',
+			slidesToShow: 1,
+			slidesToScroll: 1
+		});
 	});
 
 	/* После смены ширины контейнера (мобильная вёрстка) slick оставляет старую геометрию списка */

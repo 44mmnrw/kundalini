@@ -417,8 +417,7 @@ function initializePracticeSystem() {
         });
     });
 
-    // Инициализация слайдеров
-    initializeSliders();
+    // Слайдеры упражнений инициализируются в script.js через Slick.
 }
 
 // Функция для перехода к следующему упражнению
@@ -623,40 +622,6 @@ function updateAudioFullscreen(exercise, playerElement) {
     updateFullscreenControls();
 }
 
-// Функция для инициализации слайдеров
-function initializeSliders() {
-    document.querySelectorAll('.exercise-slider').forEach(slider => {
-        if (slider.querySelectorAll('.exercise-slider__item').length > 1) {
-            // Инициализация слайдера, если нужно
-            // Можно использовать любой слайдер (Swiper, Glide, etc.)
-            // Здесь просто добавляем индикаторы для навигации
-            const items = slider.querySelectorAll('.exercise-slider__item');
-            const indicators = document.createElement('div');
-            indicators.className = 'exercise-slider__indicators';
-            
-            items.forEach((item, index) => {
-                const indicator = document.createElement('span');
-                indicator.className = 'exercise-slider__indicator';
-                if (index === 0) indicator.classList.add('active');
-                indicator.addEventListener('click', () => {
-                    // Простая реализация переключения слайдов
-                    items.forEach(i => i.style.display = 'none');
-                    items[index].style.display = 'block';
-                    
-                    // Обновляем индикаторы
-                    indicators.querySelectorAll('.exercise-slider__indicator').forEach(ind => {
-                        ind.classList.remove('active');
-                    });
-                    indicator.classList.add('active');
-                });
-                indicators.appendChild(indicator);
-            });
-            
-            slider.appendChild(indicators);
-        }
-    });
-}
-
 // Стили для полноэкранного режима аудио
 const audioFullscreenStyles = `
     .audio-fullscreen {
@@ -752,25 +717,6 @@ const audioFullscreenStyles = `
         width: 0%;
         transition: width 0.3s;
     }
-    
-    .exercise-slider__indicators {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-        gap: 8px;
-    }
-    
-    .exercise-slider__indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #ccc;
-        cursor: pointer;
-    }
-    
-    .exercise-slider__indicator.active {
-        background: #2c3e50;
-    }
 `;
 
 // Добавляем стили в документ
@@ -821,4 +767,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Axecode.tech: Этап 2 стабилизации - единая точка входа инициализации (DOMContentLoaded).
-

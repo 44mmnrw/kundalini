@@ -228,6 +228,18 @@ if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 						'layout'        => 'vertical',
 						'return_format' => 'value',
 					),
+					array(
+						'key'           => 'field_practice_questions_hidden_tariffs',
+						'label'         => 'Скрывать блок «Остались вопросы?» для тарифов',
+						'name'          => 'practice_questions_hidden_tariffs',
+						'type'          => 'post_object',
+						'instructions'  => 'Выберите тарифы, для которых на страницах практик не нужно показывать форму вопроса. Если поле пустое — блок показывается всем.',
+						'post_type'     => array('product'),
+						'return_format' => 'id',
+						'multiple'      => 1,
+						'allow_null'    => 1,
+						'ui'            => 1,
+					),
 				),
 				'location'              => array(
 					array(
@@ -285,16 +297,19 @@ if (!function_exists('yoga_register_practice_guest_access_fields')) {
 
 add_action('acf/init', 'yoga_register_practice_guest_access_fields', 15);
 
-if (!function_exists('yoga_delay_exercise_wysiwyg_editors')) {
-	function yoga_delay_exercise_wysiwyg_editors(array $field): array {
+if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
+	function yoga_delay_acf_wysiwyg_editors(array $field): array {
+		if (!is_admin()) {
+			return $field;
+		}
+
 		$field['delay'] = 1;
 
 		return $field;
 	}
 }
 
-add_filter('acf/load_field/key=field_ex_content', 'yoga_delay_exercise_wysiwyg_editors');
-add_filter('acf/load_field/key=field_ex_content_mod', 'yoga_delay_exercise_wysiwyg_editors');
+add_filter('acf/load_field/type=wysiwyg', 'yoga_delay_acf_wysiwyg_editors', 20);
 
 if (!function_exists('yoga_register_theme_smartcaptcha_fields')) {
     function yoga_register_theme_smartcaptcha_fields() {

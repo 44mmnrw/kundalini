@@ -213,6 +213,68 @@ if (!function_exists('yoga_can_view_practice_section')) {
 	}
 }
 
+if (!function_exists('yoga_get_practice_questions_hidden_tariff_ids')) {
+	/**
+	 * @return array<int>
+	 */
+	function yoga_get_practice_questions_hidden_tariff_ids(): array {
+		if (!function_exists('get_field')) {
+			return array();
+		}
+
+		$value = get_field('practice_questions_hidden_tariffs', 'option');
+		if (empty($value)) {
+			return array();
+		}
+
+		if (function_exists('yoga_normalize_acf_post_ids')) {
+			$ids = yoga_normalize_acf_post_ids($value);
+		} else {
+			$ids = array();
+			foreach ((array) $value as $item) {
+				if ($item instanceof WP_Post) {
+					$ids[] = (int) $item->ID;
+				} elseif (is_array($item) && isset($item['ID'])) {
+					$ids[] = (int) $item['ID'];
+				} elseif (is_numeric($item)) {
+					$ids[] = (int) $item;
+				}
+			}
+		}
+
+		$tariff_ids = array();
+		foreach ($ids as $id) {
+			$id = (int) $id;
+			if ($id <= 0) {
+				continue;
+			}
+
+			$tariff_ids[] = $id;
+			if (function_exists('yoga_get_tariff_product_root_id')) {
+				$tariff_ids[] = yoga_get_tariff_product_root_id($id);
+			}
+		}
+
+		return array_values(array_unique(array_filter(array_map('intval', $tariff_ids))));
+	}
+}
+
+if (!function_exists('yoga_can_view_practice_questions_form')) {
+	function yoga_can_view_practice_questions_form(?int $user_id = null): bool {
+		$hidden_tariff_ids = yoga_get_practice_questions_hidden_tariff_ids();
+		if ($hidden_tariff_ids === array()) {
+			return true;
+		}
+
+		$viewer_tariff_ids = yoga_get_viewer_active_tariff_ids($user_id);
+		if ($viewer_tariff_ids === array()) {
+			return true;
+		}
+
+		return array_intersect($hidden_tariff_ids, $viewer_tariff_ids) === array();
+	}
+}
+
 if (!function_exists('yoga_viewer_has_full_practice_sections')) {
 	/**
 	 * Полный доступ ко всем якорям — только при активном оплаченном тарифе.
