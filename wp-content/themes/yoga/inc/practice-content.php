@@ -102,7 +102,6 @@ if (!function_exists('yoga_practice_prepare_lightbox_open_tag')) {
 	function yoga_practice_prepare_lightbox_open_tag(string $open_tag, string $image_tag, string $href): string {
 		$open_tag = yoga_practice_set_html_attribute($open_tag, 'href', esc_url_raw($href));
 		$open_tag = yoga_practice_set_html_attribute($open_tag, 'data-fancybox', 'practice-content-images');
-		$open_tag = yoga_practice_set_html_attribute($open_tag, 'data-yoga-copy-allow', '1');
 		$open_tag = yoga_practice_set_html_attribute($open_tag, 'class', yoga_practice_lightbox_link_class($image_tag, yoga_practice_get_html_attribute($open_tag, 'class')));
 
 		$alt = trim(yoga_practice_get_html_attribute($image_tag, 'alt'));

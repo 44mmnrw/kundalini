@@ -21,7 +21,7 @@
 		if (!el) {
 			return false;
 		}
-		return !!el.closest('[data-yoga-copy-allow], [data-fancybox], .praktika-lightbox-link, input, textarea, select, [contenteditable="true"]');
+		return !!el.closest('[data-yoga-copy-allow], input, textarea, select, [contenteditable="true"]');
 	}
 
 	function isInProtectedArea(el) {

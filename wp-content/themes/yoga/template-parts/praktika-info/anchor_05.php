@@ -209,7 +209,6 @@
 						href="<?php echo esc_url($image['url']); ?>"
 						class="exercise-slider__lightbox"
 						data-fancybox="<?php echo esc_attr($gallery_fancybox); ?>"
-						data-yoga-copy-allow="1"
 						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
 					>
 						<span class="exercise-slider__media">
@@ -378,7 +377,6 @@
 						href="<?php echo esc_url($image['url']); ?>"
 						class="exercise-slider__lightbox"
 						data-fancybox="<?php echo esc_attr($gallery_mod_fancybox); ?>"
-						data-yoga-copy-allow="1"
 						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
 					>
 						<span class="exercise-slider__media">
