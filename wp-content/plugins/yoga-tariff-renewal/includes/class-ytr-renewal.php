@@ -13,6 +13,14 @@ final class YTR_Renewal {
 		return max(1, (int) get_option('ytr_max_retry_days', 7));
 	}
 
+	public static function get_max_retry_attempts(): int {
+		return max(1, (int) get_option('ytr_max_retry_attempts', 7));
+	}
+
+	public static function get_retry_interval_minutes(): int {
+		return max(1, (int) get_option('ytr_retry_interval_minutes', DAY_IN_SECONDS / MINUTE_IN_SECONDS));
+	}
+
 	public static function is_enabled(): bool {
 		return get_option('ytr_enabled', 'yes') === 'yes';
 	}
@@ -48,6 +56,11 @@ final class YTR_Renewal {
 			}
 
 			if (YTR_Orders::has_recent_renewal_attempt($user_id)) {
+				++$stats['skipped'];
+				continue;
+			}
+
+			if (self::user_retry_limit_reached($user_id) || self::user_retry_interval_active($user_id)) {
 				++$stats['skipped'];
 				continue;
 			}
@@ -91,6 +104,25 @@ final class YTR_Renewal {
 		$renewal_end   = $access_end + ($max_retry * DAY_IN_SECONDS);
 
 		return $now >= $renewal_start && $now <= $renewal_end;
+	}
+
+	private static function user_retry_limit_reached(int $user_id): bool {
+		return YTR_User::get_renewal_failures($user_id) >= self::get_max_retry_attempts();
+	}
+
+	private static function user_retry_interval_active(int $user_id): bool {
+		if (YTR_User::get_renewal_failures($user_id) <= 0) {
+			return false;
+		}
+
+		$last_attempt = YTR_User::get_last_renewal_attempt($user_id);
+		if ($last_attempt <= 0) {
+			return false;
+		}
+
+		$retry_after = $last_attempt + (self::get_retry_interval_minutes() * MINUTE_IN_SECONDS);
+
+		return time() < $retry_after;
 	}
 
 	/**
