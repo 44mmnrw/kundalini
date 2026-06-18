@@ -64,6 +64,10 @@ final class YTR_User {
 		update_user_meta($user_id, self::META_LAST_RENEWAL_TRY, time());
 	}
 
+	public static function get_last_renewal_attempt(int $user_id): int {
+		return (int) get_user_meta($user_id, self::META_LAST_RENEWAL_TRY, true);
+	}
+
 	public static function record_renewal_failure(int $user_id): void {
 		$failures = (int) get_user_meta($user_id, self::META_RENEWAL_FAILURES, true);
 		update_user_meta($user_id, self::META_RENEWAL_FAILURES, $failures + 1);

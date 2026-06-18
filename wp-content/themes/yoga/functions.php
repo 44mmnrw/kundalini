@@ -16,6 +16,7 @@
 	require_once get_template_directory() . '/inc/practice-content.php';
 	require_once get_template_directory() . '/inc/downloads/download-limits.php';
 	require_once get_template_directory() . '/inc/downloads/download-handler.php';
+	require_once get_template_directory() . '/inc/security/protected-media.php';
 	require_once get_template_directory() . '/inc/ajax/payments.php';
 	require_once get_template_directory() . '/inc/ajax/favorites.php';
 	require_once get_template_directory() . '/inc/admin/practice-duplicate.php';
@@ -3995,7 +3996,6 @@ function handle_comment_delete() {
 			return '';
 		}
 	}
-
 
 
 

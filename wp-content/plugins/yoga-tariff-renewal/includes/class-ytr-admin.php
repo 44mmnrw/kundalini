@@ -42,6 +42,28 @@ final class YTR_Admin {
 		register_setting('ytr_settings', 'ytr_max_retry_days', array('type' => 'integer', 'default' => 7));
 		register_setting(
 			'ytr_settings',
+			'ytr_max_retry_attempts',
+			array(
+				'type'              => 'integer',
+				'default'           => 7,
+				'sanitize_callback' => static function ($value): int {
+					return max(1, min(30, (int) $value));
+				},
+			)
+		);
+		register_setting(
+			'ytr_settings',
+			'ytr_retry_interval_minutes',
+			array(
+				'type'              => 'integer',
+				'default'           => 1440,
+				'sanitize_callback' => static function ($value): int {
+					return max(1, min(43200, (int) $value));
+				},
+			)
+		);
+		register_setting(
+			'ytr_settings',
 			YTR_Stub::OPTION,
 			array(
 				'type'              => 'string',
@@ -199,6 +221,24 @@ final class YTR_Admin {
 						<th scope="row"><?php esc_html_e('Повторы после истечения (дней)', 'yoga-tariff-renewal'); ?></th>
 						<td>
 							<input type="number" min="1" max="30" name="ytr_max_retry_days" value="<?php echo esc_attr((string) get_option('ytr_max_retry_days', 7)); ?>">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e('Количество попыток списания', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<input type="number" min="1" max="30" name="ytr_max_retry_attempts" value="<?php echo esc_attr((string) get_option('ytr_max_retry_attempts', 7)); ?>">
+							<p class="description">
+								<?php esc_html_e('Максимальное число неудачных попыток автопродления для одного оплаченного периода.', 'yoga-tariff-renewal'); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e('Периодичность повторных попыток (минут)', 'yoga-tariff-renewal'); ?></th>
+						<td>
+							<input type="number" min="1" max="43200" name="ytr_retry_interval_minutes" value="<?php echo esc_attr((string) get_option('ytr_retry_interval_minutes', 1440)); ?>">
+							<p class="description">
+								<?php esc_html_e('Минимальная пауза между неудачной попыткой и следующим списанием. По умолчанию 1440 минут, раз в сутки.', 'yoga-tariff-renewal'); ?>
+							</p>
 						</td>
 					</tr>
 					<tr>
