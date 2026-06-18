@@ -105,11 +105,10 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 									<form method="post" action="<?php echo esc_url($checkout_url); ?>" class="yoga-checkout-tariff__remove-form">
 										<?php wp_nonce_field('yoga-cart', 'yoga_remove_nonce', false, true); ?>
 										<input type="hidden" name="yoga_remove" value="<?php echo esc_attr($cart_item_key); ?>">
-										<button type="submit" class="yoga-checkout-tariff__remove">
+										<button type="submit" class="yoga-checkout-tariff__remove" aria-label="<?php esc_attr_e('Убрать тариф из корзины', 'yoga'); ?>">
 											<svg class="yoga-checkout-tariff__remove-icon" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 												<use href="<?php echo esc_url($sprite_href); ?>#checkout-trash"></use>
 											</svg>
-											<span class="yoga-checkout-tariff__remove-text"><?php esc_html_e('Убрать', 'yoga'); ?></span>
 										</button>
 									</form>
 								</div>
@@ -179,7 +178,7 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 					<aside class="yoga-checkout__summary">
 							<div class="yoga-checkout-summary">
 								<div class="yoga-checkout-summary__body">
-									<h3 class="yoga-checkout-summary__title"><?php esc_html_e('Ваша подписка', 'yoga'); ?></h3>
+									<h3 class="yoga-checkout-summary__title"><?php esc_html_e('Ваш заказ', 'yoga'); ?></h3>
 									<div class="yoga-checkout-summary__lines">
 										<div class="yoga-checkout-summary__line">
 											<span class="yoga-checkout-summary__line-label"><?php echo esc_html(sprintf(__('Тариф %s', 'yoga'), $primary_line_label)); ?></span>
