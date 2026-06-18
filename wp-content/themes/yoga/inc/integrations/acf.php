@@ -285,6 +285,17 @@ if (!function_exists('yoga_register_practice_guest_access_fields')) {
 
 add_action('acf/init', 'yoga_register_practice_guest_access_fields', 15);
 
+if (!function_exists('yoga_delay_exercise_wysiwyg_editors')) {
+	function yoga_delay_exercise_wysiwyg_editors(array $field): array {
+		$field['delay'] = 1;
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_ex_content', 'yoga_delay_exercise_wysiwyg_editors');
+add_filter('acf/load_field/key=field_ex_content_mod', 'yoga_delay_exercise_wysiwyg_editors');
+
 if (!function_exists('yoga_register_theme_smartcaptcha_fields')) {
     function yoga_register_theme_smartcaptcha_fields() {
         if (!function_exists('acf_add_local_field_group')) {

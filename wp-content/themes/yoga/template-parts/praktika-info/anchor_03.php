@@ -11,7 +11,7 @@
 	<?php echo esc_html($section['title']); ?>
 </h3>
 
-<p><?php echo esc_html($section['intro_text']); ?></p>
+<?php echo apply_filters('the_content', $section['intro_text'] ?? ''); ?>
 
 <div class="praktika-quote">
 	<?php echo apply_filters('the_content', $section['quote_text']); ?>
