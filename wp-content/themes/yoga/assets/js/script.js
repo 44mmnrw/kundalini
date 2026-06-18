@@ -1783,6 +1783,7 @@ jQuery(document).ready(function($) {
 		if ($.fn.fancybox) {
 			$('[data-fancybox^="practice-"]').fancybox({
 				loop: true,
+				protect: true,
 				buttons: [
 					'zoom',
 					'close'
