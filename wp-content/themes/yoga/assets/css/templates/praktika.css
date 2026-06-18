@@ -1,4 +1,8 @@
 /* Section-praktika */
+.section-praktika_no-questions {
+  padding-bottom: 7.5rem;
+}
+
 .praktika {
   width: 100%;
 }
@@ -1390,6 +1394,10 @@ display: block !important;
   }
 }
 @media (max-width: 767px) {
+  .section-praktika_no-questions {
+    padding-bottom: 5rem;
+  }
+
   .praktika-details {
     flex-wrap: wrap;
     row-gap: 0.375rem;
@@ -1664,6 +1672,10 @@ display: block !important;
   }
 }
 @media (max-width: 575px) {
+  .section-praktika_no-questions {
+    padding-bottom: 3.75rem;
+  }
+
   .section-praktika > .container {
     width: 100%;
     max-width: calc(100% - 2 * var(--container-inline-gutter, 0.625rem));
