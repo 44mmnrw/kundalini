@@ -8,6 +8,7 @@
 
 	var selectors = config.selectors;
 	var offlineMessage = config.offlineMessage || 'Контент доступен только на сайте. Сохранённая копия страницы недоступна.';
+	var blockDevtools = config.blockDevtools === true || config.blockDevtools === '1' || config.blockDevtools === 1;
 	var isOfflinePage = window.location.protocol === 'file:';
 
 	function getElement(node) {
@@ -37,7 +38,7 @@
 	}
 
 	function isProtectedTarget(el) {
-		return isInProtectedArea(el) && !isAllowedElement(el);
+		return !!(el && document.body && document.body.contains(el)) && !isAllowedElement(el);
 	}
 
 	function selectionTouchesProtectedArea() {
@@ -116,6 +117,42 @@
 		event.stopPropagation();
 	}
 
+	function blockBrowserShortcuts(event) {
+		var active = document.activeElement;
+		if (isAllowedElement(active)) {
+			return;
+		}
+
+		var key = String(event.key || '').toLowerCase();
+		var code = String(event.code || '').toLowerCase();
+		var hasModifier = event.ctrlKey || event.metaKey;
+
+		var blocked = false;
+
+		if (blockDevtools && (key === 'f12' || code === 'f12')) {
+			blocked = true;
+		}
+
+		if (blockDevtools && hasModifier && event.shiftKey && ['i', 'j', 'c', 'k'].indexOf(key) !== -1) {
+			blocked = true;
+		}
+
+		if (hasModifier && ['s', 'u', 'p'].indexOf(key) !== -1) {
+			blocked = true;
+		}
+
+		if (hasModifier && ['c', 'a', 'x'].indexOf(key) !== -1) {
+			blocked = isProtectedTarget(getElement(active)) || selectionTouchesProtectedArea() || isInProtectedArea(getElement(event.target));
+		}
+
+		if (!blocked) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+	}
+
 	initOfflineGuard();
 
 	document.addEventListener('contextmenu', function (event) {
@@ -139,6 +176,7 @@
 	}, true);
 
 	document.addEventListener('keydown', blockSaveShortcuts, true);
+	document.addEventListener('keydown', blockBrowserShortcuts, true);
 
 	document.addEventListener('keydown', function (event) {
 		if (!event.ctrlKey && !event.metaKey) {
