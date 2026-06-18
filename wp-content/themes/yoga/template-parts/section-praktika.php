@@ -131,6 +131,10 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 											continue;
 										}
 
+										if (function_exists('yoga_can_view_practice_section') && !yoga_can_view_practice_section($section, get_current_user_id())) {
+											continue;
+										}
+
 										switch ($layout) {
 											
 											case 'anchor_01':
@@ -191,6 +195,17 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										if ($sections) {
 											foreach ($sections as $index => $section) {
 												$menu_layout = (string) ($section['acf_fc_layout'] ?? '');
+												$menu_locked = function_exists('yoga_can_view_practice_section_layout')
+													&& !yoga_can_view_practice_section_layout($menu_layout, $practice_id);
+
+												if (
+													!$menu_locked
+													&& function_exists('yoga_can_view_practice_section')
+													&& !yoga_can_view_practice_section($section, get_current_user_id())
+												) {
+													continue;
+												}
+
 												$section_id = function_exists('yoga_get_practice_section_anchor_id')
 													? yoga_get_practice_section_anchor_id($section, (int) $index)
 													: ($section['anchor_id'] ?: 'anchor_0' . ($index + 1));
@@ -198,8 +213,6 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 												$section_title = function_exists('yoga_get_practice_section_display_title')
 													? yoga_get_practice_section_display_title($section, $menu_layout)
 													: ($section['section_title'] ?? '');
-												$menu_locked = function_exists('yoga_can_view_practice_section_layout')
-													&& !yoga_can_view_practice_section_layout($menu_layout, $practice_id);
 											?>
                                             <li<?php echo $menu_locked ? ' class="praktika-menu__item--locked"' : ''; ?>>
                                                 <a class="ref" href="#<?php echo esc_attr($section_id); ?>" data-section-key="<?php echo esc_attr($section_key); ?>">

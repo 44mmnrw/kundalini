@@ -115,6 +115,104 @@ if (!function_exists('yoga_guest_practice_section_filter_enabled')) {
 	}
 }
 
+if (!function_exists('yoga_get_practice_section_allowed_tariff_ids')) {
+	/**
+	 * @param array<string, mixed> $section
+	 * @return array<int>
+	 */
+	function yoga_get_practice_section_allowed_tariff_ids(array $section): array {
+		$value = $section['section_allowed_tariffs'] ?? null;
+		if (empty($value)) {
+			return array();
+		}
+
+		if (function_exists('yoga_normalize_acf_post_ids')) {
+			$ids = yoga_normalize_acf_post_ids($value);
+		} else {
+			$ids = array();
+			foreach ((array) $value as $item) {
+				if ($item instanceof WP_Post) {
+					$ids[] = (int) $item->ID;
+				} elseif (is_array($item) && isset($item['ID'])) {
+					$ids[] = (int) $item['ID'];
+				} elseif (is_numeric($item)) {
+					$ids[] = (int) $item;
+				}
+			}
+		}
+
+		$tariff_ids = array();
+		foreach ($ids as $id) {
+			$id = (int) $id;
+			if ($id <= 0) {
+				continue;
+			}
+
+			$tariff_ids[] = $id;
+			if (function_exists('yoga_get_tariff_product_root_id')) {
+				$tariff_ids[] = yoga_get_tariff_product_root_id($id);
+			}
+		}
+
+		return array_values(array_unique(array_filter(array_map('intval', $tariff_ids))));
+	}
+}
+
+if (!function_exists('yoga_get_viewer_active_tariff_ids')) {
+	/**
+	 * @return array<int>
+	 */
+	function yoga_get_viewer_active_tariff_ids(?int $user_id = null): array {
+		if (!function_exists('get_current_user_tariff')) {
+			return array();
+		}
+
+		if ($user_id === null) {
+			$user_id = get_current_user_id();
+		}
+
+		if ($user_id <= 0) {
+			return array();
+		}
+
+		$tariff = get_current_user_tariff($user_id);
+		if (!is_array($tariff) || empty($tariff['product_id'])) {
+			return array();
+		}
+
+		$product_id = (int) $tariff['product_id'];
+		if ($product_id <= 0) {
+			return array();
+		}
+
+		$ids = array($product_id);
+		if (function_exists('yoga_get_tariff_product_root_id')) {
+			$ids[] = yoga_get_tariff_product_root_id($product_id);
+		}
+
+		return array_values(array_unique(array_filter(array_map('intval', $ids))));
+	}
+}
+
+if (!function_exists('yoga_can_view_practice_section')) {
+	/**
+	 * @param array<string, mixed> $section
+	 */
+	function yoga_can_view_practice_section(array $section, ?int $user_id = null): bool {
+		$allowed_tariff_ids = yoga_get_practice_section_allowed_tariff_ids($section);
+		if ($allowed_tariff_ids === array()) {
+			return true;
+		}
+
+		$viewer_tariff_ids = yoga_get_viewer_active_tariff_ids($user_id);
+		if ($viewer_tariff_ids === array()) {
+			return false;
+		}
+
+		return array_intersect($allowed_tariff_ids, $viewer_tariff_ids) !== array();
+	}
+}
+
 if (!function_exists('yoga_viewer_has_full_practice_sections')) {
 	/**
 	 * Полный доступ ко всем якорям — только при активном оплаченном тарифе.
@@ -224,14 +322,8 @@ if (!function_exists('yoga_filter_practice_sections_for_viewer')) {
 			return array();
 		}
 
-		return array_values(
-			array_filter(
-				$sections,
-				static function (array $section) use ($practice_id): bool {
-					$layout = sanitize_key((string) ($section['acf_fc_layout'] ?? ''));
-					return yoga_can_view_practice_section_layout($layout, $practice_id);
-				}
-			)
-		);
+		return array_values(array_filter($sections, static function ($section): bool {
+			return is_array($section) && yoga_can_view_practice_section($section);
+		}));
 	}
 }

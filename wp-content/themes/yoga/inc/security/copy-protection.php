@@ -77,7 +77,7 @@ if (!function_exists('yoga_copy_protection_inline_head_guard')) {
 				return;
 			}
 			document.documentElement.classList.add('yoga-copy-offline');
-			window.yogaCopyProtectionOffline = <?php echo wp_json_encode(
+			window.yogaAppRuntimeOffline = <?php echo wp_json_encode(
 				array(
 					'message'   => $offline_message,
 					'selectors' => array_values($selectors),
@@ -106,7 +106,7 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 		$theme_uri = get_template_directory_uri();
 
 		$css_path = $theme_dir . '/assets/css/copy-protection.css';
-		$js_path  = $theme_dir . '/assets/js/copy-protection.js';
+		$js_path  = $theme_dir . '/assets/js/runtime.js';
 
 		$css_ver = file_exists($css_path) ? (string) filemtime($css_path) : '1.0.0';
 		$js_ver  = file_exists($js_path) ? (string) filemtime($js_path) : '1.0.0';
@@ -117,23 +117,23 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 		}
 
 		wp_enqueue_style(
-			'yoga-copy-protection',
+			'yoga-app-runtime-style',
 			$theme_uri . '/assets/css/copy-protection.css',
 			array(),
 			$css_ver
 		);
 
 		wp_enqueue_script(
-			'yoga-copy-protection',
-			$theme_uri . '/assets/js/copy-protection.js',
+			'yoga-app-runtime',
+			$theme_uri . '/assets/js/runtime.js',
 			array(),
 			$js_ver,
 			true
 		);
 
 		wp_localize_script(
-			'yoga-copy-protection',
-			'yogaCopyProtection',
+			'yoga-app-runtime',
+			'yogaAppRuntime',
 			array(
 				'enabled'        => true,
 				'selectors'      => array_values($selectors),

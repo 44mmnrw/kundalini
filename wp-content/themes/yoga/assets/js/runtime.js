@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var config = window.yogaCopyProtection || {};
+	var config = window.yogaAppRuntime || {};
 	if (!config.enabled || !Array.isArray(config.selectors) || !config.selectors.length) {
 		return;
 	}
