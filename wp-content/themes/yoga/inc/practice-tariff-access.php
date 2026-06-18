@@ -68,34 +68,7 @@ if (!function_exists('yoga_get_tariff_practice_ids')) {
 	 * @return int[]|null
 	 */
 	function yoga_get_tariff_practice_ids(int $product_id): ?array {
-		if ($product_id <= 0 || !function_exists('get_field')) {
-			return null;
-		}
-
-		$root_id = yoga_get_tariff_product_root_id($product_id);
-		$raw     = get_field('tariff_practices', $root_id);
-
-		if (($raw === null || $raw === '' || $raw === false) && $root_id !== $product_id) {
-			$raw = get_field('tariff_practices', $product_id);
-		}
-
-		if ($raw === null || $raw === '' || $raw === false) {
-			return null;
-		}
-
-		$ids = yoga_normalize_acf_post_ids($raw);
-		if ($ids === array()) {
-			return null;
-		}
-
-		$practice_ids = array();
-		foreach ($ids as $id) {
-			if (get_post_type($id) === 'practice') {
-				$practice_ids[] = $id;
-			}
-		}
-
-		return $practice_ids === array() ? null : array_values(array_unique($practice_ids));
+		return null;
 	}
 }
 
@@ -124,24 +97,7 @@ if (!function_exists('yoga_get_user_allowed_practice_ids')) {
 	 * @return int[]|null null — ограничение по списку не задано (все практики тарифа).
 	 */
 	function yoga_get_user_allowed_practice_ids(?int $user_id = null): ?array {
-		if (!function_exists('get_current_user_tariff')) {
-			return null;
-		}
-
-		if ($user_id === null) {
-			$user_id = get_current_user_id();
-		}
-
-		if ($user_id <= 0) {
-			return null;
-		}
-
-		$tariff = get_current_user_tariff($user_id);
-		if (!is_array($tariff) || empty($tariff['product_id'])) {
-			return null;
-		}
-
-		return yoga_get_tariff_practice_ids((int) $tariff['product_id']);
+		return null;
 	}
 }
 
@@ -158,16 +114,7 @@ if (!function_exists('yoga_user_can_access_practice')) {
 			return false;
 		}
 
-		if (!yoga_user_has_active_tariff($user_id)) {
-			return true;
-		}
-
-		$allowed = yoga_get_user_allowed_practice_ids($user_id);
-		if ($allowed === null) {
-			return true;
-		}
-
-		return in_array($practice_id, $allowed, true);
+		return true;
 	}
 }
 
@@ -176,19 +123,7 @@ if (!function_exists('yoga_practice_is_tariff_locked_for_viewer')) {
 	 * У подписчика нет этой практики в своём тарифе.
 	 */
 	function yoga_practice_is_tariff_locked_for_viewer(?int $practice_id = null, ?int $user_id = null): bool {
-		if ($practice_id === null) {
-			$practice_id = (int) get_the_ID();
-		}
-
-		if ($practice_id <= 0) {
-			return false;
-		}
-
-		if (!yoga_user_has_active_tariff($user_id)) {
-			return false;
-		}
-
-		return !yoga_user_can_access_practice($user_id, $practice_id);
+		return false;
 	}
 }
 
@@ -222,38 +157,7 @@ if (!function_exists('yoga_get_tariffs_for_practice')) {
 	 * @return array<int, array{id:int,name:string}>
 	 */
 	function yoga_get_tariffs_for_practice(int $practice_id): array {
-		if ($practice_id <= 0) {
-			return array();
-		}
-
-		static $cache = array();
-		if (isset($cache[$practice_id])) {
-			return $cache[$practice_id];
-		}
-
-		$tariffs = array();
-		foreach (yoga_get_published_tariff_products() as $product) {
-			$product_id = (int) $product->get_id();
-			$practice_ids = yoga_get_tariff_practice_ids($product_id);
-
-			if ($practice_ids === null) {
-				continue;
-			}
-
-			if (!in_array($practice_id, $practice_ids, true)) {
-				continue;
-			}
-
-			$root_id = yoga_get_tariff_product_root_id($product_id);
-			$tariffs[$root_id] = array(
-				'id'   => $root_id,
-				'name' => $product->get_name(),
-			);
-		}
-
-		$cache[$practice_id] = array_values($tariffs);
-
-		return $cache[$practice_id];
+		return array();
 	}
 }
 
@@ -359,8 +263,6 @@ if (!function_exists('yoga_get_section_paywall_text')) {
 
 if (!function_exists('yoga_practice_card_tariff_lock_class')) {
 	function yoga_practice_card_tariff_lock_class(int $practice_id, ?int $user_id = null): string {
-		return yoga_practice_is_tariff_locked_for_viewer($practice_id, $user_id)
-			? 'kriyi-item--tariff-locked'
-			: '';
+		return '';
 	}
 }

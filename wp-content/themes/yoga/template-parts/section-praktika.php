@@ -124,18 +124,19 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 											? yoga_get_practice_section_anchor_id($section, (int) $section_index)
 											: ($section['anchor_id'] ?? ('anchor_0' . ($section_index + 1)));
 										$section_key = 'section-' . ($section_index + 1);
+										$section_title = function_exists('yoga_get_practice_section_display_title')
+											? yoga_get_practice_section_display_title($section, $layout)
+											: ($section['section_title'] ?? $layout);
 										$section_can_view = !function_exists('yoga_can_view_practice_section_layout')
 											|| yoga_can_view_practice_section_layout($layout, $practice_id);
 
 										if (!$section_can_view) {
-											$section_title = function_exists('yoga_get_practice_section_display_title')
-												? yoga_get_practice_section_display_title($section, $layout)
-												: ($section['section_title'] ?? $layout);
 											include locate_template('template-parts/praktika-info/section-paywall.php');
 											continue;
 										}
 
 										if (function_exists('yoga_can_view_practice_section') && !yoga_can_view_practice_section($section, get_current_user_id())) {
+											include locate_template('template-parts/praktika-info/section-paywall.php');
 											continue;
 										}
 
@@ -199,16 +200,11 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 										if ($sections) {
 											foreach ($sections as $index => $section) {
 												$menu_layout = (string) ($section['acf_fc_layout'] ?? '');
-												$menu_locked = function_exists('yoga_can_view_practice_section_layout')
+												$menu_layout_locked = function_exists('yoga_can_view_practice_section_layout')
 													&& !yoga_can_view_practice_section_layout($menu_layout, $practice_id);
-
-												if (
-													!$menu_locked
-													&& function_exists('yoga_can_view_practice_section')
-													&& !yoga_can_view_practice_section($section, get_current_user_id())
-												) {
-													continue;
-												}
+												$menu_tariff_locked = function_exists('yoga_can_view_practice_section')
+													&& !yoga_can_view_practice_section($section, get_current_user_id());
+												$menu_locked = $menu_layout_locked || $menu_tariff_locked;
 
 												$section_id = function_exists('yoga_get_practice_section_anchor_id')
 													? yoga_get_practice_section_anchor_id($section, (int) $index)

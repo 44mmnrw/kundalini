@@ -304,25 +304,14 @@
 .kriyi-item_disabled {
   pointer-events: none;
 }
-.kriyi-item_disabled .kriyi-item__inner {
-  border-color: rgba(31, 31, 31, 0.6);
-}
-.kriyi-item_disabled .kriya-level {
-  opacity: 0.6;
-  color: var(--color-black);
-  border-color: var(--color-black);
-}
 .kriyi-item_disabled .kriya-info {
-  width: calc(100% - 8.75rem - 13.8125rem);  opacity: 0.6;
+  width: calc(100% - 8.75rem - 13.8125rem);
 }
 .kriyi-item_disabled .kriya-fav {
   display: none;
 }
 .kriyi-item_disabled .kriya-media {
-  width: 13.8125rem;  filter: grayscale(100%);
-}
-.kriyi-item_disabled .kriya-btn {
-  background: #E8E8E8;
+  width: 13.8125rem;
 }
 
 .lk-questions-form {
