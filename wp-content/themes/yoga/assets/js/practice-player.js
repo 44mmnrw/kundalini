@@ -88,12 +88,15 @@ function initializePracticeSystem() {
             const resetBtn = version.querySelector('.timer-reset');
             const presetBtns = version.querySelectorAll('.timer-preset');
             const playerElement = version.querySelector('.exercise-player');
+            const endSignalSrc = version.dataset.endSignal === 'true' ? (version.dataset.endSignalSrc || '') : '';
             
             let timerInterval = null;
             let remainingTime = 0;
             let isPlaying = false;
             let player = null;
             let suppressAutoPlayUntil = 0;
+            let endSignalAudio = null;
+            let endSignalPrimed = false;
             const initialDuration = parseDuration(timerDisplay?.textContent);
             const presetDefaultDuration = (() => {
                 const firstPreset = presetBtns && presetBtns.length ? presetBtns[0] : null;
@@ -110,6 +113,54 @@ function initializePracticeSystem() {
                 const seconds = parseInt(secondsText, 10);
                 if (Number.isNaN(minutes) || Number.isNaN(seconds)) return 0;
                 return (minutes * 60) + seconds;
+            }
+
+            if (endSignalSrc) {
+                endSignalAudio = new Audio(endSignalSrc);
+                endSignalAudio.preload = 'auto';
+            }
+
+            function primeEndSignal() {
+                if (!endSignalAudio || endSignalPrimed) {
+                    return;
+                }
+
+                endSignalAudio.muted = true;
+                const playPromise = endSignalAudio.play();
+                if (playPromise && typeof playPromise.then === 'function') {
+                    playPromise
+                        .then(() => {
+                            endSignalAudio.pause();
+                            endSignalAudio.currentTime = 0;
+                            endSignalAudio.muted = false;
+                            endSignalPrimed = true;
+                        })
+                        .catch(() => {
+                            endSignalAudio.muted = false;
+                        });
+                } else {
+                    endSignalAudio.pause();
+                    endSignalAudio.currentTime = 0;
+                    endSignalAudio.muted = false;
+                    endSignalPrimed = true;
+                }
+            }
+
+            function playEndSignal() {
+                if (!endSignalAudio) {
+                    return;
+                }
+
+                try {
+                    endSignalAudio.pause();
+                    endSignalAudio.currentTime = 0;
+                    endSignalAudio.muted = false;
+                    endSignalAudio.volume = 1;
+                    const playPromise = endSignalAudio.play();
+                    if (playPromise && typeof playPromise.catch === 'function') {
+                        playPromise.catch(() => {});
+                    }
+                } catch (err) {}
             }
             
             if (playerElement) {
@@ -253,6 +304,7 @@ function initializePracticeSystem() {
                             updateFullscreenTimer();
                         }
                     } else {
+                        playEndSignal();
                         stopTimer();
                         if (player) player.pause();
                         
@@ -381,6 +433,7 @@ function initializePracticeSystem() {
                     } else {
                         // Явный клик "Старт" должен обходить анти-автозапуск после сброса.
                         suppressAutoPlayUntil = 0;
+                        primeEndSignal();
                         startTimer();
                         if (player) {
                             player.play();

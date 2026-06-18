@@ -354,7 +354,27 @@ if (!function_exists('yoga_get_checkout_payment_type_slug')) {
 			}
 		}
 
-		return '';
+		return yoga_yookassa_is_tariff_checkout_context() ? 'bank_card' : '';
+	}
+}
+
+if (!function_exists('yoga_yookassa_is_tariff_checkout_context')) {
+	function yoga_yookassa_is_tariff_checkout_context(): bool {
+		$order = yoga_yookassa_get_checkout_order();
+		if ($order instanceof WC_Order && function_exists('yoga_order_contains_tariff_product') && yoga_order_contains_tariff_product($order)) {
+			return true;
+		}
+
+		if (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) {
+			foreach (WC()->cart->get_cart() as $cart_item) {
+				$product_id = (int) (($cart_item['variation_id'] ?? 0) ?: ($cart_item['product_id'] ?? 0));
+				if ($product_id > 0 && function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }
 

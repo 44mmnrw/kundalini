@@ -78,6 +78,32 @@
 			return $images;
 		}
 	}
+
+	if (!function_exists('yoga_get_practice_timer_end_signal_url')) {
+		function yoga_get_practice_timer_end_signal_url(): string {
+			if (!function_exists('get_field')) {
+				return '';
+			}
+
+			$file = get_field('practice_timer_end_signal_file', 'option');
+			if (is_array($file)) {
+				if (!empty($file['url'])) {
+					return (string) $file['url'];
+				}
+
+				$file_id = (int) ($file['ID'] ?? $file['id'] ?? 0);
+				return $file_id > 0 ? (string) wp_get_attachment_url($file_id) : '';
+			}
+
+			if (is_numeric($file)) {
+				return (string) wp_get_attachment_url((int) $file);
+			}
+
+			return is_string($file) ? trim($file) : '';
+		}
+	}
+
+	$practice_timer_end_signal_url = yoga_get_practice_timer_end_signal_url();
 ?>
 
 <span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
@@ -114,6 +140,7 @@
 	$allow_fullscreen = true;
 	$restrict_scrub = false;
 	$auto_play = true;
+	$end_signal_enabled = !empty($exercise['signal_v_koncze']) && $practice_timer_end_signal_url !== '';
 	
 	$media_source = '';
 	if ($media_type !== 'none' && !empty($media_file) && isset($media_file['url'])) {
@@ -128,7 +155,7 @@
 
 <div class="praktika-exercise" data-exercise-id="<?php echo esc_attr($index . '-' . $ex_idx); ?>">
     <!-- Основная версия -->
-    <div class="exercise-item active" data-version="main">
+    <div class="exercise-item active" data-version="main" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>">
         <div class="exercise-item__info">
             <?php if ($title): ?>
             <h3><?php echo esc_html($title); ?></h3>
@@ -299,7 +326,7 @@
     
     <!-- Модифицированная версия -->
     <?php if ($has_modifications): ?>
-    <div class="exercise-item" data-version="mod" style="display: none;">
+    <div class="exercise-item" data-version="mod" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>" style="display: none;">
         <div class="exercise-item__info">
             <?php if ($title): ?>
             <h3><?php echo esc_html($title); ?> (Модификация)</h3>

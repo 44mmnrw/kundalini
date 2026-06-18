@@ -154,6 +154,11 @@ final class YTR_Checkout {
 			&& (string) wp_unslash($_POST['yoga_save_payment_method']) === '1';
 	}
 
+	public static function user_declined_save_payment_method(): bool {
+		return isset($_POST['yoga_save_payment_method'])
+			&& (string) wp_unslash($_POST['yoga_save_payment_method']) === '0';
+	}
+
 	/**
 	 * Согласие из POST или сессии checkout (на случай, если поле не попало в AJAX).
 	 */
@@ -162,11 +167,21 @@ final class YTR_Checkout {
 			return true;
 		}
 
-		if (function_exists('WC') && WC()->session) {
-			return WC()->session->get('ytr_save_payment_opt_in') === 'yes';
+		if (self::user_declined_save_payment_method()) {
+			return false;
 		}
 
-		return false;
+		if (function_exists('WC') && WC()->session) {
+			$stored = WC()->session->get('ytr_save_payment_opt_in');
+			if ($stored === 'yes') {
+				return true;
+			}
+			if ($stored === 'no') {
+				return false;
+			}
+		}
+
+		return self::order_is_tariff_checkout_context();
 	}
 
 	public static function resolve_checkout_order(): ?WC_Order {
@@ -201,10 +216,20 @@ final class YTR_Checkout {
 		}
 
 		if ($order instanceof WC_Order) {
-			return sanitize_key((string) $order->get_meta('_yoga_checkout_payment_type'));
+			$stored = sanitize_key((string) $order->get_meta('_yoga_checkout_payment_type'));
+			if ($stored !== '') {
+				return $stored;
+			}
 		}
 
-		return '';
+		if (function_exists('WC') && WC()->session) {
+			$stored = sanitize_key((string) WC()->session->get('yoga_yookassa_payment_type'));
+			if ($stored !== '') {
+				return $stored;
+			}
+		}
+
+		return self::order_is_tariff_checkout_context($order) ? 'bank_card' : '';
 	}
 
 	public static function payment_type_supports_save(string $slug): bool {
@@ -276,6 +301,30 @@ final class YTR_Checkout {
 		foreach (WC()->cart->get_cart() as $cart_item) {
 			$product_id = (int) ($cart_item['variation_id'] ?: $cart_item['product_id']);
 			if (YTR_Tariff::is_tariff_product($product_id)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static function order_is_tariff_checkout_context(?WC_Order $order = null): bool {
+		if ($order instanceof WC_Order && self::order_is_tariff_checkout($order)) {
+			return true;
+		}
+
+		$order = self::resolve_checkout_order();
+		if ($order instanceof WC_Order && self::order_is_tariff_checkout($order)) {
+			return true;
+		}
+
+		if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+			return false;
+		}
+
+		foreach (WC()->cart->get_cart() as $cart_item) {
+			$product_id = (int) (($cart_item['variation_id'] ?? 0) ?: ($cart_item['product_id'] ?? 0));
+			if ($product_id > 0 && YTR_Tariff::is_tariff_product($product_id)) {
 				return true;
 			}
 		}

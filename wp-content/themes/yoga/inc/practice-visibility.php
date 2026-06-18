@@ -304,6 +304,91 @@ if (!function_exists('yoga_get_viewer_active_tariff_ids')) {
 	}
 }
 
+if (!function_exists('yoga_practice_section_has_media_type')) {
+	/**
+	 * @param array<string, mixed> $section
+	 */
+	function yoga_practice_section_has_media_type(array $section, string $media_type): bool {
+		$media_type = sanitize_key($media_type);
+		if ($media_type === '') {
+			return false;
+		}
+
+		$stack = array($section);
+		while ($stack !== array()) {
+			$current = array_pop($stack);
+			if (!is_array($current)) {
+				continue;
+			}
+
+			foreach (array('media_type', 'media_type_mod') as $field_name) {
+				if (sanitize_key((string) ($current[$field_name] ?? '')) === $media_type) {
+					return true;
+				}
+			}
+
+			foreach ($current as $value) {
+				if (is_array($value)) {
+					$stack[] = $value;
+				}
+			}
+		}
+
+		return false;
+	}
+}
+
+if (!function_exists('yoga_tariff_hides_audio_section_paywall')) {
+	function yoga_tariff_hides_audio_section_paywall(int $tariff_id): bool {
+		if ($tariff_id <= 0) {
+			return false;
+		}
+
+		$ids = array($tariff_id);
+		if (function_exists('yoga_get_tariff_product_root_id')) {
+			$ids[] = yoga_get_tariff_product_root_id($tariff_id);
+		}
+
+		foreach (array_values(array_unique(array_filter(array_map('intval', $ids)))) as $id) {
+			if ($id <= 0) {
+				continue;
+			}
+
+			if (function_exists('get_field') && (bool) get_field('hide_audio_section_paywall', $id)) {
+				return true;
+			}
+
+			if ((bool) get_post_meta($id, 'hide_audio_section_paywall', true)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
+if (!function_exists('yoga_viewer_hides_audio_section_paywall')) {
+	function yoga_viewer_hides_audio_section_paywall(?int $user_id = null): bool {
+		foreach (yoga_get_viewer_active_tariff_ids($user_id) as $tariff_id) {
+			if (yoga_tariff_hides_audio_section_paywall((int) $tariff_id)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
+if (!function_exists('yoga_should_hide_practice_section_paywall')) {
+	/**
+	 * @param array<string, mixed> $section
+	 */
+	function yoga_should_hide_practice_section_paywall(array $section, ?int $user_id = null): bool {
+		return yoga_practice_section_has_media_type($section, 'audio')
+			&& yoga_viewer_hides_audio_section_paywall($user_id);
+	}
+}
+
 if (!function_exists('yoga_get_tariff_display_name_by_id')) {
 	function yoga_get_tariff_display_name_by_id(int $tariff_id): string {
 		if ($tariff_id <= 0) {

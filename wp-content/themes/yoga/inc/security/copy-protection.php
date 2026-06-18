@@ -21,7 +21,36 @@ if (!function_exists('yoga_copy_protection_is_enabled')) {
 			return false;
 		}
 
+		if (function_exists('yoga_copy_protection_is_blog_context') && yoga_copy_protection_is_blog_context()) {
+			return false;
+		}
+
 		return (bool) apply_filters('yoga_copy_protection_enabled', true);
+	}
+}
+
+if (!function_exists('yoga_copy_protection_is_blog_context')) {
+	function yoga_copy_protection_is_blog_context(): bool {
+		if (is_singular('post') || is_home() || is_tag() || is_date() || is_author()) {
+			return true;
+		}
+
+		if (is_category()) {
+			$queried = get_queried_object();
+			if (!$queried instanceof WP_Term) {
+				return true;
+			}
+
+			$blog_category = get_category_by_slug('blog');
+			if (!$blog_category instanceof WP_Term) {
+				return true;
+			}
+
+			return (int) $queried->term_id === (int) $blog_category->term_id
+				|| cat_is_ancestor_of((int) $blog_category->term_id, (int) $queried->term_id);
+		}
+
+		return false;
 	}
 }
 
@@ -34,6 +63,7 @@ if (!function_exists('yoga_copy_protection_selectors')) {
 	function yoga_copy_protection_selectors(): array {
 		$selectors = array(
 			'.praktika-info',
+			'.fancybox-container',
 			'.rules',
 			'.question__sub',
 			'.about-text',
@@ -52,6 +82,16 @@ if (!function_exists('yoga_copy_protection_offline_message')) {
 			'yoga_copy_protection_offline_message',
 			__('Контент доступен только на сайте. Сохранённая копия страницы недоступна.', 'yoga')
 		);
+	}
+}
+
+if (!function_exists('yoga_copy_protection_block_devtools_shortcuts')) {
+	function yoga_copy_protection_block_devtools_shortcuts(): bool {
+		if (!function_exists('get_field')) {
+			return false;
+		}
+
+		return (bool) get_field('copy_protection_block_devtools_shortcuts', 'option');
 	}
 }
 
@@ -138,6 +178,7 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 				'enabled'        => true,
 				'selectors'      => array_values($selectors),
 				'offlineMessage' => yoga_copy_protection_offline_message(),
+				'blockDevtools'  => yoga_copy_protection_block_devtools_shortcuts(),
 			)
 		);
 	}

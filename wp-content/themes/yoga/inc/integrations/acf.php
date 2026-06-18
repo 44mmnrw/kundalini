@@ -22,6 +22,43 @@ if (!function_exists('yoga_register_acf_options_page')) {
 
 add_action('acf/init', 'yoga_register_acf_options_page');
 
+if (!function_exists('yoga_register_tariff_frontend_access_fields')) {
+	function yoga_register_tariff_frontend_access_fields() {
+		if (!function_exists('acf_add_local_field_group')) {
+			return;
+		}
+
+		acf_add_local_field_group(array(
+			'key' => 'group_tariff_frontend_access_fields',
+			'title' => 'Доступ на фронте',
+			'fields' => array(
+				array(
+					'key' => 'field_tariff_hide_audio_section_paywall',
+					'label' => 'Не показывать заглушку для аудио',
+					'name' => 'hide_audio_section_paywall',
+					'type' => 'true_false',
+					'instructions' => 'Если включено, пользователи этого тарифа не увидят заглушку закрытых секций с аудио. Сама секция остается недоступной, она просто скрывается вместе с пунктом меню.',
+					'ui' => 1,
+					'default_value' => 0,
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'product',
+					),
+				),
+			),
+			'position' => 'side',
+			'menu_order' => 3,
+		));
+	}
+}
+
+add_action('acf/init', 'yoga_register_tariff_frontend_access_fields', 15);
+
 // Группа «Поля тарифов» (group_tariff_fields) — только в ACF → Field Groups (БД).
 // Локальная регистрация удалена, чтобы не перебивать настройки из админки.
 
@@ -195,6 +232,79 @@ if (!function_exists('yoga_register_theme_cta_fields')) {
 }
 
 add_action('acf/init', 'yoga_register_theme_cta_fields');
+
+if (!function_exists('yoga_register_practice_timer_signal_fields')) {
+	function yoga_register_practice_timer_signal_fields() {
+		if (!function_exists('acf_add_local_field_group')) {
+			return;
+		}
+
+		acf_add_local_field_group(array(
+			'key' => 'group_practice_timer_signal',
+			'title' => 'Практики: таймер',
+			'fields' => array(
+				array(
+					'key' => 'field_practice_timer_end_signal_file',
+					'label' => 'Файл сигнала в конце таймера',
+					'name' => 'practice_timer_end_signal_file',
+					'type' => 'file',
+					'instructions' => 'Один общий аудиофайл для упражнений, где включена галочка «Сигнал в конце».',
+					'return_format' => 'array',
+					'library' => 'all',
+					'mime_types' => 'mp3,wav,ogg,m4a',
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param' => 'options_page',
+						'operator' => '==',
+						'value' => 'theme-general-settings',
+					),
+				),
+			),
+			'menu_order' => 7,
+		));
+	}
+}
+
+add_action('acf/init', 'yoga_register_practice_timer_signal_fields', 15);
+
+if (!function_exists('yoga_register_copy_protection_settings_fields')) {
+	function yoga_register_copy_protection_settings_fields() {
+		if (!function_exists('acf_add_local_field_group')) {
+			return;
+		}
+
+		acf_add_local_field_group(array(
+			'key' => 'group_copy_protection_settings',
+			'title' => 'Защита контента',
+			'fields' => array(
+				array(
+					'key' => 'field_copy_protection_block_devtools_shortcuts',
+					'label' => 'Блокировать F12 и горячие клавиши DevTools',
+					'name' => 'copy_protection_block_devtools_shortcuts',
+					'type' => 'true_false',
+					'instructions' => 'Если включено, на фронтенде блокируются F12 и Ctrl/Cmd+Shift+I/J/C/K. По умолчанию выключено, чтобы не мешать разработке.',
+					'ui' => 1,
+					'default_value' => 0,
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param' => 'options_page',
+						'operator' => '==',
+						'value' => 'theme-general-settings',
+					),
+				),
+			),
+			'menu_order' => 8,
+		));
+	}
+}
+
+add_action('acf/init', 'yoga_register_copy_protection_settings_fields', 15);
 
 if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 	function yoga_register_guest_practice_sections_fields() {
