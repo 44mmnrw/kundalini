@@ -30,6 +30,54 @@
 		}
 	}
 ?>
+<?php
+	if (!function_exists('yoga_normalize_practice_exercise_gallery')) {
+		/**
+		 * @return array<int, array{url: string, alt: string}>
+		 */
+		function yoga_normalize_practice_exercise_gallery($gallery): array {
+			if (!is_array($gallery)) {
+				return array();
+			}
+
+			$images = array();
+			foreach ($gallery as $image) {
+				$url = '';
+				$alt = '';
+
+				if (is_array($image)) {
+					$url = trim((string) ($image['url'] ?? ''));
+					$alt = (string) ($image['alt'] ?? '');
+
+					if ($url === '') {
+						$image_id = (int) ($image['ID'] ?? $image['id'] ?? 0);
+						if ($image_id > 0) {
+							$url = (string) wp_get_attachment_image_url($image_id, 'full');
+							$alt = $alt !== '' ? $alt : (string) get_post_meta($image_id, '_wp_attachment_image_alt', true);
+						}
+					}
+				} elseif (is_numeric($image)) {
+					$image_id = (int) $image;
+					if ($image_id > 0) {
+						$url = (string) wp_get_attachment_image_url($image_id, 'full');
+						$alt = (string) get_post_meta($image_id, '_wp_attachment_image_alt', true);
+					}
+				}
+
+				if ($url === '') {
+					continue;
+				}
+
+				$images[] = array(
+					'url' => $url,
+					'alt' => $alt,
+				);
+			}
+
+			return $images;
+		}
+	}
+?>
 
 <span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 <?php foreach ($steps as $index => $step): ?>
@@ -54,12 +102,8 @@
 	$media_file_mod = $exercise['media_file_mod'] ?? [];
 	$duration = $exercise['duration'] ?? 180;
 	$duration_mod = $exercise['duration_mod'] ?? 180;
-	$gallery = array_values(array_filter($exercise['gallery'] ?? [], static function ($image): bool {
-		return is_array($image) && !empty($image['url']);
-	}));
-	$gallery_mod = array_values(array_filter($exercise['gallery_mod'] ?? [], static function ($image): bool {
-		return is_array($image) && !empty($image['url']);
-	}));
+	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array());
+	$gallery_mod = yoga_normalize_practice_exercise_gallery($exercise['gallery_mod'] ?? array());
 	$content =  $exercise['content'] ?? []; // Основной контент из поля WYSIWYG
 	$content_mod =  $exercise['content_mod'] ?? []; // Контент модификации (WYSIWYG)
 	$allow_fullscreen = true;
