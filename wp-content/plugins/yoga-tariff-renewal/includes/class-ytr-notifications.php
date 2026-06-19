@@ -62,9 +62,18 @@ final class YTR_Notifications {
 			),
 			'',
 			__('Пожалуйста, проверьте карту или оплатите тариф заново в личном кабинете.', 'yoga-tariff-renewal'),
-			home_url('/lk/'),
+			self::get_account_url(),
 		);
 
 		return implode("\n", $lines);
+	}
+
+	private static function get_account_url(): string {
+		$url = '';
+		if (function_exists('wc_get_page_permalink')) {
+			$url = (string) wc_get_page_permalink('myaccount');
+		}
+
+		return $url !== '' ? $url : home_url('/my-account/');
 	}
 }
