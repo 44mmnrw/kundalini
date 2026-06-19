@@ -73,13 +73,14 @@ final class YTR_Orders {
 		$orders = wc_get_orders(
 			array(
 				'customer_id' => $user_id,
-				'limit'       => 5,
+				'limit'       => 10,
 				'orderby'     => 'date',
 				'order'       => 'DESC',
 				'meta_key'    => self::META_RENEWAL,
 				'meta_value'  => 'yes',
 			)
 		);
+		$created_after = time() - $within_seconds;
 
 		foreach ($orders as $order) {
 			if (!$order instanceof WC_Order) {
@@ -94,11 +95,16 @@ final class YTR_Orders {
 				}
 			}
 
-			if ($order->has_status(array('processing', 'completed'))) {
+			if ($order->has_status(array('pending', 'on-hold'))) {
 				return true;
 			}
 
-			if ($order->has_status(array('pending', 'on-hold'))) {
+			if (!$order->has_status(array('processing', 'completed'))) {
+				continue;
+			}
+
+			$created = $order->get_date_created();
+			if ($created && $created->getTimestamp() >= $created_after) {
 				return true;
 			}
 		}
