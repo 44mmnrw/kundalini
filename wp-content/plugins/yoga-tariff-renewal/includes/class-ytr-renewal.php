@@ -45,6 +45,11 @@ final class YTR_Renewal {
 			return $stats;
 		}
 
+		if (!self::acquire_lock('process')) {
+			return $stats;
+		}
+
+		try {
 		foreach (YTR_User::get_auto_renew_user_ids() as $user_id) {
 			if (class_exists('YTR_Saved_Cards')) {
 				YTR_Saved_Cards::sync_renewal_state($user_id);
@@ -70,12 +75,38 @@ final class YTR_Renewal {
 
 			if ($result['success']) {
 				++$stats['succeeded'];
+			} elseif (!empty($result['pending'])) {
+				++$stats['skipped'];
 			} else {
 				++$stats['failed'];
 			}
 		}
 
 		return $stats;
+		} finally {
+			self::release_lock('process');
+		}
+	}
+
+	private static function acquire_lock(string $name, int $ttl = 900): bool {
+		$option = 'ytr_renewal_lock_' . sanitize_key($name);
+		$now    = time();
+
+		if (add_option($option, (string) $now, '', false)) {
+			return true;
+		}
+
+		$created_at = (int) get_option($option, 0);
+		if ($created_at > 0 && ($now - $created_at) > $ttl) {
+			delete_option($option);
+			return add_option($option, (string) $now, '', false);
+		}
+
+		return false;
+	}
+
+	private static function release_lock(string $name): void {
+		delete_option('ytr_renewal_lock_' . sanitize_key($name));
 	}
 
 	public static function user_needs_renewal(int $user_id): bool {
@@ -146,6 +177,16 @@ final class YTR_Renewal {
 			);
 		}
 
+		$lock_name = 'user_' . $user_id;
+		if (!self::acquire_lock($lock_name)) {
+			return array(
+				'success'  => false,
+				'message'  => __('Автопродление уже выполняется', 'yoga-tariff-renewal'),
+				'order_id' => 0,
+			);
+		}
+
+		try {
 		YTR_User::record_renewal_attempt($user_id);
 
 		$product_id = YTR_User::get_tariff_product_id($user_id);
@@ -197,13 +238,30 @@ final class YTR_Renewal {
 			);
 		}
 
+		if (in_array((string) $charge['status'], array('pending', 'waiting_for_capture'), true)) {
+			$order->add_order_note(__('Автопродление: ожидаем финальный статус платежа ЮKassa, новая попытка списания не запускается.', 'yoga-tariff-renewal'));
+
+			return array(
+				'success'  => false,
+				'message'  => $charge['message'],
+				'order_id' => $order->get_id(),
+				'pending'  => true,
+			);
+		}
+
 		YTR_User::record_renewal_failure($user_id);
 		$order->update_status('failed', $charge['message']);
+		if (class_exists('YTR_Notifications')) {
+			YTR_Notifications::send_renewal_failure($order, $charge['message']);
+		}
 
 		return array(
 			'success'  => false,
 			'message'  => $charge['message'],
 			'order_id' => $order->get_id(),
 		);
+		} finally {
+			self::release_lock($lock_name);
+		}
 	}
 }

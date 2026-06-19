@@ -260,6 +260,8 @@ final class YTR_Checkout {
 				$opted_in = true;
 			} elseif ($stored === 'no') {
 				return false;
+			} elseif (self::order_is_tariff_checkout($order)) {
+				$opted_in = true;
 			} else {
 				$opted_in = self::customer_wants_save_payment_method();
 			}
@@ -272,6 +274,22 @@ final class YTR_Checkout {
 		}
 
 		return self::is_save_payment_supported($order);
+	}
+
+	public static function ensure_order_opt_in_for_payment(WC_Order $order): void {
+		if ((string) $order->get_meta('_ytr_auto_renew_opt_in') !== '') {
+			return;
+		}
+
+		if (!self::order_is_tariff_checkout($order)) {
+			return;
+		}
+
+		$order->update_meta_data('_ytr_auto_renew_opt_in', 'yes');
+		if ((string) $order->get_meta('_yoga_checkout_payment_type') === '') {
+			$order->update_meta_data('_yoga_checkout_payment_type', 'bank_card');
+		}
+		$order->save();
 	}
 
 	public static function store_opt_in_on_order(WC_Order $order): void {
@@ -350,6 +368,7 @@ final class YTR_Checkout {
 			return $payment_request;
 		}
 
+		self::ensure_order_opt_in_for_payment($order);
 		self::ensure_order_billing_phone($order);
 
 		if (!self::order_ready_for_save($order)) {

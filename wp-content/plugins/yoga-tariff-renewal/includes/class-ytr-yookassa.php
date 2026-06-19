@@ -228,7 +228,8 @@ final class YTR_YooKassa {
 			}
 
 			$payment_request = $builder->build();
-			$response        = YooKassaClientFactory::getYooKassaClient()->createPayment($payment_request);
+			$idempotence_key = class_exists('YTR_Orders') ? YTR_Orders::get_renewal_idempotence_key($order) : 'ytr-renewal-order-' . $order->get_id();
+			$response        = YooKassaClientFactory::getYooKassaClient()->createPayment($payment_request, $idempotence_key);
 		} catch (Exception $e) {
 			return array(
 				'success'     => false,
@@ -243,8 +244,9 @@ final class YTR_YooKassa {
 
 		if ($payment_id !== '') {
 			$order->set_transaction_id($payment_id);
-			$order->save();
 		}
+		$order->update_meta_data('_ytr_yookassa_payment_status', $status);
+		$order->save();
 
 		if ($status === 'succeeded') {
 			$order->payment_complete($payment_id);
@@ -280,6 +282,70 @@ final class YTR_YooKassa {
 			'status'      => $status,
 			'message'     => 'Платёж не прошёл: ' . $status,
 		);
+	}
+
+	public static function sync_order_payment_status(WC_Order $order): string {
+		$payment_id = (string) $order->get_transaction_id();
+		if ($payment_id === '' || !class_exists('YooKassaClientFactory')) {
+			return '';
+		}
+
+		try {
+			$payment = YooKassaClientFactory::getYooKassaClient()->getPaymentInfo($payment_id);
+		} catch (Exception $e) {
+			$order->add_order_note(
+				sprintf(
+					/* translators: %s: api error */
+					__('Автопродление: не удалось проверить статус платежа в ЮKassa: %s', 'yoga-tariff-renewal'),
+					self::humanize_api_error($e->getMessage())
+				)
+			);
+			return '';
+		}
+
+		$status = method_exists($payment, 'getStatus') ? (string) $payment->getStatus() : '';
+		if ($status === '') {
+			return '';
+		}
+
+		$order->update_meta_data('_ytr_yookassa_payment_status', $status);
+
+		if ($status === 'succeeded') {
+			$order->payment_complete($payment_id);
+			if ($order->has_status('processing')) {
+				$order->update_status('completed', __('Автопродление тарифа.', 'yoga-tariff-renewal'));
+			} else {
+				$order->save();
+			}
+
+			return $status;
+		}
+
+		if ($status === 'canceled' || $status === 'cancelled') {
+			$order->update_status(
+				'failed',
+				__('Автопродление: ЮKassa вернула финальный статус отмены платежа.', 'yoga-tariff-renewal')
+			);
+			$user_id = (int) $order->get_customer_id();
+			if ($user_id > 0 && class_exists('YTR_User')) {
+				YTR_User::record_renewal_failure($user_id);
+			}
+			if (class_exists('YTR_Notifications')) {
+				YTR_Notifications::send_renewal_failure($order, __('ЮKassa вернула финальный статус отмены платежа.', 'yoga-tariff-renewal'));
+			}
+			return $status;
+		}
+
+		if ($status === 'waiting_for_capture' && !$order->has_status('on-hold')) {
+			$order->update_status(
+				'on-hold',
+				__('Автопродление: платеж ожидает подтверждения ЮKassa.', 'yoga-tariff-renewal')
+			);
+			return $status;
+		}
+
+		$order->save();
+		return $status;
 	}
 
 	private static function build_description(WC_Order $order): string {

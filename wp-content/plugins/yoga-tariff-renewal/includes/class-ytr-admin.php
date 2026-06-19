@@ -172,6 +172,8 @@ final class YTR_Admin {
 				?>
 			</p>
 
+			<?php self::render_receipt_status(); ?>
+
 			<form method="post" action="options.php">
 				<?php settings_fields('ytr_settings'); ?>
 				<table class="form-table" role="presentation">
@@ -286,6 +288,56 @@ final class YTR_Admin {
 					<a href="https://yookassa.ru/developers/payment-acceptance/scenario-extensions/recurring-payments/basics" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Документация API', 'yoga-tariff-renewal'); ?></a>
 				</p>
 			</div>
+		</div>
+		<?php
+	}
+
+	private static function render_receipt_status(): void {
+		if (!class_exists('YooKassaHandler') || !method_exists('YooKassaHandler', 'isReceiptEnabled')) {
+			?>
+			<div class="notice notice-warning inline">
+				<p><?php esc_html_e('Чеки ЮKassa: официальный модуль не найден, передача чеков при автоплатежах недоступна.', 'yoga-tariff-renewal'); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		$enabled = (bool) YooKassaHandler::isReceiptEnabled();
+		if (!$enabled) {
+			?>
+			<div class="notice notice-warning inline">
+				<p><?php esc_html_e('Чеки ЮKassa: раздел «Чеки» в официальном модуле выключен. Автоплатежи будут создаваться без receipt.', 'yoga-tariff-renewal'); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		$missing = array();
+		if ((string) get_option('yookassa_tax_rate', '') === '' && (string) get_option('yookassa_default_tax_rate', '') === '') {
+			$missing[] = __('ставка НДС', 'yoga-tariff-renewal');
+		}
+		if ((string) get_option('yookassa_payment_mode_default', '') === '') {
+			$missing[] = __('признак способа расчета', 'yoga-tariff-renewal');
+		}
+		if ((string) get_option('yookassa_payment_subject_default', '') === '') {
+			$missing[] = __('признак предмета расчета', 'yoga-tariff-renewal');
+		}
+
+		?>
+		<div class="notice <?php echo $missing ? 'notice-warning' : 'notice-success'; ?> inline">
+			<p>
+				<?php
+				if ($missing) {
+					printf(
+						/* translators: %s: missing settings list */
+						esc_html__('Чеки ЮKassa: включены, но проверьте настройки: %s.', 'yoga-tariff-renewal'),
+						esc_html(implode(', ', $missing))
+					);
+				} else {
+					esc_html_e('Чеки ЮKassa: включены. Данные receipt будут передаваться при каждом автоплатеже через официальный модуль.', 'yoga-tariff-renewal');
+				}
+				?>
+			</p>
 		</div>
 		<?php
 	}

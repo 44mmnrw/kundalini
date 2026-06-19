@@ -72,6 +72,10 @@ final class YTR_Saved_Cards {
 		}
 
 		// Сиротские флаги без карты — сбрасываем, но не помечаем как отмену пользователем.
+		if (self::has_recent_save_payment_candidate($user_id)) {
+			return;
+		}
+
 		YTR_User::disable_auto_renew($user_id, false);
 	}
 
@@ -80,6 +84,43 @@ final class YTR_Saved_Cards {
 	 *
 	 * @param bool $opt_in_only Только _ytr_auto_renew_opt_in=yes или привязка карты.
 	 */
+	private static function has_recent_save_payment_candidate(int $user_id): bool {
+		$orders = wc_get_orders(
+			array(
+				'customer_id' => $user_id,
+				'limit'       => 5,
+				'orderby'     => 'date',
+				'order'       => 'DESC',
+				'status'      => array('completed', 'processing', 'pending', 'on-hold'),
+			)
+		);
+
+		$threshold = time() - (2 * HOUR_IN_SECONDS);
+
+		foreach ($orders as $order) {
+			if (!$order instanceof WC_Order || !YTR_Tariff::order_contains_tariff($order)) {
+				continue;
+			}
+
+			$created = $order->get_date_created();
+			if (!$created || $created->getTimestamp() < $threshold) {
+				continue;
+			}
+
+			if ((string) $order->get_meta('_ytr_auto_renew_opt_in') === 'no') {
+				continue;
+			}
+
+			if (self::sync_from_order($order)) {
+				return true;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public static function sync_cards_for_user(int $user_id, bool $opt_in_only = true): void {
 		if ($user_id <= 0) {
 			return;
