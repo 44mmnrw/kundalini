@@ -190,6 +190,7 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 
 			$this->savePaymentMethod = false;
 			YTR_Checkout::ensure_order_billing_phone($order);
+			YTR_Checkout::ensure_order_opt_in_for_payment($order);
 
 			if (!YTR_Checkout::order_ready_for_save($order)) {
 				return;
@@ -452,6 +453,7 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 
 			$this->savePaymentMethod = false;
 			YTR_Checkout::ensure_order_billing_phone($order);
+			YTR_Checkout::ensure_order_opt_in_for_payment($order);
 
 			if (!YTR_Checkout::order_ready_for_save($order)) {
 				return;

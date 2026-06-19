@@ -10,6 +10,7 @@ require_once YTR_PLUGIN_DIR . 'includes/class-ytr-user.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-checkout.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-yookassa.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-orders.php';
+require_once YTR_PLUGIN_DIR . 'includes/class-ytr-notifications.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-renewal.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-cron.php';
 require_once YTR_PLUGIN_DIR . 'includes/class-ytr-admin.php';

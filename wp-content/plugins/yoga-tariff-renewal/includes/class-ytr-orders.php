@@ -5,6 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 final class YTR_Orders {
+	private const META_RENEWAL = '_ytr_renewal';
+	private const META_IDEMPOTENCE_KEY = '_ytr_yookassa_idempotence_key';
+
 	/**
 	 * @return WC_Order|WP_Error
 	 */
@@ -45,11 +48,25 @@ final class YTR_Orders {
 		$order->set_payment_method('yookassa_epl');
 		$order->set_payment_method_title(__('ЮKassa (автопродление)', 'yoga-tariff-renewal'));
 
-		$order->update_meta_data('_ytr_renewal', 'yes');
+		$order->update_meta_data(self::META_RENEWAL, 'yes');
 		$order->calculate_totals();
+		self::get_renewal_idempotence_key($order);
 		$order->save();
 
 		return $order;
+	}
+
+	public static function get_renewal_idempotence_key(WC_Order $order): string {
+		$key = (string) $order->get_meta(self::META_IDEMPOTENCE_KEY);
+		if ($key !== '') {
+			return $key;
+		}
+
+		$key = 'ytr-renewal-order-' . $order->get_id();
+		$order->update_meta_data(self::META_IDEMPOTENCE_KEY, $key);
+		$order->save();
+
+		return $key;
 	}
 
 	public static function has_recent_renewal_attempt(int $user_id, int $within_seconds = DAY_IN_SECONDS): bool {
@@ -59,30 +76,29 @@ final class YTR_Orders {
 				'limit'       => 5,
 				'orderby'     => 'date',
 				'order'       => 'DESC',
-				'meta_key'    => '_ytr_renewal',
+				'meta_key'    => self::META_RENEWAL,
 				'meta_value'  => 'yes',
 			)
 		);
-
-		$threshold = time() - $within_seconds;
 
 		foreach ($orders as $order) {
 			if (!$order instanceof WC_Order) {
 				continue;
 			}
 
-			$created = $order->get_date_created();
-			if (!$created || $created->getTimestamp() < $threshold) {
-				continue;
+			if ($order->has_status(array('pending', 'on-hold')) && class_exists('YTR_YooKassa')) {
+				YTR_YooKassa::sync_order_payment_status($order);
+				$order = wc_get_order($order->get_id());
+				if (!$order instanceof WC_Order) {
+					continue;
+				}
 			}
 
-			// Успешное продление — не дублируем.
 			if ($order->has_status(array('processing', 'completed'))) {
 				return true;
 			}
 
-			// Недавний pending — ждём webhook / не спамим API.
-			if ($order->has_status('pending') && $created->getTimestamp() >= (time() - HOUR_IN_SECONDS)) {
+			if ($order->has_status(array('pending', 'on-hold'))) {
 				return true;
 			}
 		}
