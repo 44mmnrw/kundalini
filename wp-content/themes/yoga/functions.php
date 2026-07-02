@@ -2559,6 +2559,15 @@ function handle_comment_delete() {
 			
 			wp_update_user($user_data);
 
+			if (isset($_POST['timezone'])) {
+				$timezone = sanitize_text_field(wp_unslash($_POST['timezone']));
+				if ($timezone !== '' && in_array($timezone, timezone_identifiers_list(), true)) {
+					update_user_meta($user_id, 'timezone', $timezone);
+				} else {
+					delete_user_meta($user_id, 'timezone');
+				}
+			}
+
 			if (isset($_POST['phone'])) {
 				$phone = sanitize_text_field(wp_unslash($_POST['phone']));
 				$digits = preg_replace('/\D+/', '', $phone);
@@ -3976,7 +3985,6 @@ function handle_comment_delete() {
 			return '';
 		}
 	}
-
 
 
 

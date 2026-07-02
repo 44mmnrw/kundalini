@@ -3250,6 +3250,13 @@ jQuery(document).ready(function($) {
 			$('#avatar-upload').click();
 		}, 50); // Небольшая задержка
 	});
+
+	$(document).on('keydown', '.photo-input-custom', function(e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			$(this).trigger('click');
+		}
+	});
 	
 	$(document).on('change', '#avatar-upload', function() {
 		var file = this.files && this.files[0];
@@ -3262,7 +3269,7 @@ jQuery(document).ready(function($) {
 			URL.revokeObjectURL($img[0].src);
 		}
 		$photo.find('img').remove();
-		$photo.append($('<img>', { src: dataUrl, alt: '', class: 'avatar' }));
+		$photo.addClass('has-avatar').append($('<img>', { src: dataUrl, alt: '', class: 'avatar' }));
 	});
 	
 	// Удаление аватара

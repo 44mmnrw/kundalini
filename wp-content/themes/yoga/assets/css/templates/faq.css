@@ -486,7 +486,7 @@
 /* Sidebar */
 .sidebar {
   display: block;
-  position: fixed;
+  position: absolute;
   left: var(--lk-sidebar-left);
   top: var(--header-bar-height);
   z-index: 8;

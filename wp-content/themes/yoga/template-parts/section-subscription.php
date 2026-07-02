@@ -1,4 +1,4 @@
-<?php
+<?php /*
 	$GLOBALS['has_subscription_section'] = true;
 ?>
 <section class="section-subscription wow fadeInUp delay-200ms" id="section-subscription">
@@ -48,3 +48,4 @@
 		</div>
 	</div>
 </section>
+*/ ?>
