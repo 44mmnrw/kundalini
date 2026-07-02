@@ -14,6 +14,9 @@
 	
 	$current_user = wp_get_current_user();
 	$user_id = get_current_user_id();
+	$user_timezone = get_user_meta($user_id, 'timezone', true);
+	$user_timezone = is_string($user_timezone) ? $user_timezone : '';
+	$timezone_options = timezone_identifiers_list();
 ?>
 
 
@@ -24,131 +27,121 @@
                 <div class="lk__slides">
                     <!-- Слайд "Мои данные" -->
                     <div class="lk-slide active" data-target="1">
-                        <h2>Мои данные</h2>
                         <div class="lk-slide__content">
                             <form action="#" class="lk-form" id="profile-form" enctype="multipart/form-data">
                                 <?php wp_nonce_field('update_user_profile', 'profile_nonce'); ?>
-                                
-                                <div class="lk-form__photo">
-                                    <div class="photo-input">
-                                        <div class="photo-input-custom">
-                                            <div class="photo-input-custom__inner">
-                                                <div class="photo-input-custom__inner-photo">
-													<?php 
-														$current_user = wp_get_current_user();
-														$avatar_id = get_field('user_avatar', 'user_' . $current_user->ID);
-														
-														if ($avatar_id) {
-															echo wp_get_attachment_image($avatar_id, 'thumbnail', false, array('class' => 'avatar'));
-															} else {
-															// Fallback на стандартный аватар WordPress
-															echo get_avatar($current_user->ID, 96);
-														}
-													?>
+
+								<div class="lk-form__photo">
+									<div class="photo-input">
+										<div class="photo-input-custom" role="button" tabindex="0">
+											<div class="photo-input-custom__inner">
+												<div class="photo-input-custom__inner-photo" aria-hidden="true">
+													<svg class="photo-input-custom__icon" viewBox="0 0 24 24" focusable="false">
+														<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-upload-camera'); ?>"></use>
+													</svg>
 												</div>
-                                                <b class="photo-input-custom__inner-title">Загрузить фото</b>
-                                                <p class="photo-input-custom__inner-text">.jpg, .png не более 10мб</p>
+												<div class="photo-input-custom__copy">
+													<b class="photo-input-custom__inner-title">Загрузить фото</b>
+													<p class="photo-input-custom__inner-text">.jpg, .png не более 10мб</p>
+												</div>
 											</div>
-                                            
-										</div>
-                                        <div class="photo-input-delete">
-                                            <span>Удалить фото</span>
 										</div>
 										<input type="file" id="avatar-upload" name="avatar" accept=".jpg,.png" style="display: none;">
 									</div>
-								</div>  
-                                
+								</div>
+
                                 <div class="lk-form__main">
-                                    <div class="lk-form-item">
-                                        <h5>Имя</h5>
-                                        <input type="text" class="input" required placeholder="Имя" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>">
-									</div>
-                                    <div class="lk-form-item">
-                                        <h5>Фамилия</h5>
-                                        <input type="text" class="input" required placeholder="Фамилия" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>">
-									</div>
-                                    <div class="lk-form-item">
-                                        <h5>E-mail</h5>
-                                        <input type="email" class="input" required placeholder="E-mail" name="email" value="<?php echo esc_attr($current_user->user_email); ?>">
-									</div>
-                                    <div class="lk-form-item">
-                                        <h5>Телефон</h5>
-                                        <input type="text" class="input input_phone" name="phone" value="<?php echo esc_attr(get_user_meta($current_user->ID, 'phone', true)); ?>">
-									</div>
-                                    <div class="lk-form-item">
-                                        <h5>Дата рождения</h5>
-                                        <input type="text" class="input input_birth" placeholder="__.__.____" name="birthdate" value="<?php echo esc_attr(get_user_meta($current_user->ID, 'birthdate', true)); ?>">
-									</div>
-                                    <div class="lk-form-item">
-                                        <h5>Пол</h5>
-                                        <div class="lk-gender">
-                                            <?php
-												$gender = get_user_meta($current_user->ID, 'gender', true);
-											?>
-                                            <label class="lk-gender-item <?php echo ($gender == 'male') ? 'active' : ''; ?>">
-                                                <input type="radio" name="gender" value="male" <?php checked($gender, 'male'); ?>>
-                                                <div class="lk-gender-item__btn">М</div>
-											</label>
-                                            <label class="lk-gender-item <?php echo ($gender == 'female') ? 'active' : ''; ?>">
-                                                <input type="radio" name="gender" value="female" <?php checked($gender, 'female'); ?>>
-                                                <div class="lk-gender-item__btn">Ж</div>
-											</label>
+									<div class="lk-form-fields">
+										<div class="lk-form-row">
+											<div class="lk-form-item">
+												<h5>Имя<span>*</span></h5>
+												<input type="text" class="input" required placeholder="Имя" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>">
+											</div>
+											<div class="lk-form-item">
+												<h5>Фамилия<span>*</span></h5>
+												<input type="text" class="input" required placeholder="Фамилия" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>">
+											</div>
+										</div>
+										<div class="lk-form-row">
+											<div class="lk-form-item lk-form-item_email">
+												<h5>E-mail<span>*</span></h5>
+												<input type="email" class="input" required placeholder="E-mail" name="email" value="<?php echo esc_attr($current_user->user_email); ?>">
+												<div class="lk-email-confirmation">
+													<p>E-mail не подтверждён</p>
+													<a href="#" class="lk-email-confirmation__link">Подтвердить e-mail</a>
+												</div>
+											</div>
+											<div class="lk-form-item lk-form-item_timezone">
+												<h5>Часовой пояс (для садхан)<span>*</span></h5>
+												<div class="lk-timezone-select">
+													<select name="timezone" required>
+														<option value=""><?php esc_html_e('Не выбрано', 'yoga'); ?></option>
+														<?php foreach ($timezone_options as $timezone_option) : ?>
+															<option value="<?php echo esc_attr($timezone_option); ?>" <?php selected($user_timezone, $timezone_option); ?>>
+																<?php echo esc_html($timezone_option); ?>
+															</option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
 										</div>
 									</div>
-                                    
+
                                     <div class="lk-form-password">
                                         <h2>Изменить пароль</h2>
-                                        <div class="lk-form-item">
-                                            <h5>Текущий пароль</h5>
-                                            <div class="input-password">
-                                                <input type="password" class="input" name="current_password"  placeholder="Текущий пароль">
-                                                <div class="input-password__btn input-password__btn_show active">
-                                                    <svg aria-hidden="true" focusable="false">
-                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
-                                                    </svg>
-												</div>
-                                                <div class="input-password__btn input-password__btn_hide">
-                                                    <svg aria-hidden="true" focusable="false">
-                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
-                                                    </svg>
-												</div>
-											</div>
-										</div>
-                                        <div class="lk-form-item lk-form-item_newpass">
-                                            <h5>Новый пароль</h5>
-                                            <div class="input-password">
-                                                <input type="password" class="input" name="new_password">
-                                                <div class="input-password__btn input-password__btn_show active">
-                                                    <svg aria-hidden="true" focusable="false">
-                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
-                                                    </svg>
-												</div>
-                                                <div class="input-password__btn input-password__btn_hide">
-                                                    <svg aria-hidden="true" focusable="false">
-                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
-                                                    </svg>
+										<div class="lk-form-row lk-form-row_passwords">
+											<div class="lk-form-item">
+												<h5>Текущий пароль</h5>
+												<div class="input-password">
+													<input type="password" class="input" name="current_password" placeholder="••••••••">
+													<div class="input-password__btn input-password__btn_show active">
+														<svg aria-hidden="true" focusable="false">
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+														</svg>
+													</div>
+													<div class="input-password__btn input-password__btn_hide">
+														<svg aria-hidden="true" focusable="false">
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+														</svg>
+													</div>
 												</div>
 											</div>
-										</div>
-                                        <div class="lk-form-item lk-form-item_newpassrepeat">
-                                            <h5>Повторите пароль</h5>
-                                            <div class="input-password">
-                                                <input type="password" class="input" name="repeat_password">
-                                                <div class="input-password__btn input-password__btn_show active">
-                                                    <svg aria-hidden="true" focusable="false">
-                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
-                                                    </svg>
+											<div class="lk-form-item lk-form-item_newpass">
+												<h5>Новый пароль</h5>
+												<div class="input-password">
+													<input type="password" class="input" name="new_password">
+													<div class="input-password__btn input-password__btn_show active">
+														<svg aria-hidden="true" focusable="false">
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+														</svg>
+													</div>
+													<div class="input-password__btn input-password__btn_hide">
+														<svg aria-hidden="true" focusable="false">
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+														</svg>
+													</div>
 												</div>
-                                                <div class="input-password__btn input-password__btn_hide">
-                                                    <svg aria-hidden="true" focusable="false">
-                                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
-                                                    </svg>
+											</div>
+											<div class="lk-form-item lk-form-item_newpassrepeat">
+												<h5>Повторите пароль</h5>
+												<div class="input-password">
+													<input type="password" class="input" name="repeat_password">
+													<div class="input-password__btn input-password__btn_show active">
+														<svg aria-hidden="true" focusable="false">
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+														</svg>
+													</div>
+													<div class="input-password__btn input-password__btn_hide">
+														<svg aria-hidden="true" focusable="false">
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+														</svg>
+													</div>
+													<span class="input-password__placeholder">Пароли не совпадают</span>
 												</div>
-                                                <span class="input-password__placeholder">Пароли не совпадают</span>
 											</div>
 										</div>
 									</div>
-                                    
+
                                     <div class="lk-form-safe">
                                         <input type="submit" id="lk-safe-btn">
                                         <label for="lk-safe-btn" class="btn">

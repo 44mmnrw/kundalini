@@ -110,6 +110,8 @@
 .footer-subscribe__field input::placeholder {
   color: rgba(255, 255, 255, 0.6);
   opacity: 1;
+  font-family: "Mulish-Regular", sans-serif;
+  font-weight: normal;
 }
 
 .footer-subscribe__submit {
