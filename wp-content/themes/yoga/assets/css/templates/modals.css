@@ -392,7 +392,7 @@
        */
   }
   .modal-mobile-menu-lk .mobile-menu-inner {
-    background: var(--color-violet);
+    background: #f6f6f9;
   }
   .modal-mobile-menu-lk.active .mobile-menu-inner {
     height: 100%;
@@ -418,7 +418,7 @@
     left: 0px;
     top: 0px;
     width: 100%;
-    height: 4.4375rem;    background: var(--color-violet);
+    height: 4.4375rem;    background: #f6f6f9;
     z-index: 2;
   }
   .modal-mobile-menu-lk .mobile-menu__slide {
@@ -470,7 +470,7 @@
   .modal-mobile-menu-lk .sidebar-menu-lk-group--primary .sidebar-menu {
     display: flex;
     flex-direction: column;
-    gap: 0.3125rem;
+    gap: 0;
   }
   .modal-mobile-menu-lk .sidebar-menu-lk-group--primary .sidebar-menu__item {
     margin-top: 0;
@@ -482,11 +482,11 @@
     margin: 1.25rem 0 0;
     padding: 0;
     border: none;
-    background: rgba(255, 255, 255, 0.45);
+    background: rgba(31, 31, 31, 0.18);
     flex-shrink: 0;
   }
   .modal-mobile-menu-lk .sidebar-menu-sep--before-logout {
-    margin-top: 0.625rem;
+    margin-top: 1.25rem;
   }
   .modal-mobile-menu-lk .sidebar-menu-secondary {
     display: flex;
@@ -530,19 +530,24 @@
   }
   .modal-mobile-menu-lk .sidebar-menu.sidebar-menu_exit {
     padding-top: 0.3125rem;    padding-bottom: 0.9375rem;  }
-  .modal-mobile-menu-lk .sidebar-menu__item span {
+  .modal-mobile-menu-lk .sidebar-menu__item .sidebar-menu__label {
     padding-left: 0.75rem;
     font-size: 1rem;
     line-height: 1.1;
+    color: #1f1f1f;
   }
   .modal-mobile-menu-lk .personal-status__img {
     color: #e8ff57;
   }
   .modal-mobile-menu-lk .sidebar-menu__item {
-    color: #fff;
+    min-height: 2.75rem;
+    margin-top: 0;
+    padding: 0.75rem 1.25rem;
+    color: #1f1f1f;
     font-size: 1rem;
   }
   .modal-mobile-menu-lk .sidebar-menu__item.active {
+    background: #f4ecfc;
     color: #1f1f1f;
   }
   .modal-mobile-menu-lk .sidebar-menu__item-icon,
@@ -551,6 +556,7 @@
     height: 1em;
     max-height: 1em;
     flex-shrink: 0;
+    color: #1f1f1f;
   }
   /* Figma favorite_icon 620:12663 — кадр 17×15, не квадрат */
   .modal-mobile-menu-lk .sidebar-menu__item-icon--heart {
@@ -595,21 +601,38 @@
     left: auto;
     right: auto;
     width: 100%;
-    margin-top: 0;
+    margin-top: 0.625rem;
     flex-shrink: 0;
     z-index: 1;
-    background: var(--color-violet);
+    background: transparent;
     border-top: none;
-    color: #fff;
+    color: #1f1f1f;
     font-size: 1rem;
   }
   .modal-mobile-menu-lk .mobile-menu-exit.sidebar-exit::before {
     display: none;
   }
-  .modal-mobile-menu-lk .mobile-menu-exit span {
+  .modal-mobile-menu-lk .mobile-menu-exit .sidebar-menu__label {
     padding-left: 0.75rem;
     font-size: 1rem;
     line-height: 1.1;
+    color: #1f1f1f;
+  }
+  .modal-mobile-menu-lk .sidebar-menu__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-left: 0.5rem;
+    padding-left: 0;
+    border-radius: 50%;
+    background: #9153e1;
+    color: #fff;
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-size: 0.75rem;
+    line-height: 1;
   }
   .lk-mobile-menu-item {
     display: flex;

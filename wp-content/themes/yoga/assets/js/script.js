@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 		};
 	});   
 	
-	$(".body_main .logo-header, .body_main .logo-footer").click(function () {
+	$(".body_main .logo-header").click(function () {
 		var elementClick = $(this).attr("href");
 		var destination = $(elementClick).offset().top;
 		$('html, body').animate({ scrollTop: destination }, 1200);
@@ -849,8 +849,9 @@ jQuery(document).ready(function($) {
 	
 	
 	
-	/* Header-lk — бургер: панель .modal-mobile-menu-lk (ниже lg второй обработчик снимал active и мешал). */
-	$('.lk-burger').on('click', function (e) {
+	/* ЛК использует общий .burger, но открывает свою панель .modal-mobile-menu-lk. */
+	$(document).on('click', '.body_lk .burger', function (e) {
+		e.preventDefault();
 		e.stopPropagation();
 		var $panel = $('.modal-mobile-menu-lk');
 		if (!$panel.length) {
@@ -874,7 +875,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	$('.lk-burger').on('keydown', function (e) {
+	$(document).on('keydown', '.body_lk .burger', function (e) {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			$(this).trigger('click');
@@ -1277,7 +1278,7 @@ jQuery(document).ready(function($) {
 		$('.body').removeClass("body-fixed");
 		$('.modal-addnewcard').removeClass("active");
 		$('.body_lk .header').removeClass("active");
-		$('.body_lk .lk-burger').removeClass("active");
+		$('.body_lk .burger').removeClass("active");
 		closeLibraryFiltersScreen(true);
 	});
 	
@@ -1291,7 +1292,7 @@ jQuery(document).ready(function($) {
 		$('.modal-addnewcard').removeClass("active");
 		$('.body').removeClass("body-fixed");
 		$('.body_lk .header').removeClass("active");
-		$('.body_lk .lk-burger').removeClass("active");
+		$('.body_lk .burger').removeClass("active");
 		closeLibraryFiltersScreen(true);
 	});
 	
@@ -1725,7 +1726,7 @@ jQuery(document).ready(function($) {
 	
 	$('.modal-call_logout').click(function () {
 		$('.modal-mobile-menu-lk').removeClass('active');
-		$('.body_lk .lk-burger').removeClass('active');
+		$('.body_lk .burger').removeClass('active');
 		$('.body_lk .header').removeClass('active');
 		$('.overlay').addClass('active');
 		$('.modal-default_logout').addClass('active');
@@ -3098,7 +3099,8 @@ jQuery(document).ready(function($) {
 	});
 
     // Переход в "Мои данные" при клике по аватару в шапке ЛК
-    $('.lk-login-btn').on('click', function() {
+    $('.body_lk .login-icon_logged').on('click', function(e) {
+		e.preventDefault();
         switchLkSlide(1);
     });
 

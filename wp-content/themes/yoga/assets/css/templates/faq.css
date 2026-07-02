@@ -367,117 +367,18 @@
 /* Header-lk */
 .body_lk {
   padding-top: var(--header-bar-height);  max-width: none;
+  --lk-sidebar-left: max(var(--container-inline-gutter), calc((100vw - 75rem) / 2));
 }
 
 .body_lk .header {
-  width: calc(100% - 17.5rem);  padding-left: 0.9375rem;  padding-right: 0.3125rem;  left: auto;
-  right: 0px;
-  padding-top: var(--header-mobile-py);
-  padding-bottom: var(--header-mobile-py);
-  border-bottom: none;
-  box-shadow: 0 1px 0 rgba(145, 83, 225, 0.07);
-  height: auto;
+  width: 100%;
+  left: 0;
+  right: auto;
+  padding-left: 0;
+  padding-right: 0;
+  height: var(--header-bar-height);
   min-height: var(--header-bar-height);
 }
-.body_lk .header.active .lk-header-menu {
-  top: 100%;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.lk-header-main {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  position: relative;
-  z-index: 2;
-}
-.lk-header-main .logo-header {
-  display: none;
-}
-
-.lk-header-main__buttons {
-  display: flex;
-}
-
-/* Группа как в Figma mobile header: аватар (логин) слева, бургер справа, зазор 7px */
-.lk-header-main__actions {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 0.4375rem;
-}
-
-/* Десктоп ЛК: горизонтальное меню в шапке — бургер не показываем.
-   Круг + ховер как .login-icon; линии — sprite.svg#burger-menu-lines */
-.lk-burger {
-  display: none;
-  position: relative;
-  flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
-  border: none;
-  color: var(--color-black);
-  background: var(--color-grey);
-  border-radius: 50%;
-  cursor: pointer;
-  margin-left: 0;
-  transition: 0.4s ease;
-}
-.lk-burger:hover {
-  background: var(--color-green);
-}
-.lk-burger svg {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 1.25rem;
-  height: 1.25rem;
-}
-.lk-burger img {
-  display: block;
-  position: absolute;
-  width: 0.8125rem;  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  transition: 0.4s ease;
-}
-.lk-burger img.active {
-  width: 1.125rem;  transform: translate(-50%, -50%) scale(1);
-}
-.lk-burger.active img {
-  transform: translate(-50%, -50%) scale(1);
-  transition: 0.4s ease;
-}
-.lk-burger.active img.active {
-  transform: translate(-50%, -50%) scale(0);
-}
-
-.lk-login-btn {
-  display: flex;
-  width: 2.5rem;  height: 2.5rem;  border-radius: 50%;
-  cursor: pointer;
-  background: var(--color-violet);
-}
-.lk-login-btn span {
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin: auto;
-  color: #fff;
-  font-size: 1.125rem;  font-family: "Mulish-SemiBold", sans-serif;
-}
-.lk-login-btn__avatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
 .personal-status {
   position: relative;
   display: flex;
@@ -560,35 +461,14 @@
   color: rgba(24, 25, 34, 0.65);
 }
 
-.lk-header-menu {
-  position: absolute;
-  left: 0px;
-  top: 0%;
-  width: 100%;
-  padding-top: 1.125rem;  padding-bottom: 1.1875rem;  padding-left: 1.9375rem;  padding-right: 1.3125rem;  border-top: 2px solid var(--color-green);
-  background: #fff;
-  box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.4s ease;
-}
-.lk-header-menu nav {
-  display: block;
-  width: 100%;
-}
-.lk-header-menu nav ul {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}
-.lk-header-menu .ref {
-  font-family: "Mulish-Medium", sans-serif;
-  font-weight: normal;
-}
-
 @media (max-width: 1319px) {
+  .body_lk {
+    --lk-sidebar-left: max(var(--container-inline-gutter), calc((100vw - 70rem) / 2));
+  }
   .body_lk .header {
-    width: calc(100% - 15.9375rem);    padding-left: 0.3125rem;  }
+    width: 100%;
+    padding-left: 0;
+  }
 }
 @media (max-width: 1279px) {
   .body_lk .header {
@@ -596,43 +476,8 @@
     padding-left: 0px;
     padding-right: 0px;
   }
-  .lk-header-menu {
-    display: none;
-  }
-  .lk-header-main .logo-header {
-    display: block;
-    margin-right: auto;
-  }
-  /* Как в Figma mobile: только логотип и пара «аватар + бургер» */
-  .lk-header-main .notification-icon,
-  .lk-header-main .personal-status {
-    display: none;
-  }
-  .lk-burger {
-    display: block;
-    width: 3rem;
-    height: 3rem;
-    margin-left: 0;
-  }
-  .lk-burger svg {
-    width: var(--header-mobile-figma-icon-inner, 1.5rem);
-    height: var(--header-mobile-figma-icon-inner, 1.5rem);
-  }
-  .lk-burger img.active {
-    width: 1.25rem;  }
-  .lk-login-btn {
-    width: 3rem;
-    height: 3rem;
-    background: var(--color-grey);
-  }
-  .lk-login-btn span {
-    color: var(--color-black);
-  }
 }
 @media (max-width: 575px) {
-  .lk-header-main .personal-status {
-    display: none;
-  }
   .lk-notifications-popup {
     right: -2.75rem;
     width: 16.5rem;
@@ -642,22 +487,24 @@
 .sidebar {
   display: block;
   position: fixed;
-  left: 0px;
-  top: 0px;
-  z-index: 10;
-  width: 17.5rem;  height: 100vh;
-  background: var(--color-violet);
+  left: var(--lk-sidebar-left);
+  top: var(--header-bar-height);
+  z-index: 8;
+  width: 17.8125rem;
+  background: #f6f6f9;
+  border-radius: 1.875rem;
 }
 
 .sidebar-inner {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100vh;
-  padding: 1.25rem;}
+  min-height: 0;
+  padding: 1.25rem 0.9375rem;
+}
 
 .sidebar-logo {
-  display: block;
+  display: none;
 }
 .sidebar-logo img {
   display: block;
@@ -665,12 +512,13 @@
 
 .sidebar-menu {
   width: 100%;
-  padding-top: 0.9375rem;}
+  padding-top: 0;
+}
 
 .sidebar-menu-lk-group--primary .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: 0.3125rem;
+  gap: 0;
 }
 
 .sidebar-menu-lk-group--primary .sidebar-menu__item {
@@ -684,11 +532,11 @@
   margin: 1.25rem 0 0;
   padding: 0;
   border: none;
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(31, 31, 31, 0.18);
 }
 
 .sidebar-menu-sep--before-logout {
-  margin-top: 0.625rem;
+  margin-top: 1.25rem;
 }
 
 .sidebar-menu-secondary {
@@ -741,39 +589,53 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: 0.3125rem;  padding-left: 1.25rem;  padding-right: 1.25rem;  padding-top: 1rem;  padding-bottom: 1rem;  background: rgba(232, 255, 87, 0);
-  border-radius: 0.4375rem;  transition: 0.4s ease;
+  min-height: 2.75rem;
+  margin-top: 0;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border-radius: 0.4375rem;
+  color: #1f1f1f;
+  transition: background-color 0.2s ease;
   cursor: pointer;
+  box-sizing: border-box;
 }
-.sidebar-menu__item span, .sidebar-exit span {
+.sidebar-menu__item .sidebar-menu__label, .sidebar-exit .sidebar-menu__label {
   display: block;
-  padding-left: 0.75rem;  font-family: "Mulish-SemiBold", sans-serif;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: 0.75rem;
+  font-family: "Mulish-SemiBold", sans-serif;
   font-weight: normal;
-  color: #fff;
-  transition: 0.4s ease;
+  font-size: 1rem;
+  line-height: 1.1;
+  color: #1f1f1f;
+  transition: color 0.2s ease;
 }
 .sidebar-menu__item.active, .sidebar-exit.active {
-  background: var(--color-green);
+  background: #f4ecfc;
 }
-.sidebar-menu__item.active span, .sidebar-exit.active span {
-  color: var(--color-black);
+.sidebar-menu__item:hover, .sidebar-exit:hover {
+  background: rgba(244, 236, 252, 0.72);
+}
+.sidebar-menu__item.active .sidebar-menu__label, .sidebar-exit.active .sidebar-menu__label {
+  color: #1f1f1f;
 }
 .sidebar-menu__item-icon, .sidebar-exit__icon {
   position: relative;
   width: 1.25rem;
   height: 1.25rem;
   flex-shrink: 0;
-  color: #fff;
+  color: #1f1f1f;
 }
 .sidebar-menu__item-icon--heart {
   width: calc(1.25rem * 17.4 / 15.4852);
   height: 1.25rem;
 }
 .sidebar-menu__item.active .sidebar-menu__item-icon {
-  color: var(--color-black);
+  color: #1f1f1f;
 }
 .sidebar-exit__icon {
-  color: #fff;
+  color: #1f1f1f;
 }
 .sidebar-menu__item-svg,
 .sidebar-exit__svg {
@@ -783,29 +645,46 @@
   overflow: visible;
 }
 
+.sidebar-menu__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-left: 0.5rem;
+  border-radius: 50%;
+  background: #9153e1;
+  color: #fff;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
 .sidebar-exit {
-  margin-top: auto;
+  min-height: 3.25rem;
+  margin-top: 0.625rem;
   position: relative;
 }
 .sidebar-exit::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0px;
-  top: -0.625rem;  width: 100%;
-  height: 0.8px;
-  background: #fff;
+  display: none;
 }
 
 @media (max-width: 1319px) {
   .sidebar {
-    width: 15.9375rem;  }
+    width: 17.8125rem;
+  }
   .sidebar-inner {
-    padding-left: 0.9375rem;    padding-right: 0.9375rem;  }
+    padding-left: 0.9375rem;
+    padding-right: 0.9375rem;
+  }
   .sidebar-menu__item, .sidebar-exit {
-    padding-left: 0.9375rem;    padding-right: 0.9375rem;  }
-  .sidebar-menu__item span, .sidebar-exit span {
-    padding-left: 0.5rem;  }
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .sidebar-menu__item .sidebar-menu__label, .sidebar-exit .sidebar-menu__label {
+    padding-left: 0.75rem;
+  }
   .sidebar-menu-secondary__link {
     padding-left: 0.9375rem;
     padding-right: 0.9375rem;

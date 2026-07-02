@@ -1605,26 +1605,6 @@ function handle_comment_delete() {
 	}
 	
 	
-	// Сохранение в базу данных
-	class Footer_Walker extends Walker_Nav_Menu {
-		function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
-			$classes     = empty( $item->classes ) ? array() : (array) $item->classes;
-			$is_active   = in_array( 'current-menu-item', $classes ) || in_array( 'current_page_item', $classes );
-			$active_class = $is_active ? ' active' : '';
-			$item_title = trim(wp_strip_all_tags((string) $item->title));
-
-			if ($item_title === 'ЧАСТЫЕ ВОПРОСЫ') {
-				$item_title = 'Частые вопросы';
-			}
-			
-			$output .= '<li>';
-			$output .= '<a class="footer-menu-item' . $active_class . '" href="' . esc_url( $item->url ) . '">';
-			$output .= esc_html( $item_title );
-			$output .= '</a>';
-			$output .= '</li>';
-		}
-	}
-	
 	// Создание Custom Post Type для вопросов
 	add_action('wp_ajax_faq_contact_form', 'handle_faq_contact_form');
 	add_action('wp_ajax_nopriv_faq_contact_form', 'handle_faq_contact_form');
@@ -3996,7 +3976,6 @@ function handle_comment_delete() {
 			return '';
 		}
 	}
-
 
 
 

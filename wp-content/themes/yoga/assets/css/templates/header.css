@@ -1,17 +1,15 @@
 /**
- * Шапка главного сайта (ЛК в шапке: .lk-header-* в faq.css).
- * Desktop гость: Figma 265:5652.
+ * Единая шапка главного сайта и ЛК.
+ * Desktop: Figma header 2098:25907.
  * Mobile: Figma header_mobile 593:16211 — py 12px, px 10px, круги 48px, gap 7px, лого 44×28, иконки внутри круга 24px.
  */
 
 :root {
   --header-desktop-logo-w: 3.125rem;
   --header-desktop-logo-h: 2rem;
-  /* Figma desktop: 53px между логотипом и навигацией */
-  --header-desktop-logo-nav-gap: calc(53 / 16 * 1rem);
-  --header-desktop-nav-item-gap: clamp(0.625rem, 1.1vw + 0.2rem, 1.5rem);
-  /* Figma: 20px между CTA и иконкой входа */
-  --header-desktop-lk-gap: 1.25rem;
+  --header-desktop-logo-nav-gap: 1.875rem;
+  --header-desktop-nav-item-gap: 2.1875rem;
+  --header-desktop-lk-gap: 0.625rem;
   /* Figma header_mobile: 12px */
   --header-mobile-py: 0.75rem;
   /* Figma: 48px круги log_in + burger */
@@ -260,6 +258,13 @@ header > .container > .row > .header-content {
   margin-right: 0;
   margin-bottom: 0;
   bottom: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  border-radius: 50%;
+  background: var(--color-grey);
 }
 
 .header-lk-logged-desktop {
@@ -297,7 +302,7 @@ header > .container > .row > .header-content {
 }
 
 .login-icon.login-icon_logged {
-  background: #9153e1;
+  background: var(--color-grey);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,7 +310,7 @@ header > .container > .row > .header-content {
 }
 
 .login-icon__initial {
-  color: #fff;
+  color: var(--color-black);
   font-family: "Mulish-SemiBold", sans-serif;
   font-size: 1.125rem;
   line-height: 1.4;
@@ -328,7 +333,7 @@ header > .container > .row > .header-content {
 }
 
 .login-icon.login-icon_logged:hover {
-  background: #9153e1;
+  background: var(--color-green);
 }
 
 .burger {
@@ -407,6 +412,11 @@ header > .container > .row > .header-content {
     height: 1.5rem;
   }
 
+  .header-lk .login-icon.login-icon_logged svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   .header-lk--logged {
     gap: 0.625rem;
   }
@@ -414,7 +424,7 @@ header > .container > .row > .header-content {
   .header-lk-logged-desktop {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: var(--header-desktop-lk-gap);
     flex-shrink: 0;
     min-width: max-content;
   }
@@ -426,18 +436,21 @@ header > .container > .row > .header-content {
   .header-rate-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.3125rem;
-    max-width: 13rem;
+    justify-content: center;
+    width: 11.0625rem;
+    max-width: 11.0625rem;
+    min-height: 2.125rem;
     padding: 0.3125rem 0.9375rem;
     border-radius: 6.25rem;
     background: rgba(145, 83, 225, 0.07);
     text-decoration: none;
     color: var(--color-black);
     font-family: "Mulish-Regular", sans-serif;
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: normal;
-    line-height: normal;
+    line-height: 1;
     transition: background 0.25s ease;
+    box-sizing: border-box;
   }
 
   .header-rate-pill:hover {
@@ -447,7 +460,7 @@ header > .container > .row > .header-content {
   }
 
   .header-rate-pill__icon {
-    display: block;
+    display: none;
     flex-shrink: 0;
     width: 1.5rem;
     height: 1.5rem;
@@ -461,8 +474,8 @@ header > .container > .row > .header-content {
   }
 
   .header-rate-pill_inactive {
-    width: max-content;
-    max-width: none;
+    width: 11.0625rem;
+    max-width: 11.0625rem;
     flex-shrink: 0;
   }
 
@@ -472,8 +485,8 @@ header > .container > .row > .header-content {
   }
 
   .header-lk .notification-icon_header .notification-icon__img {
-    width: 1.375rem;
-    height: 1.375rem;
+    width: 1.5rem;
+    height: 1.5rem;
     color: var(--color-black);
     transition: color 0.2s ease;
   }
@@ -488,25 +501,28 @@ header > .container > .row > .header-content {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 2rem;
-    height: 2rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
+    border-radius: 50%;
+    background: var(--color-grey);
     color: var(--color-black);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease;
   }
 
   .header-favorites-link:hover {
+    background: var(--color-green);
     color: var(--color-violet);
     text-decoration: none;
   }
 
   .header-favorites-link svg {
     display: block;
-    width: 1.4375rem;
+    width: 1.375rem;
     height: 1.25rem;
   }
 
-  /* Гость: Figma — слева лого+меню (53px), справа CTA+иконка (20px), между блоками свободное место */
+  /* Гость: та же сетка и pill, без уведомлений/избранного. */
   .header-content:has(> .header-lk:not(.header-lk--logged)) {
     display: flex;
     align-items: center;
@@ -537,7 +553,7 @@ header > .container > .row > .header-content {
 @supports (width: 1cqi) {
   @media (min-width: 1025px) {
     .header-content {
-      --header-desktop-nav-item-gap: clamp(0.625rem, 2.6cqi + 0.1rem, 1.5rem);
+      --header-desktop-nav-item-gap: clamp(1rem, 3.4cqi, 2.1875rem);
     }
   }
 }
@@ -553,14 +569,15 @@ header > .container > .row > .header-content {
   }
 
   .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill:not(.header-rate-pill_inactive) {
-    max-width: 12.75rem;
+    max-width: 10.25rem;
+    width: 10.25rem;
     padding: 0.25rem 0.625rem;
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
   }
 
   .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill_inactive {
-    max-width: none;
-    font-size: 1rem;
+    max-width: 10.25rem;
+    font-size: 0.8125rem;
   }
 
   .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill__icon {
@@ -687,6 +704,10 @@ header > .container > .row > .header-content {
   }
 
   .header-lk .btn {
+    display: none;
+  }
+
+  .header-lk > .header-rate-pill {
     display: none;
   }
 

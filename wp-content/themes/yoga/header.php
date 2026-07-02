@@ -22,96 +22,65 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 	</head>
 	
 	<body <?php body_class( $is_lk_shell ? 'body body_lk' : 'body body_main' ); ?> id="body">
-<?php if ( $is_lk_shell ) : ?>
-		<header id="header" class="header animated fadeIn slow delay-200ms">
-			<div class="container">
-				<div class="row">
-					<div class="lk-header-main">
-						<a href="<?php echo esc_url(home_url('/')); ?>" class="logo-header">
-							<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>">
-						</a>
-						<?php
-							$current_user = wp_get_current_user();
-							$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
-							$user_display_name = trim((string) $current_user->display_name);
-							$user_login = trim((string) $current_user->user_login);
-							$user_source_name = $user_first_name !== '' ? $user_first_name : ($user_display_name !== '' ? $user_display_name : $user_login);
-							if ($user_source_name === '') {
-								$user_source_name = 'U';
-							}
-							if (function_exists('mb_substr') && function_exists('mb_strtoupper')) {
-								$user_initial = mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8');
-							} else {
-								$user_initial = strtoupper(substr($user_source_name, 0, 1));
-							}
-							$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
-							$user_avatar_html = $user_avatar_id > 0
-								? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
-									'class' => 'lk-login-btn__avatar',
-									'alt' => '',
-									'loading' => 'lazy',
-									'decoding' => 'async',
-								))
-								: '';
-						?>
-						<div class="notification-icon" role="button" tabindex="0" aria-expanded="false" aria-controls="lk-notifications-popup">
-							<svg class="notification-icon__img" aria-hidden="true">
-								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>"></use>
-							</svg>
-							<span>0</span>
-							<div class="lk-notifications-popup" id="lk-notifications-popup" aria-hidden="true">
-								<div class="lk-notifications-popup__title">Уведомления</div>
-								<div class="lk-notifications-popup__empty">Ничего нет...</div>
-							</div>
-						</div>
-						<?php
-							$tariff = get_current_user_tariff();
-							$tariff_name = '';
-							if (is_array($tariff) && !empty($tariff['product_name'])) {
-								$tariff_name = (string) $tariff['product_name'];
-							}
-						?>
-						<div class="personal-status<?php echo $tariff_name === '' ? ' personal-status_empty' : ''; ?>">
-							<svg class="personal-status__img" aria-hidden="true">
-								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
-							</svg>
-							<?php if ($tariff_name !== '') : ?>
-							<span><?php echo esc_html($tariff_name); ?></span>
-							<?php endif; ?>
-						</div>
-						<div class="lk-header-main__actions">
-							<div class="lk-header-main__buttons">
-								<div class="lk-login-btn">
-									<?php if ($user_avatar_html) : ?>
-										<?php echo $user_avatar_html; ?>
-									<?php else : ?>
-										<span><?php echo esc_html($user_initial); ?></span>
-									<?php endif; ?>
-								</div>
-							</div>
-							<div class="lk-burger" role="button" tabindex="0" aria-label="<?php esc_attr_e('Меню', 'yoga'); ?>">
-								<svg aria-hidden="true" focusable="false">
-									<use href="<?php echo esc_url( get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines' ); ?>"></use>
-								</svg>
-							</div>
-						</div>
-					</div>
-					<div class="lk-header-menu">
-						<nav>
-							<?php
-								wp_nav_menu(array(
-									'theme_location' => 'primary',
-									'container' => false,
-									'menu_class' => '',
-									'items_wrap' => '<ul>%3$s</ul>',
-								));
-							?>
-						</nav>
-					</div>
-				</div>
-			</div>
-		</header>
-<?php else : ?>
+		<?php
+		$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+		$tariffs_url = home_url('/product-category/tariffs/');
+		if ($tariffs_term && !is_wp_error($tariffs_term)) {
+			$term_link = get_term_link($tariffs_term);
+			if (!is_wp_error($term_link)) {
+				$tariffs_url = $term_link;
+			}
+		}
+		$sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
+		$lk_page_url = function_exists('yoga_get_lk_page_url') ? yoga_get_lk_page_url() : '';
+		$myaccount_url = $lk_page_url !== ''
+			? $lk_page_url
+			: get_permalink(get_option('woocommerce_myaccount_page_id'));
+		if (!$myaccount_url) {
+			$myaccount_url = home_url('/');
+		}
+		$favorites_href = ($lk_page_url !== '')
+			? trailingslashit($lk_page_url) . '#lk-slide-favorites'
+			: home_url('/');
+		$tariff_row = is_user_logged_in() && function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
+		$tariff_product_name = '';
+		if (is_array($tariff_row) && !empty($tariff_row['product_name'])) {
+			$tariff_product_name = (string) $tariff_row['product_name'];
+		}
+		$pill_href = $tariffs_url;
+		$pill_label = __('Подписка не активна', 'yoga');
+		$pill_classes = 'header-rate-pill header-rate-pill_inactive';
+		if ($tariff_product_name !== '') {
+			$pill_label = $tariff_product_name;
+			$pill_classes = 'header-rate-pill';
+			if ($lk_page_url !== '') {
+				$pill_href = trailingslashit($lk_page_url) . '#lk-slide-settings';
+			}
+		}
+		$user_initial = 'U';
+		$user_avatar_html = '';
+		if (is_user_logged_in()) {
+			$current_user = wp_get_current_user();
+			$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
+			$user_display_name = trim((string) $current_user->display_name);
+			$user_login = trim((string) $current_user->user_login);
+			$user_source_name = $user_first_name !== '' ? $user_first_name : ($user_display_name !== '' ? $user_display_name : $user_login);
+			if ($user_source_name !== '') {
+				$user_initial = function_exists('mb_substr') && function_exists('mb_strtoupper')
+					? mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8')
+					: strtoupper(substr($user_source_name, 0, 1));
+			}
+			$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
+			$user_avatar_html = $user_avatar_id > 0
+				? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
+					'class' => 'login-icon__avatar',
+					'alt' => '',
+					'loading' => 'lazy',
+					'decoding' => 'async',
+				))
+				: '';
+		}
+		?>
 		<header id="header" class="header animated fadeIn slow delay-200ms">
 			<div class="container">
 				<div class="row">
@@ -131,79 +100,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							?>
 						</nav>
 						<div class="header-lk<?php echo is_user_logged_in() ? ' header-lk--logged' : ''; ?>">
-							<?php
-							$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
-							$tariffs_url = home_url('/product-category/tariffs/');
-							if ($tariffs_term && !is_wp_error($tariffs_term)) {
-								$term_link = get_term_link($tariffs_term);
-								if (!is_wp_error($term_link)) {
-									$tariffs_url = $term_link;
-								}
-							}
-							$has_paid_tariff = is_user_logged_in() && function_exists('get_current_user_tariff') && get_current_user_tariff();
-							if (!$has_paid_tariff) :
-								if (is_user_logged_in()) : ?>
-							<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_white header-lk-tariff-cta">
-								<span><?php esc_html_e('Подписка не активна', 'yoga'); ?></span>
-							</a>
-								<?php else : ?>
-							<div class="btn btn_white modal-call_login">
-								<span><?php esc_html_e('Подписка не активна', 'yoga'); ?></span>
-							</div>
-								<?php endif;
-							endif;
-							?>
 							<?php if (is_user_logged_in()) : ?>
-								<?php
-								$current_user = wp_get_current_user();
-								$lk_page_url = function_exists('yoga_get_lk_page_url') ? yoga_get_lk_page_url() : '';
-								$myaccount_url = $lk_page_url !== ''
-									? $lk_page_url
-									: get_permalink(get_option('woocommerce_myaccount_page_id'));
-								if (!$myaccount_url) {
-									$myaccount_url = home_url('/');
-								}
-								$user_first_name = trim((string) get_user_meta($current_user->ID, 'first_name', true));
-								$user_display_name = trim((string) $current_user->display_name);
-								$user_login = trim((string) $current_user->user_login);
-								$user_source_name = $user_first_name !== '' ? $user_first_name : ($user_display_name !== '' ? $user_display_name : $user_login);
-								if ($user_source_name === '') {
-									$user_source_name = 'U';
-								}
-								if (function_exists('mb_substr') && function_exists('mb_strtoupper')) {
-									$user_initial = mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8');
-								} else {
-									$user_initial = strtoupper(substr($user_source_name, 0, 1));
-								}
-								$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
-								$user_avatar_html = $user_avatar_id > 0
-									? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
-										'class' => 'login-icon__avatar',
-										'alt' => '',
-										'loading' => 'lazy',
-										'decoding' => 'async',
-									))
-									: '';
-								$tariff_row = function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
-								$tariff_product_name = '';
-								if (is_array($tariff_row) && !empty($tariff_row['product_name'])) {
-									$tariff_product_name = (string) $tariff_row['product_name'];
-								}
-								$pill_href = $tariffs_url;
-								$pill_label = __('Подписка не активна', 'yoga');
-								$pill_classes = 'header-rate-pill header-rate-pill_inactive';
-								if ($tariff_product_name !== '') {
-									$pill_label = $tariff_product_name;
-									$pill_classes = 'header-rate-pill';
-									if ($lk_page_url !== '') {
-										$pill_href = trailingslashit($lk_page_url) . '#lk-slide-settings';
-									}
-								}
-								$favorites_href = ($lk_page_url !== '')
-									? trailingslashit($lk_page_url) . '#lk-slide-favorites'
-									: home_url('/');
-								$sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
-								?>
 							<div class="header-lk-logged-desktop">
 								<a class="<?php echo esc_attr($pill_classes); ?>" href="<?php echo esc_url($pill_href); ?>">
 									<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
@@ -241,6 +138,9 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								</div>
 							</div>
 							<?php else : ?>
+							<div class="header-rate-pill header-rate-pill_inactive header-rate-pill_guest modal-call_login" role="button" tabindex="0">
+								<span><?php echo esc_html($pill_label); ?></span>
+							</div>
 							<div class="header-lk__trailing">
 								<div class="login-icon modal-call_login">
 									<svg aria-hidden="true" focusable="false">
@@ -259,5 +159,4 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 				</div>
 			</div>
 		</header>
-<?php endif; ?>
 	<main>			
