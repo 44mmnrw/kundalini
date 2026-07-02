@@ -170,6 +170,24 @@
 							<?php echo do_shortcode('[practice_history]'); ?>
 						</div>
 					</div>
+
+					<div class="lk-slide" data-target="7">
+						<h2>
+							Мои садханы
+						</h2>
+						<div class="lk-slide__content">
+							<?php echo do_shortcode('[practice_history]'); ?>
+						</div>
+					</div>
+
+					<div class="lk-slide" data-target="8">
+						<h2>
+							Уведомления
+						</h2>
+						<div class="lk-slide__content">
+							<div class="lk-notifications-empty">Ничего нет...</div>
+						</div>
+					</div>
 					
 					<div class="lk-slide" id="lk-slide-favorites" data-target="3">
 						<h2>
@@ -621,31 +639,18 @@
 </section>
 <?php
 $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
-$lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array(
-	'library' => home_url('/'),
-	'tariffs' => home_url('/'),
-	'about' => home_url('/'),
-	'blog' => home_url('/'),
-	'contacts' => home_url('/'),
-	'faq' => home_url('/'),
-);
 ?>
 <div class="sidebar">
 	<div class="sidebar-inner">
-        <a href="<?php echo esc_url(home_url('/')); ?>" class="sidebar-logo">
-			<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sidebar-logo.png" alt="">
-		</a>
         <div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
-        <div class="sidebar-menu">
+        <nav class="sidebar-menu" aria-label="<?php esc_attr_e('Разделы личного кабинета', 'yoga'); ?>">
 			<div class="sidebar-menu__item active" data-target="1">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-user" width="100%" height="100%"></use>
 					</svg>
 				</div>
-				<span>
-					Мои данные
-				</span>
+				<span class="sidebar-menu__label">Мои данные</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="2">
 				<div class="sidebar-menu__item-icon">
@@ -653,9 +658,16 @@ $lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_
 						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-history" width="100%" height="100%"></use>
 					</svg>
 				</div>
-				<span>
-					История практик
-				</span>
+				<span class="sidebar-menu__label">История практик</span>
+			</div>
+			<div class="sidebar-menu__item" data-target="7">
+				<div class="sidebar-menu__item-icon">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-lotus" width="100%" height="100%"></use>
+					</svg>
+				</div>
+				<span class="sidebar-menu__label">Мои садханы</span>
+				<span class="sidebar-menu__badge" aria-label="<?php esc_attr_e('6 садхан', 'yoga'); ?>">6</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="3">
 				<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
@@ -663,9 +675,7 @@ $lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_
 						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-heart" width="100%" height="100%"></use>
 					</svg>
 				</div>
-				<span>
-					Избранное
-				</span>
+				<span class="sidebar-menu__label">Избранное</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="4">
 				<div class="sidebar-menu__item-icon">
@@ -673,9 +683,7 @@ $lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_
 						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-smile" width="100%" height="100%"></use>
 					</svg>
 				</div>
-				<span>
-					Рекомендации
-				</span>
+				<span class="sidebar-menu__label">Рекомендации</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="5">
 				<div class="sidebar-menu__item-icon">
@@ -683,9 +691,15 @@ $lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_
 						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-question" width="100%" height="100%"></use>
 					</svg>
 				</div>
-				<span>
-					Мои вопросы
-				</span>
+				<span class="sidebar-menu__label">Мои вопросы</span>
+			</div>
+			<div class="sidebar-menu__item" data-target="8">
+				<div class="sidebar-menu__item-icon">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+						<use href="<?php echo $lk_sidebar_sprite; ?>#notification-bell-icon" width="100%" height="100%"></use>
+					</svg>
+				</div>
+				<span class="sidebar-menu__label">Уведомления</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="6">
 				<div class="sidebar-menu__item-icon">
@@ -693,39 +707,8 @@ $lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_
 						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-settings" width="100%" height="100%"></use>
 					</svg>
 				</div>
-				<span>
-					Настройки подписки
-				</span>
+				<span class="sidebar-menu__label">Настройки подписки</span>
 			</div>
-			
-		</div>
-		</div>
-
-		<hr class="sidebar-menu-sep" aria-hidden="true">
-
-		<div class="sidebar-menu-lk-group sidebar-menu-lk-group--secondary">
-		<nav class="sidebar-menu-secondary" aria-label="<?php esc_attr_e('Навигация по сайту', 'yoga'); ?>">
-			<a class="sidebar-menu-secondary__link sidebar-menu-secondary__link--library" href="<?php echo esc_url($lk_secondary['library']); ?>">
-				<span><?php esc_html_e('Библиотека практик', 'yoga'); ?></span>
-				<svg class="sidebar-menu-secondary__chevron" viewBox="0 0 9 16" aria-hidden="true" focusable="false">
-					<use href="<?php echo $lk_sidebar_sprite; ?>#lk-library-chevron" width="100%" height="100%"></use>
-				</svg>
-			</a>
-			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['tariffs']); ?>">
-				<span><?php esc_html_e('Тарифы и подписка', 'yoga'); ?></span>
-			</a>
-			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['about']); ?>">
-				<span><?php esc_html_e('О нас', 'yoga'); ?></span>
-			</a>
-			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['blog']); ?>">
-				<span><?php esc_html_e('Блог', 'yoga'); ?></span>
-			</a>
-			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['contacts']); ?>">
-				<span><?php esc_html_e('Контакты', 'yoga'); ?></span>
-			</a>
-			<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($lk_secondary['faq']); ?>">
-				<span><?php esc_html_e('FAQ', 'yoga'); ?></span>
-			</a>
 		</nav>
 		</div>
 
@@ -737,11 +720,9 @@ $lk_secondary = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_
 					<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-logout" width="100%" height="100%"></use>
 				</svg>
 			</div>
-			<span>
-				Выйти
-			</span>
+			<span class="sidebar-menu__label">Выйти</span>
 		</div>
 	</div>
 </div>
 <?php
-	get_footer();					
+	get_footer();
