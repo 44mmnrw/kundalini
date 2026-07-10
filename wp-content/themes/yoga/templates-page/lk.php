@@ -28,6 +28,7 @@
                     <!-- Слайд "Мои данные" -->
                     <div class="lk-slide active" data-target="1">
                         <div class="lk-slide__content">
+                            <h1 class="lk-slide__title">Мои данные</h1>
                             <form action="#" class="lk-form" id="profile-form" enctype="multipart/form-data">
                                 <?php wp_nonce_field('update_user_profile', 'profile_nonce'); ?>
 
@@ -37,7 +38,7 @@
 											<div class="photo-input-custom__inner">
 												<div class="photo-input-custom__inner-photo" aria-hidden="true">
 													<svg class="photo-input-custom__icon" viewBox="0 0 24 24" focusable="false">
-														<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-upload-camera'); ?>"></use>
+														<use href="#lk-upload-camera"></use>
 													</svg>
 												</div>
 												<div class="photo-input-custom__copy">
@@ -96,12 +97,12 @@
 													<input type="password" class="input" name="current_password" placeholder="••••••••">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
-															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+															<use href="#password-eye-open"></use>
 														</svg>
 													</div>
 													<div class="input-password__btn input-password__btn_hide">
 														<svg aria-hidden="true" focusable="false">
-															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+															<use href="#password-eye-closed"></use>
 														</svg>
 													</div>
 												</div>
@@ -112,12 +113,12 @@
 													<input type="password" class="input" name="new_password">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
-															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+															<use href="#password-eye-open"></use>
 														</svg>
 													</div>
 													<div class="input-password__btn input-password__btn_hide">
 														<svg aria-hidden="true" focusable="false">
-															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+															<use href="#password-eye-closed"></use>
 														</svg>
 													</div>
 												</div>
@@ -128,12 +129,12 @@
 													<input type="password" class="input" name="repeat_password">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
-															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
+															<use href="#password-eye-open"></use>
 														</svg>
 													</div>
 													<div class="input-password__btn input-password__btn_hide">
 														<svg aria-hidden="true" focusable="false">
-															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
+															<use href="#password-eye-closed"></use>
 														</svg>
 													</div>
 													<span class="input-password__placeholder">Пароли не совпадают</span>
@@ -235,8 +236,8 @@
                                     </div>
                                     <div class="kriya-fav fav active" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="true" aria-label="Убрать">
 										<span class="kriya-fav__icon" aria-hidden="true">
-											<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
-											<svg class="active"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
+											<svg><use href="#noun-heart"></use></svg>
+											<svg class="active"><use href="#noun-heart-filled"></use></svg>
 										</span>
 										<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
 										<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
@@ -307,8 +308,8 @@
 																	</div>
 																	<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 																		<span class="kriya-fav__icon" aria-hidden="true">
-																			<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
-																			<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
+																			<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="#noun-heart"></use></svg>
+																			<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="#noun-heart-filled"></use></svg>
 																		</span>
 																		<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
 																		<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
@@ -630,9 +631,6 @@
 		</div>
 	</div>
 </section>
-<?php
-$lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
-?>
 <div class="sidebar">
 	<div class="sidebar-inner">
         <div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
@@ -640,7 +638,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item active" data-target="1">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-user" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-user" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои данные</span>
@@ -648,15 +646,15 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item" data-target="2">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-history" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-history" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">История практик</span>
 			</div>
 			<div class="sidebar-menu__item" data-target="7">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-lotus" width="100%" height="100%"></use>
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 16" aria-hidden="true" focusable="false">
+						<use href="#lk-sidebar-lotus" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои садханы</span>
@@ -665,7 +663,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item" data-target="3">
 				<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 17.4 15.4852" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-heart" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-heart" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Избранное</span>
@@ -673,7 +671,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item" data-target="4">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="-0.6 -0.6 18.2 18.2" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-smile" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-smile" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Рекомендации</span>
@@ -681,7 +679,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item" data-target="5">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-question" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-question" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои вопросы</span>
@@ -689,7 +687,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item" data-target="8">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#notification-bell-icon" width="100%" height="100%"></use>
+						<use href="#notification-bell-icon" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Уведомления</span>
@@ -697,7 +695,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
 			<div class="sidebar-menu__item" data-target="6">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-settings" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-settings" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Настройки подписки</span>
@@ -710,7 +708,7 @@ $lk_sidebar_sprite = esc_url(get_template_directory_uri() . '/assets/svg/sprite.
         <div class="sidebar-exit modal-call modal-call_logout">
 			<div class="sidebar-exit__icon">
 				<svg class="sidebar-exit__svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-					<use href="<?php echo $lk_sidebar_sprite; ?>#lk-sidebar-logout" width="100%" height="100%"></use>
+					<use href="#lk-sidebar-logout" width="100%" height="100%"></use>
 				</svg>
 			</div>
 			<span class="sidebar-menu__label">Выйти</span>

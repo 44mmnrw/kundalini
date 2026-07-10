@@ -22,6 +22,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 	</head>
 	
 	<body <?php body_class( $is_lk_shell ? 'body body_lk' : 'body body_main' ); ?> id="body">
+		<?php get_template_part('template-parts/inline-svg-sprite'); ?>
 		<?php
 		$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
 		$tariffs_url = home_url('/product-category/tariffs/');
@@ -31,7 +32,6 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 				$tariffs_url = $term_link;
 			}
 		}
-		$sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
 		$lk_page_url = function_exists('yoga_get_lk_page_url') ? yoga_get_lk_page_url() : '';
 		$myaccount_url = $lk_page_url !== ''
 			? $lk_page_url
@@ -104,13 +104,13 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							<div class="header-lk-logged-desktop">
 								<a class="<?php echo esc_attr($pill_classes); ?>" href="<?php echo esc_url($pill_href); ?>">
 									<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url($sprite_uri); ?>#personal-status-crown"></use>
+										<use href="#personal-status-crown"></use>
 									</svg>
 									<span><?php echo esc_html($pill_label); ?></span>
 								</a>
 								<div class="notification-icon notification-icon_header" role="button" tabindex="0" aria-expanded="false" aria-controls="header-notifications-popup">
 									<svg class="notification-icon__img" aria-hidden="true">
-										<use href="<?php echo esc_url($sprite_uri); ?>#notification-bell-icon"></use>
+										<use href="#notification-bell-icon"></use>
 									</svg>
 									<div class="lk-notifications-popup" id="header-notifications-popup" aria-hidden="true">
 										<div class="lk-notifications-popup__title"><?php esc_html_e('Уведомления', 'yoga'); ?></div>
@@ -119,7 +119,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								</div>
 								<a class="header-favorites-link" href="<?php echo esc_url($favorites_href); ?>" aria-label="<?php esc_attr_e('Избранное', 'yoga'); ?>">
 									<svg aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url($sprite_uri); ?>#noun-heart"></use>
+										<use href="#noun-heart"></use>
 									</svg>
 								</a>
 							</div>
@@ -133,7 +133,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								</a>
 								<div class="burger">
 									<svg aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url( get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines' ); ?>"></use>
+										<use href="#burger-menu-lines"></use>
 									</svg>
 								</div>
 							</div>
@@ -144,12 +144,12 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							<div class="header-lk__trailing">
 								<div class="login-icon modal-call_login">
 									<svg aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
+										<use href="#login-user-icon"></use>
 									</svg>
 								</div>
 								<div class="burger">
 									<svg aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url( get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines' ); ?>"></use>
+										<use href="#burger-menu-lines"></use>
 									</svg>
 								</div>
 							</div>
