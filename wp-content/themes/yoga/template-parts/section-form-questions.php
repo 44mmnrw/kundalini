@@ -36,9 +36,7 @@ $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.s
                 </div>
 
                 <div class="contacts-form-layout__badge" aria-hidden="true">
-                    <svg class="contacts-form-layout__badge-svg" viewBox="0 0 48 48" focusable="false">
-                        <use href="<?php echo $yoga_sprite_href; ?>#contacts-form-badge"></use>
-                    </svg>
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/contacts-form-envelope.svg'); ?>" alt="">
                 </div>
 
                 <div class="contacts-form-layout__panel form-questions__main">
@@ -52,28 +50,14 @@ $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.s
                             <input type="email" name="contacts_email" class="input" required value="<?php echo esc_attr($contacts_prefill_email); ?>"
                                    placeholder="<?php echo esc_attr(get_field('contacts_placeholder_email', 'option') ?: 'E-mail'); ?>">
 
-                            <input type="tel" name="contacts_phone" class="input input_phone" required autocomplete="tel">
                         </div>
 
                         <div class="form-questions-textarea contacts-form-layout__textarea">
                             <textarea name="contacts_message" placeholder="<?php echo esc_attr(get_field('contacts_placeholder_message', 'option') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
 
-                            <input type="submit" id="form-questions-submit" style="display: none;">
-
-                            <?php
-                            $btn_icon = get_field('contacts_btn_icon', 'option');
-                            if ($btn_icon) :
-                                ?>
-                                <label for="form-questions-submit" class="btn contacts-form-layout__submit">
-                                    <img src="<?php echo esc_url($btn_icon); ?>" alt="">
-                                </label>
-                            <?php else : ?>
-                                <label for="form-questions-submit" class="btn contacts-form-layout__submit contacts-form-layout__submit--sprite" aria-label="<?php esc_attr_e('Отправить сообщение', 'yoga'); ?>">
-                                    <svg class="contacts-form-layout__submit-icon" viewBox="0 0 205.8 205.8" focusable="false" aria-hidden="true">
-                                        <use href="<?php echo $yoga_sprite_href; ?>#hundreds-practices-arrow-hover"></use>
-                                    </svg>
-                                </label>
-                            <?php endif; ?>
+                            <button type="submit" class="btn contacts-form-layout__submit" aria-label="<?php esc_attr_e('Отправить сообщение', 'yoga'); ?>">
+                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/contacts-form-submit-arrow.svg'); ?>" alt="">
+                            </button>
                         </div>
                     </form>
                 </div>

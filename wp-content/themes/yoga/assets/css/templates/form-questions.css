@@ -611,11 +611,11 @@
 .section-form-questions_contacts .contacts-form-layout__scene.form-questions {
   position: relative;
   width: 100%;
-  max-width: min(75rem, 100%);
+  max-width: min(63.5rem, 100%);
   margin-left: auto;
   margin-right: auto;
   margin-top: 2.25rem;
-  padding: 2.5rem 0 0;
+  padding: 2.5625rem 0 0;
   border-radius: 0;
   overflow: visible;
   background: none;
@@ -693,18 +693,18 @@
   pointer-events: none;
   width: 5.125rem;
   height: 5.125rem;
-  transform: translate(-50%, -42%);
+  transform: translateX(-50%);
 }
 
-.section-form-questions_contacts .contacts-form-layout__badge-svg {
+.section-form-questions_contacts .contacts-form-layout__badge img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 @media (min-width: 1025px) {
   .section-form-questions_contacts .contacts-form-layout__badge {
-    top: 35px;
+    top: 0;
   }
 }
 
@@ -738,10 +738,14 @@
 }
 
 .section-form-questions_contacts .contacts-form-layout__row--inputs > .input {
-  flex: 1 1 calc(33.333% - 1rem);
-  min-width: 11rem;
+  flex: 1 1 calc(50% - 0.625rem);
+  min-width: 0;
   width: auto !important;
   margin: 0;
+  height: 3.8125rem;
+  padding: 0.625rem 0.625rem 0.625rem 1.875rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
 }
 
 .section-form-questions_contacts .contacts-form-layout__textarea.form-questions-textarea {
@@ -750,6 +754,10 @@
 
 .section-form-questions_contacts .contacts-form-layout__textarea textarea.input {
   border-radius: 1.25rem !important;
+  height: 11.25rem;
+  padding: 1.0625rem 3.75rem 0.625rem 1.875rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
 }
 
 .section-form-questions_contacts .contacts-form-layout__submit.btn {
@@ -763,10 +771,15 @@
   justify-content: center;
 }
 
-.section-form-questions_contacts .contacts-form-layout__submit--sprite .contacts-form-layout__submit-icon {
-  width: 72%;
-  height: 72%;
-  display: block;
+.section-form-questions_contacts .contacts-form-layout__submit.btn img {
+  position: static;
+  width: 1.25rem;
+  height: 1.125rem;
+  transform: rotate(180deg);
+}
+
+.section-form-questions_contacts .contacts-form-layout__submit.btn:hover {
+  transform: none;
 }
 
 .contacts-social {
@@ -777,6 +790,11 @@
   flex-wrap: wrap;
   padding-top: 1rem;
   /* без border-top — иначе на десктопе заметная серая полоска между карточкой формы и иконками */
+}
+
+/* На странице контактов ссылки на мессенджеры не выводятся. */
+.section-form-questions_contacts .contacts-social {
+  display: none;
 }
 
 .contacts-social__item {
@@ -874,7 +892,7 @@
   }
 
   .section-form-questions_contacts .contacts-form-layout__form.form-questions__main-form {
-    padding-top: 2rem;
+    padding-top: 4rem;
     padding-left: 1rem;
     padding-right: 1rem;
   }
@@ -900,6 +918,6 @@
   }
 
   .section-form-questions_contacts .contacts-form-layout__form.form-questions__main-form {
-    padding-top: 1.875rem;
+    padding-top: 4rem;
   }
 }

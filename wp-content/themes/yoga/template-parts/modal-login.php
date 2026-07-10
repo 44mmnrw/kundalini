@@ -19,6 +19,11 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
     <div class="modal-close">
         <img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
     </div>
+    <button type="button" class="password-recovery-back ml-sl-switch" data-target="1" aria-label="Вернуться ко входу">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
+            <path d="M7 18L1 10.5L7 3M1 10.5H19" fill="none" stroke="#1F1F1F" stroke-width="1.5" stroke-linecap="square"></path>
+        </svg>
+    </button>
     <div class="modal-login-inner">
         <div class="modal-login-inner__slide active" data-target="1">
             <div class="login-slide-switches login-slide-switches_login">
@@ -116,6 +121,9 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         зарегистрироваться
                     </span>
                 </label>
+                <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk registration-vk-link">
+                    Войти через VK
+                </a>
                 <div class="loggin-back loggin-back_mob loggin-back_grey">
                     <span class="loggin-back__link ml-sl-switch" data-target="1">
                         Войти
@@ -124,9 +132,6 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
             </form>
         </div>
         <div class="modal-login-inner__slide" data-target="3">
-            <button type="button" class="password-recovery-back ml-sl-switch" data-target="1" aria-label="Вернуться ко входу">
-                <span aria-hidden="true"></span>
-            </button>
             <div class="login-slide-switches">
                 <h3>
                     Восстановление пароля
