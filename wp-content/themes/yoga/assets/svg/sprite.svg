@@ -69,6 +69,10 @@
     <path d="M13 18L19 10.5L13 3M19 10.5H1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
   </symbol>
 
+  <symbol id="password-recovery-back" viewBox="0 0 20 20">
+    <path d="M7 18L1 10.5L7 3M1 10.5H19" fill="none" stroke="#1F1F1F" stroke-width="1.5" stroke-linecap="square"/>
+  </symbol>
+
   <symbol id="login-user-icon" viewBox="0 0 19 19">
     <path d="M15.4719 16.0369C15.1145 15.0363 14.3267 14.1521 13.2309 13.5215C12.1351 12.8908 10.7925 12.549 9.41123 12.549C8.03 12.549 6.68736 12.8908 5.59155 13.5215C4.49574 14.1521 3.70801 15.0363 3.35052 16.0369" fill="none" stroke="#1F1F1F" stroke-width="1.2" stroke-linecap="round"/>
     <circle cx="9.41069" cy="6.27451" r="3.13725" fill="none" stroke="#1F1F1F" stroke-width="1.2" stroke-linecap="round"/>

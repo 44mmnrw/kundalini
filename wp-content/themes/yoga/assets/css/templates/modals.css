@@ -1256,11 +1256,11 @@
   position: absolute;
 }
 
-.modal-login-inner__slide .password-recovery-back {
+.modal-login .password-recovery-back {
   position: absolute;
-  top: -2.6875rem;
-  left: -0.8125rem;
-  display: flex;
+  top: 2.53125rem;
+  left: calc(100% - 31.6875rem + 1.875rem);
+  display: none;
   align-items: center;
   justify-content: center;
   width: 1.25rem;
@@ -1270,26 +1270,19 @@
   background: transparent;
   color: var(--color-black);
   cursor: pointer;
+  pointer-events: auto;
+  z-index: 26;
 }
 
-.password-recovery-back span {
-  position: relative;
+.modal-login.modal-login--recovery .password-recovery-back,
+.modal-login:has(.modal-login-inner__slide[data-target="3"].active) .password-recovery-back {
+  display: flex;
+}
+
+.password-recovery-back svg {
   display: block;
-  width: 0.75rem;
-  height: 2px;
-  background: currentColor;
-}
-
-.password-recovery-back span::after {
-  content: '';
-  position: absolute;
-  top: -0.1875rem;
-  left: 0;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-bottom: 2px solid currentColor;
-  border-left: 2px solid currentColor;
-  transform: rotate(45deg);
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .password-recovery-back:focus-visible {
@@ -1306,14 +1299,39 @@
 
 .login-form-links a,
 .login-form-links .login-switch-link {
+  bottom: auto;
   color: var(--color-black);
   cursor: pointer;
   font-family: "Mulish-SemiBold", sans-serif;
   font-size: 1rem;
   font-weight: normal;
   line-height: 1.1;
+  margin: 0;
   text-decoration: underline;
   text-underline-offset: 0.1875rem;
+}
+
+.login-form-links .login-switch-link::before {
+  display: none;
+}
+
+.modal-login-inner__slide .yoga-form-register .registration-vk-link {
+  display: flex;
+  width: max-content;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  left: auto;
+  margin: 1.5625rem auto 0;
+  transform: none;
+}
+
+.modal-login-inner__slide .yoga-form-register .registration-vk-link::after {
+  position: absolute;
+  top: calc(50% - 0.5px);
+  right: -2.375rem;
+  margin-left: 0;
+  transform: translateY(-50%);
 }
 
 @media (min-width: 576px) {
@@ -1391,10 +1409,6 @@
     transform: none;
   }
 
-  .modal-login-inner__slide .password-recovery-back {
-    top: -4.4375rem;
-    left: -0.375rem;
-  }
 }
 .modal-login-inner__slide.active {
   opacity: 1;
@@ -1805,6 +1819,12 @@ p.login-rules a:hover {
   }
   .modal-login-inner__slide.active {
     transform: translateY(0%);
+  }
+  .modal-login .password-recovery-back {
+    position: fixed;
+    top: 1.46875rem;
+    left: 1.25rem;
+    z-index: 30;
   }
   .modal-login-inner__slide h3 {
     font-size: 1.625rem;    width: 100%;

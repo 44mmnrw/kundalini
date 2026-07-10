@@ -542,6 +542,7 @@
 		$ways_style_ver = file_exists($theme_dir . '/assets/css/templates/ways.css') ? filemtime($theme_dir . '/assets/css/templates/ways.css') : '1.0.0';
 		$checkout_style_ver = file_exists($theme_dir . '/assets/css/templates/checkout.css') ? filemtime($theme_dir . '/assets/css/templates/checkout.css') : '1.0.0';
 		$payment_success_style_ver = file_exists($theme_dir . '/assets/css/templates/payment-success.css') ? filemtime($theme_dir . '/assets/css/templates/payment-success.css') : '1.0.0';
+		$question_success_style_ver = file_exists($theme_dir . '/assets/css/templates/question-success.css') ? filemtime($theme_dir . '/assets/css/templates/question-success.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
 		
@@ -574,6 +575,7 @@
 			$ways_style_ver = time();
 			$checkout_style_ver = time();
 			$payment_success_style_ver = time();
+			$question_success_style_ver = time();
 			$main_script_ver = time();
 			$practice_player_script_ver = time();
 		}
@@ -595,6 +597,7 @@
 		$is_order_received = function_exists('yoga_is_order_received_request') && yoga_is_order_received_request();
 		$is_checkout_page = function_exists('is_checkout') && is_checkout() && !$is_order_received;
 		$is_payment_success_page = function_exists('yoga_is_payment_success_screen') && yoga_is_payment_success_screen();
+		$is_question_success_template = is_page_template('templates-page/question-success.php');
 		$common_style_deps = array('main-style');
 
 		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
@@ -675,6 +678,9 @@
 		}
 		if ($is_payment_success_page) {
 			wp_enqueue_style( 'payment-success-style', $theme_uri . '/assets/css/templates/payment-success.css', $common_style_deps, $payment_success_style_ver );
+		}
+		if ($is_question_success_template) {
+			wp_enqueue_style( 'question-success-style', $theme_uri . '/assets/css/templates/question-success.css', $common_style_deps, $question_success_style_ver );
 		}
 		if ($is_homepage || $is_archive_page || $is_post_single || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'subscription-style', $theme_uri . '/assets/css/templates/subscription.css', $common_style_deps, $subscription_style_ver );
@@ -778,6 +784,10 @@ function yoga_subscribe_handler() {
 	function yoga_ajax_localization() {
 
 		$current_user = wp_get_current_user();
+		$question_success_page = get_page_by_path('question-sent');
+		$question_success_url = $question_success_page
+			? get_permalink($question_success_page)
+			: home_url('/question-sent/');
 
 		$yoga_ajax_data = array(
 			'ajax_url'       => admin_url('admin-ajax.php'),
@@ -786,6 +796,7 @@ function yoga_subscribe_handler() {
 			'user_logged_in' => is_user_logged_in(),
 			'user_email'     => $current_user->user_email,
 			'site_url'       => home_url(),
+			'question_success_url' => $question_success_url,
 			'post_id'        => get_the_ID(),
 			'smartcaptcha_enabled' => function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced(),
 			'smartcaptcha_sitekey' => function_exists('yoga_smartcaptcha_client_key') ? yoga_smartcaptcha_client_key() : '',
@@ -1372,6 +1383,16 @@ function handle_comment_delete() {
 		if (!$sent) {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
 		}
+
+		$question_success_page = get_page_by_path('question-sent');
+		$question_success_url = $question_success_page
+			? get_permalink($question_success_page)
+			: home_url('/question-sent/');
+
+		wp_send_json_success(array(
+			'message' => 'Message sent successfully.',
+			'redirect_url' => $question_success_url,
+		));
 		
 		wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
 	}
@@ -3985,9 +4006,6 @@ function handle_comment_delete() {
 			return '';
 		}
 	}
-
-
-
 
 
 

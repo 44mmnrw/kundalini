@@ -1344,6 +1344,8 @@ jQuery(document).ready(function($) {
 		$('.modal-login').addClass('active');
 		if (slideTarget) {
 			yogaSwitchLoginSlide(slideTarget);
+		} else {
+			$('.modal-login').removeClass('modal-login--recovery');
 		}
 	}
 
@@ -1353,6 +1355,7 @@ jQuery(document).ready(function($) {
 		}
 		$('.modal-login-inner__slide').removeClass('active');
 		$('.modal-login-inner__slide[data-target="' + target + '"]').addClass('active');
+		$('.modal-login').toggleClass('modal-login--recovery', target === '3');
 		$('.yoga-form-login-message').removeClass('is-visible').empty();
 
 		if (target === '3') {
@@ -1937,6 +1940,11 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
+				const redirectUrl = (data.data && data.data.redirect_url) || yoga_ajax.question_success_url;
+				if (redirectUrl) {
+					window.location.assign(redirectUrl);
+					return;
+				}
 				location.reload();
 				} else {
 				alert('Ошибка при отправке комментария');
@@ -2151,12 +2159,15 @@ jQuery(document).ready(function($) {
 	
 	// AJAX отправка формы контактов
 	function submitContactForm(formData, form) {
-		const submitLabel = form.querySelector('label[for="form-questions-submit"]');
-		const originalHtml = submitLabel.innerHTML;
+		const submitButton = form.querySelector('.contacts-form-layout__submit[type="submit"]');
+		if (!submitButton) {
+			return;
+		}
+		const originalHtml = submitButton.innerHTML;
 		
 		// Показываем лоадер
-		submitLabel.innerHTML = '<span class="spinner"></span>';
-		submitLabel.style.pointerEvents = 'none';
+		submitButton.innerHTML = '<span class="spinner"></span>';
+		submitButton.style.pointerEvents = 'none';
 		
 		fetch(yoga_ajax.ajax_url, {
 			method: 'POST',
@@ -2178,8 +2189,8 @@ jQuery(document).ready(function($) {
 			showContactError('Ошибка сети. Попробуйте еще раз.');
 		})
 		.finally(() => {
-			submitLabel.innerHTML = originalHtml;
-			submitLabel.style.pointerEvents = 'auto';
+			submitButton.innerHTML = originalHtml;
+			submitButton.style.pointerEvents = 'auto';
 		});
 	}
 	
