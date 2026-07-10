@@ -233,6 +233,43 @@ if (!function_exists('yoga_register_theme_cta_fields')) {
 
 add_action('acf/init', 'yoga_register_theme_cta_fields');
 
+if (!function_exists('yoga_register_footer_settings_fields')) {
+	function yoga_register_footer_settings_fields() {
+		if (!function_exists('acf_add_local_field_group')) {
+			return;
+		}
+
+		acf_add_local_field_group(array(
+			'key' => 'group_footer_settings',
+			'title' => 'Футер',
+			'fields' => array(
+				array(
+					'key' => 'field_footer_requisites',
+					'label' => 'Реквизиты',
+					'name' => 'footer_requisites',
+					'type' => 'textarea',
+					'instructions' => 'Каждая строка выводится отдельной строкой в футере.',
+					'default_value' => "ИП КСЕНОФОНТОВА МАРИНА ЕВГЕНЬЕВНА\nИНН 632200860531\nОГРНИП 319631300101827",
+					'new_lines' => '',
+					'rows' => 4,
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param' => 'options_page',
+						'operator' => '==',
+						'value' => 'theme-general-settings',
+					),
+				),
+			),
+			'menu_order' => 9,
+		));
+	}
+}
+
+add_action('acf/init', 'yoga_register_footer_settings_fields', 15);
+
 if (!function_exists('yoga_register_practice_timer_signal_fields')) {
 	function yoga_register_practice_timer_signal_fields() {
 		if (!function_exists('acf_add_local_field_group')) {

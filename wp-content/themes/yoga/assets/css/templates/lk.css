@@ -52,6 +52,16 @@
   margin-top: 0;
 }
 
+.lk-slide__title {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+  color: var(--color-black);
+}
+
 .lk-notifications-empty {
   display: flex;
   align-items: center;

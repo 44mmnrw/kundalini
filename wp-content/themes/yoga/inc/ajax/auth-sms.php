@@ -85,6 +85,14 @@ if (!function_exists('handle_yoga_email_register')) {
         $email = sanitize_email($_POST['user_email']);
         $name = sanitize_text_field($_POST['user_name']);
         $pass = $_POST['user_pass'];
+
+        $required_consents = array('accept_terms', 'accept_personal_data', 'accept_contraindications');
+        foreach ($required_consents as $consent) {
+            if (empty($_POST[$consent])) {
+                yoga_ajax_error('Необходимо принять обязательные условия регистрации', 'validation_error', 422);
+            }
+        }
+
         if (empty($email) || !is_email($email)) {
             yoga_ajax_error('Введите корректный email', 'validation_error', 422);
         }
@@ -106,6 +114,8 @@ if (!function_exists('handle_yoga_email_register')) {
         if ($name !== '') {
             update_user_meta($user_id, 'first_name', $name);
         }
+        update_user_meta($user_id, 'yoga_marketing_consent', !empty($_POST['accept_marketing']) ? 'yes' : 'no');
+        update_user_meta($user_id, 'yoga_registration_consents_at', current_time('mysql', true));
 
         $site_name = get_bloginfo('name');
         $login_url = wp_login_url(home_url('/'));

@@ -49,7 +49,8 @@ $footer_socials = array(
 );
 
 $footer_copyright = $footer_option('copyright_text') ?: 'Все права защищены.';
-$footer_sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
+$footer_requisites = $footer_option('footer_requisites') ?: "ИП КСЕНОФОНТОВА МАРИНА ЕВГЕНЬЕВНА\nИНН 632200860531\nОГРНИП 319631300101827";
+$footer_requisites_lines = array_values(array_filter(array_map('trim', preg_split('/\R/', $footer_requisites))));
 ?>
 <footer class="footer" id="footer">
 	<div class="footer__inner">
@@ -80,9 +81,9 @@ $footer_sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
 
 			<div class="footer__info">
 				<div class="footer__requisites">
-					<p>ИП КСЕНОФОНТОВА МАРИНА ЕВГЕНЬЕВНА</p>
-					<p>ИНН 632200860531</p>
-					<p>ОГРНИП 319631300101827</p>
+					<?php foreach ($footer_requisites_lines as $requisite_line) : ?>
+						<p><?php echo esc_html($requisite_line); ?></p>
+					<?php endforeach; ?>
 				</div>
 
 				<form class="footer-subscribe" action="<?php echo esc_url(home_url('/')); ?>" method="post">
@@ -93,7 +94,7 @@ $footer_sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
 						<input id="footer-subscribe-email" name="footer_email" type="email" placeholder="Электронная почта">
 						<button class="footer-subscribe__submit" type="submit" aria-label="<?php echo esc_attr__('Подписаться на новости', 'yoga'); ?>">
 							<svg aria-hidden="true" focusable="false">
-								<use href="<?php echo esc_url($footer_sprite_uri); ?>#footer-arrow-up-right"></use>
+								<use href="#footer-arrow-up-right"></use>
 							</svg>
 						</button>
 					</div>
@@ -121,7 +122,7 @@ $footer_sprite_uri = get_template_directory_uri() . '/assets/svg/sprite.svg';
 					<li>
 						<a class="footer__social" href="<?php echo esc_url($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($social['label']); ?>">
 							<svg aria-hidden="true" focusable="false">
-								<use href="<?php echo esc_url($footer_sprite_uri . '#' . $social['icon']); ?>"></use>
+								<use href="#<?php echo esc_attr($social['icon']); ?>"></use>
 							</svg>
 						</a>
 					</li>

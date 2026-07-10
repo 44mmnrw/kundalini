@@ -3529,8 +3529,9 @@ jQuery(document).ready(function($) {
     $('#phone-form').on('submit', function(e) {
         e.preventDefault();
         
-        var formData = $(this).serialize();
-        var phone = $('input[name="phone"]').val();
+        var $form = $(this);
+        var formData = $form.serialize();
+        var phone = $form.find('input[name="phone"]').val();
 		
         $.ajax({
             type: 'POST',
@@ -3543,8 +3544,8 @@ jQuery(document).ready(function($) {
 				console.log(response);
                 if (response.success) {
                     // Переход ко второму слайду
-                    $('[data-target="1"]').removeClass('active');
-                    $('[data-target="2"]').addClass('active');
+                    $form.closest('.modal, .modal-login, .modal-default, .phone-form-wrapper').find('[data-target="1"]').removeClass('active');
+                    $form.closest('.modal, .modal-login, .modal-default, .phone-form-wrapper').find('[data-target="2"]').addClass('active');
                     $('#phone-number-display').text('Отправили на номер: ' + phone);
                     $('#verify-phone').val(phone);
                     startTimer();
