@@ -50,15 +50,20 @@ if (!function_exists('toggle_favorite_practice')) {
         if (in_array($practice_id, $favorites, true)) {
             $favorites = array_values(array_diff($favorites, array($practice_id)));
             $message = 'Удалено из избранного';
+			$is_favorite = false;
         } else {
             $favorites[] = $practice_id;
             $favorites = array_values(array_unique(array_map('intval', $favorites)));
             $message = 'Добавлено в избранное';
+			$is_favorite = true;
         }
 
         update_user_meta($user_id, 'favorite_practices', $favorites);
 
-        yoga_ajax_success($message);
+        yoga_ajax_success($message, array(
+			'is_favorite' => $is_favorite,
+			'favorites_count' => count($favorites),
+		));
     }
 }
 

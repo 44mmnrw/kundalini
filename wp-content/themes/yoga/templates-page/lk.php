@@ -17,16 +17,18 @@
 	$user_timezone = get_user_meta($user_id, 'timezone', true);
 	$user_timezone = is_string($user_timezone) ? $user_timezone : '';
 	$timezone_options = timezone_identifiers_list();
+	$requested_lk_section = function_exists('yoga_get_requested_lk_section') ? yoga_get_requested_lk_section() : '';
+	$initial_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_initial_lk_target() : '1';
 ?>
 
 
-<section class="section-lk" id="section-lk">
+<section class="section-lk" id="section-lk" data-initial-target="<?php echo esc_attr($initial_lk_target); ?>" data-server-routed="<?php echo $requested_lk_section !== '' ? '1' : '0'; ?>">
     <div class="container">
         <div class="row">
             <div class="lk">
                 <div class="lk__slides">
                     <!-- Слайд "Мои данные" -->
-                    <div class="lk-slide active" data-target="1">
+					<div class="lk-slide<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
                         <div class="lk-slide__content">
                             <h1 class="lk-slide__title">Мои данные</h1>
                             <form action="#" class="lk-form" id="profile-form" enctype="multipart/form-data">
@@ -156,7 +158,7 @@
 					</div>
                     
                     <!-- Остальные слайды будут здесь -->
-					<div class="lk-slide" data-target="2">
+					<div class="lk-slide<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 						<h2>
 							История пройденных практик
 						</h2>
@@ -165,7 +167,7 @@
 						</div>
 					</div>
 
-					<div class="lk-slide" data-target="7">
+					<div class="lk-slide<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 						<h2>
 							Мои садханы
 						</h2>
@@ -174,16 +176,65 @@
 						</div>
 					</div>
 
-					<div class="lk-slide" data-target="8">
+					<div class="lk-slide lk-slide--notifications<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 						<h2>
 							Уведомления
 						</h2>
 						<div class="lk-slide__content">
-							<div class="lk-notifications-empty">Ничего нет...</div>
+							<div class="lk-notifications-page__actions">
+								<button class="lk-notifications-page__settings" type="button" data-target="9" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="#lk-sidebar-settings"></use></svg></button>
+								<button class="lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
+							</div>
+							<?php $notifications = function_exists('yoga_get_user_notifications') ? yoga_get_user_notifications((int) $user_id) : array(); ?>
+							<?php if (empty($notifications)): ?>
+								<div class="lk-notifications-empty">Ничего нет...</div>
+							<?php else: ?>
+								<div class="lk-notifications-list">
+									<?php foreach ($notifications as $notification): ?>
+										<?php
+										$title = (string) ($notification['title'] ?? '');
+										$message = (string) ($notification['message'] ?? '');
+										$url = (string) ($notification['url'] ?? '');
+										$created_at = (string) ($notification['created_at'] ?? '');
+										$type = (string) ($notification['type'] ?? '');
+										if ($type === 'question_answer' && function_exists('yoga_get_notification_read_url')) {
+											$url = yoga_get_notification_read_url($notification, 'questions');
+										}
+										$is_unread = empty($notification['read_at']);
+										$icon = $type === 'question_answer' ? 'notification-teacher-reply-icon' : 'notification-bell-icon';
+										?>
+										<a class="lk-notification lk-notification--<?php echo esc_attr($type ?: 'default'); ?><?php echo $is_unread ? ' lk-notification--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($type); ?>" href="<?php echo esc_url($url ?: '#'); ?>">
+											<span class="lk-notification__head">
+												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="#<?php echo esc_attr($icon); ?>"></use></svg></span>
+												<strong><?php echo esc_html($title); ?></strong>
+												<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread && $type !== 'question_answer'): ?><i aria-hidden="true"></i><?php endif; ?></span>
+											</span>
+											<span class="lk-notification__message"><?php echo esc_html($message); ?></span>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							<?php endif; ?>
+						</div>
+					</div>
+
+					<div class="lk-slide lk-slide--notification-settings<?php echo $initial_lk_target === '9' ? ' active' : ''; ?>" data-target="9">
+						<div class="lk-slide__content">
+							<div class="notification-settings">
+								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true"><use href="#notification-settings-back"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
+								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
+								<?php $notification_settings = array(
+									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(array('Подписка скоро заканчивается', 'За 3 дня до окончания', 1, 1), array('Срок действия карты истекает или истёк', '', 1, 0), array('Подписка закончилась', '', 1, 1))),
+									array('Садхана', 'Всё, что касается садхан', array(array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1), array('Садхана прервана', '', 0, 0), array('Садхана завершена', '', 1, 1))),
+									array('Сообщения', 'Всё, что касается садхан', array(array('Ответ преподавателя или поддержки', '', 1, 0), array('Ответ на ваш комментарий от другого пользователя', '', 0, 1))),
+									array('Новости', 'Новостные письма рассылаем только на почту. Отписаться можно в любой момент.', array(array('Новые крийи и медитации', '', null, 1), array('Новые статьи в блоге', '', null, 0), array('Акции и спецпредложения', '', null, 1))),
+								); foreach ($notification_settings as $category): ?>
+									<section class="notification-settings__category"><div class="notification-settings__category-head"><h3><?php echo esc_html($category[0]); ?></h3><p><?php echo esc_html($category[1]); ?></p></div><?php foreach ($category[2] as $row): ?><div class="notification-settings__row"><div><strong><?php echo esc_html($row[0]); ?></strong><?php if ($row[1] !== ''): ?><span><?php echo esc_html($row[1]); ?></span><?php endif; ?></div><div class="notification-settings__toggles"><?php if ($row[2] !== null): ?><button type="button" class="notification-toggle<?php echo $row[2] ? ' is-on' : ''; ?>" aria-pressed="<?php echo $row[2] ? 'true' : 'false'; ?>"></button><?php else: ?><i></i><?php endif; ?><button type="button" class="notification-toggle<?php echo $row[3] ? ' is-on' : ''; ?>" aria-pressed="<?php echo $row[3] ? 'true' : 'false'; ?>"></button></div></div><?php endforeach; ?></section>
+								<?php endforeach; ?>
+							</div>
 						</div>
 					</div>
 					
-					<div class="lk-slide" id="lk-slide-favorites" data-target="3">
+					<div class="lk-slide<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" id="lk-slide-favorites" data-target="3">
 						<h2>
 							Избранное
 						</h2>
@@ -263,7 +314,7 @@
 					</div>
 					
 					<!-- Слайд "Рекомендации" -->
-					<div class="lk-slide" data-target="4">
+					<div class="lk-slide<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 						<h2>Рекомендации</h2>
 						<div class="lk-slide__content">
 							<?php
@@ -346,7 +397,7 @@
 					
 					
 					<!-- Слайд "Мои вопросы" -->
-					<div class="lk-slide" data-target="5">
+					<div class="lk-slide<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 						<h2>Мои вопросы</h2>
 						<div class="lk-slide__content">
 							<div class="lk-questions-form">
@@ -399,7 +450,7 @@
 					</div>
 					
 					<!-- Слайд "Настройки подписки" -->
-					<div class="lk-slide" id="lk-slide-settings" data-target="6">
+					<div class="lk-slide<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" id="lk-slide-settings" data-target="6">
 						<div class="lk-slide__content">
 							<div class="lk-settings">
 								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1">
@@ -635,7 +686,7 @@
 	<div class="sidebar-inner">
         <div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
         <nav class="sidebar-menu" aria-label="<?php esc_attr_e('Разделы личного кабинета', 'yoga'); ?>">
-			<div class="sidebar-menu__item active" data-target="1">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-user" width="100%" height="100%"></use>
@@ -643,7 +694,7 @@
 				</div>
 				<span class="sidebar-menu__label">Мои данные</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="2">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-history" width="100%" height="100%"></use>
@@ -651,7 +702,7 @@
 				</div>
 				<span class="sidebar-menu__label">История практик</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="7">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 16" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-lotus" width="100%" height="100%"></use>
@@ -660,7 +711,7 @@
 				<span class="sidebar-menu__label">Мои садханы</span>
 				<span class="sidebar-menu__badge" aria-label="<?php esc_attr_e('6 садхан', 'yoga'); ?>">6</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="3">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 17.4 15.4852" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-heart" width="100%" height="100%"></use>
@@ -668,7 +719,7 @@
 				</div>
 				<span class="sidebar-menu__label">Избранное</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="4">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="-0.6 -0.6 18.2 18.2" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-smile" width="100%" height="100%"></use>
@@ -676,7 +727,7 @@
 				</div>
 				<span class="sidebar-menu__label">Рекомендации</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="5">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-question" width="100%" height="100%"></use>
@@ -684,7 +735,7 @@
 				</div>
 				<span class="sidebar-menu__label">Мои вопросы</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="8">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
 						<use href="#notification-bell-icon" width="100%" height="100%"></use>
@@ -692,7 +743,7 @@
 				</div>
 				<span class="sidebar-menu__label">Уведомления</span>
 			</div>
-			<div class="sidebar-menu__item" data-target="6">
+			<div class="sidebar-menu__item<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="#lk-sidebar-settings" width="100%" height="100%"></use>

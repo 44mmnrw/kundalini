@@ -8,6 +8,7 @@
 if (!is_user_logged_in()) {
 	return;
 }
+$mobile_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_initial_lk_target() : '1';
 ?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
@@ -19,7 +20,7 @@ if (!is_user_logged_in()) {
 			<div class="mobile-menu__slide mobile-menu__slide_main active">
 				<div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
 					<nav class="sidebar-menu" aria-label="<?php esc_attr_e('Разделы личного кабинета', 'yoga'); ?>">
-						<div class="sidebar-menu__item active" data-target="1">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-user" width="100%" height="100%"></use>
@@ -27,7 +28,7 @@ if (!is_user_logged_in()) {
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои данные', 'yoga'); ?></span>
 						</div>
-						<div class="sidebar-menu__item" data-target="2">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-history" width="100%" height="100%"></use>
@@ -35,7 +36,7 @@ if (!is_user_logged_in()) {
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('История практик', 'yoga'); ?></span>
 						</div>
-						<div class="sidebar-menu__item" data-target="7">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 16" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-lotus" width="100%" height="100%"></use>
@@ -44,7 +45,7 @@ if (!is_user_logged_in()) {
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои садханы', 'yoga'); ?></span>
 							<span class="sidebar-menu__badge" aria-label="<?php esc_attr_e('6 садхан', 'yoga'); ?>">6</span>
 						</div>
-						<div class="sidebar-menu__item" data-target="3">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 							<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 17.4 15.4852" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-heart" width="100%" height="100%"></use>
@@ -52,7 +53,7 @@ if (!is_user_logged_in()) {
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Избранное', 'yoga'); ?></span>
 						</div>
-						<div class="sidebar-menu__item" data-target="4">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="-0.6 -0.6 18.2 18.2" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-smile" width="100%" height="100%"></use>
@@ -60,7 +61,7 @@ if (!is_user_logged_in()) {
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Рекомендации', 'yoga'); ?></span>
 						</div>
-						<div class="sidebar-menu__item" data-target="5">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-question" width="100%" height="100%"></use>
@@ -68,7 +69,7 @@ if (!is_user_logged_in()) {
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои вопросы', 'yoga'); ?></span>
 						</div>
-						<div class="sidebar-menu__item" data-target="8">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
 									<use href="#notification-bell-icon" width="100%" height="100%"></use>
@@ -76,7 +77,7 @@ if (!is_user_logged_in()) {
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Уведомления', 'yoga'); ?></span>
 						</div>
-						<div class="sidebar-menu__item" data-target="6">
+						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 									<use href="#lk-sidebar-settings" width="100%" height="100%"></use>

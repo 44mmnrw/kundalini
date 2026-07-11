@@ -800,6 +800,11 @@ function yoga_subscribe_handler() {
 			'post_id'        => get_the_ID(),
 			'smartcaptcha_enabled' => function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced(),
 			'smartcaptcha_sitekey' => function_exists('yoga_smartcaptcha_client_key') ? yoga_smartcaptcha_client_key() : '',
+			'notification_preferences' => array(
+				'question_answer_site' => yoga_notification_preference((int) get_current_user_id(), 'question_answer_site', true),
+				'question_answer_email' => yoga_notification_preference((int) get_current_user_id(), 'question_answer_email', false),
+			),
+			'lk_section_by_target' => function_exists('yoga_get_lk_section_by_target') ? yoga_get_lk_section_by_target() : array(),
 		);
 
 		wp_localize_script('main-script', 'yoga_ajax', $yoga_ajax_data);
@@ -1384,15 +1389,6 @@ function handle_comment_delete() {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
 		}
 
-		$question_success_page = get_page_by_path('question-sent');
-		$question_success_url = $question_success_page
-			? get_permalink($question_success_page)
-			: home_url('/question-sent/');
-
-		wp_send_json_success(array(
-			'message' => 'Message sent successfully.',
-			'redirect_url' => $question_success_url,
-		));
 		
 		wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
 	}
@@ -1400,10 +1396,10 @@ function handle_comment_delete() {
 	// Увеличиваем счетчик после обработки элемента
 	function save_contact_message(string $name, string $email, string $phone, string $message): bool {
 		$post_data = array(
-        'post_title' => 'Вопрос от ' . $name,
-        'post_content' => $message,
-        'post_type' => 'question',
-        'post_status' => 'draft',
+		'post_title' => 'Вопрос от ' . $name,
+		'post_content' => $message,
+		'post_type' => 'question',
+		'post_status' => 'publish',
         'meta_input' => array(
 		'contact_email' => $email,
 		'contact_phone' => $phone,
@@ -1706,10 +1702,10 @@ function handle_comment_delete() {
 		";
 		
 		$post_id = wp_insert_post(array(
-            'post_title' => 'Вопрос от ' . $name,
-            'post_content' => $message,
-            'post_type' => 'question',
-            'post_status' => 'draft',
+			'post_title' => 'Вопрос от ' . $name,
+			'post_content' => $message,
+			'post_type' => 'question',
+			'post_status' => 'publish',
             'meta_input' => array(
 			'contact_email' => $email,
 			'contact_date' => current_time('mysql')
@@ -1723,10 +1719,15 @@ function handle_comment_delete() {
 		
 		// Почту отправляем отдельно: если письмо не ушло, вопрос все равно уже есть в админке.
 		$email_sent = wp_mail($to, $subject, $body, $headers);
+		$question_success_page = get_page_by_path('question-sent');
+		$question_success_url = $question_success_page
+			? get_permalink($question_success_page)
+			: home_url('/question-sent/');
 		
 		wp_send_json_success(array(
             'message' => get_field('faq_form_success_message', 'option') ?: 'Ваш вопрос отправлен! Мы ответим вам в ближайшее время.',
-            'mail_sent' => (bool) $email_sent
+            'mail_sent' => (bool) $email_sent,
+			'redirect_url' => $question_success_url
 		));
 		
 		exit;
@@ -1754,7 +1755,9 @@ function handle_comment_delete() {
         'show_ui' => true,
         'show_in_menu' => true,
         'capability_type' => 'post',
-        'supports' => array('title', 'editor'),
+        // `array()` is interpreted by WordPress as the default editor support.
+        // Questions are handled entirely through the dedicated metaboxes below.
+        'supports' => false,
         'menu_icon' => 'dashicons-format-chat'
 		));
 	}
@@ -2982,6 +2985,219 @@ function handle_comment_delete() {
 	}
 	
 	
+	function yoga_notification_has_live_source(array $notification): bool {
+		if (($notification['type'] ?? '') !== 'question_answer') {
+			return true;
+		}
+
+		$question_id = absint($notification['question_id'] ?? 0);
+		if ($question_id <= 0) {
+			return false;
+		}
+
+		$question = get_post($question_id);
+		return $question instanceof WP_Post
+			&& $question->post_type === 'question'
+			&& $question->post_status !== 'trash';
+	}
+
+	/** @return array<int, array<string, mixed>> */
+	function yoga_get_user_notifications(int $user_id, int $limit = 50): array {
+		$notifications = get_user_meta($user_id, 'yoga_notifications', true);
+		if (!is_array($notifications)) {
+			return array();
+		}
+		$notifications = array_values(array_filter($notifications, static function ($notification): bool {
+			return is_array($notification) && yoga_notification_has_live_source($notification);
+		}));
+		usort($notifications, static function (array $left, array $right): int {
+			return strcmp((string) ($right['created_at'] ?? ''), (string) ($left['created_at'] ?? ''));
+		});
+		return array_slice($notifications, 0, max(1, $limit));
+	}
+
+	/** @return array<int, array<string, mixed>> */
+	function yoga_get_unread_user_notifications(int $user_id): array {
+		$notifications = yoga_get_user_notifications($user_id, 100);
+		return array_values(array_filter($notifications, static function (array $notification): bool {
+			return empty($notification['read_at']);
+		}));
+	}
+
+	function yoga_notification_preference(int $user_id, string $key, bool $default = true): bool {
+		$preferences = get_user_meta($user_id, 'yoga_notification_preferences', true);
+		return is_array($preferences) && array_key_exists($key, $preferences) ? (bool) $preferences[$key] : $default;
+	}
+
+	function yoga_save_notification_preference(): void {
+		if (!is_user_logged_in()) wp_send_json_error(null, 401);
+		check_ajax_referer('yoga_ajax_nonce', 'nonce');
+		$key = sanitize_key((string) ($_POST['key'] ?? ''));
+		if (!in_array($key, array('question_answer_site', 'question_answer_email'), true)) wp_send_json_error(null, 400);
+		$preferences = get_user_meta(get_current_user_id(), 'yoga_notification_preferences', true);
+		$preferences = is_array($preferences) ? $preferences : array();
+		$preferences[$key] = !empty($_POST['enabled']);
+		update_user_meta(get_current_user_id(), 'yoga_notification_preferences', $preferences);
+		wp_send_json_success();
+	}
+	add_action('wp_ajax_yoga_save_notification_preference', 'yoga_save_notification_preference');
+
+	function yoga_add_user_notification(int $user_id, string $type, string $title, string $message, string $url = '', array $context = array()): void {
+		if ($user_id <= 0) {
+			return;
+		}
+		if ($type === 'question_answer' && !yoga_notification_preference($user_id, 'question_answer_site', true)) return;
+		$notifications = yoga_get_user_notifications($user_id, 100);
+		$notification = array(
+			'id' => wp_generate_uuid4(),
+			'type' => sanitize_key($type),
+			'title' => sanitize_text_field($title),
+			'message' => sanitize_text_field($message),
+			'url' => esc_url_raw($url),
+			'created_at' => current_time('mysql'),
+			'read_at' => '',
+		);
+		if (!empty($context['question_id'])) {
+			$notification['question_id'] = absint($context['question_id']);
+		}
+		$notifications[] = $notification;
+		update_user_meta($user_id, 'yoga_notifications', array_slice($notifications, -100));
+	}
+
+	function yoga_get_question_notification_user_id(int $question_id): int {
+		$author_id = (int) get_post_field('post_author', $question_id);
+		if ($author_id > 0) {
+			return $author_id;
+		}
+		$email = sanitize_email((string) get_post_meta($question_id, 'contact_email', true));
+		$user = $email !== '' ? get_user_by('email', $email) : false;
+		return $user instanceof WP_User ? (int) $user->ID : 0;
+	}
+
+	function yoga_remove_question_notifications(int $question_id): void {
+		if (get_post_type($question_id) !== 'question') {
+			return;
+		}
+
+		$user_id = yoga_get_question_notification_user_id($question_id);
+		if ($user_id <= 0) {
+			return;
+		}
+
+		$notifications = get_user_meta($user_id, 'yoga_notifications', true);
+		if (!is_array($notifications)) {
+			return;
+		}
+
+		$remaining = array_values(array_filter($notifications, static function ($notification) use ($question_id): bool {
+			return !is_array($notification)
+				|| ($notification['type'] ?? '') !== 'question_answer'
+				|| absint($notification['question_id'] ?? 0) !== $question_id;
+		}));
+
+		if (count($remaining) !== count($notifications)) {
+			update_user_meta($user_id, 'yoga_notifications', $remaining);
+		}
+	}
+	add_action('trashed_post', 'yoga_remove_question_notifications');
+	add_action('before_delete_post', 'yoga_remove_question_notifications');
+
+	function yoga_cleanup_orphaned_question_notifications(): void {
+		if ((int) get_option('yoga_notification_source_schema_version', 0) >= 1) {
+			return;
+		}
+
+		$user_ids = get_users(array(
+			'meta_key' => 'yoga_notifications',
+			'fields' => 'ID',
+		));
+		foreach ($user_ids as $user_id) {
+			$notifications = get_user_meta((int) $user_id, 'yoga_notifications', true);
+			if (!is_array($notifications)) {
+				continue;
+			}
+			$remaining = array_values(array_filter($notifications, static function ($notification): bool {
+				return is_array($notification) && yoga_notification_has_live_source($notification);
+			}));
+			if (count($remaining) !== count($notifications)) {
+				update_user_meta((int) $user_id, 'yoga_notifications', $remaining);
+			}
+		}
+
+		update_option('yoga_notification_source_schema_version', 1, false);
+	}
+	add_action('admin_init', 'yoga_cleanup_orphaned_question_notifications');
+
+	function yoga_get_lk_notifications_url(): string {
+		return function_exists('yoga_get_lk_section_url') ? yoga_get_lk_section_url('notifications') : home_url('/');
+	}
+
+	function yoga_get_lk_questions_url(): string {
+		return function_exists('yoga_get_lk_section_url') ? yoga_get_lk_section_url('questions') : home_url('/');
+	}
+
+	function yoga_mark_user_notifications_read(int $user_id, string $notification_id = '', bool $mark_all = false): int {
+		$notifications = yoga_get_user_notifications($user_id, 100);
+		$changed = false;
+		foreach ($notifications as &$notification) {
+			$is_selected = $notification_id !== '' && hash_equals((string) ($notification['id'] ?? ''), $notification_id);
+			if (($mark_all || $is_selected) && empty($notification['read_at'])) {
+				$notification['read_at'] = current_time('mysql');
+				$changed = true;
+			}
+		}
+		unset($notification);
+
+		if ($changed) {
+			update_user_meta($user_id, 'yoga_notifications', $notifications);
+		}
+
+		return count(yoga_get_unread_user_notifications($user_id));
+	}
+
+	function yoga_get_notification_read_url(array $notification, string $section = 'notifications'): string {
+		$notification_id = sanitize_text_field((string) ($notification['id'] ?? ''));
+		$url = function_exists('yoga_get_lk_section_url') ? yoga_get_lk_section_url($section) : home_url('/');
+		if ($notification_id === '') {
+			return $url;
+		}
+
+		return add_query_arg(array(
+			'read-notification' => $notification_id,
+			'_yoga-notification-nonce' => wp_create_nonce('yoga_read_notification_' . $notification_id),
+		), $url);
+	}
+
+	function yoga_handle_notification_read_route(): void {
+		if (!is_user_logged_in() || empty($_GET['read-notification'])) {
+			return;
+		}
+
+		$notification_id = sanitize_text_field(wp_unslash((string) $_GET['read-notification']));
+		$nonce = sanitize_text_field(wp_unslash((string) ($_GET['_yoga-notification-nonce'] ?? '')));
+		if ($notification_id === '' || !wp_verify_nonce($nonce, 'yoga_read_notification_' . $notification_id)) {
+			return;
+		}
+
+		yoga_mark_user_notifications_read((int) get_current_user_id(), $notification_id);
+	}
+	add_action('template_redirect', 'yoga_handle_notification_read_route', 5);
+
+	function yoga_mark_question_answer_notifications_read(): void {
+		if (!is_user_logged_in()) {
+			wp_send_json_error(array('message' => __('Необходима авторизация.', 'yoga')), 401);
+		}
+		check_ajax_referer('yoga_ajax_nonce', 'nonce');
+
+		$user_id = (int) get_current_user_id();
+		$mark_all = !empty($_POST['mark_all']);
+		$notification_id = sanitize_text_field((string) ($_POST['notification_id'] ?? ''));
+		wp_send_json_success(array(
+			'unread_count' => yoga_mark_user_notifications_read($user_id, $notification_id, $mark_all),
+		));
+	}
+	add_action('wp_ajax_yoga_mark_question_answer_notifications_read', 'yoga_mark_question_answer_notifications_read');
+
 	// Отправляем уведомление администратору
 	function get_user_questions(int $user_id): array {
 		$args = array(
@@ -2999,12 +3215,9 @@ function handle_comment_delete() {
 	// Регистрируем тип записи для вопросов
 	function display_question_item(WP_Post $question, bool $hidden = false): void {
 		$question_id = $question->ID;
-		$answer = get_post_meta($question_id, '_answer', true);
-		$answer_date = get_post_meta($question_id, '_answer_date', true);
-		$admin_id = get_post_meta($question_id, '_answer_admin', true);
-		$admin_name = $admin_id ? get_the_author_meta('display_name', $admin_id) : 'Администратор';
+		$answers = yoga_get_question_answers($question_id);
 		
-		$status_class = $answer ? '' : 'lk-questions-item_new';
+		$status_class = !empty($answers) ? '' : 'lk-questions-item_new';
 		$hidden_class = $hidden ? 'hidden' : '';
 	?>
     <div class="lk-questions-item <?php echo $status_class . ' ' . $hidden_class; ?>">
@@ -3016,23 +3229,32 @@ function handle_comment_delete() {
             <div class="lk-question__text">
                 <p><?php echo esc_html($question->post_content); ?></p>
 			</div>
-            <?php if (!$answer): ?>
-            <span class="lk-question__status">Ожидает ответа</span>
-            <?php endif; ?>
+			<?php if (empty($answers)): ?>
+			<span class="lk-question__status">Ожидает ответа</span>
+			<?php endif; ?>
 		</div>
-        
-        <?php if ($answer): ?>
-        <div class="lk-question lk-question_answer">
-            <div class="lk-question__time">
-                <b>Ответ <?php echo esc_html($admin_name); ?></b>
-                <time><?php echo date('d.m.Y', strtotime($answer_date)); ?></time>
-                <time><?php echo date('H:i', strtotime($answer_date)); ?></time>
+
+		<?php foreach ($answers as $answer): ?>
+		<?php
+			$answer_content = (string) ($answer['content'] ?? '');
+			$answer_date = (string) ($answer['created_at'] ?? '');
+			$admin_id = (int) ($answer['admin_id'] ?? 0);
+			$admin_name = $admin_id > 0 ? (string) get_the_author_meta('display_name', $admin_id) : __('Администратор', 'yoga');
+			$answer_timestamp = $answer_date !== '' ? strtotime($answer_date) : false;
+		?>
+		<div class="lk-question lk-question_answer">
+			<div class="lk-question__time">
+				<b>Ответ <?php echo esc_html($admin_name); ?></b>
+				<?php if ($answer_timestamp): ?>
+					<time datetime="<?php echo esc_attr(wp_date('c', $answer_timestamp)); ?>"><?php echo esc_html(wp_date('d.m.Y', $answer_timestamp)); ?></time>
+					<time><?php echo esc_html(wp_date('H:i', $answer_timestamp)); ?></time>
+				<?php endif; ?>
 			</div>
-            <div class="lk-question__text">
-                <p><?php echo wp_kses_post($answer); ?></p>
+			<div class="lk-question__text">
+				<?php echo wpautop(wp_kses_post($answer_content)); ?>
 			</div>
 		</div>
-        <?php endif; ?>
+		<?php endforeach; ?>
 	</div>
     <?php
 	}
@@ -3098,7 +3320,7 @@ function handle_comment_delete() {
         'show_in_menu' => true,
         'menu_position' => 25,
         'menu_icon' => 'dashicons-format-chat',
-        'supports' => array('title', 'editor'),
+        'supports' => array(),
         'labels' => array(
 		'name' => 'Вопросы FAQ',
 		'singular_name' => 'Вопрос',
@@ -3117,9 +3339,79 @@ function handle_comment_delete() {
 		register_post_type('question', $args);
 	}
 	add_action('init', 'register_question_post_type');
+
+	/**
+	 * Questions are conversation records, not editorial content. Normalize legacy
+	 * statuses once so wp-admin does not expose a draft/publishing workflow.
+	 */
+	function yoga_migrate_question_record_statuses(): void {
+		if ((int) get_option('yoga_question_record_schema_version', 0) >= 1) {
+			return;
+		}
+		global $wpdb;
+
+		$question_ids = get_posts(array(
+			'post_type' => 'question',
+			'post_status' => array('draft', 'pending', 'private'),
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'no_found_rows' => true,
+			'orderby' => 'none',
+		));
+
+		if (!empty($question_ids)) {
+			$updated = $wpdb->query($wpdb->prepare(
+				"UPDATE {$wpdb->posts} SET post_status = %s WHERE post_type = %s AND post_status IN (%s, %s, %s)",
+				'publish',
+				'question',
+				'draft',
+				'pending',
+				'private'
+			));
+			if ($updated === false) {
+				return;
+			}
+			foreach ($question_ids as $question_id) {
+				clean_post_cache((int) $question_id);
+			}
+		}
+
+		update_option('yoga_question_record_schema_version', 1, false);
+	}
+	add_action('admin_init', 'yoga_migrate_question_record_statuses');
+
+	function yoga_question_admin_post_states(array $post_states, WP_Post $post): array {
+		if ($post->post_type !== 'question') {
+			return $post_states;
+		}
+
+		return empty(yoga_get_question_answers((int) $post->ID))
+			? array('yoga_new' => __('Новое', 'yoga'))
+			: array();
+	}
+	add_filter('display_post_states', 'yoga_question_admin_post_states', 10, 2);
+
+	/**
+	 * Keep the FAQ request screen free of WordPress's post title/editor UI.
+	 * This runs after all CPT registration hooks, including plugins.
+	 */
+	function yoga_question_remove_default_editor(): void {
+		remove_post_type_support('question', 'title');
+		remove_post_type_support('question', 'editor');
+	}
+	add_action('init', 'yoga_question_remove_default_editor', 999);
 	
 	// Функция для получения активной подписки пользователя
 	function add_question_answer_meta_box() {
+		add_meta_box(
+			'question_request',
+			'Вопрос пользователя',
+			'render_question_request_meta_box',
+			'question',
+			'normal',
+			'high'
+		);
+
 		add_meta_box(
         'question_answer',
         'Ответ на вопрос',
@@ -3130,33 +3422,212 @@ function handle_comment_delete() {
 		);
 	}
 	add_action('add_meta_boxes', 'add_question_answer_meta_box');
+
+	/**
+	 * The question screen is a conversation, not a publishing workflow.
+	 * Reply actions are handled by the dedicated "Отправить ответ" button.
+	 */
+	function yoga_question_remove_publish_box(WP_Post $post): void {
+		remove_meta_box('submitdiv', 'question', 'side');
+	}
+	add_action('add_meta_boxes_question', 'yoga_question_remove_publish_box', 100);
+
+	function yoga_question_screen_layout_columns(array $columns): array {
+		$columns['question'] = 1;
+		return $columns;
+	}
+	add_filter('screen_layout_columns', 'yoga_question_screen_layout_columns');
+
+	function yoga_question_force_single_column($columns): int {
+		return 1;
+	}
+	add_filter('get_user_option_screen_layout_question', 'yoga_question_force_single_column');
+
+	/** @return array<int, array<string, mixed>> */
+	function yoga_get_question_answers(int $post_id): array {
+		$answers = get_post_meta($post_id, '_question_answers', true);
+		if (is_array($answers)) {
+			return $answers;
+		}
+
+		// Show an answer saved by the previous implementation without losing it.
+		$legacy_answer = (string) get_post_meta($post_id, '_answer', true);
+		if (trim(wp_strip_all_tags($legacy_answer)) === '') {
+			return array();
+		}
+
+		return array(array(
+			'content' => $legacy_answer,
+			'created_at' => (string) get_post_meta($post_id, '_answer_date', true),
+			'admin_id' => (int) get_post_meta($post_id, '_answer_admin', true),
+			'sent_at' => (string) get_post_meta($post_id, '_answer_sent_at', true),
+			'email' => (string) get_post_meta($post_id, '_answer_sent_email', true),
+			'status' => (string) get_post_meta($post_id, '_answer_delivery_status', true),
+		));
+	}
+
+	function yoga_get_unanswered_questions_count(): int {
+		$question_ids = get_posts(array(
+			'post_type' => 'question',
+			'post_status' => array('publish', 'pending', 'draft', 'private'),
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'no_found_rows' => true,
+			'orderby' => 'none',
+		));
+
+		$count = 0;
+		foreach ($question_ids as $question_id) {
+			if (empty(yoga_get_question_answers((int) $question_id))) {
+				$count++;
+			}
+		}
+
+		return $count;
+	}
+
+	function yoga_add_unanswered_questions_menu_count(): void {
+		global $menu;
+
+		$count = yoga_get_unanswered_questions_count();
+		if ($count <= 0 || !is_array($menu)) {
+			return;
+		}
+
+		foreach ($menu as &$menu_item) {
+			if (!isset($menu_item[2]) || $menu_item[2] !== 'edit.php?post_type=question') {
+				continue;
+			}
+
+			$menu_item[0] .= sprintf(
+				' <span class="awaiting-mod count-%1$d"><span class="pending-count" aria-hidden="true">%1$d</span><span class="screen-reader-text">%2$s</span></span>',
+				$count,
+				esc_html(sprintf(_n('%d вопрос без ответа', '%d вопросов без ответа', $count, 'yoga'), $count))
+			);
+			break;
+		}
+		unset($menu_item);
+	}
+	add_action('admin_menu', 'yoga_add_unanswered_questions_menu_count', 999);
+
+	function render_question_request_meta_box(WP_Post $post): void {
+		$email = sanitize_email((string) get_post_meta($post->ID, 'contact_email', true));
+		$date = get_post_meta($post->ID, 'contact_date', true) ?: $post->post_date;
+		$answers = yoga_get_question_answers($post->ID);
+		$notification_user_id = yoga_get_question_notification_user_id($post->ID);
+		$email_notifications_enabled = $notification_user_id <= 0 || yoga_notification_preference($notification_user_id, 'question_answer_email', false);
+		wp_nonce_field('manage_question_answers', 'question_answers_nonce');
+		?>
+		<div class="yoga-question-admin-card">
+			<div class="yoga-question-admin-card__meta">
+				<span><strong><?php esc_html_e('Получатель ответа:', 'yoga'); ?></strong> <?php echo $email ? esc_html($email) : esc_html__('e-mail не указан', 'yoga'); ?></span>
+				<span><strong><?php esc_html_e('Получено:', 'yoga'); ?></strong> <?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($date))); ?></span>
+			</div>
+			<div class="yoga-question-admin-card__message">
+				<?php echo wpautop(esc_html($post->post_content)); ?>
+			</div>
+			<?php foreach ($answers as $answer_index => $answer): ?>
+				<?php
+				$content = isset($answer['content']) ? (string) $answer['content'] : '';
+				$status = isset($answer['status']) ? (string) $answer['status'] : '';
+				$sent_at = isset($answer['sent_at']) ? (string) $answer['sent_at'] : '';
+				$created_at = isset($answer['created_at']) ? (string) $answer['created_at'] : '';
+				$display_status = $status === 'failed' && !$email_notifications_enabled ? 'email_disabled' : $status;
+				$status_labels = array(
+					'sent' => __('Письмо отправлено', 'yoga'),
+					'email_disabled' => __('E-mail-уведомления отключены', 'yoga'),
+					'missing_recipient' => __('Не указан e-mail получателя', 'yoga'),
+					'failed' => __('Ошибка отправки письма', 'yoga'),
+				);
+				$status_label = $status_labels[$display_status] ?? __('Письмо не отправлено', 'yoga');
+				$status_class = in_array($display_status, array('sent', 'email_disabled', 'failed'), true) ? ' yoga-question-admin-card__status--' . $display_status : '';
+				?>
+				<div class="yoga-question-admin-card__reply">
+					<div class="yoga-question-admin-card__reply-meta">
+						<strong><?php esc_html_e('Ответ администратора', 'yoga'); ?></strong>
+						<button type="submit" class="button-link-delete yoga-question-admin-card__delete" name="question_delete_answer" value="<?php echo esc_attr((string) $answer_index); ?>" onclick="return window.confirm('Удалить этот ответ?');">
+							<?php esc_html_e('Удалить', 'yoga'); ?>
+						</button>
+						<?php if ($sent_at && $display_status === 'sent'): ?>
+							<span class="yoga-question-admin-card__status yoga-question-admin-card__status--sent"><?php echo esc_html($status_label); ?></span>
+							<span><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($sent_at))); ?></span>
+						<?php else: ?>
+							<span class="yoga-question-admin-card__status<?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_label); ?></span>
+							<?php if ($created_at): ?><span><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($created_at))); ?></span><?php endif; ?>
+						<?php endif; ?>
+					</div>
+					<div class="yoga-question-admin-card__reply-text">
+						<?php echo wpautop(wp_kses_post($content)); ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
 	
 	function render_question_answer_meta_box(WP_Post $post): void {
-		$answer = get_post_meta($post->ID, '_answer', true);
-		$answer_date = get_post_meta($post->ID, '_answer_date', true);
-		$admin_id = get_post_meta($post->ID, '_answer_admin', true);
-		
 		wp_nonce_field('save_question_answer', 'answer_nonce');
 	?>
-    <div style="margin-bottom: 15px;">
-        <label for="question_answer" style="display: block; margin-bottom: 5px; font-weight: bold;">Ответ:</label>
-        <?php
-			wp_editor($answer, 'question_answer', array(
-            'textarea_name' => 'question_answer',
-            'textarea_rows' => 10,
-            'media_buttons' => false,
-            'teeny' => true
-			));
-		?>
-	</div>
-    <?php if ($answer_date): ?>
-    <div style="color: #666; font-size: 13px;">
-        Ответ дан: <?php echo date('d.m.Y H:i', strtotime($answer_date)); ?> 
-        пользователем: <?php echo $admin_id ? get_the_author_meta('display_name', $admin_id) : 'Неизвестно'; ?>
-	</div>
-    <?php endif; ?>
+		<?php $recipient_email = sanitize_email((string) get_post_meta($post->ID, 'contact_email', true)); ?>
+		<div class="yoga-question-answer">
+			<div class="yoga-question-answer__head">
+				<div>
+					<label for="question_answer"><?php esc_html_e('Новый ответ', 'yoga'); ?></label>
+					<p><?php esc_html_e('После отправки текст появится под вопросом, а это поле очистится.', 'yoga'); ?></p>
+				</div>
+				<span class="yoga-question-answer__recipient"><?php echo $recipient_email ? esc_html($recipient_email) : esc_html__('e-mail не указан', 'yoga'); ?></span>
+			</div>
+			<textarea id="question_answer" name="question_answer" class="large-text" rows="9" placeholder="Напишите ответ пользователю"></textarea>
+			<div class="yoga-question-answer__footer">
+				<button type="submit" class="button button-primary" name="question_send_reply" value="1">
+					<?php esc_html_e('Отправить ответ', 'yoga'); ?>
+				</button>
+				<span><?php esc_html_e('Каждая отправка создаёт новый ответ и не изменяет предыдущие.', 'yoga'); ?></span>
+			</div>
+		</div>
     <?php
 	}
+
+	function yoga_question_admin_styles(): void {
+		$screen = get_current_screen();
+		if (!$screen || $screen->post_type !== 'question') {
+			return;
+		}
+		?>
+		<style>
+			#poststuff #post-body.columns-2 { margin-right: 0; }
+			#post-body.columns-2 #postbox-container-1 { display: none; }
+			#poststuff #post-body.columns-2 #postbox-container-2 { width: 100%; }
+			#question_request .inside, #question_answer .inside { padding: 0; margin: 0; }
+			.yoga-question-admin-card, .yoga-question-answer { padding: 20px; }
+			.yoga-question-admin-card__meta { display: flex; flex-wrap: wrap; gap: 8px 24px; color: #50575e; font-size: 13px; }
+			.yoga-question-admin-card__message { margin-top: 16px; padding: 18px 20px; border-left: 3px solid #2271b1; background: #f6f7f7; font-size: 15px; line-height: 1.6; }
+			.yoga-question-admin-card__message > :first-child { margin-top: 0; }
+			.yoga-question-admin-card__message > :last-child { margin-bottom: 0; }
+			.yoga-question-admin-card__reply { margin-top: 16px; padding: 18px 20px; border: 1px solid #b8d8bd; border-radius: 4px; background: #f6fbf6; }
+			.yoga-question-admin-card__reply-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; color: #50575e; font-size: 13px; }
+			.yoga-question-admin-card__reply-meta strong { color: #1d2327; font-size: 14px; }
+			.yoga-question-admin-card__delete { margin-left: auto; }
+			.yoga-question-admin-card__status { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e7e7e7; color: #50575e; }
+			.yoga-question-admin-card__status--sent { background: #d7f0d9; color: #1e6b2b; }
+			.yoga-question-admin-card__status--email_disabled { background: #f0f0f1; color: #50575e; }
+			.yoga-question-admin-card__status--failed { background: #fce2e3; color: #8a2424; }
+			.yoga-question-admin-card__reply-text { margin-top: 12px; font-size: 14px; line-height: 1.6; }
+			.yoga-question-admin-card__reply-text > :first-child { margin-top: 0; }
+			.yoga-question-admin-card__reply-text > :last-child { margin-bottom: 0; }
+			.yoga-question-answer__head, .yoga-question-answer__footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+			.yoga-question-answer__head label { display: block; font-weight: 600; font-size: 14px; }
+			.yoga-question-answer__head p, .yoga-question-answer__footer span { margin: 4px 0 0; color: #646970; font-size: 13px; }
+			.yoga-question-answer__recipient { padding: 6px 10px; border-radius: 999px; background: #f0f6fc; color: #135e96; font-size: 13px; }
+			#question_answer textarea.large-text { display: block; width: 100%; min-height: 190px; margin: 16px 0; padding: 12px; border-color: #8c8f94; border-radius: 4px; line-height: 1.5; resize: vertical; }
+			.yoga-question-answer__footer { align-items: flex-start; }
+			.yoga-question-answer__delivery { margin: -4px 20px 16px; }
+			@media (max-width: 782px) { .yoga-question-answer__head, .yoga-question-answer__footer { display: block; } .yoga-question-answer__recipient { display: inline-block; margin-top: 10px; } .yoga-question-answer__footer span { display: block; } }
+		</style>
+		<?php
+	}
+	add_action('admin_head-post.php', 'yoga_question_admin_styles');
+	add_action('admin_head-post-new.php', 'yoga_question_admin_styles');
 	
 	// Если используете WooCommerce Subscriptions
 	// Axecode.tech: сохранение ответа администратора и отправка email пользователю.
@@ -3173,12 +3644,122 @@ function handle_comment_delete() {
 		if (!current_user_can('edit_post', $post_id)) {
 			return;
 		}
+
+		if (isset($_POST['question_delete_answer']) && isset($_POST['question_answers_nonce']) && wp_verify_nonce($_POST['question_answers_nonce'], 'manage_question_answers')) {
+			$answer_index = absint($_POST['question_delete_answer']);
+			$answers = yoga_get_question_answers($post_id);
+			if (array_key_exists($answer_index, $answers)) {
+				array_splice($answers, $answer_index, 1);
+				update_post_meta($post_id, '_question_answers', $answers);
+			}
+			return;
+		}
+
+		// A sent reply becomes an immutable history entry; the compose field stays empty after reload.
+		if (!empty($_POST['question_send_reply']) && isset($_POST['question_answer'])) {
+			$answer = wp_kses_post((string) $_POST['question_answer']);
+			if (trim(wp_strip_all_tags($answer)) === '') {
+				return;
+			}
+
+			$recipient_email = sanitize_email((string) get_post_meta($post_id, 'contact_email', true));
+			if ($recipient_email === '') {
+				$question_author = get_userdata((int) get_post_field('post_author', $post_id));
+				$recipient_email = $question_author ? sanitize_email((string) $question_author->user_email) : '';
+			}
+
+			$question = get_post($post_id);
+			$subject = sprintf(__('Ответ на ваш вопрос — %s', 'yoga'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
+			$question_text = $question ? wp_strip_all_tags((string) $question->post_content) : '';
+			$body = '<p>' . esc_html__('Здравствуйте!', 'yoga') . '</p>';
+			$body .= '<p><strong>' . esc_html__('Ваш вопрос:', 'yoga') . '</strong><br>' . nl2br(esc_html($question_text)) . '</p>';
+			$body .= '<p><strong>' . esc_html__('Ответ:', 'yoga') . '</strong></p>' . wpautop($answer);
+			$body .= '<p>' . esc_html__('С уважением, администрация сайта.', 'yoga') . '</p>';
+			$notification_user_id = yoga_get_question_notification_user_id($post_id);
+			$email_notifications_enabled = $notification_user_id <= 0 || yoga_notification_preference($notification_user_id, 'question_answer_email', false);
+			$sent = false;
+			if ($recipient_email === '') {
+				$delivery_status = 'missing_recipient';
+			} elseif (!$email_notifications_enabled) {
+				$delivery_status = 'email_disabled';
+			} else {
+				$sent = wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
+				$delivery_status = $sent ? 'sent' : 'failed';
+			}
+
+			$answers = yoga_get_question_answers($post_id);
+			$answers[] = array(
+				'content' => $answer,
+				'created_at' => current_time('mysql'),
+				'admin_id' => get_current_user_id(),
+				'sent_at' => $sent ? current_time('mysql') : '',
+				'email' => $recipient_email,
+				'status' => $delivery_status,
+			);
+			update_post_meta($post_id, '_question_answers', $answers);
+
+			$notification_user_id = yoga_get_question_notification_user_id($post_id);
+			if ($notification_user_id > 0) {
+				yoga_add_user_notification(
+					$notification_user_id,
+					'question_answer',
+					__('Получен ответ на ваш вопрос', 'yoga'),
+					__('Администратор ответил на ваш вопрос. Откройте раздел «Мои вопросы».', 'yoga'),
+					yoga_get_lk_questions_url(),
+					array('question_id' => $post_id)
+				);
+			}
+			return;
+		}
 		
 		if (isset($_POST['question_answer'])) {
 			$answer = wp_kses_post($_POST['question_answer']);
 			$old_answer = get_post_meta($post_id, '_answer', true);
 			
 			update_post_meta($post_id, '_answer', $answer);
+			if ($answer !== $old_answer) {
+				update_post_meta($post_id, '_answer_date', current_time('mysql'));
+				update_post_meta($post_id, '_answer_admin', get_current_user_id());
+			}
+
+			// Обычное сохранение ответа не отправляет письмо: для этого есть отдельная кнопка в метабоксе.
+			if (empty($_POST['question_send_reply'])) {
+				return;
+			}
+
+			if (trim(wp_strip_all_tags($answer)) === '') {
+				update_post_meta($post_id, '_answer_delivery_status', 'empty_answer');
+				return;
+			}
+
+			$recipient_email = sanitize_email((string) get_post_meta($post_id, 'contact_email', true));
+			if ($recipient_email === '') {
+				$question_author = get_userdata((int) get_post_field('post_author', $post_id));
+				$recipient_email = $question_author ? sanitize_email((string) $question_author->user_email) : '';
+			}
+
+			if ($recipient_email === '') {
+				update_post_meta($post_id, '_answer_delivery_status', 'missing_recipient');
+				return;
+			}
+
+			$question = get_post($post_id);
+			$subject = sprintf(__('Ответ на ваш вопрос — %s', 'yoga'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
+			$question_text = $question ? wp_strip_all_tags((string) $question->post_content) : '';
+			$body = '<p>' . esc_html__('Здравствуйте!', 'yoga') . '</p>';
+			$body .= '<p><strong>' . esc_html__('Ваш вопрос:', 'yoga') . '</strong><br>' . nl2br(esc_html($question_text)) . '</p>';
+			$body .= '<p><strong>' . esc_html__('Ответ:', 'yoga') . '</strong></p>' . wpautop(wp_kses_post($answer));
+			$body .= '<p>' . esc_html__('С уважением, администрация сайта.', 'yoga') . '</p>';
+
+			$sent = wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
+			update_post_meta($post_id, '_answer_delivery_status', $sent ? 'sent' : 'failed');
+			if ($sent) {
+				update_post_meta($post_id, '_answer_sent_at', current_time('mysql'));
+				update_post_meta($post_id, '_answer_sent_by', get_current_user_id());
+				update_post_meta($post_id, '_answer_sent_email', $recipient_email);
+			}
+
+			return;
 			
 			// Альтернатива: проверка через метаполя
 			if ($answer !== $old_answer) {
@@ -3539,6 +4120,44 @@ function handle_comment_delete() {
 			}
 			return $cached;
 		}
+	}
+
+	function yoga_get_lk_sections(): array {
+		return array(
+			'profile' => '1',
+			'history' => '2',
+			'favorites' => '3',
+			'recommendations' => '4',
+			'questions' => '5',
+			'subscription' => '6',
+			'sadhanas' => '7',
+			'notifications' => '8',
+			'notification-settings' => '9',
+		);
+	}
+
+	function yoga_get_lk_section_by_target(): array {
+		return array_flip(yoga_get_lk_sections());
+	}
+
+	function yoga_get_requested_lk_section(): string {
+		$section = isset($_GET['lk-section']) ? sanitize_key(wp_unslash((string) $_GET['lk-section'])) : '';
+		return array_key_exists($section, yoga_get_lk_sections()) ? $section : '';
+	}
+
+	function yoga_get_initial_lk_target(): string {
+		$section = yoga_get_requested_lk_section();
+		$sections = yoga_get_lk_sections();
+		return $section !== '' ? $sections[$section] : $sections['profile'];
+	}
+
+	function yoga_get_lk_section_url(string $section): string {
+		$sections = yoga_get_lk_sections();
+		$lk_url = yoga_get_lk_page_url();
+		if ($lk_url === '' || !array_key_exists($section, $sections)) {
+			return $lk_url !== '' ? $lk_url : home_url('/');
+		}
+		return add_query_arg('lk-section', $section, $lk_url);
 	}
 
 	// Axecode.tech: расчет периода доступа вынесен в отдельный helper для повторного использования.
@@ -4006,8 +4625,3 @@ function handle_comment_delete() {
 			return '';
 		}
 	}
-
-
-
-
-

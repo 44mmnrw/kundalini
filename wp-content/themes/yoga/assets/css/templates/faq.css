@@ -417,7 +417,7 @@
   width: 1.6875rem;
   height: 1.6875rem;
   color: var(--color-violet);}
-.notification-icon span {
+.notification-icon > span:not(.notification-icon__count) {
   display: block;
   position: absolute;
   top: -0.3125rem;  right: -0.3125rem;  min-width: 1.0625rem;  height: 1.0625rem;  line-height: 1.0625rem;  border-radius: 50%;
