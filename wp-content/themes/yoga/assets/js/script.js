@@ -1940,11 +1940,6 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				const redirectUrl = (data.data && data.data.redirect_url) || yoga_ajax.question_success_url;
-				if (redirectUrl) {
-					window.location.assign(redirectUrl);
-					return;
-				}
 				location.reload();
 				} else {
 				alert('Ошибка при отправке комментария');
@@ -2100,6 +2095,13 @@ jQuery(document).ready(function($) {
 		// Обработка отправки формы
 		const contactForms = document.querySelectorAll('.contacts-form');
 		const submitLabels = document.querySelectorAll('label[for="form-questions-submit"]');
+
+		contactForms.forEach(form => {
+			form.addEventListener('submit', function(e) {
+				e.preventDefault();
+				processContactForm(form);
+			});
+		});
 		
 		// Клик по кнопке отправки
 		submitLabels.forEach(label => {
@@ -2159,15 +2161,16 @@ jQuery(document).ready(function($) {
 	
 	// AJAX отправка формы контактов
 	function submitContactForm(formData, form) {
-		const submitButton = form.querySelector('.contacts-form-layout__submit[type="submit"]');
-		if (!submitButton) {
+		const submitControl = form.querySelector('.contacts-form-layout__submit[type="submit"]')
+			|| form.querySelector('label[for="form-questions-submit"]');
+		if (!submitControl) {
 			return;
 		}
-		const originalHtml = submitButton.innerHTML;
+		const originalHtml = submitControl.innerHTML;
 		
 		// Показываем лоадер
-		submitButton.innerHTML = '<span class="spinner"></span>';
-		submitButton.style.pointerEvents = 'none';
+		submitControl.innerHTML = '<span class="spinner"></span>';
+		submitControl.style.pointerEvents = 'none';
 		
 		fetch(yoga_ajax.ajax_url, {
 			method: 'POST',
@@ -2189,8 +2192,8 @@ jQuery(document).ready(function($) {
 			showContactError('Ошибка сети. Попробуйте еще раз.');
 		})
 		.finally(() => {
-			submitButton.innerHTML = originalHtml;
-			submitButton.style.pointerEvents = 'auto';
+			submitControl.innerHTML = originalHtml;
+			submitControl.style.pointerEvents = 'auto';
 		});
 	}
 	
@@ -2270,6 +2273,11 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
+				const redirectUrl = (data.data && data.data.redirect_url) || yoga_ajax.question_success_url;
+				if (redirectUrl) {
+					window.location.assign(redirectUrl);
+					return;
+				}
 				faqForm.reset();
 				$(faqForm).find('input[type="text"], input[type="email"], textarea').val('');
 				$('.body').addClass("body-fixed");
@@ -3061,6 +3069,36 @@ jQuery(document).ready(function($) {
 		}
 	}
 
+	function syncLkSectionUrl(target) {
+		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.lk_section_by_target || !window.history || !window.history.replaceState) {
+			return;
+		}
+		var section = yoga_ajax.lk_section_by_target[String(target || '')];
+		if (!section) {
+			return;
+		}
+		var url = new URL(window.location.href);
+		url.searchParams.set('lk-section', section);
+		url.searchParams.delete('lk-slide');
+		url.hash = '';
+		window.history.replaceState({}, '', url.toString());
+	}
+
+	function cleanNotificationActionUrl() {
+		if (!window.history || !window.history.replaceState) {
+			return;
+		}
+		var url = new URL(window.location.href);
+		if (!url.searchParams.has('read-notification') && !url.searchParams.has('_yoga-notification-nonce')) {
+			return;
+		}
+		url.searchParams.delete('read-notification');
+		url.searchParams.delete('_yoga-notification-nonce');
+		window.history.replaceState({}, '', url.toString());
+	}
+
+	cleanNotificationActionUrl();
+
 	function getCurrentLkSlideTarget() {
 		var activeSlide = String($('.lk-slide.active').attr('data-target') || '').trim();
 		if (activeSlide !== '') {
@@ -3068,6 +3106,88 @@ jQuery(document).ready(function($) {
 		}
 		return String($('.sidebar-menu__item.active').attr('data-target') || '').trim();
 	}
+
+	function updateHeaderNotificationBell(unreadCount) {
+		var $bell = $('.header-lk .notification-icon_header');
+		if (!$bell.length) {
+			return;
+		}
+		var $count = $bell.find('.notification-icon__count');
+		if (unreadCount > 0) {
+			$bell.addClass('notification-icon_header--has-notifications');
+			$bell.find('.notification-icon__img use').attr('href', '#notification-bell-filled-icon');
+			if ($count.length) {
+				$count.text(unreadCount);
+			} else {
+				$bell.append($('<span class="notification-icon__count" aria-hidden="true"></span>').text(unreadCount));
+			}
+			return;
+		}
+		$bell.removeClass('notification-icon_header--has-notifications');
+		$count.remove();
+		$bell.find('.notification-icon__img use').attr('href', '#notification-bell-icon');
+	}
+
+	function renderHeaderNotificationsEmpty() {
+		var $popup = $('#header-notifications-popup');
+		if (!$popup.length) {
+			return;
+		}
+		$popup.addClass('lk-notifications-popup--empty');
+		$popup.find('.lk-notifications-popup__read-all, .lk-notifications-popup__list, .lk-notifications-popup__all').remove();
+		if (!$popup.find('.lk-notifications-popup__empty').length) {
+			$popup.append(
+				'<div class="lk-notifications-popup__empty">' +
+					'<span class="lk-notifications-popup__empty-icon"><svg aria-hidden="true"><use href="#notification-bell-icon"></use></svg></span>' +
+					'<strong>Здесь пока ничего нет</strong>' +
+					'<span>Здесь появятся уведомления</span>' +
+				'</div>'
+			);
+		}
+	}
+
+	$(document).on('click', '.lk-notifications-page__read-all', function() {
+		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in) {
+			return;
+		}
+		var $button = $(this).prop('disabled', true);
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_mark_question_answer_notifications_read',
+			nonce: yoga_ajax.nonce,
+			mark_all: 1
+		}).done(function(response) {
+			if (!response || !response.success) {
+				return;
+			}
+			$('.lk-notification--unread').removeClass('lk-notification--unread').find('.lk-notification__meta i').remove();
+			updateHeaderNotificationBell(Number(response.data.unread_count));
+			if (Number(response.data.unread_count) === 0) {
+				renderHeaderNotificationsEmpty();
+			}
+		}).always(function() {
+			$button.prop('disabled', false);
+		});
+	});
+
+	$(document).on('click', '.notification-settings__back', function() { switchLkSlide('8'); });
+	$(document).on('click', '.lk-notifications-page__settings', function() { switchLkSlide('9'); });
+	$('.notification-settings__row').each(function() {
+		var $row = $(this);
+		if ($row.find('strong').text().indexOf('Ответ преподавателя') === -1) return;
+		var $toggles = $row.find('.notification-toggle');
+		$toggles.eq(0).attr('data-preference-key', 'question_answer_site');
+		$toggles.eq(1).attr('data-preference-key', 'question_answer_email');
+		if (typeof yoga_ajax !== 'undefined' && yoga_ajax.notification_preferences) {
+			$toggles.eq(0).toggleClass('is-on', !!yoga_ajax.notification_preferences.question_answer_site).attr('aria-pressed', !!yoga_ajax.notification_preferences.question_answer_site);
+			$toggles.eq(1).toggleClass('is-on', !!yoga_ajax.notification_preferences.question_answer_email).attr('aria-pressed', !!yoga_ajax.notification_preferences.question_answer_email);
+		}
+	});
+	$(document).on('click', '.notification-toggle', function() {
+		var $toggle=$(this), on=!$toggle.hasClass('is-on'), key=$toggle.data('preference-key');
+		$toggle.toggleClass('is-on',on).attr('aria-pressed',on?'true':'false');
+		if (!key || typeof yoga_ajax === 'undefined') return;
+		$.post(yoga_ajax.ajax_url,{action:'yoga_save_notification_preference',nonce:yoga_ajax.nonce,key:key,enabled:on?1:0}).fail(function(){ $toggle.toggleClass('is-on',!on).attr('aria-pressed',!on?'true':'false'); });
+	});
 
     function switchLkSlide(target) {
         var normalizedTarget = String(target || '').trim();
@@ -3080,6 +3200,7 @@ jQuery(document).ready(function($) {
         $('.sidebar-menu__item').removeClass('active');
         $('.sidebar-menu__item[data-target="' + normalizedTarget + '"]').addClass('active');
 		persistLkSlide(normalizedTarget);
+		syncLkSectionUrl(normalizedTarget);
     }
 
     function applyLkDeepLinkHash() {
@@ -3090,15 +3211,30 @@ jQuery(document).ready(function($) {
         } else if (raw === 'lk-slide-settings') {
             switchLkSlide('6');
 			return true;
+		} else if (raw === 'lk-slide-notifications') {
+			switchLkSlide('8');
+			return true;
+		} else if (raw === 'lk-slide-questions') {
+			switchLkSlide('5');
+			return true;
+		} else if (raw === 'lk-slide-notification-settings') {
+			switchLkSlide('9');
+			return true;
         }
 		return false;
     }
 
-    var hashApplied = applyLkDeepLinkHash();
-	if (!hashApplied) {
-		var persistedTarget = readPersistedLkSlide();
-		if (persistedTarget !== '') {
-			switchLkSlide(persistedTarget);
+	var $lkSection = $('#section-lk');
+	var serverRouted = $lkSection.attr('data-server-routed') === '1';
+	if (serverRouted) {
+		persistLkSlide($lkSection.attr('data-initial-target'));
+	} else {
+		var hashApplied = applyLkDeepLinkHash();
+		if (!hashApplied) {
+			var persistedTarget = readPersistedLkSlide();
+			if (persistedTarget !== '') {
+				switchLkSlide(persistedTarget);
+			}
 		}
 	}
     $(window).on('hashchange', applyLkDeepLinkHash);
@@ -3326,6 +3462,36 @@ jQuery(document).ready(function($) {
 	
 	
 	// Обработка избранного в рекомендациях
+	function updateHeaderFavorites(favoritesCount) {
+		var count = Math.max(0, parseInt(favoritesCount, 10) || 0);
+		var $link = $('.header-lk .header-favorites-link');
+		if (!$link.length) {
+			return;
+		}
+
+		$link
+			.toggleClass('header-favorites-link--active', count > 0)
+			.attr('aria-label', 'Избранное: ' + count);
+		$link.find('svg use').attr('href', count > 0 ? '#header-heart-filled' : '#header-heart');
+
+		var $counter = $link.find('.header-favorites-link__count');
+		if (count > 0) {
+			if ($counter.length) {
+				$counter.text(count);
+			} else {
+				$link.append($('<span class="header-favorites-link__count" aria-hidden="true"></span>').text(count));
+			}
+		} else {
+			$counter.remove();
+		}
+	}
+
+	$(document).on('yoga:favorites-updated', function(event, payload) {
+		if (payload && payload.favorites_count !== undefined) {
+			updateHeaderFavorites(payload.favorites_count);
+		}
+	});
+
 	$(document).on('click', '.fav', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -3347,7 +3513,7 @@ jQuery(document).ready(function($) {
 			},
 			success: function(response) {
 				if (response.success) {
-					//$this.toggleClass('active');
+					$(document).trigger('yoga:favorites-updated', [response.data || {}]);
 					$this.toggleClass('active');
 					$this.find('img, svg').toggleClass('active');
 					if ($this.attr('role') === 'button') {

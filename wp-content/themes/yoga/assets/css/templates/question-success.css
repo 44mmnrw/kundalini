@@ -7,7 +7,7 @@
   min-height: 34.375rem;
   margin: 0 auto;
   max-width: 75.0625rem;
-  background: url('../../svg/question-success-bg.svg') center / 100% 31.9375rem no-repeat;
+  background: url('../../svg/question-success-bg.svg') center bottom / 100% 31.9375rem no-repeat;
 }
 
 .question-success__content {
@@ -81,6 +81,8 @@
 }
 
 .question-success__decor svg,
+.question-success__decor img,
+.question-success__envelope img,
 .question-success__envelope svg {
   display: block;
   width: 100%;
@@ -90,8 +92,16 @@
 .question-success__decor--oval {
   top: 0;
   left: 3.3125rem;
-  width: 1.8125rem;
-  height: 7.1875rem;
+  display: flex;
+  width: 3.62294rem;
+  height: 7.18263rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-success__decor--oval img {
+  width: 1.75184rem;
+  height: 6.9705rem;
   transform: rotate(16.16deg);
 }
 
