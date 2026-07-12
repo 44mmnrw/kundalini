@@ -521,7 +521,18 @@
 		$specification_style_ver = file_exists($theme_dir . '/assets/css/templates/specification.css') ? filemtime($theme_dir . '/assets/css/templates/specification.css') : '1.0.0';
 		$header_style_ver = file_exists($theme_dir . '/assets/css/templates/header.css') ? filemtime($theme_dir . '/assets/css/templates/header.css') : '1.0.0';
 		$footer_style_ver = file_exists($theme_dir . '/assets/css/templates/footer.css') ? filemtime($theme_dir . '/assets/css/templates/footer.css') : '1.0.0';
+		$notifications_style_ver = file_exists($theme_dir . '/assets/css/templates/notifications.css') ? filemtime($theme_dir . '/assets/css/templates/notifications.css') : '1.0.0';
 		$modals_style_ver = file_exists($theme_dir . '/assets/css/templates/modals.css') ? filemtime($theme_dir . '/assets/css/templates/modals.css') : '1.0.0';
+		$modal_component_styles = array(
+			'modal-mobile-menus'  => 'mobile-menus.css',
+			'modal-auth'          => 'auth.css',
+			'modal-filters'       => 'filters.css',
+			'modal-confirmations' => 'confirmations.css',
+			'modal-cards'         => 'cards.css',
+			'modal-cookie'        => 'cookie.css',
+			'modal-utilities'     => 'utilities.css',
+			'modal-auth-states'   => 'auth-states.css',
+		);
 		$homepage_style_ver = file_exists($theme_dir . '/assets/css/templates/homepage.css') ? filemtime($theme_dir . '/assets/css/templates/homepage.css') : '1.0.0';
 		$kriyi_style_ver = file_exists($theme_dir . '/assets/css/templates/kriyi.css') ? filemtime($theme_dir . '/assets/css/templates/kriyi.css') : '1.0.0';
 		$library_style_ver = file_exists($theme_dir . '/assets/css/templates/library.css') ? filemtime($theme_dir . '/assets/css/templates/library.css') : '1.0.0';
@@ -606,7 +617,17 @@
 		wp_enqueue_style( 'specification-style', $theme_uri . '/assets/css/templates/specification.css', $common_style_deps, $specification_style_ver );
 		wp_enqueue_style( 'header-style', $theme_uri . '/assets/css/templates/header.css', $common_style_deps, $header_style_ver );
 		wp_enqueue_style( 'footer-style', $theme_uri . '/assets/css/templates/footer.css', $common_style_deps, $footer_style_ver );
+		wp_enqueue_style( 'notifications-style', $theme_uri . '/assets/css/templates/notifications.css', $common_style_deps, $notifications_style_ver );
 		wp_enqueue_style( 'modals-style', $theme_uri . '/assets/css/templates/modals.css', $common_style_deps, $modals_style_ver );
+		$modal_style_dependency = 'modals-style';
+		foreach ($modal_component_styles as $modal_style_handle => $modal_style_file) {
+			$modal_style_path = '/assets/css/templates/modals/' . $modal_style_file;
+			$modal_style_version = (defined('WP_DEBUG') && WP_DEBUG)
+				? time()
+				: (file_exists($theme_dir . $modal_style_path) ? filemtime($theme_dir . $modal_style_path) : '1.0.0');
+			wp_enqueue_style($modal_style_handle, $theme_uri . $modal_style_path, array($modal_style_dependency), $modal_style_version);
+			$modal_style_dependency = $modal_style_handle;
+		}
 
 		if ($is_homepage) {
 			wp_enqueue_style( 'homepage-style', $theme_uri . '/assets/css/templates/homepage.css', $common_style_deps, $homepage_style_ver );

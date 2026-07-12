@@ -426,7 +426,7 @@ input {
   -moz-appearance: none !important;
   appearance: none !important;
   box-shadow: none !important;
-  font-family: "Roboto-Regular";
+  font-family: inherit;
 }
 
 input::-webkit-outer-spin-button,
@@ -438,7 +438,7 @@ input::-webkit-inner-spin-button {
 }
 
 input::placeholder {
-  font-family: "Roboto-Regular";
+  font-family: inherit;
   opacity: 1 !important;
   -webkit-appearance: none;
   -moz-appearance: none;

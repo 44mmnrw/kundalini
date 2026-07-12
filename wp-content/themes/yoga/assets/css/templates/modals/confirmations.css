@@ -1,0 +1,461 @@
+/* Modal-default */
+.modal-default {
+  width: 28.5625rem;  max-width: 100%;
+  padding-top: 3.9375rem;  padding-bottom: 4.0625rem;  background: var(--color-green) !important;
+}
+.modal-default.active {
+  width: 28.5625rem;}
+.modal-default .modal-close {
+  background: #fff;
+  top: 0.9375rem;  right: 0.9375rem;}
+.modal-default h3 {
+  font-size: 1.75rem;}
+.modal-default p {
+  display: block;
+  margin-top: 0.8125rem;}
+.modal-default.modal-default_logout {
+  padding-bottom: 2.8125rem;}
+
+/* Подтверждение очистки корзины — Figma 2039:17911. */
+#yoga-cart-clear-modal.modal-default {
+  width: 28.5625rem;
+  height: 18.4375rem;
+  max-width: calc(100vw - 1.875rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: var(--color-green) !important;
+}
+
+#yoga-cart-clear-modal.modal-default.active {
+  width: 28.5625rem;
+  height: 18.4375rem;
+}
+
+#yoga-cart-clear-modal .modal-close {
+  display: grid;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  top: 0.9375rem;
+  right: 0.9375rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+#yoga-cart-clear-modal .modal-close svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Удаление комментария — Figma 246:5523 и 246:5590. */
+.yoga-comment-delete-modal.modal-default {
+  width: 28.5625rem;
+  height: 19.0625rem;
+  max-width: calc(100vw - 1.875rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: var(--color-green) !important;
+}
+
+.yoga-comment-delete-modal.modal-default.active {
+  width: 28.5625rem;
+  height: 19.0625rem;
+}
+
+.yoga-comment-delete-modal .modal-close {
+  top: 0.9375rem;
+  right: 0.9375rem;
+  padding: 0;
+  border: 0;
+}
+
+.yoga-comment-delete-modal__content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.6875rem;
+  padding: 4.0625rem 2.1875rem 3.4375rem;
+}
+
+.yoga-comment-delete-modal__copy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9375rem;
+  color: var(--color-black);
+}
+
+.yoga-comment-delete-modal .yoga-comment-delete-modal__copy h3,
+.yoga-comment-delete-modal .yoga-comment-delete-modal__copy p {
+  width: 100%;
+  margin: 0;
+}
+
+.yoga-comment-delete-modal .yoga-comment-delete-modal__copy h3 {
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.yoga-comment-delete-modal .yoga-comment-delete-modal__copy p {
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.yoga-comment-delete-modal__actions {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.yoga-comment-delete-modal__button {
+  display: flex;
+  flex: 1 1 0;
+  height: 3.25rem;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.9375rem;
+  border: 1px solid var(--color-black);
+  border-radius: 9.375rem;
+  font-family: "Mulish-Medium", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.yoga-comment-delete-modal__button_cancel {
+  background: transparent;
+  color: var(--color-black);
+}
+
+.yoga-comment-delete-modal__button_confirm {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.yoga-comment-delete-modal_success.modal-default,
+.yoga-comment-delete-modal_success.modal-default.active {
+  height: 19.6875rem;
+}
+
+.yoga-comment-delete-modal__success-content {
+  position: absolute;
+  top: calc(50% + 0.03125rem);
+  left: calc(50% + 0.03125rem);
+  display: flex;
+  width: 16rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  transform: translate(-50%, -50%);
+}
+
+.yoga-comment-delete-modal__success-icon {
+  display: block;
+  width: 4.8125rem;
+  height: 4.8125rem;
+}
+
+.yoga-comment-delete-modal .yoga-comment-delete-modal__success-content h3 {
+  width: 100%;
+  margin: 0;
+  color: var(--color-black);
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+}
+
+@media (max-width: 575px) {
+  .yoga-comment-delete-modal__content {
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .yoga-comment-delete-modal__actions {
+    gap: 0.625rem;
+  }
+}
+
+.yoga-cart-clear__content {
+  position: absolute;
+  top: calc(50% + 0.03125rem);
+  left: 2.1875rem;
+  display: flex;
+  width: 22.9375rem;
+  max-width: calc(100% - 4.375rem);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.6875rem;
+  transform: translateY(-50%);
+}
+
+#yoga-cart-clear-modal .yoga-cart-clear__content h3 {
+  width: 100%;
+  margin: 0;
+  color: var(--color-black);
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.yoga-cart-clear__actions {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.yoga-cart-clear__button {
+  display: flex;
+  flex: 1 1 0;
+  height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 1rem 0.9375rem;
+  border: 1px solid var(--color-black);
+  border-radius: 9.375rem;
+  font-family: "Mulish-Medium", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.yoga-cart-clear__button_cancel {
+  background: transparent;
+  color: var(--color-black);
+}
+
+.yoga-cart-clear__button_confirm {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+@media (max-width: 575px) {
+  .yoga-cart-clear__content {
+    left: 1.25rem;
+    width: calc(100% - 2.5rem);
+    max-width: none;
+  }
+
+  #yoga-cart-clear-modal .yoga-cart-clear__content h3 {
+    padding-right: 2.5rem;
+    font-size: 1.5rem;
+  }
+
+  .yoga-cart-clear__actions {
+    gap: 0.625rem;
+  }
+}
+
+.delcomm {
+  width: 100%;
+  position: relative;
+  padding-left: 2.1875rem;  padding-right: 5.375rem;}
+.delcomm.active .delcomm__main {
+  opacity: 0;
+  pointer-events: none;
+}
+.delcomm.active .delcomm__succes {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.delcomm__main {
+  width: 100%;
+  position: relative;
+}
+
+.delcomm-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1.6875rem;}
+.delcomm-buttons .btn {
+  width: calc(50% - 0.625rem);  padding-left: 0.3125rem;  padding-right: 0.3125rem;  height: 3.25rem;  min-height: 3.25rem;  line-height: 3.1875rem;}
+.delcomm-buttons .btn span {
+  font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
+  font-weight: normal;
+}
+.delcomm-buttons .btn_white {
+  border: 1px solid var(--color-black);
+  background: rgba(31, 31, 31, 0);
+}
+.delcomm-buttons .btn_white:hover {
+  background: var(--color-black);
+}
+.delcomm-buttons .btn_white:hover span {
+  color: var(--color-green);
+}
+.delcomm-buttons .btn_dark {
+  border: 1px solid var(--color-black);
+}
+.delcomm-buttons .btn_dark span {
+  color: #fff;
+}
+.delcomm-buttons .btn_dark:hover {
+  background: var(--color-green);
+}
+.delcomm-buttons .btn_dark:hover span {
+  color: var(--color-black);
+}
+
+.delcomm__succes {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  padding-top: 6.25rem;  transition: opacity 0.3s ease;
+}
+.delcomm__succes::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0.1875rem;  width: 4.8125rem;  height: 4.875rem;  border-radius: 50%;
+  background: url(../../img/delcomm-succes-before.png) no-repeat center center/100% auto;
+}
+.delcomm__succes b {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 1.25rem;  font-family: "Mulish-Bold", sans-serif;
+  font-weight: normal;
+}
+
+.thanksforqw {
+  padding-left: 2.1875rem;  padding-right: 2.1875rem;  padding-top: 1rem;  padding-bottom: 0.9375rem;  max-width: 25.375rem;}
+
+/* Question submission confirmation — Figma 2338:25157 / 2335:24470. */
+.modal-default_formsucces,
+.modal-default_formsucces.active {
+  width: 28.5625rem;
+  height: 19.3125rem;
+  max-width: calc(100vw - 1.875rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: var(--color-green) !important;
+}
+
+.modal-default_formsucces .modal-close {
+  display: block;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  top: 0.9375rem;
+  right: 0.9375rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-white);
+}
+
+.modal-default_formsucces .thanksforqw {
+  position: absolute;
+  top: calc(50% + 0.46875rem);
+  left: 2.1875rem;
+  display: flex;
+  width: 24.1875rem;
+  max-width: calc(100% - 4.375rem);
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(-50%);
+  color: var(--color-black);
+  text-align: center;
+}
+
+.modal-default_formsucces .thanksforqw__icon {
+  display: block;
+  width: 4.8125rem;
+  height: 4.8125rem;
+  margin-bottom: 1.25rem;
+}
+
+.modal-default_formsucces .thanksforqw h3,
+.modal-default_formsucces .thanksforqw p {
+  width: 100%;
+  margin: 0;
+  color: inherit;
+}
+
+.modal-default_formsucces .thanksforqw h3 {
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.modal-default_formsucces .thanksforqw p {
+  margin-top: 0.9375rem;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+@media (max-width: 575px) {
+  .modal-default_formsucces,
+  .modal-default_formsucces.active {
+    width: 20rem;
+    height: 18.5rem;
+    max-width: calc(100vw - 1.875rem);
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    border-radius: 1.875rem;
+  }
+
+  .modal-default_formsucces .modal-close {
+    display: block;
+    width: 2.25rem;
+    height: 2.25rem;
+    top: 0.9375rem;
+    right: 0.9375rem;
+  }
+
+  .modal-default_formsucces .modal-close img {
+    height: 0.75rem;
+  }
+
+  .modal-default_formsucces .thanksforqw {
+    top: calc(50% + 0.28125rem);
+    left: 0.9375rem;
+    width: calc(100% - 1.875rem);
+    max-width: none;
+  }
+
+  .modal-default_formsucces .thanksforqw h3 {
+    width: 18.125rem;
+    max-width: 100%;
+    font-size: 1.25rem;
+  }
+}
+
+.modal-default_card {
+  padding-top: 1.5625rem;  padding-bottom: 1.5625rem;}

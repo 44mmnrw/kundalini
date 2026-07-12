@@ -1,0 +1,365 @@
+/* Figma 1700:14537 — подтверждение отправки письма, desktop. */
+@media (min-width: 576px) {
+  .modal-login.modal-login--success .modal-login-inner {
+    display: block;
+    position: relative;
+    min-height: 100%;
+    padding: 0;
+  }
+
+  .modal-login.modal-login--success .modal-login-inner__slide_succes.active {
+    display: flex;
+    position: fixed;
+    top: 50vh;
+    right: 3.34375rem;
+    left: auto;
+    width: 25rem;
+    max-width: calc(100% - 2.5rem);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+
+  .modal-login.modal-login--success .password-recovery-back { display: none; }
+
+  .modal-login-inner__slide_succes.active > p {
+    margin: 0;
+    font: 400 1rem/1.25 "Mulish-Regular", sans-serif;
+    text-align: left;
+  }
+
+  .modal-login-inner__slide_succes.active .login-notification {
+    margin: 0;
+    padding: 0.375rem;
+    border-radius: 0.1875rem;
+    background: #ddf354;
+    color: #1f1f1f;
+    font: 400 1rem/1.25 "Mulish-Regular", sans-serif;
+    text-align: center;
+  }
+
+  .modal-login-inner__slide_succes.active .form {
+    display: flex;
+    padding: 0.625rem 0 0;
+    flex-direction: column;
+    gap: 1.5625rem;
+    align-items: center;
+  }
+
+  .modal-login-inner__slide_succes.active .form > .btn {
+    width: 100%;
+    min-height: 3.8125rem;
+    margin: 0;
+    line-height: 3.8125rem;
+  }
+
+  .modal-login-inner__slide_succes.active .loggin-back {
+    margin: 0;
+  }
+
+  .modal-login-inner__slide_succes.active .loggin-back__link {
+    margin: 0;
+    color: #646464;
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-size: 1rem;
+    line-height: 1.1;
+    text-decoration: underline;
+    text-underline-offset: 0.1875rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .modal-login.active { width: 100%; height: 100dvh; background: var(--color-green); }
+  .modal-login .modal-close { display: none; position: absolute; top: 0.75rem; right: 0.625rem; width: 3.1875rem; height: 3.1875rem; background: #fff; z-index: 30; }
+  .modal-login.active .modal-close { display: block; }
+  .modal-login.active .modal-login-inner { display: flex; width: 100%; height: 100%; min-height: 100%; margin: 0; padding: 3.125rem 1.25rem 1.875rem; border-radius: 0; overflow-y: auto; }
+  .modal-login-inner__slide[data-target="1"].active { display: flex; width: 100%; min-width: 0; min-height: 100%; margin: 0; padding: 0; flex-direction: column; align-items: stretch; justify-content: center; }
+  .modal-login-inner__slide[data-target="1"].active .login-slide-switches { flex: 0 0 auto; }
+  .modal-login-inner__slide[data-target="1"].active .login-slide-switches h3 { font: 700 1.625rem/1 "Mulish-Bold", sans-serif; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login { display: flex; flex: 0 0 auto; flex-direction: column; gap: 0.625rem; margin-top: 1.25rem; padding: 0; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input,
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input-password,
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .btn,
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-form-links { width: 100%; margin: 0; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border-color: #383838; border-radius: 6.25rem; font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login .btn { height: 3.8125rem; margin: 0; line-height: 3.8125rem; }
+  .modal-login-inner__slide[data-target="1"].active .login-form-links { display: flex; gap: 1.875rem; justify-content: center; margin-top: 0.625rem; }
+  .modal-login-inner__slide[data-target="1"].active .login-form-links a,
+  .modal-login-inner__slide[data-target="1"].active .login-form-links .login-switch-link { display: inline-block; font-size: 1rem; line-height: 1.1; white-space: nowrap; }
+  .modal-login-inner__slide[data-target="1"].active .login-vk-link { position: absolute; right: 0; bottom: 0; left: 0; margin: 0; font-size: 1rem; }
+  .modal-login-inner__slide[data-target="1"].active .login-vk-link::before { display: none; }
+  .modal-login-inner__slide[data-target="1"].active .login-vk-link > span { text-decoration: underline; text-underline-offset: 0.125rem; }
+
+  .modal-login-inner__slide[data-target="2"].active {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
+    margin: 0;
+    padding: 0 0 3.625rem;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    transform: none;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .login-slide-switches {
+    justify-content: center;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .login-slide-switches h3 {
+    width: 100%;
+    font: 700 1.625rem/1 "Mulish-Bold", sans-serif;
+    text-align: center;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .login-slide-switches > .login-switch-link {
+    display: none;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .yoga-form-register {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    margin-top: 1.25rem;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .yoga-form-register > .input,
+  .modal-login-inner__slide[data-target="2"].active .yoga-form-register > .input-password {
+    width: 100%;
+    height: 3.8125rem;
+    margin: 0;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .yoga-form-register .input {
+    height: 3.8125rem;
+    margin: 0;
+    padding: 0 1.875rem;
+    border-color: #383838;
+    border-radius: 6.25rem;
+    font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .registration-consents {
+    gap: 0.625rem;
+    margin: 0.9375rem 0;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .registration-consent {
+    gap: 0.75rem;
+    font: 400 0.875rem/1.15 "Mulish-Regular", sans-serif;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .registration-consent input {
+    flex-basis: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .yoga-form-register > .btn {
+    width: 100%;
+    height: 3.8125rem;
+    margin: 0;
+    line-height: 3.8125rem;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .loggin-back_mob {
+    display: flex;
+    margin-top: 0.625rem;
+    align-items: center;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .loggin-back_mob .loggin-back__link {
+    margin: 0;
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-size: 1rem;
+    line-height: 1.1;
+    text-decoration: underline;
+    text-underline-offset: 0.1875rem;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .registration-vk-link {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-login-inner__slide[data-target="2"].active .registration-vk-link::before { display: none; }
+  .modal-login-inner__slide[data-target="2"].active .registration-vk-link > span { text-decoration: underline; text-underline-offset: 0.125rem; }
+
+  .modal-login:has(.modal-login-inner__slide[data-target="3"].active) .modal-close,
+  .modal-login:has(.modal-login-inner__slide[data-target="3"].active) .password-recovery-back {
+    display: none;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
+    margin: 0;
+    padding: 0 0 3rem;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    transform: none;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .login-slide-switches {
+    justify-content: center;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .login-slide-switches h3 {
+    width: 100%;
+    font: 700 1.625rem/1 "Mulish-Bold", sans-serif;
+    text-align: center;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active > p {
+    width: 100%;
+    margin: 0.625rem 0 0;
+    font: 400 1rem/1.2 "Mulish-Regular", sans-serif;
+    text-align: center;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .form_recovery {
+    position: static;
+    display: flex;
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 0;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .form_recovery > .input {
+    width: 100%;
+    height: 3.8125rem;
+    margin: 0;
+    padding: 0 1.875rem;
+    border-color: #383838;
+    border-radius: 6.25rem;
+    font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .form_recovery > .btn {
+    width: 100%;
+    height: 3.8125rem;
+    margin: 0;
+    line-height: 3.8125rem;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .form_recovery > .loggin-back {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    margin: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.875rem;
+  }
+
+  .modal-login-inner__slide[data-target="3"].active .loggin-back__link {
+    margin: 0;
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-size: 1rem;
+    line-height: 1.1;
+    text-decoration: underline;
+    text-underline-offset: 0.1875rem;
+    white-space: nowrap;
+  }
+
+  .modal-login.modal-login--success .modal-login-inner {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 3.125rem 1.25rem 1.875rem;
+    border-radius: 0;
+    justify-content: center;
+  }
+
+  .modal-login-inner__slide_succes.active {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
+    padding: 0 0 3rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: stretch;
+    justify-content: center;
+    transform: none;
+  }
+
+  .modal-login-inner__slide_succes.active > p {
+    width: 100%;
+    margin: 0;
+    color: #1f1f1f;
+    font: 400 1rem/1.25 "Mulish-Regular", sans-serif;
+    text-align: center;
+  }
+
+  .modal-login-inner__slide_succes.active .login-notification {
+    width: 100%;
+    margin: 0;
+    padding: 0.375rem;
+    border-radius: 0.1875rem;
+    background: #ddf354;
+    color: #1f1f1f;
+    font: 400 1rem/1.25 "Mulish-Regular", sans-serif;
+    text-align: center;
+  }
+
+  .modal-login-inner__slide_succes.active .form {
+    position: static;
+    display: flex;
+    padding: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal-login-inner__slide_succes.active .form > .btn {
+    width: 100%;
+    height: 3.8125rem;
+    margin: 0;
+    line-height: 3.8125rem;
+  }
+
+  .modal-login-inner__slide_succes.active .loggin-back {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-login-inner__slide_succes.active .loggin-back__link {
+    margin: 0;
+    color: #1f1f1f;
+    font-family: "Mulish-SemiBold", sans-serif;
+    font-size: 1rem;
+    line-height: 1.1;
+    text-decoration: underline;
+    text-underline-offset: 0.1875rem;
+  }
+}

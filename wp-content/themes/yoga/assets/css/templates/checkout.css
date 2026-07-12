@@ -533,7 +533,8 @@
 	align-items: center;
 	gap: 0.625rem;
 	width: 100%;
-	padding: 0.8125rem 1.5625rem;
+	min-height: 2.75rem;
+	padding: 0 1.5625rem;
 	border: 1px solid #e8e8e8;
 	border-radius: 1.5rem;
 	background: var(--color-grey);
@@ -542,9 +543,18 @@
 
 .yoga-checkout-promo__icon {
 	display: flex;
+	width: 1.125rem;
+	height: 1.125rem;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
+	color: var(--color-violet);
+}
+
+.yoga-checkout-promo__icon svg {
+	display: block;
+	width: 1.0625rem;
+	height: 1.0625rem;
 }
 
 .yoga-checkout-promo__input {
@@ -555,12 +565,18 @@
 	outline: none;
 	font-family: "Mulish-Regular", sans-serif;
 	font-size: 0.875rem;
+	font-weight: 400;
 	line-height: normal;
 	color: #646464;
 }
 
 .yoga-checkout-promo__input::placeholder {
 	color: #646464;
+	font-family: "Mulish-Regular", sans-serif;
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: normal;
+	opacity: 1;
 }
 
 .yoga-checkout-promo__apply {
@@ -886,7 +902,7 @@
 	}
 
 	.yoga-checkout-promo__field {
-		padding: 0.8125rem 1.5625rem;
+		padding: 0 1.5625rem;
 	}
 
 	.yoga-checkout-summary__total-value {

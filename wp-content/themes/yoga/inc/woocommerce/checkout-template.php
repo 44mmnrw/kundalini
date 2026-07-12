@@ -199,3 +199,72 @@ function yoga_validate_checkout_user_logged_in(): void {
 
 	wc_add_notice(__('Для оплаты необходимо войти или зарегистрироваться.', 'yoga'), 'error');
 }
+
+add_action('wp_ajax_yoga_apply_checkout_coupon', 'yoga_apply_checkout_coupon');
+add_action('wp_ajax_nopriv_yoga_apply_checkout_coupon', 'yoga_apply_checkout_coupon');
+function yoga_apply_checkout_coupon(): void {
+	$nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash((string) $_POST['nonce'])) : '';
+	if (!wp_verify_nonce($nonce, 'yoga-apply-coupon')) {
+		wp_send_json_error(array('message' => __('Не удалось проверить запрос. Обновите страницу.', 'yoga')), 403);
+	}
+
+	if (!function_exists('WC') || !WC()->cart || !function_exists('wc_coupons_enabled') || !wc_coupons_enabled()) {
+		wp_send_json_error(array('message' => __('Купоны сейчас недоступны.', 'yoga')), 400);
+	}
+
+	$coupon_code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash((string) $_POST['coupon_code'])) : '';
+	if ($coupon_code === '') {
+		wp_send_json_error(array('message' => __('Введите промокод.', 'yoga')), 400);
+	}
+
+	wc_clear_notices();
+	$applied = WC()->cart->apply_coupon($coupon_code);
+	if (!$applied) {
+		$errors = wc_get_notices('error');
+		$message = !empty($errors[0]['notice'])
+			? wp_strip_all_tags((string) $errors[0]['notice'])
+			: __('Не удалось применить промокод.', 'yoga');
+		wc_clear_notices();
+		wp_send_json_error(array('message' => $message), 400);
+	}
+
+	WC()->cart->calculate_totals();
+	WC()->cart->set_session();
+	if (WC()->session) {
+		WC()->session->set_customer_session_cookie(true);
+		WC()->session->save_data();
+	}
+	wc_clear_notices();
+
+	$discount = (float) WC()->cart->get_discount_total();
+	$total = (float) WC()->cart->get_total('edit');
+	$formatted_discount = yoga_format_cart_price_display($discount);
+	$formatted_total = yoga_format_cart_price_display($total);
+
+	wp_send_json_success(array(
+		'message' => __('Промокод применён.', 'yoga'),
+		'discount' => $formatted_discount,
+		'total' => $formatted_total,
+		'pay_label' => sprintf(__('оплатить %s', 'yoga'), $formatted_total),
+	));
+}
+
+add_action('woocommerce_checkout_process', 'yoga_restore_checkout_coupon_from_post', 2);
+function yoga_restore_checkout_coupon_from_post(): void {
+	if (!function_exists('WC') || !WC()->cart || !function_exists('wc_coupons_enabled') || !wc_coupons_enabled()) {
+		return;
+	}
+
+	$coupon_code = isset($_POST['coupon_code']) ? wc_format_coupon_code(wp_unslash((string) $_POST['coupon_code'])) : '';
+	if ($coupon_code === '' || WC()->cart->has_discount($coupon_code)) {
+		return;
+	}
+
+	if (WC()->cart->apply_coupon($coupon_code)) {
+		WC()->cart->calculate_totals();
+		WC()->cart->set_session();
+		if (WC()->session) {
+			WC()->session->save_data();
+		}
+	}
+}

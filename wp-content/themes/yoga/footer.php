@@ -159,28 +159,16 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 		</div>
 	</div>
 </div><div class="modal modal-default modal-default_formsucces">
-	<div class="modal-close">
+	<button class="modal-close" type="button" aria-label="Закрыть">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
-	</div>
+	</button>
 	<div class="thanksforqw">
+		<img class="thanksforqw__icon" src="<?=get_template_directory_uri()?>/assets/svg/comment-delete-success.svg" alt="">
         <h3>
 			Мы получили ваше сообщение!
-			</h3>
-			<p>
-			Вернёмся с ответом очень скоро.
-		</p>
-	</div>
-	
-</div><div class="modal modal-default modal-default_favoritesucces">
-	<div class="modal-close">
-        <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
-	</div>
-	<div class="thanksforqw">
-        <h3>
-			Избранное обновлено
 		</h3>
-		<p class="favorite-modal-message">
-			Практика добавлена в избранное.
+		<p>
+			Вернёмся с ответом очень скоро.
 		</p>
 	</div>
 </div><div class="modal modal-default modal-default_logout">
