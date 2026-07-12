@@ -1721,13 +1721,17 @@ jQuery(document).ready(function($) {
 	*/
 	
 	$('.mobile-menu-main-item_sw').click(function () {
-		$('.mobile-menu__slide_sub').addClass("active");
-		$('.mobile-menu__slide_main').removeClass("active");
+		var $menu = $(this).closest('.mobile-menu-inner');
+		$menu.addClass('mobile-menu-inner_library');
+		$menu.find('.mobile-menu__slide_sub').addClass("active");
+		$menu.find('.mobile-menu__slide_main').removeClass("active");
 	});
 	
 	$('.mobile-menu-back').click(function () {
-		$('.mobile-menu__slide_sub').removeClass("active");
-		$('.mobile-menu__slide_main').addClass("active");
+		var $menu = $(this).closest('.mobile-menu-inner');
+		$menu.removeClass('mobile-menu-inner_library');
+		$menu.find('.mobile-menu__slide_sub').removeClass("active");
+		$menu.find('.mobile-menu__slide_main').addClass("active");
 	});
 	
 	
