@@ -349,11 +349,35 @@ class VKID_Login_Plugin {
     $access_token = (string) ($tok['access_token'] ?? '');
     $refresh_token= (string) ($tok['refresh_token'] ?? '');
     $vk_user_id   = isset($tok['user_id']) ? (int)$tok['user_id'] : 0;
-    $email        = isset($tok['email']) ? sanitize_email($tok['email']) : ''; // может отсутствовать
+    $email        = isset($tok['email']) ? sanitize_email($tok['email']) : '';
 
-    // 2) Получим имя/фамилию (и аватар) через users.get
+    // 2) VK ID OAuth 2.1 отдаёт персональные данные отдельным user_info-запросом.
+    // Token response не обязан содержать email даже при выданном scope=email.
     $first = $last = '';
     if ($access_token) {
+      $info_resp = wp_remote_post('https://id.vk.com/oauth2/user_info', [
+        'timeout' => 15,
+        'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
+        'body'    => [
+          'access_token' => $access_token,
+          'client_id'    => $client_id,
+        ],
+      ]);
+
+      if (!is_wp_error($info_resp) && (int) wp_remote_retrieve_response_code($info_resp) === 200) {
+        $info = json_decode((string) wp_remote_retrieve_body($info_resp), true);
+        $profile = isset($info['user']) && is_array($info['user']) ? $info['user'] : $info;
+
+        if (is_array($profile)) {
+          $profile_email = sanitize_email((string) ($profile['email'] ?? ''));
+          if ($profile_email && is_email($profile_email)) $email = $profile_email;
+          if (!$vk_user_id && !empty($profile['user_id'])) $vk_user_id = (int) $profile['user_id'];
+          $first = sanitize_text_field((string) ($profile['first_name'] ?? ''));
+          $last  = sanitize_text_field((string) ($profile['last_name'] ?? ''));
+        }
+      }
+
+      // Резерв для имени на случай временной недоступности user_info.
       $api_url = add_query_arg([
         'user_ids'     => $vk_user_id ?: '',
         'fields'       => 'first_name,last_name,photo_100',
@@ -365,8 +389,8 @@ class VKID_Login_Plugin {
       if (!is_wp_error($u)) {
         $ud = json_decode( (string) wp_remote_retrieve_body($u), true);
         if (!empty($ud['response'][0])) {
-          $first = sanitize_text_field($ud['response'][0]['first_name'] ?? '');
-          $last  = sanitize_text_field($ud['response'][0]['last_name'] ?? '');
+          if (!$first) $first = sanitize_text_field($ud['response'][0]['first_name'] ?? '');
+          if (!$last)  $last  = sanitize_text_field($ud['response'][0]['last_name'] ?? '');
         }
       }
     }
@@ -406,6 +430,19 @@ class VKID_Login_Plugin {
     } else {
       if ($vk_user_id)   update_user_meta($user->ID, 'vk_user_id', $vk_user_id);
       if ($refresh_token) update_user_meta($user->ID, 'vk_refresh_token', $refresh_token);
+
+      // Исправляем технический fallback-адрес после повторного входа с разрешённым email scope.
+      $current_email = (string) $user->user_email;
+      $has_fallback_email = substr($current_email, -16) === '@example.invalid';
+      if ($email && is_email($email) && $has_fallback_email) {
+        $email_owner = get_user_by('email', $email);
+        if (!$email_owner || (int) $email_owner->ID === (int) $user->ID) {
+          wp_update_user([
+            'ID'         => $user->ID,
+            'user_email' => $email,
+          ]);
+        }
+      }
     }
 
     // 6) Авторизуем
