@@ -1491,6 +1491,29 @@
 
 }
 
+@media (min-width: 576px) {
+  .modal-login.modal-login--success .modal-login-inner {
+    position: relative;
+    min-height: 100%;
+    padding: 0;
+  }
+
+  .modal-login.modal-login--success .modal-login-inner__slide_succes.active {
+    position: fixed;
+    top: 50vh;
+    right: 3.34375rem;
+    left: auto;
+    width: 25rem;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    transform: translateY(-50%);
+  }
+
+  .modal-login.modal-login--success .password-recovery-back { display: none; }
+}
+
 /* Figma 1700:17003 — полноэкранный мобильный вход. */
 @media (max-width: 575px) {
   .modal-login.active {
@@ -1917,10 +1940,6 @@ p.login-rules a:hover {
 .loggin-back__link {
   bottom: auto;
   margin-left: 0.9375rem;  margin-right: 0.9375rem;}
-.modal-login-inner__slide_succes {
-  top: 50%;
-  transform: translateY(-50%);
-  padding-bottom: 2.8125rem;}
 .login-notification {
   display: block;
   background: #DDF354;
@@ -2055,20 +2074,6 @@ p.login-rules a:hover {
   }
   /* Слайд «письмо отправлено»: панель как раньше прижата к низу (margin-top: auto у .modal-login-inner);
      текст по центру по вертикали внутри за счёт min-height + flex */
-  .modal-login-inner:has(.modal-login-inner__slide_succes.active) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: min(78dvh, 100%);
-    min-height: min(78vh, 100%);
-  }
-  .modal-login-inner:has(.modal-login-inner__slide_succes.active) .modal-login-inner__slide_succes.active {
-    top: auto;
-    transform: translateY(0);
-    padding-top: 0;
-    padding-bottom: 0;
-    width: 100%;
-  }
   .login-notification {
     margin-bottom: 0px;
   }
@@ -3338,21 +3343,29 @@ p.login-rules a:hover {
 /* Figma 1700:14537 — подтверждение отправки письма, desktop. */
 @media (min-width: 576px) {
   .modal-login-inner:has(.modal-login-inner__slide_succes.active) {
-    display: flex;
+    display: block;
+    position: relative;
     min-height: 100%;
-    padding: 0 3.34375rem;
-    align-items: center;
+    padding: 0;
   }
 
   .modal-login-inner__slide_succes.active {
     display: flex;
-    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 25rem;
+    max-width: calc(100% - 2.5rem);
     min-width: 0;
+    margin: 0;
     padding: 0;
+    transform: translate(-50%, -50%);
     flex-direction: column;
     gap: 1.25rem;
     align-items: stretch;
   }
+
+  .modal-login:has(.modal-login-inner__slide_succes.active) .password-recovery-back { display: none; }
 
   .modal-login-inner__slide_succes.active > p {
     margin: 0;
@@ -3397,6 +3410,68 @@ p.login-rules a:hover {
     line-height: 1.1;
     text-decoration: underline;
     text-underline-offset: 0.1875rem;
+  }
+}
+
+/* Success popup switches to the 400px desktop composition above phone widths. */
+@media (min-width: 401px) {
+  .modal-login-inner:has(.modal-login-inner__slide_succes.active) {
+    display: block;
+    position: relative;
+    min-height: 100%;
+    padding: 0;
+  }
+
+  .modal-login-inner__slide_succes.active {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 25rem;
+    max-width: calc(100% - 2.5rem);
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .modal-login:has(.modal-login-inner__slide_succes.active) .password-recovery-back {
+    display: none;
+  }
+
+  .modal-login-inner__slide_succes.active > p { text-align: left; }
+
+  .modal-login-inner__slide_succes.active .form {
+    position: relative;
+    padding-top: 0.625rem;
+    gap: 1.5625rem;
+    align-items: center;
+  }
+
+  .modal-login-inner__slide_succes.active .loggin-back {
+    position: static;
+    margin: 0;
+  }
+
+  .modal-login-inner__slide_succes.active .loggin-back__link { color: #646464; }
+}
+
+@media (min-width: 576px) {
+  .modal-login-inner__slide_succes.active {
+    position: fixed;
+    top: 50vh;
+    right: 3.34375rem;
+    left: auto;
+    width: 25rem;
+    max-width: calc(31.6875rem - 6.6875rem);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    transform: translateY(-50%);
+  }
+
+  .modal-login:has(.modal-login-inner__slide_succes.active) .password-recovery-back {
+    display: none;
   }
 }
 
@@ -3690,4 +3765,14 @@ p.login-rules a:hover {
     text-decoration: underline;
     text-underline-offset: 0.1875rem;
   }
+}
+
+@media (min-width: 401px) {
+  .modal-login-inner:has(.modal-login-inner__slide_succes.active) { display: block; position: relative; min-height: 100%; padding: 0; }
+  .modal-login-inner__slide_succes.active { position: absolute; top: 50%; left: 50%; width: 25rem; max-width: calc(100% - 2.5rem); min-width: 0; min-height: 0; margin: 0; padding: 0; transform: translate(-50%, -50%); }
+  .modal-login:has(.modal-login-inner__slide_succes.active) .password-recovery-back { display: none; }
+  .modal-login-inner__slide_succes.active > p { text-align: left; }
+  .modal-login-inner__slide_succes.active .form { position: relative; padding-top: 0.625rem; gap: 1.5625rem; align-items: center; }
+  .modal-login-inner__slide_succes.active .loggin-back { position: static; margin: 0; }
+  .modal-login-inner__slide_succes.active .loggin-back__link { color: #646464; }
 }
