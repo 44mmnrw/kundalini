@@ -94,7 +94,9 @@ class VKID_Login_Plugin {
 
   $appId      = (int) get_option(self::OPTION_APP_ID);
   $redirect   = trim(get_option(self::OPTION_REDIRECT_URL, home_url('/')));
-  $scope      = trim(get_option(self::OPTION_SCOPE, 'email'));
+  // VK ID expects scopes separated by spaces. Keep the admin field tolerant of
+  // the historically documented comma-separated value ("email,offline").
+  $scope      = preg_replace('/[\s,]+/', ' ', trim(get_option(self::OPTION_SCOPE, 'email')));
   $endpoint   = esc_url_raw(rest_url('vkid/v1/login'));
 
   ob_start(); ?>
@@ -301,7 +303,7 @@ class VKID_Login_Plugin {
     $client_id     = trim( (string) get_option(self::OPTION_APP_ID) );
     $client_secret = trim( (string) get_option(self::OPTION_CLIENT_SECRET) ); // на этом шаге можно не передавать
     $redirect_uri  = trim( (string) get_option(self::OPTION_REDIRECT_URL, home_url('/')) );
-    $scope         = trim( (string) get_option(self::OPTION_SCOPE, 'email') );
+    $scope         = preg_replace('/[\s,]+/', ' ', trim((string) get_option(self::OPTION_SCOPE, 'email')));
 
     if (!$client_id || !$redirect_uri) {
       delete_transient($lock_key);
@@ -350,6 +352,7 @@ class VKID_Login_Plugin {
     $refresh_token= (string) ($tok['refresh_token'] ?? '');
     $vk_user_id   = isset($tok['user_id']) ? (int)$tok['user_id'] : 0;
     $email        = isset($tok['email']) ? sanitize_email($tok['email']) : '';
+    if (!$email || !is_email($email)) $email = '';
 
     // 2) VK ID OAuth 2.1 отдаёт персональные данные отдельным user_info-запросом.
     // Token response не обязан содержать email даже при выданном scope=email.
@@ -414,7 +417,9 @@ class VKID_Login_Plugin {
     if (!$user) {
       $uid = wp_insert_user([
         'user_login' => $username,
-        'user_email' => $email ?: ($username.'@example.invalid'),
+        // Do not invent an address: WordPress accepts an empty user_email and
+        // must not send account mail to a technical @example.invalid value.
+        'user_email' => $email,
         'user_pass'  => wp_generate_password(20),
         'first_name' => $first,
         'last_name'  => $last,
@@ -434,7 +439,7 @@ class VKID_Login_Plugin {
       // Исправляем технический fallback-адрес после повторного входа с разрешённым email scope.
       $current_email = (string) $user->user_email;
       $has_fallback_email = substr($current_email, -16) === '@example.invalid';
-      if ($email && is_email($email) && $has_fallback_email) {
+      if ($email && is_email($email) && ($has_fallback_email || !$current_email)) {
         $email_owner = get_user_by('email', $email);
         if (!$email_owner || (int) $email_owner->ID === (int) $user->ID) {
           wp_update_user([
@@ -442,6 +447,13 @@ class VKID_Login_Plugin {
             'user_email' => $email,
           ]);
         }
+      } elseif ($has_fallback_email) {
+        // Clean up accounts created by older plugin versions. A real address
+        // will be filled on a later login as soon as VK grants email access.
+        wp_update_user([
+          'ID'         => $user->ID,
+          'user_email' => '',
+        ]);
       }
     }
 
