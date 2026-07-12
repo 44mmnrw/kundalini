@@ -63,7 +63,12 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     <span class="login-switch-link ml-sl-switch" data-target="2">Регистрация</span>
                 </div>
             </form>
-            <?php echo do_shortcode('[vkid_login class="login-vk-link"]'); ?>
+            <a href="#" class="ref form-link form-link_vk login-vk-link vkid-login-trigger">
+                <span class="vkid-login-trigger__text">Войти через VK</span>
+                <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
+                    <use href="#vk-login-logo"></use>
+                </svg>
+            </a>
         </div>
         <div class="modal-login-inner__slide" data-target="2">
             <div class="login-slide-switches">
@@ -119,7 +124,12 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         зарегистрироваться
                     </span>
                 </label>
-                <?php echo do_shortcode('[vkid_login class="registration-vk-link"]'); ?>
+                <a href="#" class="ref form-link form-link_vk registration-vk-link vkid-login-trigger">
+                    <span class="vkid-login-trigger__text">Войти через VK</span>
+                    <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
+                        <use href="#vk-login-logo"></use>
+                    </svg>
+                </a>
                 <div class="loggin-back loggin-back_mob loggin-back_grey">
                     <span class="loggin-back__link ml-sl-switch" data-target="1">
                         Войти

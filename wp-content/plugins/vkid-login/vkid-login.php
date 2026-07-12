@@ -2,8 +2,7 @@
 /**
  * Plugin Name: VK ID Login (Custom)
  * Description: Вход/регистрация в WordPress через VK ID Web SDK (PKCE): кнопка, обмен кода на токен, создание/логин пользователя.
- * Version: 0.4.0
- * Author: telegram @ars_fl @dan_aurobyte37
+ * Version: 0.4.0 
  */
 
 if (!defined('ABSPATH')) exit;
@@ -19,6 +18,7 @@ class VKID_Login_Plugin {
     add_action('rest_api_init', [$this, 'register_routes']);
     add_action('admin_menu',   [$this, 'admin_menu']);
     add_action('admin_init',   [$this, 'register_settings']);
+    add_action('wp_footer',    [$this, 'render_login_script'], 20);
   }
 
   /* ---------- Admin ---------- */
@@ -76,28 +76,28 @@ class VKID_Login_Plugin {
   /* ---------- Shortcode (кнопка VK ID) ---------- */
 
   public function shortcode($atts = []) {
-  static $script_rendered = false;
+    $atts = shortcode_atts(['class' => ''], $atts, 'vkid_login');
+    $extra_class = implode(' ', array_map('sanitize_html_class', preg_split('/\s+/', trim($atts['class']))));
+    $classes = trim('vkid-login-trigger ' . $extra_class);
 
-  $atts = shortcode_atts([
-    'class' => '',
-  ], $atts, 'vkid_login');
+    return sprintf(
+      '<button type="button" class="%s">%s</button>',
+      esc_attr($classes),
+      esc_html__('Войти через VK', 'vkid-login')
+    );
+  }
+
+  /* ---------- Frontend OAuth behavior ---------- */
+
+  public function render_login_script() {
+  if (is_user_logged_in()) return;
 
   $appId      = (int) get_option(self::OPTION_APP_ID);
   $redirect   = trim(get_option(self::OPTION_REDIRECT_URL, home_url('/')));
   $scope      = trim(get_option(self::OPTION_SCOPE, 'email'));
   $endpoint   = esc_url_raw(rest_url('vkid/v1/login'));
-  $extraClass = implode(' ', array_map('sanitize_html_class', preg_split('/\s+/', trim($atts['class']))));
-  $classes    = trim('ref form-link form-link_vk vkid-login-trigger ' . $extraClass);
 
   ob_start(); ?>
-  <a href="#" class="<?php echo esc_attr($classes); ?>">
-    <span class="vkid-login-trigger__text">Войти через VK</span>
-    <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
-      <use href="#vk-login-logo"></use>
-    </svg>
-  </a>
-
-  <?php if (!$script_rendered) : $script_rendered = true; ?>
   <script>
   (function(){
     const sdkUrls = [
@@ -267,9 +267,8 @@ class VKID_Login_Plugin {
     });
   })();
   </script>
-  <?php endif; ?>
   <?php
-  return ob_get_clean();
+  echo ob_get_clean();
 }
 
 
