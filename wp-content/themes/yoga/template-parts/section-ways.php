@@ -13,8 +13,46 @@
                     // Главная страница
                     echo '<li><a href="' . esc_url(home_url('/')) . '" class="ways-item ref">Главная</a></li>';
                     
+                    // Для практики выводим полный путь по иерархии practice-type.
+                    if (is_singular('practice')) {
+                        $practice_terms = get_the_terms(get_the_ID(), 'practice-type');
+                        $primary_term = null;
+                        $primary_ancestors = array();
+
+                        if (is_array($practice_terms) && !is_wp_error($practice_terms)) {
+                            foreach ($practice_terms as $practice_term) {
+                                $term_ancestors = get_ancestors((int) $practice_term->term_id, 'practice-type', 'taxonomy');
+                                if ($primary_term === null || count($term_ancestors) > count($primary_ancestors)) {
+                                    $primary_term = $practice_term;
+                                    $primary_ancestors = $term_ancestors;
+                                }
+                            }
+                        }
+
+                        if ($primary_term instanceof WP_Term) {
+                            $breadcrumb_term_ids = array_reverse(array_map('intval', $primary_ancestors));
+                            $breadcrumb_term_ids[] = (int) $primary_term->term_id;
+
+                            foreach ($breadcrumb_term_ids as $breadcrumb_term_id) {
+                                $breadcrumb_term = get_term($breadcrumb_term_id, 'practice-type');
+                                if (!($breadcrumb_term instanceof WP_Term) || is_wp_error($breadcrumb_term)) {
+                                    continue;
+                                }
+
+                                $breadcrumb_term_link = get_term_link($breadcrumb_term);
+                                if (is_wp_error($breadcrumb_term_link)) {
+                                    echo '<li><span class="ways-item">' . esc_html($breadcrumb_term->name) . '</span></li>';
+                                    continue;
+                                }
+
+                                echo '<li><a href="' . esc_url($breadcrumb_term_link) . '" class="ways-item ref">' . esc_html($breadcrumb_term->name) . '</a></li>';
+                            }
+                        }
+
+                        echo '<li><span class="ways-item">' . esc_html(get_the_title()) . '</span></li>';
+                    }
                     // Если это страница записи или постоянной страницы
-                    if (is_single() || is_page()) {
+                    elseif (is_single() || is_page()) {
                         $post_type = get_post_type_object(get_post_type());
                         
                         // Если это запись и у нее есть архив
@@ -36,6 +74,36 @@
                     elseif (is_post_type_archive()) {
                         $post_type = get_post_type_object(get_post_type());
                         echo '<li><span class="ways-item">' . esc_html($post_type->labels->name) . '</span></li>';
+                    }
+                    // Для категории практик выводим всю иерархию practice-type.
+                    elseif (is_tax('practice-type')) {
+                        $current_term = get_queried_object();
+
+                        if ($current_term instanceof WP_Term) {
+                            $term_ancestor_ids = array_reverse(
+                                array_map(
+                                    'intval',
+                                    get_ancestors((int) $current_term->term_id, 'practice-type', 'taxonomy')
+                                )
+                            );
+
+                            foreach ($term_ancestor_ids as $term_ancestor_id) {
+                                $term_ancestor = get_term($term_ancestor_id, 'practice-type');
+                                if (!($term_ancestor instanceof WP_Term) || is_wp_error($term_ancestor)) {
+                                    continue;
+                                }
+
+                                $term_ancestor_link = get_term_link($term_ancestor);
+                                if (is_wp_error($term_ancestor_link)) {
+                                    echo '<li><span class="ways-item">' . esc_html($term_ancestor->name) . '</span></li>';
+                                    continue;
+                                }
+
+                                echo '<li><a href="' . esc_url($term_ancestor_link) . '" class="ways-item ref">' . esc_html($term_ancestor->name) . '</a></li>';
+                            }
+
+                            echo '<li><span class="ways-item">' . esc_html($current_term->name) . '</span></li>';
+                        }
                     }
                     // Если это таксономия (категория, метка или пользовательская таксономия)
                     elseif (is_tax() || is_category() || is_tag()) {

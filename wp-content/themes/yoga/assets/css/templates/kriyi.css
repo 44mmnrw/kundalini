@@ -261,15 +261,6 @@
   }
 }
 
-.practice-notification {
-  position: fixed;
-  top: 1.25rem;  right: 1.25rem;  z-index: 10000;
-}
-
-body.tax-practice-type .practice-notification {
-  display: none !important;
-}
-
 .kriya-btn {
   width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;
   position: relative;

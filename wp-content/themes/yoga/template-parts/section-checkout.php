@@ -143,7 +143,16 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 						<form id="yoga-checkout" name="checkout" method="post" class="yoga-checkout__form checkout woocommerce-checkout" action="<?php echo esc_url($checkout_url); ?>" enctype="multipart/form-data">
 							<?php
 							if (WC()->checkout) {
+								// The theme has its own promo-code field in the order summary.
+								// Prevent WooCommerce from rendering its standard nested coupon form here.
+								$coupon_form_priority = has_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form');
+								if ($coupon_form_priority !== false) {
+									remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', $coupon_form_priority);
+								}
 								do_action('woocommerce_before_checkout_form', WC()->checkout());
+								if ($coupon_form_priority !== false) {
+									add_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', $coupon_form_priority);
+								}
 							}
 							wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce');
 							?>
@@ -212,15 +221,15 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 									</div>
 
 									<?php if (wc_coupons_enabled()) : ?>
-										<div class="yoga-checkout-promo">
+										<div class="yoga-checkout-promo" data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" data-coupon-nonce="<?php echo esc_attr(wp_create_nonce('yoga-apply-coupon')); ?>">
 											<label class="yoga-checkout-promo__field">
 												<span class="yoga-checkout-promo__icon" aria-hidden="true">
-													<svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-														<path d="M8.2 1.5 1.5 8.2v4.1l4.1.1 6.7-6.7-4.1-.1V1.5Z" stroke="#9153E1" stroke-width="1.1"/>
+													<svg width="17" height="17" viewBox="0 0 17 17" aria-hidden="true" focusable="false">
+														<use href="<?php echo $sprite_href; ?>#checkout-price-tag"></use>
 													</svg>
 												</span>
 												<input type="text" name="coupon_code" class="yoga-checkout-promo__input" id="coupon_code" form="yoga-checkout" value="" placeholder="<?php esc_attr_e('Промокод', 'yoga'); ?>">
-												<button type="submit" class="yoga-checkout-promo__apply" form="yoga-checkout" name="apply_coupon" value="<?php esc_attr_e('Apply coupon', 'woocommerce'); ?>"><?php esc_html_e('Применить', 'yoga'); ?></button>
+												<button type="button" class="yoga-checkout-promo__apply"><?php esc_html_e('Применить', 'yoga'); ?></button>
 											</label>
 										</div>
 									<?php endif; ?>

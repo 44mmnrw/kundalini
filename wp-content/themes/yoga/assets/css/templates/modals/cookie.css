@@ -1,0 +1,152 @@
+/* Cookie popup — Figma desktop 265:5642, mobile 593:16200. */
+.modal-cookie {
+  display: flex;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 102;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1.875rem 7.5rem;
+  background: var(--color-green);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.modal-cookie.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0%);
+}
+
+.cookie {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.cookie__info {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0px;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1rem;
+  line-height: normal;
+  font-weight: normal;
+  color: var(--color-black);
+}
+
+.cookie__text {
+  display: inline;
+}
+
+.cookie__more {
+  display: inline;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0px;
+}
+.cookie__more:hover {
+  text-decoration: none;
+}
+
+.cookie__buttons {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.cookie__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 11.4375rem;
+  height: 3.25rem;
+  min-height: 3.25rem;
+  padding: 1rem 0.9375rem;
+  line-height: 1.2;
+  border-radius: 9.375rem;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.cookie__btn span {
+  display: block;
+  min-width: 0px;
+  font-size: 1rem;
+  font-family: "Mulish-Medium", sans-serif;
+  font-weight: 500;
+  line-height: normal;
+  text-align: center;
+}
+
+.cookie__btn-decline {
+  border: 1px solid var(--color-black);
+  background: transparent;
+}
+.cookie__btn-decline span {
+  color: var(--color-black);
+}
+.cookie__btn.cookie__btn-decline:hover {
+  background: rgba(31, 31, 31, 0.06);
+}
+.cookie__btn.cookie__btn-decline:hover span {
+  color: var(--color-black);
+}
+
+.cookie__btn-accept {
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+.cookie__btn-accept span {
+  color: #ffffff;
+}
+.cookie__btn.cookie__btn-accept:hover {
+  background: #141414;
+  border-color: #141414;
+}
+.cookie__btn.cookie__btn-accept:hover span {
+  color: #ffffff;
+}
+
+@media (max-width: 1319px) {
+  .modal-cookie {
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .modal-cookie {
+    padding: 1.875rem 1.25rem;
+  }
+  .cookie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+  }
+  .cookie__buttons {
+    width: 100%;
+    gap: 1.25rem;
+  }
+  .cookie__btn {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0px;
+  }
+}

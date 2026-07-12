@@ -1339,6 +1339,65 @@ jQuery(document).ready(function($) {
 			closeCartClearModal();
 		}
 	});
+
+	function applyCheckoutCoupon() {
+		var $promo = $('.yoga-checkout-promo');
+		var $input = $promo.find('.yoga-checkout-promo__input');
+		var $button = $promo.find('.yoga-checkout-promo__apply');
+		var couponCode = $.trim($input.val());
+
+		if (!$promo.length || $button.prop('disabled')) {
+			return;
+		}
+		if (!couponCode) {
+			showNotification('Введите промокод.', 'error');
+			$input.trigger('focus');
+			return;
+		}
+
+		var originalLabel = $button.text();
+		var couponApplied = false;
+		$button.prop('disabled', true).text('Применяем…');
+
+		$.ajax({
+			url: $promo.data('ajax-url'),
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				action: 'yoga_apply_checkout_coupon',
+				nonce: $promo.data('coupon-nonce'),
+				coupon_code: couponCode
+			}
+		}).done(function(response) {
+			if (!response || !response.success || !response.data) {
+				showNotification('Не удалось применить промокод.', 'error');
+				return;
+			}
+
+			$('.yoga-checkout-summary__line_discount .yoga-checkout-summary__line-value').text(response.data.discount);
+			$('.yoga-checkout-summary__total-value').text(response.data.total);
+			$('.yoga-checkout-summary__submit > span').text(response.data.pay_label);
+			$input.prop('readonly', true);
+			couponApplied = true;
+			showNotification(response.data.message);
+			$(document.body).trigger('updated_checkout');
+		}).fail(function(xhr) {
+			var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+				? xhr.responseJSON.data.message
+				: 'Не удалось применить промокод.';
+			showNotification(message, 'error');
+		}).always(function() {
+			$button.prop('disabled', couponApplied).text(couponApplied ? 'Применён' : originalLabel);
+		});
+	}
+
+	$(document).on('click', '.yoga-checkout-promo__apply', applyCheckoutCoupon);
+	$(document).on('keydown', '.yoga-checkout-promo__input', function(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			applyCheckoutCoupon();
+		}
+	});
 	
 	jQuery(function($){
 		$(".input_phone").mask("+7 (999) 999 99 99");
@@ -2244,7 +2303,10 @@ jQuery(document).ready(function($) {
 	}
 	
 	function showContactSuccess(message) {
-		//alert(message); // Можно заменить на красивый toast
+		openQuestionSuccessModal();
+	}
+
+	function openQuestionSuccessModal() {
 		$('.body').addClass("body-fixed");
 		$('.overlay').addClass("active");
 		$('.modal').removeClass("active");
@@ -2319,18 +2381,9 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				const redirectUrl = (data.data && data.data.redirect_url) || yoga_ajax.question_success_url;
-				if (redirectUrl) {
-					window.location.assign(redirectUrl);
-					return;
-				}
 				faqForm.reset();
 				$(faqForm).find('input[type="text"], input[type="email"], textarea').val('');
-				$('.body').addClass("body-fixed");
-				$('.overlay').addClass("active");
-				$('.modal').removeClass("active");
-				$('.modal-login').removeClass("active");
-				$('.modal-default_formsucces').addClass("active");
+				openQuestionSuccessModal();
 			} else {
 				alert((data && data.data && data.data.message) || data.message || 'Ошибка отправки. Попробуйте еще раз.');
 			}
@@ -3394,33 +3447,23 @@ jQuery(document).ready(function($) {
 	
 	// Функция показа уведомлений
 	function showNotification(message, type = 'success') {
-		// Удаляем предыдущие уведомления
 		$('.practice-notification').remove();
-		
-		var $notification = $('<div class="practice-notification ' + type + '">' + message + '</div>');
-		$('body').append($notification);
-		
-		// Позиционируем и показываем
-		$notification.css({
-			'position': 'fixed',
-			'top': '20px',
-			'right': '20px',
-			'padding': '15px 20px',
-			'background': type === 'success' ? '#00b894' : '#ff6b6b',
-			'color': 'white',
-			'border-radius': '5px',
-			'z-index': '10000',
-			'box-shadow': '0 4px 12px rgba(0,0,0,0.15)'
+
+		var $notification = $('<div>', {
+			'class': 'practice-notification ' + type,
+			'role': 'status',
+			'aria-live': 'polite',
+			text: message
 		});
-		
-		// Анимация
+		$('body').append($notification);
+
 		$notification.hide().fadeIn(300);
-		
+
 		setTimeout(function() {
 			$notification.fadeOut(300, function() {
 				$(this).remove();
 			});
-		}, 5000);
+		}, 3000);
 	}
 	
 	// Загрузка аватара
@@ -3573,49 +3616,22 @@ jQuery(document).ready(function($) {
 						showNotification('Удалено из избранного');
 						return;
 					}
-					showFavoriteModal(favoriteMessage);
+					showNotification(favoriteMessage);
 				} else if (response.data && response.data.message) {
-					showFavoriteModal(response.data.message);
+					showNotification(response.data.message);
 				}
 			},
 			error: function(xhr) {
 				if (xhr.status === 401) {
-					showFavoriteModal('Для добавления в избранное авторизуйтесь', 'Избранное не обновлено');
+					showNotification('Для добавления в избранное авторизуйтесь');
 				} else if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-					showFavoriteModal(xhr.responseJSON.data.message);
+					showNotification(xhr.responseJSON.data.message);
 				} else {
-					showFavoriteModal('Избранное не обновлено');
+					showNotification('Избранное не обновлено');
 				}
 			}
 		});
 	});
-	
-	function showFavoriteModal(message, title) {
-		var $modal = $('.modal-default_favoritesucces');
-		if (!$modal.length) {
-			return;
-		}
-		var heading = title !== undefined && title !== null && title !== '' ? title : 'Избранное обновлено';
-		$modal.find('.thanksforqw h3').text(heading);
-		$modal.find('.favorite-modal-message').text(message || 'Избранное обновлено');
-		$('.body').addClass("body-fixed");
-		$('.overlay').addClass("active");
-		$('.modal').removeClass("active");
-		$('.modal-login').removeClass("active");
-		$modal.addClass("active");
-	}
-	
-	// Функция показа уведомлений
-	function showNotification(message) {
-		var $notification = $('<div class="practice-notification">' + message + '</div>');
-		$('body').append($notification);
-		
-		setTimeout(function() {
-			$notification.fadeOut(300, function() {
-				$(this).remove();
-			});
-		}, 3000);
-	}
 	
 	// Обработка формы вопроса
 	$('#question-form').on('submit', function(e) {
@@ -3634,21 +3650,10 @@ jQuery(document).ready(function($) {
 			type: 'POST',
 			data: $form.serialize(),
 			success: function(response) {
-				// Показываем уведомление об успехе
-				showNotification('Вопрос успешно отправлен!');
-				$('.body').addClass("body-fixed");
-				$('.overlay').addClass("active");
-				$('.modal').removeClass("active");
-				$('.modal-login').removeClass("active");
-				$('.modal-default_formsucces').addClass("active");
+				openQuestionSuccessModal();
 				
 				// Очищаем форму
 				$form.find('textarea').val('');
-				
-				// Обновляем список вопросов
-				setTimeout(function() {
-					location.reload();
-				}, 1500);
 			},
 			error: function() {
 				showNotification('Ошибка при отправке вопроса', 'error');
@@ -3677,21 +3682,6 @@ jQuery(document).ready(function($) {
 		});
 		$btn.find('span').toggleClass('active');
 	});
-	
-	// Функция показа уведомлений
-	function showNotification(message, type = 'success') {
-		var $notification = $('<div class="practice-notification ' + type + '">' + message + '</div>');
-		$('body').append($notification);
-		
-		// Анимация появления
-		$notification.hide().fadeIn(300);
-		
-		setTimeout(function() {
-			$notification.fadeOut(300, function() {
-				$(this).remove();
-			});
-		}, 3000);
-	}
 	
 	// Управление настройками подписки — только пункты с data-target (например «Карты»)
 	$('.lk-settings-item_action[data-target]').on('click', function() {
