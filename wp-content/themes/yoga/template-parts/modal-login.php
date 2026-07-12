@@ -64,7 +64,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 </div>
             </form>
             <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk login-vk-link">
-                Войти через VK
+                <span>Войти через VK</span>
             </a>
         </div>
         <div class="modal-login-inner__slide" data-target="2">
@@ -122,7 +122,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     </span>
                 </label>
                 <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk registration-vk-link">
-                    Войти через VK
+                    <span>Войти через VK</span>
                 </a>
                 <div class="loggin-back loggin-back_mob loggin-back_grey">
                     <span class="loggin-back__link ml-sl-switch" data-target="1">
@@ -150,7 +150,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 <button type="submit" id="recovery-btn"></button>
                 <label for="recovery-btn" class="btn">
                     <span>
-                        Восстановить пароль
+                        Восстановить
                     </span>
                 </label>
                 <div class="loggin-back">
@@ -165,7 +165,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
         </div>
         <div class="modal-login-inner__slide modal-login-inner__slide_succes" data-target="4">
             <p>
-                Мы отправили подтверждение сброса пароля на вашу электронную почту. Перейдите по ссылке в письме, чтобы продолжить.
+                Мы отправили подтверждение сброса пароля на ваш e-mail. Перейдите по ссылке в письме, чтобы продолжить.
             </p>
             <b class="login-notification">
                 Нет письма? Проверьте папку Спам.

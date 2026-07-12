@@ -800,10 +800,9 @@ function yoga_subscribe_handler() {
 			'post_id'        => get_the_ID(),
 			'smartcaptcha_enabled' => function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced(),
 			'smartcaptcha_sitekey' => function_exists('yoga_smartcaptcha_client_key') ? yoga_smartcaptcha_client_key() : '',
-			'notification_preferences' => array(
-				'question_answer_site' => yoga_notification_preference((int) get_current_user_id(), 'question_answer_site', true),
-				'question_answer_email' => yoga_notification_preference((int) get_current_user_id(), 'question_answer_email', false),
-			),
+			'notification_preferences' => function_exists('yoga_get_user_notification_preferences')
+				? yoga_get_user_notification_preferences((int) get_current_user_id())
+				: array(),
 			'lk_section_by_target' => function_exists('yoga_get_lk_section_by_target') ? yoga_get_lk_section_by_target() : array(),
 		);
 
@@ -1248,6 +1247,30 @@ function handle_comment_reply() {
     
     if ($comment_id) {
         yoga_practice_comment_fix_author_binding((int) $comment_id, (int) $user_id);
+		$recipient_user_id = (int) $parent_comment->user_id;
+		if ($recipient_user_id > 0 && $recipient_user_id !== (int) $user_id) {
+			$reply_url = get_permalink($post_id) . '#comment-' . (int) $comment_id;
+			$reply_message = sprintf(__('%s ответил(а) на ваш комментарий.', 'yoga'), $comment_author);
+			yoga_add_user_notification(
+				$recipient_user_id,
+				'comment_reply',
+				__('Ответ на комментарий', 'yoga'),
+				$reply_message,
+				$reply_url,
+				array('comment_id' => (int) $comment_id, 'post_id' => $post_id)
+			);
+
+			if (yoga_notification_preference($recipient_user_id, 'comment_reply_email', true)) {
+				$recipient = get_userdata($recipient_user_id);
+				if ($recipient instanceof WP_User && is_email($recipient->user_email)) {
+					wp_mail(
+						$recipient->user_email,
+						__('Ответ на ваш комментарий', 'yoga'),
+						$reply_message . "\n\n" . $reply_url
+					);
+				}
+			}
+		}
         wp_send_json_success('Ответ добавлен');
     } else {
         wp_send_json_error('Ошибка при добавлении ответа');
@@ -3029,11 +3052,41 @@ function handle_comment_delete() {
 		return is_array($preferences) && array_key_exists($key, $preferences) ? (bool) $preferences[$key] : $default;
 	}
 
+	function yoga_get_notification_preference_defaults(): array {
+		return array(
+			'subscription_expiring_site' => true,
+			'subscription_expiring_email' => true,
+			'payment_card_expiring_site' => true,
+			'payment_card_expiring_email' => false,
+			'subscription_ended_site' => true,
+			'subscription_ended_email' => true,
+			'question_answer_site' => true,
+			'question_answer_email' => false,
+			'comment_reply_site' => false,
+			'comment_reply_email' => true,
+			'new_practices_email' => true,
+			'new_articles_email' => false,
+			'promotions_email' => true,
+		);
+	}
+
+	function yoga_get_user_notification_preferences(int $user_id): array {
+		$preferences = get_user_meta($user_id, 'yoga_notification_preferences', true);
+		$preferences = is_array($preferences) ? $preferences : array();
+		$result = yoga_get_notification_preference_defaults();
+		foreach ($result as $key => $default) {
+			if (array_key_exists($key, $preferences)) {
+				$result[$key] = (bool) $preferences[$key];
+			}
+		}
+		return $result;
+	}
+
 	function yoga_save_notification_preference(): void {
 		if (!is_user_logged_in()) wp_send_json_error(null, 401);
 		check_ajax_referer('yoga_ajax_nonce', 'nonce');
 		$key = sanitize_key((string) ($_POST['key'] ?? ''));
-		if (!in_array($key, array('question_answer_site', 'question_answer_email'), true)) wp_send_json_error(null, 400);
+		if (!array_key_exists($key, yoga_get_notification_preference_defaults())) wp_send_json_error(null, 400);
 		$preferences = get_user_meta(get_current_user_id(), 'yoga_notification_preferences', true);
 		$preferences = is_array($preferences) ? $preferences : array();
 		$preferences[$key] = !empty($_POST['enabled']);
@@ -3046,7 +3099,20 @@ function handle_comment_delete() {
 		if ($user_id <= 0) {
 			return;
 		}
-		if ($type === 'question_answer' && !yoga_notification_preference($user_id, 'question_answer_site', true)) return;
+		$site_preference_keys = array(
+			'question_answer' => 'question_answer_site',
+			'comment_reply' => 'comment_reply_site',
+			'subscription_expiring' => 'subscription_expiring_site',
+			'payment_card_expiring' => 'payment_card_expiring_site',
+			'subscription_ended' => 'subscription_ended_site',
+		);
+		if (isset($site_preference_keys[$type])) {
+			$preference_key = $site_preference_keys[$type];
+			$defaults = yoga_get_notification_preference_defaults();
+			if (!yoga_notification_preference($user_id, $preference_key, (bool) ($defaults[$preference_key] ?? true))) {
+				return;
+			}
+		}
 		$notifications = yoga_get_user_notifications($user_id, 100);
 		$notification = array(
 			'id' => wp_generate_uuid4(),
@@ -3059,6 +3125,12 @@ function handle_comment_delete() {
 		);
 		if (!empty($context['question_id'])) {
 			$notification['question_id'] = absint($context['question_id']);
+		}
+		if (!empty($context['comment_id'])) {
+			$notification['comment_id'] = absint($context['comment_id']);
+		}
+		if (!empty($context['post_id'])) {
+			$notification['post_id'] = absint($context['post_id']);
 		}
 		$notifications[] = $notification;
 		update_user_meta($user_id, 'yoga_notifications', array_slice($notifications, -100));

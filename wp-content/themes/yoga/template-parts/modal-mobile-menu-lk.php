@@ -9,6 +9,9 @@ if (!is_user_logged_in()) {
 	return;
 }
 $mobile_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_initial_lk_target() : '1';
+$mobile_lk_tariff = function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
+$mobile_lk_tariff_label = is_array($mobile_lk_tariff) && !empty($mobile_lk_tariff['product_name']) ? (string) $mobile_lk_tariff['product_name'] : __('Подписка не активна', 'yoga');
+$mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array_fill_keys(array('library', 'tariffs', 'about', 'blog', 'contacts', 'faq'), home_url('/'));
 ?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
@@ -16,6 +19,7 @@ $mobile_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_ini
 		</svg>
 	</div>
 	<div class="mobile-menu-inner">
+		<div class="lk-mobile-menu-head"><a class="lk-mobile-menu-rate" href="<?php echo esc_url($mobile_lk_urls['tariffs']); ?>"><svg aria-hidden="true"><use href="#personal-status-crown"></use></svg><span><?php echo esc_html($mobile_lk_tariff_label); ?></span></a></div>
 		<div class="mobile-menu">
 			<div class="mobile-menu__slide mobile-menu__slide_main active">
 				<div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
@@ -88,6 +92,15 @@ $mobile_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_ini
 					</nav>
 				</div>
 
+				<hr class="sidebar-menu-sep" aria-hidden="true">
+				<nav class="sidebar-menu-secondary" aria-label="<?php esc_attr_e('Разделы сайта', 'yoga'); ?>">
+					<a class="sidebar-menu-secondary__link sidebar-menu-secondary__link--library" href="<?php echo esc_url($mobile_lk_urls['library']); ?>"><span><?php esc_html_e('Библиотека практик', 'yoga'); ?></span><svg class="sidebar-menu-secondary__chevron" viewBox="0 0 8 16" aria-hidden="true"><path d="M1 1l6 7-6 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+					<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($mobile_lk_urls['tariffs']); ?>"><span><?php esc_html_e('Тарифы и подписка', 'yoga'); ?></span></a>
+					<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($mobile_lk_urls['about']); ?>"><span><?php esc_html_e('О нас', 'yoga'); ?></span></a>
+					<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($mobile_lk_urls['blog']); ?>"><span><?php esc_html_e('Блог', 'yoga'); ?></span></a>
+					<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($mobile_lk_urls['contacts']); ?>"><span><?php esc_html_e('Контакты', 'yoga'); ?></span></a>
+					<a class="sidebar-menu-secondary__link" href="<?php echo esc_url($mobile_lk_urls['faq']); ?>"><span><?php esc_html_e('FAQ', 'yoga'); ?></span></a>
+				</nav>
 				<hr class="sidebar-menu-sep sidebar-menu-sep--before-logout" aria-hidden="true">
 
 				<div class="mobile-menu-exit sidebar-exit modal-call modal-call_logout">

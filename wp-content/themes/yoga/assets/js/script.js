@@ -1295,6 +1295,50 @@ jQuery(document).ready(function($) {
 		$('.body_lk .burger').removeClass("active");
 		closeLibraryFiltersScreen(true);
 	});
+
+	var pendingCartRemoveForm = null;
+
+	function closeCartClearModal() {
+		pendingCartRemoveForm = null;
+		$('#yoga-cart-clear-modal').removeClass('active').attr('aria-hidden', 'true');
+		$('.overlay').removeClass('active');
+		$('.body').removeClass('body-fixed');
+	}
+
+	$(document).on('submit', '.yoga-checkout-tariff__remove-form, .yoga-checkout-summary__remove-form', function(event) {
+		var $modal = $('#yoga-cart-clear-modal');
+		if (!$modal.length) {
+			return;
+		}
+		event.preventDefault();
+		pendingCartRemoveForm = this;
+		$('.modal, .modal-login').removeClass('active');
+		$modal.addClass('active').attr('aria-hidden', 'false');
+		$('.overlay').addClass('active');
+		$('.body').addClass('body-fixed');
+		$modal.find('.yoga-cart-clear__button_cancel').trigger('focus');
+	});
+
+	$(document).on('click', '.yoga-cart-clear__button_confirm', function() {
+		if (!pendingCartRemoveForm) {
+			return;
+		}
+		var form = pendingCartRemoveForm;
+		pendingCartRemoveForm = null;
+		form.submit();
+	});
+
+	$(document).on('click', '.yoga-cart-clear__button_cancel, #yoga-cart-clear-modal .modal-close', closeCartClearModal);
+	$(document).on('click', '.overlay', function() {
+		if (pendingCartRemoveForm) {
+			closeCartClearModal();
+		}
+	});
+	$(document).on('keydown', function(event) {
+		if (event.key === 'Escape' && $('#yoga-cart-clear-modal').hasClass('active')) {
+			closeCartClearModal();
+		}
+	});
 	
 	jQuery(function($){
 		$(".input_phone").mask("+7 (999) 999 99 99");
@@ -3171,18 +3215,7 @@ jQuery(document).ready(function($) {
 
 	$(document).on('click', '.notification-settings__back', function() { switchLkSlide('8'); });
 	$(document).on('click', '.lk-notifications-page__settings', function() { switchLkSlide('9'); });
-	$('.notification-settings__row').each(function() {
-		var $row = $(this);
-		if ($row.find('strong').text().indexOf('Ответ преподавателя') === -1) return;
-		var $toggles = $row.find('.notification-toggle');
-		$toggles.eq(0).attr('data-preference-key', 'question_answer_site');
-		$toggles.eq(1).attr('data-preference-key', 'question_answer_email');
-		if (typeof yoga_ajax !== 'undefined' && yoga_ajax.notification_preferences) {
-			$toggles.eq(0).toggleClass('is-on', !!yoga_ajax.notification_preferences.question_answer_site).attr('aria-pressed', !!yoga_ajax.notification_preferences.question_answer_site);
-			$toggles.eq(1).toggleClass('is-on', !!yoga_ajax.notification_preferences.question_answer_email).attr('aria-pressed', !!yoga_ajax.notification_preferences.question_answer_email);
-		}
-	});
-	$(document).on('click', '.notification-toggle', function() {
+	$(document).on('click', '.notification-toggle[data-preference-key]', function() {
 		var $toggle=$(this), on=!$toggle.hasClass('is-on'), key=$toggle.data('preference-key');
 		$toggle.toggleClass('is-on',on).attr('aria-pressed',on?'true':'false');
 		if (!key || typeof yoga_ajax === 'undefined') return;
@@ -3968,27 +4001,73 @@ function updateComment(commentId) {
     });
 }
 
+var pendingCommentDeleteId = null;
+
+function setCommentDeleteModalState($modal, isOpen) {
+    $modal.toggleClass('active', isOpen).attr('aria-hidden', isOpen ? 'false' : 'true');
+}
+
+function closeCommentDeleteConfirm() {
+    pendingCommentDeleteId = null;
+    setCommentDeleteModalState(jQuery('#yoga-comment-delete-confirm'), false);
+    jQuery('.overlay').removeClass('active');
+    jQuery('.body').removeClass('body-fixed');
+}
+
 function deleteComment(commentId) {
-    if (!confirm('Вы уверены, что хотите удалить комментарий?')) {
+    var $modal = jQuery('#yoga-comment-delete-confirm');
+    if (!$modal.length) {
         return;
     }
-    
-    var data = {
+
+    pendingCommentDeleteId = commentId;
+    jQuery('.modal, .modal-login').removeClass('active').attr('aria-hidden', 'true');
+    setCommentDeleteModalState($modal, true);
+    jQuery('.overlay').addClass('active');
+    jQuery('.body').addClass('body-fixed');
+    $modal.find('.yoga-comment-delete-modal__button_cancel').trigger('focus');
+}
+
+jQuery(document).on('click', '.yoga-comment-delete-modal__button_cancel, #yoga-comment-delete-confirm .modal-close', function() {
+    closeCommentDeleteConfirm();
+});
+
+jQuery(document).on('click', '.yoga-comment-delete-modal__button_confirm', function() {
+    if (!pendingCommentDeleteId) {
+        return;
+    }
+
+    var commentId = pendingCommentDeleteId;
+    var $button = jQuery(this);
+    $button.prop('disabled', true);
+
+    jQuery.post(yoga_ajax.ajax_url, {
         action: 'delete_comment',
         comment_id: commentId,
         security: yoga_ajax.nonce
-    };
-    
-    jQuery.post(yoga_ajax.ajax_url, data, function(response) {
-        if (response.success) {
-            location.reload();
-        } else {
+    }, function(response) {
+        if (!response.success) {
             alert('Ошибка при удалении комментария: ' + (response.data || 'Неизвестная ошибка'));
+            return;
         }
+
+        jQuery('#comment-' + commentId).remove();
+        pendingCommentDeleteId = null;
+        setCommentDeleteModalState(jQuery('#yoga-comment-delete-confirm'), false);
+        setCommentDeleteModalState(jQuery('#yoga-comment-delete-success'), true);
+        jQuery('#yoga-comment-delete-success .modal-close').trigger('focus');
     }, 'json').fail(function() {
         alert('Ошибка соединения');
+    }).always(function() {
+        $button.prop('disabled', false);
     });
-}
+});
+
+jQuery(document).on('click', '.overlay', function() {
+    if (jQuery('#yoga-comment-delete-confirm').hasClass('active')) {
+        pendingCommentDeleteId = null;
+    }
+});
 
 // Закрытие форм при клике вне области
 jQuery(document).on('click', function(e) {

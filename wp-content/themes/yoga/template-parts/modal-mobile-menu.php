@@ -5,13 +5,21 @@
 	 */
 	$theme_uri   = get_template_directory_uri();
 	$sprite_href = esc_url($theme_uri . '/assets/svg/sprite.svg');
+	$mobile_header_tariff = is_user_logged_in() && function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
+	$mobile_header_tariff_label = is_array($mobile_header_tariff) && !empty($mobile_header_tariff['product_name']) ? (string) $mobile_header_tariff['product_name'] : __('Подписка не активна', 'yoga');
+	$mobile_header_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array_fill_keys(array('tariffs'), home_url('/'));
 ?><div class="modal-mobile-menu">
     <div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
 			<use href="<?php echo $sprite_href; ?>#lk-modal-close" width="100%" height="100%"></use>
 		</svg>
-	</div>
+    </div>
     <div class="mobile-menu-inner">
+		<?php if (is_user_logged_in()) : ?>
+		<div class="mobile-header-popup__head">
+			<a class="mobile-header-popup__rate" href="<?php echo esc_url($mobile_header_urls['tariffs']); ?>"><?php echo esc_html($mobile_header_tariff_label); ?></a>
+		</div>
+		<?php endif; ?>
         <div class="mobile-menu">
             <div class="mobile-menu__slide mobile-menu__slide_main active">
                 <nav class="mobile-menu-main">
@@ -120,9 +128,15 @@
 				<?php endforeach; ?>
 			</div>
 		</div>
+		<?php if (is_user_logged_in()) : ?>
+		<button type="button" class="mobile-header-popup__logout modal-call modal-call_logout">
+			<span><?php esc_html_e('Выйти', 'yoga'); ?></span>
+			<svg aria-hidden="true" focusable="false"><use href="<?php echo $sprite_href; ?>#lk-sidebar-logout"></use></svg>
+		</button>
+		<?php endif; ?>
 		<?php
 		$has_paid_tariff = is_user_logged_in() && get_current_user_tariff();
-		if (!$has_paid_tariff) :
+		if (!$has_paid_tariff && !is_user_logged_in()) :
 			$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
 			$tariffs_url = home_url('/product-category/tariffs/');
 			if ($tariffs_term && !is_wp_error($tariffs_term)) {
@@ -132,19 +146,11 @@
 				}
 			}
 			$cta_text = esc_html(yoga_get_purchase_cta_text());
-			if (is_user_logged_in()) :
-				?>
-		<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt">
-			<span><?php echo $cta_text; ?></span>
-		</a>
-				<?php
-			else :
-				?>
+			?>
 		<div class="btn btn_alt modal-call_login">
 			<span><?php echo $cta_text; ?></span>
 		</div>
-				<?php
-			endif;
+			<?php
 		endif;
 		?>
 	</div>
