@@ -839,7 +839,7 @@ body.email-confirmation-is-open {
   display: inline-block;
 }
 
-input[type=checkbox], input[type=radio] {
+input[type=checkbox]:not(.footer-subscribe__checkbox), input[type=radio] {
   position: absolute !important;
   opacity: 0 !important;
   z-index: -10 !important;

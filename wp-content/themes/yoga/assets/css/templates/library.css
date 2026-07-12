@@ -342,6 +342,14 @@
   color: var(--color-violet);
 }
 
+.section-practice-category .form-cat-list__item--all-practices span {
+  color: var(--color-violet, #9153e1);
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .filter {
   display: flex;
   flex-wrap: wrap;

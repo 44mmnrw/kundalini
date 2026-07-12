@@ -31,7 +31,7 @@
 					
 					<nav>
 						<ul>
-							<li class="modal-menu-item">
+							<li class="modal-menu-item modal-menu-item--all-practices">
 								<?php if ($is_available) : ?>
                                 <a href="<?php echo esc_url(get_term_link($parent_term)); ?>"></a>
                                 <span class="modal-menu-item__text">Все практики</span>

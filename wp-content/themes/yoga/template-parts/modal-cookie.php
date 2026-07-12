@@ -15,6 +15,9 @@ if (function_exists('get_field')) {
 if ($privacy_url === '') {
 	$privacy_url = '#';
 }
+$privacy_url = function_exists('yoga_get_legal_document_url')
+	? yoga_get_legal_document_url('cookie_policy', yoga_get_legal_document_url('privacy_policy', $privacy_url))
+	: $privacy_url;
 
 $cookie_text = __('Сайт использует файлы куки для обеспечения удобства пользователей сайта, его улучшения, предоставления персонализированных рекомендаций.', 'yoga');
 ?><div class="modal-cookie" id="yoga-modal-cookie" role="dialog" aria-live="polite" aria-label="<?php echo esc_attr__('Уведомление о файлах cookie', 'yoga'); ?>">
