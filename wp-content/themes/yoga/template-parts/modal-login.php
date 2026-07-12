@@ -63,9 +63,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     <span class="login-switch-link ml-sl-switch" data-target="2">Регистрация</span>
                 </div>
             </form>
-            <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk login-vk-link">
-                <span>Войти через VK</span>
-            </a>
+            <?php echo do_shortcode('[vkid_login class="login-vk-link"]'); ?>
         </div>
         <div class="modal-login-inner__slide" data-target="2">
             <div class="login-slide-switches">
@@ -121,9 +119,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         зарегистрироваться
                     </span>
                 </label>
-                <a href="<?php echo esc_url(home_url('/?oauth=vk')); ?>" class="ref form-link form-link_vk registration-vk-link">
-                    <span>Войти через VK</span>
-                </a>
+                <?php echo do_shortcode('[vkid_login class="registration-vk-link"]'); ?>
                 <div class="loggin-back loggin-back_mob loggin-back_grey">
                     <span class="loggin-back__link ml-sl-switch" data-target="1">
                         Войти
