@@ -2007,58 +2007,6 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-	/* // Обработка комментариев
-	document.addEventListener('DOMContentLoaded', function() {
-		// Показ/скрытие формы ответа
-		document.addEventListener('click', function(e) {
-			if (e.target.closest('.answer-btn')) {
-				const commentItem = e.target.closest('.praktika-comment');
-				const answerForm = commentItem.querySelector('.praktika-comment__answer');
-				answerForm.style.display = answerForm.style.display === 'none' ? 'block' : 'none';
-			}
-		});
-		
-		// Автоматическое увеличение textarea
-		const textareas = document.querySelectorAll('.textarea-resize');
-		textareas.forEach(textarea => {
-			textarea.addEventListener('input', function() {
-				this.style.height = 'auto';
-				this.style.height = (this.scrollHeight) + 'px';
-			});
-		});
-		
-		// Обработка отправки формы
-		const commentForms = document.querySelectorAll('#commentform');
-		commentForms.forEach(form => {
-			form.addEventListener('submit', function(e) {
-				e.preventDefault();
-				// AJAX отправка формы
-				submitCommentForm(this);
-			});
-		});
-	});
-	
-	// AJAX отправка комментария
-	function submitCommentForm(form) {
-		const formData = new FormData(form);
-		
-		fetch(yoga_ajax.ajax_url, {
-			method: 'POST',
-			body: formData
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success) {
-				location.reload();
-				} else {
-				alert('Ошибка при отправке комментария');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	} */
-	
 	// Обработка формы подписки (DOM уже готов в этом jQuery.ready — второй DOMContentLoaded уже не сработает)
 	(function initSubscriptionForms() {
 		const subscriptionForms = document.querySelectorAll('.subscription-form');
@@ -3823,28 +3771,33 @@ jQuery(document).ready(function($) {
     // Отправка основного комментария
     $('#custom-comment-form').on('submit', function(e) {
         e.preventDefault();
-        
-        var formData = $(this).serialize();
+        var $form = $(this);
+        var $button = $form.find('button[type="submit"]');
+        var formData = $form.serialize();
         
         $.ajax({
             type: 'POST',
             url: yoga_ajax.ajax_url,
             data: formData,
+            dataType: 'json',
+            beforeSend: function() {
+                $button.prop('disabled', true).addClass('is-loading');
+            },
             success: function(response) {
-                if (response.success) {
-                    location.reload();
+                if (response.success && response.data && response.data.html) {
+                    appendPracticeComment(response.data);
+                    $form[0].reset();
+                    $form.removeClass('active');
+                    $form.find('textarea').css('height', '');
                 } else {
-                    var errorText = 'Неизвестная ошибка';
-                    if (typeof response.data === 'string') {
-                        errorText = response.data;
-                    } else if (response.data && response.data.message) {
-                        errorText = response.data.message;
-                    }
-                    alert('Ошибка при отправке комментария: ' + errorText);
+                    alert('Ошибка при отправке комментария: ' + practiceCommentError(response));
                 }
             },
             error: function() {
                 alert('Ошибка соединения');
+            },
+            complete: function() {
+                $button.prop('disabled', false).removeClass('is-loading');
             }
         });
     });
@@ -3886,6 +3839,35 @@ jQuery(document).ready(function($) {
 });
 
 // Функции для работы с комментариями
+function practiceCommentError(response) {
+    if (response && typeof response.data === 'string') {
+        return response.data;
+    }
+    if (response && response.data && response.data.message) {
+        return response.data.message;
+    }
+    return 'Неизвестная ошибка';
+}
+
+function appendPracticeComment(data) {
+    var $items = jQuery('.praktika-comments .comments-items').first();
+    var $list = $items.find('.praktika-comments-list').first();
+    if (!$list.length) {
+        $items.empty();
+        $list = jQuery('<div class="praktika-comments-list"></div>').appendTo($items);
+    }
+    $list.append(data.html).append('<div class="praktika-comment__sub-answers"></div>');
+}
+
+function appendPracticeCommentReply(parentId, data) {
+    var $parent = jQuery('#comment-' + parentId);
+    var $children = $parent.next('.praktika-comment__sub-answers');
+    if (!$children.length) {
+        $children = jQuery('<div class="praktika-comment__sub-answers"></div>').insertAfter($parent);
+    }
+    $children.append(data.html).append('<div class="praktika-comment__sub-answers"></div>');
+}
+
 function toggleReplyForm(commentId) {
     var $form = jQuery('#reply-form-' + commentId);
     var isOpen = $form.hasClass('active');
@@ -3945,7 +3927,9 @@ function submitReply(parentId) {
         return;
     }
 
-    var content = jQuery('#reply-form-' + parentId + ' textarea').val();
+    var $form = jQuery('#reply-form-' + parentId);
+    var $button = $form.find('.btn');
+    var content = $form.find('textarea').val();
     
     if (!content.trim()) {
         alert('Введите текст ответа');
@@ -3960,19 +3944,26 @@ function submitReply(parentId) {
         security: yoga_ajax.nonce
     };
     
+    $button.prop('disabled', true).addClass('is-loading');
     jQuery.post(yoga_ajax.ajax_url, data, function(response) {
-        if (response.success) {
-            location.reload();
+        if (response.success && response.data && response.data.html) {
+            appendPracticeCommentReply(parentId, response.data);
+            $form.find('textarea').val('').css('height', '');
+            $form.removeClass('active').addClass('hidden');
         } else {
-            alert('Ошибка при отправке ответа: ' + (response.data || 'Неизвестная ошибка'));
+            alert('Ошибка при отправке ответа: ' + practiceCommentError(response));
         }
-    }).fail(function() {
+    }, 'json').fail(function() {
         alert('Ошибка соединения');
+    }).always(function() {
+        $button.prop('disabled', false).removeClass('is-loading');
     });
 }
 
 function updateComment(commentId) {
-    var content = jQuery('#edit-form-' + commentId + ' textarea').val();
+    var $form = jQuery('#edit-form-' + commentId);
+    var $button = $form.find('.btn_comment-update');
+    var content = $form.find('textarea').val();
     
     if (!content.trim()) {
         alert('Введите текст комментария');
@@ -3986,14 +3977,17 @@ function updateComment(commentId) {
         security: yoga_ajax.nonce
     };
     
+    $button.prop('disabled', true).addClass('is-loading');
     jQuery.post(yoga_ajax.ajax_url, data, function(response) {
-        if (response.success) {
-            location.reload();
+        if (response.success && response.data && response.data.html) {
+            jQuery('#comment-' + commentId).replaceWith(response.data.html);
         } else {
-            alert('Ошибка при обновлении комментария: ' + (response.data || 'Неизвестная ошибка'));
+            alert('Ошибка при обновлении комментария: ' + practiceCommentError(response));
         }
     }, 'json').fail(function() {
         alert('Ошибка соединения');
+    }).always(function() {
+        $button.prop('disabled', false).removeClass('is-loading');
     });
 }
 

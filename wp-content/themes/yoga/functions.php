@@ -1117,6 +1117,71 @@ function yoga_render_threaded_ajax_comments_list(int $post_id): void {
 	echo '</div>';
 }
 
+/** Render one comment with the same markup used by the initial comments tree. */
+function yoga_render_ajax_comment(int $comment_id): string {
+	$comment = get_comment($comment_id);
+	if (!$comment instanceof WP_Comment) {
+		return '';
+	}
+
+	$depth = 0;
+	$parent_id = (int) $comment->comment_parent;
+	while ($parent_id > 0 && $depth < 4) {
+		$depth++;
+		$parent = get_comment($parent_id);
+		$parent_id = $parent instanceof WP_Comment ? (int) $parent->comment_parent : 0;
+	}
+
+	ob_start();
+	custom_comment_template($comment, array('max_depth' => 5), $depth);
+	return (string) ob_get_clean();
+}
+
+/** Return the freshly rendered comment so the client does not reload a cached page. */
+function yoga_comment_ajax_success(int $comment_id): void {
+	$comment = get_comment($comment_id);
+	if (!$comment instanceof WP_Comment) {
+		wp_send_json_error('Комментарий сохранён, но не удалось обновить список');
+	}
+
+	wp_send_json_success(array(
+		'comment_id' => $comment_id,
+		'parent_id'  => (int) $comment->comment_parent,
+		'html'       => yoga_render_ajax_comment($comment_id),
+	));
+}
+
+add_action('yoga_send_new_comment_notifications', static function (int $comment_id): void {
+	wp_new_comment_notify_moderator($comment_id);
+	wp_new_comment_notify_postauthor($comment_id);
+});
+
+/**
+ * Insert a comment without making the visitor wait for WordPress email delivery.
+ * Validation and flood protection still run through wp_new_comment when requested.
+ *
+ * @return int|false|WP_Error
+ */
+function yoga_insert_ajax_comment(array $comment_data, bool $validate = true) {
+	remove_action('comment_post', 'wp_new_comment_notify_moderator');
+	remove_action('comment_post', 'wp_new_comment_notify_postauthor');
+
+	try {
+		$comment_id = $validate
+			? wp_new_comment($comment_data, true)
+			: wp_insert_comment($comment_data);
+	} finally {
+		add_action('comment_post', 'wp_new_comment_notify_moderator');
+		add_action('comment_post', 'wp_new_comment_notify_postauthor');
+	}
+
+	if (!is_wp_error($comment_id) && (int) $comment_id > 0) {
+		wp_schedule_single_event(time() + 5, 'yoga_send_new_comment_notifications', array((int) $comment_id));
+	}
+
+	return $comment_id;
+}
+
 // Обновление комментариев (только для зарегистрированных пользователей)
 add_action('wp_ajax_submit_custom_comment', 'handle_custom_comment');
 add_action('wp_ajax_nopriv_submit_custom_comment', 'handle_custom_comment');
@@ -1173,11 +1238,11 @@ function handle_custom_comment() {
         'comment_approved' => 1
     );
     
-    $comment_id = wp_new_comment($comment_data, true);
+    $comment_id = yoga_insert_ajax_comment($comment_data, true);
     
     if (!is_wp_error($comment_id) && $comment_id) {
         yoga_practice_comment_fix_author_binding((int) $comment_id, is_user_logged_in() ? (int) get_current_user_id() : 0);
-        wp_send_json_success('Комментарий добавлен');
+        yoga_comment_ajax_success((int) $comment_id);
     } else {
         $error_message = is_wp_error($comment_id)
             ? $comment_id->get_error_message()
@@ -1185,10 +1250,10 @@ function handle_custom_comment() {
 
         // Fallback: в некоторых окружениях wp_new_comment возвращает 0 без WP_Error.
         if (!$error_message) {
-            $fallback_comment_id = wp_insert_comment($comment_data);
+            $fallback_comment_id = yoga_insert_ajax_comment($comment_data, false);
             if ($fallback_comment_id) {
                 yoga_practice_comment_fix_author_binding((int) $fallback_comment_id, is_user_logged_in() ? (int) get_current_user_id() : 0);
-                wp_send_json_success('Комментарий добавлен');
+                yoga_comment_ajax_success((int) $fallback_comment_id);
             }
         }
 
@@ -1209,6 +1274,12 @@ function handle_custom_comment() {
 // Включить поддержку комментариев для custom post type
 add_action('wp_ajax_submit_comment_reply', 'handle_comment_reply');
 add_action('wp_ajax_nopriv_submit_comment_reply', 'handle_comment_reply');
+
+add_action('yoga_send_comment_reply_email', static function (string $email, string $subject, string $message): void {
+	if (is_email($email)) {
+		wp_mail($email, $subject, $message);
+	}
+}, 10, 3);
 
 function handle_comment_reply() {
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
@@ -1264,7 +1335,7 @@ function handle_comment_reply() {
         'comment_approved' => 1,
     );
     
-    $comment_id = wp_insert_comment($comment_data);
+    $comment_id = yoga_insert_ajax_comment($comment_data, false);
     
     if ($comment_id) {
         yoga_practice_comment_fix_author_binding((int) $comment_id, (int) $user_id);
@@ -1284,15 +1355,15 @@ function handle_comment_reply() {
 			if (yoga_notification_preference($recipient_user_id, 'comment_reply_email', true)) {
 				$recipient = get_userdata($recipient_user_id);
 				if ($recipient instanceof WP_User && is_email($recipient->user_email)) {
-					wp_mail(
-						$recipient->user_email,
-						__('Ответ на ваш комментарий', 'yoga'),
-						$reply_message . "\n\n" . $reply_url
-					);
+					wp_schedule_single_event(time() + 5, 'yoga_send_comment_reply_email', array(
+						(string) $recipient->user_email,
+						(string) __('Ответ на ваш комментарий', 'yoga'),
+						(string) ($reply_message . "\n\n" . $reply_url),
+					));
 				}
 			}
 		}
-        wp_send_json_success('Ответ добавлен');
+        yoga_comment_ajax_success((int) $comment_id);
     } else {
         wp_send_json_error('Ошибка при добавлении ответа');
     }
@@ -1321,7 +1392,10 @@ function handle_comment_update() {
     $result = wp_update_comment($comment_data);
     
     if ($result) {
-        wp_send_json_success('Комментарий обновлен');
+        wp_send_json_success(array(
+			'comment_id' => $comment_id,
+			'html' => yoga_render_ajax_comment($comment_id),
+		));
     } else {
         wp_send_json_error('Ошибка при обновлении комментария');
     }
