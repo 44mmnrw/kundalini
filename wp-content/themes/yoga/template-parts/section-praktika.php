@@ -82,6 +82,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
     <div class="container">
         <div class="row">
             <div class="praktika">
+                <h2 class="ways-heading praktika-heading"><?php echo esc_html(get_the_title()); ?></h2>
                 <div class="praktika-details">
 					<div class="praktika-details__lead">
 						<span class="praktika-details__lvl">
@@ -114,8 +115,7 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 						</span>
 					</div>
 				</div>
-                <div class="praktika__main">
-                        <div class="praktika-info">
+				<div class="praktika-info">
 							<?php
 								if ($sections) {
 									foreach ($sections as $section_index => $section) {
@@ -311,7 +311,6 @@ if ($difficulty_term_id > 0 && $practice_level_slug !== '') {
 								}
 							?>
 						</div>
-					</div>
 				</div>
 			</div>
 		</div>

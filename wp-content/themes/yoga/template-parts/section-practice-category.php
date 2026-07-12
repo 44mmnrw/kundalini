@@ -64,7 +64,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 							<div class="form-categories">
 								<div class="form-categories__value">
 									<span<?php echo $parent_term_link_attr; ?> data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
-										<?php echo esc_html($parent_term->name); ?>
+										<?php esc_html_e('Все практики', 'yoga'); ?>
 									</span>
 									<span class="active"<?php echo $current_term_link_attr; ?> data-target="<?php echo esc_attr((string) $current_term->term_id); ?>">
 										<?php echo esc_html($current_term->name); ?>
@@ -96,8 +96,8 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 							</label>
 							<div class="form-search-list"></div>
 							<div class="form-cat-list">
-								<div class="form-cat-list__item"<?php echo $parent_term_link_attr; ?> data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
-									<span><?php echo esc_html($parent_term->name); ?></span>
+								<div class="form-cat-list__item form-cat-list__item--all-practices"<?php echo $parent_term_link_attr; ?> data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
+									<span><?php esc_html_e('Все практики', 'yoga'); ?></span>
 								</div>
 								<div class="form-cat-list__item active"<?php echo $current_term_link_attr; ?> data-target="<?php echo esc_attr((string) $current_term->term_id); ?>">
 									<span><?php echo esc_html($current_term->name); ?></span>

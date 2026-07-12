@@ -172,9 +172,7 @@
 }
 
 .footer-subscribe__agree input:checked {
-  background:
-    linear-gradient(45deg, transparent 45%, var(--color-white) 46%, var(--color-white) 54%, transparent 55%) 0.25rem 0.55rem / 0.35rem 0.35rem no-repeat,
-    linear-gradient(-45deg, transparent 43%, var(--color-white) 44%, var(--color-white) 54%, transparent 55%) 0.52rem 0.42rem / 0.55rem 0.55rem no-repeat;
+  background: transparent url("../../img/checkbox-arrow_white.png") center / 0.75rem auto no-repeat;
 }
 
 .footer-subscribe__agree span {

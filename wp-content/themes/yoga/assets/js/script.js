@@ -2084,7 +2084,10 @@ jQuery(document).ready(function($) {
 			body: new URLSearchParams({
 				'action': 'process_subscription',
 				'email': email,
-				'nonce': nonce
+				'nonce': nonce,
+				'consent': '1',
+				'source': form.classList.contains('footer-subscribe') ? 'footer' : 'subscription-section',
+				'page_url': window.location.href
 			})
 		})
 		.then(response => response.json())
@@ -2108,6 +2111,7 @@ jQuery(document).ready(function($) {
 	}
 	
 	function showSubscriptionSuccess(message, form) {
+		openSubscriptionSuccessModal();
 		const subscription = form ? form.closest('.subscription') : null;
 		const successElement = subscription
 			? subscription.querySelector('.form__succes')
@@ -2119,6 +2123,36 @@ jQuery(document).ready(function($) {
 			successElement.textContent = message;
 		}
 	}
+
+	function openSubscriptionSuccessModal() {
+		const modal = document.getElementById('yoga-subscription-success-modal');
+		if (!modal) return;
+		document.querySelectorAll('.modal.active, .modal-login.active').forEach(item => item.classList.remove('active'));
+		modal.classList.add('active');
+		modal.setAttribute('aria-hidden', 'false');
+		document.querySelector('.overlay')?.classList.add('active');
+		document.body.classList.add('body-fixed');
+		modal.querySelector('.modal-close')?.focus();
+	}
+
+	document.querySelectorAll('.footer-subscribe').forEach(form => {
+		form.addEventListener('submit', function(event) {
+			event.preventDefault();
+			const email = this.querySelector('input[type="email"]');
+			const nonce = this.querySelector('input[name="subscription_nonce_field"]');
+			const agree = this.querySelector('input[type="checkbox"]');
+			const button = this.querySelector('button[type="submit"]');
+			if (!email || !nonce || !agree || !button) return;
+			if (!agree.checked) { showSubscriptionError('Подтвердите согласие на обработку персональных данных.'); return; }
+			if (!isValidSubscriptionEmail(email.value)) { showSubscriptionError('Пожалуйста, введите корректный email (не более 30 символов)'); return; }
+			button.disabled = true;
+			fetch(yoga_ajax.ajax_url, {method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'process_subscription',email:email.value.trim(),nonce:nonce.value,consent:'1',source:'footer',page_url:window.location.href})})
+				.then(response => response.json())
+				.then(data => { if (!data.success) throw new Error(yogaSubscriptionAjaxMessage(data, 'Не удалось оформить подписку.')); openSubscriptionSuccessModal(); this.reset(); agree.checked = true; })
+				.catch(error => showSubscriptionError(error.message || 'Ошибка сети. Попробуйте еще раз.'))
+				.finally(() => { button.disabled = false; });
+		});
+	});
 	
 	function showSubscriptionError(message) {
 		console.error('Subscription error:', message);
@@ -4283,6 +4317,77 @@ jQuery(document).on('click', function(e) {
         });
     });
 })(jQuery);
+
+/* Reveal the homepage subscription after 200px of the preceding section is visible. */
+(function () {
+    var subscription = document.querySelector('.home-footer-subscribe');
+    var main = document.querySelector('main');
+    var sections = main ? main.querySelectorAll('section') : [];
+    var precedingSection = sections.length ? sections[sections.length - 1] : null;
+    if (!subscription || !precedingSection) return;
+
+    subscription.classList.add('is-footer-reveal-ready');
+
+    function revealSubscription() {
+        subscription.addEventListener('transitionend', function finishSubscriptionReveal(event) {
+            if (event.propertyName !== 'transform') return;
+            subscription.classList.add('is-footer-reveal-complete');
+            subscription.removeEventListener('transitionend', finishSubscriptionReveal);
+        });
+
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+                subscription.classList.add('is-footer-visible');
+            });
+        });
+    }
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        revealSubscription();
+        return;
+    }
+
+    var framePending = false;
+
+    function getDocumentTop(element) {
+        var top = 0;
+        var node = element;
+
+        while (node) {
+            top += node.offsetTop || 0;
+            node = node.offsetParent;
+        }
+
+        return top;
+    }
+
+    function checkRevealPoint() {
+        framePending = false;
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var triggerPoint = getDocumentTop(precedingSection) - window.innerHeight + 200;
+
+        if (scrollTop < triggerPoint) return;
+
+        revealSubscription();
+        window.removeEventListener('scroll', requestRevealCheck);
+        window.removeEventListener('resize', requestRevealCheck);
+        window.removeEventListener('load', requestRevealCheck);
+        window.removeEventListener('pageshow', requestRevealCheck);
+    }
+
+    function requestRevealCheck() {
+        if (framePending) return;
+        framePending = true;
+        window.requestAnimationFrame(checkRevealPoint);
+    }
+
+    window.addEventListener('scroll', requestRevealCheck, { passive: true });
+    window.addEventListener('resize', requestRevealCheck);
+    window.addEventListener('load', requestRevealCheck);
+    window.addEventListener('pageshow', requestRevealCheck);
+    requestRevealCheck();
+})();
+
 
 (function($) {
     'use strict';

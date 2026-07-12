@@ -136,6 +136,15 @@
   font-size: 1.125rem;  transition: 0.4s ease;
 }
 
+.modal-menu-item--all-practices .modal-menu-item__text,
+.modal-menu-item--all-practices:hover .modal-menu-item__text {
+  color: var(--color-violet, #9153e1);
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 @media (max-width: 1319px) {
   .modal-menu {
     top: var(--header-bar-height);  }

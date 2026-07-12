@@ -5,6 +5,7 @@
 	// Регистрация меню
 	require_once get_template_directory() . '/inc/core/ajax-responses.php';
 	require_once get_template_directory() . '/inc/core/dependencies.php';
+	require_once get_template_directory() . '/inc/core/legal-documents.php';
 	require_once get_template_directory() . '/inc/security/smartcaptcha.php';
 	require_once get_template_directory() . '/inc/security/copy-protection.php';
 	// Axecode.tech: интеграция ACF вынесена в /inc/integrations/acf.php.
@@ -703,6 +704,10 @@
 		}
 		if ($is_question_success_template) {
 			wp_enqueue_style( 'question-success-style', $theme_uri . '/assets/css/templates/question-success.css', $common_style_deps, $question_success_style_ver );
+		}
+		if (is_page() && get_page_template_slug(get_queried_object_id()) === '') {
+			wp_enqueue_style('ways-style', $theme_uri . '/assets/css/templates/ways.css', array('specification-style'), $ways_style_ver);
+			wp_enqueue_style('rules-style', $theme_uri . '/assets/css/templates/rules.css', $common_style_deps, $rules_style_ver);
 		}
 		if ($is_homepage || $is_archive_page || $is_post_single || $is_contacts_template || $is_tariffs_template || $is_product_cat_tax) {
 			wp_enqueue_style( 'subscription-style', $theme_uri . '/assets/css/templates/subscription.css', $common_style_deps, $subscription_style_ver );

@@ -30,13 +30,17 @@ $footer_main_links = array(
 );
 
 $footer_privacy_url = $footer_option('privacy_policy_link');
+$legal_url = static function($type, $fallback = '') {
+	return function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url($type, $fallback) : $fallback;
+};
+$footer_privacy_url = $legal_url('privacy_policy', $footer_privacy_url);
 $footer_legal_links = array(
-	array('label' => 'Публичная оферта', 'url' => $footer_option('public_offer_link')),
+	array('label' => 'Публичная оферта', 'url' => $legal_url('public_offer', $footer_option('public_offer_link'))),
 	array('label' => 'Политика конфиденциальности', 'url' => $footer_privacy_url),
-	array('label' => 'Политика куки', 'url' => $footer_option('cookie_policy_link') ?: $footer_privacy_url),
-	array('label' => 'Согласие на обработку персональных данных', 'url' => $footer_option('personal_data_processing_link') ?: $footer_option('personal_data_link') ?: $footer_privacy_url),
-	array('label' => 'Противопоказания и отказ от ответственности', 'url' => $footer_option('contraindications_link') ?: $footer_option('disclaimer_link') ?: $footer_privacy_url),
-	array('label' => 'Пользовательское соглашение', 'url' => $footer_option('user_agreement_link')),
+	array('label' => 'Политика куки', 'url' => $legal_url('cookie_policy', $footer_option('cookie_policy_link') ?: $footer_privacy_url)),
+	array('label' => 'Согласие на обработку персональных данных', 'url' => $legal_url('personal_data', $footer_option('personal_data_processing_link') ?: $footer_option('personal_data_link') ?: $footer_privacy_url)),
+	array('label' => 'Противопоказания и отказ от ответственности', 'url' => $legal_url('contraindications', $footer_option('contraindications_link') ?: $footer_option('disclaimer_link') ?: $footer_privacy_url)),
+	array('label' => 'Пользовательское соглашение', 'url' => $legal_url('user_agreement', $footer_option('user_agreement_link'))),
 );
 
 $footer_socials = array(
@@ -51,7 +55,26 @@ $footer_socials = array(
 $footer_copyright = $footer_option('copyright_text') ?: 'Все права защищены.';
 $footer_requisites = $footer_option('footer_requisites') ?: "ИП КСЕНОФОНТОВА МАРИНА ЕВГЕНЬЕВНА\nИНН 632200860531\nОГРНИП 319631300101827";
 $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_split('/\R/', $footer_requisites))));
+$is_blog_footer = is_home()
+	|| is_category()
+	|| is_tag()
+	|| is_date()
+	|| is_author();
+$is_home_footer = is_front_page()
+	|| is_page_template('templates-page/homepage.php')
+	|| $is_blog_footer;
 ?>
+<?php if ($is_home_footer) : ?>
+<section class="home-footer-subscribe" aria-labelledby="home-footer-subscribe-title">
+	<p class="home-footer-subscribe__eyebrow">Оставайтесь вместе с нами</p>
+	<h2 class="home-footer-subscribe__title" id="home-footer-subscribe-title"><span class="home-footer-subscribe__mark">Подпишитесь,</span> чтобы всегда быть в курсе <span class="home-footer-subscribe__green">новых материалов</span>,<br>акций и <span class="home-footer-subscribe__thumb" aria-hidden="true"></span> спецпредложений!</h2>
+	<form class="footer-subscribe home-footer-subscribe__form" action="<?php echo esc_url(home_url('/')); ?>" method="post">
+		<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
+		<div class="footer-subscribe__field"><input id="home-footer-subscribe-email" name="footer_email" type="email" placeholder="E-mail" aria-label="E-mail"><button class="footer-subscribe__submit" type="submit" aria-label="Подписаться на новости"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-arrow-up-right'); ?>"></use></svg></button></div>
+		<label class="footer-subscribe__agree"><input class="footer-subscribe__checkbox" type="checkbox" name="footer_subscribe_agree" checked><span>Я соглашаюсь на <a href="<?php echo esc_url(($footer_legal_links[3]['url'] ?? '') ?: $footer_privacy_url ?: home_url('/')); ?>">обработку персональных данных</a> и получение рассылок</span></label>
+	</form>
+</section>
+<?php endif; ?>
 <footer class="footer" id="footer">
 	<div class="footer__inner">
 		<div class="footer__top">
@@ -88,7 +111,8 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 					</div>
 				</div>
 
-				<form class="footer-subscribe" action="<?php echo esc_url(home_url('/')); ?>" method="post">
+				<?php if (!$is_home_footer) : ?><form class="footer-subscribe" action="<?php echo esc_url(home_url('/')); ?>" method="post">
+					<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
 					<div class="footer-subscribe__main">
 						<label class="footer-subscribe__label" for="footer-subscribe-email">
 							Подписаться на новости:
@@ -103,7 +127,7 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 						</div>
 					</div>
 					<label class="footer-subscribe__agree">
-						<input type="checkbox" name="footer_subscribe_agree" checked>
+						<input class="footer-subscribe__checkbox" type="checkbox" name="footer_subscribe_agree" checked>
 						<span>
 							Я соглашаюсь на
 							<a href="<?php echo esc_url(($footer_legal_links[3]['url'] ?? '') ?: $footer_privacy_url ?: home_url('/')); ?>">
@@ -112,7 +136,7 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 							и получение рассылок
 						</span>
 					</label>
-				</form>
+				</form><?php endif; ?>
 			</div>
 		</div>
 
@@ -161,6 +185,12 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 				Карта добавлена
 			</b>
 		</div>
+	</div>
+</div><div class="modal modal-default yoga-subscription-success-modal" id="yoga-subscription-success-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="yoga-subscription-success-title">
+	<button class="modal-close yoga-subscription-success-modal__close" type="button" aria-label="Закрыть"></button>
+	<div class="yoga-subscription-success-modal__content">
+		<img class="yoga-subscription-success-modal__icon" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/subscription-success-check.svg'); ?>" alt="">
+		<h3 id="yoga-subscription-success-title">Подписка оформлена!<br>Обещаем отсутствие спама :)</h3>
 	</div>
 </div><div class="modal modal-default modal-default_formsucces">
 	<button class="modal-close" type="button" aria-label="Закрыть">

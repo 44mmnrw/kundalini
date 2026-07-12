@@ -149,7 +149,7 @@
                 /** На странице «Контакты» заголовок под крошками не показываем */
                 $yoga_hide_ways_heading = is_page_template('templates-page/contacts.php');
                 ?>
-                <?php if (!$yoga_hide_ways_heading) : ?>
+                <?php if (!$yoga_hide_ways_heading && !is_singular('practice')) : ?>
                 <h2 class="ways-heading">
                     <?php
                     if (is_home() || is_front_page()) {

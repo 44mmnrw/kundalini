@@ -31,7 +31,7 @@
   pointer-events: none;
 }
 /* Заголовок под крошками: глобальный h2 из specification.css (# по ID перебивает margin/size/center) */
-#section-ways h2.ways-heading {
+#section-ways :is(h1, h2).ways-heading {
   box-sizing: border-box;
   margin-top: 2.125rem;
   margin-bottom: 0;
@@ -41,12 +41,17 @@
   text-align: left;
   font-family: "Mulish-Bold", sans-serif;
   font-weight: normal;
-  font-size: 2.25rem;
-  line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: 0;
   color: var(--color-black);
   word-wrap: break-word;
+}
+
+@media (min-width: 1025px) {
+  .single-practice #section-ways h2.ways-heading {
+    width: calc(100% - 20.3125rem);
+    max-width: 49.5625rem;
+  }
 }
 
 .ways-item {
@@ -54,8 +59,7 @@
 }
 
 @media (max-width: var(--yoga-below-tight-desktop)) {
-  #section-ways h2.ways-heading {
-    font-size: 2rem;
+  #section-ways :is(h1, h2).ways-heading {
     margin-top: 1.75rem;
   }
 }
@@ -84,9 +88,7 @@
   }
 }
 @media (max-width: 575px) {
-  #section-ways h2.ways-heading {
-    font-size: 1.625rem;
-    line-height: 1.25;
+  #section-ways :is(h1, h2).ways-heading {
     margin-top: 1.25rem;
   }
 }

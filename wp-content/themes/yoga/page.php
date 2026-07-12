@@ -1,38 +1,42 @@
 <?php
 /**
- * The template for displaying all pages
- *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site may use a
- * different template.
- *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package yoga
+ * Стандартный шаблон обычной страницы.
+ * Выводит только содержимое редактора: header.php уже открывает <main>,
+ * а footer.php закрывает его.
  */
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 get_header();
-?>
 
-	<main id="primary" class="site-main">
+while (have_posts()) {
+	the_post();
+	?>
+	<section class="section-ways section-ways_page" id="section-ways">
+		<div class="container">
+			<div class="row">
+				<div class="ways">
+					<ul>
+						<li><a href="<?php echo esc_url(home_url('/')); ?>" class="ways-item ref">Главная</a></li>
+						<li><span class="ways-item"><?php the_title(); ?></span></li>
+					</ul>
+					<h1 class="ways-heading"><?php the_title(); ?></h1>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="section-rules section-rules_page" id="section-rules">
+		<div class="container">
+			<div class="row">
+				<article id="post-<?php the_ID(); ?>" <?php post_class('rules'); ?>>
+					<?php the_content(); ?>
+				</article>
+			</div>
+		</div>
+	</section>
+	<?php
+}
 
-		<?php
-		while ( have_posts() ) :
-			the_post();
-
-			get_template_part( 'template-parts/content', 'page' );
-
-			// If comments are open or we have at least one comment, load up the comment template.
-			if ( comments_open() || get_comments_number() ) :
-				comments_template();
-			endif;
-
-		endwhile; // End of the loop.
-		?>
-
-	</main><!-- #main -->
-
-<?php
-get_sidebar();
 get_footer();

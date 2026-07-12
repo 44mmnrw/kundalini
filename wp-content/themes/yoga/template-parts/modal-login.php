@@ -2,16 +2,16 @@
 /**
  * Login Modal Template — вход и регистрация по почте
  */
-$terms_url = get_permalink(get_page_by_path('terms'));
-$privacy_url = get_permalink(get_page_by_path('privacy'));
-if (!$terms_url) $terms_url = home_url('/terms/');
-if (!$privacy_url) $privacy_url = home_url('/privacy/');
 $legal_option = static function($key) {
     return function_exists('get_field') ? trim((string) get_field($key, 'option')) : '';
 };
-$public_offer_url = $legal_option('public_offer_link') ?: $terms_url;
-$personal_data_url = $legal_option('personal_data_processing_link') ?: $legal_option('personal_data_link') ?: $privacy_url;
-$contraindications_url = $legal_option('contraindications_link') ?: $legal_option('disclaimer_link') ?: $privacy_url;
+$terms_url = function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url('user_agreement', $legal_option('user_agreement_link')) : $legal_option('user_agreement_link');
+$privacy_url = function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url('privacy_policy', $legal_option('privacy_policy_link')) : $legal_option('privacy_policy_link');
+if ($terms_url === '') $terms_url = get_permalink(get_page_by_path('terms')) ?: home_url('/terms/');
+if ($privacy_url === '') $privacy_url = get_permalink(get_page_by_path('privacy')) ?: home_url('/privacy/');
+$public_offer_url = function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url('public_offer', $legal_option('public_offer_link') ?: $terms_url) : ($legal_option('public_offer_link') ?: $terms_url);
+$personal_data_url = function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url('personal_data', $legal_option('personal_data_processing_link') ?: $legal_option('personal_data_link') ?: $privacy_url) : ($legal_option('personal_data_processing_link') ?: $legal_option('personal_data_link') ?: $privacy_url);
+$contraindications_url = function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url('contraindications', $legal_option('contraindications_link') ?: $legal_option('disclaimer_link') ?: $privacy_url) : ($legal_option('contraindications_link') ?: $legal_option('disclaimer_link') ?: $privacy_url);
 $img_uri = get_template_directory_uri() . '/assets/img';
 $yoga_smart_captcha = function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced();
 $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_client_key')) ? yoga_smartcaptcha_client_key() : '';
