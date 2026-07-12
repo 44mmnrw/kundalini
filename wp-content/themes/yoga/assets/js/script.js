@@ -1400,6 +1400,7 @@ jQuery(document).ready(function($) {
 		$('.modal-login-inner__slide').removeClass('active');
 		$('.modal-login-inner__slide[data-target="' + target + '"]').addClass('active');
 		$('.modal-login').toggleClass('modal-login--recovery', target === '3');
+		$('.modal-login').toggleClass('modal-login--success', target === '4');
 		$('.yoga-form-login-message').removeClass('is-visible').empty();
 
 		if (target === '3') {
@@ -1598,6 +1599,7 @@ jQuery(document).ready(function($) {
 				if (r.success) {
 					$('.modal-login-inner__slide').removeClass("active");
 					$('.modal-login-inner__slide[data-target=4]').addClass("active");
+					$('.modal-login').removeClass('modal-login--recovery').addClass('modal-login--success');
 				} else {
 					var message = (r && r.data && r.data.message) ? r.data.message : (r.data || 'Не удалось отправить письмо');
 					alert(message);
