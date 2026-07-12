@@ -20,6 +20,9 @@
 	}
 // Всегда короткий URL блога: иначе POST на /category/blog/ даёт 301 на /blog/ без query — теряются s и фильтр.
 $form_action = home_url('/blog/');
+$sprite_file = get_template_directory() . '/assets/svg/sprite.svg';
+$sprite_version = file_exists($sprite_file) ? (string) filemtime($sprite_file) : wp_get_theme()->get('Version');
+$sprite_href = add_query_arg('ver', rawurlencode($sprite_version), get_template_directory_uri() . '/assets/svg/sprite.svg');
 $blog_search_value = '';
 if (isset($_GET['s']) && is_string($_GET['s'])) {
 	$blog_search_value = sanitize_text_field(wp_unslash($_GET['s']));
@@ -56,8 +59,9 @@ if ($blog_search_value === '') {
                         <input type="text" name="s" class="input" placeholder="Что ищете?" value="<?php echo esc_attr($blog_search_value); ?>" required>
                         <label class="blog-search__btn">
                             <input type="submit">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/search-btn-icon.png" alt="" class="active">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/search-btn-icon_active.png" alt="">
+							<svg class="blog-search__btn-icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
+								<use href="<?php echo esc_url($sprite_href); ?>#search-icon"></use>
+							</svg>
 						</label>
                         <label class="blog-search__delete-btn">
                             <input type="reset">
