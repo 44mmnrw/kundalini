@@ -28,6 +28,7 @@
 	require_once get_template_directory() . '/inc/woocommerce/payment-success.php';
 	// Подключение стилей и скриптов
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
+	require_once get_template_directory() . '/inc/ajax/email-verification.php';
 	require_once get_template_directory() . '/inc/auth/login-modal.php';
 
 	// Стили
@@ -816,7 +817,15 @@ function yoga_subscribe_handler() {
 			'user_id'        => get_current_user_id(),
 			'user_logged_in' => is_user_logged_in(),
 			'user_email'     => $current_user->user_email,
+			'email_verification_nonce' => wp_create_nonce('yoga_email_verification'),
 			'site_url'       => home_url(),
+			'sprite_url'     => add_query_arg(
+				'ver',
+				file_exists(get_template_directory() . '/assets/svg/sprite.svg')
+					? (string) filemtime(get_template_directory() . '/assets/svg/sprite.svg')
+					: wp_get_theme()->get('Version'),
+				get_template_directory_uri() . '/assets/svg/sprite.svg'
+			),
 			'question_success_url' => $question_success_url,
 			'post_id'        => get_the_ID(),
 			'smartcaptcha_enabled' => function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced(),
@@ -872,10 +881,24 @@ if (!function_exists('yoga_get_user_public_name')) {
 	}
 }
 
+if (!function_exists('yoga_get_user_avatar_id')) {
+	function yoga_get_user_avatar_id(int $user_id): int {
+		if ($user_id <= 0) {
+			return 0;
+		}
+
+		$avatar_id = function_exists('get_field')
+			? (int) get_field('user_avatar', 'user_' . $user_id)
+			: (int) get_user_meta($user_id, 'user_avatar', true);
+
+		return $avatar_id > 0 && get_post_type($avatar_id) === 'attachment' ? $avatar_id : 0;
+	}
+}
+
 if (!function_exists('yoga_get_user_avatar_html')) {
 	function yoga_get_user_avatar_html(int $user_id, int $size = 60, string $class = 'avatar'): string {
-		if ($user_id > 0 && function_exists('get_field')) {
-			$avatar_id = (int) get_field('user_avatar', 'user_' . $user_id);
+		if ($user_id > 0) {
+			$avatar_id = yoga_get_user_avatar_id($user_id);
 			if ($avatar_id > 0) {
 				$attachment = wp_get_attachment_image(
 					$avatar_id,
@@ -2681,6 +2704,8 @@ function handle_comment_delete() {
 		}
 		
 		$user_id = get_current_user_id();
+		$old_user = get_user_by('id', $user_id);
+		$old_email = $old_user ? sanitize_email((string) $old_user->user_email) : '';
 		$response = array();
 		
 		try {
@@ -2699,7 +2724,19 @@ function handle_comment_delete() {
 				$user_data['user_email'] = sanitize_email($_POST['email']);
 			}
 			
-			wp_update_user($user_data);
+			$update_result = wp_update_user($user_data);
+			if (is_wp_error($update_result)) {
+				wp_send_json_error($update_result->get_error_message(), 422);
+			}
+			$new_email = isset($user_data['user_email']) ? sanitize_email($user_data['user_email']) : $old_email;
+			if ($new_email !== '' && strcasecmp($new_email, $old_email) !== 0) {
+				delete_user_meta($user_id, 'yoga_verified_email');
+				delete_user_meta($user_id, 'yoga_email_verified_at');
+				if (function_exists('yoga_clear_email_verification_code')) {
+					yoga_clear_email_verification_code($user_id);
+				}
+				delete_user_meta($user_id, 'yoga_email_code_sent_at');
+			}
 
 			if (isset($_POST['timezone'])) {
 				$timezone = sanitize_text_field(wp_unslash($_POST['timezone']));
@@ -2752,20 +2789,30 @@ function handle_comment_delete() {
 				// Шорткод для истории практик
 				
 				$attachment_id = media_handle_upload('avatar', 0);
-				
+				if (is_wp_error($attachment_id)) {
+					wp_send_json_error($attachment_id->get_error_message(), 400);
+				}
+
 				$attachment = get_post($attachment_id);
 				if ($attachment && $attachment->post_type === 'attachment') {
 					$mime_type = get_post_mime_type($attachment_id);
 					if (strpos($mime_type, 'image/') === 0) {
-						// Шорткод для истории заказов и подписок
-						$result = update_field('user_avatar', $attachment_id, 'user_' . $user_id);
-						
-						if ($result) {
-							wp_send_json_success('Аватар успешно обновлен');
-							} else {
-							wp_send_json_error('Ошибка при обновлении аватара');
+						$result = function_exists('update_field')
+							? update_field('user_avatar', $attachment_id, 'user_' . $user_id)
+							: update_user_meta($user_id, 'user_avatar', $attachment_id);
+
+						if ($result === false && yoga_get_user_avatar_id($user_id) !== (int) $attachment_id) {
+							wp_delete_attachment($attachment_id, true);
+							wp_send_json_error('Ошибка при обновлении аватара', 500);
 						}
+
+						wp_send_json_success([
+							'message'    => 'Аватар успешно обновлен',
+							'avatar_id'  => (int) $attachment_id,
+							'avatar_url' => wp_get_attachment_image_url($attachment_id, 'thumbnail'),
+						]);
 						} else {
+						wp_delete_attachment($attachment_id, true);
 						wp_send_json_error("Файл не является изображением: $mime_type");
 					}
 				}
@@ -2778,6 +2825,58 @@ function handle_comment_delete() {
 		}
 	}
 	add_action('wp_ajax_update_user_profile', 'yoga_update_profile_ajax');
+
+	function yoga_upload_avatar_ajax() {
+		if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'yoga_ajax_nonce')) {
+			wp_send_json_error('Ошибка безопасности', 403);
+		}
+
+		if (!is_user_logged_in()) {
+			wp_send_json_error('Не авторизован', 401);
+		}
+
+		if (empty($_FILES['avatar']) || !isset($_FILES['avatar']['tmp_name'])) {
+			wp_send_json_error('Файл не выбран', 400);
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		$user_id = get_current_user_id();
+		$old_avatar_id = yoga_get_user_avatar_id($user_id);
+		$attachment_id = media_handle_upload('avatar', 0);
+
+		if (is_wp_error($attachment_id)) {
+			wp_send_json_error($attachment_id->get_error_message(), 400);
+		}
+
+		$mime_type = (string) get_post_mime_type($attachment_id);
+		if (strpos($mime_type, 'image/') !== 0) {
+			wp_delete_attachment($attachment_id, true);
+			wp_send_json_error('Файл не является изображением', 400);
+		}
+
+		$result = function_exists('update_field')
+			? update_field('user_avatar', $attachment_id, 'user_' . $user_id)
+			: update_user_meta($user_id, 'user_avatar', $attachment_id);
+
+		if ($result === false && yoga_get_user_avatar_id($user_id) !== (int) $attachment_id) {
+			wp_delete_attachment($attachment_id, true);
+			wp_send_json_error('Не удалось сохранить аватар', 500);
+		}
+
+		if ($old_avatar_id > 0 && $old_avatar_id !== (int) $attachment_id) {
+			wp_delete_attachment($old_avatar_id, true);
+		}
+
+		wp_send_json_success([
+			'avatar_id'  => (int) $attachment_id,
+			'avatar_url' => wp_get_attachment_image_url($attachment_id, 'thumbnail'),
+		]);
+	}
+	add_action('wp_ajax_upload_user_avatar', 'yoga_upload_avatar_ajax');
+
 	// Функция для получения рекомендованных практик
 	function delete_avatar_ajax() {
 		if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
@@ -2789,7 +2888,7 @@ function handle_comment_delete() {
 		}
 		
 		$user_id = get_current_user_id();
-		$avatar_id = (int) get_field('user_avatar', 'user_' . $user_id);
+		$avatar_id = yoga_get_user_avatar_id($user_id);
 
 		if ($avatar_id > 0) {
 			if (function_exists('delete_field')) {

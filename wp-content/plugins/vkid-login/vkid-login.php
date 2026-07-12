@@ -2,16 +2,19 @@
 /**
  * Plugin Name: VK ID Login (Custom)
  * Description: Вход/регистрация в WordPress через VK ID Web SDK (PKCE): кнопка, обмен кода на токен, создание/логин пользователя.
- * Version: 0.4.0 
+ * Version: 1.0.0
+ * Author: AxeCode.Tech
  */
 
 if (!defined('ABSPATH')) exit;
 
 class VKID_Login_Plugin {
+  const TOKEN_ENDPOINT       = 'https://id.vk.com/oauth2/auth';
+  const USER_INFO_ENDPOINT   = 'https://id.vk.com/oauth2/user_info';
+  const VK_API_ENDPOINT      = 'https://api.vk.com/method/users.get';
   const OPTION_APP_ID         = 'vkid_app_id';
   const OPTION_CLIENT_SECRET  = 'vkid_client_secret'; // для refresh потока; на обмен кода не обязателен
   const OPTION_REDIRECT_URL   = 'vkid_redirect_url';  // ДОЛЖЕН совпадать 1:1 с VK ID (без фрагмента #)
-  const OPTION_SCOPE          = 'vkid_scope';         // напр.: "email" или "email,offline"
 
   public function __construct() {
     add_shortcode('vkid_login', [$this, 'shortcode']);
@@ -31,7 +34,6 @@ class VKID_Login_Plugin {
     register_setting('vkid-login', self::OPTION_APP_ID);
     register_setting('vkid-login', self::OPTION_CLIENT_SECRET);
     register_setting('vkid-login', self::OPTION_REDIRECT_URL);
-    register_setting('vkid-login', self::OPTION_SCOPE);
   }
 
   public function settings_page() { ?>
@@ -56,13 +58,6 @@ class VKID_Login_Plugin {
             <td>
               <input id="vkid_redirect_url" type="url" name="<?php echo esc_attr(self::OPTION_REDIRECT_URL); ?>" value="<?php echo esc_attr(get_option(self::OPTION_REDIRECT_URL, home_url('/'))); ?>" class="regular-text">
               <p class="description">Должен совпадать с настройкой VK ID. Не используйте фрагменты (<code>#...</code>).</p>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row"><label for="vkid_scope">Scope</label></th>
-            <td>
-              <input id="vkid_scope" type="text" name="<?php echo esc_attr(self::OPTION_SCOPE); ?>" value="<?php echo esc_attr(get_option(self::OPTION_SCOPE, 'email')); ?>" class="regular-text" placeholder="email,offline">
-              <p class="description">Для e-mail укажите <code>email</code>. Телефон через OAuth не приходит — спросите на сайте после входа.</p>
             </td>
           </tr>
         </table>
@@ -94,9 +89,7 @@ class VKID_Login_Plugin {
 
   $appId      = (int) get_option(self::OPTION_APP_ID);
   $redirect   = trim(get_option(self::OPTION_REDIRECT_URL, home_url('/')));
-  // VK ID expects scopes separated by spaces. Keep the admin field tolerant of
-  // the historically documented comma-separated value ("email,offline").
-  $scope      = preg_replace('/[\s,]+/', ' ', trim(get_option(self::OPTION_SCOPE, 'email')));
+  $scope      = 'email';
   $endpoint   = esc_url_raw(rest_url('vkid/v1/login'));
 
   ob_start(); ?>
@@ -284,6 +277,101 @@ class VKID_Login_Plugin {
     ]);
   }
 
+  private function error_response($message, $status, $extra = []) {
+    return new \WP_REST_Response(array_merge(['ok' => false, 'message' => $message], $extra), $status);
+  }
+
+  private function exchange_code($code, $device_id, $code_verifier, $client_id, $redirect_uri) {
+    $response = wp_remote_post(self::TOKEN_ENDPOINT, [
+      'timeout' => 20,
+      'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
+      'body'    => [
+        'grant_type'    => 'authorization_code',
+        'code'          => $code,
+        'redirect_uri'  => $redirect_uri,
+        'client_id'     => $client_id,
+        'device_id'     => $device_id,
+        'code_verifier' => $code_verifier,
+      ],
+    ]);
+
+    if (is_wp_error($response)) return $response;
+
+    $data = json_decode((string) wp_remote_retrieve_body($response), true);
+    if (!is_array($data)) $data = [];
+    $status = (int) wp_remote_retrieve_response_code($response);
+
+    if ($status !== 200 || empty($data['access_token'])) {
+      return new \WP_Error('vkid_token_error', 'VK token error', [
+        'status'                => 400,
+        'vk_error'              => $data['error'] ?? null,
+        'vk_error_description'  => $data['error_description'] ?? null,
+      ]);
+    }
+
+    return $data;
+  }
+
+  private function fetch_profile($access_token, $client_id, $vk_user_id) {
+    $profile = ['email' => '', 'first_name' => '', 'last_name' => '', 'user_id' => $vk_user_id];
+    $response = wp_remote_post(self::USER_INFO_ENDPOINT, [
+      'timeout' => 15,
+      'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
+      'body'    => ['access_token' => $access_token, 'client_id' => $client_id],
+    ]);
+
+    if (!is_wp_error($response) && (int) wp_remote_retrieve_response_code($response) === 200) {
+      $data = json_decode((string) wp_remote_retrieve_body($response), true);
+      $user = isset($data['user']) && is_array($data['user']) ? $data['user'] : $data;
+      if (is_array($user)) {
+        $email = sanitize_email((string) ($user['email'] ?? ''));
+        $profile['email'] = is_email($email) ? $email : '';
+        $profile['user_id'] = (int) ($user['user_id'] ?? $profile['user_id']);
+        $profile['first_name'] = sanitize_text_field((string) ($user['first_name'] ?? ''));
+        $profile['last_name'] = sanitize_text_field((string) ($user['last_name'] ?? ''));
+      }
+    }
+
+    if ($profile['first_name'] && $profile['last_name']) return $profile;
+
+    $api_url = add_query_arg([
+      'user_ids'     => $profile['user_id'] ?: '',
+      'fields'       => 'first_name,last_name',
+      'access_token' => $access_token,
+      'v'            => '5.199',
+    ], self::VK_API_ENDPOINT);
+    $response = wp_remote_get($api_url, ['timeout' => 15]);
+    if (!is_wp_error($response)) {
+      $data = json_decode((string) wp_remote_retrieve_body($response), true);
+      $user = $data['response'][0] ?? [];
+      if (!$profile['first_name']) $profile['first_name'] = sanitize_text_field($user['first_name'] ?? '');
+      if (!$profile['last_name']) $profile['last_name'] = sanitize_text_field($user['last_name'] ?? '');
+    }
+
+    return $profile;
+  }
+
+  private function find_user($email, $vk_user_id) {
+    $user = $email ? get_user_by('email', $email) : false;
+    if ($user || !$vk_user_id) return $user;
+
+    $users = get_users([
+      'meta_key'   => 'vk_user_id',
+      'meta_value' => $vk_user_id,
+      'number'     => 1,
+      'count_total'=> false,
+    ]);
+    return $users ? $users[0] : false;
+  }
+
+  private function unique_username($email, $vk_user_id) {
+    $base = $email ? strstr($email, '@', true) : 'vk_' . $vk_user_id;
+    $base = sanitize_user($base, true) ?: 'vk_' . $vk_user_id;
+    $username = $base;
+    for ($suffix = 2; username_exists($username); $suffix++) $username = $base . $suffix;
+    return $username;
+  }
+
   public function handle_login(\WP_REST_Request $req) {
     $code         = sanitize_text_field( (string)$req->get_param('code') );
     $device_id    = sanitize_text_field( (string)$req->get_param('device_id') );
@@ -300,52 +388,23 @@ class VKID_Login_Plugin {
     }
     set_transient($lock_key, 1, 3 * MINUTE_IN_SECONDS);
 
-    $client_id     = trim( (string) get_option(self::OPTION_APP_ID) );
-    $client_secret = trim( (string) get_option(self::OPTION_CLIENT_SECRET) ); // на этом шаге можно не передавать
-    $redirect_uri  = trim( (string) get_option(self::OPTION_REDIRECT_URL, home_url('/')) );
-    $scope         = preg_replace('/[\s,]+/', ' ', trim((string) get_option(self::OPTION_SCOPE, 'email')));
+    $client_id    = trim((string) get_option(self::OPTION_APP_ID));
+    $redirect_uri = trim((string) get_option(self::OPTION_REDIRECT_URL, home_url('/')));
 
     if (!$client_id || !$redirect_uri) {
       delete_transient($lock_key);
-      return new \WP_REST_Response(['ok'=>false,'message'=>'VK config is incomplete'], 400);
+      return $this->error_response('VK config is incomplete', 400);
     }
 
-    // 1) Обмен кода на токены (VK ID, PKCE)
-    $token_endpoint = 'https://id.vk.com/oauth2/auth';
-    $body = [
-      'grant_type'    => 'authorization_code',
-      'code'          => $code,
-      'redirect_uri'  => $redirect_uri,
-      'client_id'     => $client_id,
-      'device_id'     => $device_id,
-      'code_verifier' => $code_verifier,
-      // 'client_secret' => $client_secret, // как правило НЕ нужен на этом шаге; раскомментируйте при необходимости
-    ];
-
-    $resp = wp_remote_post($token_endpoint, [
-      'timeout' => 20,
-      'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
-      'body'    => $body
-    ]);
-
-    if (is_wp_error($resp)) {
+    $tok = $this->exchange_code($code, $device_id, $code_verifier, $client_id, $redirect_uri);
+    if (is_wp_error($tok)) {
       delete_transient($lock_key);
-      return new \WP_REST_Response(['ok'=>false,'message'=>$resp->get_error_message()], 500);
-    }
-
-    $status   = (int) wp_remote_retrieve_response_code($resp);
-    $body_raw = (string) wp_remote_retrieve_body($resp);
-    $tok      = json_decode($body_raw, true);
-
-    if ($status !== 200 || (isset($tok['error']) && !isset($tok['access_token']))) {
-      delete_transient($lock_key);
-      return new \WP_REST_Response([
-        'ok'                   => false,
-        'message'              => 'VK token error',
-        'vk_error'             => $tok['error'] ?? null,
-        'vk_error_description' => $tok['error_description'] ?? null,
-        'raw'                  => $body_raw
-      ], 400);
+      $data = $tok->get_error_data();
+      if (!is_array($data)) $data = [];
+      return $this->error_response($tok->get_error_message(), (int) ($data['status'] ?? 500), [
+        'vk_error'             => $data['vk_error'] ?? null,
+        'vk_error_description' => $data['vk_error_description'] ?? null,
+      ]);
     }
 
     $access_token = (string) ($tok['access_token'] ?? '');
@@ -354,69 +413,22 @@ class VKID_Login_Plugin {
     $email        = isset($tok['email']) ? sanitize_email($tok['email']) : '';
     if (!$email || !is_email($email)) $email = '';
 
-    // 2) VK ID OAuth 2.1 отдаёт персональные данные отдельным user_info-запросом.
-    // Token response не обязан содержать email даже при выданном scope=email.
-    $first = $last = '';
-    if ($access_token) {
-      $info_resp = wp_remote_post('https://id.vk.com/oauth2/user_info', [
-        'timeout' => 15,
-        'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
-        'body'    => [
-          'access_token' => $access_token,
-          'client_id'    => $client_id,
-        ],
-      ]);
+    $profile = $this->fetch_profile($access_token, $client_id, $vk_user_id);
+    if ($profile['email']) $email = $profile['email'];
+    $vk_user_id = $profile['user_id'];
+    $first = $profile['first_name'];
+    $last = $profile['last_name'];
 
-      if (!is_wp_error($info_resp) && (int) wp_remote_retrieve_response_code($info_resp) === 200) {
-        $info = json_decode((string) wp_remote_retrieve_body($info_resp), true);
-        $profile = isset($info['user']) && is_array($info['user']) ? $info['user'] : $info;
-
-        if (is_array($profile)) {
-          $profile_email = sanitize_email((string) ($profile['email'] ?? ''));
-          if ($profile_email && is_email($profile_email)) $email = $profile_email;
-          if (!$vk_user_id && !empty($profile['user_id'])) $vk_user_id = (int) $profile['user_id'];
-          $first = sanitize_text_field((string) ($profile['first_name'] ?? ''));
-          $last  = sanitize_text_field((string) ($profile['last_name'] ?? ''));
-        }
-      }
-
-      // Резерв для имени на случай временной недоступности user_info.
-      $api_url = add_query_arg([
-        'user_ids'     => $vk_user_id ?: '',
-        'fields'       => 'first_name,last_name,photo_100',
-        'access_token' => $access_token,
-        'v'            => '5.199'
-      ], 'https://api.vk.com/method/users.get');
-
-      $u = wp_remote_get($api_url, ['timeout'=>15]);
-      if (!is_wp_error($u)) {
-        $ud = json_decode( (string) wp_remote_retrieve_body($u), true);
-        if (!empty($ud['response'][0])) {
-          if (!$first) $first = sanitize_text_field($ud['response'][0]['first_name'] ?? '');
-          if (!$last)  $last  = sanitize_text_field($ud['response'][0]['last_name'] ?? '');
-        }
-      }
+    if (!$vk_user_id) {
+      delete_transient($lock_key);
+      return $this->error_response('VK user ID is missing', 400);
     }
 
-    // 3) Подбираем username
-    $username_base = $email ? current(explode('@', $email)) : ('vk_' . ($vk_user_id ?: wp_generate_password(6, false)));
-    $username      = sanitize_user($username_base, true) ?: ('vk_' . wp_generate_password(6, false));
-    $tmp = $username; $i=2;
-    while (username_exists($tmp)) { $tmp = $username.$i; $i++; }
-    $username = $tmp;
+    $user = $this->find_user($email, $vk_user_id);
 
-    // 4) Ищем уже существующего
-    $user = null;
-    if ($email) $user = get_user_by('email', $email);
-    if (!$user && $vk_user_id) {
-      $existing = get_users(['meta_key'=>'vk_user_id','meta_value'=>$vk_user_id,'number'=>1,'count_total'=>false]);
-      if (!empty($existing)) $user = $existing[0];
-    }
-
-    // 5) Создаём при необходимости
     if (!$user) {
       $uid = wp_insert_user([
-        'user_login' => $username,
+        'user_login' => $this->unique_username($email, $vk_user_id),
         // Do not invent an address: WordPress accepts an empty user_email and
         // must not send account mail to a technical @example.invalid value.
         'user_email' => $email,

@@ -40,12 +40,12 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     <input type="password" name="pwd" class="input" required placeholder="Пароль">
                         <div class="input-password__btn input-password__btn_show active">
                             <svg aria-hidden="true" focusable="false">
-                            <use href="#password-eye-open"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
                             </svg>
 						</div>
                         <div class="input-password__btn input-password__btn_hide">
                             <svg aria-hidden="true" focusable="false">
-                            <use href="#password-eye-closed"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
                             </svg>
 						</div>
                 </div>
@@ -66,7 +66,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
             <a href="#" class="ref form-link form-link_vk login-vk-link vkid-login-trigger">
                 <span class="vkid-login-trigger__text">Войти через VK</span>
                 <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
-                    <use href="#vk-login-logo"></use>
+                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#vk-login-logo'); ?>"></use>
                 </svg>
             </a>
         </div>
@@ -88,12 +88,12 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     <input type="password" name="user_pass" class="input" required placeholder="Пароль">
                         <div class="input-password__btn input-password__btn_show active">
                             <svg aria-hidden="true" focusable="false">
-                            <use href="#password-eye-open"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
                             </svg>
 						</div>
                         <div class="input-password__btn input-password__btn_hide">
                             <svg aria-hidden="true" focusable="false">
-                            <use href="#password-eye-closed"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
                             </svg>
 						</div>
                 </div>
@@ -127,7 +127,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 <a href="#" class="ref form-link form-link_vk registration-vk-link vkid-login-trigger">
                     <span class="vkid-login-trigger__text">Войти через VK</span>
                     <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
-                        <use href="#vk-login-logo"></use>
+                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#vk-login-logo'); ?>"></use>
                     </svg>
                 </a>
                 <div class="loggin-back loggin-back_mob loggin-back_grey">
@@ -188,6 +188,25 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                     </span>
                 </div>
             </form>
+        </div>
+        <div class="modal-login-inner__slide email-confirmation-slide" data-target="5">
+            <div class="email-confirmation-modal">
+                <h3>Подтверждение<br>электронной почты</h3>
+                <div class="email-confirmation-modal__description">
+                    <p>На указанный вами email <strong class="email-confirmation-modal__email"></strong> отправлено письмо с кодом подтверждения.</p>
+                    <p>Введите код ниже, чтобы завершить проверку доступа к электронной почте.</p>
+                </div>
+                <form class="email-confirmation-modal__form" action="#" method="post">
+                    <label for="email-confirmation-code">Код подтверждения:</label>
+                    <input id="email-confirmation-code" class="email-confirmation-modal__code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-describedby="email-confirmation-message">
+                    <button type="button" class="email-confirmation-modal__resend">Отправить код повторно</button>
+                    <p id="email-confirmation-message" class="email-confirmation-modal__message" role="status" aria-live="polite"></p>
+                    <div class="email-confirmation-modal__buttons">
+                        <button type="button" class="email-confirmation-modal__cancel">Отменить</button>
+                        <button type="submit" class="email-confirmation-modal__confirm">Подтвердить</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -15,11 +15,11 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 ?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
-			<use href="#lk-modal-close" width="100%" height="100%"></use>
+			<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>" width="100%" height="100%"></use>
 		</svg>
 	</div>
 	<div class="mobile-menu-inner">
-		<div class="lk-mobile-menu-head"><a class="lk-mobile-menu-rate" href="<?php echo esc_url($mobile_lk_urls['tariffs']); ?>"><svg aria-hidden="true"><use href="#personal-status-crown"></use></svg><span><?php echo esc_html($mobile_lk_tariff_label); ?></span></a></div>
+		<div class="lk-mobile-menu-head"><a class="lk-mobile-menu-rate" href="<?php echo esc_url($mobile_lk_urls['tariffs']); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use></svg><span><?php echo esc_html($mobile_lk_tariff_label); ?></span></a></div>
 		<div class="mobile-menu">
 			<div class="mobile-menu__slide mobile-menu__slide_main active">
 				<div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
@@ -27,7 +27,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-user" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-user'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои данные', 'yoga'); ?></span>
@@ -35,7 +35,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-history" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-history'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('История практик', 'yoga'); ?></span>
@@ -43,7 +43,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 16" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-lotus" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-lotus'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои садханы', 'yoga'); ?></span>
@@ -52,7 +52,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 							<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 17.4 15.4852" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-heart" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-heart'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Избранное', 'yoga'); ?></span>
@@ -60,7 +60,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="-0.6 -0.6 18.2 18.2" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-smile" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-smile'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Рекомендации', 'yoga'); ?></span>
@@ -68,7 +68,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-question" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-question'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои вопросы', 'yoga'); ?></span>
@@ -76,7 +76,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
-									<use href="#notification-bell-icon" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Уведомления', 'yoga'); ?></span>
@@ -84,7 +84,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 							<div class="sidebar-menu__item-icon">
 								<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-									<use href="#lk-sidebar-settings" width="100%" height="100%"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>" width="100%" height="100%"></use>
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Настройки подписки', 'yoga'); ?></span>
@@ -106,7 +106,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 				<div class="mobile-menu-exit sidebar-exit modal-call modal-call_logout">
 					<div class="sidebar-exit__icon">
 						<svg class="sidebar-exit__svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-							<use href="#lk-sidebar-logout" width="100%" height="100%"></use>
+							<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-logout'); ?>" width="100%" height="100%"></use>
 						</svg>
 					</div>
 					<span class="sidebar-menu__label"><?php esc_html_e('Выйти', 'yoga'); ?></span>

@@ -1602,7 +1602,7 @@ jQuery(document).ready(function($) {
 		$.post(yoga_ajax.ajax_url, $form.serialize())
 			.done(function(r) {
 				if (r.success) {
-					$('.modal-login').removeClass("active");
+					$('.modal-login').removeClass('active');
 					location.reload();
 				} else {
 					var message = (r && r.data && r.data.message) ? r.data.message : (r.data || 'Ошибка регистрации');
@@ -3187,9 +3187,10 @@ jQuery(document).ready(function($) {
 		$popup.addClass('lk-notifications-popup--empty');
 		$popup.find('.lk-notifications-popup__read-all, .lk-notifications-popup__list, .lk-notifications-popup__all').remove();
 		if (!$popup.find('.lk-notifications-popup__empty').length) {
+			var spriteUrl = (typeof yoga_ajax !== 'undefined' && yoga_ajax.sprite_url) ? yoga_ajax.sprite_url : '';
 			$popup.append(
 				'<div class="lk-notifications-popup__empty">' +
-					'<span class="lk-notifications-popup__empty-icon"><svg aria-hidden="true"><use href="#notification-bell-icon"></use></svg></span>' +
+					'<span class="lk-notifications-popup__empty-icon"><svg aria-hidden="true"><use href="' + spriteUrl + '#notification-bell-icon"></use></svg></span>' +
 					'<strong>Здесь пока ничего нет</strong>' +
 					'<span>Здесь появятся уведомления</span>' +
 				'</div>'
@@ -3349,7 +3350,7 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				if (response.success) {
 					// Если загружен аватар — обновляем страницу (как принято)
-					if (response.avatar_url) {
+					if (response.data && response.data.avatar_url) {
 						location.reload();
 						return;
 					}
@@ -3447,12 +3448,84 @@ jQuery(document).ready(function($) {
 		}
 		$photo.find('img').remove();
 		$photo.addClass('has-avatar').append($('<img>', { src: dataUrl, alt: '', class: 'avatar' }));
+		var $deleteButton = $photo.find('.photo-input-delete');
+		$deleteButton.removeAttr('hidden').attr('data-preview-only', '1');
+
+		var uploadData = new FormData();
+		uploadData.append('action', 'upload_user_avatar');
+		uploadData.append('nonce', yoga_ajax.nonce);
+		uploadData.append('avatar', file);
+		$deleteButton.prop('disabled', true).attr('aria-busy', 'true');
+
+		$.ajax({
+			url: yoga_ajax.ajax_url,
+			type: 'POST',
+			data: uploadData,
+			processData: false,
+			contentType: false,
+			dataType: 'json',
+			success: function(response) {
+				if (response && response.success && response.data && response.data.avatar_url) {
+					var avatarUrl = response.data.avatar_url;
+					var $previewImage = $photo.find('img');
+					if ($previewImage.length && $previewImage[0].src && $previewImage[0].src.startsWith('blob:')) {
+						URL.revokeObjectURL($previewImage[0].src);
+					}
+					$previewImage.attr('src', avatarUrl);
+					$('#avatar-upload').val('');
+					$deleteButton.removeAttr('data-preview-only aria-busy').prop('disabled', false);
+
+					var $headerAvatar = $('.login-icon_logged');
+					if ($headerAvatar.length) {
+						$headerAvatar.find('.login-icon__avatar, .login-icon__initial').remove();
+						$headerAvatar.prepend($('<img>', {
+							src: avatarUrl,
+							alt: '',
+							'class': 'login-icon__avatar',
+							decoding: 'async'
+						}));
+					}
+					return;
+				}
+				showNotification((response && response.data) ? response.data : 'Не удалось загрузить аватар', 'error');
+			},
+			error: function(xhr) {
+				var message = xhr.responseJSON && xhr.responseJSON.data ? xhr.responseJSON.data : 'Ошибка загрузки аватара';
+				showNotification(message, 'error');
+			},
+			complete: function(xhr) {
+				if (!xhr.responseJSON || !xhr.responseJSON.success) {
+					$('#avatar-upload').val('');
+					$photo.find('img').remove();
+					$photo.removeClass('has-avatar');
+					$deleteButton.attr('hidden', 'hidden').removeAttr('data-preview-only aria-busy').prop('disabled', false);
+				}
+			}
+		});
 	});
 	
 	// Удаление аватара
-	$(document).on('click', '.photo-input-delete', function() {
-		if (confirm('Удалить аватар?')) {
-			$.ajax({
+	$(document).on('click', '.photo-input-delete', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var $button = $(this);
+		if ($button.attr('data-preview-only') === '1') {
+			var $photo = $button.closest('.photo-input-custom__inner-photo');
+			var $fileInput = $button.closest('.photo-input').find('#avatar-upload');
+			var $preview = $photo.find('img');
+			if ($preview.length && $preview[0].src && $preview[0].src.startsWith('blob:')) {
+				URL.revokeObjectURL($preview[0].src);
+			}
+			$fileInput.val('');
+			$preview.remove();
+			$photo.removeClass('has-avatar');
+			$button.attr('hidden', 'hidden').removeAttr('data-preview-only');
+			return;
+		}
+		if ($button.prop('disabled')) return;
+		$button.prop('disabled', true).attr('aria-busy', 'true');
+
+		$.ajax({
 				url: yoga_ajax.ajax_url,
 				type: 'POST',
 				data: {
@@ -3468,9 +3541,11 @@ jQuery(document).ready(function($) {
 				},
 				error: function() {
 					showNotification('Ошибка соединения', 'error');
+				},
+				complete: function() {
+					$button.prop('disabled', false).removeAttr('aria-busy');
 				}
 			});
-		}
 	});
 	
 	// Показать/скрыть пароль
@@ -4111,3 +4186,184 @@ jQuery(document).on('click', function(e) {
         applyResponsiveTableLabels();
     }
 })();
+
+// Подтверждение e-mail в личном кабинете.
+(function($) {
+    'use strict';
+
+    function verificationMessage($box, text, isError) {
+        $box.find('.lk-email-verification__message')
+            .text(text || '')
+            .toggleClass('is-error', !!isError);
+    }
+
+    function responseMessage(response, fallback) {
+        if (response && response.data) {
+            if (typeof response.data === 'string') return response.data;
+            if (response.data.message) return response.data.message;
+        }
+        return fallback;
+    }
+
+    function startEmailResendTimer($button, seconds) {
+        var remaining = parseInt(seconds, 10) || 60;
+        window.clearInterval($button.data('emailTimer'));
+        $button.prop('disabled', true).text('Отправить повторно через ' + remaining + ' сек.');
+        var timer = window.setInterval(function() {
+            remaining--;
+            if (remaining <= 0) {
+                window.clearInterval(timer);
+                $button.prop('disabled', false).text('Отправить код повторно');
+                return;
+            }
+            $button.text('Отправить повторно через ' + remaining + ' сек.');
+        }, 1000);
+        $button.data('emailTimer', timer);
+    }
+
+    $(document).on('click', '.lk-email-confirmation__link', function(e) {
+        e.preventDefault();
+        $('.email-confirmation-modal__email').text(yoga_ajax.user_email || '');
+        $('.email-confirmation-modal__message').empty().removeClass('is-error');
+        $('.email-confirmation-modal__code').val('');
+        $('.modal-login-inner__slide').removeClass('active');
+        $('.modal-login-inner__slide[data-target="5"]').addClass('active');
+        $('.modal-login')
+            .removeClass('modal-login--recovery modal-login--success')
+            .addClass('active modal-login--email-confirmation');
+        $('.email-confirmation-modal__code').trigger('focus');
+        $('.email-confirmation-modal__resend').trigger('click');
+    });
+
+    $(document).on('input', '.lk-email-verification__code', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    });
+
+    $(document).on('click', '.lk-email-verification__resend', function() {
+        if (typeof yoga_ajax === 'undefined') return;
+        var $button = $(this);
+        var $box = $button.closest('.lk-email-verification');
+        $button.prop('disabled', true);
+        $.post(yoga_ajax.ajax_url, {
+            action: 'yoga_send_email_verification_code',
+            nonce: yoga_ajax.email_verification_nonce
+        }).done(function(response) {
+            verificationMessage($box, responseMessage(response, 'Код отправлен.'), !response.success);
+            if (response.success) startEmailResendTimer($button, response.data.retry_after);
+        }).fail(function(xhr) {
+            var response = xhr.responseJSON;
+            verificationMessage($box, responseMessage(response, 'Не удалось отправить код.'), true);
+            var retryAfter = response && response.data && response.data.retry_after;
+            if (retryAfter) startEmailResendTimer($button, retryAfter);
+            else $button.prop('disabled', false);
+        });
+    });
+
+    $(document).on('click', '.lk-email-verification__verify', function() {
+        if (typeof yoga_ajax === 'undefined') return;
+        var $button = $(this);
+        var $box = $button.closest('.lk-email-verification');
+        var code = $box.find('.lk-email-verification__code').val();
+        if (!/^\d{6}$/.test(code)) {
+            verificationMessage($box, 'Введите 6 цифр из письма.', true);
+            return;
+        }
+        $button.prop('disabled', true);
+        $.post(yoga_ajax.ajax_url, {
+            action: 'yoga_verify_email_code',
+            nonce: yoga_ajax.email_verification_nonce,
+            code: code
+        }).done(function(response) {
+            if (response.success) {
+                location.reload();
+                return;
+            }
+            verificationMessage($box, responseMessage(response, 'Неверный код.'), true);
+        }).fail(function(xhr) {
+            verificationMessage($box, responseMessage(xhr.responseJSON, 'Не удалось проверить код.'), true);
+        }).always(function() {
+            $button.prop('disabled', false);
+        });
+    });
+})(jQuery);
+
+(function($) {
+    'use strict';
+
+    function modalEmailMessage(text, error) {
+        $('.email-confirmation-modal__message').text(text || '').toggleClass('is-error', !!error);
+    }
+
+    function modalResponseMessage(response, fallback) {
+        return response && response.data && response.data.message ? response.data.message : fallback;
+    }
+
+    function modalResendTimer($button, seconds) {
+        var remaining = parseInt(seconds, 10) || 60;
+        window.clearInterval($button.data('timer'));
+        $button.prop('disabled', true).text('Отправить повторно через ' + remaining + ' сек.');
+        var timer = window.setInterval(function() {
+            remaining--;
+            if (remaining <= 0) {
+                window.clearInterval(timer);
+                $button.prop('disabled', false).text('Отправить код повторно');
+            } else {
+                $button.text('Отправить повторно через ' + remaining + ' сек.');
+            }
+        }, 1000);
+        $button.data('timer', timer);
+    }
+
+    $(document).on('input', '.email-confirmation-modal__code', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    });
+
+    $(document).on('click', '.email-confirmation-modal__cancel', function() {
+        $('.modal-login').removeClass('active modal-login--email-confirmation');
+        location.reload();
+    });
+
+    $(document).on('click', '.email-confirmation-modal__resend', function() {
+        var $button = $(this);
+        $button.prop('disabled', true);
+        $.post(yoga_ajax.ajax_url, {
+            action: 'yoga_send_email_verification_code',
+            nonce: yoga_ajax.email_verification_nonce
+        }).done(function(response) {
+            modalEmailMessage(modalResponseMessage(response, 'Код отправлен.'), !response.success);
+            if (response.success) modalResendTimer($button, response.data.retry_after);
+        }).fail(function(xhr) {
+            modalEmailMessage(modalResponseMessage(xhr.responseJSON, 'Не удалось отправить код.'), true);
+            var retryAfter = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.retry_after;
+            if (retryAfter) modalResendTimer($button, retryAfter);
+            else $button.prop('disabled', false);
+        });
+    });
+
+    $(document).on('submit', '.email-confirmation-modal__form', function(e) {
+        e.preventDefault();
+        var code = $('.email-confirmation-modal__code').val();
+        var $button = $('.email-confirmation-modal__confirm');
+        if (!/^\d{6}$/.test(code)) {
+            modalEmailMessage('Введите 6 цифр из письма.', true);
+            return;
+        }
+        $button.prop('disabled', true);
+        $.post(yoga_ajax.ajax_url, {
+            action: 'yoga_verify_email_code',
+            nonce: yoga_ajax.email_verification_nonce,
+            code: code
+        }).done(function(response) {
+            if (response.success) {
+                modalEmailMessage(response.data.message, false);
+                window.setTimeout(function() { location.reload(); }, 700);
+            } else {
+                modalEmailMessage(modalResponseMessage(response, 'Неверный код.'), true);
+            }
+        }).fail(function(xhr) {
+            modalEmailMessage(modalResponseMessage(xhr.responseJSON, 'Не удалось проверить код.'), true);
+        }).always(function() {
+            $button.prop('disabled', false);
+        });
+    });
+})(jQuery);

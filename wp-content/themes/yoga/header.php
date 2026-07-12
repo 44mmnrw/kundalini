@@ -22,7 +22,6 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 	</head>
 	
 	<body <?php body_class( $is_lk_shell ? 'body body_lk' : 'body body_main' ); ?> id="body">
-		<?php get_template_part('template-parts/inline-svg-sprite'); ?>
 		<?php
 		$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
 		$tariffs_url = home_url('/product-category/tariffs/');
@@ -106,7 +105,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 					? mb_strtoupper(mb_substr($user_source_name, 0, 1, 'UTF-8'), 'UTF-8')
 					: strtoupper(substr($user_source_name, 0, 1));
 			}
-			$user_avatar_id = function_exists('get_field') ? (int) get_field('user_avatar', 'user_' . $current_user->ID) : 0;
+			$user_avatar_id = function_exists('yoga_get_user_avatar_id') ? yoga_get_user_avatar_id($current_user->ID) : 0;
 			$user_avatar_html = $user_avatar_id > 0
 				? wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array(
 					'class' => 'login-icon__avatar',
@@ -140,20 +139,20 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							<div class="header-lk-logged-desktop">
 								<a class="<?php echo esc_attr($pill_classes); ?>" href="<?php echo esc_url($pill_href); ?>">
 									<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
-										<use href="#personal-status-crown"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
 									</svg>
 									<span><?php echo esc_html($pill_label); ?></span>
 								</a>
 								<div class="notification-icon notification-icon_header<?php echo $header_unread_notifications_count > 0 ? ' notification-icon_header--has-notifications' : ''; ?>" role="button" tabindex="0" aria-expanded="false" aria-controls="header-notifications-popup">
 									<svg class="notification-icon__img" aria-hidden="true">
-										<use href="#<?php echo $header_unread_notifications_count > 0 ? 'notification-bell-filled-icon' : 'notification-bell-icon'; ?>"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($header_unread_notifications_count > 0 ? 'notification-bell-filled-icon' : 'notification-bell-icon')); ?>"></use>
 									</svg>
 									<?php if ($header_unread_notifications_count > 0): ?><span class="notification-icon__count"><?php echo esc_html((string) $header_unread_notifications_count); ?></span><?php endif; ?>
 									<div class="lk-notifications-popup<?php echo $header_unread_notifications_count === 0 ? ' lk-notifications-popup--empty' : ''; ?>" id="header-notifications-popup" aria-hidden="true">
 									<div class="lk-notifications-popup__head">
 										<strong><?php esc_html_e('Уведомления', 'yoga'); ?></strong>
 										<div class="lk-notifications-popup__head-actions">
-											<a class="lk-notifications-popup__settings" href="<?php echo esc_url($notifications_settings_href); ?>" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="#lk-sidebar-settings"></use></svg></a>
+											<a class="lk-notifications-popup__settings" href="<?php echo esc_url($notifications_settings_href); ?>" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>"></use></svg></a>
 											<?php if ($header_unread_notifications_count > 0): ?>
 												<button class="lk-notifications-popup__read-all lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
 											<?php endif; ?>
@@ -161,7 +160,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 									</div>
 										<?php if ($header_unread_notifications_count === 0): ?>
 											<div class="lk-notifications-popup__empty">
-												<span class="lk-notifications-popup__empty-icon"><svg aria-hidden="true"><use href="#notification-bell-icon"></use></svg></span>
+												<span class="lk-notifications-popup__empty-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>"></use></svg></span>
 												<strong><?php esc_html_e('Здесь пока ничего нет', 'yoga'); ?></strong>
 												<span><?php esc_html_e('Здесь появятся уведомления', 'yoga'); ?></span>
 											</div>
@@ -180,7 +179,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 												?>
 												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
 													<span class="lk-notifications-popup__item-head">
-														<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="#<?php echo $notification_type === 'question_answer' ? 'notification-teacher-reply-icon' : 'notification-bell-icon'; ?>"></use></svg></span>
+												<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($notification_type === 'question_answer' ? 'notification-teacher-reply-icon' : 'notification-bell-icon')); ?>"></use></svg></span>
 														<strong><?php echo esc_html($notification_title); ?></strong>
 														<?php if ($notification_time !== ''): ?><time datetime="<?php echo esc_attr((string) ($notification['created_at'] ?? '')); ?>"><?php echo esc_html($notification_time); ?></time><?php endif; ?>
 													</span>
@@ -194,7 +193,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								</div>
 								<a class="header-favorites-link<?php echo $header_favorites_count > 0 ? ' header-favorites-link--active' : ''; ?>" href="<?php echo esc_url($favorites_href); ?>" aria-label="<?php echo esc_attr(sprintf(__('Избранное: %d', 'yoga'), $header_favorites_count)); ?>">
 									<svg aria-hidden="true" focusable="false">
-										<use href="#<?php echo $header_favorites_count > 0 ? 'header-heart-filled' : 'header-heart'; ?>"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($header_favorites_count > 0 ? 'header-heart-filled' : 'header-heart')); ?>"></use>
 									</svg>
 									<?php if ($header_favorites_count > 0) : ?>
 										<span class="header-favorites-link__count" aria-hidden="true"><?php echo esc_html((string) $header_favorites_count); ?></span>
@@ -211,7 +210,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								</a>
 								<div class="burger">
 									<svg aria-hidden="true" focusable="false">
-										<use href="#burger-menu-lines"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines'); ?>"></use>
 									</svg>
 								</div>
 							</div>
@@ -222,12 +221,12 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							<div class="header-lk__trailing">
 								<div class="login-icon modal-call_login">
 									<svg aria-hidden="true" focusable="false">
-										<use href="#login-user-icon"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
 									</svg>
 								</div>
 								<div class="burger">
 									<svg aria-hidden="true" focusable="false">
-										<use href="#burger-menu-lines"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines'); ?>"></use>
 									</svg>
 								</div>
 							</div>
