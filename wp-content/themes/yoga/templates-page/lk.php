@@ -14,11 +14,19 @@
 	
 	$current_user = wp_get_current_user();
 	$user_id = get_current_user_id();
+	$email_verified = function_exists('yoga_is_user_email_verified') && yoga_is_user_email_verified($user_id);
 	$user_timezone = get_user_meta($user_id, 'timezone', true);
 	$user_timezone = is_string($user_timezone) ? $user_timezone : '';
 	$timezone_options = timezone_identifiers_list();
 	$requested_lk_section = function_exists('yoga_get_requested_lk_section') ? yoga_get_requested_lk_section() : '';
 	$initial_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_initial_lk_target() : '1';
+	$user_avatar_id = function_exists('yoga_get_user_avatar_id') ? yoga_get_user_avatar_id($user_id) : 0;
+	$lk_sprite_file = get_template_directory() . '/assets/svg/sprite.svg';
+	$lk_sprite_url = add_query_arg(
+		'ver',
+		file_exists($lk_sprite_file) ? (string) filemtime($lk_sprite_file) : wp_get_theme()->get('Version'),
+		get_template_directory_uri() . '/assets/svg/sprite.svg'
+	);
 ?>
 
 
@@ -38,10 +46,17 @@
 									<div class="photo-input">
 										<div class="photo-input-custom" role="button" tabindex="0">
 											<div class="photo-input-custom__inner">
-												<div class="photo-input-custom__inner-photo" aria-hidden="true">
-													<svg class="photo-input-custom__icon" viewBox="0 0 24 24" focusable="false">
-														<use href="#lk-upload-camera"></use>
-													</svg>
+								<div class="photo-input-custom__inner-photo<?php echo $user_avatar_id > 0 ? ' has-avatar' : ''; ?>">
+									<button type="button" class="photo-input-delete" aria-label="<?php esc_attr_e('Удалить аватар', 'yoga'); ?>"<?php echo $user_avatar_id > 0 ? '' : ' hidden'; ?>>
+										<svg viewBox="0 0 9 9" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($lk_sprite_url); ?>#lk-avatar-delete"></use></svg>
+									</button>
+									<?php if ($user_avatar_id > 0) : ?>
+										<?php echo wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array('class' => 'avatar', 'alt' => '')); ?>
+									<?php else : ?>
+										<svg class="photo-input-custom__icon" viewBox="0 0 687.88 550.44" aria-hidden="true" focusable="false">
+											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-upload-camera'); ?>"></use>
+										</svg>
+									<?php endif; ?>
 												</div>
 												<div class="photo-input-custom__copy">
 													<b class="photo-input-custom__inner-title">Загрузить фото</b>
@@ -69,10 +84,21 @@
 											<div class="lk-form-item lk-form-item_email">
 												<h5>E-mail<span>*</span></h5>
 												<input type="email" class="input" required placeholder="E-mail" name="email" value="<?php echo esc_attr($current_user->user_email); ?>">
-												<div class="lk-email-confirmation">
-													<p>E-mail не подтверждён</p>
-													<a href="#" class="lk-email-confirmation__link">Подтвердить e-mail</a>
-												</div>
+								<div class="lk-email-confirmation<?php echo $email_verified ? ' is-verified' : ''; ?>">
+									<p><?php echo $email_verified ? 'E-mail подтверждён' : 'E-mail не подтверждён'; ?></p>
+									<?php if (!$email_verified) : ?>
+										<a href="#" class="lk-email-confirmation__link">Подтвердить e-mail</a>
+										<div class="lk-email-verification" hidden>
+											<p>Введите 6-значный код из письма</p>
+											<div class="lk-email-verification__controls">
+												<input type="text" class="input lk-email-verification__code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+												<button type="button" class="btn lk-email-verification__verify"><span>Подтвердить</span></button>
+											</div>
+											<button type="button" class="lk-email-verification__resend">Отправить код повторно</button>
+											<p class="lk-email-verification__message" role="status" aria-live="polite"></p>
+										</div>
+									<?php endif; ?>
+								</div>
 											</div>
 											<div class="lk-form-item lk-form-item_timezone">
 												<h5>Часовой пояс (для садхан)<span>*</span></h5>
@@ -99,12 +125,12 @@
 													<input type="password" class="input" name="current_password" placeholder="••••••••">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
-															<use href="#password-eye-open"></use>
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
 														</svg>
 													</div>
 													<div class="input-password__btn input-password__btn_hide">
 														<svg aria-hidden="true" focusable="false">
-															<use href="#password-eye-closed"></use>
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
 														</svg>
 													</div>
 												</div>
@@ -115,12 +141,12 @@
 													<input type="password" class="input" name="new_password">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
-															<use href="#password-eye-open"></use>
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
 														</svg>
 													</div>
 													<div class="input-password__btn input-password__btn_hide">
 														<svg aria-hidden="true" focusable="false">
-															<use href="#password-eye-closed"></use>
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
 														</svg>
 													</div>
 												</div>
@@ -131,12 +157,12 @@
 													<input type="password" class="input" name="repeat_password">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
-															<use href="#password-eye-open"></use>
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>
 														</svg>
 													</div>
 													<div class="input-password__btn input-password__btn_hide">
 														<svg aria-hidden="true" focusable="false">
-															<use href="#password-eye-closed"></use>
+															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-closed'); ?>"></use>
 														</svg>
 													</div>
 													<span class="input-password__placeholder">Пароли не совпадают</span>
@@ -182,7 +208,7 @@
 						</h2>
 						<div class="lk-slide__content">
 							<div class="lk-notifications-page__actions">
-								<button class="lk-notifications-page__settings" type="button" data-target="9" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="#lk-sidebar-settings"></use></svg></button>
+								<button class="lk-notifications-page__settings" type="button" data-target="9" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>"></use></svg></button>
 								<button class="lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
 							</div>
 							<?php $notifications = function_exists('yoga_get_user_notifications') ? yoga_get_user_notifications((int) $user_id) : array(); ?>
@@ -205,7 +231,7 @@
 										?>
 										<a class="lk-notification lk-notification--<?php echo esc_attr($type ?: 'default'); ?><?php echo $is_unread ? ' lk-notification--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($type); ?>" href="<?php echo esc_url($url ?: '#'); ?>">
 											<span class="lk-notification__head">
-												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="#<?php echo esc_attr($icon); ?>"></use></svg></span>
+												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $icon); ?>"></use></svg></span>
 												<strong><?php echo esc_html($title); ?></strong>
 												<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread && $type !== 'question_answer'): ?><i aria-hidden="true"></i><?php endif; ?></span>
 											</span>
@@ -220,7 +246,7 @@
 					<div class="lk-slide lk-slide--notification-settings<?php echo $initial_lk_target === '9' ? ' active' : ''; ?>" data-target="9">
 						<div class="lk-slide__content">
 							<div class="notification-settings">
-								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true"><use href="#notification-settings-back"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
+								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-settings-back'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
 								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
 								<?php $notification_settings = array(
 									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(
@@ -319,8 +345,8 @@
                                     </div>
                                     <div class="kriya-fav fav active" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="true" aria-label="Убрать">
 										<span class="kriya-fav__icon" aria-hidden="true">
-											<svg><use href="#noun-heart"></use></svg>
-											<svg class="active"><use href="#noun-heart-filled"></use></svg>
+											<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
+											<svg class="active"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart-filled'); ?>"></use></svg>
 										</span>
 										<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
 										<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
@@ -391,8 +417,8 @@
 																	</div>
 																	<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 																		<span class="kriya-fav__icon" aria-hidden="true">
-																			<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="#noun-heart"></use></svg>
-																			<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="#noun-heart-filled"></use></svg>
+																			<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
+																			<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart-filled'); ?>"></use></svg>
 																		</span>
 																		<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
 																		<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
@@ -721,7 +747,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-user" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-user'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои данные</span>
@@ -729,7 +755,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-history" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-history'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">История практик</span>
@@ -737,7 +763,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 16" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-lotus" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-lotus'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои садханы</span>
@@ -746,7 +772,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 17.4 15.4852" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-heart" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-heart'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Избранное</span>
@@ -754,7 +780,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="-0.6 -0.6 18.2 18.2" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-smile" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-smile'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Рекомендации</span>
@@ -762,7 +788,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-question" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-question'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои вопросы</span>
@@ -770,7 +796,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
-						<use href="#notification-bell-icon" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Уведомления</span>
@@ -778,7 +804,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="#lk-sidebar-settings" width="100%" height="100%"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Настройки подписки</span>
@@ -791,7 +817,7 @@
         <div class="sidebar-exit modal-call modal-call_logout">
 			<div class="sidebar-exit__icon">
 				<svg class="sidebar-exit__svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-					<use href="#lk-sidebar-logout" width="100%" height="100%"></use>
+					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-logout'); ?>" width="100%" height="100%"></use>
 				</svg>
 			</div>
 			<span class="sidebar-menu__label">Выйти</span>

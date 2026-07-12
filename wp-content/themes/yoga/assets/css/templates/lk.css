@@ -163,16 +163,15 @@
 }
 
 .photo-input-custom__inner-photo {
-  display: flex;
+  display: grid;
+  place-items: center;
   position: relative;
-  left: auto;
-  transform: none;
+  flex: 0 0 4.0625rem;
   width: 4.0625rem;
   height: 4.0625rem;
   border-radius: 50%;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--color-violet);
-  clip-path: circle(50%);
   background: rgba(145, 83, 225, 0.07);
   color: var(--color-violet);
 }
@@ -192,9 +191,8 @@
 }
 .photo-input-custom__icon {
   display: block;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin: auto;
+  width: 1.3125rem;
+  height: 1.0625rem;
 }
 .photo-input-custom__copy {
   display: flex;
@@ -205,24 +203,35 @@
 }
 
 .photo-input-delete {
-  display: flex;
-  width: 100%;
-  min-height: 2.5rem;  border-radius: 1.25rem;  background: rgba(145, 83, 225, 0.07);
-  transition: 0.4s ease;
+  position: absolute;
+  z-index: 2;
+  top: -0.125rem;
+  right: -0.125rem;
+  display: grid;
+  visibility: visible;
+  opacity: 1;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 1px solid rgba(31, 31, 31, 0.15);
+  border-radius: 50%;
+  background: #fff;
+  color: #1f1f1f;
+  box-shadow: 0 0.125rem 0.5rem rgba(31, 31, 31, 0.12);
   cursor: pointer;
-  margin-top: 0.6875rem;}
-.photo-input-delete span {
-  display: block;
-  margin: auto;
-  transition: 0.4s ease;
 }
-.photo-input-delete:hover {
-  background: rgba(145, 83, 225, 0.2);
-  /*
-  span {
-  	color: #fff;
-  }
-  */
+.photo-input-delete[hidden] {
+  display: none;
+}
+.photo-input-delete svg {
+  display: block;
+  width: 0.5625rem;
+  height: 0.5625rem;
+}
+.photo-input-delete:focus-visible {
+  outline: 2px solid var(--color-violet);
+  outline-offset: 2px;
 }
 
 .photo-input-custom__inner-title {
@@ -493,6 +502,52 @@
   text-decoration-style: dotted;
   text-underline-offset: 0.1875rem;
   text-decoration-thickness: 1px;
+}
+
+.lk-email-confirmation.is-verified p {
+	color: #42855b;
+}
+
+.lk-email-verification {
+	margin-top: 12px;
+}
+
+.lk-email-verification__controls {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.lk-email-verification__code {
+	max-width: 150px;
+	letter-spacing: .2em;
+}
+
+.lk-email-verification__verify {
+	border: 0;
+}
+
+.lk-email-verification__resend {
+	margin-top: 10px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.lk-email-verification__resend:disabled {
+	cursor: default;
+	opacity: .6;
+}
+
+.lk-email-verification__message {
+	margin-top: 8px;
+	color: #42855b;
+}
+
+.lk-email-verification__message.is-error {
+	color: #b42318;
 }
 .lk-timezone-select {
   position: relative;

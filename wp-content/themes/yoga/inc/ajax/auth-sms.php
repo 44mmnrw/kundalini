@@ -117,25 +117,21 @@ if (!function_exists('handle_yoga_email_register')) {
         update_user_meta($user_id, 'yoga_marketing_consent', !empty($_POST['accept_marketing']) ? 'yes' : 'no');
         update_user_meta($user_id, 'yoga_registration_consents_at', current_time('mysql', true));
 
-        $site_name = get_bloginfo('name');
-        $login_url = wp_login_url(home_url('/'));
-        $subject = sprintf('Регистрация на %s', $site_name);
-        $message = sprintf(
-            "Здравствуйте, %s!\n\nВы успешно зарегистрировались на сайте %s.\n\nДля входа используйте ваш email и пароль, который вы указали при регистрации.\n\nСтраница входа: %s\n\n— %s",
-            $name,
-            $site_name,
-            $login_url,
-            $site_name
-        );
-        $headers = array('Content-Type: text/plain; charset=UTF-8');
-        try {
-            wp_mail($email, $subject, $message, $headers);
-        } catch (Throwable $e) {
-            // Registration should not fail if mail transport is unavailable.
-        }
-
         wp_set_auth_cookie($user_id);
-        yoga_ajax_success('Регистрация выполнена');
+        wp_set_current_user($user_id);
+        $mail_result = function_exists('yoga_send_email_verification_code')
+            ? yoga_send_email_verification_code($user_id, true)
+            : new WP_Error('verification_unavailable', 'Подтверждение e-mail временно недоступно.');
+        yoga_ajax_success(
+            is_wp_error($mail_result)
+                ? 'Регистрация выполнена. Код не отправлен — запросите его в личном кабинете.'
+                : 'Регистрация выполнена. Код подтверждения отправлен на e-mail.',
+            array(
+                'verification_sent' => !is_wp_error($mail_result),
+                'verification_nonce' => wp_create_nonce('yoga_email_verification'),
+                'email' => $email,
+            )
+        );
     }
 }
 

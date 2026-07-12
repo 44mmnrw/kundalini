@@ -97,7 +97,7 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 							<input id="footer-subscribe-email" name="footer_email" type="email" placeholder="Электронная почта">
 							<button class="footer-subscribe__submit" type="submit" aria-label="<?php echo esc_attr__('Подписаться на новости', 'yoga'); ?>">
 								<svg aria-hidden="true" focusable="false">
-									<use href="#footer-arrow-up-right"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-arrow-up-right'); ?>"></use>
 								</svg>
 							</button>
 						</div>
@@ -126,7 +126,7 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 					<li>
 						<a class="footer__social" href="<?php echo esc_url($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($social['label']); ?>">
 							<svg aria-hidden="true" focusable="false">
-								<use href="#<?php echo esc_attr($social['icon']); ?>"></use>
+								<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $social['icon']); ?>"></use>
 							</svg>
 						</a>
 					</li>
