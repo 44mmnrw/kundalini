@@ -133,6 +133,7 @@
 .notification-settings__row > div:first-child { display:flex; flex-direction:column; }.notification-settings__row strong { font:700 1.125rem/1.5 "Mulish-Bold",sans-serif; }
 .notification-settings__toggles { display:grid; grid-template-columns:5.5625rem 5.5625rem; gap:.625rem; place-items:center; }.notification-settings__toggles i { display:block; width:2.5rem; height:1.5rem; }
 .notification-toggle { width:2.5rem; height:1.5rem; padding:.125rem; border:0; border-radius:6.25rem; background:#dbdbdb; cursor:pointer; }.notification-toggle:after { content:""; display:block; width:1.125rem; height:1.125rem; border-radius:50%; background:#fff; transition:transform .2s; }.notification-toggle.is-on { background:var(--color-violet); }.notification-toggle.is-on:after { transform:translateX(1rem); }
+.notification-toggle[aria-disabled="true"] { cursor:default; }
 @media(max-width:575px){.notification-settings__title h2{font-size:1.625rem}.notification-settings__columns{grid-template-columns:1fr 3rem 3rem;font-size:.625rem}.notification-settings__row{grid-template-columns:1fr 6.625rem}.notification-settings__toggles{grid-template-columns:3rem 3rem;gap:.625rem}.notification-settings__row strong{font-size:1rem}}
 
 .lk-form__photo {

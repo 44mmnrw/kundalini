@@ -5,6 +5,11 @@
 	padding-bottom: 7.5rem;
 }
 
+.yoga-checkout-column {
+	flex: 0 0 100%;
+	min-width: 0;
+}
+
 .yoga-checkout__notices {
 	margin-bottom: 1.25rem;
 }
@@ -623,11 +628,121 @@
 }
 
 /* РџСѓСЃС‚Р°СЏ РєРѕСЂР·РёРЅР° */
-.yoga-checkout_empty {
+.yoga-checkout-empty {
+	display: flex;
+	height: 22.4375rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.875rem;
+	width: 100%;
+}
+
+.yoga-checkout-empty__message {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.625rem;
+	width: 100%;
+}
+
+.yoga-checkout-empty__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 5rem;
+	height: 5rem;
+	flex: 0 0 5rem;
+	border-radius: 50%;
+	background: #f6f6f9;
+}
+
+.yoga-checkout-empty__icon img {
+	display: block;
+	width: 2.075rem;
+	height: 1.8875rem;
+}
+
+.yoga-checkout-empty__copy {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.25rem;
+	width: min(37.5rem, 100%);
+	text-align: center;
+}
+
+.yoga-checkout-empty__copy h1,
+.yoga-checkout-empty__copy p {
+	margin: 0;
+	width: 100%;
+}
+
+.yoga-checkout-empty__copy h1 {
+	font-family: "Mulish-Bold", sans-serif;
+	font-size: 1.75rem;
+	font-weight: normal;
+	line-height: 1.1;
+	color: #1f1f1f;
+}
+
+.yoga-checkout-empty__copy p {
+	font-family: "Mulish-Regular", sans-serif;
+	font-size: 1rem;
+	font-weight: normal;
+	line-height: 1;
+	color: #646464;
+}
+
+.yoga-checkout-empty__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.625rem;
+	padding: 0.9375rem 1.875rem;
+	border-radius: 31.25rem;
+	background: #1f1f1f;
+	color: #e8ff57;
+	text-decoration: none;
+}
+
+.yoga-checkout-empty__button > span:first-child {
+	font-family: "Mulish-SemiBold", sans-serif;
+	font-size: 0.875rem;
+	font-weight: normal;
+	line-height: 1;
+	letter-spacing: -0.154px;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.yoga-checkout-empty__button-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.875rem;
+	height: 1.875rem;
+	flex: 0 0 1.875rem;
+	border-radius: 50%;
+	background: #e8ff57;
+	color: #1f1f1f;
+	transition: transform 0.4s ease;
+}
+
+.yoga-checkout-empty__button-icon svg {
+	width: 0.9375rem;
+	height: 0.9375rem;
+}
+
+.yoga-checkout-empty__button:hover .yoga-checkout-empty__button-icon {
+	transform: rotate(45deg);
+}
+
+.yoga-checkout_auth {
 	padding-bottom: 4rem;
 }
 
-.yoga-checkout-empty__text {
+.yoga-checkout-auth__text {
 	margin: 0 0 1.5rem;
 	font-family: "Mulish-Regular", sans-serif;
 	font-size: 1.125rem;

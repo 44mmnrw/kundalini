@@ -223,12 +223,44 @@
 								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true"><use href="#notification-settings-back"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
 								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
 								<?php $notification_settings = array(
-									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(array('Подписка скоро заканчивается', 'За 3 дня до окончания', 1, 1), array('Срок действия карты истекает или истёк', '', 1, 0), array('Подписка закончилась', '', 1, 1))),
-									array('Садхана', 'Всё, что касается садхан', array(array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1), array('Садхана прервана', '', 0, 0), array('Садхана завершена', '', 1, 1))),
-									array('Сообщения', 'Всё, что касается садхан', array(array('Ответ преподавателя или поддержки', '', 1, 0), array('Ответ на ваш комментарий от другого пользователя', '', 0, 1))),
-									array('Новости', 'Новостные письма рассылаем только на почту. Отписаться можно в любой момент.', array(array('Новые крийи и медитации', '', null, 1), array('Новые статьи в блоге', '', null, 0), array('Акции и спецпредложения', '', null, 1))),
+									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(
+										array('Подписка скоро заканчивается', 'За 3 дня до окончания', 1, 1, 'subscription_expiring_site', 'subscription_expiring_email'),
+										array('Срок действия карты истекает или истёк', '', 1, 0, 'payment_card_expiring_site', 'payment_card_expiring_email'),
+										array('Подписка закончилась', '', 1, 1, 'subscription_ended_site', 'subscription_ended_email'),
+									)),
+									array('Садхана', 'Всё, что касается садхан', array(
+										array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1, '', ''),
+										array('Садхана прервана', '', 0, 0, '', ''),
+										array('Садхана завершена', '', 1, 1, '', ''),
+									)),
+									array('Сообщения', 'Ответы преподавателя, поддержки и других пользователей.', array(
+										array('Ответ преподавателя или поддержки', '', 1, 0, 'question_answer_site', 'question_answer_email'),
+										array('Ответ на ваш комментарий от другого пользователя', '', 0, 1, 'comment_reply_site', 'comment_reply_email'),
+									)),
+									array('Новости', 'Новостные письма рассылаем только на почту. Отписаться можно в любой момент.', array(
+										array('Новые крийи и медитации', '', null, 1, '', 'new_practices_email'),
+										array('Новые статьи в блоге', '', null, 0, '', 'new_articles_email'),
+										array('Акции и спецпредложения', '', null, 1, '', 'promotions_email'),
+									)),
 								); foreach ($notification_settings as $category): ?>
-									<section class="notification-settings__category"><div class="notification-settings__category-head"><h3><?php echo esc_html($category[0]); ?></h3><p><?php echo esc_html($category[1]); ?></p></div><?php foreach ($category[2] as $row): ?><div class="notification-settings__row"><div><strong><?php echo esc_html($row[0]); ?></strong><?php if ($row[1] !== ''): ?><span><?php echo esc_html($row[1]); ?></span><?php endif; ?></div><div class="notification-settings__toggles"><?php if ($row[2] !== null): ?><button type="button" class="notification-toggle<?php echo $row[2] ? ' is-on' : ''; ?>" aria-pressed="<?php echo $row[2] ? 'true' : 'false'; ?>"></button><?php else: ?><i></i><?php endif; ?><button type="button" class="notification-toggle<?php echo $row[3] ? ' is-on' : ''; ?>" aria-pressed="<?php echo $row[3] ? 'true' : 'false'; ?>"></button></div></div><?php endforeach; ?></section>
+									<section class="notification-settings__category">
+										<div class="notification-settings__category-head"><h3><?php echo esc_html($category[0]); ?></h3><p><?php echo esc_html($category[1]); ?></p></div>
+										<?php foreach ($category[2] as $row): ?>
+											<?php
+											$site_key = (string) ($row[4] ?? '');
+											$email_key = (string) ($row[5] ?? '');
+											$site_enabled = $site_key !== '' ? yoga_notification_preference((int) $user_id, $site_key, (bool) $row[2]) : (bool) $row[2];
+											$email_enabled = $email_key !== '' ? yoga_notification_preference((int) $user_id, $email_key, (bool) $row[3]) : (bool) $row[3];
+											?>
+											<div class="notification-settings__row">
+												<div><strong><?php echo esc_html($row[0]); ?></strong><?php if ($row[1] !== ''): ?><span><?php echo esc_html($row[1]); ?></span><?php endif; ?></div>
+												<div class="notification-settings__toggles">
+													<?php if ($row[2] !== null): ?><button type="button" class="notification-toggle<?php echo $site_enabled ? ' is-on' : ''; ?>"<?php if ($site_key !== ''): ?> data-preference-key="<?php echo esc_attr($site_key); ?>"<?php else: ?> disabled aria-disabled="true"<?php endif; ?> aria-pressed="<?php echo $site_enabled ? 'true' : 'false'; ?>"></button><?php else: ?><i></i><?php endif; ?>
+													<button type="button" class="notification-toggle<?php echo $email_enabled ? ' is-on' : ''; ?>"<?php if ($email_key !== ''): ?> data-preference-key="<?php echo esc_attr($email_key); ?>"<?php else: ?> disabled aria-disabled="true"<?php endif; ?> aria-pressed="<?php echo $email_enabled ? 'true' : 'false'; ?>"></button>
+												</div>
+											</div>
+										<?php endforeach; ?>
+									</section>
 								<?php endforeach; ?>
 							</div>
 						</div>

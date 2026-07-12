@@ -12,6 +12,7 @@ $wc_cart = WC()->cart;
 $theme_uri = get_template_directory_uri();
 $sprite_href = esc_url($theme_uri . '/assets/svg/sprite.svg');
 $checkout_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout/');
+$tariffs_url = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_page_url() : home_url('/product-category/tariffs/');
 $privacy_url = function_exists('yoga_get_privacy_policy_url') ? yoga_get_privacy_policy_url() : home_url('/privacy-policy/');
 $order_button_text = apply_filters('woocommerce_order_button_text', __('Оплатить', 'woocommerce'));
 
@@ -68,11 +69,31 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 <section class="section-checkout" id="section-checkout">
 	<div class="container">
 		<div class="row">
-			<div class="yoga-checkout">
+			<div class="yoga-checkout-column">
+				<div class="yoga-checkout">
 				<?php if (function_exists('wc_print_notices')) : ?>
 					<div class="yoga-checkout__notices"><?php wc_print_notices(); ?></div>
 				<?php endif; ?>
 
+				<?php if ($wc_cart->is_empty()) : ?>
+					<div class="yoga-checkout-empty">
+						<div class="yoga-checkout-empty__message">
+							<span class="yoga-checkout-empty__icon" aria-hidden="true">
+								<img src="<?php echo esc_url($theme_uri . '/assets/svg/checkout-empty-cart.svg'); ?>" alt="" width="34" height="31">
+							</span>
+							<div class="yoga-checkout-empty__copy">
+								<h1><?php esc_html_e('В корзине пока пусто', 'yoga'); ?></h1>
+								<p><?php esc_html_e('Выберите тариф и добавьте его в корзину', 'yoga'); ?></p>
+							</div>
+						</div>
+						<a class="yoga-checkout-empty__button" href="<?php echo esc_url($tariffs_url); ?>">
+							<span><?php esc_html_e('Выбрать тариф', 'yoga'); ?></span>
+							<span class="yoga-checkout-empty__button-icon" aria-hidden="true">
+								<svg viewBox="0 0 16 16" focusable="false"><path d="M3 13L13 3M6 3H13V10" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+							</span>
+						</a>
+					</div>
+				<?php else : ?>
 				<h1 class="yoga-checkout__title"><?php esc_html_e('КОРЗИНА', 'yoga'); ?></h1>
 
 				<div class="yoga-checkout__layout">
@@ -253,6 +274,8 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 					do_action('woocommerce_after_checkout_form', WC()->checkout());
 				}
 				?>
+				<?php endif; ?>
+				</div>
 			</div>
 		</div>
 	</div>

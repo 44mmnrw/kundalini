@@ -142,6 +142,11 @@ if ($is_lk_shell) {
 	get_template_part('template-parts/modal', 'subscription-cancel');
 	get_template_part('template-parts/modal', 'card-binding');
 }
+?><?php
+$comment_modal_post_type = get_post_type();
+if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') && in_array($comment_modal_post_type, yoga_ajax_comment_supported_post_types(), true)) {
+	get_template_part('template-parts/modal', 'comment-delete');
+}
 ?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_cardsucces">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
@@ -204,5 +209,9 @@ if ($is_lk_shell) {
 			</div>
 		</div>   
 	</div>
-</div><?php wp_footer(); ?></body>
+</div><?php
+if (function_exists('yoga_is_theme_checkout_context') && yoga_is_theme_checkout_context()) {
+	get_template_part('template-parts/modal', 'cart-clear');
+}
+?><?php wp_footer(); ?></body>
 </html>
