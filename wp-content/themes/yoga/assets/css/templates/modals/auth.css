@@ -505,13 +505,40 @@
   display: inline-block;
   left: calc(50% - 1.1875rem);  transform: translateX(-50%);
   margin-top: 1rem;}
-.form-link_vk::after {
-  content: "";
+
+/* VK ID: Figma 1694:12743 — текст и логотип составляют одну центрированную группу. */
+.modal-login-inner__slide .form-link_vk.vkid-login-trigger {
+  display: flex;
+  width: max-content;
+  min-height: 1.75rem;
+  margin-right: auto;
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  left: auto;
+  transform: none;
+  color: #1f1f1f !important;
+  font: 400 1rem/1 "Mulish-Regular", sans-serif;
+  white-space: nowrap;
+}
+
+.modal-login-inner__slide .form-link_vk.vkid-login-trigger::before,
+.modal-login-inner__slide .form-link_vk.vkid-login-trigger::after {
+  display: none;
+}
+
+.vkid-login-trigger__text {
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+}
+
+.vkid-login-trigger__icon {
   display: block;
-  position: absolute;
-  right: -2.375rem;  top: calc(50% - 0.5px);
-  transform: translateY(-50%);
-  width: 1.75rem;  height: 1.75rem;  background: url(../../img/vk-icon.png) no-repeat center center/100% auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 1.75rem;
+  text-decoration: none !important;
 }
 
 .form-back {

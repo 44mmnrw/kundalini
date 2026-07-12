@@ -64,10 +64,6 @@
   flex-direction: column;
 }
 
-.footer__socials_mobile {
-  display: none;
-}
-
 .footer__requisites {
   display: flex;
   flex-direction: column;
@@ -359,13 +355,6 @@
 
   .footer__company {
     gap: 1.25rem;
-  }
-
-  .footer__socials_mobile {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    gap: 1rem;
   }
 
   .footer__socials_desktop {

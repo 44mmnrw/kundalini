@@ -86,16 +86,6 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 							<p><?php echo esc_html($requisite_line); ?></p>
 						<?php endforeach; ?>
 					</div>
-					<ul class="footer__socials footer__socials_mobile" aria-label="<?php echo esc_attr__('Социальные сети', 'yoga'); ?>">
-						<?php foreach ($footer_socials as $social) : ?>
-							<?php if ($social['url'] === '') continue; ?>
-							<li>
-								<a class="footer__social" href="<?php echo esc_url($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($social['label']); ?>">
-									<svg aria-hidden="true" focusable="false"><use href="#<?php echo esc_attr($social['icon']); ?>"></use></svg>
-								</a>
-							</li>
-						<?php endforeach; ?>
-					</ul>
 				</div>
 
 				<form class="footer-subscribe" action="<?php echo esc_url(home_url('/')); ?>" method="post">
