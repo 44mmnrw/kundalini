@@ -614,6 +614,91 @@
   }
 }
 
+/* Independent e-mail confirmation modal (does not inherit the auth drawer). */
+body.email-confirmation-is-open {
+  overflow: hidden;
+}
+
+.email-confirmation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(31, 31, 31, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.email-confirmation-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.2s ease;
+}
+
+.email-confirmation-overlay .email-confirmation-modal {
+  position: relative;
+  box-sizing: border-box;
+  width: 28.5625rem;
+  height: 31.0625rem;
+  margin: 0;
+  padding: 4.0625rem 2.1875rem 0;
+  border-radius: 1.875rem;
+  background: #fff;
+  box-shadow: 0 1rem 3rem rgba(31, 31, 31, 0.12);
+  opacity: 0;
+  transform: translateY(0.75rem) scale(0.985);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.email-confirmation-overlay.is-open .email-confirmation-modal {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.email-confirmation-modal__close {
+  position: absolute;
+  top: 0.9375rem;
+  right: 0.9375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  padding: 0 0 0.1875rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-green);
+  color: #1f1f1f;
+  font: 300 2rem/1 Mulish, sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.email-confirmation-modal__close:hover {
+  transform: rotate(45deg);
+}
+
+@media (max-width: 575px) {
+  .email-confirmation-overlay {
+    padding: 0.75rem;
+  }
+
+  .email-confirmation-overlay .email-confirmation-modal {
+    width: 100%;
+    height: auto;
+    min-height: 30rem;
+    max-height: calc(100dvh - 1.5rem);
+    padding: 4rem 1.5rem 1.5rem;
+    overflow-y: auto;
+  }
+}
+
 .modal-login-inner__slide.active {
   opacity: 1;
   pointer-events: auto;
@@ -1151,6 +1236,33 @@ p.login-rules a:hover {
 }
 
 /* Email confirmation: final overrides after the generic auth modal breakpoints. */
+.modal-login.modal-login--email-confirmation {
+  right: 0;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.modal-login.active.modal-login--email-confirmation {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.2s ease;
+}
+
+.modal-login.modal-login--email-confirmation .modal-login-inner {
+  opacity: 0;
+  transform: translateY(0.75rem) scale(0.985);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.modal-login.active.modal-login--email-confirmation .modal-login-inner {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
 @media (min-width: 576px) {
   .modal-login.active.modal-login--email-confirmation {
     align-items: center;

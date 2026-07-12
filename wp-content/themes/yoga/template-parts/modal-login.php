@@ -189,9 +189,12 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 </div>
             </form>
         </div>
-        <div class="modal-login-inner__slide email-confirmation-slide" data-target="5">
-            <div class="email-confirmation-modal">
-                <h3>Подтверждение<br>электронной почты</h3>
+    </div>
+</div>
+<div class="email-confirmation-overlay" aria-hidden="true">
+    <div class="email-confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="email-confirmation-title">
+        <button type="button" class="email-confirmation-modal__close" aria-label="Закрыть">×</button>
+                <h3 id="email-confirmation-title">Подтверждение<br>электронной почты</h3>
                 <div class="email-confirmation-modal__description">
                     <p>На указанный вами email <strong class="email-confirmation-modal__email"></strong> отправлено письмо с кодом подтверждения.</p>
                     <p>Введите код ниже, чтобы завершить проверку доступа к электронной почте.</p>
@@ -206,7 +209,5 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         <button type="submit" class="email-confirmation-modal__confirm">Подтвердить</button>
                     </div>
                 </form>
-            </div>
-        </div>
     </div>
 </div>

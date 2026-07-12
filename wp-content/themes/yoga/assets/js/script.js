@@ -4226,11 +4226,8 @@ jQuery(document).on('click', function(e) {
         $('.email-confirmation-modal__email').text(yoga_ajax.user_email || '');
         $('.email-confirmation-modal__message').empty().removeClass('is-error');
         $('.email-confirmation-modal__code').val('');
-        $('.modal-login-inner__slide').removeClass('active');
-        $('.modal-login-inner__slide[data-target="5"]').addClass('active');
-        $('.modal-login')
-            .removeClass('modal-login--recovery modal-login--success')
-            .addClass('active modal-login--email-confirmation');
+        $('.email-confirmation-overlay').addClass('is-open').attr('aria-hidden', 'false');
+        $('body').addClass('email-confirmation-is-open');
         $('.email-confirmation-modal__code').trigger('focus');
         $('.email-confirmation-modal__resend').trigger('click');
     });
@@ -4318,9 +4315,24 @@ jQuery(document).on('click', function(e) {
         this.value = this.value.replace(/\D/g, '').slice(0, 6);
     });
 
-    $(document).on('click', '.email-confirmation-modal__cancel', function() {
-        $('.modal-login').removeClass('active modal-login--email-confirmation');
-        location.reload();
+    function closeEmailConfirmationModal() {
+        $('.email-confirmation-overlay').removeClass('is-open').attr('aria-hidden', 'true');
+        $('body').removeClass('email-confirmation-is-open');
+        $('.lk-email-confirmation__link').trigger('focus');
+    }
+
+    $(document).on('click', '.email-confirmation-modal__cancel, .email-confirmation-modal__close', function() {
+        closeEmailConfirmationModal();
+    });
+
+    $(document).on('click', '.email-confirmation-overlay', function(e) {
+        if (e.target === this) closeEmailConfirmationModal();
+    });
+
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $('.email-confirmation-overlay').hasClass('is-open')) {
+            closeEmailConfirmationModal();
+        }
     });
 
     $(document).on('click', '.email-confirmation-modal__resend', function() {
