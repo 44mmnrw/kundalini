@@ -116,17 +116,15 @@
   visibility: hidden !important;
   pointer-events: none !important;
 }
-.blog-search__btn img {
+.blog-search__btn .blog-search__btn-icon {
   display: block;
   width: 1.0625rem;  position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: 0.4s ease;
-}
-.blog-search__btn img.active {
+  color: var(--color-black);
   opacity: 1;
+  transition: 0.4s ease;
 }
 
 .blog-search__delete-btn {
@@ -862,10 +860,10 @@
     align-items: center;
     justify-content: center;
   }
-  .section-blog-form .blog-search__btn img {
-    width: 1.25rem;
-    height: auto;
-    max-height: 1.25rem;
+  .section-blog-form .blog-search__btn .blog-search__btn-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    max-height: 1.125rem;
   }
   .section-blog-form .blog-search__delete-btn {
     position: absolute;

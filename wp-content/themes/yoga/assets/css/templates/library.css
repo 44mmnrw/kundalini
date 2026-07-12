@@ -107,7 +107,7 @@
 .form-search__btn .form-search__btn-icon {
   display: block;
   position: absolute;
-  width: 1.25rem;  height: 1.25rem;  left: 50%;
+  width: 1.125rem;  height: 1.125rem;  left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;

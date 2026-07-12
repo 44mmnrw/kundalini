@@ -80,23 +80,37 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 			</nav>
 
 			<div class="footer__info">
-				<div class="footer__requisites">
-					<?php foreach ($footer_requisites_lines as $requisite_line) : ?>
-						<p><?php echo esc_html($requisite_line); ?></p>
-					<?php endforeach; ?>
+				<div class="footer__company">
+					<div class="footer__requisites">
+						<?php foreach ($footer_requisites_lines as $requisite_line) : ?>
+							<p><?php echo esc_html($requisite_line); ?></p>
+						<?php endforeach; ?>
+					</div>
+					<ul class="footer__socials footer__socials_mobile" aria-label="<?php echo esc_attr__('Социальные сети', 'yoga'); ?>">
+						<?php foreach ($footer_socials as $social) : ?>
+							<?php if ($social['url'] === '') continue; ?>
+							<li>
+								<a class="footer__social" href="<?php echo esc_url($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($social['label']); ?>">
+									<svg aria-hidden="true" focusable="false"><use href="#<?php echo esc_attr($social['icon']); ?>"></use></svg>
+								</a>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 				</div>
 
 				<form class="footer-subscribe" action="<?php echo esc_url(home_url('/')); ?>" method="post">
-					<label class="footer-subscribe__label" for="footer-subscribe-email">
-						Подписаться на новости:
-					</label>
-					<div class="footer-subscribe__field">
-						<input id="footer-subscribe-email" name="footer_email" type="email" placeholder="Электронная почта">
-						<button class="footer-subscribe__submit" type="submit" aria-label="<?php echo esc_attr__('Подписаться на новости', 'yoga'); ?>">
-							<svg aria-hidden="true" focusable="false">
-								<use href="#footer-arrow-up-right"></use>
-							</svg>
-						</button>
+					<div class="footer-subscribe__main">
+						<label class="footer-subscribe__label" for="footer-subscribe-email">
+							Подписаться на новости:
+						</label>
+						<div class="footer-subscribe__field">
+							<input id="footer-subscribe-email" name="footer_email" type="email" placeholder="Электронная почта">
+							<button class="footer-subscribe__submit" type="submit" aria-label="<?php echo esc_attr__('Подписаться на новости', 'yoga'); ?>">
+								<svg aria-hidden="true" focusable="false">
+									<use href="#footer-arrow-up-right"></use>
+								</svg>
+							</button>
+						</div>
 					</div>
 					<label class="footer-subscribe__agree">
 						<input type="checkbox" name="footer_subscribe_agree" checked>
@@ -116,7 +130,7 @@ $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_spli
 			<a href="<?php echo esc_url(home_url('/')); ?>" class="footer__logo" aria-label="<?php echo esc_attr(get_bloginfo('name')); ?>">
 				<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/logo/logo.svg'); ?>" alt="">
 			</a>
-			<ul class="footer__socials" aria-label="<?php echo esc_attr__('Социальные сети', 'yoga'); ?>">
+			<ul class="footer__socials footer__socials_desktop" aria-label="<?php echo esc_attr__('Социальные сети', 'yoga'); ?>">
 				<?php foreach ($footer_socials as $social) : ?>
 					<?php if ($social['url'] === '') continue; ?>
 					<li>
