@@ -1661,6 +1661,26 @@ function handle_comment_delete() {
 		
 		return true;
 	}
+
+	function yoga_is_subscription_email_subscribed(string $email): bool {
+		$email = strtolower(trim(sanitize_email($email)));
+		if ($email === '' || !is_email($email)) {
+			return false;
+		}
+
+		$stored_emails = array_merge(
+			(array) get_option('subscription_emails', array()),
+			(array) get_option('yoga_subscribers', array())
+		);
+
+		foreach ($stored_emails as $stored_email) {
+			if (strtolower(trim(sanitize_email((string) $stored_email))) === $email) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 	
 	class Custom_Menu_Walker extends Walker_Nav_Menu {
 		private $item_counter = 0; // Сбрасываем счетчик при завершении уровня меню

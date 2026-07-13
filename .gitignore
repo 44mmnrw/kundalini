@@ -33,6 +33,10 @@
 !/wp-content/plugins/yoga-tariff-renewal/
 !/wp-content/plugins/yoga-tariff-renewal/**
 
+# Custom plugin: Yoga Subscribers
+!/wp-content/plugins/yoga-subscribers/
+!/wp-content/plugins/yoga-subscribers/**
+
 # Custom plugin: VK ID authentication
 !/wp-content/plugins/vkid-login/
 !/wp-content/plugins/vkid-login/**
