@@ -2,13 +2,13 @@
 /**
  * Plugin Name: Yoga Subscribers
  * Description: Подписчики и журнал добровольных согласий на рассылку.
- * Version: 1.1.0
+ * Version: 1.0.0
  * Author: Yoga
  */
 defined('ABSPATH') || exit;
 
 final class Yoga_Subscribers_Plugin {
-	private const VERSION = '1.1.0';
+	private const VERSION = '1.0.0';
 	private const CONSENT_VERSION = '2026-07-12';
 	private const CONSENT_TEXT = 'Я соглашаюсь на обработку персональных данных и получение рассылок';
 
@@ -18,6 +18,7 @@ final class Yoga_Subscribers_Plugin {
 		add_action('wp_ajax_nopriv_process_subscription', array(__CLASS__, 'subscribe'), 1);
 		add_action('admin_menu', array(__CLASS__, 'menu'));
 		add_action('admin_post_yoga_subscribers_export', array(__CLASS__, 'export'));
+		add_action('admin_post_yoga_subscribers_delete', array(__CLASS__, 'delete'));
 	}
 
 	private static function table(): string { global $wpdb; return $wpdb->prefix . 'yoga_subscribers'; }
@@ -80,9 +81,22 @@ final class Yoga_Subscribers_Plugin {
 	public static function page(): void {
 		if (!current_user_can('manage_options')) wp_die('Недостаточно прав.'); global $wpdb;
 		$rows=$wpdb->get_results('SELECT * FROM '.self::table().' ORDER BY id DESC'); ?>
-		<div class="wrap"><h1 class="wp-heading-inline">Подписчики</h1> <a class="page-title-action" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=yoga_subscribers_export'),'yoga_subscribers_export')); ?>">Экспорт CSV</a><hr class="wp-header-end"><p>Всего: <strong><?php echo esc_html((string)count($rows)); ?></strong></p><table class="widefat striped"><thead><tr><th>Email</th><th>Дата согласия</th><th>IP</th><th>Источник</th><th>Страница</th><th>Статус</th></tr></thead><tbody>
-		<?php if(!$rows):?><tr><td colspan="6">Подписчиков пока нет.</td></tr><?php endif; foreach($rows as $r):?><tr><td><?php echo esc_html($r->email);?></td><td><?php echo esc_html($r->consented_at ?: $r->created_at);?></td><td><?php echo esc_html($r->ip_address);?></td><td><?php echo esc_html($r->source);?></td><td><?php if($r->page_url):?><a href="<?php echo esc_url($r->page_url);?>" target="_blank" rel="noopener">Открыть</a><?php endif;?></td><td><?php echo esc_html($r->provider_status);?></td></tr><?php endforeach;?></tbody></table></div>
+		<div class="wrap"><h1 class="wp-heading-inline">Подписчики</h1> <a class="page-title-action" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=yoga_subscribers_export'),'yoga_subscribers_export')); ?>">Экспорт CSV</a><hr class="wp-header-end">
+		<?php if (isset($_GET['deleted'])) : ?><div class="notice <?php echo $_GET['deleted'] === '1' ? 'notice-success' : 'notice-error'; ?> is-dismissible"><p><?php echo $_GET['deleted'] === '1' ? 'Email удалён.' : 'Не удалось удалить email.'; ?></p></div><?php endif; ?>
+		<p>Всего: <strong><?php echo esc_html((string)count($rows)); ?></strong></p><table class="widefat striped"><thead><tr><th>Email</th><th>Дата согласия</th><th>IP</th><th>Источник</th><th>Страница</th><th>Статус</th><th>Действия</th></tr></thead><tbody>
+		<?php if(!$rows):?><tr><td colspan="7">Подписчиков пока нет.</td></tr><?php endif; foreach($rows as $r):?><?php $delete_url = wp_nonce_url(add_query_arg(array('action'=>'yoga_subscribers_delete','subscriber_id'=>(int)$r->id),admin_url('admin-post.php')),'yoga_subscribers_delete_'.(int)$r->id); ?><tr><td><?php echo esc_html($r->email);?></td><td><?php echo esc_html($r->consented_at ?: $r->created_at);?></td><td><?php echo esc_html($r->ip_address);?></td><td><?php echo esc_html($r->source);?></td><td><?php if($r->page_url):?><a href="<?php echo esc_url($r->page_url);?>" target="_blank" rel="noopener">Открыть</a><?php endif;?></td><td><?php echo esc_html($r->provider_status);?></td><td><a class="button button-small button-link-delete" href="<?php echo esc_url($delete_url); ?>" onclick="return confirm('Удалить этот email из подписчиков?');">Удалить</a></td></tr><?php endforeach;?></tbody></table></div>
 	<?php }
+
+	public static function delete(): void {
+		if (!current_user_can('manage_options')) wp_die('Недостаточно прав.');
+		$id = absint($_GET['subscriber_id'] ?? 0);
+		if ($id < 1) wp_die('Некорректный подписчик.');
+		check_admin_referer('yoga_subscribers_delete_'.$id);
+		global $wpdb;
+		$deleted = $wpdb->delete(self::table(), array('id'=>$id), array('%d'));
+		wp_safe_redirect(add_query_arg(array('page'=>'yoga-subscribers','deleted'=>$deleted === 1 ? '1' : '0'),admin_url('admin.php')));
+		exit;
+	}
 
 	public static function export(): void {
 		if(!current_user_can('manage_options'))wp_die('Недостаточно прав.'); check_admin_referer('yoga_subscribers_export'); global $wpdb;
