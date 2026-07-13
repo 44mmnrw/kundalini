@@ -283,6 +283,15 @@
 										}
 										$is_unread = empty($notification['read_at']);
 										$icon = $type === 'question_answer' ? 'notification-teacher-reply-icon' : 'notification-bell-icon';
+										if ($type === 'comment_reply') {
+											$icon = 'notification-comment-reply-icon';
+										}
+										if ($type === 'payment_card_expiring') {
+											$icon = 'notification-payment-card-icon';
+										}
+										if ($type === 'subscription_expiring') {
+											$icon = 'notification-subscription-expiring-icon';
+										}
 										?>
 										<a class="lk-notification lk-notification--<?php echo esc_attr($type ?: 'default'); ?><?php echo $is_unread ? ' lk-notification--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($type); ?>" href="<?php echo esc_url($url ?: '#'); ?>">
 											<span class="lk-notification__head">
@@ -291,6 +300,9 @@
 										<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread): ?><i aria-hidden="true"></i><?php endif; ?></span>
 											</span>
 											<span class="lk-notification__message"><?php echo esc_html($message); ?></span>
+											<?php if ($type === 'payment_card_expiring'): ?>
+												<span class="lk-notification__action"><?php esc_html_e('Обновить карту', 'yoga'); ?></span>
+											<?php endif; ?>
 										</a>
 									<?php endforeach; ?>
 								</div>

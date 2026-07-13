@@ -3376,6 +3376,28 @@ function handle_comment_delete() {
 			}
 		}
 		$notifications = yoga_get_user_notifications($user_id, 100);
+		$dedupe_key = sanitize_text_field((string) ($context['dedupe_key'] ?? ''));
+		if ($dedupe_key !== '') {
+			$matching_indexes = array();
+			foreach ($notifications as $index => $existing_notification) {
+				$has_same_key = hash_equals((string) ($existing_notification['dedupe_key'] ?? ''), $dedupe_key);
+				$is_legacy_match = ($existing_notification['type'] ?? '') === sanitize_key($type)
+					&& ($existing_notification['title'] ?? '') === sanitize_text_field($title)
+					&& ($existing_notification['message'] ?? '') === sanitize_text_field($message);
+				if ($has_same_key || $is_legacy_match) {
+					$matching_indexes[] = $index;
+				}
+			}
+			if ($matching_indexes !== array()) {
+				$keep_index = array_shift($matching_indexes);
+				$notifications[$keep_index]['dedupe_key'] = $dedupe_key;
+				foreach ($matching_indexes as $duplicate_index) {
+					unset($notifications[$duplicate_index]);
+				}
+				update_user_meta($user_id, 'yoga_notifications', array_values($notifications));
+				return;
+			}
+		}
 		$notification = array(
 			'id' => wp_generate_uuid4(),
 			'type' => sanitize_key($type),
@@ -3385,6 +3407,9 @@ function handle_comment_delete() {
 			'created_at' => current_time('mysql'),
 			'read_at' => '',
 		);
+		if ($dedupe_key !== '') {
+			$notification['dedupe_key'] = $dedupe_key;
+		}
 		if (!empty($context['question_id'])) {
 			$notification['question_id'] = absint($context['question_id']);
 		}

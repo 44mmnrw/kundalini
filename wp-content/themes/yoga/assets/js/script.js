@@ -3258,10 +3258,35 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.notification-settings__back', function() { switchLkSlide('8'); });
 	$(document).on('click', '.lk-notifications-page__settings', function() { switchLkSlide('9'); });
 	$(document).on('click', '.notification-toggle[data-preference-key]', function() {
-		var $toggle=$(this), on=!$toggle.hasClass('is-on'), key=$toggle.data('preference-key');
-		$toggle.toggleClass('is-on',on).attr('aria-pressed',on?'true':'false');
-		if (!key || typeof yoga_ajax === 'undefined') return;
-		$.post(yoga_ajax.ajax_url,{action:'yoga_save_notification_preference',nonce:yoga_ajax.nonce,key:key,enabled:on?1:0}).fail(function(){ $toggle.toggleClass('is-on',!on).attr('aria-pressed',!on?'true':'false'); });
+		var $toggle = $(this);
+		var wasOn = $toggle.hasClass('is-on');
+		var isOn = !wasOn;
+		var key = $toggle.data('preference-key');
+
+		if (!key || typeof yoga_ajax === 'undefined' || $toggle.prop('disabled')) {
+			return;
+		}
+
+		$toggle
+			.toggleClass('is-on', isOn)
+			.attr('aria-pressed', isOn ? 'true' : 'false')
+			.attr('aria-busy', 'true')
+			.prop('disabled', true);
+
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_save_notification_preference',
+			nonce: yoga_ajax.nonce,
+			key: key,
+			enabled: isOn ? 1 : 0
+		}).done(function(response) {
+			if (!response || response.success !== true) {
+				$toggle.toggleClass('is-on', wasOn).attr('aria-pressed', wasOn ? 'true' : 'false');
+			}
+		}).fail(function() {
+			$toggle.toggleClass('is-on', wasOn).attr('aria-pressed', wasOn ? 'true' : 'false');
+		}).always(function() {
+			$toggle.removeAttr('aria-busy').prop('disabled', false);
+		});
 	});
 
     function switchLkSlide(target) {
