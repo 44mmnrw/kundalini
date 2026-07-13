@@ -17,6 +17,27 @@
   display: block;
   background: transparent;
 }
+
+/* Mobile LK shell: Figma uses a 320px content area on a 340px viewport. */
+@media (max-width: 767px) {
+  .section-lk > .container {
+    width: calc(100% - 2 * var(--container-inline-gutter, 10px));
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-lk > .container > .row,
+  .section-lk .lk,
+  .section-lk .lk__slides,
+  .section-lk .lk-slide,
+  .section-lk .lk-page-header,
+  .section-lk .lk-slide__content {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
 .lk {
   width: 100%;
 }

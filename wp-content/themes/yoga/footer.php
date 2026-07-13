@@ -218,7 +218,18 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 			Вопрос будет опубликован в личном кабинете вместе с&nbsp;ответом
 		</p>
 	</div>
-</div><div class="modal modal-default modal-default_logout">
+</div><?php if (is_page_template('templates-page/contacts.php')) : ?><div class="modal modal-default yoga-contact-success-modal" id="yoga-contact-success-modal" role="dialog" aria-modal="true" aria-labelledby="yoga-contact-success-title" aria-hidden="true">
+	<button class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+		<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/modal-close-img.png'); ?>" alt="">
+	</button>
+	<div class="yoga-contact-success-modal__content">
+		<div class="yoga-contact-success-modal__heading">
+			<img class="yoga-contact-success-modal__icon" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/comment-delete-success.svg'); ?>" width="77" height="77" alt="">
+			<h3 id="yoga-contact-success-title"><?php esc_html_e('Мы получили ваше сообщение!', 'yoga'); ?></h3>
+		</div>
+		<p><?php esc_html_e('Вернёмся с ответом очень скоро.', 'yoga'); ?></p>
+	</div>
+</div><?php endif; ?><div class="modal modal-default modal-default_logout">
 	<div class="modal-close">
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</div>
