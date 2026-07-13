@@ -67,7 +67,6 @@ if ($category_filter_term_id) {
 
 $main_post = null;
 $secondary_post = null;
-$exclude_ids = array();
 
 /**
  * Результаты поиска (макет Figma — одна сетка карточек): без блока «Новое», все посты в grid.
@@ -78,7 +77,7 @@ if ($is_blog_search_ui) {
     )));
     $blog_posts_total = (int) $current_posts->found_posts;
 } else {
-    // Верхний блок «Новое»: 2 поста; ниже — остальные без дублей.
+    // Верхний блок «Новое»: 2 самых свежих поста.
     $latest_posts_query = new WP_Query(array_merge($query_common, array(
         'posts_per_page' => 2,
     )));
@@ -86,14 +85,32 @@ if ($is_blog_search_ui) {
     if (!empty($latest_posts_query->posts)) {
         $main_post = isset($latest_posts_query->posts[0]) ? $latest_posts_query->posts[0]->ID : null;
         $secondary_post = isset($latest_posts_query->posts[1]) ? $latest_posts_query->posts[1]->ID : null;
-        $exclude_ids = array_filter(array($main_post, $secondary_post));
     }
 
     $blog_posts_total = (int) $latest_posts_query->found_posts;
 
-    $current_posts = new WP_Query(array_merge($query_common, array(
-        'posts_per_page' => $posts_count,
-        'post__not_in' => $exclude_ids,
+    // «Популярное»: все статьи по убыванию просмотров; при равенстве — свежие выше.
+    $popular_query_common = $query_common;
+    unset($popular_query_common['orderby'], $popular_query_common['order']);
+
+    $current_posts = new WP_Query(array_merge($popular_query_common, array(
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            'relation' => 'OR',
+            'views_clause' => array(
+                'key' => 'yoga_post_views',
+                'compare' => 'EXISTS',
+                'type' => 'NUMERIC',
+            ),
+            'no_views_clause' => array(
+                'key' => 'yoga_post_views',
+                'compare' => 'NOT EXISTS',
+            ),
+        ),
+        'orderby' => array(
+            'views_clause' => 'DESC',
+            'date' => 'DESC',
+        ),
     )));
 }
 
@@ -212,19 +229,17 @@ if ($is_blog_search_ui) {
         
         <div class="row">
             <div class="blog-articles">
-                <?php
-                /*
+                <?php if (!$is_blog_search_ui) : ?>
                 <div class="blog-articles__intro">
-                    <h3>Популярное</h3>
+                    <h3><?php esc_html_e('Популярное', 'yoga'); ?></h3>
                 </div>
-                */
-                ?>
+                <?php endif; ?>
                 
                 <div class="blog-articles__items">
                     <?php if ($current_posts->have_posts()) : ?>
                         <?php $counter = 1; ?>
                         <?php while ($current_posts->have_posts()) : $current_posts->the_post(); ?>
-                            <div class="blog-article-item <?php echo $counter > 9 ? 'blog-article-item_last hidden' : ''; ?>">
+                            <div class="blog-article-item <?php echo $counter > $posts_count ? 'blog-article-item_last hidden' : ''; ?>">
                                 <div class="blog-article-item__image">
                                     <?php if (has_post_thumbnail()) : ?>
                                         <?php the_post_thumbnail('medium'); ?>
@@ -261,7 +276,7 @@ if ($is_blog_search_ui) {
                     <?php endif; ?>
                 </div>
                 
-                <?php if ($current_posts->found_posts > 9) : ?>
+                <?php if ($current_posts->found_posts > $posts_count) : ?>
                     <div class="blog-articles__more">
                         <div class="btn">
                             <span class="active">Показать еще</span>

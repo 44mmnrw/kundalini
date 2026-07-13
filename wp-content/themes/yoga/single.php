@@ -298,6 +298,22 @@ if (have_posts()) :
             'posts_per_page' => 6,
             'post__not_in' => array(get_the_ID()),
             'ignore_sticky_posts' => true,
+            'meta_query' => array(
+                'relation' => 'OR',
+                'views_clause' => array(
+                    'key' => 'yoga_post_views',
+                    'compare' => 'EXISTS',
+                    'type' => 'NUMERIC',
+                ),
+                'no_views_clause' => array(
+                    'key' => 'yoga_post_views',
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
+            'orderby' => array(
+                'views_clause' => 'DESC',
+                'date' => 'DESC',
+            ),
         ));
 
         if ($popular_posts->have_posts()) :

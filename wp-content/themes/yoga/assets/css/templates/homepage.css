@@ -127,7 +127,8 @@
 .hundreds-practices {
   position: relative;
   margin-left: auto;
-  width: 15.625rem;  aspect-ratio: 250 / 239;
+  width: 15.625rem;
+  aspect-ratio: 6614.58 / 6099.93;
 }
 .hundreds-practices__card,
 .hundreds-practices__oval {
@@ -170,8 +171,11 @@
 }
 .hundreds-practices__arrow {
   position: absolute;
-  right: 0;
-  bottom: 0.3125rem;
+  left: 91.798%;
+  top: 91.108%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
   width: 2.3125rem;
   height: 2.3125rem;
   display: block;
@@ -344,8 +348,10 @@
     margin-right: auto;
   }
   .hundreds-practices__arrow {
-    right: 0;
-    bottom: 0.3125rem;
+    left: 91.798%;
+    top: 91.108%;
+    right: auto;
+    bottom: auto;
   }
   .hundreds-practices p {
     max-width: 12.5rem;  }
@@ -368,8 +374,10 @@
   .main__practices {
     margin-top: 0.625rem;  }
   .hundreds-practices__arrow {
-    right: 0;
-    bottom: 0.3125rem;
+    left: 91.798%;
+    top: 91.108%;
+    right: auto;
+    bottom: auto;
   }
   .main__img {
     width: 16.375rem;    right: calc(50% - 0.25rem);    transform: translateX(50%);
@@ -399,7 +407,7 @@
   .main__practices {
     margin-top: 0.125rem;  }
   .hundreds-practices {
-    width: 17.5rem;    max-width: 17.5rem;    aspect-ratio: 280 / 165;
+    width: 17.5rem;    max-width: 17.5rem;    aspect-ratio: 7408.34 / 4142.01;
     background: transparent;
     border-radius: 0;
   }
@@ -431,8 +439,10 @@
     margin-top: 0.3125rem;    max-width: 13.125rem;    font-size: 1rem;    line-height: 1.25;
   }
   .hundreds-practices__arrow {
-    right: 0rem;
-    top: 7.6875rem;    bottom: auto;
+    left: 93.393%;
+    top: 88.183%;
+    right: auto;
+    bottom: auto;
     width: 2.3125rem;    height: 2.3125rem;  }
   .main__img {
     /* Как у кнопки: bottom 1.25rem + высота .btn */
@@ -539,15 +549,17 @@
   overflow: hidden;
   background: transparent;
   border-radius: 0;
-  --whyme-vb-w: 320;
-  --whyme-vb-h: 298;
-  /*
-   * Центр выреза в координатах viewBox wyme_*.svg (идентичный path).
-   * Вырез по кромке: y от 52.346 до 84.564 → середина 68.455; x от 235.659 до 320 → середина 277.829.
-   * При object-fit:fill процент left/top масштабируются как доля viewBox — отступ сверху/снизу относительно выреза совпадает на всех экранах.
-   */
-  --whyme-notch-cx: 277.829;
-  --whyme-notch-cy: 68.455;
+  --whyme-background: #e8ff57;
+  --whyme-notch-radius: 2.6357rem;
+  --whyme-notch-top: 4.2784rem;
+}
+
+.whyme-item_grey {
+  --whyme-background: #f6f6f9;
+}
+
+.whyme-item_purple {
+  --whyme-background: #f8bdf6;
 }
 
 .whyme-item *:not(.whyme-item__shape):not(.whyme-item__star):not(.whyme-item__star-img):not(.whyme-item__number):not(.whyme-item__plate) {
@@ -562,8 +574,29 @@
   pointer-events: none;
 }
 
+.whyme-item__plate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1.875rem;
+  background: var(--whyme-background);
+  z-index: 0;
+}
+
+.whyme-item__plate::after {
+  content: "";
+  position: absolute;
+  top: 1.875rem;
+  right: 0;
+  width: 5.3125rem;
+  height: 6.0625rem;
+  background: url(../../svg/whyme-card-right-cutout.svg) no-repeat right top / contain;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .whyme-item .whyme-item__shape {
-  display: block;
+  display: none;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -606,9 +639,8 @@
 .whyme-item__plate .whyme-item__number {
   position: absolute;
   z-index: 3;
-  left: calc(var(--whyme-notch-cx) * 100% / var(--whyme-vb-w));
-  top: calc(var(--whyme-notch-cy) * 100% / var(--whyme-vb-h));
-  /* Центрируем по вырезу; половина по вертикали — по bounding-box текста */
+  left: calc(100% - var(--whyme-notch-radius));
+  top: var(--whyme-notch-top);
   transform: translate(-50%, -50%);
   right: auto;
   width: auto;
@@ -734,17 +766,10 @@
 
   /* Фон: как viewBox SVG 320×298 */
   .whyme-item__plate {
-    inset: auto;
-    top: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
     width: auto;
     height: auto;
-    aspect-ratio: 320 / 298;
-  }
-
-  .whyme-item .whyme-item__shape {
-    object-fit: fill;
+    aspect-ratio: auto;
   }
 
   .whyme-item h4 {

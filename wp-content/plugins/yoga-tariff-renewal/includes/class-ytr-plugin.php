@@ -32,6 +32,7 @@ final class YTR_Plugin {
 	public function init(): void {
 		YTR_Checkout::init();
 		YTR_Cron::init();
+		YTR_Notifications::init();
 		YTR_Admin::init();
 		YTR_Saved_Cards::init();
 		YTR_Card_Binding::init();
@@ -43,10 +44,12 @@ final class YTR_Plugin {
 
 	public static function activate(): void {
 		YTR_Cron::schedule();
+		YTR_Notifications::schedule_expiring_check();
 	}
 
 	public static function deactivate(): void {
 		wp_clear_scheduled_hook(YTR_Cron::HOOK);
+		wp_clear_scheduled_hook(YTR_Notifications::EXPIRING_HOOK);
 	}
 
 	public function on_payment_complete(int $order_id): void {

@@ -1,3 +1,3 @@
-<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 285 644" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="285" height="644" viewBox="0 0 285 644" fill="none" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
 <path id="Subtract" fill-rule="evenodd" clip-rule="evenodd" d="M30 0C13.4315 0 0 13.4314 0 30V614C0 630.569 13.4315 644 30 644H255C271.569 644 285 630.569 285 614V531C285 503.386 262.614 481 235 481H191.5C187.358 481 184 477.642 184 473.5C184 469.358 187.358 466 191.5 466H235C262.614 466 285 443.614 285 416V30C285 13.4315 271.569 0 255 0H30Z" fill="var(--fill-0, #F6F6F9)"/>
 </svg>

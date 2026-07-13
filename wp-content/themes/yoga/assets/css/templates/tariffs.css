@@ -179,10 +179,14 @@
   pointer-events: none;
 }
 .tariff_visual_1 .tariff__bg {
-  background: url(../../svg/tariff-card-1-bg.svg) no-repeat center center/100% 100%;
+  background:
+    url(../../svg/tariff-card-1-right-cutout.svg) no-repeat right 26rem / 6.3125rem 7.1875rem,
+    #f6f6f9;
 }
 .tariff_visual_3 .tariff__bg {
-  background: url(../../svg/tariff-card-3-bg.svg) no-repeat center center/100% 100%;
+  background:
+    url(../../svg/tariff-card-3-right-cutout.svg) no-repeat right 6.3125rem / 6.375rem 7.1875rem,
+    #f6f6f9;
 }
 .tariff_visual_1 .tariff__bg::after,
 .tariff_visual_2 .tariff__bg::after,

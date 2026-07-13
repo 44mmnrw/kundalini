@@ -4385,6 +4385,37 @@ function handle_comment_delete() {
 		return max(1, (int) ceil($word_count / 180));
 	}
 
+	if (!function_exists('yoga_track_blog_post_view')) {
+		/**
+		 * Count real front-end article views used by the blog's Popular section.
+		 */
+		function yoga_track_blog_post_view(): void {
+			if (!is_singular('post') || is_preview() || is_feed() || wp_doing_ajax()) {
+				return;
+			}
+
+			if (isset($_SERVER['REQUEST_METHOD']) && strtoupper((string) $_SERVER['REQUEST_METHOD']) !== 'GET') {
+				return;
+			}
+
+			$user_agent = isset($_SERVER['HTTP_USER_AGENT'])
+				? strtolower(sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])))
+				: '';
+			if ($user_agent !== '' && preg_match('/bot|crawl|spider|slurp|preview|facebookexternalhit|telegrambot|whatsapp/i', $user_agent)) {
+				return;
+			}
+
+			$post_id = (int) get_queried_object_id();
+			if ($post_id <= 0) {
+				return;
+			}
+
+			$views = max(0, (int) get_post_meta($post_id, 'yoga_post_views', true));
+			update_post_meta($post_id, 'yoga_post_views', $views + 1);
+		}
+	}
+	add_action('template_redirect', 'yoga_track_blog_post_view', 20);
+
 	if (!function_exists('yoga_minutes_word')) {
 		/**
 		 * @param int|string $minutes Number of minutes.
