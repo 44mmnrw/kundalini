@@ -3134,7 +3134,7 @@ jQuery(document).ready(function($) {
 	}
 
 	function syncLkSectionUrl(target) {
-		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.lk_section_by_target || !window.history || !window.history.replaceState) {
+		if (!$('#section-lk').length || typeof yoga_ajax === 'undefined' || !yoga_ajax.lk_section_by_target || !window.history || !window.history.replaceState) {
 			return;
 		}
 		var section = yoga_ajax.lk_section_by_target[String(target || '')];
@@ -3422,23 +3422,43 @@ jQuery(document).ready(function($) {
     }
 
 	var $lkSection = $('#section-lk');
-	var serverRouted = $lkSection.attr('data-server-routed') === '1';
-	if (serverRouted) {
-		persistLkSlide($lkSection.attr('data-initial-target'));
-	} else {
-		var hashApplied = applyLkDeepLinkHash();
-		if (!hashApplied) {
-			var persistedTarget = readPersistedLkSlide();
-			if (persistedTarget !== '') {
-				switchLkSlide(persistedTarget);
+	if ($lkSection.length) {
+		var serverRouted = $lkSection.attr('data-server-routed') === '1';
+		if (serverRouted) {
+			persistLkSlide($lkSection.attr('data-initial-target'));
+		} else {
+			var hashApplied = applyLkDeepLinkHash();
+			if (!hashApplied) {
+				var persistedTarget = readPersistedLkSlide();
+				if (persistedTarget !== '') {
+					switchLkSlide(persistedTarget);
+				}
 			}
 		}
+		$(window).on('hashchange', applyLkDeepLinkHash);
+	} else if (window.history && window.history.replaceState) {
+		var nonLkUrl = new URL(window.location.href);
+		if (nonLkUrl.searchParams.has('lk-section')) {
+			nonLkUrl.searchParams.delete('lk-section');
+			window.history.replaceState({}, '', nonLkUrl.toString());
+		}
 	}
-    $(window).on('hashchange', applyLkDeepLinkHash);
 
     // Переключение между слайдами
     $('.sidebar-menu__item').on('click', function() {
         var target = $(this).data('target');
+		if (!$('#section-lk').length) {
+			var section = typeof yoga_ajax !== 'undefined' && yoga_ajax.lk_section_by_target
+				? yoga_ajax.lk_section_by_target[String(target || '')]
+				: '';
+			var lkPageUrl = typeof yoga_ajax !== 'undefined' ? String(yoga_ajax.lk_page_url || '') : '';
+			if (section && lkPageUrl) {
+				var destination = new URL(lkPageUrl, window.location.origin);
+				destination.searchParams.set('lk-section', section);
+				window.location.href = destination.toString();
+			}
+			return;
+		}
         switchLkSlide(target);
 	});
 
@@ -3449,6 +3469,9 @@ jQuery(document).ready(function($) {
     });
 
 	$(window).on('pagehide beforeunload', function () {
+		if (!$lkSection.length) {
+			return;
+		}
 		var activeTarget = getCurrentLkSlideTarget();
 		if (activeTarget !== '') {
 			persistLkSlide(activeTarget);
