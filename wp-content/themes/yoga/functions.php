@@ -3658,6 +3658,16 @@ function handle_comment_delete() {
 		wp_mail((string) get_option('admin_email'), $subject, $message);
 	}
 	add_action('yoga_send_new_question_admin_email', 'yoga_send_new_question_admin_email');
+
+	function yoga_get_question_author_name(int $user_id): string {
+		$user = get_userdata($user_id);
+		if (!$user instanceof WP_User) {
+			return sprintf(__('Пользователь %d', 'yoga'), $user_id);
+		}
+
+		$name = trim((string) $user->display_name);
+		return $name !== '' ? $name : (string) $user->user_login;
+	}
 	
 	// Добавляем метабокс для ответа на вопрос
 	// Axecode.tech: прием вопросов из личного кабинета.
@@ -3688,10 +3698,11 @@ function handle_comment_delete() {
 		}
 		
 		$user_id = get_current_user_id();
+		$author_name = yoga_get_question_author_name((int) $user_id);
 		
 		// Сохранение ответа на вопрос
 		$question_data = array(
-        'post_title' => 'Вопрос от пользователя ' . $user_id,
+		'post_title' => sprintf(__('Вопрос от %s', 'yoga'), $author_name),
         'post_content' => $question_text,
         'post_status' => 'publish',
         'post_type' => 'question',
