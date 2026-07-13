@@ -8,6 +8,9 @@
           $tariffs_periods = function_exists('yoga_get_tariffs_periods')
             ? yoga_get_tariffs_periods(get_the_ID())
             : (get_field('tariffs_periods', get_the_ID()) ?: get_field('tariffs_periods', 'options'));
+		  $tariffs_animation_class = (is_front_page() || is_page_template('templates-page/homepage.php'))
+			? ' wow fadeIn delay-300ms'
+			: '';
           
           // Получаем продукты из категории тарифов
           $tariff_products = wc_get_products(array(
@@ -20,7 +23,7 @@
         ?>
         
         <?php if ($tariffs_periods) : ?>
-        <div class="switches wow fadeIn delay-200ms">
+		<div class="switches<?php echo esc_attr($tariffs_animation_class); ?>">
           <?php 
             $period_index = 1;
             foreach ($tariffs_periods as $period) : 
@@ -39,7 +42,7 @@
         <?php endif; ?>
         
         <?php if ($tariff_products) : ?>
-        <div class="tariffs-items wow fadeIn delay-200ms">
+		<div class="tariffs-items<?php echo esc_attr($tariffs_animation_class); ?>">
           <?php 
             // Создаем слайды для каждого периода
             $period_index = 1;
@@ -157,7 +160,7 @@
           ?>
         </div>
         <?php else : ?>
-        <div class="tariffs-items wow fadeIn delay-200ms">
+		<div class="tariffs-items<?php echo esc_attr($tariffs_animation_class); ?>">
           <p>Тарифы временно недоступны</p>
         </div>
         <?php endif; ?>

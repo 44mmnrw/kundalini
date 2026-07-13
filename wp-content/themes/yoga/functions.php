@@ -869,6 +869,7 @@ function yoga_subscribe_handler() {
 			'notification_preferences' => function_exists('yoga_get_user_notification_preferences')
 				? yoga_get_user_notification_preferences((int) get_current_user_id())
 				: array(),
+			'lk_page_url' => function_exists('yoga_get_lk_page_url') ? yoga_get_lk_page_url() : '',
 			'lk_section_by_target' => function_exists('yoga_get_lk_section_by_target') ? yoga_get_lk_section_by_target() : array(),
 		);
 
