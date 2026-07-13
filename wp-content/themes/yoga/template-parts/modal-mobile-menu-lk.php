@@ -47,7 +47,6 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои садханы', 'yoga'); ?></span>
-							<span class="sidebar-menu__badge" aria-label="<?php esc_attr_e('6 садхан', 'yoga'); ?>">6</span>
 						</div>
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 							<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
@@ -72,6 +71,14 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои вопросы', 'yoga'); ?></span>
+							<?php
+							$mobile_unread_question_answers_count = function_exists('yoga_get_unread_question_answer_notifications')
+								? count(yoga_get_unread_question_answer_notifications((int) get_current_user_id()))
+								: 0;
+							if ($mobile_unread_question_answers_count > 0) :
+							?>
+								<span class="sidebar-menu__count" aria-label="<?php echo esc_attr(sprintf(_n('%d непрочитанный ответ', '%d непрочитанных ответов', $mobile_unread_question_answers_count, 'yoga'), $mobile_unread_question_answers_count)); ?>"><?php echo esc_html((string) $mobile_unread_question_answers_count); ?></span>
+							<?php endif; ?>
 						</div>
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 							<div class="sidebar-menu__item-icon">
@@ -80,6 +87,14 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 								</svg>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Уведомления', 'yoga'); ?></span>
+							<?php
+							$mobile_unread_notifications_count = function_exists('yoga_get_unread_user_notifications')
+								? count(yoga_get_unread_user_notifications((int) get_current_user_id()))
+								: 0;
+							if ($mobile_unread_notifications_count > 0) :
+							?>
+								<span class="sidebar-menu__count" aria-label="<?php echo esc_attr(sprintf(_n('%d непрочитанное уведомление', '%d непрочитанных уведомлений', $mobile_unread_notifications_count, 'yoga'), $mobile_unread_notifications_count)); ?>"><?php echo esc_html((string) $mobile_unread_notifications_count); ?></span>
+							<?php endif; ?>
 						</div>
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 							<div class="sidebar-menu__item-icon">

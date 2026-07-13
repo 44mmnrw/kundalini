@@ -814,16 +814,6 @@ body.email-confirmation-is-open {
   padding-top: 0px;
   color: var(--color-black);
 }
-.form-back span::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0px;
-  top: calc(50% + 1px);
-  transform: translateY(-50%);
-  width: 0.5rem;  height: 1rem;  background: url(../../img/back-arrow.png) no-repeat center center/100% auto;
-}
-
 .new-code {
   display: flex;
   width: 100%;

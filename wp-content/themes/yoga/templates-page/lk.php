@@ -14,6 +14,12 @@
 	
 	$current_user = wp_get_current_user();
 	$user_id = get_current_user_id();
+	$unread_question_answers_count = function_exists('yoga_get_unread_question_answer_notifications')
+		? count(yoga_get_unread_question_answer_notifications((int) $user_id))
+		: 0;
+	$unread_notifications_count = function_exists('yoga_get_unread_user_notifications')
+		? count(yoga_get_unread_user_notifications((int) $user_id))
+		: 0;
 	$email_verified = function_exists('yoga_is_user_email_verified') && yoga_is_user_email_verified($user_id);
 	$user_timezone = get_user_meta($user_id, 'timezone', true);
 	$user_timezone = is_string($user_timezone) ? $user_timezone : '';
@@ -184,12 +190,47 @@
 					</div>
                     
                     <!-- Остальные слайды будут здесь -->
-					<div class="lk-slide<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
+					<div class="lk-slide lk-slide--practice-history<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 						<h2>
 							История пройденных практик
 						</h2>
 						<div class="lk-slide__content">
-							<?php echo do_shortcode('[practice_history]'); ?>
+							<?php
+							// Временная демонстрационная выборка по макету Figma.
+							// После реализации прохождения практик здесь будет источник истории пользователя.
+							$practice_history_preview = array(
+								array('level' => 'Начинающий', 'title' => 'Сат Крийя', 'excerpt' => 'усиливает поток энергии Кундалини, укрепляет нервную систему'),
+								array('level' => 'Средний', 'title' => 'Содаршан Чакра Крийя', 'excerpt' => 'очищает карму, улучшает ментальную концентрацию, балансирует нервную систему и повышает осознанность'),
+								array('level' => 'Начинающий', 'title' => 'Набхи Крийя', 'excerpt' => 'укрепляет мышцы живота, активирует пупочный центр, улучшает пищеварение и энергетический баланс'),
+								array('level' => 'Продвинутый', 'title' => 'Сурья Крийя', 'excerpt' => 'заряжает энергией, улучшает обмен веществ, развивает силу и выносливость'),
+								array('level' => 'Начинающий', 'title' => 'Крийя для Солнечного сплетения и сердца', 'excerpt' => 'заряжает энергией, улучшает обмен веществ, развивает силу и выносливость'),
+								array('level' => 'Средний', 'title' => 'Крийя Гибкость позвоночника', 'excerpt' => 'укрепляет спину, улучшает циркуляцию энергии, стимулирует нервную систему'),
+								array('level' => 'Средний', 'title' => 'Крийя "Баланс праны и апаны"', 'excerpt' => 'уравновешивает потоки энергии в теле, очищает организм, помогает эмоциональному балансу'),
+								array('level' => 'Средний', 'title' => 'Крийя для очищения лимфатической системы', 'excerpt' => 'стимулирует лимфоток, улучшает детоксикацию, поддерживает иммунитет'),
+							);
+							$practice_history_image = get_template_directory_uri() . '/assets/img/kriya-img_01.png';
+							?>
+							<div class="practice-history-preview" data-history-source="preview">
+								<div class="practice-history-preview__list">
+									<?php foreach ($practice_history_preview as $history_item): ?>
+										<article class="practice-history-card">
+											<div class="practice-history-card__content">
+												<span class="practice-history-card__level"><?php echo esc_html($history_item['level']); ?></span>
+												<div class="practice-history-card__copy">
+													<h3><?php echo esc_html($history_item['title']); ?></h3>
+													<p><?php echo esc_html($history_item['excerpt']); ?></p>
+												</div>
+												<span class="practice-history-card__access"><span aria-hidden="true">&#128274;</span> Доступно на платном тарифе</span>
+											</div>
+											<div class="practice-history-card__media">
+												<img src="<?php echo esc_url($practice_history_image); ?>" alt="">
+												<span class="practice-history-card__arrow" aria-hidden="true">&#8599;</span>
+											</div>
+										</article>
+									<?php endforeach; ?>
+								</div>
+								<button class="practice-history-preview__more" type="button" disabled aria-disabled="true">Показать ещё</button>
+							</div>
 						</div>
 					</div>
 
@@ -197,9 +238,7 @@
 						<h2>
 							Мои садханы
 						</h2>
-						<div class="lk-slide__content">
-							<?php echo do_shortcode('[practice_history]'); ?>
-						</div>
+						<div class="lk-slide__content"></div>
 					</div>
 
 					<div class="lk-slide lk-slide--notifications<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
@@ -211,7 +250,7 @@
 								<button class="lk-notifications-page__settings" type="button" data-target="9" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>"></use></svg></button>
 								<button class="lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
 							</div>
-							<?php $notifications = function_exists('yoga_get_user_notifications') ? yoga_get_user_notifications((int) $user_id) : array(); ?>
+							<?php $notifications = function_exists('yoga_get_unread_user_notifications') ? yoga_get_unread_user_notifications((int) $user_id) : array(); ?>
 							<?php if (empty($notifications)): ?>
 								<div class="lk-notifications-empty">Ничего нет...</div>
 							<?php else: ?>
@@ -472,33 +511,8 @@
 							
 							<div class="lk-questions">
 								<?php
-									if (is_user_logged_in()) {
-										$user_id = get_current_user_id();
-										$questions = get_user_questions($user_id);
-										
-										if (!empty($questions)) {
-											$visible_questions = array_slice($questions, 0, 4);
-											$hidden_questions = array_slice($questions, 4);
-											
-											foreach ($visible_questions as $question) {
-												display_question_item($question);
-											}
-											
-											if (!empty($hidden_questions)) {
-												foreach ($hidden_questions as $question) {
-													display_question_item($question, true);
-												}
-											}
-											
-											if (count($questions) > 4) {
-												echo '<div class="btn show-more-questions">';
-												echo '<span class="active">Показать еще</span>';
-												echo '<span>Свернуть</span>';
-												echo '</div>';
-											}
-											} else {
-											echo '<p class="no-questions">У вас пока нет заданных вопросов.</p>';
-										}
+									if (is_user_logged_in() && function_exists('yoga_render_user_questions_list')) {
+										yoga_render_user_questions_list((int) get_current_user_id());
 										} else {
 										echo '<p>Пожалуйста, авторизуйтесь для просмотра ваших вопросов.</p>';
 									}
@@ -513,59 +527,42 @@
 							<div class="lk-settings">
 								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1">
 									<h2>Настройки подписки</h2>
-									<div class="lk-settings-part">
+									<?php
+									$current_subscription = get_user_active_subscription();
+									$subscription_end_label = $current_subscription
+										? date('d.m.Y', strtotime($current_subscription['end_date']))
+										: '—';
+									$ytr_auto_renew_active = class_exists('YTR_LK')
+										? YTR_LK::user_has_renewable_payment_setup($user_id)
+										: (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id));
+									?>
+									<div class="lk-settings-part lk-settings-part_status">
 										<div class="lk-settings-item lk-settings-item_main">
 											<div class="lk-settings-item__col">
 												<p class="lk-settings-item__col-text">Ваш тариф:</p>
 												<div class="personal-status">
 													<img src="<?php echo get_template_directory_uri(); ?>/assets/img/personal-status-icon_settings.png" alt="" class="personal-status__img">
 													<span>
-														<?php
-															$current_subscription = get_user_active_subscription();
-															echo $current_subscription ? $current_subscription['name'] : 'Не активен';
-														?>
+														<?php echo esc_html($current_subscription ? $current_subscription['name'] : 'Не активен'); ?>
 													</span>
 												</div>
 											</div>
-											<div class="lk-settings-item__col">
+											<div class="lk-settings-item__col lk-settings-item__col_subscription-meta">
 												<p class="lk-settings-item__col-text">Действует до:</p>
-												<time>
-													<?php
-														echo $current_subscription ? date('d.m.Y', strtotime($current_subscription['end_date'])) : '—';
-													?>
-												</time>
+												<time><?php echo esc_html($subscription_end_label); ?></time>
+												<?php if ($current_subscription && $ytr_auto_renew_active) : ?>
+													<button
+														type="button"
+														class="lk-cancel-subscription-btn"
+														id="ytr-cancel-subscription-btn"
+														data-access-end="<?php echo esc_attr($subscription_end_label); ?>"
+													>Отменить подписку</button>
+												<?php endif; ?>
 											</div>
 										</div>
 									</div>
 
-									<?php
-									$ytr_auto_renew_active = class_exists('YTR_LK')
-										? YTR_LK::user_has_renewable_payment_setup($user_id)
-										: (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id));
-									if ($current_subscription && $ytr_auto_renew_active) :
-										$subscription_end_label = date('d.m.Y', strtotime($current_subscription['end_date']));
-									?>
-									<div class="lk-settings-part lk-settings-part_cancel">
-										<button
-											type="button"
-											class="btn lk-cancel-subscription-btn"
-											id="ytr-cancel-subscription-btn"
-											data-access-end="<?php echo esc_attr($subscription_end_label); ?>"
-										>
-											<span><?php esc_html_e('Отменить автопродление', 'yoga'); ?></span>
-										</button>
-										<p class="lk-settings-item__col-text lk-cancel-subscription-hint">
-											<?php
-											printf(
-												/* translators: %s: subscription end date */
-												esc_html__('Отключит автопродление. Доступ сохранится до %s.', 'yoga'),
-												esc_html($subscription_end_label)
-											);
-											?>
-										</p>
-									</div>
-									<?php elseif ($current_subscription) :
-										$subscription_end_label = date('d.m.Y', strtotime($current_subscription['end_date']));
+									<?php if ($current_subscription && !$ytr_auto_renew_active) :
 										$ytr_status_text      = class_exists('YTR_LK')
 											? YTR_LK::get_auto_renew_status_text($user_id, $subscription_end_label)
 											: '';
@@ -587,7 +584,7 @@
 									</div>
 									<?php endif; ?>
 									
-									<div class="lk-settings-part">
+									<div class="lk-settings-part lk-settings-part_payment-methods">
 										<h4>Способы оплаты</h4>
 										<div class="lk-settings-item lk-settings-item_action" data-target="2">
 											<div class="lk-settings-item__col">
@@ -614,23 +611,18 @@
 										</div>
 									</div>
 									
-									<div class="lk-settings-part">
+									<div class="lk-settings-part lk-settings-part_purchase-history">
 										<h4>История покупок</h4>
+										<div class="lk-settings-purchases">
 										<?php
 											$orders = get_user_orders_history();
 											if (!empty($orders)) {
 												foreach ($orders as $order) {
 												?>
-												<div class="lk-settings-item">
-													<div class="lk-settings-item__col">
-														<time><?php echo date('d.m.Y', strtotime($order['date'])); ?></time>
-													</div>
-													<div class="lk-settings-item__col">
-														<div class="lk-settings-item__col-text">
-															<b><?php echo esc_html($order['product_name']); ?></b>
-														</div>
-														<p class="lk-settings-item__col-text"><?php echo wc_price($order['total']); ?></p>
-													</div>
+												<div class="lk-settings-item lk-settings-purchase">
+													<time><?php echo esc_html(date('d.m.Y', strtotime($order['date']))); ?></time>
+													<strong><?php echo esc_html($order['product_name']); ?></strong>
+													<span><?php echo wp_kses_post(wc_price($order['total'])); ?></span>
 												</div>
 												<?php
 												}
@@ -638,6 +630,7 @@
 												echo '<p>У вас пока нет завершенных заказов.</p>';
 											}
 										?>
+										</div>
 									</div>
 									
 									<?php if (!$current_subscription): ?>
@@ -664,6 +657,9 @@
 								
 								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2">
 									<div class="form-back" data-target="1">
+										<svg class="form-back__icon" width="9" height="16" aria-hidden="true" focusable="false">
+											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#form-back-arrow'); ?>"></use>
+										</svg>
 										<span>назад</span>
 									</div>
 									<h2>Способы оплаты</h2>
@@ -767,7 +763,6 @@
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои садханы</span>
-				<span class="sidebar-menu__badge" aria-label="<?php esc_attr_e('6 садхан', 'yoga'); ?>">6</span>
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon sidebar-menu__item-icon--heart">
@@ -792,6 +787,9 @@
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои вопросы</span>
+				<?php if ($unread_question_answers_count > 0) : ?>
+					<span class="sidebar-menu__count" aria-label="<?php echo esc_attr(sprintf(_n('%d непрочитанный ответ', '%d непрочитанных ответов', $unread_question_answers_count, 'yoga'), $unread_question_answers_count)); ?>"><?php echo esc_html((string) $unread_question_answers_count); ?></span>
+				<?php endif; ?>
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 				<div class="sidebar-menu__item-icon">
@@ -800,6 +798,9 @@
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Уведомления</span>
+				<?php if ($unread_notifications_count > 0) : ?>
+					<span class="sidebar-menu__count" aria-label="<?php echo esc_attr(sprintf(_n('%d непрочитанное уведомление', '%d непрочитанных уведомлений', $unread_notifications_count, 'yoga'), $unread_notifications_count)); ?>"><?php echo esc_html((string) $unread_notifications_count); ?></span>
+				<?php endif; ?>
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 				<div class="sidebar-menu__item-icon">

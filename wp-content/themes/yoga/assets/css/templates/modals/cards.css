@@ -158,6 +158,88 @@
   text-align: center;
 }
 
+/* Подтверждение удаления карты — Figma 2113:22871. */
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel,
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel.active {
+  width: 28.5625rem;
+  height: 18.4375rem;
+  max-width: calc(100vw - 1.875rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: #e8ff57 !important;
+}
+
+#ytr-modal-cancel-subscription-confirm .modal-close {
+  z-index: 2;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm {
+  position: relative;
+  display: block;
+  height: 100%;
+  padding: 0;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm__main {
+  position: absolute;
+  top: 4.0625rem;
+  left: 2.1875rem;
+  display: flex;
+  width: 22.9375rem;
+  flex-direction: column;
+  gap: 0;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm__main h3 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm__main p {
+  margin: 0.9375rem 0 0;
+  color: var(--color-black);
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm-buttons {
+  flex-wrap: nowrap;
+  gap: 1.25rem;
+  margin-top: 1.6875rem;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm-buttons .btn,
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_dark,
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_white {
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 3.25rem;
+  min-height: 3.25rem;
+  padding: 0 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_white {
+  width: 12.625rem;
+}
+
+#ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_dark {
+  width: 9.0625rem;
+}
+
+#ytr-modal-cancel-subscription-confirm .delcomm-buttons .btn span {
+  white-space: nowrap;
+  line-height: 1;
+}
+
 #ytr-modal-cancel-subscription-success .delcomm {
   min-height: 18.4375rem;
 }
@@ -261,6 +343,35 @@
   }
   .modal-default_carddel .delcomm .btn_white {
     width: 100%;
+  }
+  #ytr-modal-cancel-subscription-confirm.modal-default_carddel,
+  #ytr-modal-cancel-subscription-confirm.modal-default_carddel.active {
+    width: calc(100vw - 1.875rem);
+  }
+  #ytr-modal-cancel-subscription-confirm .delcomm {
+    padding: 0;
+  }
+  #ytr-modal-cancel-subscription-confirm .delcomm__main {
+    left: 1.25rem;
+    width: calc(100% - 2.5rem);
+  }
+  #ytr-modal-cancel-subscription-confirm .delcomm-buttons {
+    flex-wrap: nowrap;
+    gap: 0.625rem;
+    padding-top: 0;
+  }
+  #ytr-modal-cancel-subscription-confirm .delcomm-buttons .btn,
+  #ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_dark,
+  #ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_white {
+    margin-top: 0;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  #ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_white {
+    width: calc(100% - 9.6875rem);
+  }
+  #ytr-modal-cancel-subscription-confirm.modal-default_carddel .delcomm .btn_dark {
+    width: 9.0625rem;
   }
   #ytr-modal-unsubscribe .delcomm-buttons .btn,
   #ytr-modal-unsubscribe.modal-default_carddel .delcomm .btn_dark,

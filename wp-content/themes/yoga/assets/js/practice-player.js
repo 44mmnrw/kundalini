@@ -197,6 +197,12 @@ function initializePracticeSystem() {
                             player.pause();
                             return;
                         }
+
+                        // Запуск через встроенную кнопку Plyr также должен запускать таймер.
+                        if (!isPlaying) {
+                            primeEndSignal();
+                            startTimer();
+                        }
                     });
                     
                     player.on('pause', () => {
@@ -229,7 +235,7 @@ function initializePracticeSystem() {
 
                     // Перехват нативного autoplay/playing после сброса (в обход Plyr events).
                     const blockUnexpectedPlay = (event) => {
-                        if (Date.now() < suppressAutoPlayUntil || !isPlaying) {
+                        if (Date.now() < suppressAutoPlayUntil) {
                             if (event && typeof event.preventDefault === 'function') {
                                 event.preventDefault();
                             }

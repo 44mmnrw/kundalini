@@ -365,7 +365,7 @@
 .modal-default_formsucces,
 .modal-default_formsucces.active {
   width: 28.5625rem;
-  height: 19.3125rem;
+  height: 15.5625rem;
   max-width: calc(100vw - 1.875rem);
   padding: 0;
   overflow: hidden;
@@ -387,24 +387,18 @@
 
 .modal-default_formsucces .thanksforqw {
   position: absolute;
-  top: calc(50% + 0.46875rem);
+  top: 50%;
   left: 2.1875rem;
   display: flex;
-  width: 24.1875rem;
-  max-width: calc(100% - 4.375rem);
+  width: 21rem;
+  max-width: calc(100% - 7.375rem);
   padding: 0;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.9375rem;
   transform: translateY(-50%);
   color: var(--color-black);
-  text-align: center;
-}
-
-.modal-default_formsucces .thanksforqw__icon {
-  display: block;
-  width: 4.8125rem;
-  height: 4.8125rem;
-  margin-bottom: 1.25rem;
+  text-align: left;
 }
 
 .modal-default_formsucces .thanksforqw h3,
@@ -422,7 +416,7 @@
 }
 
 .modal-default_formsucces .thanksforqw p {
-  margin-top: 0.9375rem;
+  margin-top: 0;
   font-family: "Mulish-Regular", sans-serif;
   font-size: 1rem;
   font-weight: 400;
@@ -433,7 +427,7 @@
   .modal-default_formsucces,
   .modal-default_formsucces.active {
     width: 20rem;
-    height: 18.5rem;
+    height: 15.5625rem;
     max-width: calc(100vw - 1.875rem);
     top: 50%;
     bottom: auto;
@@ -454,14 +448,14 @@
   }
 
   .modal-default_formsucces .thanksforqw {
-    top: calc(50% + 0.28125rem);
-    left: 0.9375rem;
-    width: calc(100% - 1.875rem);
+    top: 50%;
+    left: 1.5rem;
+    width: calc(100% - 4.5rem);
     max-width: none;
   }
 
   .modal-default_formsucces .thanksforqw h3 {
-    width: 18.125rem;
+    width: 100%;
     max-width: 100%;
     font-size: 1.25rem;
   }
