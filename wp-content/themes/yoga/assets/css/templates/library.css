@@ -450,6 +450,9 @@
 .filter-item__list .checkbox-item:hover span, .sorting-item__list .checkbox-item:hover span {
   color: var(--color-violet);
 }
+.section-library .filter-item__list .checkbox-item.is-current > span {
+  color: var(--color-violet);
+}
 .filter-item__list .checkbox, .sorting-item__list .checkbox {
   width: 1.25rem;  height: 1.25rem;}
 .filter-item__list .checkbox::before, .sorting-item__list .checkbox::before {
@@ -698,11 +701,10 @@ input#filt-reset {
   .library-item__btn {
     width: 2.8125rem;
     height: 2.8125rem;  }
-  .section-library .form-categories, .section-library .form-cat-list, .section-library .filter {
-    display: none;
-  }
-  /* Мобильные фильтры только в .library-filters-screen, не десктопная .filter */
-  .section-library .filter.active {
+  .section-library .form-categories,
+  .section-library .form-cat-list,
+  .section-library #practice-filter-form > .filter,
+  .section-library #practice-filter-form > .filter.active {
     display: none !important;
   }
 }

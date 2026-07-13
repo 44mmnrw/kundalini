@@ -283,8 +283,8 @@
   }
 
   .library-filters-screen__box.checkbox.active {
-    border-color: #1f1f1f;
-    background: #fff;
+    border-color: var(--color-violet);
+    background: var(--color-violet);
   }
 
   /* Галочка через ::after; modals.css задаёт .checkbox::after { opacity: 0 } — без opacity:1 здесь галочка невидима */
@@ -295,7 +295,7 @@
     top: 45%;
     width: 0.4375rem;
     height: 0.6875rem;
-    border: solid #1f1f1f;
+    border: solid #fff;
     border-width: 0 0.125rem 0.125rem 0;
     transform: translate(-50%, -50%) rotate(45deg);
     box-sizing: border-box;
@@ -313,6 +313,10 @@
     font-size: 1rem;
     line-height: normal;
     color: #1f1f1f;
+  }
+
+  .library-filters-screen__row.is-current .library-filters-screen__text {
+    color: var(--color-violet);
   }
 
   .library-filters-screen__actions {

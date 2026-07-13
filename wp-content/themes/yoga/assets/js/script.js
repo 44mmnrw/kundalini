@@ -287,17 +287,6 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	if ($(window).width() < yogaViewportBp.lg ) {
-        jQuery(function($){
-			$(document).mouseup(function (e){ // событие клика по веб-документу
-				$('.modal-filter .checkbox-item').not('.active').closest('body').find('.library-form').find('.filter-btn span').removeClass("active");
-				$('.modal-filter .checkbox-item.active').closest('body').find('.library-form').find('.filter-btn span').addClass("active");
-			});
-		});
-	};
-	
-	
-	
 	jQuery(function($){
 		$(document).on('mouseup', function (e) {
 			/* Закрываем все выпадающие части виджета поиска только при клике ВНЕ .form-search
@@ -433,6 +422,13 @@ jQuery(document).ready(function($) {
 		$('.form-cat-list').removeClass("active");
 		$('.form-search-list').removeClass("active");
 		if ($(this).closest('#practice-filter-form').length) {
+			var inputId = $(this).attr('for');
+			var input = inputId ? document.getElementById(inputId) : null;
+			if (input && $(input).hasClass('library-filter-input')) {
+				e.preventDefault();
+				input.checked = !input.checked;
+				$(input).trigger('change');
+			}
 			return;
 		}
 		$(this).toggleClass("active");
@@ -940,7 +936,6 @@ jQuery(document).ready(function($) {
 		$('.sidebar-menu__item').click(function () {
 			$('.overlay').removeClass("active");
 			$('.modal').removeClass("active");
-			$('.modal-filter').removeClass("active");
 			$('.modal-login').removeClass("active");
 			$('.modal-mobile-menu').removeClass("active")
 			$('.modal-mobile-menu-lk').removeClass("active")
@@ -950,7 +945,6 @@ jQuery(document).ready(function($) {
 		$('.sidebar-menu-secondary__link').on('click', function () {
 			$('.overlay').removeClass("active");
 			$('.modal').removeClass("active");
-			$('.modal-filter').removeClass("active");
 			$('.modal-login').removeClass("active");
 			$('.modal-mobile-menu').removeClass("active");
 			$('.modal-mobile-menu-lk').removeClass("active");
@@ -1267,7 +1261,6 @@ jQuery(document).ready(function($) {
 		$(this).removeClass("active");
 		$('.modal').removeClass("active");
 		$('.modal-login').removeClass("active");
-		$('.modal-filter').removeClass("active");
 		$('.modal-login').removeClass("active");
 		$('.modal-mobile-menu').removeClass("active");
 		$('.modal-mobile-menu-lk').removeClass("active");
@@ -1281,7 +1274,6 @@ jQuery(document).ready(function($) {
 	$('.modal-close').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
-		$('.modal-filter').removeClass("active");
 		$('.modal-login').removeClass("active");
 		$('.modal-mobile-menu').removeClass("active");
 		$('.modal-mobile-menu-lk').removeClass("active");
@@ -1737,29 +1729,6 @@ jQuery(document).ready(function($) {
 	
 	
 	
-	$('.filter-mob-item .checkbox-item').click(function () {
-		$(this).toggleClass("active");
-		$(this).find('.checkbox').toggleClass("active");
-		
-	});
-	
-	$('.modal-filter-inner .btn').click(function () {
-		$('.overlay').removeClass("active");
-		$('.modal').removeClass("active");
-		$('.modal-filter').removeClass("active");
-		$('.modal-login').removeClass("active");
-		$('.modal-mobile-menu').removeClass("active")
-		$('.body').removeClass("body-fixed");
-	});
-	
-	
-	$('.modal-filter-inner .form-reset').click(function () {
-		$('.modal-filter-inner .checkbox-item').removeClass("active");
-		$('.modal-filter-inner .checkbox-item .checkbox').removeClass("active")
-	});
-	
-	
-	
 	$('.modal-call_delcomm').click(function () {
 		$('.modal-default_delcomm').addClass("active");
 	});
@@ -1845,7 +1814,6 @@ jQuery(document).ready(function($) {
 	$('.modal-default_logout .modal-close, .modal-default_logout .modal-close-logout').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
-		$('.modal-filter').removeClass("active");
 		$('.modal-login').removeClass("active");
 		$('.modal-mobile-menu').removeClass("active");
 		$('.modal-mobile-menu-lk').removeClass("active");
@@ -2463,11 +2431,18 @@ jQuery(document).ready(function($) {
         });
     }
 
-    function updateLibraryFiltersApplyCountFromHtml(html) {
-        var $c = $('.library-filters-apply-count');
-        if (!$c.length) return;
-        var n = $('<div>').html(html).find('.library-item').length;
-        $c.text(n);
+    function setCurrentLibraryFilter(input) {
+        var $input = $(input);
+        var id = $input.attr('id');
+        if (!id) return;
+
+        var $rows = $('.section-library .filter-item__list .checkbox-item, .library-filters-screen__row');
+        if ($input.prop('checked')) {
+            $rows.removeClass('is-current');
+            $('label[for="' + id + '"]').add($input.closest('.library-filters-screen__row')).addClass('is-current');
+        } else {
+            $('label[for="' + id + '"]').add($input.closest('.library-filters-screen__row')).removeClass('is-current');
+        }
     }
 
     function finalizeLibraryFiltersScreenUi() {
@@ -2536,10 +2511,6 @@ jQuery(document).ready(function($) {
         $('.overlay').addClass('active');
         $('.body').addClass('body-fixed');
         syncLibraryFilterCheckboxLabels();
-        var $applyCount = $('.library-filters-apply-count');
-        if ($applyCount.length) {
-            $applyCount.text($('.section-library .library .library-item').length);
-        }
     }
 
     function loadLibraryPractices() {
@@ -2565,7 +2536,6 @@ jQuery(document).ready(function($) {
 			data: data,
 			success: function(response) {
 				$('.section-library .library').html(response);
-				updateLibraryFiltersApplyCountFromHtml(response);
 			}
 		});
 	}
@@ -2696,10 +2666,6 @@ jQuery(document).ready(function($) {
 		} else {
 			syncPracticeTaxonomyPageHeading();
 		}
-		var libCount = $('.section-library .library .library-item').length;
-		if ($('.library-filters-apply-count').length && libCount) {
-			$('.library-filters-apply-count').text(libCount);
-		}
 	});
 	
 	// поиск
@@ -2788,6 +2754,7 @@ jQuery(document).ready(function($) {
 
 	$(document).on('change', 'input.library-filter-input', function() {
 		syncLibraryFilterCheckboxLabels();
+		setCurrentLibraryFilter(this);
 		if ($(window).width() < yogaViewportBp.lg && $(this).closest('.library-filters-screen.active').length) {
 			return;
 		}
@@ -2809,19 +2776,13 @@ jQuery(document).ready(function($) {
 
 	$(document).on('click', '.js-library-filters-reset', function() {
 		$('input.library-filter-input').prop('checked', false);
+		$('.section-library .filter-item__list .checkbox-item, .library-filters-screen__row').removeClass('is-current');
 		syncLibraryFilterCheckboxLabels();
 		if (!$(this).closest('.library-filters-screen.active').length) {
 			loadLibraryPractices();
 		}
 	});
 
-	$(document).on('click', '.js-library-filters-more-goals', function() {
-		var $sec = $(this).closest('.library-filters-screen__section');
-		$sec.find('.library-filters-screen__options_goals').addClass('library-filters-screen__options_goals_expanded');
-		$(this).addClass('library-filters-screen__more_hidden');
-	});
-	
-	
     function getActivePracticeTermId() {
         const $activeCategory = $('.section-kriyi .form-categories__value span.active');
         if (!$activeCategory.length) {
