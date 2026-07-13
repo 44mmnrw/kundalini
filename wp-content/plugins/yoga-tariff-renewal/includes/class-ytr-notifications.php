@@ -96,7 +96,7 @@ final class YTR_Notifications {
 			$message = __('Срок действия вашей привязанной карты истёк. Пожалуйста, обновите метод оплаты.', 'yoga-tariff-renewal');
 		}
 		$account_url = function_exists('yoga_get_lk_section_url')
-			? yoga_get_lk_section_url('settings')
+			? yoga_get_lk_section_url('subscription')
 			: self::get_account_url();
 
 		$site_enabled = !function_exists('yoga_notification_preference')

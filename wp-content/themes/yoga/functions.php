@@ -3391,6 +3391,9 @@ function handle_comment_delete() {
 			if ($matching_indexes !== array()) {
 				$keep_index = array_shift($matching_indexes);
 				$notifications[$keep_index]['dedupe_key'] = $dedupe_key;
+				$notifications[$keep_index]['title'] = sanitize_text_field($title);
+				$notifications[$keep_index]['message'] = sanitize_text_field($message);
+				$notifications[$keep_index]['url'] = esc_url_raw($url);
 				foreach ($matching_indexes as $duplicate_index) {
 					unset($notifications[$duplicate_index]);
 				}
