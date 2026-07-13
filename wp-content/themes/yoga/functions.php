@@ -1667,6 +1667,9 @@ function handle_comment_delete() {
 		if ($email === '' || !is_email($email)) {
 			return false;
 		}
+		if (class_exists('Yoga_Subscribers_Plugin') && method_exists('Yoga_Subscribers_Plugin', 'is_subscribed')) {
+			return Yoga_Subscribers_Plugin::is_subscribed($email);
+		}
 
 		$stored_emails = array_merge(
 			(array) get_option('subscription_emails', array()),

@@ -23,6 +23,13 @@ final class Yoga_Subscribers_Plugin {
 
 	private static function table(): string { global $wpdb; return $wpdb->prefix . 'yoga_subscribers'; }
 
+	public static function is_subscribed(string $email): bool {
+		$email = strtolower(trim(sanitize_email($email)));
+		if ($email === '' || !is_email($email)) return false;
+		global $wpdb;
+		return (bool) $wpdb->get_var($wpdb->prepare('SELECT 1 FROM '.self::table().' WHERE LOWER(email)=%s LIMIT 1', $email));
+	}
+
 	public static function activate(): void { self::install(); self::migrate(); }
 	public static function maybe_upgrade(): void { if (get_option('yoga_subscribers_db_version') !== self::VERSION) self::install(); }
 
@@ -78,13 +85,23 @@ final class Yoga_Subscribers_Plugin {
 		add_menu_page('Подписчики','Подписчики','manage_options','yoga-subscribers',array(__CLASS__,'page'),'dashicons-email-alt',58);
 	}
 
+	private static function source_label(string $source): string {
+		$labels = array(
+			'footer' => 'Форма подписки в подвале',
+			'subscription-section' => 'Блок подписки на странице',
+			'website' => 'Форма на сайте',
+			'legacy' => 'Перенесён из старой базы',
+		);
+		return $labels[$source] ?? ($source !== '' ? $source : 'Источник не указан');
+	}
+
 	public static function page(): void {
 		if (!current_user_can('manage_options')) wp_die('Недостаточно прав.'); global $wpdb;
 		$rows=$wpdb->get_results('SELECT * FROM '.self::table().' ORDER BY id DESC'); ?>
 		<div class="wrap"><h1 class="wp-heading-inline">Подписчики</h1> <a class="page-title-action" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=yoga_subscribers_export'),'yoga_subscribers_export')); ?>">Экспорт CSV</a><hr class="wp-header-end">
 		<?php if (isset($_GET['deleted'])) : ?><div class="notice <?php echo $_GET['deleted'] === '1' ? 'notice-success' : 'notice-error'; ?> is-dismissible"><p><?php echo $_GET['deleted'] === '1' ? 'Email удалён.' : 'Не удалось удалить email.'; ?></p></div><?php endif; ?>
 		<p>Всего: <strong><?php echo esc_html((string)count($rows)); ?></strong></p><table class="widefat striped"><thead><tr><th>Email</th><th>Дата согласия</th><th>IP</th><th>Источник</th><th>Страница</th><th>Статус</th><th>Действия</th></tr></thead><tbody>
-		<?php if(!$rows):?><tr><td colspan="7">Подписчиков пока нет.</td></tr><?php endif; foreach($rows as $r):?><?php $delete_url = wp_nonce_url(add_query_arg(array('action'=>'yoga_subscribers_delete','subscriber_id'=>(int)$r->id),admin_url('admin-post.php')),'yoga_subscribers_delete_'.(int)$r->id); ?><tr><td><?php echo esc_html($r->email);?></td><td><?php echo esc_html($r->consented_at ?: $r->created_at);?></td><td><?php echo esc_html($r->ip_address);?></td><td><?php echo esc_html($r->source);?></td><td><?php if($r->page_url):?><a href="<?php echo esc_url($r->page_url);?>" target="_blank" rel="noopener">Открыть</a><?php endif;?></td><td><?php echo esc_html($r->provider_status);?></td><td><a class="button button-small button-link-delete" href="<?php echo esc_url($delete_url); ?>" onclick="return confirm('Удалить этот email из подписчиков?');">Удалить</a></td></tr><?php endforeach;?></tbody></table></div>
+		<?php if(!$rows):?><tr><td colspan="7">Подписчиков пока нет.</td></tr><?php endif; foreach($rows as $r):?><?php $delete_url = wp_nonce_url(add_query_arg(array('action'=>'yoga_subscribers_delete','subscriber_id'=>(int)$r->id),admin_url('admin-post.php')),'yoga_subscribers_delete_'.(int)$r->id); ?><tr><td><?php echo esc_html($r->email);?></td><td><?php echo esc_html($r->consented_at ?: $r->created_at);?></td><td><?php echo esc_html($r->ip_address);?></td><td><?php echo esc_html(self::source_label((string)$r->source));?></td><td><?php if($r->page_url):?><a href="<?php echo esc_url($r->page_url);?>" target="_blank" rel="noopener">Открыть</a><?php endif;?></td><td><?php echo esc_html($r->provider_status);?></td><td><a class="button button-small button-link-delete" href="<?php echo esc_url($delete_url); ?>" onclick="return confirm('Удалить этот email из подписчиков?');">Удалить</a></td></tr><?php endforeach;?></tbody></table></div>
 	<?php }
 
 	public static function delete(): void {
@@ -93,9 +110,25 @@ final class Yoga_Subscribers_Plugin {
 		if ($id < 1) wp_die('Некорректный подписчик.');
 		check_admin_referer('yoga_subscribers_delete_'.$id);
 		global $wpdb;
+		$email = (string) $wpdb->get_var($wpdb->prepare('SELECT email FROM '.self::table().' WHERE id=%d', $id));
 		$deleted = $wpdb->delete(self::table(), array('id'=>$id), array('%d'));
+		if ($deleted === 1 && $email !== '') {
+			self::remove_from_legacy_options($email);
+		}
 		wp_safe_redirect(add_query_arg(array('page'=>'yoga-subscribers','deleted'=>$deleted === 1 ? '1' : '0'),admin_url('admin.php')));
 		exit;
+	}
+
+	private static function remove_from_legacy_options(string $email): void {
+		$email = strtolower(trim(sanitize_email($email)));
+		foreach (array('subscription_emails', 'yoga_subscribers') as $option_name) {
+			$emails = get_option($option_name, array());
+			if (!is_array($emails)) continue;
+			$filtered = array_values(array_filter($emails, static function($stored_email) use ($email): bool {
+				return strtolower(trim(sanitize_email((string) $stored_email))) !== $email;
+			}));
+			if ($filtered !== $emails) update_option($option_name, $filtered, false);
+		}
 	}
 
 	public static function export(): void {
