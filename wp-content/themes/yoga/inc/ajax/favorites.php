@@ -71,3 +71,21 @@ if (!function_exists('toggle_favorite_practice')) {
 add_action('wp_ajax_toggle_favorite_practice', 'toggle_favorite_practice');
 add_action('wp_ajax_nopriv_toggle_favorite_practice', 'toggle_favorite_practice');
 
+if (!function_exists('yoga_clear_favorite_practices')) {
+    function yoga_clear_favorite_practices() {
+        check_ajax_referer('yoga_ajax_nonce', 'security');
+
+        if (!is_user_logged_in()) {
+            yoga_ajax_error('Не авторизован', 'not_authenticated', 401);
+        }
+
+        update_user_meta((int) get_current_user_id(), 'favorite_practices', array());
+
+        yoga_ajax_success('Избранное очищено', array(
+            'favorites_count' => 0,
+        ));
+    }
+}
+
+add_action('wp_ajax_yoga_clear_favorite_practices', 'yoga_clear_favorite_practices');
+

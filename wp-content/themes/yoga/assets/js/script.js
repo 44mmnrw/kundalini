@@ -3228,10 +3228,21 @@ jQuery(document).ready(function($) {
 		}
 	}
 
+	function renderHeaderNotificationsRead() {
+		var $popup = $('#header-notifications-popup');
+		if (!$popup.length) {
+			return;
+		}
+		$popup.find('.lk-notifications-popup__item--unread').removeClass('lk-notifications-popup__item--unread');
+		$popup.find('.lk-notifications-popup__unread-dot').remove();
+		$popup.find('.lk-notifications-popup__read-all').remove();
+	}
+
 	function renderLkNotificationsEmpty() {
 		var $list = $('.lk-notifications-list');
 		if ($list.length) {
-			$list.replaceWith('<div class="lk-notifications-empty">Ничего нет...</div>');
+			$list.find('.lk-notification--unread').removeClass('lk-notification--unread');
+			$list.find('.lk-notification__meta i').remove();
 		}
 		$('.lk-notifications-page__read-all').remove();
 	}
@@ -3254,7 +3265,7 @@ jQuery(document).ready(function($) {
 			renderLkNotificationsEmpty();
 			updateHeaderNotificationBell(Number(response.data.unread_count));
 			if (Number(response.data.unread_count) === 0) {
-				renderHeaderNotificationsEmpty();
+				renderHeaderNotificationsRead();
 			}
 		}).always(function() {
 			$button.prop('disabled', false);
@@ -3645,6 +3656,61 @@ jQuery(document).ready(function($) {
 		}
 	});
 
+	function renderLkFavoritesEmpty($content) {
+		var spriteUrl = yoga_ajax.sprite_url || '';
+		var libraryUrl = yoga_ajax.library_url || yoga_ajax.site_url || '/';
+		$content.html(
+			'<div class="no-favorites lk-favorites-empty">' +
+				'<div class="lk-favorites-empty__message">' +
+					'<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="' + spriteUrl + '#noun-heart"></use></svg></span>' +
+					'<div class="lk-favorites-empty__text"><h3>Здесь пока ничего нет</h3><p>Здесь появятся крийи, когда вы их добавите в избранное</p></div>' +
+				'</div>' +
+				'<a class="lk-favorites-empty__button" href="' + libraryUrl + '"><span>В библиотеку практик</span><i aria-hidden="true"><svg><use href="' + spriteUrl + '#footer-arrow-up-right"></use></svg></i></a>' +
+			'</div>'
+		);
+	}
+
+	$(document).on('click', '.lk-favorites-clear', function(e) {
+		e.preventDefault();
+		var $button = $(this);
+		var $slide = $button.closest('#lk-slide-favorites');
+		$button.prop('disabled', true);
+
+		$.ajax({
+			url: yoga_ajax.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'yoga_clear_favorite_practices',
+				security: yoga_ajax.nonce
+			},
+			success: function(response) {
+				if (!response || !response.success) {
+					showNotification(response && response.data && response.data.message ? response.data.message : 'Не удалось очистить избранное', 'error');
+					return;
+				}
+
+				$(document).trigger('yoga:favorites-updated', [response.data || { favorites_count: 0 }]);
+				$('.fav.active').each(function() {
+					var $favorite = $(this).removeClass('active').attr('aria-pressed', 'false').attr('aria-label', 'В избранное');
+					$favorite.find('img, svg').toggleClass('active');
+				});
+				$slide.find('.lk-kriyi').remove();
+				renderLkFavoritesEmpty($slide.find('.lk-slide__content'));
+				$button.remove();
+				showNotification('Избранное очищено');
+			},
+			error: function(xhr) {
+				var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+					? xhr.responseJSON.data.message
+					: 'Не удалось очистить избранное';
+				showNotification(message, 'error');
+			},
+			complete: function() {
+				$button.prop('disabled', false);
+			}
+		});
+	});
+
 	$(document).on('click', '.fav', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -3684,8 +3750,9 @@ jQuery(document).ready(function($) {
 						$card.remove();
 						if ($items.length && $items.find('.kriyi-item').length === 0) {
 							$content.find('.lk-kriyi').remove();
+							$content.closest('#lk-slide-favorites').find('.lk-favorites-clear').remove();
 							if ($content.find('.no-favorites').length === 0) {
-								$content.append('<div class="no-favorites">У вас пока нет избранных практик</div>');
+								renderLkFavoritesEmpty($content);
 							}
 						}
 						showNotification('Удалено из избранного');
