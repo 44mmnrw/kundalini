@@ -33,6 +33,10 @@
 		file_exists($lk_sprite_file) ? (string) filemtime($lk_sprite_file) : wp_get_theme()->get('Version'),
 		get_template_directory_uri() . '/assets/svg/sprite.svg'
 	);
+	$lk_secondary_nav_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls')
+		? yoga_lk_sidebar_secondary_nav_urls()
+		: array();
+	$lk_library_url = (string) ($lk_secondary_nav_urls['library'] ?? home_url('/'));
 ?>
 
 
@@ -248,9 +252,11 @@
 						<div class="lk-slide__content">
 							<div class="lk-notifications-page__actions">
 								<button class="lk-notifications-page__settings" type="button" data-target="9" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>"></use></svg></button>
-								<button class="lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
+								<?php if ($unread_notifications_count > 0): ?>
+									<button class="lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
+								<?php endif; ?>
 							</div>
-							<?php $notifications = function_exists('yoga_get_unread_user_notifications') ? yoga_get_unread_user_notifications((int) $user_id) : array(); ?>
+							<?php $notifications = function_exists('yoga_get_user_notifications') ? yoga_get_user_notifications((int) $user_id, 100) : array(); ?>
 							<?php if (empty($notifications)): ?>
 								<div class="lk-notifications-empty">Ничего нет...</div>
 							<?php else: ?>
@@ -272,7 +278,7 @@
 											<span class="lk-notification__head">
 												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $icon); ?>"></use></svg></span>
 												<strong><?php echo esc_html($title); ?></strong>
-												<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread && $type !== 'question_answer'): ?><i aria-hidden="true"></i><?php endif; ?></span>
+										<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread): ?><i aria-hidden="true"></i><?php endif; ?></span>
 											</span>
 											<span class="lk-notification__message"><?php echo esc_html($message); ?></span>
 										</a>
@@ -332,11 +338,7 @@
 					</div>
 					
 					<div class="lk-slide<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" id="lk-slide-favorites" data-target="3">
-						<h2>
-							Избранное
-						</h2>
-						<div class="lk-slide__content">
-							<?php
+						<?php
 							$favorites = get_user_meta($user_id, 'favorite_practices', true);
 							if (is_string($favorites)) {
 								$favorites = array_filter(array_map('trim', explode(',', $favorites)));
@@ -345,8 +347,31 @@
 								$favorites = array();
 							}
 							$favorites = array_values(array_unique(array_filter(array_map('intval', $favorites))));
+						?>
+						<div class="lk-favorites-head">
+							<h2>Избранное</h2>
+							<?php if (!empty($favorites)) : ?>
+								<button class="lk-favorites-clear" type="button">Очистить</button>
+							<?php endif; ?>
+						</div>
+						<div class="lk-slide__content">
+							<?php
 							if (empty($favorites)) :
-								echo '<div class="no-favorites">У вас пока нет избранных практик</div>';
+								?>
+								<div class="no-favorites lk-favorites-empty">
+									<div class="lk-favorites-empty__message">
+										<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#noun-heart"></use></svg></span>
+										<div class="lk-favorites-empty__text">
+											<h3>Здесь пока ничего нет</h3>
+											<p>Здесь появятся крийи, когда вы их добавите в избранное</p>
+										</div>
+									</div>
+									<a class="lk-favorites-empty__button" href="<?php echo esc_url($lk_library_url); ?>">
+										<span>В библиотеку практик</span>
+										<i aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#footer-arrow-up-right"></use></svg></i>
+									</a>
+								</div>
+								<?php
 							else :
 							?>
 							<div class="lk-kriyi">

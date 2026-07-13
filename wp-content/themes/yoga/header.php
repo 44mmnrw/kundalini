@@ -148,7 +148,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($header_unread_notifications_count > 0 ? 'notification-bell-filled-icon' : 'notification-bell-icon')); ?>"></use>
 									</svg>
 									<?php if ($header_unread_notifications_count > 0): ?><span class="notification-icon__count"><?php echo esc_html((string) $header_unread_notifications_count); ?></span><?php endif; ?>
-									<div class="lk-notifications-popup<?php echo $header_unread_notifications_count === 0 ? ' lk-notifications-popup--empty' : ''; ?>" id="header-notifications-popup" aria-hidden="true">
+									<div class="lk-notifications-popup<?php echo empty($header_notifications) ? ' lk-notifications-popup--empty' : ''; ?>" id="header-notifications-popup" aria-hidden="true">
 									<div class="lk-notifications-popup__head">
 										<strong><?php esc_html_e('Уведомления', 'yoga'); ?></strong>
 										<div class="lk-notifications-popup__head-actions">
@@ -158,7 +158,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 											<?php endif; ?>
 										</div>
 									</div>
-										<?php if ($header_unread_notifications_count === 0): ?>
+										<?php if (empty($header_notifications)): ?>
 											<div class="lk-notifications-popup__empty">
 												<span class="lk-notifications-popup__empty-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>"></use></svg></span>
 												<strong><?php esc_html_e('Здесь пока ничего нет', 'yoga'); ?></strong>
@@ -166,9 +166,10 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 											</div>
 										<?php else: ?>
 											<div class="lk-notifications-popup__list">
-											<?php foreach ($header_unread_notifications as $notification): ?>
+											<?php foreach ($header_notifications as $notification): ?>
 												<?php
 												$notification_type = sanitize_key((string) ($notification['type'] ?? ''));
+												$notification_is_unread = empty($notification['read_at']);
 												$notification_title = $notification_type === 'question_answer'
 													? __('Ответ преподавателя', 'yoga')
 													: (string) ($notification['title'] ?? '');
@@ -177,11 +178,12 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 													: (string) ($notification['url'] ?? $header_notifications_url);
 												$notification_time = $format_header_notification_time((string) ($notification['created_at'] ?? ''));
 												?>
-												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
+												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?><?php echo $notification_is_unread ? ' lk-notifications-popup__item--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
 													<span class="lk-notifications-popup__item-head">
 												<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($notification_type === 'question_answer' ? 'notification-teacher-reply-icon' : 'notification-bell-icon')); ?>"></use></svg></span>
 														<strong><?php echo esc_html($notification_title); ?></strong>
 														<?php if ($notification_time !== ''): ?><time datetime="<?php echo esc_attr((string) ($notification['created_at'] ?? '')); ?>"><?php echo esc_html($notification_time); ?></time><?php endif; ?>
+														<?php if ($notification_is_unread): ?><i class="lk-notifications-popup__unread-dot" aria-hidden="true"></i><?php endif; ?>
 													</span>
 													<span class="lk-notifications-popup__item-message"><?php echo esc_html((string) ($notification['message'] ?? '')); ?></span>
 												</a>

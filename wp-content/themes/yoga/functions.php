@@ -626,7 +626,7 @@
 		$is_contacts_template = is_page_template('templates-page/contacts.php');
 		$is_tariffs_template = is_page_template('templates-page/tariffs.php');
 		$is_faq_template = is_page_template('templates-page/faq.php');
-		$is_404_template = is_page_template('templates-page/404.php');
+		$is_404_template = is_404() || is_page_template('templates-page/404.php');
 		$is_privacy_template = is_page_template('templates-page/privacy-policy.php');
 		$is_about_template = is_page_template('templates-page/about.php');
 		$is_practice_tax = is_tax('practice-type');
@@ -851,6 +851,9 @@ function yoga_subscribe_handler() {
 			'user_email'     => $current_user->user_email,
 			'email_verification_nonce' => wp_create_nonce('yoga_email_verification'),
 			'site_url'       => home_url(),
+			'library_url'    => function_exists('yoga_lk_sidebar_secondary_nav_urls')
+				? (string) (yoga_lk_sidebar_secondary_nav_urls()['library'] ?? home_url('/'))
+				: home_url('/'),
 			'sprite_url'     => add_query_arg(
 				'ver',
 				file_exists(get_template_directory() . '/assets/svg/sprite.svg')

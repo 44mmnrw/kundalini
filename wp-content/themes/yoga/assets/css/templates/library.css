@@ -2,7 +2,7 @@
 .section-library {
   /* Не задавать overflow-x: hidden здесь: при overflow-y: visible браузер всё равно считает вертикальную ось как auto и обрезает выпадающие списки поиска */
   overflow: visible;
-  padding-top: 1.5rem;  padding-bottom: 7.5rem;}
+  padding-top: 1.5rem;  padding-bottom: 6.25rem;}
 
 /* Ширина .library шире контейнера — клип только здесь, не у всей секции */
 .library-x-clip {

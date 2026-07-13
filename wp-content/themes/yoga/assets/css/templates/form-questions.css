@@ -570,7 +570,7 @@
 /* Section-form-questions_contacts — макет Figma «Контакты»: SVG из sprite.svg, без PNG-фонов */
 .section-form-questions_contacts {
   padding-top: 3rem;
-  padding-bottom: 7.5rem;
+  padding-bottom: 6.25rem;
   --contacts-form-panel-max: 63.5rem;
   --contacts-form-panel-half: 31.75rem;
   /* Половина max-width текста над формой — якорь для восьмиконечной звезды справа от подзаголовка */
