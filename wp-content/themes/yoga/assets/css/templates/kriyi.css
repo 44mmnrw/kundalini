@@ -267,6 +267,10 @@
     flex-wrap: wrap;
     justify-content: space-between;
     margin-top: -0.3125rem;  }
+  .kriyi__items > .no-practices {
+    width: 100%;
+    margin: 1.5625rem 0 0;
+  }
   .kriyi-item {
     display: flex;
     width: calc(50% - 1.25rem);    margin-top: 1.5625rem;  }
