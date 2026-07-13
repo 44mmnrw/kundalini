@@ -105,5 +105,14 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 				</div>
 			</div>
 		</div>
+		<div class="library-filters-screen__actions">
+			<button type="button" class="library-filters-screen__apply js-library-filters-apply">
+				<?php esc_html_e('Подобрать', 'yoga'); ?>
+			</button>
+			<button type="button" class="library-filters-screen__reset js-library-filters-reset">
+				<span class="library-filters-screen__reset-icon" aria-hidden="true"></span>
+				<?php esc_html_e('Очистить', 'yoga'); ?>
+			</button>
+		</div>
 	</div>
 </div>

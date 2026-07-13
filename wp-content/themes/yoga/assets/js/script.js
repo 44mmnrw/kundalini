@@ -2788,6 +2788,9 @@ jQuery(document).ready(function($) {
 
 	$(document).on('change', 'input.library-filter-input', function() {
 		syncLibraryFilterCheckboxLabels();
+		if ($(window).width() < yogaViewportBp.lg && $(this).closest('.library-filters-screen.active').length) {
+			return;
+		}
 		loadLibraryPractices();
 	});
 
@@ -2807,7 +2810,9 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.js-library-filters-reset', function() {
 		$('input.library-filter-input').prop('checked', false);
 		syncLibraryFilterCheckboxLabels();
-		loadLibraryPractices();
+		if (!$(this).closest('.library-filters-screen.active').length) {
+			loadLibraryPractices();
+		}
 	});
 
 	$(document).on('click', '.js-library-filters-more-goals', function() {
