@@ -28,74 +28,8 @@
   --library-search-row-height: 4.9375rem;
 }
 
-.sorting {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1.5rem;}
-
-.sorting__result {
-  display: inline-block;
-  font-size: 0.9375rem;  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
-}
-
-.sorting-item {
-  margin-right: 0px;
-  margin-top: 0.5px;
-}
-
-.sorting-item__main {
-  padding-top: 0.6875rem;  padding-bottom: 0.6875rem;  padding-left: 1.25rem;  padding-right: 2.625rem;}
-.sorting-item__main span {
-  font-size: 0.875rem;  color: var(--color-black);
-}
-.sorting-item__main span::after {
-  top: calc(50% + 0.5px);
-  width: 0.875rem;  height: 0.875rem;  background: url(../../img/sorting-select-arrow.png) no-repeat center center/100% auto;
-}
-
-.filter-item.active .filter-item__main span::after, .filter-item.active .sorting-item__main span::after, .sorting-item.active .filter-item__main span::after, .sorting-item.active .sorting-item__main span::after {
+.filter-item.active .filter-item__main span::after {
   transform: translateY(-45%) rotate(-180deg);
-}
-
-.sorting-item__list {
-  position: absolute;
-  left: auto;
-  right: 0px;
-  top: 0.125rem;  width: 100%;
-  min-width: 11.25rem;  padding-left: 1.3125rem;  padding-right: 1.3125rem;  padding-top: 0.875rem;  padding-bottom: 1.5rem;  background: #fff;
-  border: 1px solid var(--color-violet);
-  border-bottom-left-radius: 0.4375rem;  border-bottom-right-radius: 0.4375rem;  opacity: 0%;
-  box-shadow: 0px 20px 50px rgba(241, 241, 248, 0.7);
-  pointer-events: none;
-  z-index: -1;
-}
-.sorting-item__list.active {
-  z-index: 2;
-  top: calc(100% - 0.125rem);  opacity: 1;
-  pointer-events: auto;
-  transition: opacity 0.3s ease;
-}
-
-.sorting-item__list-item {
-  display: block;
-  position: relative;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 0.625rem;}
-.sorting-item__list-item.active {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.sorting-item__list-item span {
-  font-size: 1rem;  line-height: 1.5em;
-  transition: 0.4s ease;
-}
-.sorting-item__list-item:hover span {
-  color: var(--color-violet);
 }
 
 .kriyi {
@@ -439,13 +373,6 @@
   }
   .kriya-img img {
     height: 12.0625rem;  }
-  .sorting-item__list {
-    width: 100%;
-    min-width: 11.25rem;    left: auto;
-    right: 0px;
-    padding-left: 0.9375rem;    padding-right: 0.9375rem;    padding-top: 0.5625rem;    padding-bottom: 1.1875rem;  }
-  .sorting-item__list-item span {
-    font-size: 0.875rem;  }
   .kriyi .btn {
     margin-top: 1.875rem;    width: 100%;
   }

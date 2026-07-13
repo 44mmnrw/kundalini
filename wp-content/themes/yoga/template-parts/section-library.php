@@ -128,10 +128,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 							<svg class="filter-btn__icon filter-btn__icon--filter active" viewBox="0 0 28 28" width="28" height="28" aria-hidden="true" focusable="false">
 								<use href="<?php echo esc_url($sprite_href); ?>#library-filter-icon"></use>
 							</svg>
-							<svg class="filter-btn__icon filter-btn__icon--close" viewBox="0 0 18 18" width="22" height="22" aria-hidden="true" focusable="false">
-								<use href="<?php echo esc_url($sprite_href); ?>#lk-modal-close"></use>
-							</svg>
-							<span>0</span>
+							<span class="filter-btn__count" aria-hidden="true">0</span>
 						</div>
 					</div>
 					<div class="filter">
@@ -142,10 +139,10 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 							<div class="filter-item__list">
 								<?php foreach ($library_difficulty_terms as $index => $difficulty_term) : ?>
 									<?php $input_id = 'library-filter-difficulty-' . ($index + 1); ?>
-									<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-										<div class="checkbox library-filter-faux-checkbox"></div>
-										<span><?php echo esc_html((string) $difficulty_term->name); ?></span>
-									</label>
+					<button type="button" data-filter-input="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
+						<div class="checkbox library-filter-faux-checkbox"></div>
+						<span><?php echo esc_html((string) $difficulty_term->name); ?></span>
+					</button>
 								<?php endforeach; ?>
 							</div>
 						</div>
@@ -157,10 +154,10 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 							<div class="filter-item__list">
 								<?php foreach ($library_duration_terms as $index => $duration_term) : ?>
 									<?php $input_id = 'library-filter-duration-' . ($index + 1); ?>
-									<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-										<div class="checkbox library-filter-faux-checkbox"></div>
-										<span><?php echo esc_html((string) $duration_term->name); ?></span>
-									</label>
+					<button type="button" data-filter-input="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
+						<div class="checkbox library-filter-faux-checkbox"></div>
+						<span><?php echo esc_html((string) $duration_term->name); ?></span>
+					</button>
 								<?php endforeach; ?>
 							</div>
 						</div>
@@ -172,10 +169,10 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 							<div class="filter-item__list">
 								<?php foreach ($library_goal_terms as $index => $goal_term) : ?>
 									<?php $input_id = 'library-filter-goal-' . ($index + 1); ?>
-									<label for="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-										<div class="checkbox library-filter-faux-checkbox"></div>
-										<span><?php echo esc_html((string) $goal_term->name); ?></span>
-									</label>
+					<button type="button" data-filter-input="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
+						<div class="checkbox library-filter-faux-checkbox"></div>
+						<span><?php echo esc_html((string) $goal_term->name); ?></span>
+					</button>
 								<?php endforeach; ?>
 							</div>
 						</div>

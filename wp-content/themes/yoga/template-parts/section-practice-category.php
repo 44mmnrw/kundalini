@@ -58,7 +58,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 	<div class="container">
 		<div class="row">
 			<div class="kriyi-form">
-				<form action="#">
+				<form id="practice-category-filter-form" action="#">
 					<div class="kriyi-form-main">
 						<div class="form-search">
 							<div class="form-categories">
@@ -121,10 +121,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 							<svg class="filter-btn__icon filter-btn__icon--filter active" viewBox="0 0 28 28" width="28" height="28" aria-hidden="true" focusable="false">
 								<use href="<?php echo esc_url($sprite_href); ?>#library-filter-icon"></use>
 							</svg>
-							<svg class="filter-btn__icon filter-btn__icon--close" viewBox="0 0 18 18" width="22" height="22" aria-hidden="true" focusable="false">
-								<use href="<?php echo esc_url($sprite_href); ?>#lk-modal-close"></use>
-							</svg>
-							<span>1</span>
+							<span class="filter-btn__count" aria-hidden="true">0</span>
 						</div>
 					</div>
 
@@ -222,18 +219,6 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 						</label>
 					</div>
 
-					<div class="sorting">
-						<span class="sorting__result">Найдено: <?php echo esc_html((string) $practices_count); ?></span>
-						<div class="sorting-item">
-							<div class="sorting-item__main">
-								<span>По популярности</span>
-							</div>
-							<div class="sorting-item__list">
-								<div class="sorting-item__list-item active" data-target="popularity"><span>По популярности</span></div>
-								<div class="sorting-item__list-item" data-target="newness"><span>По новизне</span></div>
-							</div>
-						</div>
-					</div>
 				</form>
 			</div>
 		</div>
@@ -310,3 +295,12 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 		</div>
 	</div>
 </section>
+<?php
+get_template_part('template-parts/section', 'library-filters', array(
+	'difficulty_terms' => $difficulty_terms,
+	'duration_terms' => $duration_terms,
+	'goal_terms' => $goal_terms,
+	'form_id' => 'practice-category-filter-form',
+	'value_field' => 'term_id',
+));
+?>
