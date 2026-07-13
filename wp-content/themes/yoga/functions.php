@@ -143,6 +143,12 @@
 
 	/** Поиск на сайте — только записи блога (post), без практик и прочих CPT. */
 	if (!function_exists('yoga_search_main_query_only_posts')) {
+		/**
+		 * Limit the main front-end search query to blog posts.
+		 *
+		 * @param WP_Query $query Current WordPress query instance.
+		 * @return void
+		 */
 		function yoga_search_main_query_only_posts($query) {
 			if (is_admin() || !($query instanceof WP_Query) || !$query->is_main_query() || !$query->is_search()) {
 				return;
@@ -155,6 +161,11 @@
 	// Логичная структура URL для практик:
 	// /library/{category}/{type}/{practice}
 	if (!function_exists('yoga_customize_practice_post_type_rewrite')) {
+		/**
+		 * @param array<string, mixed> $args Post type registration arguments.
+		 * @param string               $post_type Post type key.
+		 * @return array<string, mixed>
+		 */
 		function yoga_customize_practice_post_type_rewrite($args, $post_type) {
 			if ($post_type !== 'practice') {
 				return $args;
@@ -172,6 +183,11 @@
 	add_filter('register_post_type_args', 'yoga_customize_practice_post_type_rewrite', 20, 2);
 
 	if (!function_exists('yoga_customize_practice_type_taxonomy_rewrite')) {
+		/**
+		 * @param array<string, mixed> $args Taxonomy registration arguments.
+		 * @param string               $taxonomy Taxonomy key.
+		 * @return array<string, mixed>
+		 */
 		function yoga_customize_practice_type_taxonomy_rewrite($args, $taxonomy) {
 			if ($taxonomy !== 'practice-type') {
 				return $args;
@@ -190,6 +206,10 @@
 	add_filter('register_taxonomy_args', 'yoga_customize_practice_type_taxonomy_rewrite', 20, 2);
 
 	if (!function_exists('yoga_get_practice_primary_term_path')) {
+		/**
+		 * @param int $post_id Practice post ID.
+		 * @return string
+		 */
 		function yoga_get_practice_primary_term_path($post_id) {
 			$terms = get_the_terms((int) $post_id, 'practice-type');
 			if (empty($terms) || is_wp_error($terms)) {
@@ -218,6 +238,13 @@
 	}
 
 	if (!function_exists('yoga_filter_practice_permalink')) {
+		/**
+		 * @param string  $post_link Existing permalink.
+		 * @param WP_Post $post Post object.
+		 * @param bool    $leavename Whether to retain the post name placeholder.
+		 * @param bool    $sample Whether this is a sample permalink.
+		 * @return string
+		 */
 		function yoga_filter_practice_permalink($post_link, $post, $leavename, $sample) {
 			if (!$post instanceof WP_Post || $post->post_type !== 'practice') {
 				return $post_link;
@@ -2003,6 +2030,10 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_get_practice_type_card_data')) {
+		/**
+		 * @param int $post_id Practice post ID.
+		 * @return array<string, string>
+		 */
 		function yoga_get_practice_type_card_data($post_id) {
 			$data = array(
 				'term_name' => '',
@@ -2570,6 +2601,11 @@ function handle_comment_delete() {
 	 * Чекаут WooCommerce: для авторизованных подставить имя и фамилию из метаполей профиля (как в ЛК).
 	 */
 	add_filter('woocommerce_checkout_get_value', 'yoga_wc_checkout_prefill_names_from_profile', 10, 2);
+	/**
+	 * @param mixed  $value Current checkout field value.
+	 * @param string $input Checkout field key.
+	 * @return mixed
+	 */
 	function yoga_wc_checkout_prefill_names_from_profile($value, string $input) {
 		if (!function_exists('is_user_logged_in') || !is_user_logged_in()) {
 			return $value;
@@ -4257,6 +4293,10 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_minutes_word')) {
+		/**
+		 * @param int|string $minutes Number of minutes.
+		 * @return string
+		 */
 		function yoga_minutes_word($minutes) {
 			$minutes = abs((int) $minutes);
 			$mod10 = $minutes % 10;
@@ -4277,6 +4317,11 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_format_minutes')) {
+		/**
+		 * @param int|string $minutes Number of minutes.
+		 * @param bool       $short Whether to use the abbreviated label.
+		 * @return string
+		 */
 		function yoga_format_minutes($minutes, $short = false) {
 			$minutes = max(1, (int) $minutes);
 
@@ -4528,6 +4573,10 @@ function handle_comment_delete() {
 
 	// Обработка /blog/ без необходимости вручную сбрасывать rewrite rules.
 	if (!function_exists('theme_force_blog_request_to_category')) {
+		/**
+		 * @param array<string, mixed> $query_vars Parsed request variables.
+		 * @return array<string, mixed>
+		 */
 		function theme_force_blog_request_to_category($query_vars) {
 			if (is_admin()) {
 				return $query_vars;
@@ -4559,6 +4608,10 @@ function handle_comment_delete() {
 	// Кастомный роутинг product_cat без префикса /product-category/.
 	// Важно: это намеренный компромисс и может конфликтовать с одинаковыми slug страниц.
 	if (!function_exists('yoga_get_product_cat_path')) {
+		/**
+		 * @param int|WP_Term $term Product category term or ID.
+		 * @return string
+		 */
 		function yoga_get_product_cat_path($term): string {
 			$term = get_term($term, 'product_cat');
 			if (!$term instanceof WP_Term || is_wp_error($term)) {
@@ -4619,6 +4672,12 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_filter_product_cat_link_without_base')) {
+		/**
+		 * @param string  $termlink Existing term link.
+		 * @param WP_Term $term Term object.
+		 * @param string  $taxonomy Taxonomy key.
+		 * @return string
+		 */
 		function yoga_filter_product_cat_link_without_base($termlink, $term, $taxonomy) {
 			if ($taxonomy !== 'product_cat' || !$term instanceof WP_Term) {
 				return $termlink;
@@ -4701,6 +4760,10 @@ function handle_comment_delete() {
 			return false;
 		}
 
+		/**
+		 * @param array<string, mixed> $query_vars Parsed request variables.
+		 * @return array<string, mixed>
+		 */
 		function yoga_route_product_cat_without_base($query_vars) {
 			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
 				return $query_vars;
@@ -4780,6 +4843,9 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_normalize_practice_level_label')) {
+		/**
+		 * @param mixed $value Raw practice level value.
+		 */
 		function yoga_normalize_practice_level_label($value): string {
 			$raw_value = trim((string) $value);
 			if ($raw_value === '') {
@@ -4816,6 +4882,9 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_get_practice_level_slug')) {
+		/**
+		 * @param mixed $value Raw practice level value.
+		 */
 		function yoga_get_practice_level_slug($value): string {
 			$normalized = yoga_normalize_practice_level_label($value);
 			$key = function_exists('mb_strtolower')
@@ -4833,6 +4902,9 @@ function handle_comment_delete() {
 	}
 
 	if (!function_exists('yoga_get_practice_difficulty_label')) {
+		/**
+		 * @param WP_Term $term Practice difficulty term.
+		 */
 		function yoga_get_practice_difficulty_label($term): string {
 			if (!$term instanceof WP_Term) {
 				return '';
