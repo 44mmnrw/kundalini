@@ -981,10 +981,6 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 	});
 	
-	$('.lk-form').submit(function() {
-		$(this).find('.lk-form-safe__text').addClass("active");
-	});
-	
 	/* «Показать еще» для вопросов ЛК — см. делегированный обработчик .show-more-questions во втором $(document).ready */
 	
 	$('.lk-questions-form .input').keydown(function () {
@@ -3232,6 +3228,14 @@ jQuery(document).ready(function($) {
 		}
 	}
 
+	function renderLkNotificationsEmpty() {
+		var $list = $('.lk-notifications-list');
+		if ($list.length) {
+			$list.replaceWith('<div class="lk-notifications-empty">Ничего нет...</div>');
+		}
+		$('.lk-notifications-page__read-all').remove();
+	}
+
 	$(document).on('click', '.lk-notifications-page__read-all', function() {
 		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in) {
 			return;
@@ -3246,6 +3250,8 @@ jQuery(document).ready(function($) {
 				return;
 			}
 			$('.lk-notification--unread').removeClass('lk-notification--unread').find('.lk-notification__meta i').remove();
+			$('.sidebar-menu__item[data-target="5"] .sidebar-menu__count, .sidebar-menu__item[data-target="8"] .sidebar-menu__count').remove();
+			renderLkNotificationsEmpty();
 			updateHeaderNotificationBell(Number(response.data.unread_count));
 			if (Number(response.data.unread_count) === 0) {
 				renderHeaderNotificationsEmpty();
@@ -3342,8 +3348,10 @@ jQuery(document).ready(function($) {
 		console.log('User logged in:', yoga_ajax.user_logged_in);
 		
 		var $form = $(this);
-		var $submitBtn = $form.find('.btn');
-		var originalText = $submitBtn.find('span').text();
+		var $submitBtn = $form.find('.lk-form-safe label[for="lk-safe-btn"]').first();
+		var $submitInput = $form.find('#lk-safe-btn');
+		var $submitText = $submitBtn.children('span').first();
+		var originalText = $submitText.text();
 		var $notification = $('.lk-form-safe__text');
 		
 		// Валидация паролей
@@ -3356,8 +3364,9 @@ jQuery(document).ready(function($) {
 		}
 		
 		// Показываем индикатор загрузки
-		$submitBtn.find('span').text('Сохранение...');
-		$submitBtn.prop('disabled', true);
+		$submitText.text('Сохранение...');
+		$submitInput.prop('disabled', true);
+		$submitBtn.attr('aria-busy', 'true');
 		
 		// Создаем FormData
 		var formData = new FormData(this);
@@ -3389,8 +3398,12 @@ jQuery(document).ready(function($) {
 						return;
 					}
 					// Показываем уведомление об успехе
-					$notification.addClass('active').text(response.data);
-					setTimeout(function() { $notification.removeClass('active'); }, 3000);
+					if (typeof window.yogaShowLkSuccessToast === 'function') {
+						window.yogaShowLkSuccessToast(response.data);
+					} else {
+						$notification.addClass('active').text(response.data);
+						setTimeout(function() { $notification.removeClass('active'); }, 3000);
+					}
 					} else {
 					showNotification(response.data, 'error');
 				}
@@ -3426,8 +3439,9 @@ jQuery(document).ready(function($) {
 			},
 			complete: function() {
 				// Восстанавливаем кнопку
-				$submitBtn.find('span').text(originalText);
-				$submitBtn.prop('disabled', false);
+				$submitText.text(originalText);
+				$submitInput.prop('disabled', false);
+				$submitBtn.removeAttr('aria-busy');
 			}
 		});
 	});
@@ -3700,26 +3714,56 @@ jQuery(document).ready(function($) {
 		
 		var $form = $(this);
 		var $submitBtn = $form.find('.btn');
-		var originalText = $submitBtn.find('span').text();
+		var $nativeSubmit = $form.find('[type="submit"]');
+		var originalText = $submitBtn.text();
+		var restoreSubmitState = function() {
+			$submitBtn.text(originalText).removeClass('is-loading');
+			$nativeSubmit.prop('disabled', false);
+		};
 		
-		// Показываем индикатор загрузки
-		$submitBtn.find('span').text('Отправка...');
-		$submitBtn.prop('disabled', true);
+		$submitBtn.text('Отправка...').addClass('is-loading');
+		$nativeSubmit.prop('disabled', true);
 		
 		$.ajax({
-			url: $form.attr('action'),
+			url: (typeof yoga_ajax !== 'undefined' ? yoga_ajax.ajax_url : $form.attr('action')),
 			type: 'POST',
+			dataType: 'json',
+			timeout: 20000,
 			data: $form.serialize(),
 			success: function(response) {
-				openQuestionSuccessModal();
-				
-				// Очищаем форму
-				$form.find('textarea').val('');
+				try {
+					if (!response || !response.success) {
+						showNotification(response && response.data && response.data.message ? response.data.message : 'Ошибка при отправке вопроса', 'error');
+						return;
+					}
+
+					if (response.data && typeof response.data.questions_html === 'string') {
+						$('.lk-questions').html(response.data.questions_html);
+					}
+
+					$('.body').addClass('body-fixed');
+					$('.overlay').addClass('active');
+					$('.modal').removeClass('active').attr('aria-hidden', 'true');
+					$('.modal-default_formsucces').addClass('active').attr('aria-hidden', 'false');
+					$form.find('textarea').val('');
+				} catch (error) {
+					if (window.console && typeof window.console.error === 'function') {
+						window.console.error('Question form success handler failed:', error);
+					}
+					showNotification('Вопрос отправлен, но окно подтверждения не открылось', 'error');
+				} finally {
+					restoreSubmitState();
+				}
 			},
-			error: function() {
-				showNotification('Ошибка при отправке вопроса', 'error');
-				$submitBtn.find('span').text(originalText);
-				$submitBtn.prop('disabled', false);
+			error: function(xhr) {
+				try {
+					var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+						? xhr.responseJSON.data.message
+						: 'Ошибка при отправке вопроса';
+					showNotification(message, 'error');
+				} finally {
+					restoreSubmitState();
+				}
 			}
 		});
 	});
@@ -4221,6 +4265,36 @@ jQuery(document).on('click', function(e) {
     }
 })();
 
+window.yogaShowLkSuccessToast = function(message) {
+    var $toast = jQuery('.lk-form-safe__text').first();
+    if (!$toast.length) return;
+
+    window.clearTimeout($toast.data('hideTimer'));
+    $toast.text(message || '').addClass('active');
+    $toast.data('hideTimer', window.setTimeout(function() {
+        $toast.removeClass('active');
+    }, 3000));
+};
+
+window.yogaQueueLkSuccessToast = function(message) {
+    try {
+        window.sessionStorage.setItem('yoga_lk_success_toast', message || '');
+    } catch (error) {
+        window.yogaShowLkSuccessToast(message);
+    }
+};
+
+jQuery(function() {
+    var queuedMessage = '';
+    try {
+        queuedMessage = window.sessionStorage.getItem('yoga_lk_success_toast') || '';
+        window.sessionStorage.removeItem('yoga_lk_success_toast');
+    } catch (error) {
+        queuedMessage = '';
+    }
+    if (queuedMessage) window.yogaShowLkSuccessToast(queuedMessage);
+});
+
 // Подтверждение e-mail в личном кабинете.
 (function($) {
     'use strict';
@@ -4306,6 +4380,7 @@ jQuery(document).on('click', function(e) {
             code: code
         }).done(function(response) {
             if (response.success) {
+                window.yogaQueueLkSuccessToast('Электронная почта подтверждена');
                 location.reload();
                 return;
             }
@@ -4472,8 +4547,8 @@ jQuery(document).on('click', function(e) {
             code: code
         }).done(function(response) {
             if (response.success) {
-                modalEmailMessage(response.data.message, false);
-                window.setTimeout(function() { location.reload(); }, 700);
+                window.yogaQueueLkSuccessToast('Электронная почта подтверждена');
+                location.reload();
             } else {
                 modalEmailMessage(modalResponseMessage(response, 'Неверный код.'), true);
             }

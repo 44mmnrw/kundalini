@@ -194,19 +194,24 @@
   padding: 0;}
 .kriya-info h3 {
   display: block;
-  font-family: "Mulish", sans-serif;
+  color: var(--color-black, #1F1F1F);
+  font-family: "Mulish-Bold", "Mulish", sans-serif;
   font-size: 1.25rem;
-  font-weight: 400;
+  font-style: normal;
+  font-weight: 700;
   line-height: 1.1;
   transition: 0.4s ease;
 }
 .kriya-info p {
   display: block;
   margin-top: 0.3125rem;
-  font-family: "Mulish-Regular", sans-serif;
+  color: var(--color-black, #1F1F1F);
+  font-family: "Mulish-Regular", "Mulish", sans-serif;
   font-size: 1rem;
+  font-style: normal;
   font-weight: 400;
-  line-height: normal;}
+  line-height: normal;
+}
 
 .kriya-media {
   display: flex;
@@ -315,8 +320,8 @@
 }
 @media (max-width: 1279px) {
   .kriyi-item__inner {
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
   }
 }
 @media (max-width: 1024px) {
@@ -396,7 +401,7 @@
   .kriyi-item__inner {
     padding-left: 0.9375rem;    padding-right: 0.9375rem;  }
   .kriya-info h3 {
-    font-size: 1.375rem;  }
+    font-size: 1.25rem;  }
   .kriya-level {
     width: auto;
     font-size: 0.875rem;    padding: 0.9375rem;    padding-top: 0.4062rem;    padding-bottom: 0.4062rem;  }

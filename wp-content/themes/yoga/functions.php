@@ -2822,7 +2822,10 @@ function handle_comment_delete() {
 			
 			// Обновляем поле ACF для текущего пользователя
 			// Обработчик удаления аватара
-			if (!empty($_FILES['avatar'])) {
+			if (
+				isset($_FILES['avatar']['error'])
+				&& (int) $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE
+			) {
 				require_once(ABSPATH . 'wp-admin/includes/image.php');
 				require_once(ABSPATH . 'wp-admin/includes/file.php');
 				require_once(ABSPATH . 'wp-admin/includes/media.php');
@@ -3282,6 +3285,16 @@ function handle_comment_delete() {
 		}));
 	}
 
+	/** @return array<int, array<string, mixed>> */
+	function yoga_get_unread_question_answer_notifications(int $user_id): array {
+		return array_values(array_filter(
+			yoga_get_unread_user_notifications($user_id),
+			static function (array $notification): bool {
+				return ($notification['type'] ?? '') === 'question_answer';
+			}
+		));
+	}
+
 	function yoga_notification_preference(int $user_id, string $key, bool $default = true): bool {
 		$preferences = get_user_meta($user_id, 'yoga_notification_preferences', true);
 		return is_array($preferences) && array_key_exists($key, $preferences) ? (bool) $preferences[$key] : $default;
@@ -3501,6 +3514,7 @@ function handle_comment_delete() {
 		$notification_id = sanitize_text_field((string) ($_POST['notification_id'] ?? ''));
 		wp_send_json_success(array(
 			'unread_count' => yoga_mark_user_notifications_read($user_id, $notification_id, $mark_all),
+			'unread_question_answers_count' => count(yoga_get_unread_question_answer_notifications($user_id)),
 		));
 	}
 	add_action('wp_ajax_yoga_mark_question_answer_notifications_read', 'yoga_mark_question_answer_notifications_read');
@@ -3565,22 +3579,68 @@ function handle_comment_delete() {
 	</div>
     <?php
 	}
+
+	function yoga_render_user_questions_list(int $user_id): void {
+		$questions = get_user_questions($user_id);
+		if (empty($questions)) {
+			echo '<p class="no-questions">' . esc_html__('У вас пока нет заданных вопросов.', 'yoga') . '</p>';
+			return;
+		}
+
+		foreach ($questions as $index => $question) {
+			display_question_item($question, $index >= 4);
+		}
+
+		if (count($questions) > 4) {
+			echo '<div class="btn show-more-questions">';
+			echo '<span class="active">' . esc_html__('Показать еще', 'yoga') . '</span>';
+			echo '<span>' . esc_html__('Свернуть', 'yoga') . '</span>';
+			echo '</div>';
+		}
+	}
+
+	function yoga_send_new_question_admin_email(int $question_id): void {
+		$question = get_post($question_id);
+		if (!$question instanceof WP_Post || $question->post_type !== 'question') {
+			return;
+		}
+
+		$user = get_userdata((int) $question->post_author);
+		$display_name = $user instanceof WP_User ? $user->display_name : __('Пользователь', 'yoga');
+		$subject = __('Новый вопрос в личном кабинете', 'yoga');
+		$message = sprintf(__('%s задал новый вопрос:', 'yoga'), $display_name) . "\n\n";
+		$message .= $question->post_content . "\n\n";
+		$message .= __('Ссылка для ответа:', 'yoga') . ' ' . admin_url("post.php?post={$question_id}&action=edit");
+
+		wp_mail((string) get_option('admin_email'), $subject, $message);
+	}
+	add_action('yoga_send_new_question_admin_email', 'yoga_send_new_question_admin_email');
 	
 	// Добавляем метабокс для ответа на вопрос
 	// Axecode.tech: прием вопросов из личного кабинета.
 	// Зачем: централизованная валидация nonce/авторизации и единый формат уведомления в админку.
 	function handle_question_submission() {
+		$is_ajax = wp_doing_ajax();
 		if (!isset($_POST['question_nonce']) || !wp_verify_nonce($_POST['question_nonce'], 'submit_question')) {
+			if ($is_ajax) {
+				wp_send_json_error(array('message' => __('Ошибка безопасности', 'yoga')), 403);
+			}
 			wp_die('Ошибка безопасности');
 		}
 		
 		if (!is_user_logged_in()) {
+			if ($is_ajax) {
+				wp_send_json_error(array('message' => __('Вы не авторизованы', 'yoga')), 401);
+			}
 			wp_die('Вы не авторизованы');
 		}
 		
-		$question_text = sanitize_textarea_field($_POST['question_text']);
+		$question_text = sanitize_textarea_field(wp_unslash((string) ($_POST['question_text'] ?? '')));
 		
 		if (empty($question_text)) {
+			if ($is_ajax) {
+				wp_send_json_error(array('message' => __('Вопрос не может быть пустым', 'yoga')), 400);
+			}
 			wp_die('Вопрос не может быть пустым');
 		}
 		
@@ -3598,24 +3658,31 @@ function handle_comment_delete() {
 		$question_id = wp_insert_post($question_data);
 		
 		if (is_wp_error($question_id)) {
+			if ($is_ajax) {
+				wp_send_json_error(array('message' => __('Ошибка при сохранении вопроса', 'yoga')), 500);
+			}
 			wp_die('Ошибка при сохранении вопроса');
 		}
 		
-		// Если ответ изменился или добавлен новый
-		$admin_email = get_option('admin_email');
-		$user = get_userdata($user_id);
-		$subject = 'Новый вопрос в личном кабинете';
-		$message = "Пользователь {$user->display_name} задал новый вопрос:\n\n";
-		$message .= $question_text . "\\\\n\\\\n";
-		$message .= "Ссылка для ответа: " . admin_url("post.php?post={$question_id}&action=edit");
-		
-		wp_mail($admin_email, $subject, $message);
+		// Медленная отправка SMTP не должна блокировать AJAX-ответ пользователю.
+		wp_schedule_single_event(time(), 'yoga_send_new_question_admin_email', array((int) $question_id));
+
+		if ($is_ajax) {
+			ob_start();
+			yoga_render_user_questions_list((int) $user_id);
+			$questions_html = (string) ob_get_clean();
+			wp_send_json_success(array(
+				'message' => __('Вопрос отправлен', 'yoga'),
+				'questions_html' => $questions_html,
+			));
+		}
 		
 		wp_redirect(add_query_arg('question_submitted', 'true', wp_get_referer()));
 		exit;
 	}
 	add_action('admin_post_submit_question', 'handle_question_submission');
 	add_action('admin_post_nopriv_submit_question', 'handle_question_submission');
+	add_action('wp_ajax_submit_question', 'handle_question_submission');
 	
 	// Отправляем уведомление пользователю
 	function register_question_post_type() {

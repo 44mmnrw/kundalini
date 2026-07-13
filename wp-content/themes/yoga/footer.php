@@ -197,12 +197,11 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
         <img src="<?=get_template_directory_uri()?>/assets/img/modal-close-img.png" alt="">
 	</button>
 	<div class="thanksforqw">
-		<img class="thanksforqw__icon" src="<?=get_template_directory_uri()?>/assets/svg/comment-delete-success.svg" alt="">
         <h3>
-			Мы получили ваше сообщение!
+			Спасибо за Ваш вопрос
 		</h3>
 		<p>
-			Вернёмся с ответом очень скоро.
+			Вопрос будет опубликован в личном кабинете вместе с&nbsp;ответом
 		</p>
 	</div>
 </div><div class="modal modal-default modal-default_logout">
