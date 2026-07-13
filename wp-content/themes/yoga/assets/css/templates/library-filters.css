@@ -8,7 +8,7 @@
 
 /* Литералы в условии: Safari и часть движков не применяют @media с var(); иначе экран фильтров вечно display:none */
 @media (min-width: 1025px) {
-  /* Не display:none: нативные input внутри остаются связаны с label[for] в .section-library и получают change → AJAX. */
+  /* Не display:none: input остаются источником сериализуемого состояния для общего JS-модуля. */
   .library-filters-screen {
     display: block !important;
     position: absolute;
@@ -227,7 +227,7 @@
     -webkit-tap-highlight-color: rgba(31, 31, 31, 0.06);
   }
 
-  /* Строка кликабельна целиком через JS; input только для формы и label[for] на десктопе */
+  /* Строка кликабельна целиком через JS; input хранит состояние и отправляется общей формой. */
   .library-filters-screen__row input.library-filter-input[type="checkbox"] {
     position: absolute !important;
     left: 0 !important;

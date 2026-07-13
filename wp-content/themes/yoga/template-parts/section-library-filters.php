@@ -1,7 +1,7 @@
 <?php
 /**
  * Мобильные фильтры библиотеки — Figma pop_up (node 582:10993).
- * Строки — div + явный тап в script.js; input с form= для связи с #practice-filter-form; десктоп: label[for] в section-library.
+ * Input хранит доступное состояние мобильного интерфейса и отправляется общей формой; десктоп управляет им через единый JS state.
  */
 
 if (!isset($difficulty_terms) || !is_array($difficulty_terms)) {
@@ -28,6 +28,8 @@ if (!isset($goal_terms) || !is_array($goal_terms)) {
 		'order' => 'ASC',
 	));
 }
+$filter_form_id = isset($args['form_id']) ? sanitize_html_class((string) $args['form_id']) : 'practice-filter-form';
+$filter_value_field = isset($args['value_field']) && $args['value_field'] === 'term_id' ? 'term_id' : 'slug';
 if (!is_array($difficulty_terms) || is_wp_error($difficulty_terms)) {
 	$difficulty_terms = array();
 }
@@ -54,7 +56,7 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 							$input_id = 'library-filter-difficulty-' . ($index + 1);
 							?>
 							<div class="library-filters-screen__row checkbox-item">
-								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-difficulty[]" value="<?php echo esc_attr((string) $difficulty_term->slug); ?>" form="practice-filter-form" tabindex="-1">
+								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-difficulty[]" value="<?php echo esc_attr((string) $difficulty_term->{$filter_value_field}); ?>" form="<?php echo esc_attr($filter_form_id); ?>" tabindex="-1">
 								<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 								<span class="library-filters-screen__text"><?php echo esc_html((string) $difficulty_term->name); ?></span>
 							</div>
@@ -74,7 +76,7 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 							$input_id = 'library-filter-duration-' . ($index + 1);
 							?>
 							<div class="library-filters-screen__row checkbox-item">
-								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-duration[]" value="<?php echo esc_attr((string) $duration_term->slug); ?>" form="practice-filter-form" tabindex="-1">
+								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-duration[]" value="<?php echo esc_attr((string) $duration_term->{$filter_value_field}); ?>" form="<?php echo esc_attr($filter_form_id); ?>" tabindex="-1">
 								<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 								<span class="library-filters-screen__text"><?php echo esc_html((string) $duration_term->name); ?></span>
 							</div>
@@ -94,7 +96,7 @@ if (!is_array($goal_terms) || is_wp_error($goal_terms)) {
 							$input_id = 'library-filter-goal-' . ($index + 1);
 							?>
 							<div class="library-filters-screen__row checkbox-item">
-								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-goal[]" value="<?php echo esc_attr((string) $goal_term->slug); ?>" form="practice-filter-form" tabindex="-1">
+								<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="practice-goal[]" value="<?php echo esc_attr((string) $goal_term->{$filter_value_field}); ?>" form="<?php echo esc_attr($filter_form_id); ?>" tabindex="-1">
 								<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 								<span class="library-filters-screen__text"><?php echo esc_html((string) $goal_term->name); ?></span>
 							</div>

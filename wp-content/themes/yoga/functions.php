@@ -583,6 +583,7 @@
 		$payment_success_style_ver = file_exists($theme_dir . '/assets/css/templates/payment-success.css') ? filemtime($theme_dir . '/assets/css/templates/payment-success.css') : '1.0.0';
 		$question_success_style_ver = file_exists($theme_dir . '/assets/css/templates/question-success.css') ? filemtime($theme_dir . '/assets/css/templates/question-success.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
+		$library_filters_script_ver = file_exists($theme_dir . '/assets/js/library-filters.js') ? filemtime($theme_dir . '/assets/js/library-filters.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
 		
 		// В режиме разработки принудительно отключаем кэш ассетов.
@@ -765,7 +766,8 @@
 		
 		wp_enqueue_script( 'fancybox', $theme_uri . '/assets/libs/fancybox/jquery.fancybox.min.js', array('jquery', 'slick'), null, true );
 		
-		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox'), $main_script_ver, true );
+		wp_enqueue_script( 'library-filters-script', $theme_uri . '/assets/js/library-filters.js', array('jquery'), $library_filters_script_ver, true );
+		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox', 'library-filters-script'), $main_script_ver, true );
 		
 		// Здесь можно добавить логику подписки:
 		wp_enqueue_style('plyr-css', get_template_directory_uri() . '/assets/css/plyr.css');
@@ -2119,6 +2121,8 @@ function handle_comment_delete() {
 	}
 	
 	function filter_practices_callback() {
+		check_ajax_referer('yoga_ajax_nonce', 'nonce');
+
 		$filters = $_POST['filters'] ?? [];
 		if (!is_array($filters)) {
 			$filters = [];
@@ -2287,23 +2291,8 @@ function handle_comment_delete() {
 			}
 		}
 		
-		// Добавляем товар
-		if (!empty($_POST['sort'])) {
-			switch ($_POST['sort']) {
-				case 'newness':
-                $args['orderby'] = 'date';
-                $args['order'] = 'DESC';
-                break;
-				case 'popularity':
-				default:
-                // На части практик нет views_count, из-за чего meta-сортировка
-                // отфильтровывает записи и даёт "Найдено: 0" при переключении типа.
-                // Оставляем безопасную сортировку без потерь результатов.
-                $args['orderby'] = 'date';
-                $args['order'] = 'DESC';
-                break;
-			}
-		}
+		$args['orderby'] = 'date';
+		$args['order'] = 'DESC';
 		
 		if ($search_term !== '') {
 			$search_ids = array();

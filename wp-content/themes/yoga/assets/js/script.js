@@ -257,7 +257,7 @@ jQuery(document).ready(function($) {
 	/* Делегирование: надёжнее на мобилке; z-index у .filter-btn выше .form-search (20), иначе тапы уходят в строку поиска */
 	$(document).on('click', '.library-form-main .filter-btn, .kriyi-form-main .filter-btn', function () {
 		var $btn = $(this);
-		var $lib = $btn.closest('.section-library');
+		var $lib = $btn.closest('.section-library, .section-kriyi');
 		var $screen = $('#library-filters-screen');
 		if ($lib.length && $(window).width() < yogaViewportBp.lg && $screen.length) {
 			$btn.toggleClass('active');
@@ -422,11 +422,11 @@ jQuery(document).ready(function($) {
 		$('.form-cat-list').removeClass("active");
 		$('.form-search-list').removeClass("active");
 		if ($(this).closest('#practice-filter-form').length) {
-			var inputId = $(this).attr('for');
+			var inputId = $(this).attr('data-filter-input');
 			var input = inputId ? document.getElementById(inputId) : null;
 			if (input && $(input).hasClass('library-filter-input')) {
 				e.preventDefault();
-				input.checked = !input.checked;
+				YogaLibraryFiltersCore.toggle(input);
 				$(input).trigger('change');
 			}
 			return;
@@ -441,54 +441,21 @@ jQuery(document).ready(function($) {
 		*/
 	});
 
-	$('.form-reset').click(function () {
+	$('.form-reset').click(function (e) {
+		e.preventDefault();
 		$(this).removeClass("active");
 		$('.filter-item').removeClass("focused");
 		$('.filter-item__list .checkbox-item').removeClass("active");
-		$('.filter-item__list .checkbox-item .checkbox').removeClass("active")
+		$('.filter-item__list .checkbox-item .checkbox').removeClass("active");
+		YogaLibraryFiltersCore.clear();
+		syncLibraryFilterCheckboxLabels();
+		if ($(this).closest('.section-kriyi').length) {
+			loadPractices();
+		} else if ($(this).closest('.section-library').length) {
+			loadLibraryPractices();
+		}
 	});
 	
-	
-	/* Section-kriyi */
-	
-	jQuery(function($){
-		
-		$(document).mouseup(function (e){ // событие клика по веб-документу
-			var div = $(".sorting-item"); // тут указываем ID элемента
-			var val = div.val();
-			if (!div.is(e.target) // если клик был не по нашему блоку
-				&& div.has(e.target).length === 0 ) { // и не по его дочерним элементам
-				$('.sorting-item').removeClass("active");
-				$('.sorting-item__list').removeClass("active");
-			}
-		});
-	});
-	
-	
-	$('.sorting-item__main').click(function () {
-		$('.form-search').removeClass("active");
-		$('.form-categories').removeClass("active");
-		$('.form-cat-list').removeClass("active");
-		$('.form-search-list').removeClass("active");
-		
-		$(this).closest('.sorting').find('.sorting-item').find('.sorting-item__main').not(this).closest('.sorting-item').removeClass("active");
-		$(this).closest('.sorting').find('.sorting-item').find('.sorting-item__main').not(this).closest('.sorting-item').find('.sorting-item__list').removeClass("active");
-		
-		$(this).closest('.sorting-item').toggleClass("active");
-		$(this).closest('.sorting-item').find('.sorting-item__list').toggleClass("active");
-		
-	});
-	
-	
-	$('.sorting-item__list-item').click(function () {
-		$(this).closest('.sorting-item').toggleClass("active");
-		$(this).closest('.sorting-item').find('.sorting-item__list').toggleClass("active");
-		$(this).closest('.sorting-item__list').find('.sorting-item__list-item').removeClass("active");
-		$(this).addClass("active");
-		
-		var sortcat = $(this).find('span').text();
-		$(this).closest('.sorting-item').find('.sorting-item__main span').text(sortcat);
-	}); 
 	
 	/* $('.kriya-fav').click(function () {
 		$(this).toggleClass("active");
@@ -2417,18 +2384,41 @@ jQuery(document).ready(function($) {
         return rawTermId;
     }
 
+    function updateLibraryFilterCount() {
+		var selectedCount = YogaLibraryFiltersCore.selectedCount();
+		$('.section-library .filter-btn__count, .section-kriyi .filter-btn__count')
+			.text(selectedCount)
+			.toggleClass('active', selectedCount > 0);
+	}
+
     function syncLibraryFilterCheckboxLabels() {
         $('input.library-filter-input').each(function() {
             var id = $(this).attr('id');
             if (!id) return;
             var on = $(this).prop('checked');
             var $mobileRow = $(this).closest('.library-filters-screen__row');
-            var $targets = $('label[for="' + id + '"]');
+            var $targets = $('[data-filter-input="' + id + '"]');
             if ($mobileRow.length) {
                 $targets = $targets.add($mobileRow);
             }
             $targets.toggleClass('active', on).find('.checkbox').toggleClass('active', on);
         });
+
+		$('.section-kriyi .filter input[type="checkbox"]').each(function () {
+			var id = this.id;
+			if (!id) return;
+			var on = Boolean(this.checked);
+			var $label = $('.section-kriyi .filter label[for="' + id + '"]');
+			$label.toggleClass('active', on).find('.checkbox').toggleClass('active', on);
+		});
+		$('.section-kriyi .filter-item').removeClass('focused');
+		$('.section-kriyi .filter-item__list .checkbox-item.active').closest('.filter-item').addClass('focused');
+		$('.section-kriyi .form-reset').toggleClass(
+			'active',
+			$('.section-kriyi .filter input[type="checkbox"]:checked').length > 0
+		);
+
+		updateLibraryFilterCount();
     }
 
     function setCurrentLibraryFilter(input) {
@@ -2439,15 +2429,15 @@ jQuery(document).ready(function($) {
         var $rows = $('.section-library .filter-item__list .checkbox-item, .library-filters-screen__row');
         if ($input.prop('checked')) {
             $rows.removeClass('is-current');
-            $('label[for="' + id + '"]').add($input.closest('.library-filters-screen__row')).addClass('is-current');
+            $('[data-filter-input="' + id + '"]').add($input.closest('.library-filters-screen__row')).addClass('is-current');
         } else {
-            $('label[for="' + id + '"]').add($input.closest('.library-filters-screen__row')).removeClass('is-current');
+            $('[data-filter-input="' + id + '"]').add($input.closest('.library-filters-screen__row')).removeClass('is-current');
         }
     }
 
     function finalizeLibraryFiltersScreenUi() {
         $('.library-filters-screen').removeClass('active library-filters-screen--closing').attr('aria-hidden', 'true');
-        $('.section-library .filter-btn').removeClass('active');
+        $('.section-library .filter-btn, .section-kriyi .filter-btn').removeClass('active');
         $('.overlay').removeClass('active');
         $('.body').removeClass('body-fixed');
     }
@@ -2524,13 +2514,10 @@ jQuery(document).ready(function($) {
 			term_id: getActiveLibraryTermId()
 		};
 
-		$('input.library-filter-input:checked').each(function() {
-			let name = $(this).attr('name').replace('[]','');
-			if (!data.filters[name]) data.filters[name] = [];
-			data.filters[name].push($(this).val());
-		});
+		data.filters = YogaLibraryFiltersCore.selectedByTaxonomy();
+		data.nonce = yoga_ajax.nonce;
 
-		$.ajax({
+		YogaLibraryFiltersCore.request('practices', {
 			url: yoga_ajax.ajax_url,
 			type: 'POST',
 			data: data,
@@ -2551,7 +2538,7 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        $.ajax({
+        YogaLibraryFiltersCore.request('suggestions', {
             url: yoga_ajax.ajax_url,
             type: 'POST',
             dataType: 'json',
@@ -2583,7 +2570,8 @@ jQuery(document).ready(function($) {
                 $list.html(html).addClass('active');
                 $search.addClass('active');
             },
-            error: function() {
+            error: function(xhr, status) {
+                if (status === 'abort') return;
                 $list.html('<div class="form-search-list__item form-search-list__item_empty"><span>Ничего не найдено</span></div>').addClass('active');
                 $search.addClass('active');
             }
@@ -2666,6 +2654,10 @@ jQuery(document).ready(function($) {
 		} else {
 			syncPracticeTaxonomyPageHeading();
 		}
+		syncLibraryFilterCheckboxLabels();
+		if ($('.section-library').length && YogaLibraryFiltersCore.selectedCount() > 0) {
+			loadLibraryPractices();
+		}
 	});
 	
 	// поиск
@@ -2674,8 +2666,8 @@ jQuery(document).ready(function($) {
 		loadLibraryPractices();
 	});
 
-    $(document).on('input keyup change', '.section-library .form-search .input', function() {
-        requestLibrarySuggestions();
+    $(document).on('input', '.section-library .form-search .input', function() {
+        YogaLibraryFiltersCore.debounce('suggestions', requestLibrarySuggestions, 300);
     });
 
     $(document).on('click', '.section-library .form-search-list__item[data-url]', function(e) {
@@ -2704,7 +2696,7 @@ jQuery(document).ready(function($) {
 			$('.form-search').removeClass('active');
 			$('.form-cat-list').removeClass('active');
 			$('.form-search-list').removeClass('active');
-			inp.checked = !inp.checked;
+			YogaLibraryFiltersCore.toggle(inp);
 			$(inp).trigger('change');
 		}
 
@@ -2753,6 +2745,7 @@ jQuery(document).ready(function($) {
 	})(jQuery);
 
 	$(document).on('change', 'input.library-filter-input', function() {
+		YogaLibraryFiltersCore.set(this, this.checked);
 		syncLibraryFilterCheckboxLabels();
 		setCurrentLibraryFilter(this);
 		if ($(window).width() < yogaViewportBp.lg && $(this).closest('.library-filters-screen.active').length) {
@@ -2770,15 +2763,19 @@ jQuery(document).ready(function($) {
 	});
 
 	$(document).on('click', '.js-library-filters-apply', function() {
-		loadLibraryPractices();
+		if ($(window).width() < yogaViewportBp.lg && $('.section-kriyi').length) {
+			loadPractices();
+		} else {
+			loadLibraryPractices();
+		}
 		closeLibraryFiltersScreen();
 	});
 
 	$(document).on('click', '.js-library-filters-reset', function() {
-		$('input.library-filter-input').prop('checked', false);
+		YogaLibraryFiltersCore.clear();
 		$('.section-library .filter-item__list .checkbox-item, .library-filters-screen__row').removeClass('is-current');
 		syncLibraryFilterCheckboxLabels();
-		if (!$(this).closest('.library-filters-screen.active').length) {
+		if (!$(this).closest('.library-filters-screen.active').length && !$('.section-kriyi').length) {
 			loadLibraryPractices();
 		}
 	});
@@ -2803,25 +2800,27 @@ jQuery(document).ready(function($) {
             nonce: yoga_ajax.nonce,
             filters: {},
             search: $('.section-kriyi .input').val(),
-            term_id: getActivePracticeTermId(),
-            sort: $('.section-kriyi .sorting-item__list-item.active').data('target') || 'popularity'
+            term_id: getActivePracticeTermId()
 		};
 		
         // Собираем чекбоксы
-        $('.section-kriyi .filter input[type=checkbox]:checked').each(function() {
-            let taxonomy = $(this).attr('name');
-            if (!data.filters[taxonomy]) data.filters[taxonomy] = [];
-            data.filters[taxonomy].push($(this).val());
-		});
+		if ($(window).width() < yogaViewportBp.lg) {
+			data.filters = YogaLibraryFiltersCore.selectedByTaxonomy();
+		} else {
+			$('.section-kriyi .filter input[type=checkbox]:checked').each(function() {
+				let taxonomy = $(this).attr('name');
+				if (!data.filters[taxonomy]) data.filters[taxonomy] = [];
+				data.filters[taxonomy].push($(this).val());
+			});
+		}
 		
-        $.ajax({
+        YogaLibraryFiltersCore.request('practices', {
             url: yoga_ajax.ajax_url,
             type: 'POST',
             data: data,
             success: function(response) {
                 if (response.success) {
                     $('.kriyi__items').html(response.data.html);
-                    $('.sorting__result').text('Найдено: ' + response.data.count);
                     
                     // Показываем/скрываем кнопку "Показать еще"
                     if (response.data.count > 10) {
@@ -2840,11 +2839,6 @@ jQuery(document).ready(function($) {
 			}
 		});
 	}
-
-    const suggestState = {
-        timer: null,
-        requestSeq: 0
-    };
 
     function escapeHtml(text) {
         return String(text || '')
@@ -2924,10 +2918,7 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        suggestState.requestSeq += 1;
-        const requestId = suggestState.requestSeq;
-
-        $.ajax({
+        YogaLibraryFiltersCore.request('suggestions', {
             url: yoga_ajax.ajax_url,
             type: 'POST',
             dataType: 'json',
@@ -2938,19 +2929,14 @@ jQuery(document).ready(function($) {
                 term_id: termId
             },
             success: function(response) {
-                if (requestId !== suggestState.requestSeq) {
-                    return;
-                }
                 if (response && response.success && response.data) {
                     renderPracticeSuggestions(response.data.items || [], query);
                 } else {
                     renderPracticeSuggestions([], query);
                 }
             },
-            error: function() {
-                if (requestId !== suggestState.requestSeq) {
-                    return;
-                }
+            error: function(xhr, status) {
+                if (status === 'abort') return;
                 renderPracticeSuggestions([], query);
             }
         });
@@ -3004,11 +2990,8 @@ jQuery(document).ready(function($) {
         loadPractices();
 	});
 
-    $(document).on('input keyup change', '.section-kriyi .form-search .input', function() {
-        clearTimeout(suggestState.timer);
-        suggestState.timer = setTimeout(function() {
-            requestPracticeSuggestions();
-        }, 220);
+    $(document).on('input', '.section-kriyi .form-search .input', function() {
+        YogaLibraryFiltersCore.debounce('suggestions', requestPracticeSuggestions, 300);
     });
 
     $(document).on('click', '.section-kriyi .form-search-list__item[data-url]', function(e) {
@@ -3021,14 +3004,8 @@ jQuery(document).ready(function($) {
 	
     // Чекбоксы
     $('.section-kriyi .filter input[type=checkbox]').on('change', function() {
-        loadPractices();
-	});
-	
-    // Сортировка
-    $(document).on('click', '.section-kriyi .sorting-item__list-item', function(e) {
-        e.preventDefault();
-        $('.section-kriyi .sorting-item__list-item').removeClass('active');
-        $(this).addClass('active');
+		YogaLibraryFiltersCore.set(this, this.checked);
+		syncLibraryFilterCheckboxLabels();
         loadPractices();
 	});
 	
@@ -3090,7 +3067,7 @@ jQuery(document).ready(function($) {
 				return;
 			}
 
-			$checkbox.prop('checked', true);
+			YogaLibraryFiltersCore.set($checkbox[0], true);
 			const checkboxId = $checkbox.attr('id');
 			const $label = checkboxId
 				? $('.section-kriyi .filter label[for="' + checkboxId + '"]')
@@ -3125,7 +3102,8 @@ jQuery(document).ready(function($) {
 	}
 
 	const hasUrlPracticeFilters = applyPracticeFiltersFromUrl();
-	if (hasUrlPracticeFilters) {
+	updateLibraryFilterCount();
+	if (hasUrlPracticeFilters || YogaLibraryFiltersCore.selectedCount() > 0) {
 		loadPractices();
 	}
 	
