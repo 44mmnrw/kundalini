@@ -10,6 +10,8 @@ final class YTR_Notifications {
 	private const META_FAILURE_EMAIL_SENT_AT = '_ytr_failure_email_sent_at';
 	private const META_EXPIRING_SITE_END      = '_ytr_expiring_site_end';
 	private const META_EXPIRING_EMAIL_END     = '_ytr_expiring_email_end';
+	private const META_CARD_EXPIRING_SITE     = '_ytr_card_expiring_site';
+	private const META_CARD_EXPIRING_EMAIL    = '_ytr_card_expiring_email';
 	private const EXPIRING_WINDOW             = 3 * DAY_IN_SECONDS;
 
 	public static function init(): void {
@@ -45,10 +47,82 @@ final class YTR_Notifications {
 
 			foreach ($user_ids as $user_id) {
 				self::maybe_send_expiring_notification($user_id);
+				self::maybe_send_card_expiring_notification($user_id);
 			}
 
 			++$page;
 		} while (count($user_ids) === 100);
+	}
+
+	private static function maybe_send_card_expiring_notification(int $user_id): void {
+		if (!class_exists('YTR_Saved_Cards')) {
+			return;
+		}
+
+		$cards = YTR_Saved_Cards::get_cards($user_id);
+		$card  = isset($cards[0]) && is_array($cards[0]) ? $cards[0] : null;
+		if ($card === null) {
+			return;
+		}
+
+		$month = (int) ($card['exp_month'] ?? 0);
+		$year  = (int) ($card['exp_year'] ?? 0);
+		if ($year > 0 && $year < 100) {
+			$year += 2000;
+		}
+		if ($month < 1 || $month > 12 || $year < 2000) {
+			return;
+		}
+
+		$now            = new DateTimeImmutable('now', wp_timezone());
+		$current_period = ((int) $now->format('Y') * 12) + (int) $now->format('n');
+		$expiry_period  = ($year * 12) + $month;
+		if (
+			$expiry_period !== ($current_period - 1)
+			&& $expiry_period !== $current_period
+			&& $expiry_period !== ($current_period + 1)
+		) {
+			return;
+		}
+
+		$last4 = preg_replace('/\D+/', '', (string) ($card['last4'] ?? ''));
+		$token = sprintf('%04d-%02d:%s', $year, $month, $last4);
+		$title = __('Проблема с оплатой', 'yoga-tariff-renewal');
+		if ($expiry_period === ($current_period + 1)) {
+			$message = __('Срок действия вашей привязанной карты истекает в следующем месяце. Пожалуйста, обновите метод оплаты.', 'yoga-tariff-renewal');
+		} elseif ($expiry_period === $current_period) {
+			$message = __('Срок действия вашей привязанной карты истекает в этом месяце. Пожалуйста, обновите метод оплаты.', 'yoga-tariff-renewal');
+		} else {
+			$message = __('Срок действия вашей привязанной карты истёк. Пожалуйста, обновите метод оплаты.', 'yoga-tariff-renewal');
+		}
+		$account_url = function_exists('yoga_get_lk_section_url')
+			? yoga_get_lk_section_url('settings')
+			: self::get_account_url();
+
+		$site_enabled = !function_exists('yoga_notification_preference')
+			|| yoga_notification_preference($user_id, 'payment_card_expiring_site', true);
+		if ($site_enabled && function_exists('yoga_add_user_notification')) {
+			yoga_add_user_notification($user_id, 'payment_card_expiring', $title, $message, $account_url, array(
+				'dedupe_key' => 'payment_card_expiring:' . $token,
+			));
+			update_user_meta($user_id, self::META_CARD_EXPIRING_SITE, $token);
+		}
+
+		$email_enabled = !function_exists('yoga_notification_preference')
+			|| yoga_notification_preference($user_id, 'payment_card_expiring_email', false);
+		if (!$email_enabled || (string) get_user_meta($user_id, self::META_CARD_EXPIRING_EMAIL, true) === $token) {
+			return;
+		}
+
+		$user = get_user_by('id', $user_id);
+		if (!$user instanceof WP_User || !is_email($user->user_email)) {
+			return;
+		}
+
+		$email_message = $message . "\n\n" . __('Обновить карту:', 'yoga-tariff-renewal') . "\n" . $account_url;
+		if (wp_mail((string) $user->user_email, $title, $email_message)) {
+			update_user_meta($user_id, self::META_CARD_EXPIRING_EMAIL, $token);
+		}
 	}
 
 	private static function maybe_send_expiring_notification(int $user_id): void {
@@ -74,10 +148,10 @@ final class YTR_Notifications {
 
 		$site_enabled = !function_exists('yoga_notification_preference')
 			|| yoga_notification_preference($user_id, 'subscription_expiring_site', true);
-		if ($site_enabled
-			&& (int) get_user_meta($user_id, self::META_EXPIRING_SITE_END, true) !== $access_end
-			&& function_exists('yoga_add_user_notification')) {
-			yoga_add_user_notification($user_id, 'subscription_expiring', $title, $message, $account_url);
+		if ($site_enabled && function_exists('yoga_add_user_notification')) {
+			yoga_add_user_notification($user_id, 'subscription_expiring', $title, $message, $account_url, array(
+				'dedupe_key' => 'subscription_expiring:' . $access_end,
+			));
 			update_user_meta($user_id, self::META_EXPIRING_SITE_END, $access_end);
 		}
 

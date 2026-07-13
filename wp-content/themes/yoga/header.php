@@ -36,7 +36,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 			? $lk_page_url
 			: get_permalink(get_option('woocommerce_myaccount_page_id'));
 		$header_notifications = is_user_logged_in() && function_exists('yoga_get_user_notifications')
-			? yoga_get_user_notifications((int) get_current_user_id(), 3)
+			? yoga_get_user_notifications((int) get_current_user_id(), 5)
 			: array();
 		$header_unread_notifications = is_user_logged_in() && function_exists('yoga_get_unread_user_notifications')
 			? yoga_get_unread_user_notifications((int) get_current_user_id())
@@ -177,10 +177,20 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 													? yoga_get_notification_read_url($notification, 'questions')
 													: (string) ($notification['url'] ?? $header_notifications_url);
 												$notification_time = $format_header_notification_time((string) ($notification['created_at'] ?? ''));
+												$notification_icon = 'notification-bell-icon';
+												if ($notification_type === 'question_answer') {
+													$notification_icon = 'notification-teacher-reply-icon';
+												} elseif ($notification_type === 'comment_reply') {
+													$notification_icon = 'notification-comment-reply-icon';
+												} elseif ($notification_type === 'payment_card_expiring') {
+													$notification_icon = 'notification-payment-card-icon';
+												} elseif ($notification_type === 'subscription_expiring') {
+													$notification_icon = 'notification-subscription-expiring-icon';
+												}
 												?>
 												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?><?php echo $notification_is_unread ? ' lk-notifications-popup__item--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
 													<span class="lk-notifications-popup__item-head">
-												<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($notification_type === 'question_answer' ? 'notification-teacher-reply-icon' : 'notification-bell-icon')); ?>"></use></svg></span>
+										<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $notification_icon); ?>"></use></svg></span>
 														<strong><?php echo esc_html($notification_title); ?></strong>
 														<?php if ($notification_time !== ''): ?><time datetime="<?php echo esc_attr((string) ($notification['created_at'] ?? '')); ?>"><?php echo esc_html($notification_time); ?></time><?php endif; ?>
 														<?php if ($notification_is_unread): ?><i class="lk-notifications-popup__unread-dot" aria-hidden="true"></i><?php endif; ?>

@@ -436,9 +436,42 @@ header > .container > .row > .header-content {
   color: #f6f6f9;
 }
 
+.header-lk .lk-notifications-popup__item--payment_card_expiring .lk-notifications-popup__item-icon {
+  background: #e15355;
+  color: var(--color-white);
+}
+
+.header-lk .lk-notifications-popup__item--payment_card_expiring .lk-notifications-popup__item-icon svg {
+  width: 1.4375rem;
+  height: 1.0625rem;
+}
+
+.header-lk .lk-notifications-popup__item--subscription_expiring .lk-notifications-popup__item-icon {
+  background: var(--color-green);
+  color: var(--color-black);
+}
+
+.header-lk .lk-notifications-popup__item--subscription_expiring .lk-notifications-popup__item-icon svg {
+  width: 1.625rem;
+  height: 1.375rem;
+}
+
 .header-lk .lk-notifications-popup__item-icon svg {
   width: 1.375rem;
   height: 1.5rem;
+}
+
+.header-lk .lk-notifications-popup__item--comment_reply .lk-notifications-popup__item-icon svg {
+  width: 1.6875rem;
+  height: 1.375rem;
+}
+
+.header-lk .lk-notifications-popup__item--comment_reply .lk-notifications-popup__item-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 6.25rem;
+  background: #f6f6f9;
+  color: #1f1f1f;
 }
 
 .header-lk .lk-notifications-popup__item-head strong {
