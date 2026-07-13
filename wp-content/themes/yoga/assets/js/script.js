@@ -3230,11 +3230,74 @@ jQuery(document).ready(function($) {
 		$('.lk-notifications-page__read-all').remove();
 	}
 
-	$(document).on('click', '.lk-notifications-page__read-all', function() {
+	function updateNotificationMenuCount(target, count) {
+		var $items = $('.sidebar-menu__item[data-target="' + target + '"]');
+		$items.each(function() {
+			var $item = $(this);
+			var $count = $item.find('.sidebar-menu__count');
+			if (count <= 0) {
+				$count.remove();
+				return;
+			}
+			if ($count.length) {
+				$count.text(count);
+			} else {
+				$item.append($('<span class="sidebar-menu__count" aria-hidden="true"></span>').text(count));
+			}
+		});
+	}
+
+	function applyNotificationReadCounts(data) {
+		var unreadCount = Number(data.unread_count || 0);
+		var questionCount = Number(data.unread_question_answers_count || 0);
+		updateHeaderNotificationBell(unreadCount);
+		updateNotificationMenuCount('8', unreadCount);
+		updateNotificationMenuCount('5', questionCount);
+		if (unreadCount === 0) {
+			renderHeaderNotificationsRead();
+			renderLkNotificationsEmpty();
+		}
+	}
+
+	function navigateAfterNotificationRead(href) {
+		if (!href || href === '#') {
+			return;
+		}
+
+		var targetUrl;
+		try {
+			targetUrl = new URL(href, window.location.href);
+		} catch (error) {
+			window.location.href = href;
+			return;
+		}
+
+		var section = targetUrl.searchParams.get('lk-section');
+		var sectionByTarget = typeof yoga_ajax !== 'undefined' ? yoga_ajax.lk_section_by_target : null;
+		if (targetUrl.origin === window.location.origin && section && sectionByTarget && $('#section-lk').length) {
+			var target = '';
+			$.each(sectionByTarget, function(candidateTarget, candidateSection) {
+				if (String(candidateSection) === section) {
+					target = String(candidateTarget);
+					return false;
+				}
+			});
+			if (target !== '') {
+				switchLkSlide(target);
+				$('.notification-icon').removeClass('active').attr('aria-expanded', 'false');
+				$('.lk-notifications-popup').attr('aria-hidden', 'true');
+				return;
+			}
+		}
+
+		window.location.href = targetUrl.toString();
+	}
+
+	function markAllNotificationsRead($button) {
 		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in) {
 			return;
 		}
-		var $button = $(this).prop('disabled', true);
+		$button.prop('disabled', true);
 		$.post(yoga_ajax.ajax_url, {
 			action: 'yoga_mark_question_answer_notifications_read',
 			nonce: yoga_ajax.nonce,
@@ -3244,16 +3307,50 @@ jQuery(document).ready(function($) {
 				return;
 			}
 			$('.lk-notification--unread').removeClass('lk-notification--unread').find('.lk-notification__meta i').remove();
-			$('.sidebar-menu__item[data-target="5"] .sidebar-menu__count, .sidebar-menu__item[data-target="8"] .sidebar-menu__count').remove();
-			renderLkNotificationsEmpty();
-			updateHeaderNotificationBell(Number(response.data.unread_count));
-			if (Number(response.data.unread_count) === 0) {
-				renderHeaderNotificationsRead();
-			}
+			$('.lk-notifications-popup__unread-dot').remove();
+			applyNotificationReadCounts(response.data || {});
 		}).always(function() {
 			$button.prop('disabled', false);
 		});
+	}
+
+	$(document).on('click', '.lk-slide--notifications .lk-notifications-page__read-all', function() {
+		markAllNotificationsRead($(this));
 	});
+	$('.lk-notifications-popup').on('click', '.lk-notifications-page__read-all', function() {
+		markAllNotificationsRead($(this));
+	});
+
+	function markNotificationRead(event) {
+		var $notification = $(this);
+		var notificationId = String($notification.data('notification-id') || '');
+		var href = $notification.attr('href') || '';
+		var isUnread = $notification.hasClass('lk-notification--unread') || $notification.hasClass('lk-notifications-popup__item--unread');
+
+		if (!isUnread || !notificationId || typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in) {
+			return;
+		}
+
+		event.preventDefault();
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_mark_question_answer_notifications_read',
+			nonce: yoga_ajax.nonce,
+			notification_id: notificationId
+		}).done(function(response) {
+			if (!response || !response.success) {
+				return;
+			}
+			var $copies = $('.lk-notification[data-notification-id="' + notificationId + '"]');
+			$copies.removeClass('lk-notification--unread lk-notifications-popup__item--unread');
+			$copies.find('.lk-notification__meta i, .lk-notifications-popup__unread-dot').remove();
+			applyNotificationReadCounts(response.data || {});
+		}).always(function() {
+			navigateAfterNotificationRead(href);
+		});
+	}
+
+	$(document).on('click', '.lk-slide--notifications .lk-notification[data-notification-id]', markNotificationRead);
+	$('.lk-notifications-popup').on('click', '.lk-notification[data-notification-id]', markNotificationRead);
 
 	$(document).on('click', '.notification-settings__back', function() { switchLkSlide('8'); });
 	$(document).on('click', '.lk-notifications-page__settings', function() { switchLkSlide('9'); });
