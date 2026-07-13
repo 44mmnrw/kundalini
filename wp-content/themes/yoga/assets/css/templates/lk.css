@@ -1782,7 +1782,20 @@
     object-fit: cover;
   }
   .lk-kriyi .kriya-info h3 {
-    font-size: 1.25rem;
+    color: var(--black, #1F1F1F);
+    font-family: "Mulish-Bold", "Mulish", sans-serif;
+    font-size: 1.125rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .lk-kriyi .kriya-info p {
+    color: var(--black, #1F1F1F);
+    font-family: "Mulish-Regular", "Mulish", sans-serif;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
   }
 }
 @media (max-width: 575px) {

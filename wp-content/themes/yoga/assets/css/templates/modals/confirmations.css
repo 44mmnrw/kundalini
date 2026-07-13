@@ -193,13 +193,61 @@
 }
 
 @media (max-width: 575px) {
+  #yoga-comment-delete-confirm.modal-default,
+  #yoga-comment-delete-confirm.modal-default.active {
+    width: 20rem;
+    height: 25.25rem;
+    max-width: calc(100vw - 1.875rem);
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    border-radius: 1.875rem;
+  }
+
+  #yoga-comment-delete-success.modal-default,
+  #yoga-comment-delete-success.modal-default.active {
+    width: 20rem;
+    height: 14.9375rem;
+    max-width: calc(100vw - 1.875rem);
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    border-radius: 1.875rem;
+  }
+
+  #yoga-comment-delete-success .modal-close {
+    display: block;
+    width: 2.25rem;
+    height: 2.25rem;
+    top: 0.9375rem;
+    right: 0.9375rem;
+  }
+
+  #yoga-comment-delete-success .modal-close img {
+    height: 0.75rem;
+  }
+
   .yoga-comment-delete-modal__content {
-    padding-right: 1.25rem;
-    padding-left: 1.25rem;
+    gap: 1.6875rem;
+    padding: 4.0625rem 2.1875rem 3.4375rem;
+  }
+
+  .yoga-comment-delete-modal .yoga-comment-delete-modal__copy h3 {
+    font-size: 1.375rem;
+  }
+
+  .yoga-comment-delete-modal .yoga-comment-delete-modal__success-content h3 {
+    font-size: 1.25rem;
   }
 
   .yoga-comment-delete-modal__actions {
+    flex-direction: column;
     gap: 0.625rem;
+  }
+
+  .yoga-comment-delete-modal__button {
+    width: 100%;
+    flex: 0 0 3.25rem;
   }
 }
 
