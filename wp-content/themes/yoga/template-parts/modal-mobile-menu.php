@@ -153,7 +153,7 @@
 		<?php if (is_user_logged_in()) : ?>
 		<button type="button" class="mobile-header-popup__logout modal-call modal-call_logout">
 			<span><?php esc_html_e('Выйти', 'yoga'); ?></span>
-			<svg aria-hidden="true" focusable="false"><use href="<?php echo $sprite_href; ?>#lk-sidebar-logout"></use></svg>
+			<svg aria-hidden="true" focusable="false"><use href="<?php echo $sprite_href; ?>#mobile-menu-logout"></use></svg>
 		</button>
 		<?php endif; ?>
 		<?php
