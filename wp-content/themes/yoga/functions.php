@@ -555,7 +555,6 @@
 		$modal_component_styles = array(
 			'modal-mobile-menus'  => 'mobile-menus.css',
 			'modal-auth'          => 'auth.css',
-			'modal-filters'       => 'filters.css',
 			'modal-confirmations' => 'confirmations.css',
 			'modal-cards'         => 'cards.css',
 			'modal-cookie'        => 'cookie.css',
