@@ -45,10 +45,12 @@
         <div class="row">
             <div class="lk">
                 <div class="lk__slides">
-                    <!-- Слайд "Мои данные" -->
+					<!-- Слайд "Мои данные" -->
 					<div class="lk-slide<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
+						<div class="lk-page-header">
+							<h1 class="lk-page-title">Мои данные</h1>
+						</div>
                         <div class="lk-slide__content">
-                            <h1 class="lk-slide__title">Мои данные</h1>
                             <form action="#" class="lk-form" id="profile-form" enctype="multipart/form-data">
                                 <?php wp_nonce_field('update_user_profile', 'profile_nonce'); ?>
 
@@ -193,11 +195,11 @@
 						</div>
 					</div>
                     
-                    <!-- Остальные слайды будут здесь -->
+					<!-- Остальные слайды будут здесь -->
 					<div class="lk-slide lk-slide--practice-history<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
-						<h2>
-							История пройденных практик
-						</h2>
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">История пройденных практик</h2>
+						</div>
 						<div class="lk-slide__content">
 							<?php
 							// Временная демонстрационная выборка по макету Figma.
@@ -239,26 +241,34 @@
 					</div>
 
 					<div class="lk-slide<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
-						<h2>
-							Мои садханы
-						</h2>
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">Мои садханы</h2>
+						</div>
 						<div class="lk-slide__content"></div>
 					</div>
 
 					<div class="lk-slide lk-slide--notifications<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
-						<h2>
-							Уведомления
-						</h2>
-						<div class="lk-slide__content">
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">Уведомления</h2>
 							<div class="lk-notifications-page__actions">
 								<button class="lk-notifications-page__settings" type="button" data-target="9" aria-label="<?php esc_attr_e('Настройки уведомлений', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>"></use></svg></button>
 								<?php if ($unread_notifications_count > 0): ?>
 									<button class="lk-notifications-page__read-all" type="button"><?php esc_html_e('Прочитать все', 'yoga'); ?></button>
 								<?php endif; ?>
 							</div>
+						</div>
+						<div class="lk-slide__content">
 							<?php $notifications = function_exists('yoga_get_user_notifications') ? yoga_get_user_notifications((int) $user_id, 100) : array(); ?>
 							<?php if (empty($notifications)): ?>
-								<div class="lk-notifications-empty">Ничего нет...</div>
+								<div class="lk-notifications-empty" role="status">
+									<span class="lk-notifications-empty__icon" aria-hidden="true">
+										<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>"></use></svg>
+									</span>
+									<div class="lk-notifications-empty__text">
+										<h3><?php esc_html_e('Здесь пока ничего нет', 'yoga'); ?></h3>
+										<p><?php esc_html_e('Здесь появятся уведомления', 'yoga'); ?></p>
+									</div>
+								</div>
 							<?php else: ?>
 								<div class="lk-notifications-list">
 									<?php foreach ($notifications as $notification): ?>
@@ -348,8 +358,8 @@
 							}
 							$favorites = array_values(array_unique(array_filter(array_map('intval', $favorites))));
 						?>
-						<div class="lk-favorites-head">
-							<h2>Избранное</h2>
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">Избранное</h2>
 							<?php if (!empty($favorites)) : ?>
 								<button class="lk-favorites-clear" type="button">Очистить</button>
 							<?php endif; ?>
@@ -437,7 +447,9 @@
 					
 					<!-- Слайд "Рекомендации" -->
 					<div class="lk-slide<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
-						<h2>Рекомендации</h2>
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">Рекомендации</h2>
+						</div>
 						<div class="lk-slide__content">
 							<?php
 								if (is_user_logged_in()) {
@@ -520,7 +532,9 @@
 					
 					<!-- Слайд "Мои вопросы" -->
 					<div class="lk-slide<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
-						<h2>Мои вопросы</h2>
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">Мои вопросы</h2>
+						</div>
 						<div class="lk-slide__content">
 							<div class="lk-questions-form">
 								<form action="<?php echo admin_url('admin-post.php'); ?>" method="post" id="question-form">
@@ -548,10 +562,12 @@
 					
 					<!-- Слайд "Настройки подписки" -->
 					<div class="lk-slide<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" id="lk-slide-settings" data-target="6">
+						<div class="lk-page-header">
+							<h2 class="lk-page-title">Настройки подписки</h2>
+						</div>
 						<div class="lk-slide__content">
 							<div class="lk-settings">
 								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1">
-									<h2>Настройки подписки</h2>
 									<?php
 									$current_subscription = get_user_active_subscription();
 									$subscription_end_label = $current_subscription

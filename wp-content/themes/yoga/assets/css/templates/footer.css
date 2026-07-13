@@ -192,6 +192,43 @@
   color: var(--color-green);
 }
 
+.footer-subscribe.is-subscribed {
+  gap: 1rem;
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__field input,
+.footer-subscribe.is-subscribed .footer-subscribe__submit,
+.footer-subscribe.is-subscribed .footer-subscribe__agree input {
+  opacity: 1;
+  cursor: default;
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__agree {
+  color: var(--color-white);
+  opacity: 0.5;
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__agree a {
+  color: var(--color-white);
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__agree input {
+  border-color: var(--color-white);
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__submit:hover {
+  transform: none;
+  background-color: transparent;
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__submit {
+  background: transparent url("../../img/smile.png") center / 2.5rem 2.5625rem no-repeat;
+}
+
+.footer-subscribe.is-subscribed .footer-subscribe__submit svg {
+  visibility: hidden;
+}
+
 .footer__bottom {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

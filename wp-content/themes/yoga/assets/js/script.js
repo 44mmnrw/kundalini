@@ -2131,6 +2131,28 @@ jQuery(document).ready(function($) {
 		modal.querySelector('.modal-close')?.focus();
 	}
 
+	function setFooterSubscriptionComplete(form) {
+		if (!form) return;
+		const email = form.querySelector('input[type="email"]');
+		const agree = form.querySelector('input[type="checkbox"]');
+		const button = form.querySelector('button[type="submit"]');
+
+		form.classList.add('is-subscribed');
+		form.setAttribute('aria-label', 'Подписка оформлена');
+		if (email) {
+			email.value = '';
+			email.disabled = true;
+		}
+		if (agree) {
+			agree.checked = true;
+			agree.disabled = true;
+		}
+		if (button) {
+			button.disabled = true;
+			button.setAttribute('aria-label', 'Подписка оформлена');
+		}
+	}
+
 	document.querySelectorAll('.footer-subscribe').forEach(form => {
 		form.addEventListener('submit', function(event) {
 			event.preventDefault();
@@ -2144,9 +2166,14 @@ jQuery(document).ready(function($) {
 			button.disabled = true;
 			fetch(yoga_ajax.ajax_url, {method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'process_subscription',email:email.value.trim(),nonce:nonce.value,consent:'1',source:'footer',page_url:window.location.href})})
 				.then(response => response.json())
-				.then(data => { if (!data.success) throw new Error(yogaSubscriptionAjaxMessage(data, 'Не удалось оформить подписку.')); openSubscriptionSuccessModal(); this.reset(); agree.checked = true; })
+				.then(data => {
+					if (!data.success) throw new Error(yogaSubscriptionAjaxMessage(data, 'Не удалось оформить подписку.'));
+					this.reset();
+					setFooterSubscriptionComplete(this);
+					openSubscriptionSuccessModal();
+				})
 				.catch(error => showSubscriptionError(error.message || 'Ошибка сети. Попробуйте еще раз.'))
-				.finally(() => { button.disabled = false; });
+				.finally(() => { if (!this.classList.contains('is-subscribed')) button.disabled = false; });
 		});
 	});
 	

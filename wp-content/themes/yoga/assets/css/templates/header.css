@@ -559,8 +559,8 @@ header > .container > .row > .header-content {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 1.1875rem;
-  height: 1.1875rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .login-icon.login-icon_logged {
@@ -1051,7 +1051,7 @@ header > .container > .row > .header-content {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: var(--header-mobile-figma-icon-inner);
-    height: var(--header-mobile-figma-icon-inner);
+    width: 1.375rem;
+    height: 0.9375rem;
   }
 }
