@@ -192,7 +192,89 @@
   text-align: center;
 }
 
+/* Успешная отправка формы на странице контактов — Figma 2338:25160. */
+#yoga-contact-success-modal.modal-default,
+#yoga-contact-success-modal.modal-default.active {
+  width: 28.5625rem;
+  height: 19.6875rem;
+  max-width: calc(100vw - 1.875rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: var(--color-green) !important;
+}
+
+.yoga-contact-success-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: 24.1875rem;
+  max-width: calc(100% - 4.375rem);
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9375rem;
+  transform: translate(-50%, -50%);
+  color: var(--color-black);
+  text-align: center;
+}
+
+.yoga-contact-success-modal__heading {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.yoga-contact-success-modal__icon {
+  display: block;
+  width: 4.8125rem;
+  height: 4.8125rem;
+}
+
+#yoga-contact-success-modal .yoga-contact-success-modal__content h3,
+#yoga-contact-success-modal .yoga-contact-success-modal__content p {
+  width: 100%;
+  margin: 0;
+  color: inherit;
+}
+
+#yoga-contact-success-modal .yoga-contact-success-modal__content h3 {
+  font-family: "Mulish-Bold", "Mulish", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+#yoga-contact-success-modal .yoga-contact-success-modal__content p {
+  font-family: "Mulish-Regular", "Mulish", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
 @media (max-width: 575px) {
+  #yoga-contact-success-modal.modal-default,
+  #yoga-contact-success-modal.modal-default.active {
+    width: 20rem;
+    height: 18.5rem;
+    max-width: calc(100vw - 1.875rem);
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    border-radius: 1.875rem;
+  }
+
+  .yoga-contact-success-modal__content {
+    width: calc(100% - 1.875rem);
+    max-width: 18.125rem;
+  }
+
+  #yoga-contact-success-modal .yoga-contact-success-modal__content h3 {
+    font-size: 1.25rem;
+  }
+
   #yoga-comment-delete-confirm.modal-default,
   #yoga-comment-delete-confirm.modal-default.active {
     width: 20rem;

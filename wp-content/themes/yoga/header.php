@@ -204,6 +204,9 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							</div>
 							<div class="header-lk__trailing">
 								<a href="<?php echo esc_url($myaccount_url); ?>" class="login-icon login-icon_logged" aria-label="<?php echo esc_attr__('Личный кабинет', 'yoga'); ?>">
+									<svg class="login-icon__mobile-symbol" aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
+									</svg>
 									<?php if ($user_avatar_html) : ?>
 										<?php echo $user_avatar_html; ?>
 									<?php else : ?>

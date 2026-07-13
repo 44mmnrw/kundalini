@@ -2293,7 +2293,7 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				showContactSuccess('Сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
+				showContactSuccess('Сообщение отправлено! Мы свяжемся с вами в ближайшее время.', form);
 				form.reset();
 				} else {
 				const errorMessage = (data && data.data && data.data.message)
@@ -2311,8 +2311,20 @@ jQuery(document).ready(function($) {
 		});
 	}
 	
-	function showContactSuccess(message) {
+	function showContactSuccess(message, form) {
+		if (form && form.closest('.section-form-questions_contacts')) {
+			openContactSuccessModal();
+			return;
+		}
+
 		openQuestionSuccessModal();
+	}
+
+	function openContactSuccessModal() {
+		$('.body').addClass("body-fixed");
+		$('.overlay').addClass("active");
+		$('.modal, .modal-login').removeClass("active").attr('aria-hidden', 'true');
+		$('#yoga-contact-success-modal').addClass("active").attr('aria-hidden', 'false');
 	}
 
 	function openQuestionSuccessModal() {
