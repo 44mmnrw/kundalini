@@ -3176,10 +3176,15 @@ jQuery(document).ready(function($) {
 		if (!$bell.length) {
 			return;
 		}
+		var $bellIcon = $bell.find('.notification-icon__img use');
+		var currentIconHref = String($bellIcon.attr('href') || '');
+		var spriteUrl = typeof yoga_ajax !== 'undefined' && yoga_ajax.sprite_url
+			? String(yoga_ajax.sprite_url).replace(/#.*$/, '')
+			: currentIconHref.replace(/#.*$/, '');
 		var $count = $bell.find('.notification-icon__count');
 		if (unreadCount > 0) {
 			$bell.addClass('notification-icon_header--has-notifications');
-			$bell.find('.notification-icon__img use').attr('href', '#notification-bell-filled-icon');
+			$bellIcon.attr('href', spriteUrl + '#notification-bell-filled-icon');
 			if ($count.length) {
 				$count.text(unreadCount);
 			} else {
@@ -3189,7 +3194,7 @@ jQuery(document).ready(function($) {
 		}
 		$bell.removeClass('notification-icon_header--has-notifications');
 		$count.remove();
-		$bell.find('.notification-icon__img use').attr('href', '#notification-bell-icon');
+		$bellIcon.attr('href', spriteUrl + '#notification-bell-icon');
 	}
 
 	function renderHeaderNotificationsEmpty() {
