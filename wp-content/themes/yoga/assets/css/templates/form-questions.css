@@ -766,20 +766,32 @@
   padding: 0;
   border-radius: 50%;
   background: var(--color-black);
+  color: var(--color-green);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.section-form-questions_contacts .contacts-form-layout__submit.btn img {
+.section-form-questions_contacts .contacts-form-layout__submit-arrow {
   position: static;
-  width: 1.25rem;
-  height: 1.125rem;
-  transform: rotate(180deg);
+  width: 1rem;
+  height: 1rem;
+  transform: rotate(40.78deg);
+  transform-origin: center;
+  transition: transform 0.2s ease;
 }
 
-.section-form-questions_contacts .contacts-form-layout__submit.btn:hover {
+.section-form-questions_contacts .contacts-form-layout__submit.btn:hover,
+.section-form-questions_contacts .contacts-form-layout__submit.btn:focus-visible {
   transform: none;
+  background: var(--color-green);
+  color: var(--color-black);
+}
+
+.section-form-questions_contacts .contacts-form-layout__submit.btn:hover .contacts-form-layout__submit-arrow,
+.section-form-questions_contacts .contacts-form-layout__submit.btn:focus-visible .contacts-form-layout__submit-arrow {
+  transform: rotate(0deg);
 }
 
 .contacts-social {

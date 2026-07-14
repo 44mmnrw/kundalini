@@ -56,7 +56,9 @@ $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.s
                             <textarea name="contacts_message" placeholder="<?php echo esc_attr(get_field('contacts_placeholder_message', 'option') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
 
                             <button type="submit" class="btn contacts-form-layout__submit" aria-label="<?php esc_attr_e('Отправить сообщение', 'yoga'); ?>">
-                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/contacts-form-submit-arrow.svg'); ?>" alt="">
+                                <svg class="contacts-form-layout__submit-arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#button-diagonal-arrow'); ?>"></use>
+                                </svg>
                             </button>
                         </div>
                     </form>

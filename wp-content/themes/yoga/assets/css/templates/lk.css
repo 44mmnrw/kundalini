@@ -165,35 +165,58 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 3.75rem;
-  padding: 0.9375rem 1.875rem;
+  width: 20.4375rem;
+  min-height: 4.4375rem;
+  padding: 0.9375rem 1.25rem;
   border-radius: 31.25rem;
   background: var(--color-black);
   color: var(--color-green);
   font-family: "Mulish-SemiBold", sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.009625rem;
+  letter-spacing: 0;
   text-decoration: none;
   text-transform: uppercase;
   gap: 0.625rem;
   box-sizing: border-box;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .lk-favorites-empty__button i {
   display: grid;
-  width: 1.875rem;
-  height: 1.875rem;
+  width: 2.5625rem;
+  height: 2.5625rem;
   place-items: center;
   border-radius: 50%;
   background: var(--color-green);
   color: var(--color-black);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .lk-favorites-empty__button i svg {
   width: 1rem;
   height: 1rem;
+  transform: rotate(0deg);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.lk-favorites-empty__button:hover,
+.lk-favorites-empty__button:focus-visible {
+  background: var(--color-green);
+  color: var(--color-black);
+}
+
+.lk-favorites-empty__button:hover i,
+.lk-favorites-empty__button:focus-visible i {
+  background: var(--color-black);
+  color: var(--color-green);
+}
+
+.lk-favorites-empty__button:hover i svg,
+.lk-favorites-empty__button:focus-visible i svg {
+  transform: rotate(40.78deg);
 }
 
 @media (max-width: 575px) {
@@ -1982,6 +2005,167 @@
   position: static;
   flex: 0 0 auto;
   margin: 0;
+}
+
+/* Subscription settings — Figma 2113:24748. Keep every override inside this slide. */
+#lk-slide-settings > .lk-page-header {
+  min-height: 2.1875rem;
+  margin-bottom: 1.25rem;
+}
+
+#lk-slide-settings .lk-settings__slide_main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+#lk-slide-settings .lk-settings-part {
+  padding-top: 0;
+}
+
+#lk-slide-settings .lk-settings-part_payment-methods h4,
+#lk-slide-settings .lk-settings-part_purchase-history h4 {
+  margin: 0;
+  padding: 0;
+  color: #1f1f1f;
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+#lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item_action {
+  min-height: 5rem;
+  margin-top: 0.9375rem;
+  padding: 0.9375rem 1.25rem;
+}
+
+#lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-text,
+#lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-action-numbers {
+  color: #1f1f1f;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+#lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-action {
+  align-items: center;
+}
+
+#lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-action-numbers {
+  justify-content: center;
+  width: 2.125rem;
+  min-width: 2.125rem;
+  padding: 0;
+}
+
+#lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-action-numbers span {
+  min-width: 0;
+  margin: 0;
+}
+
+#lk-slide-settings .lk-settings-part_purchase-history {
+  margin-top: 3.125rem;
+}
+
+#lk-slide-settings .lk-settings-purchases {
+  margin-top: 0.9375rem;
+}
+
+#lk-slide-settings .lk-settings-empty-history {
+  display: flex;
+  align-items: center;
+  gap: 1.875rem;
+  width: 100%;
+}
+
+#lk-slide-settings .lk-settings-empty-history p {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: #1f1f1f;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+#lk-slide-settings .lk-settings-tariffs-btn {
+  display: inline-flex;
+  flex: 0 0 20.4375rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 4.4375rem;
+  padding: 0.9375rem 1.25rem;
+  border-radius: 31.25rem;
+  background: #1f1f1f;
+  color: #e8ff57;
+  font-family: "Mulish-SemiBold", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+#lk-slide-settings .lk-settings-tariffs-btn__icon {
+  display: inline-flex;
+  width: 2.5625rem;
+  height: 2.5625rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e8ff57;
+  color: #1f1f1f;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#lk-slide-settings .lk-settings-tariffs-btn__arrow {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  transform: rotate(0deg);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+#lk-slide-settings .lk-settings-tariffs-btn:hover,
+#lk-slide-settings .lk-settings-tariffs-btn:focus-visible {
+  background: #e8ff57;
+  color: #1f1f1f;
+  opacity: 1;
+}
+
+#lk-slide-settings .lk-settings-tariffs-btn:hover .lk-settings-tariffs-btn__icon,
+#lk-slide-settings .lk-settings-tariffs-btn:focus-visible .lk-settings-tariffs-btn__icon {
+  background: #1f1f1f;
+  color: #e8ff57;
+}
+
+#lk-slide-settings .lk-settings-tariffs-btn:hover .lk-settings-tariffs-btn__arrow,
+#lk-slide-settings .lk-settings-tariffs-btn:focus-visible .lk-settings-tariffs-btn__arrow {
+  transform: rotate(40.78deg);
+}
+
+@media (max-width: 767px) {
+  #lk-slide-settings .lk-settings-part_purchase-history {
+    margin-top: 2rem;
+  }
+
+  #lk-slide-settings .lk-settings-empty-history {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  #lk-slide-settings .lk-settings-tariffs-btn {
+    flex-basis: auto;
+    width: 100%;
+  }
 }
 
 .lk-slide--practice-history > .lk-page-header {

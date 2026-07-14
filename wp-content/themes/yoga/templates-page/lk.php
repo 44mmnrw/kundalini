@@ -390,7 +390,7 @@
 									</div>
 									<a class="lk-favorites-empty__button" href="<?php echo esc_url($lk_library_url); ?>">
 										<span>В библиотеку практик</span>
-										<i aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#footer-arrow-up-right"></use></svg></i>
+										<i aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#button-diagonal-arrow"></use></svg></i>
 									</a>
 								</div>
 								<?php
@@ -588,7 +588,16 @@
 									$ytr_auto_renew_active = class_exists('YTR_LK')
 										? YTR_LK::user_has_renewable_payment_setup($user_id)
 										: (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id));
+									$tariffs_url = home_url('/product-category/tariffs/');
+									$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
+									if ($tariffs_term && !is_wp_error($tariffs_term)) {
+										$term_link = get_term_link($tariffs_term);
+										if (!is_wp_error($term_link)) {
+											$tariffs_url = $term_link;
+										}
+									}
 									?>
+									<?php if ($current_subscription) : ?>
 									<div class="lk-settings-part lk-settings-part_status">
 										<div class="lk-settings-item lk-settings-item_main">
 											<div class="lk-settings-item__col">
@@ -614,6 +623,7 @@
 											</div>
 										</div>
 									</div>
+									<?php endif; ?>
 
 									<?php if ($current_subscription && !$ytr_auto_renew_active) :
 										$ytr_status_text      = class_exists('YTR_LK')
@@ -680,32 +690,24 @@
 												<?php
 												}
 												} else {
-												echo '<p>У вас пока нет завершенных заказов.</p>';
+												?>
+												<div class="lk-settings-empty-history">
+													<p>Покупок пока не было. Оформите подписку на один из наших тарифов, чтобы покупка добавилась в список.</p>
+													<a href="<?php echo esc_url($tariffs_url); ?>" class="lk-settings-tariffs-btn">
+														<span>Выбрать тариф</span>
+														<span class="lk-settings-tariffs-btn__icon" aria-hidden="true">
+															<svg class="lk-settings-tariffs-btn__arrow" width="16" height="16" viewBox="0 0 16 16" focusable="false">
+																<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#button-diagonal-arrow'); ?>"></use>
+															</svg>
+														</span>
+													</a>
+												</div>
+												<?php
 											}
 										?>
 										</div>
 									</div>
 									
-									<?php if (!$current_subscription): ?>
-									<?php
-										$tariffs_url = home_url('/product-category/tariffs/');
-										$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
-										if ($tariffs_term && !is_wp_error($tariffs_term)) {
-											$term_link = get_term_link($tariffs_term);
-											if (!is_wp_error($term_link)) {
-												$tariffs_url = $term_link;
-											}
-										}
-									?>
-									<div class="lk-settings-part">
-										<div class="subscribe-cta">
-											<p>У вас нет активной подписки. Выберите подходящий тариф:</p>
-											<a href="<?php echo esc_url($tariffs_url); ?>" class="btn">
-												<span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
-											</a>
-										</div>
-									</div>
-									<?php endif; ?>
 								</div>
 								
 								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2">
