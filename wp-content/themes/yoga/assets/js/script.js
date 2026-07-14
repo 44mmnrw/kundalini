@@ -1161,9 +1161,15 @@ jQuery(document).ready(function($) {
 	
 	$(document).ready(function () {
 		function checkWidthAndInitSlick() {
+			var $popularArticlesSlider = $('.popular-articles-slider');
+
+			if (!$popularArticlesSlider.length) {
+				return;
+			}
+
 			if ($(window).width() >= yogaViewportBp.sm) {
-				if (!$('.popular-articles-slider').hasClass('slick-initialized')) {
-					$('.popular-articles-slider').slick({
+				if (!$popularArticlesSlider.hasClass('slick-initialized')) {
+					$popularArticlesSlider.slick({
 						// твои настройки слайдера
 						infinite: true,
 						dots: true,
@@ -1184,9 +1190,9 @@ jQuery(document).ready(function($) {
 						]
 					});
 				}
-				} else {
-				if ($('.slider').hasClass('slick-initialized')) {
-					$('.slider').slick('unslick');
+			} else {
+				if ($popularArticlesSlider.hasClass('slick-initialized')) {
+					$popularArticlesSlider.slick('unslick');
 				}
 			}
 		}

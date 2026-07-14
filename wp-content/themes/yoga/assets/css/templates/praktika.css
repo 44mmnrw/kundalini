@@ -17,11 +17,13 @@
   }
 
   .single-practice .praktika-heading {
-    grid-column: 1;
+    grid-column: 1 / 2;
     grid-row: 1;
+    min-width: 0;
     margin: 2.125rem 0 0;
     width: 100%;
     max-width: 49.5625rem;
+    overflow-wrap: anywhere;
     text-align: left;
   }
 
