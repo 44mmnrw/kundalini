@@ -341,30 +341,32 @@ if (have_posts()) :
                             <div class="popular-articles__media">
                                 <div class="popular-articles-slider">
                                     <?php while ($popular_posts->have_posts()) : $popular_posts->the_post(); ?>
-                                        <div class="blog-article-item">
-                                            <div class="blog-article-item__image">
-                                                <?php if (has_post_thumbnail()) : ?>
-                                                    <?php the_post_thumbnail('medium'); ?>
-                                                <?php endif; ?>
+                                        <div class="popular-articles-slider__slide">
+                                            <div class="blog-article-item">
+                                                <div class="blog-article-item__image">
+                                                    <?php if (has_post_thumbnail()) : ?>
+                                                        <?php the_post_thumbnail('medium'); ?>
+                                                    <?php endif; ?>
+                                                </div>
+
+                                                <div class="blog-article-item__date">
+                                                    <time class="article-time"><?php echo esc_html(get_the_date('j F, Y')); ?></time>
+                                                    <time class="article-time article-time_time">
+                                                        <?php
+                                                        $popular_reading_minutes = function_exists('reading_time')
+                                                            ? (int) reading_time()
+                                                            : $count_reading_minutes(get_the_content());
+
+                                                        echo esc_html(function_exists('yoga_format_minutes') ? yoga_format_minutes($popular_reading_minutes, true) : ($popular_reading_minutes . ' мин'));
+                                                        ?>
+                                                    </time>
+                                                </div>
+
+                                                <h4><?php the_title(); ?></h4>
+
+                                                <div class="article-btn">Читать</div>
+                                                <a href="<?php the_permalink(); ?>" aria-label="<?php the_title_attribute(); ?>"></a>
                                             </div>
-
-                                            <div class="blog-article-item__date">
-                                                <time class="article-time"><?php echo esc_html(get_the_date('j F, Y')); ?></time>
-                                                <time class="article-time article-time_time">
-                                                    <?php
-                                                    $popular_reading_minutes = function_exists('reading_time')
-                                                        ? (int) reading_time()
-                                                        : $count_reading_minutes(get_the_content());
-
-                                                    echo esc_html(function_exists('yoga_format_minutes') ? yoga_format_minutes($popular_reading_minutes, true) : ($popular_reading_minutes . ' мин'));
-                                                    ?>
-                                                </time>
-                                            </div>
-
-                                            <h4><?php the_title(); ?></h4>
-
-                                            <div class="article-btn">Читать</div>
-                                            <a href="<?php the_permalink(); ?>" aria-label="<?php the_title_attribute(); ?>"></a>
                                         </div>
                                     <?php endwhile; ?>
                                 </div>
