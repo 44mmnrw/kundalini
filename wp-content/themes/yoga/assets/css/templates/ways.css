@@ -54,6 +54,19 @@
   }
 }
 
+/* On blog posts the title belongs above the main article column, not the author sidebar. */
+@media (min-width: 1280px) {
+  .single-post #section-ways h2.ways-heading {
+    width: calc(100% - 19.0625rem);
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1279px) {
+  .single-post #section-ways h2.ways-heading {
+    width: calc(100% - 17.5rem);
+  }
+}
+
 .ways-item {
   font-size: 0.875rem;  font-family: "Mulish-Regular", sans-serif;
 }
