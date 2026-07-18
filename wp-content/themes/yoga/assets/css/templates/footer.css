@@ -371,8 +371,10 @@
 }
 
 @media (max-width: 575px) {
+  html,
   body {
-    min-height: 100dvh;
+    background-color: var(--color-black);
+    overscroll-behavior-y: none;
   }
 
   .footer {
