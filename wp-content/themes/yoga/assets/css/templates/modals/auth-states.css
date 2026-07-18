@@ -170,7 +170,9 @@
   }
 
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob {
-    display: none;
+    display: flex;
+    margin-top: 0.625rem;
+    align-items: center;
   }
 
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob .loggin-back__link {
@@ -183,19 +185,16 @@
   }
 
   .modal-login-inner__slide[data-target="2"].active .registration-vk-link {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    position: static;
     display: flex;
-    width: 100%;
-    margin: 0;
+    width: max-content;
+    margin: 18px auto 0;
     align-items: center;
     justify-content: center;
   }
 
   .modal-login-inner__slide[data-target="2"].active .registration-vk-link::before { display: none; }
-  .modal-login-inner__slide[data-target="2"].active .registration-vk-link > span { text-decoration: underline; text-underline-offset: 0.125rem; }
+  .modal-login-inner__slide[data-target="2"].active .registration-vk-link > span { display: inline-block; text-decoration: underline; text-underline-offset: 0.125rem; }
 
   .modal-login:has(.modal-login-inner__slide[data-target="3"].active) .modal-close {
     display: none;
