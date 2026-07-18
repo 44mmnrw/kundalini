@@ -379,6 +379,12 @@ if (!function_exists('yoga_repair_order_tariff_line_items')) {
 	 * Восстанавливает позицию тарифа в заказе, если сумма есть, а line items пустые.
 	 */
 	function yoga_repair_order_tariff_line_items(WC_Order $order): bool {
+		// Заказ привязки карты содержит только сервисный сбор. Тариф из текущей
+		// корзины в него добавлять нельзя, иначе 1 ₽ превращается в сумму тарифа + 1 ₽.
+		if ($order->get_meta('_ytr_card_binding') === 'yes') {
+			return false;
+		}
+
 		if (count($order->get_items()) > 0) {
 			return true;
 		}

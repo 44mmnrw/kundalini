@@ -575,14 +575,6 @@ final class YTR_Saved_Cards {
 			return false;
 		}
 
-		if (class_exists('YTR_Card_Binding') && YTR_Card_Binding::is_binding_order($order)) {
-			return true;
-		}
-
-		if ($order->get_meta('_ytr_auto_renew_opt_in') !== 'yes') {
-			return false;
-		}
-
 		$user_id = (int) $order->get_customer_id();
 		$paused_at = (int) get_user_meta($user_id, self::SYNC_PAUSED_AT_META, true);
 		if ($paused_at <= 0) {
