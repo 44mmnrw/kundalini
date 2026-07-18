@@ -16,15 +16,15 @@ $img_uri = get_template_directory_uri() . '/assets/img';
 $yoga_smart_captcha = function_exists('yoga_smartcaptcha_is_enforced') && yoga_smartcaptcha_is_enforced();
 $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_client_key')) ? yoga_smartcaptcha_client_key() : '';
 ?><div class="modal-login">
-    <div class="modal-close">
-        <img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
-    </div>
     <button type="button" class="password-recovery-back ml-sl-switch" data-target="1" aria-label="Вернуться ко входу">
         <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
             <path d="M7 18L1 10.5L7 3M1 10.5H19" fill="none" stroke="#1F1F1F" stroke-width="1.5" stroke-linecap="square"></path>
         </svg>
     </button>
     <div class="modal-login-inner">
+        <div class="modal-close">
+            <img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+        </div>
         <div class="modal-login-inner__slide active" data-target="1">
             <div class="login-slide-switches login-slide-switches_login">
                 <h3>
