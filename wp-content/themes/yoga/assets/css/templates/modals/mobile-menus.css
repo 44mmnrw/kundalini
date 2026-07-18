@@ -362,7 +362,7 @@
     color: #e8ff57;
   }
   .modal-mobile-menu-lk .sidebar-menu__item {
-    min-height: 2.75rem;
+    min-height: 0;
     margin-top: 0;
     padding: 0.75rem 1.25rem;
     color: #1f1f1f;
@@ -379,12 +379,6 @@
     max-height: 1em;
     flex-shrink: 0;
     color: #1f1f1f;
-  }
-  /* Figma favorite_icon 620:12663 — кадр 17×15, не квадрат. */
-  .modal-mobile-menu-lk .sidebar-menu__item-icon--heart {
-    width: calc(1em * 17.4 / 15.4852);
-    height: 1em;
-    max-height: 1em;
   }
   .modal-mobile-menu-lk .sidebar-menu__item-icon svg,
   .modal-mobile-menu-lk .sidebar-menu__item-svg {

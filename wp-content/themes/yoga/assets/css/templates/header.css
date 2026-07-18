@@ -38,7 +38,7 @@ header {
   align-items: stretch;
   position: fixed;
   left: 0;
-  top: 0;
+  top: var(--header-top-offset, 0px);
   z-index: 9;
   height: var(--header-bar-height);
   min-height: var(--header-bar-height);
@@ -943,7 +943,7 @@ header > .container > .row > .header-content {
 
   /* Отступ основного контента = высота шапки (линия под шапкой — в box-shadow, не в layout) */
   body.body_main {
-    padding-top: var(--header-bar-height);
+    padding-top: var(--header-page-offset);
   }
 
   #header > .container > .row {

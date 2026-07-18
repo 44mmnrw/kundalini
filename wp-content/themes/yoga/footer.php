@@ -241,7 +241,23 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 		</div>
 		<p><?php esc_html_e('Вернёмся с ответом очень скоро.', 'yoga'); ?></p>
 	</div>
-</div><?php endif; ?><div class="modal modal-default modal-default_logout">
+</div><?php endif; ?><?php if (is_user_logged_in()) : ?>
+<div class="modal modal-default lk-unsaved-changes-modal" id="lk-unsaved-changes-modal" role="dialog" aria-modal="true" aria-labelledby="lk-unsaved-changes-title" aria-describedby="lk-unsaved-changes-description" aria-hidden="true">
+	<button class="modal-close lk-unsaved-changes-modal__cancel" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
+	</button>
+	<div class="lk-unsaved-changes-modal__content">
+		<div class="lk-unsaved-changes-modal__copy">
+			<h3 id="lk-unsaved-changes-title"><?php esc_html_e('Есть несохранённые изменения', 'yoga'); ?></h3>
+			<p id="lk-unsaved-changes-description"><?php esc_html_e('Если закрыть страницу сейчас, изменения не сохранятся', 'yoga'); ?></p>
+		</div>
+		<div class="lk-unsaved-changes-modal__actions">
+			<button class="lk-unsaved-changes-modal__leave" type="button"><?php esc_html_e('Закрыть', 'yoga'); ?></button>
+			<button class="lk-unsaved-changes-modal__cancel" type="button"><?php esc_html_e('Отмена', 'yoga'); ?></button>
+		</div>
+	</div>
+</div>
+<?php endif; ?><div class="modal modal-default modal-default_logout">
 	<div class="modal-close">
 		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#email-confirmation-close"></use></svg>
 	</div>

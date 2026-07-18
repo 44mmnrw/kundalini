@@ -2,7 +2,7 @@
 .section-subscription {
   position: relative;
   background-color: var(--color-black);
-  padding-top: var(--header-bar-height);  padding-bottom: 0.5rem;}
+  padding-top: var(--header-page-offset);  padding-bottom: 0.5rem;}
 
 .section-subscription .container {
   background-color: transparent;

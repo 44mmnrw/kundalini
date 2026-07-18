@@ -16,7 +16,11 @@
   /* Горизонтальный отступ от края вьюпорта до контента (в том числе max-width .container) */
   --container-inline-gutter: 10px;
   /* Полоса шапки (#header): 12px + ряд ~48px + 12px = 4.5rem; нижний разделитель — box-shadow (не border). */
-  --header-bar-height: 4.5rem;
+  /* Figma desktop: visual header bar is 51px. */
+  --header-bar-height: 3.1875rem;
+  --header-top-offset: 1rem;
+  /* Reserve in document flow keeps the Figma content coordinates intact. */
+  --header-page-offset: calc(4.5rem + var(--header-top-offset));
 }
 
 html {
@@ -57,7 +61,7 @@ body {
   width: 100%;
   max-width: 125rem;  text-align: left;
   font-weight: 100;
-  padding-top: var(--header-bar-height);  min-height: 100vh;
+  padding-top: var(--header-page-offset);  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--color-white);
@@ -79,7 +83,7 @@ footer {
 }
 
 .body-header-fixed {
-  padding-top: var(--header-bar-height);}
+  padding-top: var(--header-page-offset);}
 
 .container {
   width: 75rem;
@@ -458,8 +462,15 @@ input::-moz-placeholder {
 }
 
 @media (max-width: 1319px) {
+  :root {
+    /* Adaptive/mobile: 48px controls + 12px vertical insets. */
+    --header-bar-height: 4.5rem;
+    --header-top-offset: 0px;
+    --header-page-offset: 4.5rem;
+  }
+
   body {
-    padding-top: var(--header-bar-height);  }
+    padding-top: var(--header-page-offset);  }
   .container {
     width: 70rem;  }
 }
@@ -469,7 +480,7 @@ input::-moz-placeholder {
 }
 @media (max-width: 1024px) {
   body {
-    padding-top: var(--header-bar-height);  }
+    padding-top: var(--header-page-offset);  }
   .container {
     width: 45rem;  }
 }
@@ -483,7 +494,7 @@ input::-moz-placeholder {
 }
 @media (max-width: 575px) {
   body {
-    padding-top: var(--header-bar-height);  }
+    padding-top: var(--header-page-offset);  }
 }
 @media (max-width: 350px) {
   .btn span {
