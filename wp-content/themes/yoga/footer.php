@@ -74,7 +74,7 @@ $footer_subscription_complete = $footer_current_user->exists()
 	<h2 class="home-footer-subscribe__title" id="home-footer-subscribe-title"><span class="home-footer-subscribe__mark">Подпишитесь,</span> чтобы <span class="home-footer-subscribe__always">всег<span class="home-footer-subscribe__star" aria-hidden="true"></span>да</span> быть в курсе <span class="home-footer-subscribe__green">новых материалов</span>,<br>акций и <span class="home-footer-subscribe__thumb" aria-hidden="true"></span> спецпредложений!</h2>
 	<form class="footer-subscribe home-footer-subscribe__form<?php echo $footer_subscription_complete ? ' is-subscribed' : ''; ?>" action="<?php echo esc_url(home_url('/')); ?>" method="post"<?php echo $footer_subscription_complete ? ' aria-label="Подписка оформлена"' : ''; ?>>
 		<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
-		<div class="footer-subscribe__field"><input id="home-footer-subscribe-email" name="footer_email" type="email" placeholder="эл. почта" aria-label="E-mail"><button class="footer-subscribe__submit" type="submit" aria-label="Подписаться на новости"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-arrow-up-right'); ?>"></use></svg></button></div>
+		<div class="footer-subscribe__field"><input id="home-footer-subscribe-email" name="footer_email" type="email" placeholder="эл. почта" aria-label="E-mail"><button class="footer-subscribe__submit" type="submit" aria-label="Подписаться на новости"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-subscribe-arrow'); ?>"></use></svg></button></div>
 		<label class="footer-subscribe__agree"><input class="footer-subscribe__checkbox" type="checkbox" name="footer_subscribe_agree" checked><span>Я соглашаюсь на <a href="<?php echo esc_url(($footer_legal_links[3]['url'] ?? '') ?: $footer_privacy_url ?: home_url('/')); ?>">обработку персональных данных</a> и получение рассылок</span></label>
 		<div class="footer-subscribe__success" role="status" aria-live="polite">
 			<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/smile.png'); ?>" alt="">
@@ -118,6 +118,18 @@ $footer_subscription_complete = $footer_current_user->exists()
 							<p><?php echo esc_html($requisite_line); ?></p>
 						<?php endforeach; ?>
 					</div>
+					<ul class="footer__socials footer__socials_mobile" aria-label="<?php echo esc_attr__('Социальные сети', 'yoga'); ?>">
+						<?php foreach ($footer_socials as $social) : ?>
+							<?php if ($social['url'] === '') continue; ?>
+							<li>
+								<a class="footer__social" href="<?php echo esc_url($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($social['label']); ?>">
+									<svg aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $social['icon']); ?>"></use>
+									</svg>
+								</a>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 				</div>
 
 				<?php if (!$is_home_footer) : ?><form class="footer-subscribe<?php echo $footer_subscription_complete ? ' is-subscribed' : ''; ?>" action="<?php echo esc_url(home_url('/')); ?>" method="post"<?php echo $footer_subscription_complete ? ' aria-label="Подписка оформлена"' : ''; ?>>
@@ -130,7 +142,7 @@ $footer_subscription_complete = $footer_current_user->exists()
 							<input id="footer-subscribe-email" name="footer_email" type="email" placeholder="эл. почта">
 							<button class="footer-subscribe__submit" type="submit" aria-label="<?php echo esc_attr__('Подписаться на новости', 'yoga'); ?>">
 								<svg aria-hidden="true" focusable="false">
-									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-arrow-up-right'); ?>"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-subscribe-arrow'); ?>"></use>
 								</svg>
 							</button>
 						</div>

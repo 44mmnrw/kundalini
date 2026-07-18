@@ -289,6 +289,9 @@
     <path d="M7 17L17 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/>
     <path d="M9 7H17V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="round"/>
   </symbol>
+  <symbol id="footer-subscribe-arrow" viewBox="0 0 20 20" fill="none">
+    <path d="M17.1705 14.2199L16.8155 4.62173L7.37352 2.86116M16.8155 4.62173L3.18504 16.3781" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+  </symbol>
   <symbol id="footer-social-youtube" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="12" fill="var(--footer-social-bg)"/>
     <path d="M18.7073 8.53046C18.5459 7.92773 18.0722 7.45407 17.4695 7.29272C16.3782 7 12 7 12 7C12 7 7.62183 7 6.53045 7.29272C5.92773 7.45407 5.45407 7.92773 5.29272 8.53046C5 9.62183 5 11.9002 5 11.9002C5 11.9002 5 14.1786 5.29272 15.27C5.45407 15.8727 5.92773 16.3464 6.53045 16.5077C7.62183 16.8005 12 16.8005 12 16.8005C12 16.8005 16.3782 16.8005 17.4695 16.5077C18.0722 16.3464 18.5459 15.8727 18.7073 15.27C19 14.1786 19 11.9002 19 11.9002C19 11.9002 18.9988 9.62183 18.7073 8.53046Z" fill="var(--footer-social-icon)"/>
