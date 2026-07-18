@@ -689,7 +689,8 @@
     flex-direction: column;
     gap: 27px;
     width: 100vw;
-    height: 326px;
+    height: auto;
+    min-height: 326px;
     max-width: 100vw;
     padding: 25px 15px;
     transform: translateX(-50%) !important;
