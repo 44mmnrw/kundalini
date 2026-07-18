@@ -3979,18 +3979,20 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		var $btn = $(this);
 		var $wrap = $btn.closest('.lk-questions');
-		var $hiddenItems = $wrap.find('.lk-questions-item.hidden');
-		var label = $.trim($btn.find('span.active').text());
+		var $extraItems = $wrap.find('.lk-questions-item_extra');
+		var isExpanded = $btn.hasClass('is-expanded');
 
-		if (label === 'Показать еще') {
-			$hiddenItems.removeClass('hidden').css('display', 'none').slideDown(300);
+		if (!isExpanded) {
+			$extraItems.stop(true, true).removeClass('hidden').hide().slideDown(300);
+			$btn.addClass('is-expanded');
 			$btn.find('span').toggleClass('active');
 			return;
 		}
 
-		$hiddenItems.slideUp(300, function() {
+		$extraItems.stop(true, true).slideUp(300, function() {
 			$(this).addClass('hidden').removeAttr('style');
 		});
+		$btn.removeClass('is-expanded');
 		$btn.find('span').toggleClass('active');
 	});
 	

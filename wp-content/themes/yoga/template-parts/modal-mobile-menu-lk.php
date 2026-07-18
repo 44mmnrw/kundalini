@@ -14,8 +14,8 @@ $mobile_lk_tariff_label = is_array($mobile_lk_tariff) && !empty($mobile_lk_tarif
 $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array_fill_keys(array('library', 'tariffs', 'about', 'blog', 'contacts', 'faq'), home_url('/'));
 ?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
-		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
-			<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>" width="100%" height="100%"></use>
+		<svg class="modal-close__icon" viewBox="0 0 17 17" width="17" height="17" aria-hidden="true" focusable="false">
+			<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>" width="100%" height="100%"></use>
 		</svg>
 	</div>
 	<div class="mobile-menu-inner">

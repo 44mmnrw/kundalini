@@ -16,7 +16,7 @@ $img_uri = get_template_directory_uri() . '/assets/img';
 ?>
 <div class="modal-addnewcard" id="ytr-modal-bind-card" aria-hidden="true">
 	<button type="button" class="modal-close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
 	</button>
 	<div class="addnewcard-inner">
 		<h3><?php esc_html_e('Привязка новой карты', 'yoga'); ?></h3>

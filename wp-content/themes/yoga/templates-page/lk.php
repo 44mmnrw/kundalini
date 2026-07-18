@@ -23,7 +23,9 @@
 	$email_verified = function_exists('yoga_is_user_email_verified') && yoga_is_user_email_verified($user_id);
 	$user_timezone = get_user_meta($user_id, 'timezone', true);
 	$user_timezone = is_string($user_timezone) ? $user_timezone : '';
-	$timezone_options = timezone_identifiers_list();
+	$timezone_options = function_exists('yoga_get_russian_timezone_options')
+		? yoga_get_russian_timezone_options()
+		: array();
 	$requested_lk_section = function_exists('yoga_get_requested_lk_section') ? yoga_get_requested_lk_section() : '';
 	$initial_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_initial_lk_target() : '1';
 	$user_avatar_id = function_exists('yoga_get_user_avatar_id') ? yoga_get_user_avatar_id($user_id) : 0;
@@ -117,9 +119,9 @@
 												<div class="lk-timezone-select">
 													<select name="timezone" required>
 														<option value=""><?php esc_html_e('Не выбрано', 'yoga'); ?></option>
-														<?php foreach ($timezone_options as $timezone_option) : ?>
-															<option value="<?php echo esc_attr($timezone_option); ?>" <?php selected($user_timezone, $timezone_option); ?>>
-																<?php echo esc_html($timezone_option); ?>
+															<?php foreach ($timezone_options as $timezone_value => $timezone_label) : ?>
+																<option value="<?php echo esc_attr($timezone_value); ?>" <?php selected($user_timezone, $timezone_value); ?>>
+																	<?php echo esc_html($timezone_label); ?>
 															</option>
 														<?php endforeach; ?>
 													</select>
@@ -134,7 +136,7 @@
 											<div class="lk-form-item">
 												<h5>Текущий пароль</h5>
 												<div class="input-password">
-													<input type="password" class="input" name="current_password" placeholder="••••••••">
+												<input type="password" class="input" name="current_password">
 													<div class="input-password__btn input-password__btn_show active">
 														<svg aria-hidden="true" focusable="false">
 															<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-eye-open'); ?>"></use>

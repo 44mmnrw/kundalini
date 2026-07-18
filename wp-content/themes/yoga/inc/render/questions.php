@@ -10,8 +10,9 @@ function display_question_item(WP_Post $question, bool $hidden = false): void {
 	
 	$status_class = !empty($answers) ? '' : 'lk-questions-item_new';
 	$hidden_class = $hidden ? 'hidden' : '';
+	$extra_class = $hidden ? 'lk-questions-item_extra' : '';
 ?>
-    <div class="lk-questions-item <?php echo $status_class . ' ' . $hidden_class; ?>">
+    <div class="lk-questions-item <?php echo $status_class . ' ' . $hidden_class . ' ' . $extra_class; ?>">
         <div class="lk-question">
             <div class="lk-question__time">
                 <time><?php echo get_the_date('d.m.Y', $question_id); ?></time>
@@ -68,4 +69,3 @@ function yoga_render_user_questions_list(int $user_id): void {
 		echo '</div>';
 	}
 }
-

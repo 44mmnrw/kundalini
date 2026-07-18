@@ -1357,6 +1357,37 @@ function yoga_subscribe_handler() {
 	// Логируем запрос для отладки
 	// Проверяем nonce
 	// Обновление основных данных
+	function yoga_get_russian_timezone_options() {
+		return array(
+			'Europe/Kaliningrad' => 'Калининград (UTC+2)',
+			'Europe/Moscow' => 'Москва (UTC+3)',
+			'Europe/Kirov' => 'Киров (UTC+3)',
+			'Europe/Volgograd' => 'Волгоград (UTC+3)',
+			'Europe/Simferopol' => 'Симферополь (UTC+3)',
+			'Europe/Astrakhan' => 'Астрахань (UTC+4)',
+			'Europe/Samara' => 'Самара (UTC+4)',
+			'Europe/Ulyanovsk' => 'Ульяновск (UTC+4)',
+			'Europe/Saratov' => 'Саратов (UTC+4)',
+			'Asia/Yekaterinburg' => 'Екатеринбург (UTC+5)',
+			'Asia/Omsk' => 'Омск (UTC+6)',
+			'Asia/Novosibirsk' => 'Новосибирск (UTC+7)',
+			'Asia/Barnaul' => 'Барнаул (UTC+7)',
+			'Asia/Tomsk' => 'Томск (UTC+7)',
+			'Asia/Krasnoyarsk' => 'Красноярск (UTC+7)',
+			'Asia/Irkutsk' => 'Иркутск (UTC+8)',
+			'Asia/Chita' => 'Чита (UTC+9)',
+			'Asia/Yakutsk' => 'Якутск (UTC+9)',
+			'Asia/Khandyga' => 'Хандыга (UTC+9)',
+			'Asia/Vladivostok' => 'Владивосток (UTC+10)',
+			'Asia/Ust-Nera' => 'Усть-Нера (UTC+10)',
+			'Asia/Magadan' => 'Магадан (UTC+11)',
+			'Asia/Sakhalin' => 'Сахалин (UTC+11)',
+			'Asia/Srednekolymsk' => 'Среднеколымск (UTC+11)',
+			'Asia/Kamchatka' => 'Камчатка (UTC+12)',
+			'Asia/Anadyr' => 'Анадырь (UTC+12)',
+		);
+	}
+
 	function yoga_update_profile_ajax() {
 		// Обновление метаполей
 		// Обработка смены пароля
@@ -1409,7 +1440,7 @@ function yoga_subscribe_handler() {
 
 			if (isset($_POST['timezone'])) {
 				$timezone = sanitize_text_field(wp_unslash($_POST['timezone']));
-				if ($timezone !== '' && in_array($timezone, timezone_identifiers_list(), true)) {
+				if ($timezone !== '' && array_key_exists($timezone, yoga_get_russian_timezone_options())) {
 					update_user_meta($user_id, 'timezone', $timezone);
 				} else {
 					delete_user_meta($user_id, 'timezone');
