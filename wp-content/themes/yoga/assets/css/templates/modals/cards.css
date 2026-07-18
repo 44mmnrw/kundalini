@@ -548,6 +548,17 @@
   border-color: #383838;
 }
 
+/* Не даём браузеру подменять фон сохранённых значений автозаполнения. */
+#ytr-modal-bind-card .input:-webkit-autofill,
+#ytr-modal-bind-card .input:-webkit-autofill:hover,
+#ytr-modal-bind-card .input:-webkit-autofill:focus,
+#ytr-modal-bind-card .input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-green) inset;
+  box-shadow: 0 0 0 1000px var(--color-green) inset;
+  -webkit-text-fill-color: var(--color-black);
+  caret-color: var(--color-black);
+}
+
 /* Figma 2113:23352 — disabled pill button. */
 #ytr-modal-bind-card .ytr-bind-card-submit-native {
   display: none !important;

@@ -216,6 +216,11 @@ header > .container > .row > .header-content {
   color: var(--color-violet);
 }
 
+.main-menu ul li > .ref:hover,
+.main-menu ul li > .ref:focus-visible {
+  color: var(--color-violet);
+}
+
 .header-lk {
   display: flex;
   align-items: center;
