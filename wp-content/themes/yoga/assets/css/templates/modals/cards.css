@@ -894,6 +894,54 @@
   }
 }
 
+/* Figma 2331:23285 — mobile card-deletion success state. */
+@media (max-width: 575px) {
+  #ytr-modal-cancel-subscription-success.modal-default_cardsucces,
+  #ytr-modal-cancel-subscription-success.modal-default_cardsucces.active {
+    display: flex;
+    width: 100vw;
+    height: 14.9375rem;
+    max-width: 100vw;
+    padding: 4.0625rem 0.9375rem 3.4375rem;
+    border-radius: 1.875rem;
+    box-sizing: border-box;
+  }
+
+  #ytr-modal-cancel-subscription-success .delcomm {
+    position: static;
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    padding: 0;
+  }
+
+  #ytr-modal-cancel-subscription-success .delcomm__succes {
+    position: static;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0;
+    transform: none;
+  }
+
+  #ytr-modal-cancel-subscription-success .delcomm__succes::before {
+    position: static;
+    width: 4.8125rem;
+    height: 4.8125rem;
+    flex: 0 0 4.8125rem;
+    transform: none;
+  }
+
+  #ytr-modal-cancel-subscription-success .delcomm__succes b {
+    width: 100%;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+}
+
 /* Figma 2331:23220 — mobile card-deletion confirmation. */
 @media (max-width: 575px) {
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel,
