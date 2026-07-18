@@ -1774,10 +1774,124 @@ jQuery(document).ready(function($) {
 	})();
 	
 	
-	$('.modal-call_logout').click(function () {
+	(function initLkUnsavedChangesGuard() {
+		var $profileForm = $('#profile-form');
+		if (!$profileForm.length) {
+			return;
+		}
+
+		var initialState = '';
+
+		function getProfileState() {
+			return $profileForm.find('input, select, textarea').map(function () {
+				var $field = $(this);
+				var type = String($field.attr('type') || '').toLowerCase();
+				var value;
+
+				if (type === 'file') {
+					var file = this.files && this.files[0];
+					value = file ? [file.name, file.size, file.lastModified].join(':') : '';
+				} else if (type === 'checkbox' || type === 'radio') {
+					value = this.checked ? '1' : '0';
+				} else {
+					value = $field.val();
+				}
+
+				return String($field.attr('name') || '') + '=' + String(value == null ? '' : value);
+			}).get().join('\u001e');
+		}
+
+		function updateDirtyState() {
+			window.yogaLkHasUnsavedChanges = window.yogaLkProfileHasUnsavedChanges();
+		}
+
+		window.yogaLkProfileHasUnsavedChanges = function () {
+			return getProfileState() !== initialState;
+		};
+
+		window.yogaMarkLkProfileClean = function () {
+			initialState = getProfileState();
+			window.yogaLkHasUnsavedChanges = false;
+		};
+
+		$profileForm.on('input change keyup', 'input, select, textarea', updateDirtyState);
+		window.yogaMarkLkProfileClean();
+	})();
+
+	var pendingLkNavigationUrl = '';
+
+	function showLkUnsavedChangesModal() {
+		$('.modal-default_logout').removeClass('active');
+		$('.modal-mobile-menu-lk').removeClass('active');
+		$('.overlay').addClass('active');
+		$('#lk-unsaved-changes-modal').addClass('active').attr('aria-hidden', 'false');
+		$('body').addClass('body-fixed');
+	}
+
+	function closeLkUnsavedChangesModal() {
+		$('#lk-unsaved-changes-modal').removeClass('active').attr('aria-hidden', 'true');
+		$('.overlay').removeClass('active');
+		$('body').removeClass('body-fixed');
+		pendingLkNavigationUrl = '';
+	}
+
+	$(document).on('click', '.lk-unsaved-changes-modal__cancel', function () {
+		closeLkUnsavedChangesModal();
+	});
+
+	$(document).on('click', '.lk-unsaved-changes-modal__leave', function () {
+		if (pendingLkNavigationUrl) {
+			window.location.href = pendingLkNavigationUrl;
+		}
+	});
+
+	$(document).on('click', 'a[href]', function (event) {
+		if (event.isDefaultPrevented() || event.which > 1 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+			return;
+		}
+
+		if (typeof window.yogaLkProfileHasUnsavedChanges !== 'function' || !window.yogaLkProfileHasUnsavedChanges()) {
+			return;
+		}
+
+		var $link = $(this);
+		var href = String($link.attr('href') || '').trim();
+		if (!href || href.charAt(0) === '#' || /^(?:javascript:|mailto:|tel:)/i.test(href) || $link.attr('target') === '_blank' || $link.is('[download]')) {
+			return;
+		}
+
+		var destination;
+		try {
+			destination = new URL(href, window.location.href);
+		} catch (ignore) {
+			return;
+		}
+
+		if (destination.pathname === window.location.pathname && destination.search === window.location.search) {
+			return;
+		}
+
+		event.preventDefault();
+		pendingLkNavigationUrl = destination.href;
+		showLkUnsavedChangesModal();
+	});
+
+	$(document).on('click', '.modal-call_logout', function (event) {
+		event.preventDefault();
 		$('.modal-mobile-menu-lk').removeClass('active');
 		$('.body_lk .burger').removeClass('active');
 		$('.body_lk .header').removeClass('active');
+
+		var hasUnsavedChanges = typeof window.yogaLkProfileHasUnsavedChanges === 'function'
+			? window.yogaLkProfileHasUnsavedChanges()
+			: Boolean(window.yogaLkHasUnsavedChanges);
+
+		if (hasUnsavedChanges) {
+			pendingLkNavigationUrl = $('.modal-default_logout .btn_dark').first().attr('href') || '';
+			showLkUnsavedChangesModal();
+			return;
+		}
+
 		$('.overlay').addClass('active');
 		$('.modal-default_logout').addClass('active');
 		$('.body').addClass('body-fixed');
@@ -3542,6 +3656,9 @@ jQuery(document).ready(function($) {
 			dataType: 'json',
 			success: function(response) {
 				if (response.success) {
+					if (typeof window.yogaMarkLkProfileClean === 'function') {
+						window.yogaMarkLkProfileClean();
+					}
 					// Если загружен аватар — обновляем страницу (как принято)
 					if (response.data && response.data.avatar_url) {
 						location.reload();

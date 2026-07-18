@@ -33,7 +33,7 @@
 /* Заголовок под крошками: глобальный h2 из specification.css (# по ID перебивает margin/size/center) */
 #section-ways :is(h1, h2).ways-heading {
   box-sizing: border-box;
-  margin-top: 2.125rem;
+  margin-top: 1.875rem;
   margin-bottom: 0;
   padding: 0;
   width: 100%;

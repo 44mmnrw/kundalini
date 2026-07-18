@@ -16,6 +16,142 @@
 .modal-default.modal-default_logout {
   padding-bottom: 2.8125rem;}
 
+/* Unsaved LK profile changes — Figma 2220:20972. */
+#lk-unsaved-changes-modal.modal-default,
+#lk-unsaved-changes-modal.modal-default.active {
+  width: 28.5625rem;
+  height: 19.75rem;
+  max-width: calc(100vw - 1.875rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: var(--color-green) !important;
+}
+
+#lk-unsaved-changes-modal .modal-close {
+  display: grid;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-black);
+  cursor: pointer;
+}
+
+#lk-unsaved-changes-modal .modal-close svg {
+  display: block;
+  width: 1.0625rem;
+  height: 1.0625rem;
+}
+
+.lk-unsaved-changes-modal__content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.6875rem;
+  padding: 4.0625rem 2.1875rem 3.4375rem;
+}
+
+.lk-unsaved-changes-modal__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9375rem;
+}
+
+#lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy h3,
+#lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy p {
+  width: 100%;
+  margin: 0;
+  color: var(--color-black);
+  text-align: left;
+}
+
+#lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy h3 {
+  font: 700 1.75rem/1.1 "Mulish-Bold", sans-serif;
+}
+
+#lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy p {
+  font: 400 1rem/normal "Mulish-Regular", sans-serif;
+}
+
+.lk-unsaved-changes-modal__actions {
+  display: flex;
+  width: 100%;
+  gap: 1.25rem;
+}
+
+.lk-unsaved-changes-modal__actions > * {
+  display: flex;
+  flex: 1 1 0;
+  height: 3.25rem;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.9375rem;
+  border-radius: 9.375rem;
+  font: 500 1rem/normal "Mulish-Medium", sans-serif;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.lk-unsaved-changes-modal__leave {
+  border: 1px solid var(--color-black);
+  background: transparent;
+  color: var(--color-black);
+}
+
+.lk-unsaved-changes-modal__actions .lk-unsaved-changes-modal__cancel {
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+@media (max-width: 575px) {
+  #lk-unsaved-changes-modal.modal-default,
+  #lk-unsaved-changes-modal.modal-default.active {
+    width: 20rem;
+    height: 22.75rem;
+    min-height: 0;
+    max-width: calc(100vw - 1.875rem);
+  }
+
+  .lk-unsaved-changes-modal__content {
+    gap: 1.6875rem;
+    padding: 4.0625rem 0.9375rem 3.4375rem;
+  }
+
+  #lk-unsaved-changes-modal .modal-close {
+    width: 2.25rem;
+    height: 2.25rem;
+    top: 0.9375rem;
+    right: 0.9375rem;
+  }
+
+  #lk-unsaved-changes-modal .modal-close svg {
+    width: 1.0625rem;
+    height: 1.0625rem;
+  }
+
+  #lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy h3 {
+    font-size: 1.375rem;
+  }
+
+  .lk-unsaved-changes-modal__actions {
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .lk-unsaved-changes-modal__actions > * {
+    flex: 0 0 3.25rem;
+    width: 100%;
+  }
+}
+
 /* Подтверждение очистки корзины — Figma 2039:17911. */
 #yoga-cart-clear-modal.modal-default {
   width: 28.5625rem;

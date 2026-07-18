@@ -944,6 +944,11 @@
 
 /* Главная: более плотные секции (уменьшены отступы заголовков и паддинги секций) — с 1025 как остальной desktop */
 @media (min-width: 1025px) {
+  /* Figma 299:4303 / 35:415: верх баннера — Y=70px. */
+body.home {
+  padding-top: calc(4.375rem + var(--header-top-offset));
+}
+
   .home #section-main h2 {
     margin-top: 0;
   }
@@ -964,7 +969,7 @@
   }
 
   .home #section-main {
-    padding-top: 1rem;
+    padding-top: 0;
     padding-bottom: 2.25rem;
   }
 
