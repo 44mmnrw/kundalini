@@ -130,11 +130,6 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#vk-login-logo'); ?>"></use>
                     </svg>
                 </a>
-                <div class="loggin-back loggin-back_mob loggin-back_grey">
-                    <span class="loggin-back__link ml-sl-switch" data-target="1">
-                        Войти
-                    </span>
-                </div>
             </form>
         </div>
         <div class="modal-login-inner__slide" data-target="3">
