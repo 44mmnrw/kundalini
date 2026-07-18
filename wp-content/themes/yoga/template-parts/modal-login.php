@@ -34,7 +34,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
             <form action="#" class="form yoga-form-login" method="post">
                 <?php wp_nonce_field('yoga_login_nonce', 'yoga_login_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_email_login">
-                <input type="email" name="log" class="input" required placeholder="Электронная почта">
+                <input type="email" name="log" class="input" required placeholder="эл. почта">
                 <p class="yoga-form-login-message" role="alert" aria-live="polite"></p>
                 <div class="input-password">
                     <input type="password" name="pwd" class="input" required placeholder="Пароль">
@@ -83,7 +83,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 <?php wp_nonce_field('yoga_register_nonce', 'yoga_register_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_email_register">
                 <input type="text" name="user_name" class="input" required placeholder="Ваше имя">
-                <input type="email" name="user_email" class="input" required placeholder="Электронная почта">
+                <input type="email" name="user_email" class="input" required placeholder="эл. почта">
                 <div class="input-password">
                     <input type="password" name="user_pass" class="input" required placeholder="Пароль">
                         <div class="input-password__btn input-password__btn_show active">
@@ -144,7 +144,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
             <form action="#" class="form form_recovery yoga-form-recovery" method="post">
                 <?php wp_nonce_field('yoga_recovery_nonce', 'yoga_recovery_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_lost_password">
-                <input type="email" name="user_login" class="input" required placeholder="Электронная почта">
+                <input type="email" name="user_login" class="input" required placeholder="эл. почта">
                 <?php if ($yoga_smart_captcha) : ?>
                 <div class="login-smartcaptcha yoga-smart-captcha-mount smart-captcha" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
                 <?php endif; ?>
