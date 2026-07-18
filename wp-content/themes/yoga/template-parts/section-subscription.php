@@ -29,7 +29,7 @@
 			<form action="#" class="form subscription-form" method="post">
 			<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
 				<div class="subscription-form-field">
-					<input type="email" name="subscription_email" class="input" maxlength="30" placeholder="<?php echo esc_attr(get_field('subscription_placeholder', 'option') ?: 'Ваша эл. почта'); ?>" required>
+					<input type="email" name="subscription_email" class="input" maxlength="30" placeholder="эл. почта" required>
 
 					<button type="submit" id="subscription-btn" style="display: none;"></button>
 

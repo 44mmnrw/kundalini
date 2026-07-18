@@ -95,7 +95,7 @@
 										<div class="lk-form-row">
 											<div class="lk-form-item lk-form-item_email">
 												<h5>E-mail<span>*</span></h5>
-												<input type="email" class="input" required placeholder="E-mail" name="email" value="<?php echo esc_attr($current_user->user_email); ?>">
+												<input type="email" class="input" required placeholder="эл. почта" name="email" value="<?php echo esc_attr($current_user->user_email); ?>">
 								<div class="lk-email-confirmation<?php echo $email_verified ? ' is-verified' : ''; ?>">
 									<p><?php echo $email_verified ? 'E-mail подтверждён' : 'E-mail не подтверждён'; ?></p>
 									<?php if (!$email_verified) : ?>

@@ -1089,6 +1089,20 @@ header > .container > .row > .header-content {
     display: none;
   }
 
+  .login-icon.login-icon_logged:has(.login-icon__avatar) {
+    height: 2.5rem;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+
+  .login-icon.login-icon_logged:has(.login-icon__avatar) .login-icon__avatar {
+    display: block;
+  }
+
+  .login-icon.login-icon_logged:has(.login-icon__avatar) .login-icon__mobile-symbol {
+    display: none;
+  }
+
   .login-icon .login-icon__mobile-symbol,
   .login-icon.login-icon_logged .login-icon__mobile-symbol {
     display: block;

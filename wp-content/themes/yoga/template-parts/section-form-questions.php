@@ -48,7 +48,7 @@ $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.s
                                    placeholder="<?php echo esc_attr(get_field('contacts_placeholder_name', 'option') ?: 'Имя'); ?>">
 
                             <input type="email" name="contacts_email" class="input" required value="<?php echo esc_attr($contacts_prefill_email); ?>"
-                                   placeholder="<?php echo esc_attr(get_field('contacts_placeholder_email', 'option') ?: 'E-mail'); ?>">
+                                   placeholder="эл. почта">
 
                         </div>
 

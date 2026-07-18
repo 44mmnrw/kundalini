@@ -977,7 +977,7 @@ label.checkbox {
 
 /* Figma 1694:12743 — desktop login slide. */
 @media (min-width: 576px) {
-  .modal-login.active .modal-login-inner {
+  .modal-login.active:not(.modal-login--success) .modal-login-inner {
     width: 31.6875rem;
     padding: 6rem 3.34375rem 2rem;
     box-sizing: border-box;
