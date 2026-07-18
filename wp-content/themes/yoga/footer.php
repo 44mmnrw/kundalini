@@ -47,8 +47,8 @@ $footer_socials = array(
 	array('label' => 'YouTube', 'url' => $footer_option('youtube_link'), 'icon' => 'footer-social-youtube'),
 	array('label' => 'Telegram', 'url' => $footer_option('telegram_link'), 'icon' => 'footer-social-telegram'),
 	array('label' => 'Rutube', 'url' => $footer_option('rutube_link'), 'icon' => 'footer-social-rutube'),
-	array('label' => 'Дзен', 'url' => $footer_option('yandex_zen_link') ?: $footer_option('zen_link'), 'icon' => 'footer-social-zen'),
-	array('label' => 'GemSpace', 'url' => $footer_option('gemspace_link'), 'icon' => 'footer-social-gemspace'),
+	array('label' => 'Дзен', 'url' => $footer_option('dzen_link'), 'icon' => 'footer-social-zen'),
+	array('label' => 'GemSpace', 'url' => $footer_option('gem_link'), 'icon' => 'footer-social-gemspace'),
 	array('label' => 'VK', 'url' => $footer_option('vk_link') ?: $footer_option('vkontakte_link'), 'icon' => 'footer-social-vk'),
 );
 

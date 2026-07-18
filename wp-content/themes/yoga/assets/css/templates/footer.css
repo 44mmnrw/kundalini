@@ -271,21 +271,23 @@
 }
 
 .footer__social {
+  --footer-social-bg: var(--color-input-stroke-dark-bg, #383838);
+  --footer-social-icon: var(--color-white);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  background: rgba(246, 246, 249, 0.22);
-  color: rgba(246, 246, 249, 0.9);
+  background: var(--footer-social-bg);
+  color: var(--footer-social-icon);
   text-decoration: none;
   transition: background var(--transition-base), color var(--transition-base), opacity var(--transition-base);
 }
 
 .footer__social:hover {
-  background: var(--color-green);
-  color: var(--color-black);
+  --footer-social-bg: var(--color-green);
+  --footer-social-icon: var(--color-black);
 }
 
 .footer__social svg {
