@@ -719,12 +719,6 @@
 									</div>
 									<h2>Способы оплаты</h2>
 									<div class="lk-settings-part lk-settings-part_cards">
-										<p class="lk-settings-item__col-text" style="margin-bottom: 1rem;">
-											Полные данные карты на сайте не хранятся. Карту можно привязать через ЮKassa кнопкой «Добавить карту» или она сохранится автоматически при оплате тарифа с галочкой сохранения способа оплаты.
-											<?php if ($current_subscription) : ?>
-												<br>Чтобы отключить автопродление, удалите карту с пометкой «Для автопродления». Доступ сохранится до <?php echo esc_html(date('d.m.Y', strtotime($current_subscription['end_date']))); ?>.
-											<?php endif; ?>
-										</p>
 										<?php
 											$saved_cards = get_user_saved_cards();
 											$ytr_auto_renew = class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id);
@@ -754,9 +748,6 @@
 														</div>
 														<p class="lk-settings-item__col-text">
 															<?php echo esc_html($card['brand'] . ' •••• ' . $card['last4']); ?>
-															<?php if ($is_auto_card) : ?>
-																<br><small>Для автопродления</small>
-															<?php endif; ?>
 														</p>
 													</div>
 													<div class="lk-settings-item__col">

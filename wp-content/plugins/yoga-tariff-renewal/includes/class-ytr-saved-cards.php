@@ -297,14 +297,8 @@ final class YTR_Saved_Cards {
 		}
 
 		$cards = array_values(array_filter($cards, 'is_array'));
-		if (count($cards) <= 1) {
-			return $cards;
-		}
 
-		$primary = self::pick_primary_card($cards);
-		update_user_meta($user_id, self::META_KEY, array($primary));
-
-		return array($primary);
+		return $cards;
 	}
 
 	public static function user_has_card_from_order(int $user_id, int $order_id): bool {
@@ -424,7 +418,17 @@ final class YTR_Saved_Cards {
 		self::pause_historical_sync($user_id);
 		self::append_removed_card($user_id, $removed);
 
-		if (class_exists('YTR_User')) {
+		$auto_payment_method_id = class_exists('YTR_User')
+			? YTR_User::get_payment_method_id($user_id)
+			: '';
+		$removed_payment_method_id = (string) ($removed['payment_method_id'] ?? '');
+		$removed_id = (string) ($removed['id'] ?? '');
+
+		if (
+			class_exists('YTR_User')
+			&& $auto_payment_method_id !== ''
+			&& ($auto_payment_method_id === $removed_payment_method_id || $auto_payment_method_id === $removed_id)
+		) {
 			YTR_User::disable_auto_renew($user_id, true);
 		}
 
@@ -463,18 +467,33 @@ final class YTR_Saved_Cards {
 			}
 		}
 
-		$cards    = self::get_cards($user_id);
-		$existing = isset($cards[0]) && is_array($cards[0]) ? $cards[0] : null;
+		$cards = self::get_cards($user_id);
+		$incoming_payment_method_id = (string) ($card_data['payment_method_id'] ?? '');
+		$updated = false;
 
-		if ($existing !== null) {
-			if (self::cards_match_identity($existing, $card_data)) {
-				$card_data = self::merge_card_records($existing, $card_data);
-			} elseif (!self::is_newer_card($card_data, $existing)) {
-				return;
+		foreach ($cards as $index => $existing) {
+			if (!is_array($existing)) {
+				continue;
 			}
+
+			$existing_payment_method_id = (string) ($existing['payment_method_id'] ?? '');
+			$is_same_payment_method = $incoming_payment_method_id !== ''
+				&& $incoming_payment_method_id === $existing_payment_method_id;
+
+			if (!$is_same_payment_method && !self::cards_match_identity($existing, $card_data)) {
+				continue;
+			}
+
+			$cards[$index] = self::merge_card_records($existing, $card_data);
+			$updated = true;
+			break;
 		}
 
-		update_user_meta($user_id, self::META_KEY, array($card_data));
+		if (!$updated) {
+			$cards[] = $card_data;
+		}
+
+		update_user_meta($user_id, self::META_KEY, array_values($cards));
 
 		if (self::order_can_resume_card_sync(wc_get_order((int) ($card_data['order_id'] ?? 0)))) {
 			self::clear_sync_pause($user_id);
