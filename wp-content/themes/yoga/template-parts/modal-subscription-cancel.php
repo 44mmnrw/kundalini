@@ -66,7 +66,7 @@ $brand_icons = array(
 
 <div class="modal modal-default modal-default_carddel" id="ytr-modal-cancel-subscription-confirm" aria-hidden="true">
 	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
 	</div>
 	<div class="delcomm" id="ytr-modal-cancel-delcomm">
 		<div class="delcomm__main">
@@ -86,7 +86,7 @@ $brand_icons = array(
 
 <div class="modal modal-default modal-default_cardsucces" id="ytr-modal-cancel-subscription-success" aria-hidden="true">
 	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
 	</div>
 	<div class="delcomm active">
 		<div class="delcomm__succes">
@@ -97,7 +97,7 @@ $brand_icons = array(
 
 <div class="modal modal-default modal-default_carddel" id="ytr-modal-unsubscribe" aria-hidden="true">
 	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
 	</div>
 	<div class="delcomm">
 		<div class="delcomm__main">
@@ -121,7 +121,7 @@ $brand_icons = array(
 
 <div class="modal modal-default modal-default_cardsucces" id="ytr-modal-unsubscribe-success" aria-hidden="true">
 	<div class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<img src="<?php echo esc_url($img_uri . '/modal-close-img.png'); ?>" alt="">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
 	</div>
 	<div class="delcomm active">
 		<div class="delcomm__succes">

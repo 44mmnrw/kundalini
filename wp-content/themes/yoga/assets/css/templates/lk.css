@@ -785,6 +785,34 @@
   align-items: flex-start;
 }
 
+.lk-form-row_passwords .input-password__btn {
+  color: var(--Line_icon, #CCD2E3);
+  top: 50%;
+  right: 1.875rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  transform: translateY(-50%);
+}
+
+.lk-form-row_passwords .input-password__btn svg {
+  position: absolute;
+  display: block;
+  top: 50%;
+  left: 50%;
+  max-width: none;
+  transform: translate(-50%, -50%);
+}
+
+.lk-form-row_passwords .input-password__btn.input-password__btn_show svg {
+  width: 20.029px;
+  height: 13.656px;
+}
+
+.lk-form-row_passwords .input-password__btn.input-password__btn_hide svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
 .input-password {
   width: 100%;
   position: relative;

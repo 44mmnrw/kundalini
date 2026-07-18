@@ -173,7 +173,8 @@
   transform: rotate(45deg);
 }
 
-.modal-close img {
+.modal-close img,
+.modal-close > svg {
   display: block;
   height: 1rem;  width: auto;
   max-width: 100%;
@@ -233,9 +234,9 @@
 
 .email-confirmation-modal h3 {
   margin: 0 0 0.9375rem;
-  font-family: Mulish, sans-serif;
+  font-family: "Mulish-Bold", sans-serif;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: normal;
   line-height: 1.1;
 }
 
@@ -256,7 +257,7 @@
 
 .email-confirmation-modal__form label {
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
   line-height: normal;
 }
@@ -271,7 +272,10 @@
   outline: 0;
   background: #f6f6f9;
   color: #1f1f1f;
-  font: 500 1.125rem/1 Mulish, sans-serif;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 1.125rem;
+  font-weight: normal;
+  line-height: 1;
   letter-spacing: 0.3em;
   text-align: center;
 }
@@ -282,12 +286,15 @@
 
 .email-confirmation-modal__resend {
   display: block;
-  margin: 0.375rem auto 0;
+  margin: 0.625rem auto 0;
   padding: 0;
   border: 0;
   background: transparent;
   color: #9153e1;
-  font: 400 0.875rem/normal Mulish, sans-serif;
+  font-family: "Mulish-Regular", sans-serif;
+  font-size: 0.875rem;
+  font-weight: normal;
+  line-height: normal;
   text-decoration: underline dotted;
   text-underline-offset: 0.12em;
   cursor: pointer;
@@ -299,21 +306,23 @@
 }
 
 .email-confirmation-modal__message {
-  height: 1.125rem;
-  margin: 0.25rem 0 0;
+  height: 0;
+  margin: 0;
   color: #42855b;
   font-size: 0.75rem;
   text-align: center;
 }
 
 .email-confirmation-modal__message.is-error {
+  height: 1.125rem;
+  margin-top: 0.25rem;
   color: #b42318;
 }
 
 .email-confirmation-modal__buttons {
   display: flex;
   gap: 1.25rem;
-  margin-top: 0.6875rem;
+  margin-top: 1.4375rem;
 }
 
 .email-confirmation-modal__buttons button {
@@ -322,7 +331,10 @@
   padding: 0 0.9375rem;
   border: 1px solid #1f1f1f;
   border-radius: 9.375rem;
-  font: 500 1rem/1 Mulish, sans-serif;
+  font-family: "Mulish-Medium", sans-serif;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1;
   cursor: pointer;
 }
 
@@ -665,14 +677,18 @@ body.email-confirmation-is-open {
   justify-content: center;
   width: 3.1875rem;
   height: 3.1875rem;
-  padding: 0 0 0.1875rem;
+  padding: 0;
   border: 0;
   border-radius: 50%;
   background: var(--color-green);
-  color: #1f1f1f;
-  font: 300 2rem/1 Mulish, sans-serif;
   cursor: pointer;
   transition: transform 0.2s ease;
+}
+
+.email-confirmation-modal__close svg {
+  display: block;
+  width: 1.0625rem;
+  height: 1.0625rem;
 }
 
 .email-confirmation-modal__close:hover {

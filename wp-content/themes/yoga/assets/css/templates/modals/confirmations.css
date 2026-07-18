@@ -31,8 +31,7 @@
 #yoga-subscription-success-modal,
 #yoga-subscription-success-modal.active{width:28.5625rem;height:19.6875rem;max-width:calc(100vw - 1.875rem);padding:0;overflow:hidden;border-radius:1.875rem;background:#e8ff57!important}
 #yoga-subscription-success-modal .yoga-subscription-success-modal__close{position:absolute;top:.9375rem;right:.9375rem;width:3.1875rem;height:3.1875rem;padding:0;border:0;border-radius:50%;background:#fff;cursor:pointer}
-#yoga-subscription-success-modal .yoga-subscription-success-modal__close:before,#yoga-subscription-success-modal .yoga-subscription-success-modal__close:after{content:"";position:absolute;top:50%;left:50%;width:1.25rem;height:1px;background:#1f1f1f}
-#yoga-subscription-success-modal .yoga-subscription-success-modal__close:before{transform:translate(-50%,-50%) rotate(45deg)}#yoga-subscription-success-modal .yoga-subscription-success-modal__close:after{transform:translate(-50%,-50%) rotate(-45deg)}
+#yoga-subscription-success-modal .yoga-subscription-success-modal__close svg{display:block;width:1.0625rem;height:1.0625rem}
 .yoga-subscription-success-modal__content{position:absolute;top:calc(50% + .0625rem);left:50%;display:flex;width:20.125rem;flex-direction:column;align-items:center;gap:1.25rem;transform:translate(-50%,-50%);text-align:center}
 .yoga-subscription-success-modal__icon{display:block;width:4.8125rem;height:4.8125rem}.yoga-subscription-success-modal__content h3{margin:0;color:#1f1f1f;font:700 1.25rem/1.1 "Mulish-Bold",sans-serif}
 @media(max-width:575px){#yoga-subscription-success-modal,#yoga-subscription-success-modal.active{width:20rem;height:17.5rem}.yoga-subscription-success-modal__content{width:calc(100% - 2rem)}}

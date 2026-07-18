@@ -24,6 +24,6 @@ $theme_uri = get_template_directory_uri();
         </div>
     </div>
     <div class="modal-close">
-        <img src="<?php echo esc_url($theme_uri . '/assets/img/modal-close-img.png'); ?>" alt="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#email-confirmation-close'); ?>"></use></svg>
     </div>
 </div>
