@@ -303,9 +303,6 @@
 
 			removeSavedCard(pending.cardId, pending.$cardItem, function (response) {
 				$btn.prop('disabled', false);
-				var notice =
-					response.data && response.data.message ? response.data.message : 'Карта удалена';
-				$('#ytr-modal-cancel-subscription-success-text').text(notice);
 				$('#ytr-modal-cancel-subscription-confirm').removeClass('active').attr('aria-hidden', 'true');
 				pendingCardDelete = null;
 				openModal($('#ytr-modal-cancel-subscription-success'));

@@ -90,7 +90,10 @@ $brand_icons = array(
 	</div>
 	<div class="delcomm active">
 		<div class="delcomm__succes">
-			<b id="ytr-modal-cancel-subscription-success-text"><?php esc_html_e('Карта удалена', 'yoga'); ?></b>
+			<span class="delcomm__succes-icon" aria-hidden="true">
+				<svg focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use></svg>
+			</span>
+			<b id="ytr-modal-cancel-subscription-success-text"><?php esc_html_e('Карта удалена. Автопродление отключено. Доступ сохранится до конца оплаченного периода.', 'yoga'); ?></b>
 		</div>
 	</div>
 </div>

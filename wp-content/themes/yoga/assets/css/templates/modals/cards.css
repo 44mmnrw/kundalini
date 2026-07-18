@@ -318,6 +318,43 @@
   line-height: 1.1;
 }
 
+#ytr-modal-cancel-subscription-success .delcomm__succes-icon {
+  display: flex;
+  width: 4.8125rem;
+  height: 4.8125rem;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 4.8125rem;
+  border-radius: 50%;
+  background: #1f1f1f;
+  color: #e8ff57;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm__succes-icon svg {
+  display: block;
+  width: 3.125rem;
+  height: 3.125rem;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm__succes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding-top: 0;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm__succes::before {
+  display: none;
+}
+
+#ytr-modal-cancel-subscription-success .delcomm__succes b {
+  display: block;
+  font-size: 1.25rem;
+  color: #1f1f1f;
+  line-height: 1.1;
+}
+
 .modal-default_carddel .delcomm {
   padding-right: 3.4375rem;}
 .modal-default_carddel .delcomm .btn_dark {
@@ -900,7 +937,8 @@
   #ytr-modal-cancel-subscription-success.modal-default_cardsucces.active {
     display: flex;
     width: 100vw;
-    height: 14.9375rem;
+    height: auto;
+    min-height: 14.9375rem;
     max-width: 100vw;
     padding: 4.0625rem 0.9375rem 3.4375rem;
     border-radius: 1.875rem;
@@ -928,11 +966,25 @@
   }
 
   #ytr-modal-cancel-subscription-success .delcomm__succes::before {
-    position: static;
+    display: none;
+  }
+
+  #ytr-modal-cancel-subscription-success .delcomm__succes-icon {
+    display: flex;
     width: 4.8125rem;
     height: 4.8125rem;
     flex: 0 0 4.8125rem;
-    transform: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #1f1f1f;
+    color: #e8ff57;
+  }
+
+  #ytr-modal-cancel-subscription-success .delcomm__succes-icon svg {
+    display: block;
+    width: 3.125rem;
+    height: 3.125rem;
   }
 
   #ytr-modal-cancel-subscription-success .delcomm__succes b {
