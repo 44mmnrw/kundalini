@@ -105,7 +105,6 @@ final class YTR_Plugin {
 		}
 
 		YTR_User::enable_auto_renew($user_id, $product_id, $payment_method_id);
-		YTR_Saved_Cards::clear_sync_pause($user_id);
 		YTR_Saved_Cards::sync_from_order($order);
 		$order->add_order_note(__('Автопродление тарифа включено.', 'yoga-tariff-renewal'));
 	}

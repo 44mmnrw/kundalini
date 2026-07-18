@@ -115,7 +115,6 @@ final class YTR_LK {
 			YTR_User::enable_auto_renew($user_id, $product_id, $payment_method_id);
 
 			if (class_exists('YTR_Saved_Cards')) {
-				YTR_Saved_Cards::clear_sync_pause($user_id);
 				YTR_Saved_Cards::sync_from_order($order);
 			}
 
