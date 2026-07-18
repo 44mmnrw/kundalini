@@ -213,10 +213,6 @@ final class YTR_Card_Binding {
 		$order->update_meta_data('_ytr_card_binding_done', 'yes');
 		$order->save();
 
-		if (class_exists('YTR_Saved_Cards') && ($card_synced || $payment_method_id !== '')) {
-			YTR_Saved_Cards::clear_sync_pause($user_id);
-		}
-
 		return true;
 	}
 

@@ -495,9 +495,6 @@ final class YTR_Saved_Cards {
 
 		update_user_meta($user_id, self::META_KEY, array_values($cards));
 
-		if (self::order_can_resume_card_sync(wc_get_order((int) ($card_data['order_id'] ?? 0)))) {
-			self::clear_sync_pause($user_id);
-		}
 	}
 
 	/**
