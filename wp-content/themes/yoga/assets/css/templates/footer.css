@@ -371,10 +371,11 @@
 }
 
 @media (max-width: 575px) {
-  .footer {
-    box-sizing: border-box;
-    min-height: 100vh;
+  body {
     min-height: 100dvh;
+  }
+
+  .footer {
     border-radius: 1.875rem 1.875rem 0 0;
     padding: 1.875rem 1.25rem 1.25rem;
   }
