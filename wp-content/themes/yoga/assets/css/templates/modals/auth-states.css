@@ -170,9 +170,7 @@
   }
 
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob {
-    display: flex;
-    margin-top: 0.625rem;
-    align-items: center;
+    display: none;
   }
 
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob .loggin-back__link {
