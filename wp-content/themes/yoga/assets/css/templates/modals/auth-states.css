@@ -99,7 +99,7 @@
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input-password,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .btn,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-form-links { width: 100%; margin: 0; }
-  .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border-color: #383838; border-radius: 6.25rem; font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border: 1px solid var(--input_stroke_dark_bg, #383838); border-radius: 100px; font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login .btn { height: 3.8125rem; margin: 0; line-height: 3.8125rem; }
   .modal-login-inner__slide[data-target="1"].active .login-form-links { display: flex; gap: 1.875rem; justify-content: center; margin-top: 0.625rem; }
   .modal-login-inner__slide[data-target="1"].active .login-form-links a,
@@ -156,8 +156,8 @@
     height: 3.8125rem;
     margin: 0;
     padding: 0 1.875rem;
-    border-color: #383838;
-    border-radius: 6.25rem;
+    border: 1px solid var(--input_stroke_dark_bg, #383838);
+    border-radius: 100px;
     font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif;
   }
 
@@ -261,8 +261,8 @@
     height: 3.8125rem;
     margin: 0;
     padding: 0 1.875rem;
-    border-color: #383838;
-    border-radius: 6.25rem;
+    border: 1px solid var(--input_stroke_dark_bg, #383838);
+    border-radius: 100px;
     font: 400 1.125rem/1.5 "Mulish-Regular", sans-serif;
   }
 
