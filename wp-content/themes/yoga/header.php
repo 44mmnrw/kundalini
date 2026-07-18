@@ -231,6 +231,9 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 							</div>
 							<?php else : ?>
 							<div class="header-rate-pill header-rate-pill_inactive header-rate-pill_guest modal-call_login" role="button" tabindex="0">
+								<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
+								</svg>
 								<span><?php echo esc_html($pill_label); ?></span>
 							</div>
 							<div class="header-lk__trailing">

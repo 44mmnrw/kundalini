@@ -33,7 +33,12 @@
   overflow: visible;
   transition: 0.4s ease;
 }
-.modal-login-inner .input, .addnewcard-inner .input {
+.modal-login-inner .input {
+  border: 1px solid var(--input_stroke_dark_bg, #383838);
+  border-radius: 100px;
+  color: var(--color-black);
+}
+.addnewcard-inner .input {
   border-color: var(--color-black);
   color: var(--color-black);
 }
@@ -455,16 +460,6 @@
     min-height: 0;
   }
 
-  .login-slide-switches_login {
-    justify-content: center;
-    text-align: center;
-  }
-
-  .modal-login-inner__slide .login-slide-switches_login h3 {
-    font-size: 2rem;
-    line-height: 1.1;
-  }
-
   .modal-login-inner__slide .yoga-form-login {
     display: flex;
     flex: 1 1 auto;
@@ -715,7 +710,7 @@ body.email-confirmation-is-open {
   position: relative;
   padding-top: 1.5625rem;}
 .modal-login-inner__slide .form.active .input {
-  border-color: var(--color-violet);
+  border-color: var(--input_stroke_dark_bg, #383838);
 }
 .modal-login-inner__slide .form.disabled .input {
   border-color: var(--color-pink);
@@ -786,8 +781,25 @@ body.email-confirmation-is-open {
 }
 
 .vkid-login-trigger__text {
-  text-decoration: underline;
-  text-underline-offset: 0.125rem;
+  position: relative;
+  text-decoration: none;
+}
+
+.vkid-login-trigger__text::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -0.1875rem;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  pointer-events: none;
+  transition: width 0.4s ease;
+}
+
+.vkid-login-trigger:hover .vkid-login-trigger__text::after {
+  width: 0;
 }
 
 .vkid-login-trigger__icon {
@@ -955,9 +967,57 @@ label.checkbox {
   width: 100%;
   justify-content: space-between;
 }
+.login-slide-switches_login {
+  justify-content: center;
+  text-align: center;
+}
 .login-slide-switches h3 {
   display: inline-block;
 }
+
+/* Figma 1694:12743 — desktop login slide. */
+@media (min-width: 576px) {
+  .modal-login.active .modal-login-inner {
+    width: 31.6875rem;
+    padding: 6rem 3.34375rem 2rem;
+    box-sizing: border-box;
+  }
+
+  .modal-login-inner__slide[data-target="1"].active {
+    display: flex;
+    width: 25rem;
+    min-width: 0;
+    height: 40.875rem;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .modal-login-inner__slide[data-target="1"].active .login-slide-switches_login {
+    display: flex;
+    flex: 0 0 2.2rem;
+    width: 100%;
+    height: 2.2rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-login-inner__slide[data-target="1"].active .login-slide-switches_login h3 {
+    margin: 0;
+    color: #1f1f1f;
+    font-family: "Mulish-Bold", sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login {
+    width: 100%;
+    margin-top: 2.5rem;
+    padding-top: 0;
+  }
+}
+
 .login-switch-link, .loggin-back__link {
   display: inline-block;
   position: relative;
@@ -969,19 +1029,31 @@ label.checkbox {
   font-weight: normal;
   cursor: pointer;
 }
-.login-switch-link::before, .loggin-back__link::before {
+/* Text actions in the auth modal use the same animated underline. */
+.modal-login-inner .login-form-links a,
+.modal-login-inner .login-switch-link,
+.modal-login-inner .loggin-back__link {
+  position: relative;
+  text-decoration: none;
+}
+.modal-login-inner .login-form-links a::after,
+.modal-login-inner .login-switch-link::after,
+.modal-login-inner .loggin-back__link::after {
   content: "";
-  display: inline-block;
   position: absolute;
-  left: 0px;
-  bottom: -1px;
+  right: 0;
+  bottom: -0.1875rem;
+  left: 0;
   width: 100%;
   height: 1px;
-  background: #646464;
-  transition: 0.4s ease;
+  background: currentColor;
+  pointer-events: none;
+  transition: width 0.4s ease;
 }
-.login-switch-link:hover::before, .loggin-back__link:hover::before {
-  width: 0%;
+.modal-login-inner .login-form-links a:hover::after,
+.modal-login-inner .login-switch-link:hover::after,
+.modal-login-inner .loggin-back__link:hover::after {
+  width: 0;
 }
 p.login-rules {
   display: block;
