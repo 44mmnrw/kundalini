@@ -1941,6 +1941,18 @@ function yoga_subscribe_handler() {
 		$order_history = array();
 		
 		foreach ($orders as $order) {
+			if ($order->get_meta('_ytr_card_binding') === 'yes') {
+				$order_history[] = array(
+					'id'           => $order->get_id(),
+					'date'         => $order->get_date_created()->format('Y-m-d H:i:s'),
+					'product_name' => __('Привязка карты', 'yoga'),
+					'total'        => $order->get_total(),
+					'status'       => $order->get_status(),
+				);
+
+				continue;
+			}
+
 			foreach ($order->get_items() as $item) {
 				$order_history[] = array(
                 'id' => $order->get_id(),

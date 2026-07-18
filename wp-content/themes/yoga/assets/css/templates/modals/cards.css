@@ -622,3 +622,137 @@
     min-width: 100% !important;
   }
 }
+
+/* Figma 620:16482 — мобильный предпросмотр и удаление сохранённой карты. */
+@media (max-width: 575px) {
+  #ytr-modal-cancel-subscription.modal-default,
+  #ytr-modal-cancel-subscription.modal-default.active {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    display: flex;
+    flex-direction: column;
+    gap: 27px;
+    width: 100vw;
+    height: 326px;
+    max-width: 100vw;
+    padding: 25px 15px;
+    transform: translateX(-50%) !important;
+    border-radius: 30px 30px 0 0;
+    background: #e8ff57;
+    box-sizing: border-box;
+  }
+
+  #ytr-modal-cancel-subscription .modal-card,
+  #ytr-modal-cancel-subscription .delcomm,
+  #ytr-modal-cancel-subscription .delcomm__main {
+    width: calc(100vw - 30px);
+    max-width: 100%;
+    padding: 0;
+  }
+
+  #ytr-modal-cancel-subscription .modal-card__main {
+    width: 100%;
+  }
+
+  #ytr-modal-cancel-subscription .card-info {
+    position: relative;
+    display: block;
+    width: calc(100vw - 30px);
+    max-width: 100%;
+    height: 182px;
+    padding: 0;
+    border-radius: 30px;
+    background: #1f1f1f;
+    box-sizing: border-box;
+  }
+
+  #ytr-modal-cancel-subscription .card-info__text {
+    position: absolute;
+    bottom: 28px;
+    left: 25px;
+    width: auto;
+    padding: 0;
+  }
+
+  #ytr-modal-cancel-subscription .card-info__text span {
+    margin: 0 0 5px;
+    color: #e8e8e8;
+    font-family: "Mulish-Regular", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: normal;
+    opacity: 0.5;
+  }
+
+  #ytr-modal-cancel-subscription .card-info__text b {
+    display: block;
+    color: #fff;
+    font-family: "Mulish-Bold", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  #ytr-modal-cancel-subscription .card-info__img {
+    position: absolute;
+    right: 25px;
+    bottom: 25px;
+    width: 50px;
+    height: 39px;
+  }
+
+  #ytr-modal-cancel-subscription .card-info__brand.is-active {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+  }
+
+  #ytr-modal-cancel-subscription .delcomm-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: calc(100vw - 30px);
+    margin: 0;
+    padding: 0;
+  }
+
+  #ytr-modal-cancel-subscription .delcomm-buttons .btn {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 52px;
+    min-height: 52px;
+    margin: 0;
+    padding: 16px 15px;
+    border-radius: 150px;
+    box-sizing: border-box;
+    font-family: "Mulish-Medium", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  #ytr-modal-cancel-subscription .delcomm-buttons .btn span {
+    display: block;
+    min-width: 0;
+    line-height: normal;
+  }
+
+  #ytr-modal-cancel-subscription .delcomm-buttons .btn_white {
+    border: 1px solid #1f1f1f;
+    background: transparent;
+    color: #1f1f1f;
+  }
+
+  #ytr-modal-cancel-subscription .delcomm-buttons .btn_dark {
+    border: 1px solid #1f1f1f;
+    background: #1f1f1f;
+    color: #fff;
+  }
+}

@@ -1115,7 +1115,7 @@
   .modal-mobile-menu-lk .mobile-menu-inner::before { display: none; }
   .modal-mobile-menu-lk .lk-mobile-menu-head { display: flex; min-height: 2.5rem; align-items: center; padding-right: 3.125rem; flex-shrink: 0; }
   .modal-mobile-menu-lk .lk-mobile-menu-rate { display: inline-flex; align-items: center; gap: 0.3125rem; max-width: 100%; padding: 0.3125rem 0.9375rem; border: 1px solid #fff; border-radius: 6.25rem; color: #fff; font: 400 0.875rem/1 "Mulish-Regular", sans-serif; text-decoration: none; }
-  .modal-mobile-menu-lk .lk-mobile-menu-rate svg { width: 1.5rem; height: 1.5rem; color: #e8ff57; flex: 0 0 auto; }
+  .modal-mobile-menu-lk .lk-mobile-menu-rate svg { width: 24px; height: 24px; padding: 2px; box-sizing: border-box; color: #e8ff57; flex: 0 0 auto; }
   .modal-mobile-menu-lk .mobile-menu__slide { padding: 1.25rem 0; }
   .modal-mobile-menu-lk .sidebar-menu-sep { background: rgba(255,255,255,.35); }
   .modal-mobile-menu-lk .sidebar-menu__item { min-height: 3.25rem; padding: 1rem 0.9375rem; color: #fff; }
