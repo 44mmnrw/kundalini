@@ -88,6 +88,20 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 		$name = sanitize_text_field($_POST['name']);
 		$email = sanitize_email($_POST['email']);
 		$message = sanitize_textarea_field($_POST['message']);
+
+		// Для авторизованного пользователя предзаполненные данные берём только из профиля.
+		if (is_user_logged_in()) {
+			$current_user = wp_get_current_user();
+			$profile_name = sanitize_text_field((string) $current_user->display_name);
+			$profile_email = sanitize_email((string) $current_user->user_email);
+
+			if ($profile_name !== '') {
+				$name = $profile_name;
+			}
+			if ($profile_email !== '') {
+				$email = $profile_email;
+			}
+		}
 		
 		// === Сложность ===
 		if (empty($name) || empty($email) || empty($message)) {
@@ -184,4 +198,3 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 		exit;
 	}
 	
-

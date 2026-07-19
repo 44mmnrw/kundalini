@@ -440,3 +440,16 @@ function yoga_checkout_nocache_headers(): void {
 add_action('wp_loaded', 'yoga_handle_cart_mutation_request', 99);
 add_action('woocommerce_cart_item_removed', 'yoga_persist_cart', 20);
 add_action('woocommerce_add_to_cart', 'yoga_persist_cart', 20);
+
+/** Не показываем служебное WooCommerce-сообщение после удаления тарифа. */
+function yoga_suppress_removed_tariff_notice(): void {
+	add_filter('woocommerce_add_message', 'yoga_discard_removed_tariff_notice', PHP_INT_MAX);
+}
+
+function yoga_discard_removed_tariff_notice(string $message): string {
+	remove_filter('woocommerce_add_message', 'yoga_discard_removed_tariff_notice', PHP_INT_MAX);
+
+	return '';
+}
+
+add_action('woocommerce_cart_item_removed', 'yoga_suppress_removed_tariff_notice', 100);

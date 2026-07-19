@@ -4,6 +4,24 @@ $new_title = get_field('blog_new_title', 'option');
 $posts_count = get_field('blog_posts_count', 'option') ?: 9;
 $blog_category = get_category_by_slug('blog');
 
+/** Возвращает дочернюю рубрику раздела «Блог», назначенную статье. */
+$get_article_category = static function (int $post_id) use ($blog_category): ?WP_Term {
+    if (!$blog_category instanceof WP_Term) {
+        return null;
+    }
+
+    $categories = get_the_category($post_id);
+
+    foreach ($categories as $category) {
+        if ($category instanceof WP_Term
+            && (int) $category->parent === (int) $blog_category->term_id) {
+            return $category;
+        }
+    }
+
+    return null;
+};
+
 $search_q = '';
 if (isset($_GET['s']) && is_string($_GET['s'])) {
     $search_q = sanitize_text_field(wp_unslash($_GET['s']));
@@ -156,21 +174,14 @@ if ($is_blog_search_ui) {
                         <div class="blog-main-article-main">
                             <div class="main-article-into">
                                 <?php
-    // Получаем категории для главного поста
-    $main_post_categories = get_the_category($main_post);
-    
-    if (!empty($main_post_categories)) {
-        foreach ($main_post_categories as $category) {
-            // Показываем только дочерние категории рубрики "blog"
-            if ($category->parent == $blog_category->term_id) {
-                echo '<div class="article-cat">' . esc_html($category->name) . '</div>';
-            }
-        }
-    }
-    ?>
+                                $main_post_category = $get_article_category((int) $main_post);
+                                if ($main_post_category) : ?>
+                                    <div class="article-cat"><?php echo esc_html($main_post_category->name); ?></div>
+                                <?php endif; ?>
                                 <time class="article-time">
                                     <?php echo human_time_diff(get_the_time('U', $main_post), current_time('timestamp')) . ' назад'; ?>
                                 </time>
+                                <span class="article-number">01.</span>
                             </div>
                             <h3>
                                 <?php echo get_the_title($main_post); ?>
@@ -178,7 +189,6 @@ if ($is_blog_search_ui) {
                             <a href="<?php echo get_permalink($main_post); ?>" class="article-btn">
                                 Читать
                             </a>
-                            <span class="article-number">01.</span>
                             <a href="<?php echo get_permalink($main_post); ?>" class="blog-main-article-main__link"></a>
                         </div>
                     <?php endif; ?>
@@ -190,26 +200,10 @@ if ($is_blog_search_ui) {
                             </div>
                             <div class="blog-main-article-sub__info">
                                 <div class="main-article-into">
-                                    <div class="article-cat">
-                                        <?php
-                                        // Получаем категории для второстепенного поста
-                                        $secondary_post_categories = get_the_category($secondary_post);
-                                        $category_names = array();
-                                        
-                                        if (!empty($secondary_post_categories)) {
-                                            foreach ($secondary_post_categories as $category) {
-                                                // Показываем только дочерние категории рубрики "blog"
-                                                if ($category->parent == $blog_category->term_id) {
-                                                    $category_names[] = $category->name;
-                                                }
-                                            }
-                                            
-                                            if (!empty($category_names)) {
-                                                echo esc_html(implode(', ', $category_names));
-                                            }
-                                        }
-                                        ?>
-                                    </div>
+                                    <?php $secondary_post_category = $get_article_category((int) $secondary_post); ?>
+                                    <?php if ($secondary_post_category) : ?>
+                                        <div class="article-cat"><?php echo esc_html($secondary_post_category->name); ?></div>
+                                    <?php endif; ?>
                                     <time class="article-time">
                                         <?php echo human_time_diff(get_the_time('U', $secondary_post), current_time('timestamp')) . ' назад'; ?>
                                     </time>

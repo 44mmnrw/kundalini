@@ -99,19 +99,19 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 </div>
                 <div class="registration-consents">
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_terms" value="1" required>
+                        <input type="checkbox" name="accept_terms" value="1" required checked>
                         <span>Я ознакомлен(а) с <a href="<?php echo esc_url($terms_url); ?>" target="_blank" rel="noopener">Пользовательским соглашением</a> и <a href="<?php echo esc_url($public_offer_url); ?>" target="_blank" rel="noopener">публичной офертой</a>, <a href="<?php echo esc_url($privacy_url); ?>" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_personal_data" value="1" required>
+                        <input type="checkbox" name="accept_personal_data" value="1" required checked>
                         <span>Я даю согласие на <a href="<?php echo esc_url($personal_data_url); ?>" target="_blank" rel="noopener">обработку персональных данных</a></span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_contraindications" value="1" required>
+                        <input type="checkbox" name="accept_contraindications" value="1" required checked>
                         <span>Я подтверждаю, что ознакомлен(а) с <a href="<?php echo esc_url($contraindications_url); ?>" target="_blank" rel="noopener">информацией о противопоказаниях и отказом от ответственности</a>.</span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_marketing" value="1">
+                        <input type="checkbox" name="accept_marketing" value="1" checked>
                         <span>Согласен(а) на получение рекламы и информации. Отказаться можно в любой момент.</span>
                     </label>
                 </div>

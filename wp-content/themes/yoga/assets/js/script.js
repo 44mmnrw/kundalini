@@ -2457,8 +2457,12 @@ jQuery(document).ready(function($) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				faqForm.reset();
-				$(faqForm).find('input[type="text"], input[type="email"], textarea').val('');
+				const redirectUrl = data && data.data ? data.data.redirect_url : '';
+				if (redirectUrl) {
+					window.location.assign(redirectUrl);
+					return;
+				}
+
 				openQuestionSuccessModal();
 			} else {
 				alert((data && data.data && data.data.message) || data.message || 'Ошибка отправки. Попробуйте еще раз.');

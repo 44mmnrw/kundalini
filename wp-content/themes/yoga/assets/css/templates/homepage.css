@@ -2,9 +2,53 @@
 .main {
   display: flex;
   position: relative;
+  isolation: isolate;
   width: 100%;
   padding-left: 2.1875rem;  padding-right: 2.1875rem;  padding-top: 4.1875rem;  padding-bottom: 5.125rem;  justify-content: space-between;
-  background: url(../../img/main-bg.png) no-repeat center center/100% auto;
+}
+.main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--color-violet);
+  -webkit-mask: url("../../svg/hero.svg") center / 100% 100% no-repeat;
+  mask: url("../../svg/hero.svg") center / 100% 100% no-repeat;
+}
+.main > * {
+  z-index: 1;
+}
+.main__decor {
+  position: absolute;
+  display: block;
+  color: var(--color-green);
+  pointer-events: none;
+  z-index: 3;
+}
+.main__decor--star-eight {
+  top: 10%;
+  left: 37%;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.main__decor--faq-star {
+  top: 6%;
+  left: 76.25%;
+  width: 3.1875rem;
+  height: 3.1875rem;
+}
+.main__decor--faq-star svg {
+  display: block;
+  width: 2.131rem;
+  height: 2.131rem;
+  margin: 0.5281rem;
+}
+.main__decor--arrow {
+  top: 70%;
+  left: 41.5%;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .main__info {
@@ -128,7 +172,17 @@
   position: relative;
   margin-left: auto;
   width: 15.625rem;
-  aspect-ratio: 6614.58 / 6099.93;
+  aspect-ratio: 250 / 203;
+}
+.hundreds-practices::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: var(--color-white);
+  -webkit-mask: url("../../svg/subtract_hero.svg") center / 100% 100% no-repeat;
+  mask: url("../../svg/subtract_hero.svg") center / 100% 100% no-repeat;
+  pointer-events: none;
 }
 .hundreds-practices__card,
 .hundreds-practices__oval {
@@ -139,10 +193,16 @@
   pointer-events: none;
 }
 .hundreds-practices__card {
-  z-index: 1;
+  display: none;
 }
 .hundreds-practices__oval {
+  inset: auto;
+  top: 1.875rem;
+  right: 1.875rem;
+  width: 3.25rem;
+  height: 9.375rem;
   z-index: 2;
+  color: var(--color-green);
 }
 .hundreds-practices__star {
   display: block;
@@ -246,7 +306,7 @@
 
 @media (max-width: 1319px) {
   .main {
-    padding-top: 3.25rem;    padding-bottom: 4.625rem;    background: url(../../img/main-bg.png) no-repeat center center/100% 100%;
+    padding-top: 3.25rem;    padding-bottom: 4.625rem;
   }
   .main__info {
     padding-top: 2.125rem;  }
@@ -264,6 +324,12 @@
 @media (max-width: 1279px) {
   .main {
     padding-left: 1.5625rem;    padding-right: 1.5625rem;    border-radius: 1.875rem;    padding-top: 1.75rem;    padding-bottom: 6.125rem;    background: var(--color-violet);
+  }
+  .main::before {
+    display: none;
+  }
+  .main__decor {
+    display: none;
   }
   .main__info {
     padding-top: 1.875rem;  }
@@ -541,7 +607,9 @@
 
 .whyme-item {
   position: relative;
-  width: calc((100% - 2.375rem) / 3);
+  flex: 0 0 24.1875rem;
+  width: 24.1875rem;
+  height: 23.9375rem;
   padding: 2.5625rem;
   padding-left: 1.5625rem;
   padding-right: 2.8125rem;
@@ -578,21 +646,14 @@
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 1.875rem;
   background: var(--whyme-background);
+  -webkit-mask: url("../../svg/wyme.svg") center / 100% 100% no-repeat;
+  mask: url("../../svg/wyme.svg") center / 100% 100% no-repeat;
   z-index: 0;
 }
 
 .whyme-item__plate::after {
-  content: "";
-  position: absolute;
-  top: 1.875rem;
-  right: 0;
-  width: 5.3125rem;
-  height: 6.0625rem;
-  background: url(../../svg/whyme-card-right-cutout.svg) no-repeat right top / contain;
-  z-index: 1;
-  pointer-events: none;
+  display: none;
 }
 
 .whyme-item .whyme-item__shape {
@@ -689,7 +750,10 @@
   }
 
   .whyme-item {
+    flex-basis: calc((100% - 2.375rem) / 3);
     width: calc((100% - 2.375rem) / 3);
+    height: auto;
+    aspect-ratio: 387 / 383;
     padding: 1.875rem;
     padding-bottom: 2.125rem;
     padding-left: 1.25rem;
@@ -754,6 +818,7 @@
   .whyme-item {
     display: block;
     width: 100%;
+    height: auto;
     box-sizing: border-box;
     isolation: isolate;
     margin-top: 1.75rem;
@@ -761,7 +826,7 @@
     padding: 2.625rem 1.25rem 1.5625rem;
     /* Центр номера совпадает с базовым (геометрия SVG одна на все брейкпоинты) */
     /* Высота пластины = ширина × 298/320; иначе absolute-пластина выступает ниже блока и наезжает на следующую карточку */
-    min-height: calc(100cqw * 298 / 320);
+    min-height: calc(100cqw * 383 / 387);
   }
 
   /* Фон: как viewBox SVG 320×298 */
@@ -811,6 +876,17 @@
 
 /* Звёзды по вариантам карточки (координаты из макета); номер — общая система notch-cx/notch-cy выше */
 @media (min-width: 768px) {
+  .whyme-item__plate .whyme-item__number {
+    left: calc(304 * 100% / 387);
+    top: calc(72.3 * 100% / 383);
+    transform: none;
+    width: 1.625rem;
+    height: 1.560999rem;
+    display: block;
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+
   .whyme-item_green .whyme-item__plate .whyme-item__star {
     left: calc(279.5 * 100% / 387);
     top: calc(166.265 * 100% / 383);
@@ -970,7 +1046,7 @@ body.home {
 
   .home #section-main {
     padding-top: 0;
-    padding-bottom: 2.25rem;
+    padding-bottom: 0.75rem;
   }
 
   /* Паддинги как в теме */
@@ -982,48 +1058,60 @@ body.home {
   .home .section-advantages {
     padding-top: 1.75rem;
     padding-bottom: 6.5rem;
-    margin-bottom: -6rem;
+    margin-bottom: -3rem;
     pointer-events: none;
   }
 
   .home .section-whyme {
-    padding-bottom: 3.75rem;
+    padding-bottom: 6.875rem;
   }
 
   .home .whyme h2 {
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
   }
 
   .home .begin-items {
-    padding-top: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .home .section-begin {
+    padding-bottom: 5.25rem;
   }
 
   .home .section-tariffs.section-tariffs_single {
     padding-top: 0;
-    padding-bottom: 3.25rem;
+    padding-bottom: 4.875rem;
   }
 
   .home .tariffs .switches {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
   }
 
   .home .tariff {
-    margin-top: 1rem;
+    margin-top: 1.3125rem;
   }
 
   .home .review {
-    margin-top: 2rem;
-    margin-bottom: 3rem;
+    margin-top: 3.75rem;
+    margin-bottom: 6.875rem;
   }
 
   .home .section-videos {
-    padding-top: 1rem;
-    padding-bottom: 1.5rem;
+    padding-top: 0;
+    padding-bottom: 4.875rem;
   }
 
   .home .popular-practices-slider {
-    padding-top: 1.25rem;
+    padding-top: 3.125rem;
     padding-bottom: 1.25rem;
+  }
+
+  .home .section-popular-practices {
+    padding-bottom: 4.875rem;
+  }
+
+  .home .questions {
+    margin-top: 2.5rem;
   }
 
   .home .section-questions {
@@ -1666,6 +1754,7 @@ body.home {
   display: block;
   width: 2.131rem;
   height: 2.131rem;
+  color: var(--color-violet);
 }
 
 .questions-quote {

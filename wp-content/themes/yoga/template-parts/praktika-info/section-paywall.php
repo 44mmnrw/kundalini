@@ -41,8 +41,16 @@ $paywall_text         = function_exists('yoga_get_section_paywall_text')
 			<p class="praktika-section-paywall__label"><?php echo esc_html($paywall_label); ?></p>
 			<p class="praktika-section-paywall__text"><?php echo esc_html($paywall_text); ?></p>
 		</div>
-		<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt praktika-section-paywall__cta">
+		<a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt btn_icon praktika-section-paywall__cta">
 			<span><?php echo esc_html(function_exists('yoga_get_purchase_cta_text') ? yoga_get_purchase_cta_text() : __('Выбрать тариф', 'yoga')); ?></span>
+			<div class="btn-icon" aria-hidden="true">
+				<svg class="btn-icon-arrow btn-icon-arrow_black active" focusable="false">
+					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+				</svg>
+				<svg class="btn-icon-arrow btn-icon-arrow_green" focusable="false">
+					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+				</svg>
+			</div>
 		</a>
 	</div>
 </div>

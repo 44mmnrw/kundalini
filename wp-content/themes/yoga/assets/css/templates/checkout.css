@@ -10,6 +10,32 @@
 	min-width: 0;
 }
 
+.yoga-checkout__breadcrumbs {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 1.875rem;
+	font-family: "Mulish-Regular", sans-serif;
+	font-size: 0.875rem;
+	line-height: 1;
+}
+
+.yoga-checkout__breadcrumbs a,
+.yoga-checkout__breadcrumbs span {
+	display: inline-flex;
+	align-items: center;
+	color: #1f1f1f;
+	text-decoration: none;
+}
+
+.yoga-checkout__breadcrumbs span::before {
+	width: 1px;
+	height: 0.75rem;
+	margin: 0 0.6875rem;
+	background: #1f1f1f;
+	content: "";
+}
+
 .yoga-checkout__notices {
 	margin-bottom: 1.25rem;
 }
@@ -270,7 +296,7 @@
 }
 
 .yoga-checkout-field_full {
-	flex: 1 1 100%;
+	flex: 0 0 4.0625rem;
 	width: 100%;
 }
 
@@ -821,6 +847,14 @@
 
 	.yoga-checkout__title {
 		font-size: 2.25rem;
+	}
+
+	.yoga-checkout__breadcrumbs {
+		margin-bottom: 1.25rem;
+	}
+
+	.yoga-checkout-empty__button {
+		width: 100%;
 	}
 
 	.yoga-checkout__layout,

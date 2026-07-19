@@ -59,11 +59,6 @@ if ($primary_line_label === '') {
 	$primary_line_label = __('Тариф', 'yoga');
 }
 
-$tariff_remove_key = '';
-foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
-	$tariff_remove_key = $cart_item_key;
-	break;
-}
 ?>
 
 <section class="section-checkout" id="section-checkout">
@@ -71,6 +66,10 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 		<div class="row">
 			<div class="yoga-checkout-column">
 				<div class="yoga-checkout">
+				<nav class="yoga-checkout__breadcrumbs" aria-label="<?php esc_attr_e('Хлебные крошки', 'yoga'); ?>">
+					<a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Главная', 'yoga'); ?></a>
+					<span aria-current="page"><?php esc_html_e('Корзина', 'yoga'); ?></span>
+				</nav>
 				<?php if (function_exists('wc_print_notices')) : ?>
 					<div class="yoga-checkout__notices"><?php wc_print_notices(); ?></div>
 				<?php endif; ?>
@@ -177,18 +176,16 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 									</div>
 									<label class="yoga-checkout-field yoga-checkout-field_full">
 										<span class="yoga-checkout-field__icon" aria-hidden="true">
-											<svg class="yoga-checkout-field__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-												<path d="M3 6.5 11.2 12.2c.5.35 1.1.35 1.6 0L21 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-												<rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.2"/>
+											<svg class="yoga-checkout-field__svg" width="24" height="24" aria-hidden="true" focusable="false">
+												<use href="<?php echo $sprite_href; ?>#checkout-email-icon"></use>
 											</svg>
 										</span>
 										<input type="email" class="yoga-checkout-field__input" name="billing_email" value="<?php echo esc_attr($prefill_email); ?>" placeholder="<?php esc_attr_e('эл. почта', 'yoga'); ?>" autocomplete="email" required>
 									</label>
 									<label class="yoga-checkout-field yoga-checkout-field_full">
 										<span class="yoga-checkout-field__icon" aria-hidden="true">
-											<svg class="yoga-checkout-field__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-												<path d="M6.5 3h11a2.5 2.5 0 0 1 2.5 2.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13A2.5 2.5 0 0 1 6.5 3Z" stroke="currentColor" stroke-width="1.2"/>
-												<path d="M9 7h6M9 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+											<svg class="yoga-checkout-field__svg" width="24" height="24" aria-hidden="true" focusable="false">
+												<use href="<?php echo $sprite_href; ?>#checkout-phone-icon"></use>
 											</svg>
 										</span>
 										<input type="tel" class="yoga-checkout-field__input input_phone" name="billing_phone" value="<?php echo esc_attr($prefill_phone); ?>" autocomplete="tel" required>
@@ -239,15 +236,6 @@ foreach ($wc_cart->get_cart() as $cart_item_key => $cart_item) {
 										<span class="yoga-checkout-summary__total-value"><?php echo esc_html($display_total); ?></span>
 									</div>
 
-									<?php if ($tariff_remove_key !== '') : ?>
-										<form method="post" action="<?php echo esc_url($checkout_url); ?>" class="yoga-checkout-summary__remove-form">
-											<?php wp_nonce_field('yoga-cart', 'yoga_remove_nonce', false, true); ?>
-											<input type="hidden" name="yoga_remove" value="<?php echo esc_attr($tariff_remove_key); ?>">
-											<button type="submit" class="yoga-checkout-summary__remove">
-												<?php esc_html_e('Убрать тариф из корзины', 'yoga'); ?>
-											</button>
-										</form>
-									<?php endif; ?>
 								</div>
 
 								<div class="yoga-checkout-summary__footer">

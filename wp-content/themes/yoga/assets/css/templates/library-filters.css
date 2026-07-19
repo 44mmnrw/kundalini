@@ -106,6 +106,7 @@
     height: 3.1875rem;
     padding: 0;
     border: none;
+    appearance: none;
     border-radius: 50%;
     background: var(--color-green);
     cursor: pointer;

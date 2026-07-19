@@ -339,6 +339,11 @@
   background: var(--color-green) !important;
 }
 
+#yoga-contact-success-modal .modal-close:focus-visible {
+  outline: 0.125rem solid var(--color-violet);
+  outline-offset: 0.125rem;
+}
+
 .yoga-contact-success-modal__content {
   position: absolute;
   top: 50%;

@@ -70,10 +70,10 @@
                             <form action="#" class="form-questions__main-form" id="faqContactForm">
                                 <?php wp_nonce_field('faq_contact_nonce', 'faq_nonce'); ?>
                                 
-                                <input type="text" name="name" class="input" required value="<?php echo esc_attr($faq_prefill_name); ?>"
+                                <input type="text" name="name" class="input" required value="<?php echo esc_attr($faq_prefill_name); ?>"<?php echo $faq_prefill_name !== '' ? ' readonly' : ''; ?>
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_name') ?: 'Имя'); ?>">
                                 
-                                <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"
+                                <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"<?php echo $faq_prefill_email !== '' ? ' readonly' : ''; ?>
                                        placeholder="эл. почта">
                                 
                                 <div class="form-questions-textarea">

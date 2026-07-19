@@ -15,6 +15,17 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
     <div class="container">
         <div class="row">
             <div class="main">
+                <svg class="main__decor main__decor--star-eight" aria-hidden="true" focusable="false">
+                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#contacts-star-eight'); ?>"></use>
+                </svg>
+                <span class="main__decor main__decor--faq-star" aria-hidden="true">
+                    <svg focusable="false">
+                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#faq-star-violet'); ?>"></use>
+                    </svg>
+                </span>
+                <svg class="main__decor main__decor--arrow" aria-hidden="true" focusable="false">
+                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#contacts-decor-arrow'); ?>"></use>
+                </svg>
                 <div class="main__info">
                     <h2 class="">
                         <p class="animation-title delay-400ms"><?php the_field('hero_title_line_1'); ?></p>
@@ -78,10 +89,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                             <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-card'); ?>"></use>
                         </svg>
                         <svg class="hundreds-practices__oval" aria-hidden="true">
-                            <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-oval'); ?>"></use>
-                        </svg>
-                        <svg class="hundreds-practices__star" aria-hidden="true">
-                            <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-star'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hero-practices-oval'); ?>"></use>
                         </svg>
                         <svg class="hundreds-practices__bg-mobile" aria-hidden="true">
                             <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-mobile-bg'); ?>"></use>
@@ -99,15 +107,31 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                             </svg>
                         </a>
                     </div>
-                    <?php if (have_rows('hero_categories')) : ?>
-                        <div class="practices-categories">
-                            <?php while (have_rows('hero_categories')) : the_row(); ?>
-                                <span class="practices-categories__item">
-                                    <?php the_sub_field('category_name'); ?>
-                                </span>
-                            <?php endwhile; ?>
-                        </div>
-                    <?php endif; ?>
+                    <?php
+                    $hero_categories = array();
+
+                    if (have_rows('hero_categories')) {
+                        while (have_rows('hero_categories')) {
+                            the_row();
+                            $category_name = trim((string) get_sub_field('category_name'));
+
+                            if ('' !== $category_name) {
+                                $hero_categories[] = $category_name;
+                            }
+                        }
+                    }
+
+                    if (empty($hero_categories)) {
+                        $hero_categories = array('Медитации', 'Пранаямы', 'Мантры', 'Шабды', 'Крийи');
+                    }
+                    ?>
+                    <div class="practices-categories" aria-label="Направления практик">
+                        <?php foreach ($hero_categories as $category_name) : ?>
+                            <span class="practices-categories__item">
+                                <?php echo esc_html($category_name); ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>
