@@ -185,7 +185,11 @@ function handle_comment_reply() {
 				__('Ответ на комментарий', 'yoga'),
 				$reply_message,
 				$reply_url,
-				array('comment_id' => (int) $comment_id, 'post_id' => $post_id)
+				array(
+					'comment_id' => (int) $comment_id,
+					'parent_comment_id' => $parent_id,
+					'post_id' => $post_id,
+				)
 			);
 
 			if (yoga_notification_preference($recipient_user_id, 'comment_reply_email', true)) {
@@ -259,4 +263,3 @@ function handle_comment_delete() {
         wp_send_json_error('Ошибка при удалении комментария');
     }
 }
-

@@ -3892,7 +3892,16 @@ jQuery(document).ready(function($) {
 		$link
 			.toggleClass('header-favorites-link--active', count > 0)
 			.attr('aria-label', 'Избранное: ' + count);
-		$link.find('svg use').attr('href', count > 0 ? '#header-heart-filled' : '#header-heart');
+		// Иконка подключена из внешнего SVG-спрайта. Сохраняем URL спрайта,
+		// иначе после AJAX-обновления остаётся только #id и сердце исчезает.
+		$link.find('svg use').each(function() {
+			var $use = $(this);
+			var currentHref = $use.attr('href') || '';
+			var spriteUrl = currentHref.indexOf('#') !== -1
+				? currentHref.split('#')[0]
+				: (yoga_ajax.sprite_url || '');
+			$use.attr('href', spriteUrl + (count > 0 ? '#header-heart-filled' : '#header-heart'));
+		});
 
 		var $counter = $link.find('.header-favorites-link__count');
 		if (count > 0) {

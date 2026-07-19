@@ -291,8 +291,13 @@ function save_question_answer(int $post_id): void {
 		$answer_index = absint($_POST['question_delete_answer']);
 		$answers = yoga_get_question_answers($post_id);
 		if (array_key_exists($answer_index, $answers)) {
+			$deleted_answer = $answers[$answer_index];
 			array_splice($answers, $answer_index, 1);
 			update_post_meta($post_id, '_question_answers', $answers);
+			yoga_remove_question_answer_notifications(
+				$post_id,
+				is_array($deleted_answer) ? sanitize_text_field((string) ($deleted_answer['id'] ?? '')) : ''
+			);
 		}
 		return;
 	}
@@ -329,8 +334,10 @@ function save_question_answer(int $post_id): void {
 			$delivery_status = $sent ? 'sent' : 'failed';
 		}
 
+		$answer_id = wp_generate_uuid4();
 		$answers = yoga_get_question_answers($post_id);
 		$answers[] = array(
+			'id' => $answer_id,
 			'content' => $answer,
 			'created_at' => current_time('mysql'),
 			'admin_id' => get_current_user_id(),
@@ -348,7 +355,7 @@ function save_question_answer(int $post_id): void {
 				__('Получен ответ на ваш вопрос', 'yoga'),
 				__('Администратор ответил на ваш вопрос. Откройте раздел «Мои вопросы».', 'yoga'),
 				yoga_get_lk_questions_url(),
-				array('question_id' => $post_id)
+				array('question_id' => $post_id, 'answer_id' => $answer_id)
 			);
 		}
 		return;
@@ -423,4 +430,3 @@ function save_question_answer(int $post_id): void {
 	}
 }
 add_action('save_post_question', 'save_question_answer');
-

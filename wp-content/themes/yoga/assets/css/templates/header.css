@@ -50,6 +50,19 @@ header {
   transition: var(--transition-base, 0.4s ease);
 }
 
+/* Верхний inset — часть визуальной шапки, а не прозрачный зазор над ней. */
+header::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--header-top-offset, 0px));
+  right: 0;
+  left: 0;
+  z-index: -1;
+  height: var(--header-top-offset, 0px);
+  background: var(--color-white);
+  pointer-events: none;
+}
+
 header > .container {
   display: block;
   box-sizing: border-box;
@@ -413,6 +426,10 @@ header > .container > .row > .header-content {
   box-sizing: border-box;
 }
 
+.header-lk .lk-notifications-popup__item:last-child {
+  border-bottom: 0;
+}
+
 .header-lk .lk-notifications-popup__item--unread {
   background: rgba(145, 83, 225, 0.07);
 }
@@ -493,8 +510,13 @@ header > .container > .row > .header-content {
   color: var(--color-violet);
 }
 
-.header-lk .lk-notifications-popup__item-head time {
-  flex: 0 0 auto;
+.header-lk .lk-notifications-popup__item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.header-lk .lk-notifications-popup__item-meta time {
   color: #646464;
   font-family: "Mulish-Regular", sans-serif;
   font-size: 0.875rem;
@@ -527,6 +549,7 @@ header > .container > .row > .header-content {
   align-items: center;
   justify-content: center;
   padding: 0.75rem;
+  border-top: 1px solid #e8e8e8;
   color: var(--color-violet);
   font-family: "Mulish-SemiBold", sans-serif;
   font-size: 1rem;
@@ -884,6 +907,135 @@ header > .container > .row > .header-content {
     margin-left: auto;
     flex-shrink: 0;
     gap: var(--header-desktop-lk-gap);
+  }
+}
+
+/* Mobile notifications popup — Figma 2341:26152. */
+@media (max-width: 1024px) {
+  .header-lk .lk-notifications-popup {
+    position: fixed;
+    top: var(--header-bar-height);
+    right: 0;
+    width: 100vw;
+    height: calc(100dvh - var(--header-bar-height));
+    padding: 0;
+    overflow-y: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .header-lk .lk-notifications-popup--empty {
+    width: 100vw !important;
+    height: calc(100dvh - var(--header-bar-height)) !important;
+    padding: 0 !important;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .header-lk .lk-notifications-popup__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.5rem;
+    grid-template-rows: 2.5rem 0.9375rem;
+    row-gap: 0.5625rem;
+    height: 5.625rem;
+    min-height: 5.625rem;
+    padding: 0.9375rem 0.625rem 0.625rem;
+    border: 0;
+  }
+
+  .header-lk .lk-notifications-popup__head > strong {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    font-size: 1.625rem;
+    line-height: 1;
+  }
+
+  .header-lk .lk-notifications-popup__settings {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    align-self: start;
+    justify-self: end;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .header-lk .lk-notifications-popup__all {
+    display: none;
+  }
+
+  .header-lk .lk-notifications-popup__head-actions {
+    display: contents;
+  }
+
+  .header-lk .lk-notifications-popup__read-all {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-self: start;
+    height: auto;
+    justify-content: flex-start;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: 0.875rem;
+    line-height: 1.1;
+  }
+
+  .header-lk .lk-notifications-popup__item {
+    gap: 0.625rem;
+    min-height: 0;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .header-lk .lk-notifications-popup__item:last-child {
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .header-lk .lk-notifications-popup__item-head {
+    min-height: 2.125rem;
+    gap: 1rem;
+  }
+
+  .header-lk .lk-notifications-popup__item-icon,
+  .header-lk .lk-notifications-popup__item--question_answer .lk-notifications-popup__item-icon,
+  .header-lk .lk-notifications-popup__item--subscription_expiring .lk-notifications-popup__item-icon,
+  .header-lk .lk-notifications-popup__item--payment_card_expiring .lk-notifications-popup__item-icon {
+    flex-basis: 2.125rem;
+    width: 2.125rem;
+    height: 2.125rem;
+  }
+
+  .header-lk .lk-notifications-popup__item--comment_reply .lk-notifications-popup__item-icon {
+    flex-basis: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .header-lk .lk-notifications-popup__item-head strong {
+    font-size: 1rem;
+  }
+
+  .header-lk .lk-notifications-popup__item-message {
+    font-size: 0.875rem;
+    line-height: 1.3;
+  }
+
+  .header-lk .lk-notifications-popup__item-meta {
+    gap: 0.625rem;
+  }
+
+  .header-lk .lk-notifications-popup__item-meta time {
+    font-size: 0.75rem;
+  }
+
+  .header-lk .lk-notifications-popup__unread-dot {
+    flex-basis: 0.4375rem;
+    width: 0.4375rem;
+    height: 0.4375rem;
   }
 }
 
