@@ -948,7 +948,7 @@ header > .container > .row > .header-content {
   .header-lk .lk-notifications-popup__head > strong {
     grid-column: 1;
     grid-row: 1;
-    align-self: start;
+    align-self: center;
     font-size: 1.625rem;
     line-height: 1;
   }

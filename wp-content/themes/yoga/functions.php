@@ -917,6 +917,17 @@ function yoga_subscribe_handler() {
 		$email = isset($_POST['contacts_email']) ? sanitize_email($_POST['contacts_email']) : '';
 		$phone = isset($_POST['contacts_phone']) ? sanitize_text_field($_POST['contacts_phone']) : '';
 		$message = isset($_POST['contacts_message']) ? sanitize_textarea_field($_POST['contacts_message']) : '';
+		if (is_user_logged_in()) {
+			$current_user = wp_get_current_user();
+			$profile_name = trim((string) $current_user->display_name);
+			$profile_email = sanitize_email((string) $current_user->user_email);
+			if ($profile_name !== '') {
+				$name = $profile_name;
+			}
+			if ($profile_email !== '') {
+				$email = $profile_email;
+			}
+		}
 		
 		if (empty($name) || empty($email) || empty($message)) {
 			wp_send_json_error(array('message' => 'Пожалуйста, заполните все поля'));

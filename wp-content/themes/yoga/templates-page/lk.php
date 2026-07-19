@@ -299,9 +299,9 @@
 											<span class="lk-notification__head">
 												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $icon); ?>"></use></svg></span>
 												<strong><?php echo esc_html($title); ?></strong>
-										<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread): ?><i aria-hidden="true"></i><?php endif; ?></span>
 											</span>
 											<span class="lk-notification__message"><?php echo esc_html($message); ?></span>
+											<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread): ?><i aria-hidden="true"></i><?php endif; ?></span>
 											<?php if ($type === 'payment_card_expiring'): ?>
 												<span class="lk-notification__action"><?php esc_html_e('Обновить карту', 'yoga'); ?></span>
 											<?php endif; ?>
@@ -315,7 +315,7 @@
 					<div class="lk-slide lk-slide--notification-settings<?php echo $initial_lk_target === '9' ? ' active' : ''; ?>" data-target="9">
 						<div class="lk-slide__content">
 							<div class="notification-settings">
-								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-settings-back'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
+								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-recovery-back'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
 								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
 								<?php $notification_settings = array(
 									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(
