@@ -190,12 +190,16 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 												?>
 												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?><?php echo $notification_is_unread ? ' lk-notifications-popup__item--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
 													<span class="lk-notifications-popup__item-head">
-										<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $notification_icon); ?>"></use></svg></span>
+														<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $notification_icon); ?>"></use></svg></span>
 														<strong><?php echo esc_html($notification_title); ?></strong>
-														<?php if ($notification_time !== ''): ?><time datetime="<?php echo esc_attr((string) ($notification['created_at'] ?? '')); ?>"><?php echo esc_html($notification_time); ?></time><?php endif; ?>
-														<?php if ($notification_is_unread): ?><i class="lk-notifications-popup__unread-dot" aria-hidden="true"></i><?php endif; ?>
 													</span>
 													<span class="lk-notifications-popup__item-message"><?php echo esc_html((string) ($notification['message'] ?? '')); ?></span>
+													<?php if ($notification_time !== '' || $notification_is_unread): ?>
+														<span class="lk-notifications-popup__item-meta">
+															<?php if ($notification_time !== ''): ?><time datetime="<?php echo esc_attr((string) ($notification['created_at'] ?? '')); ?>"><?php echo esc_html($notification_time); ?></time><?php endif; ?>
+															<?php if ($notification_is_unread): ?><i class="lk-notifications-popup__unread-dot" aria-hidden="true"></i><?php endif; ?>
+														</span>
+													<?php endif; ?>
 												</a>
 											<?php endforeach; ?>
 										</div>

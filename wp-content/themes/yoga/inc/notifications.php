@@ -5,7 +5,19 @@ if (!defined('ABSPATH')) {
 }
 
 function yoga_notification_has_live_source(array $notification): bool {
-	if (($notification['type'] ?? '') !== 'question_answer') {
+	$type = (string) ($notification['type'] ?? '');
+	if ($type === 'comment_reply') {
+		$comment_id = absint($notification['comment_id'] ?? 0);
+		$comment = $comment_id > 0 ? get_comment($comment_id) : null;
+		if (!$comment instanceof WP_Comment) {
+			return false;
+		}
+
+		$parent_comment_id = absint($notification['parent_comment_id'] ?? $comment->comment_parent);
+		return $parent_comment_id <= 0 || get_comment($parent_comment_id) instanceof WP_Comment;
+	}
+
+	if ($type !== 'question_answer') {
 		return true;
 	}
 
@@ -147,8 +159,14 @@ function yoga_add_user_notification(int $user_id, string $type, string $title, s
 	if (!empty($context['question_id'])) {
 		$notification['question_id'] = absint($context['question_id']);
 	}
+	if (!empty($context['answer_id'])) {
+		$notification['answer_id'] = sanitize_text_field((string) $context['answer_id']);
+	}
 	if (!empty($context['comment_id'])) {
 		$notification['comment_id'] = absint($context['comment_id']);
+	}
+	if (!empty($context['parent_comment_id'])) {
+		$notification['parent_comment_id'] = absint($context['parent_comment_id']);
 	}
 	if (!empty($context['post_id'])) {
 		$notification['post_id'] = absint($context['post_id']);
@@ -194,6 +212,75 @@ function yoga_remove_question_notifications(int $question_id): void {
 }
 add_action('trashed_post', 'yoga_remove_question_notifications');
 add_action('before_delete_post', 'yoga_remove_question_notifications');
+
+function yoga_remove_question_answer_notifications(int $question_id, string $answer_id = ''): void {
+	if ($question_id <= 0) {
+		return;
+	}
+
+	$user_id = yoga_get_question_notification_user_id($question_id);
+	if ($user_id <= 0) {
+		return;
+	}
+
+	$notifications = get_user_meta($user_id, 'yoga_notifications', true);
+	if (!is_array($notifications)) {
+		return;
+	}
+
+	$remaining = array_values(array_filter($notifications, static function ($notification) use ($question_id, $answer_id): bool {
+		if (!is_array($notification)
+			|| ($notification['type'] ?? '') !== 'question_answer'
+			|| absint($notification['question_id'] ?? 0) !== $question_id) {
+			return true;
+		}
+
+		$notification_answer_id = sanitize_text_field((string) ($notification['answer_id'] ?? ''));
+		return $answer_id !== '' && $notification_answer_id !== '' && !hash_equals($notification_answer_id, $answer_id);
+	}));
+
+	if (count($remaining) !== count($notifications)) {
+		update_user_meta($user_id, 'yoga_notifications', $remaining);
+	}
+}
+
+function yoga_remove_comment_reply_notifications(int $deleted_comment_id): void {
+	if ($deleted_comment_id <= 0) {
+		return;
+	}
+
+	$user_ids = get_users(array(
+		'meta_key' => 'yoga_notifications',
+		'fields' => 'ID',
+	));
+	foreach ($user_ids as $user_id) {
+		$notifications = get_user_meta((int) $user_id, 'yoga_notifications', true);
+		if (!is_array($notifications)) {
+			continue;
+		}
+
+		$remaining = array_values(array_filter($notifications, static function ($notification) use ($deleted_comment_id): bool {
+			if (!is_array($notification) || ($notification['type'] ?? '') !== 'comment_reply') {
+				return true;
+			}
+
+			$reply_comment_id = absint($notification['comment_id'] ?? 0);
+			$parent_comment_id = absint($notification['parent_comment_id'] ?? 0);
+			if ($reply_comment_id === $deleted_comment_id || $parent_comment_id === $deleted_comment_id) {
+				return false;
+			}
+
+			$reply_comment = $reply_comment_id > 0 ? get_comment($reply_comment_id) : null;
+			return !($reply_comment instanceof WP_Comment && (int) $reply_comment->comment_parent === $deleted_comment_id);
+		}));
+
+		if (count($remaining) !== count($notifications)) {
+			update_user_meta((int) $user_id, 'yoga_notifications', $remaining);
+		}
+	}
+}
+add_action('delete_comment', 'yoga_remove_comment_reply_notifications');
+add_action('trashed_comment', 'yoga_remove_comment_reply_notifications');
 
 function yoga_cleanup_orphaned_question_notifications(): void {
 	if ((int) get_option('yoga_notification_source_schema_version', 0) >= 1) {
