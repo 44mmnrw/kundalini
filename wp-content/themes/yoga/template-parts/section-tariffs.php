@@ -21,6 +21,8 @@
             'order' => 'ASC'
           ));
         ?>
+
+        <h2 class="wow flipInX delay-200ms"><?php echo esc_html($tariffs_title); ?></h2>
         
         <?php if ($tariffs_periods) : ?>
 		<div class="switches<?php echo esc_attr($tariffs_animation_class); ?>">
