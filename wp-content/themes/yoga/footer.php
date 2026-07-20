@@ -60,9 +60,14 @@ $is_blog_footer = is_home()
 	|| is_tag()
 	|| is_date()
 	|| is_author();
-$is_home_footer = is_front_page()
+
+// Динамический /question-sent/ не имеет записи страницы в БД: без явного
+// исключения WordPress ошибочно считает его главной и выводит home-подписку.
+$is_question_success_screen = function_exists('yoga_is_question_success_screen')
+	&& yoga_is_question_success_screen();
+$is_home_footer = !$is_question_success_screen && (is_front_page()
 	|| is_page_template('templates-page/homepage.php')
-	|| $is_blog_footer;
+	|| $is_blog_footer);
 $footer_current_user = wp_get_current_user();
 $footer_subscription_complete = $footer_current_user->exists()
 	&& function_exists('yoga_is_subscription_email_subscribed')
