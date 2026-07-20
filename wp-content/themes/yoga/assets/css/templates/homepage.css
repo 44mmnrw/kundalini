@@ -2076,3 +2076,10 @@ body.home {
     top: calc(50% - 1px);
   }
 }
+
+/* Popular-practice slide image: fixed Figma height across slider breakpoints. */
+.popular-practice.slick-slide > img {
+  height: 217px;
+  align-self: stretch;
+  aspect-ratio: auto;
+}
