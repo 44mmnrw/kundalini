@@ -1113,8 +1113,8 @@
   .modal-mobile-menu-lk .lk-mobile-menu-rate svg { width: 1rem; height: 0.9958125rem; color: #e8ff57; flex: 0 0 auto; }
   .modal-mobile-menu-lk .mobile-menu__slide { padding: 1.25rem 0; }
   .modal-mobile-menu-lk .sidebar-menu-sep { background: rgba(255,255,255,.35); }
-  .modal-mobile-menu-lk .sidebar-menu__item { min-height: 3.25rem; padding: 1rem 0.9375rem; color: #fff; }
-  .modal-mobile-menu-lk .sidebar-menu__item .sidebar-menu__label { color: #fff; }
+  .modal-mobile-menu-lk .sidebar-menu__item { min-height: 3.25rem; padding: 1rem 0.9375rem; color: #fff; font-family: "Mulish-SemiBold", sans-serif; font-weight: 600; }
+  .modal-mobile-menu-lk .sidebar-menu__item .sidebar-menu__label { color: #fff; font-family: "Mulish-SemiBold", sans-serif; font-weight: 600; }
   .modal-mobile-menu-lk .sidebar-menu__item-icon, .modal-mobile-menu-lk .sidebar-exit__icon { color: #fff; }
   .modal-mobile-menu-lk .sidebar-menu__item.active { background: #e8ff57; color: #1f1f1f; }
   .modal-mobile-menu-lk .sidebar-menu__item.active .sidebar-menu__label, .modal-mobile-menu-lk .sidebar-menu__item.active .sidebar-menu__item-icon { color: #1f1f1f; }
