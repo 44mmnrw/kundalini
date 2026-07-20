@@ -965,7 +965,15 @@ display: block !important;
 .praktika-comments {
   display: block;
   width: 100%;
+  max-width: 49.5625rem;
   padding-top: 2.5rem;}
+.praktika-comments > h3 {
+  margin: 0;
+  font-family: "Mulish-Bold", sans-serif;
+  font-size: 2rem;
+  font-weight: normal;
+  line-height: 1.1;
+}
 
 .comment-form-main {
   display: block;
@@ -1027,6 +1035,18 @@ display: block !important;
   opacity: 0.4;
   pointer-events: none;
 }
+.comment-form-main .btn,
+.comment-form-main .btn .comment-form-main__btn-label {
+  color: var(--color-white) !important;
+}
+.comment-form-main .btn:hover,
+.comment-form-main .btn:hover .comment-form-main__btn-label {
+  background: var(--color-green);
+  color: var(--color-violet) !important;
+}
+.comment-form-main__btn-arrow {
+  display: none;
+}
 
 .comments-items {
   width: 100%;
@@ -1074,7 +1094,9 @@ display: block !important;
   display: flex;
   position: absolute;
   right: 0px;
-  top: 0.625rem;  justify-content: flex-end;
+  top: 50%;
+  transform: translateY(-50%);
+  justify-content: flex-end;
 }
 
 .answer-btn {
@@ -1245,6 +1267,8 @@ display: block !important;
 .your-comm {
   display: inline-flex;
   position: relative;
+  align-items: center;
+  gap: 1.25rem;
   padding-left: 3.3125rem;  padding-top: 0.125rem;}
 .your-comm::before {
   display: block;
@@ -1259,8 +1283,13 @@ display: block !important;
 
 .your-comm__btn {
   position: relative;
-  margin-left: 1.25rem;
-  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -1270,12 +1299,9 @@ display: block !important;
   color: var(--color-violet);
 }
 .your-comm__btn_edit {
-  padding: 0.3125rem;
-  margin-left: 0.75rem;
   color: var(--color-violet);
 }
 .your-comm__btn_del {
-  padding: 0.3125rem;
   color: var(--color-violet);
 }
 .your-comm__btn-icon {
@@ -1709,8 +1735,7 @@ display: block !important;
     display: none;
   }
   .your-comm__btn {
-    margin-left: 0px;
-    margin-right: 1.25rem;  }
+    margin: 0;  }
   .praktika-comment-item__edit {
     padding-bottom: 0.625rem;
     position: relative;
@@ -1809,13 +1834,30 @@ display: block !important;
   .comment-form-main textarea::placeholder {
     font-size: 1rem;  }
   .comment-form-main .btn {
-    font-size: 0px;
-    right: 0.9375rem;    width: 1.875rem;    height: 1.875rem;    border-radius: 50%;
+    right: 0.9375rem;
+    top: 50%;
+    width: 1.875rem;
+    height: 1.875rem;
+    padding: 0;
+    border-radius: 50%;
     opacity: 1;
-    background: #E8E8E8 url(../../img/comments-btn-arrow-mob.png) no-repeat center center/15px auto;
+    background: #E8E8E8;
+    transform: translateY(-50%);
   }
   .comment-form-main form.active .btn {
-    background: var(--color-violet) url(../../img/comments-btn-arrow-mob_active.png) no-repeat center center/15px auto;
+    background: var(--color-violet);
+  }
+  .comment-form-main__btn-label {
+    display: none !important;
+  }
+  .comment-form-main__btn-arrow {
+    display: block;
+    width: 0.8125rem;
+    height: 0.8125rem;
+    color: #a7a7a7;
+  }
+  .comment-form-main form.active .comment-form-main__btn-arrow {
+    color: var(--color-white);
   }
   .praktika-comment-item {
     position: relative;
@@ -1867,5 +1909,41 @@ display: block !important;
     background: transparent !important;
     padding-left: 0;
     padding-right: 0;
+  }
+}
+
+/* Планшетная ширина всё ещё использует мобильную форму комментария. */
+@media (min-width: 576px) and (max-width: 767px) {
+  .comment-form-main textarea {
+    height: 4.375rem;
+    padding: 1.5rem 3.75rem 1.625rem 0.9375rem;
+    font-size: 1rem;
+    line-height: 1.3em;
+  }
+  .comment-form-main .btn {
+    right: 0.9375rem;
+    top: 50%;
+    width: 1.875rem;
+    height: 1.875rem;
+    padding: 0;
+    border-radius: 50%;
+    opacity: 1;
+    background: #e8e8e8;
+    transform: translateY(-50%);
+  }
+  .comment-form-main form.active .btn {
+    background: var(--color-violet);
+  }
+  .comment-form-main__btn-label {
+    display: none !important;
+  }
+  .comment-form-main__btn-arrow {
+    display: block;
+    width: 0.8125rem;
+    height: 0.8125rem;
+    color: #a7a7a7;
+  }
+  .comment-form-main form.active .comment-form-main__btn-arrow {
+    color: var(--color-white);
   }
 }

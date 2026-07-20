@@ -16,8 +16,13 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
     <!-- Упрощённая форма комментариев -->
     <div class="comment-form-main">
     <form id="custom-comment-form" class="comment-form">
-        <textarea name="comment" class="input textarea-resize" placeholder="Оставьте комментарий" rows="1" required></textarea>
-        <button type="submit" class="btn">ОТПРАВИТЬ</button>
+        <textarea name="comment" class="input textarea-resize" placeholder="Оставьте комментарий |" rows="1" required></textarea>
+        <button type="submit" class="btn">
+            <span class="comment-form-main__btn-label">ОТПРАВИТЬ</span>
+            <svg class="comment-form-main__btn-arrow" aria-hidden="true" focusable="false">
+                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+            </svg>
+        </button>
         
         <input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
         <input type="hidden" name="action" value="submit_custom_comment">

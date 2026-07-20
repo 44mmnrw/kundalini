@@ -285,6 +285,12 @@
   }
 }
 @media (max-width: 575px) {
+  /* 320px при viewport 340px; на остальных мобильных ширина масштабируется пропорционально. */
+  .tariff {
+    width: min(94.117647vw, 100%);
+    max-width: min(94.117647vw, 100%);
+  }
+
   .section-tariffs.section-tariffs_single {
     padding-top: 0px;
     padding-bottom: 5rem;  }
