@@ -434,7 +434,6 @@
                                     <div class="kriya-fav fav active" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="true" aria-label="Убрать">
 										<span class="kriya-fav__icon" aria-hidden="true">
 											<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
-											<svg class="active"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart-filled'); ?>"></use></svg>
 										</span>
 										<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
 										<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
@@ -507,8 +506,7 @@
 																	</div>
 																	<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 																		<span class="kriya-fav__icon" aria-hidden="true">
-																			<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
-																			<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart-filled'); ?>"></use></svg>
+																																								<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
 																		</span>
 																		<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
 																		<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
