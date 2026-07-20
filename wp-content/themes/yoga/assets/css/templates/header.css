@@ -679,12 +679,24 @@ header > .container > .row > .header-content {
     /* Desktop: 51px content row + 12px inset above and below. */
     --header-bar-height: 4.6875rem;
     --header-top-offset: 0px;
-    --header-page-offset: var(--header-bar-height);
+    /* Keep the first section at its established coordinate below the fixed header. */
+    --header-page-offset: 5.625rem;
   }
 
   header > .container {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
+  }
+
+  /* Fixed header and the document reserve use the same desktop geometry. */
+  header {
+    top: 0;
+    height: 4.6875rem;
+    min-height: 4.6875rem;
+  }
+
+  body {
+    padding-top: 5.625rem !important;
   }
   /* Авторизованный: три колонки (лого | меню | ЛК) */
   .header-content {
