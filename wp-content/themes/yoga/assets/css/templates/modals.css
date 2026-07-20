@@ -11,6 +11,12 @@
   transition: opacity 0.4s ease;
 }
 
+/* Do not paint a modal backdrop before the interface has initialized. */
+body:not(.yoga-ui-ready) .overlay,
+body:not(.yoga-ui-ready) .overlay-modal {
+  display: none !important;
+}
+
 .overlay-modal {
   position: absolute;
   width: 0vw;
