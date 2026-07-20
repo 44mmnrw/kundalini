@@ -28,7 +28,7 @@ $account_url = get_permalink(get_page_by_path('my-account')) ?: home_url('/my-ac
 				<div class="question-success__content">
 					<div class="question-success__text">
 						<h1 id="question-success-title">Мы получили ваш вопрос!</h1>
-						<p>Ответим в ближайшее время на указанный e-mail, так же вы найдёте ответ в <a href="<?php echo esc_url($account_url); ?>">личном кабинете</a>.</p>
+						<p>Ответим в ближайшее время на указанную эл. почту, так же вы найдёте ответ в <a href="<?php echo esc_url($account_url); ?>">личном кабинете</a>.</p>
 					</div>
 					<a class="question-success__button btn" href="<?php echo esc_url($faq_url); ?>">Спросить ещё</a>
                 </div>

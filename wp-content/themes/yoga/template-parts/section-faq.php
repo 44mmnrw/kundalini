@@ -61,7 +61,7 @@
                                     <?php echo esc_html(get_field('faq_form_title') ?: 'Не нашли ответа на интересующий вас вопрос?'); ?>
                                 </h4>
                                 <p>
-                                    <?php echo esc_html(get_field('faq_form_description') ?: 'Вы всегда можете задать нам ваш вопрос и получить ответ на e-mail'); ?>
+                                    <?php echo esc_html(get_field('faq_form_description') ?: 'Вы всегда можете задать нам ваш вопрос и получить ответ на эл. почту'); ?>
                                 </p>
                             </div>
                             <form action="#" class="form-questions__main-form" id="faqContactForm">
@@ -71,7 +71,7 @@
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_name') ?: 'Имя'); ?>">
                                 
                                 <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"<?php echo $faq_prefill_email !== '' ? ' readonly' : ''; ?>
-                                       placeholder="E-mail">
+                                       placeholder="эл. почта">
                                 
                                 <div class="form-questions-textarea">
                                     <textarea name="message" placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_question') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>

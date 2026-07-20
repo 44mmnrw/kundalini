@@ -204,7 +204,7 @@ if (have_posts()) :
                         $label = 'VK';
                     } elseif (strpos($detector, 'mailto:') !== false || strpos($detector, '@') !== false || strpos($detector, 'mail') !== false) {
                         $icon_id = 'social-mail';
-                        $label = 'E-mail';
+                        $label = 'эл. почта';
                     }
 
                     $add_share_link($url, $icon_id, $label);
