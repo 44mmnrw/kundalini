@@ -1276,6 +1276,10 @@ jQuery(document).ready(function($) {
 			return;
 		}
 		event.preventDefault();
+		// Fixed positioning must be calculated from the viewport, not from a page container.
+		if (!$modal.parent().is('body')) {
+			$modal.appendTo(document.body);
+		}
 		pendingCartRemoveForm = this;
 		$('.modal, .modal-login').removeClass('active');
 		$modal.addClass('active').attr('aria-hidden', 'false');

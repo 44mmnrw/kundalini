@@ -184,10 +184,7 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 		
 		// Почту отправляем отдельно: если письмо не ушло, вопрос все равно уже есть в админке.
 		$email_sent = wp_mail($to, $subject, $body, $headers);
-		$question_success_page = get_page_by_path('question-sent');
-		$question_success_url = $question_success_page
-			? get_permalink($question_success_page)
-			: home_url('/question-sent/');
+		$question_success_url = home_url('/question-sent/');
 		
 		wp_send_json_success(array(
             'message' => get_field('faq_form_success_message', 'option') ?: 'Ваш вопрос отправлен! Мы ответим вам в ближайшее время.',
