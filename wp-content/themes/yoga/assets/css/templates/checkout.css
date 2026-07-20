@@ -282,6 +282,13 @@
 	width: 100%;
 }
 
+/* The paired name fields must keep the same control height as full-width fields. */
+.yoga-checkout-fields__row > .yoga-checkout-field {
+	height: 4.0625rem;
+	min-height: 4.0625rem;
+	max-height: 4.0625rem;
+}
+
 .yoga-checkout-field {
 	display: flex;
 	align-items: center;
