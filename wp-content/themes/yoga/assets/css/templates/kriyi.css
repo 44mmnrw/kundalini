@@ -59,6 +59,30 @@
   width: 100%;
 }
 
+.practice-search-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 1.875rem;
+  width: 100%;
+  margin: 0;
+  color: var(--color-black);
+}
+.practice-search-empty p {
+  margin: 0;
+}
+.practice-search-empty__count {
+  font-family: "Mulish-Bold", "Mulish", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.practice-search-empty__message {
+  font-family: "Mulish-Medium", "Mulish", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
 .kriyi-item {
   width: 100%;
 }
@@ -269,7 +293,7 @@
     flex-wrap: wrap;
     justify-content: space-between;
     margin-top: -0.3125rem;  }
-  .kriyi__items > .no-practices {
+  .kriyi__items > .practice-search-empty {
     width: 100%;
     margin: 1.5625rem 0 0;
   }
