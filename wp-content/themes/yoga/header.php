@@ -116,7 +116,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 				: '';
 		}
 		?>
-		<header id="header" class="header animated fadeIn slow delay-200ms">
+		<header id="header" class="header">
 			<div class="container">
 				<div class="row">
 					<div class="header-content">

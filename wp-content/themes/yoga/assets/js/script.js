@@ -5,14 +5,6 @@
 var yogaViewportBp = { sm: 640, md: 768, lg: 1025, xl: 1280, xxl: 1536, tightDesktop: 1320 };
 
 jQuery(document).ready(function($) {
-	/* A page must never boot with a stale modal/mobile-menu state. */
-	$('.overlay, .overlay-modal').removeClass('active');
-	$('.modal-mobile-menu, .modal-mobile-menu-lk').removeClass('active');
-	$('.body_lk .header, .body_lk .burger').removeClass('active');
-	window.requestAnimationFrame(function () {
-		$('body').addClass('yoga-ui-ready');
-	});
-
 	window.yogaResetSmartCaptchaMount = function(mountEl) {
 		if (!mountEl || typeof window.smartCaptcha === 'undefined' || typeof window.smartCaptcha.reset !== 'function') {
 			return;
