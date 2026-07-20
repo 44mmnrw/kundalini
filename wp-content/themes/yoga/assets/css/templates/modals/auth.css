@@ -576,10 +576,14 @@
 
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input-password,
-  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .btn,
-  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-form-links {
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .btn {
     width: 100%;
     margin: 0;
+  }
+
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-form-links {
+    width: 100%;
+    margin: 0.75rem 0 0;
   }
 
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input {
@@ -603,7 +607,11 @@
     display: flex;
     gap: 1.875rem;
     justify-content: center;
-    margin-top: 0.625rem;
+    margin-top: 0;
+  }
+
+  .modal-login-inner__slide .yoga-form-register .registration-vk-link {
+    margin-top: 1.25rem;
   }
 
   .modal-login-inner__slide[data-target="1"].active .login-form-links a,
@@ -1120,12 +1128,15 @@ p.login-rules a:hover {
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
-  margin-top: 1.25rem;
+  margin-top: 0;
   min-height: 100px;}
+.yoga-form-login > .login-smartcaptcha {
+  margin-top: 1.25rem;
+}
 .loggin-back {
   display: flex;
   justify-content: center;
-  margin-top: 0.75rem;}
+  margin-top: 1.5625rem;}
 .loggin-back_mob {
   display: none;
 }
@@ -1154,6 +1165,16 @@ p.login-rules a:hover {
     margin-top: 1.25rem;  }
   .form-link_vk {
     margin-top: 1.6875rem;  }
+}
+
+@media (max-width: 575px) {
+  .login-smartcaptcha {
+    margin-top: 0;
+  }
+
+  .yoga-form-login > .login-smartcaptcha {
+    margin-top: 0;
+  }
 }
 @media (max-width: 1279px) {
   .modal-addnewcard.active .addnewcard-inner {
@@ -1233,6 +1254,13 @@ p.login-rules a:hover {
     height: 3.8125rem;    line-height: 3.8125rem;    margin-top: 0.625rem;  }
   .modal-login-inner__slide .form-link_vk {
     margin-top: 1.875rem;  }
+  .modal-login-inner__slide .form-link_vk.vkid-login-trigger,
+  .modal-login-inner__slide .form-link_vk.vkid-login-trigger .vkid-login-trigger__text {
+    text-decoration: none !important;
+  }
+  .modal-login-inner__slide .form-link_vk.vkid-login-trigger::before {
+    display: none !important;
+  }
   .modal-login-inner__slide form p {
     text-align: left;
   }
@@ -1273,7 +1301,7 @@ p.login-rules a:hover {
   .loggin-back {
     flex-direction: column;
     justify-content: flex-start;
-    margin-top: 1.5625rem;  }
+    margin-top: 1.25rem;  }
   .loggin-back__link {
     display: inline-block;
     margin-top: 1.25rem;    margin-bottom: 0px;

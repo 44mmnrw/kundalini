@@ -48,7 +48,7 @@ if (!function_exists('handle_yoga_email_login')) {
             yoga_ajax_error('Введите почту и пароль', 'validation_error', 422);
         }
         $existing = get_user_by('email', $log);
-        if (!$existing) {
+        if (!$existing && !is_email($log)) {
             $existing = get_user_by('login', $log);
         }
         if (!$existing) {
@@ -145,7 +145,7 @@ if (!function_exists('handle_yoga_lost_password')) {
             yoga_ajax_error('Введите email', 'validation_error', 422);
         }
         $user = get_user_by('email', $login);
-        if (!$user) {
+        if (!$user && !is_email($login)) {
             $user = get_user_by('login', $login);
         }
         if (!$user) {

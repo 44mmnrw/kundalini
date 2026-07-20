@@ -74,24 +74,18 @@
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_name') ?: 'Имя'); ?>">
                                 
                                 <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"<?php echo $faq_prefill_email !== '' ? ' readonly' : ''; ?>
-                                       placeholder="эл. почта">
+                                       placeholder="E-mail">
                                 
                                 <div class="form-questions-textarea">
                                     <textarea name="message" placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_question') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
                                     
                                     <input type="submit" id="faq-form-submit" style="display: none;">
                                     
-                                    <?php 
-                                    $btn_icon = get_field('faq_form_btn_icon');
-                                    if ($btn_icon) : ?>
-                                        <label for="faq-form-submit" class="btn">
-                                            <img src="<?php echo esc_url($btn_icon); ?>" alt="Отправить">
-                                        </label>
-                                    <?php else : ?>
-                                        <label for="faq-form-submit" class="btn">
-                                            <span>→</span>
-                                        </label>
-                                    <?php endif; ?>
+                                    <label for="faq-form-submit" class="btn" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
+                                        <svg class="faq__form-submit-arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                            <use href="<?php echo $faq_sprite_href; ?>#button-diagonal-arrow"></use>
+                                        </svg>
+                                    </label>
                                 </div>
                             </form>
                         </div>

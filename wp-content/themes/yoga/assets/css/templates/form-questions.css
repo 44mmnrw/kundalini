@@ -777,7 +777,7 @@
   position: static;
   width: 1rem;
   height: 1rem;
-  transform: rotate(40.78deg);
+  transform: none;
   transform-origin: center;
   transition: transform 0.2s ease;
 }
@@ -791,7 +791,7 @@
 
 .section-form-questions_contacts .contacts-form-layout__submit.btn:hover .contacts-form-layout__submit-arrow,
 .section-form-questions_contacts .contacts-form-layout__submit.btn:focus-visible .contacts-form-layout__submit-arrow {
-  transform: rotate(0deg);
+  transform: rotate(45deg);
 }
 
 .contacts-social {
@@ -920,16 +920,38 @@
     padding-bottom: 5rem;
   }
 
+  .section-form-questions_contacts .contacts-form-layout__intro {
+    width: 100%;
+    max-width: none;
+  }
+
+  .section-form-questions_contacts .contacts-form-layout__intro h3 {
+    font-size: 1.625rem;
+    line-height: 1;
+  }
+
   .section-form-questions_contacts .contacts-form-layout__scene.form-questions {
-    padding-top: 2rem;
-    margin-top: 1.25rem;
+    padding: 0;
+    margin-top: 2rem;
   }
 
   .section-form-questions_contacts .contacts-form-layout__intro p {
     margin-top: 0.5rem;
+    font-size: 1rem;
+    line-height: normal;
   }
 
   .section-form-questions_contacts .contacts-form-layout__form.form-questions__main-form {
-    padding-top: 4rem;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .section-form-questions_contacts .contacts-form-layout__row--inputs {
+    gap: 1.25rem;
+  }
+
+  .section-form-questions_contacts .contacts-form-layout__textarea.form-questions-textarea {
+    margin-top: 1.25rem;
   }
 }
