@@ -256,5 +256,6 @@ get_template_part('template-parts/section', 'library-filters', array(
 	'difficulty_terms' => $library_difficulty_terms,
 	'duration_terms' => $library_duration_terms,
 	'goal_terms' => $library_goal_terms,
+	'value_field' => 'term_id',
 ));
 ?>

@@ -155,6 +155,9 @@ if (!defined('ABSPATH')) {
 		if (!empty($_POST['search'])) {
 			$search_term = sanitize_text_field($_POST['search']);
 		}
+		$show_all = !empty($_POST['show_all']);
+		$library_results = !empty($_POST['library_results']);
+		$library_page = $library_results ? max(1, (int) ($_POST['library_page'] ?? 1)) : 1;
 		
 		// Очищаем корзину
 		if (!empty($raw_filters)) {
@@ -180,6 +183,10 @@ if (!defined('ABSPATH')) {
 		
 		$args['orderby'] = 'date';
 		$args['order'] = 'DESC';
+		if ($library_results) {
+			$args['posts_per_page'] = 10;
+			$args['paged'] = $library_page;
+		}
 		
 		if ($search_term !== '') {
 			$search_ids = array();
@@ -241,7 +248,7 @@ if (!defined('ABSPATH')) {
 		$practice_description = get_field('short_description') ?: get_the_excerpt();
 		$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
-		$hidden_class = ($item_count > 10) ? 'hidden' : '';
+		$hidden_class = (!$show_all && !$library_results && $item_count > 10) ? 'hidden' : '';
 		$tariff_lock_class = function_exists('yoga_practice_card_tariff_lock_class')
 			? yoga_practice_card_tariff_lock_class((int) get_the_ID(), $user_id)
 			: '';
@@ -282,7 +289,7 @@ if (!defined('ABSPATH')) {
         endwhile;
         
         // Отключаем стандартную обработку WooCommerce для тарифов
-        if ($count > 10) :
+		if (!$show_all && !$library_results && $count > 10) :
 		for ($i = 0; $i < 2; $i++) :
 	?>
 	<div class="kriyi-item kriyi-item_last hidden">
@@ -322,7 +329,8 @@ if (!defined('ABSPATH')) {
 		// Отключаем стандартный редирект
 		wp_send_json_success(array(
         'html' => $html,
-        'count' => $count
+		'count' => $count,
+		'has_more' => $library_results && ($library_page * 10 < $count)
 		));
 		
 		wp_die();

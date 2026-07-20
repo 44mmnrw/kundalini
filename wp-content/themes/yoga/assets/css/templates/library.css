@@ -9,6 +9,9 @@
   width: 100%;
   overflow-x: hidden;
 }
+.library-x-clip.library-x-clip--practice-results {
+  overflow: visible;
+}
 
 .library-form {
   display: block;
@@ -525,6 +528,41 @@ input#filt-reset {
   display: flex;
   min-width: calc(100% + 1.25rem);  width: calc(100% + 1.25rem);  flex-wrap: wrap;
   padding-top: 1.875rem;}
+.library.library--practice-results {
+  display: block;
+  min-width: 100%;
+  width: 100%;
+  padding-top: 1.5625rem;
+}
+.library-practice-results__more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14rem;
+  min-height: 4.5rem;
+  padding: 1.75rem 1.25rem;
+  margin: 2.5rem auto 0;
+  border: 0;
+  border-radius: 31.25rem;
+  background: var(--color-black);
+  color: var(--color-green);
+  cursor: pointer;
+  font-family: "Mulish-SemiBold", "Mulish", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.library-practice-results__more span {
+  color: inherit;
+  line-height: inherit;
+}
+.library-practice-results__more:hover,
+.library-practice-results__more:focus-visible {
+  background: var(--color-green);
+  color: var(--color-black);
+}
 
 .library-item {
   --library-card-background: rgba(145, 83, 225, 0.07);
