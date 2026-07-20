@@ -17,6 +17,75 @@
   padding-bottom: 2.8125rem;}
 
 /* Unsaved LK profile changes — Figma 2220:20972. */
+/* Logout confirmation — Figma 2113:25374 (desktop). */
+@media (min-width: 576px) {
+  .modal-default.modal-default_logout,
+  .modal-default.modal-default_logout.active {
+    width: 28.5625rem;
+    height: 17.8125rem;
+    max-width: calc(100vw - 1.875rem);
+    padding: 4.0625rem 2.1875rem 3.4375rem;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: 1.875rem;
+    background: var(--color-green) !important;
+  }
+
+  .modal-default_logout .modal-close {
+    width: 3.1875rem;
+    height: 3.1875rem;
+    top: 0.9375rem;
+    right: 0.9375rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-white);
+  }
+
+  .modal-default_logout .delcomm,
+  .modal-default_logout .delcomm__main {
+    height: 100%;
+    padding: 0;
+  }
+
+  .modal-default_logout h3,
+  .modal-default_logout p {
+    width: 100%;
+    margin: 0;
+    color: var(--color-black);
+    text-align: left;
+  }
+
+  .modal-default_logout h3 {
+    font: 700 1.75rem/1.1 "Mulish-Bold", sans-serif;
+  }
+
+  .modal-default_logout p {
+    margin-top: 0.9375rem;
+    font: 400 1rem/normal "Mulish-Regular", sans-serif;
+  }
+
+  .modal-default_logout .delcomm-buttons {
+    width: 100%;
+    margin-top: 1.6875rem;
+  }
+
+  .modal-default_logout .delcomm-buttons .btn {
+    display: flex;
+    width: calc(50% - 0.625rem);
+    height: 3.25rem;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0.9375rem;
+    line-height: normal;
+  }
+
+  .modal-default_logout .delcomm-buttons .btn span {
+    font: 500 1rem/normal "Mulish-Medium", sans-serif;
+  }
+}
+
 #lk-unsaved-changes-modal.modal-default,
 #lk-unsaved-changes-modal.modal-default.active {
   width: 28.5625rem;

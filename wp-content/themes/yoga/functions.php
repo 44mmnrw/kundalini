@@ -1418,10 +1418,23 @@ function yoga_subscribe_handler() {
 		$user_id = get_current_user_id();
 		$old_user = get_user_by('id', $user_id);
 		$old_email = $old_user ? sanitize_email((string) $old_user->user_email) : '';
+		$new_email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : $old_email;
+		$email_changed = $new_email !== '' && strcasecmp($new_email, $old_email) !== 0;
 		$response = array();
 		
 		try {
 			$user_data = array('ID' => $user_id);
+
+			if ($email_changed) {
+				if (!is_email($new_email)) {
+					wp_send_json_error('Укажите корректный e-mail.', 422);
+				}
+
+				$login_owner_id = username_exists($new_email);
+				if ($login_owner_id && (int) $login_owner_id !== $user_id) {
+					wp_send_json_error('Этот e-mail уже используется другим пользователем.', 422);
+				}
+			}
 			
 			// Обработка загрузки аватара
 			if (!empty($_POST['first_name'])) {
@@ -1432,16 +1445,29 @@ function yoga_subscribe_handler() {
 				$user_data['last_name'] = sanitize_text_field($_POST['last_name']);
 			}
 			
-			if (!empty($_POST['email'])) {
-				$user_data['user_email'] = sanitize_email($_POST['email']);
+			if ($email_changed) {
+				$user_data['user_email'] = $new_email;
 			}
 			
 			$update_result = wp_update_user($user_data);
 			if (is_wp_error($update_result)) {
 				wp_send_json_error($update_result->get_error_message(), 422);
 			}
-			$new_email = isset($user_data['user_email']) ? sanitize_email($user_data['user_email']) : $old_email;
-			if ($new_email !== '' && strcasecmp($new_email, $old_email) !== 0) {
+			if ($email_changed) {
+				global $wpdb;
+				$login_updated = $wpdb->update(
+					$wpdb->users,
+					array('user_login' => $new_email),
+					array('ID' => $user_id),
+					array('%s'),
+					array('%d')
+				);
+				if ($login_updated === false) {
+					wp_update_user(array('ID' => $user_id, 'user_email' => $old_email));
+					wp_send_json_error('Не удалось обновить e-mail. Попробуйте ещё раз.', 500);
+				}
+				clean_user_cache($user_id);
+				update_user_meta($user_id, 'billing_email', $new_email);
 				delete_user_meta($user_id, 'yoga_verified_email');
 				delete_user_meta($user_id, 'yoga_email_verified_at');
 				if (function_exists('yoga_clear_email_verification_code')) {
