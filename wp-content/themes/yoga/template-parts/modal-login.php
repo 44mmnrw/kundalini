@@ -124,13 +124,14 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         зарегистрироваться
                     </span>
                 </label>
-                <a href="#" class="ref form-link form-link_vk registration-vk-link vkid-login-trigger">
-                    <span class="vkid-login-trigger__text">Войти через VK</span>
-                    <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
-                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#vk-login-logo'); ?>"></use>
-                    </svg>
-                </a>
             </form>
+            <span class="login-switch-link login-switch-link--mobile ml-sl-switch" data-target="1">Войти</span>
+            <a href="#" class="ref form-link form-link_vk registration-vk-link vkid-login-trigger">
+                <span class="vkid-login-trigger__text">Войти через VK</span>
+                <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
+                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#vk-login-logo'); ?>"></use>
+                </svg>
+            </a>
         </div>
         <div class="modal-login-inner__slide" data-target="3">
             <div class="login-slide-switches">
