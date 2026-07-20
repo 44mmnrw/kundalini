@@ -1212,8 +1212,13 @@ header > .container > .row > .header-content {
   }
 
   .header-lk .notification-icon_header .notification-icon__img {
-    width: 1.4375rem;
-    height: 1.4375rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-black);
+  }
+
+  .header-lk .notification-icon_header--has-notifications .notification-icon__img {
+    color: var(--color-violet);
   }
 
   .header-favorites-link svg {
