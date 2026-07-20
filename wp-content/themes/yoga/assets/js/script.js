@@ -4858,4 +4858,12 @@ jQuery(function() {
             $button.prop('disabled', false);
         });
     });
+
+    document.querySelectorAll('.about__main_sec .about-img').forEach(function(imageWrap) {
+        imageWrap.addEventListener('wow', function() {
+            var frame = imageWrap.querySelector('.about-img__frame');
+            if (frame) frame.classList.add('is-rotated');
+        });
+    });
+
 })(jQuery);
