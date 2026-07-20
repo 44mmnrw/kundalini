@@ -675,6 +675,17 @@ header > .container > .row > .header-content {
 }
 
 @media (min-width: 1025px) {
+  :root {
+    /* Desktop: 51px content row + 12px inset above and below. */
+    --header-bar-height: 4.6875rem;
+    --header-top-offset: 0px;
+    --header-page-offset: var(--header-bar-height);
+  }
+
+  header > .container {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
   /* Авторизованный: три колонки (лого | меню | ЛК) */
   .header-content {
     display: grid;
@@ -1084,7 +1095,7 @@ header > .container > .row > .header-content {
   }
 }
 
-@media (max-width: 1319px) {
+@media (max-width: 1024px) {
   header {
     padding-top: var(--header-mobile-py);
     padding-bottom: var(--header-mobile-py);
