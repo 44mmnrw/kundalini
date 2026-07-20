@@ -2082,4 +2082,6 @@ body.home {
   height: 217px;
   align-self: stretch;
   aspect-ratio: auto;
+  object-fit: contain;
+  background: var(--color-white);
 }
