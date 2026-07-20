@@ -139,7 +139,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 </h3>
             </div>
             <p>
-                Введите e-mail, который вы использовали при регистрации
+                Введите эл. почту, которую вы использовали при регистрации
             </p>
             <form action="#" class="form form_recovery yoga-form-recovery" method="post">
                 <?php wp_nonce_field('yoga_recovery_nonce', 'yoga_recovery_nonce'); ?>
@@ -166,7 +166,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
         </div>
         <div class="modal-login-inner__slide modal-login-inner__slide_succes" data-target="4">
             <p>
-                Мы отправили подтверждение сброса пароля на ваш e-mail. Перейдите по ссылке в письме, чтобы продолжить.
+                Мы отправили подтверждение сброса пароля на вашу эл. почту. Перейдите по ссылке в письме, чтобы продолжить.
             </p>
             <b class="login-notification">
                 Нет письма? Проверьте папку Спам.

@@ -13,7 +13,7 @@ add_action('admin_menu', 'yoga_email_verification_add_settings_page');
 add_action('admin_init', 'yoga_email_verification_register_settings');
 
 function yoga_email_verification_default_subject() {
-	return 'Код подтверждения e-mail — {site_name}';
+	return 'Код подтверждения эл. почты — {site_name}';
 }
 
 function yoga_email_verification_default_message() {
@@ -22,8 +22,8 @@ function yoga_email_verification_default_message() {
 
 function yoga_email_verification_add_settings_page() {
 	add_options_page(
-		'Подтверждение e-mail',
-		'Подтверждение e-mail',
+		'Подтверждение эл. почты',
+		'Подтверждение эл. почты',
 		'manage_options',
 		'yoga-email-verification',
 		'yoga_email_verification_render_settings_page'
@@ -67,7 +67,7 @@ function yoga_email_verification_render_settings_page() {
 	}
 	?>
 	<div class="wrap">
-		<h1>Подтверждение e-mail</h1>
+		<h1>Подтверждение эл. почты</h1>
 		<p>Доступные переменные: <code>{code}</code>, <code>{site_name}</code>, <code>{user_name}</code>, <code>{email}</code>, <code>{ttl_minutes}</code>.</p>
 		<form method="post" action="options.php">
 			<?php settings_fields('yoga_email_verification'); ?>
@@ -110,10 +110,10 @@ function yoga_clear_email_verification_code($user_id) {
 function yoga_send_email_verification_code($user_id, $force = false) {
 	$user = get_user_by('id', (int) $user_id);
 	if (!$user || !is_email($user->user_email)) {
-		return new WP_Error('invalid_email', 'Укажите корректный e-mail.');
+		return new WP_Error('invalid_email', 'Укажите корректную эл. почту.');
 	}
 	if (yoga_is_user_email_verified($user->ID)) {
-		return new WP_Error('already_verified', 'E-mail уже подтверждён.');
+		return new WP_Error('already_verified', 'эл. почта уже подтверждена.');
 	}
 
 	$last_sent = (int) get_user_meta($user->ID, 'yoga_email_code_sent_at', true);
@@ -172,7 +172,7 @@ function yoga_send_email_verification_code_ajax() {
 		}
 		wp_send_json_error($data, $result->get_error_code() === 'rate_limited' ? 429 : 422);
 	}
-	wp_send_json_success(array('message' => 'Код отправлен на ваш e-mail.', 'retry_after' => $result['retry_after']));
+	wp_send_json_success(array('message' => 'Код отправлен на вашу эл. почту.', 'retry_after' => $result['retry_after']));
 }
 
 function yoga_verify_email_code_ajax() {
@@ -204,5 +204,5 @@ function yoga_verify_email_code_ajax() {
 	update_user_meta($user_id, 'yoga_email_verified_at', current_time('mysql', true));
 	yoga_clear_email_verification_code($user_id);
 	delete_user_meta($user_id, 'yoga_email_code_sent_at');
-	wp_send_json_success(array('message' => 'E-mail успешно подтверждён.'));
+	wp_send_json_success(array('message' => 'эл. почта успешно подтверждена.'));
 }

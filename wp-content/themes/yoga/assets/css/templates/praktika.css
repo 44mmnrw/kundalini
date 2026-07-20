@@ -390,24 +390,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.9375rem;
+  gap: 1.5625rem;
   max-width: 22rem;
 }
-.praktika-section-paywall__label {
+p.praktika-section-paywall__label {
   margin: 0;
   font-family: "Mulish-SemiBold", sans-serif;
   font-size: 1.25rem;
   line-height: 1.1;
   color: var(--color-black);
 }
-.praktika-section-paywall__text {
+p.praktika-section-paywall__text {
   margin: 0;
   font-size: 1rem;
   line-height: 1.45;
   color: rgba(0, 0, 0, 0.65);
 }
 .praktika-section-paywall__cta {
-  margin-top: 1.625rem;
+  margin-top: 1.5625rem;
   min-width: 15.5rem;
 }
 .praktika-section-paywall__cta > span:first-child {
@@ -415,9 +415,6 @@
 }
 
 @media (max-width: 767px) {
-  .praktika-section-paywall__copy {
-    gap: 0.625rem;
-  }
   .praktika-section-paywall__label {
     font-size: 1.25rem;
   }

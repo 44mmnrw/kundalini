@@ -1369,32 +1369,24 @@ function yoga_subscribe_handler() {
 	// Обновление основных данных
 	function yoga_get_russian_timezone_options() {
 		return array(
-			'Europe/Kaliningrad' => 'Калининград (UTC+2)',
-			'Europe/Moscow' => 'Москва (UTC+3)',
-			'Europe/Kirov' => 'Киров (UTC+3)',
-			'Europe/Volgograd' => 'Волгоград (UTC+3)',
-			'Europe/Simferopol' => 'Симферополь (UTC+3)',
-			'Europe/Astrakhan' => 'Астрахань (UTC+4)',
-			'Europe/Samara' => 'Самара (UTC+4)',
-			'Europe/Ulyanovsk' => 'Ульяновск (UTC+4)',
-			'Europe/Saratov' => 'Саратов (UTC+4)',
-			'Asia/Yekaterinburg' => 'Екатеринбург (UTC+5)',
-			'Asia/Omsk' => 'Омск (UTC+6)',
-			'Asia/Novosibirsk' => 'Новосибирск (UTC+7)',
-			'Asia/Barnaul' => 'Барнаул (UTC+7)',
-			'Asia/Tomsk' => 'Томск (UTC+7)',
-			'Asia/Krasnoyarsk' => 'Красноярск (UTC+7)',
-			'Asia/Irkutsk' => 'Иркутск (UTC+8)',
-			'Asia/Chita' => 'Чита (UTC+9)',
-			'Asia/Yakutsk' => 'Якутск (UTC+9)',
-			'Asia/Khandyga' => 'Хандыга (UTC+9)',
-			'Asia/Vladivostok' => 'Владивосток (UTC+10)',
-			'Asia/Ust-Nera' => 'Усть-Нера (UTC+10)',
-			'Asia/Magadan' => 'Магадан (UTC+11)',
-			'Asia/Sakhalin' => 'Сахалин (UTC+11)',
-			'Asia/Srednekolymsk' => 'Среднеколымск (UTC+11)',
-			'Asia/Kamchatka' => 'Камчатка (UTC+12)',
-			'Asia/Anadyr' => 'Анадырь (UTC+12)',
+			'America/Los_Angeles'          => 'UTC−8 — Лос-Анджелес',
+			'America/Denver'               => 'UTC−7 — Денвер',
+			'America/Chicago'              => 'UTC−6 — Чикаго · Мехико',
+			'America/New_York'             => 'UTC−5 — Нью-Йорк · Торонто',
+			'America/Argentina/Buenos_Aires' => 'UTC−3 — Буэнос-Айрес · Сан-Паулу',
+			'Europe/London'                => 'UTC+0 — Лондон · Лиссабон',
+			'Europe/Berlin'                => 'UTC+1 — Берлин · Париж',
+			'Europe/Kaliningrad'           => 'UTC+2 — Калининград · Тель-Авив',
+			'Europe/Moscow'                => 'UTC+3 — Москва · Санкт-Петербург · Минск',
+			'Europe/Samara'                => 'UTC+4 — Самара · Дубай · Тбилиси',
+			'Asia/Yekaterinburg'           => 'UTC+5 — Екатеринбург · Ташкент · Алматы',
+			'Asia/Omsk'                    => 'UTC+6 — Омск · Бишкек',
+			'Asia/Novosibirsk'             => 'UTC+7 — Новосибирск · Красноярск · Бангкок',
+			'Asia/Irkutsk'                 => 'UTC+8 — Иркутск · Бали · Сингапур',
+			'Asia/Yakutsk'                 => 'UTC+9 — Якутск · Токио',
+			'Asia/Vladivostok'             => 'UTC+10 — Владивосток · Хабаровск',
+			'Asia/Magadan'                 => 'UTC+11 — Магадан · Южно-Сахалинск',
+			'Asia/Kamchatka'               => 'UTC+12 — Петропавловск-Камчатский',
 		);
 	}
 
@@ -1425,12 +1417,12 @@ function yoga_subscribe_handler() {
 
 			if ($email_changed) {
 				if (!is_email($new_email)) {
-					wp_send_json_error('Укажите корректный e-mail.', 422);
+					wp_send_json_error('Укажите корректную эл. почту.', 422);
 				}
 
 				$login_owner_id = username_exists($new_email);
 				if ($login_owner_id && (int) $login_owner_id !== $user_id) {
-					wp_send_json_error('Этот e-mail уже используется другим пользователем.', 422);
+					wp_send_json_error('Эта эл. почта уже используется другим пользователем.', 422);
 				}
 			}
 			
@@ -1462,7 +1454,7 @@ function yoga_subscribe_handler() {
 				);
 				if ($login_updated === false) {
 					wp_update_user(array('ID' => $user_id, 'user_email' => $old_email));
-					wp_send_json_error('Не удалось обновить e-mail. Попробуйте ещё раз.', 500);
+					wp_send_json_error('Не удалось обновить эл. почту. Попробуйте ещё раз.', 500);
 				}
 				clean_user_cache($user_id);
 				update_user_meta($user_id, 'billing_email', $new_email);

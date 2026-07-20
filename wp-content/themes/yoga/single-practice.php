@@ -102,7 +102,7 @@ $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-pr
 						Мы получили ваш вопрос!
 					</h3>
 					<p>
-						Ответим в ближайшее время на указанный e-mail, так же вы найдёте ответ в <a href="#" class="ref">личном кабинете.</a>
+						Ответим в ближайшее время на указанную эл. почту, так же вы найдёте ответ в <a href="#" class="ref">личном кабинете.</a>
 					</p>
 					<div class="btn">
 						<span>

@@ -96,12 +96,12 @@
 										</div>
 										<div class="lk-form-row">
 											<div class="lk-form-item lk-form-item_email">
-												<h5>E-mail<span>*</span></h5>
+											<h5>эл. почта<span>*</span></h5>
 												<input type="email" class="input" required placeholder="эл. почта" name="email" value="<?php echo esc_attr($current_user->user_email); ?>">
 								<div class="lk-email-confirmation<?php echo $email_verified ? ' is-verified' : ''; ?>">
-									<p><?php echo $email_verified ? 'E-mail подтверждён' : 'E-mail не подтверждён'; ?></p>
+									<p><?php echo $email_verified ? 'эл. почта подтверждена' : 'эл. почта не подтверждена'; ?></p>
 									<?php if (!$email_verified) : ?>
-										<a href="#" class="lk-email-confirmation__link">Подтвердить e-mail</a>
+										<a href="#" class="lk-email-confirmation__link">Подтвердить эл. почту</a>
 										<div class="lk-email-verification" hidden>
 											<p>Введите 6-значный код из письма</p>
 											<div class="lk-email-verification__controls">

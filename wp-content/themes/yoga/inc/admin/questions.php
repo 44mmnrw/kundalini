@@ -162,7 +162,7 @@ function render_question_request_meta_box(WP_Post $post): void {
 	?>
 	<div class="yoga-question-admin-card">
 		<div class="yoga-question-admin-card__meta">
-			<span><strong><?php esc_html_e('Получатель ответа:', 'yoga'); ?></strong> <?php echo $email ? esc_html($email) : esc_html__('e-mail не указан', 'yoga'); ?></span>
+			<span><strong><?php esc_html_e('Получатель ответа:', 'yoga'); ?></strong> <?php echo $email ? esc_html($email) : esc_html__('эл. почта не указана', 'yoga'); ?></span>
 			<span><strong><?php esc_html_e('Получено:', 'yoga'); ?></strong> <?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($date))); ?></span>
 		</div>
 		<div class="yoga-question-admin-card__message">
@@ -177,8 +177,8 @@ function render_question_request_meta_box(WP_Post $post): void {
 			$display_status = $status === 'failed' && !$email_notifications_enabled ? 'email_disabled' : $status;
 			$status_labels = array(
 				'sent' => __('Письмо отправлено', 'yoga'),
-				'email_disabled' => __('E-mail-уведомления отключены', 'yoga'),
-				'missing_recipient' => __('Не указан e-mail получателя', 'yoga'),
+				'email_disabled' => __('Уведомления по эл. почте отключены', 'yoga'),
+				'missing_recipient' => __('Не указана эл. почта получателя', 'yoga'),
 				'failed' => __('Ошибка отправки письма', 'yoga'),
 			);
 			$status_label = $status_labels[$display_status] ?? __('Письмо не отправлено', 'yoga');
@@ -217,7 +217,7 @@ function render_question_answer_meta_box(WP_Post $post): void {
 				<label for="question_answer"><?php esc_html_e('Новый ответ', 'yoga'); ?></label>
 				<p><?php esc_html_e('После отправки текст появится под вопросом, а это поле очистится.', 'yoga'); ?></p>
 			</div>
-			<span class="yoga-question-answer__recipient"><?php echo $recipient_email ? esc_html($recipient_email) : esc_html__('e-mail не указан', 'yoga'); ?></span>
+			<span class="yoga-question-answer__recipient"><?php echo $recipient_email ? esc_html($recipient_email) : esc_html__('эл. почта не указана', 'yoga'); ?></span>
 		</div>
 		<textarea id="question_answer" name="question_answer" class="large-text" rows="9" placeholder="Напишите ответ пользователю"></textarea>
 		<div class="yoga-question-answer__footer">
