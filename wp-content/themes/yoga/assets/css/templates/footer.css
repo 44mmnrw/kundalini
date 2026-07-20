@@ -387,6 +387,12 @@
 }
 
 @media (max-width: 575px) {
+  html,
+  body {
+    background-color: var(--color-black);
+    overscroll-behavior-y: none;
+  }
+
   .footer {
     border-radius: 1.875rem 1.875rem 0 0;
     padding: 1.875rem 1.25rem 1.25rem;
