@@ -804,7 +804,7 @@
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 21 20" aria-hidden="true" focusable="false">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-lotus'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
@@ -812,7 +812,7 @@
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 18 16" aria-hidden="true" focusable="false">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-heart'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
@@ -820,7 +820,7 @@
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 17 17" aria-hidden="true" focusable="false">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-smile'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
@@ -839,7 +839,7 @@
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 21 23" aria-hidden="true" focusable="false">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
@@ -863,7 +863,7 @@
 
         <div class="sidebar-exit modal-call modal-call_logout">
 			<div class="sidebar-exit__icon">
-				<svg class="sidebar-exit__svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+				<svg class="sidebar-exit__svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-logout'); ?>" width="100%" height="100%"></use>
 				</svg>
 			</div>
