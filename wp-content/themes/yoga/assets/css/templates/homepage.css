@@ -473,7 +473,9 @@
   .main__practices {
     margin-top: 0.125rem;  }
   .hundreds-practices {
-    width: 17.5rem;    max-width: 17.5rem;    aspect-ratio: 7408.34 / 4142.01;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 7408.34 / 4142.01;
     background: transparent;
     border-radius: 0;
   }
@@ -826,7 +828,7 @@
     padding: 2.625rem 1.25rem 1.5625rem;
     /* Центр номера совпадает с базовым (геометрия SVG одна на все брейкпоинты) */
     /* Высота пластины = ширина × 298/320; иначе absolute-пластина выступает ниже блока и наезжает на следующую карточку */
-    min-height: calc(100cqw * 383 / 387);
+    min-height: calc(100cqw * 298 / 320);
   }
 
   /* Фон: как viewBox SVG 320×298 */
@@ -852,6 +854,13 @@
   .whyme-item__plate .whyme-item__star {
     left: 58%;
     top: calc(2.625rem + 8.8125rem / 2);
+  }
+
+  /* Координаты номера масштабируются от плашки Figma 320×298. */
+  .whyme-item__plate .whyme-item__number {
+    left: calc(304 * 100% / 387);
+    top: calc(72.3 * 100% / 383);
+    transform: none;
   }
 
   .whyme-item__image {

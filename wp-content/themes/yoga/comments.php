@@ -18,8 +18,13 @@ if (get_post_type($post_id) === 'post') :
 
 		<div class="comment-form-main">
 			<form id="custom-comment-form" class="comment-form">
-				<textarea name="comment" class="input textarea-resize" placeholder="<?php esc_attr_e('Оставьте комментарий', 'yoga'); ?>" rows="1" required></textarea>
-				<button type="submit" class="btn"><?php esc_html_e('ОТПРАВИТЬ', 'yoga'); ?></button>
+				<textarea name="comment" class="input textarea-resize" placeholder="<?php esc_attr_e('Оставьте комментарий |', 'yoga'); ?>" rows="1" required></textarea>
+				<button type="submit" class="btn">
+					<span class="comment-form-main__btn-label"><?php esc_html_e('ОТПРАВИТЬ', 'yoga'); ?></span>
+					<svg class="comment-form-main__btn-arrow" aria-hidden="true" focusable="false">
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+					</svg>
+				</button>
 
 				<input type="hidden" name="post_id" value="<?php echo esc_attr((string) $post_id); ?>">
 				<input type="hidden" name="action" value="submit_custom_comment">
