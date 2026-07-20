@@ -719,11 +719,9 @@
 			wp_enqueue_style( 'about-style', $theme_uri . '/assets/css/templates/about.css', $common_style_deps, $about_style_ver );
 		}
 
-		$load_kriyi_style = false;
-		if ($is_practice_tax) {
-			$current_term = get_queried_object();
-			$load_kriyi_style = $current_term instanceof WP_Term && !empty($current_term->parent);
-		}
+		// Parent practice-type archives also render the existing kriyi list after
+		// search/filtering, so its styles must be available there as well.
+		$load_kriyi_style = $is_practice_tax;
 		if ($is_lk_template) {
 			$load_kriyi_style = true;
 		}

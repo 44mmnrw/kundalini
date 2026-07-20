@@ -2631,15 +2631,18 @@ jQuery(document).ready(function($) {
         syncLibraryFilterCheckboxLabels();
     }
 
-    function loadLibraryPractices() {
+    function loadLibraryPractices(page) {
 		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.ajax_url) {
 			return;
 		}
+		page = Number(page) > 0 ? Number(page) : 1;
 		let data = {
-			action: 'filter_practices',
+			action: 'filter_practices_kriyi',
 			filters: {},
 			search: $('.section-library input[name="s"]').val(),
-			term_id: getActiveLibraryTermId()
+			term_id: getActiveLibraryTermId(),
+			library_results: 1,
+			library_page: page
 		};
 
 		data.filters = YogaLibraryFiltersCore.selectedByTaxonomy();
@@ -2648,9 +2651,22 @@ jQuery(document).ready(function($) {
 		YogaLibraryFiltersCore.request('practices', {
 			url: yoga_ajax.ajax_url,
 			type: 'POST',
+			dataType: 'json',
 			data: data,
 			success: function(response) {
-				$('.section-library .library').html(response);
+				if (response && response.success && response.data) {
+					var $results = $('.section-library .library').addClass('library--practice-results kriyi__items');
+					if (page === 1) {
+						$results.html(response.data.html);
+					} else {
+						$results.find('.library-practice-results__more').remove();
+						$results.append(response.data.html);
+					}
+					$results.closest('.library-x-clip').addClass('library-x-clip--practice-results');
+					if (response.data.has_more) {
+						$results.append('<button type="button" class="btn library-practice-results__more" data-next-page="' + (page + 1) + '"><span>Показать ещё</span></button>');
+					}
+				}
 			}
 		});
 	}
@@ -2761,6 +2777,10 @@ jQuery(document).ready(function($) {
 					$search.find('.form-categories').removeClass('active');
 					$search.find('.form-cat-list').removeClass('active');
 					setActiveLibraryTerm($item.data('target'));
+					// The parent category is the current URL, so it does not navigate.
+					// In this case replace its subcategory cards with practice results.
+					loadLibraryPractices();
+					requestLibrarySuggestions();
 					return;
 				}
 			} catch (ignore) {}
@@ -3124,7 +3144,7 @@ jQuery(document).ready(function($) {
         YogaLibraryFiltersCore.debounce('suggestions', requestPracticeSuggestions, 300);
     });
 
-    $(document).on('click', '.section-kriyi .form-search-list__item[data-url]', function(e) {
+	$(document).on('click', '.section-kriyi .form-search-list__item[data-url]', function(e) {
         e.preventDefault();
         const url = $(this).data('url');
         if (url) {
@@ -3137,6 +3157,11 @@ jQuery(document).ready(function($) {
 		YogaLibraryFiltersCore.set(this, this.checked);
 		syncLibraryFilterCheckboxLabels();
         loadPractices();
+	});
+
+	$(document).on('click', '.library-practice-results__more', function() {
+		var nextPage = Number($(this).attr('data-next-page')) || 2;
+		loadLibraryPractices(nextPage);
 	});
 	
     // Кнопка "Показать еще/Свернуть"
