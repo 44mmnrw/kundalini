@@ -47,22 +47,102 @@
   display: block;
   width: 100%;
 }
-.about-img img.about-img__img_mob {
-  display: none;
+/* The photo silhouette is a CSS mask, not a baked layout image. */
+.about__main_start .about-img--masked {
+  aspect-ratio: 319 / 301;
 }
 
-.about__main_start .about-img::before {
-  content: "";
-  display: block;
+.about__main_sec .about-img {
+  width: 623.291px;
+  height: 457.833px;
+  max-width: none;
+}
+
+.about__main_sec .about-img__frame {
   position: absolute;
+  z-index: 0;
+  top: 25.38px;
+  left: 16.64px;
+  width: 36.875rem;
+  height: 25.5rem;
+  box-sizing: border-box;
+  border: 0.625rem solid var(--color-green);
+  border-radius: 1.875rem;
+  pointer-events: none;
+  transform: rotate(0);
+  transform-origin: center;
+}
+
+.about__main_sec .about-img__frame.is-rotated {
+  animation: about-frame-rotate 2s ease 200ms forwards;
+}
+
+@keyframes about-frame-rotate {
+  from { transform: rotate(0); }
+  to { transform: rotate(-4.996deg); }
+}
+
+.about__main_sec .about-img img {
+  position: absolute;
+  z-index: 1;
+  top: 25.38px;
+  left: 16.64px;
+  width: 36.875rem;
+  height: 25.5rem;
+  object-fit: cover;
+}
+
+.about__main_start .about-img--masked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  background-color: var(--color-green);
+  background-image: url("../../img/o_nas_mob-photo.png");
+  /* Match the original SVG: the portrait is intentionally shifted left. */
+  background-position: -5.5625rem top;
+  background-size: 108% 100%;
+  background-repeat: no-repeat;
+  -webkit-mask: url("../../svg/o_nas_desk.svg") center / 100% 100% no-repeat;
+  mask: url("../../svg/o_nas_desk.svg") center / 100% 100% no-repeat;
+}
+
+.about__main_start .about-img--masked::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -2.5rem;
   left: 50%;
+  width: 52.125rem;
+  height: 21.4375rem;
+  pointer-events: none;
+  background: url("../../img/about-img-before.png") center / 100% auto no-repeat;
   transform: translateX(-50%);
-  top: -2.5rem;  width: 52.125rem;  height: 21.4375rem;  background: url(../../img/about-img-before.png) no-repeat center center/100% auto;
-  opacity: 0;
-  animation: fadeIn 3s forwards 0.5s;
-  animation-delay: 1s;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+}
+
+.about-img__cta {
+  position: absolute;
+  z-index: 3;
+  /* Figma: the circle's right and bottom edges match the photo frame. */
+  right: 0;
+  bottom: 0;
+  display: flex;
+  width: 3.125rem;
+  height: 3.125rem;
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-black);
+  color: var(--color-green);
+}
+
+.about-img__cta svg {
+  width: 1rem;
+  height: 1rem;
+  /* The sprite is drawn up-right; the layout uses a down-right arrow. */
+  transform: rotate(90deg);
 }
 
 .about__years {
@@ -94,13 +174,6 @@
 
 .about__main_sec .about-img {
   margin-top: 4.625rem;}
-.about__main_sec .about-img::before {
-  content: "";
-  display: block;
-  position: absolute;
-  right: -6.375rem;  top: -1.625rem;  width: 55.9375rem;  height: 34.25rem;  background: url(../../img/about-img_sec-before.png) no-repeat center center/100% auto;
-  z-index: -1;
-}
 
 .about__last {
   width: 100%;
@@ -152,10 +225,6 @@
     display: inline;
     text-align: left;
   }
-  .about__main_start .about-img::before {
-    left: calc(50% - 1.25rem);    transform: translateX(-50%);
-    top: -3.4375rem;    width: 33rem;    height: 30rem;    background: url(../../img/about-img-before_mob.png) no-repeat center center/100% auto;
-  }
   .about-year__text {
     width: 100%;
   }
@@ -182,12 +251,6 @@
     font-size: 1.125rem;    font-family: "Mulish-Bold", sans-serif;
     font-weight: normal;
     top: 1rem;  }
-  .about__main_sec .about-img::before {
-    right: 50%;
-    top: 50%;
-    transform: translate(50%, -50%);
-    width: 38.75rem;    height: 30.5rem;    background: url(../../img/about-img_sec-before_mob.png) no-repeat center center/100% auto;
-  }
 }
 @media (max-width: 767px) {
   .about {
@@ -200,15 +263,6 @@
     padding-bottom: 3.125rem;  }
   .about-img {
     margin-top: 3.3125rem;  }
-  .about__main_start .about-img img {
-    display: none;
-  }
-  .about__main_start .about-img img.about-img__img_mob {
-    display: block;
-  }
-  .about__main_start .about-img::before {
-    left: calc(50% - 0.4375rem);    transform: translateX(-50%);
-    top: -1.5rem;    width: 17.875rem;    height: 15.25rem;  }
   .about__years {
     padding-top: 2.25rem;    padding-bottom: 0px;
   }
@@ -222,8 +276,142 @@
     width: calc(100% - 1rem);    margin-top: 3.875rem;  }
   .about__main_sec .about-img img {
     border-radius: 1.875rem;  }
-  .about__main_sec .about-img::before {
-    width: calc(100% + 1rem);    height: calc(100% + 2.5rem);  }
   .about__last {
     padding-top: 3.875rem;  }
+}
+
+/* Figma 674:11556 — mobile layout.  The desktop year layout uses absolute
+   dates; on mobile it becomes a sequential list with the date above its text. */
+@media (max-width: 575px) {
+  .section-about .about__main_sec .about-img {
+    height: auto;
+    aspect-ratio: 623.291 / 457.833;
+  }
+
+  .about__main_sec .about-img__frame,
+  .about__main_sec .about-img img {
+    top: 5.54%;
+    left: 2.67%;
+    width: 94.66%;
+    height: 89.12%;
+  }
+
+  .about__main_start .about-img--masked::after {
+    background-position: -3rem top;
+    -webkit-mask: url("../../svg/o_nas_mob.svg") center / 100% 100% no-repeat;
+    mask: url("../../svg/o_nas_mob.svg") center / 100% 100% no-repeat;
+  }
+
+  .about__main_start .about-img--masked::before {
+    top: -1.5rem;
+    left: calc(50% - 0.4375rem);
+    width: 17.875rem;
+    height: 15.25rem;
+    background-image: url("../../img/about-img-before_mob.png");
+  }
+
+  .about-img__cta {
+    width: 3.125rem;
+    height: 3.125rem;
+    right: 0;
+    bottom: 0;
+  }
+
+  .about-img__cta svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .section-about {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-about .about {
+    width: 100%;
+    max-width: none;
+    padding-top: 1.25rem;
+  }
+
+  .section-about .about__main,
+  .section-about .about-year__text,
+  .section-about .about__last .about-text {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+
+  .section-about .about h3 {
+    margin: 0 0 1.875rem;
+    font-size: 1.375rem;
+    line-height: 1.1;
+  }
+
+  .section-about .about__main h3 p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+  }
+
+  .section-about .about-text p,
+  .section-about .about-year__text p {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .section-about .about-text p + p {
+    margin-top: 1.875rem;
+  }
+
+  .section-about .about__main_start .about-img {
+    /* 319 × 300.076 px in a 340 px mobile viewport; scales proportionally. */
+    width: 93.823529vw;
+    aspect-ratio: 319 / 300.076;
+    max-width: none;
+    margin: 3.3125rem auto 0;
+  }
+
+  .section-about .about__years {
+    display: flex;
+    flex-direction: column;
+    gap: 1.875rem;
+    padding: 4.625rem 0 0;
+  }
+
+  .section-about .about-year,
+  .section-about .about-year:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .section-about .about-year:not(:first-child) {
+    padding-top: 0.9375rem;
+    border-top: 1px solid var(--color-black);
+  }
+
+  .section-about .about-year span {
+    position: static;
+    display: block;
+    font-family: "Mulish-Bold", sans-serif;
+    font-size: 1.125rem;
+    font-weight: normal;
+    line-height: 1.5;
+  }
+
+  .section-about .about__last {
+    padding-top: 3.75rem;
+  }
+
+  .section-about .about__main_sec .about-img {
+    width: 100%;
+    max-width: none;
+    margin-top: 3.75rem;
+  }
+
 }

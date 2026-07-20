@@ -11,22 +11,10 @@
                         <?php echo apply_filters('the_content', get_field('about_intro_text')); ?>
                     </div>
                     
-                    <div class="about-img animated fadeInDown slow delay-500ms">
-                        <?php 
-                        $main_image = get_field('about_main_image');
-                        $mobile_image = get_field('about_main_image_mobile');
-                        
-                        if ($main_image) : ?>
-                            <img src="<?php echo esc_url($main_image['url']); ?>" 
-                                 alt="<?php echo esc_attr($main_image['alt']); ?>" 
-                                 class="about-img__img">
-                        <?php endif; ?>
-                        
-                        <?php if ($mobile_image) : ?>
-                            <img src="<?php echo esc_url($mobile_image['url']); ?>" 
-                                 alt="<?php echo esc_attr($mobile_image['alt']); ?>" 
-                                 class="about-img__img about-img__img_mob">
-                        <?php endif; ?>
+                    <div class="about-img about-img--masked animated fadeInDown slow delay-500ms" aria-label="Марина Ксенофонтова">
+                        <span class="about-img__cta" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#button-diagonal-arrow'); ?>"></use></svg>
+                        </span>
                     </div>
                 </div>
                 
@@ -60,6 +48,7 @@
                     $secondary_image = get_field('about_secondary_image');
                     if ($secondary_image) : ?>
                         <div class="about-img wow fadeInUp slow delay-200ms">
+                            <span class="about-img__frame" aria-hidden="true"></span>
                             <img src="<?php echo esc_url($secondary_image['url']); ?>" 
                                  alt="<?php echo esc_attr($secondary_image['alt']); ?>">
                         </div>
