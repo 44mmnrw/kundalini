@@ -3961,7 +3961,6 @@ jQuery(document).ready(function($) {
 				$(document).trigger('yoga:favorites-updated', [response.data || { favorites_count: 0 }]);
 				$('.fav.active').each(function() {
 					var $favorite = $(this).removeClass('active').attr('aria-pressed', 'false').attr('aria-label', 'В избранное');
-					$favorite.find('img, svg').toggleClass('active');
 				});
 				$slide.find('.lk-kriyi').remove();
 				renderLkFavoritesEmpty($slide.find('.lk-slide__content'));
@@ -4003,7 +4002,6 @@ jQuery(document).ready(function($) {
 				if (response.success) {
 					$(document).trigger('yoga:favorites-updated', [response.data || {}]);
 					$this.toggleClass('active');
-					$this.find('img, svg').toggleClass('active');
 					if ($this.attr('role') === 'button') {
 						var pressed = $this.hasClass('active');
 						$this.attr('aria-pressed', pressed ? 'true' : 'false');

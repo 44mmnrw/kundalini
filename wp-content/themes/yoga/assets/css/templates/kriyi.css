@@ -189,12 +189,14 @@
   top: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  opacity: 0;
-  transition: 0.4s ease;
-}
-.kriya-fav__icon img.active,
-.kriya-fav__icon svg.active {
   opacity: 1;
+  transition: fill 0.4s ease;
+}
+.kriya-fav__icon svg {
+  --heart-fill: none;
+}
+.kriya-fav.active .kriya-fav__icon svg {
+  --heart-fill: currentColor;
 }
 .kriya-fav__text {
   display: none;
