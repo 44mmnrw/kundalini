@@ -84,7 +84,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 									<?php endif; ?>
 								</div>
 							</div>
-							<input type="text" class="input" placeholder="Что ищете?" required>
+							<input type="text" class="input" placeholder="Что ищете?">
 							<input type="submit" id="library-btn">
 							<label for="library-btn" class="form-search__btn" aria-label="Искать">
 								<svg class="form-search__btn-icon active" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">

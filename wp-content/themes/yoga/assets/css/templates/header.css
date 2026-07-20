@@ -543,6 +543,18 @@ header > .container > .row > .header-content {
   line-height: 1.3;
 }
 
+@media (min-width: 1025px) {
+  .header-lk .lk-notifications-popup__item {
+    position: relative;
+  }
+
+  .header-lk .lk-notifications-popup__item-meta {
+    position: absolute;
+    top: 1.625rem;
+    right: 1.5rem;
+  }
+}
+
 .header-lk .lk-notifications-popup__all {
   display: flex;
   min-height: 2.625rem;

@@ -305,6 +305,11 @@ jQuery(document).ready(function($) {
 	
 	
 	$('.form-search .input').keyup(function(){
+		// Practice/library suggestions are filled asynchronously below. Do not
+		// open an empty dropdown here while their request is still pending.
+		if ($(this).closest('.section-library, .section-kriyi').length) {
+			return;
+		}
 		var $this = $(this),
 		vall = $this.val();
 		var $search = $(this).closest('.form-search');
@@ -2790,6 +2795,7 @@ jQuery(document).ready(function($) {
 	});
 
     $(document).on('input', '.section-library .form-search .input', function() {
+		$(this).closest('.form-search').removeClass('active').find('.form-search-list').removeClass('active').empty();
         YogaLibraryFiltersCore.debounce('suggestions', requestLibrarySuggestions, 300);
     });
 
@@ -2923,7 +2929,7 @@ jQuery(document).ready(function($) {
             nonce: yoga_ajax.nonce,
             filters: {},
             search: $('.section-kriyi .input').val(),
-            term_id: getActivePracticeTermId()
+			term_id: getActivePracticeTermId()
 		};
 		
         // Собираем чекбоксы
@@ -3114,6 +3120,7 @@ jQuery(document).ready(function($) {
 	});
 
     $(document).on('input', '.section-kriyi .form-search .input', function() {
+		$(this).closest('.form-search').removeClass('active').find('.form-search-list').removeClass('active').empty();
         YogaLibraryFiltersCore.debounce('suggestions', requestPracticeSuggestions, 300);
     });
 

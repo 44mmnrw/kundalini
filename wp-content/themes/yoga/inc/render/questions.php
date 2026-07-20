@@ -31,12 +31,18 @@ function display_question_item(WP_Post $question, bool $hidden = false): void {
 		$answer_content = (string) ($answer['content'] ?? '');
 		$answer_date = (string) ($answer['created_at'] ?? '');
 		$admin_id = (int) ($answer['admin_id'] ?? 0);
+		$answer_author = $admin_id > 0 ? get_userdata($admin_id) : false;
+		$is_administrator = $answer_author instanceof WP_User
+			&& in_array('administrator', (array) $answer_author->roles, true);
 		$admin_name = $admin_id > 0 ? (string) get_the_author_meta('display_name', $admin_id) : __('Администратор', 'yoga');
+		$answer_label = $is_administrator
+			? __('Ответ Администратора', 'yoga')
+			: sprintf(__('Ответ %s', 'yoga'), $admin_name);
 		$answer_timestamp = $answer_date !== '' ? strtotime($answer_date) : false;
 	?>
 	<div class="lk-question lk-question_answer">
 		<div class="lk-question__time">
-			<b>Ответ <?php echo esc_html($admin_name); ?></b>
+			<b><?php echo esc_html($answer_label); ?></b>
 			<?php if ($answer_timestamp): ?>
 				<time datetime="<?php echo esc_attr(wp_date('c', $answer_timestamp)); ?>"><?php echo esc_html(wp_date('d.m.Y', $answer_timestamp)); ?></time>
 				<time><?php echo esc_html(wp_date('H:i', $answer_timestamp)); ?></time>
