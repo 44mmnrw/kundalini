@@ -231,9 +231,15 @@
   clear: both;
 }
 .praktika-info img {
+  display: block;
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 31.5625rem;
+  max-height: 31.5625rem;
+  align-self: stretch;
+  border-radius: 1.875rem;
+  background: rgba(145, 83, 225, 0.07);
+  object-fit: contain;
 }
 .praktika-info .alignleft,
 .praktika-info .alignright {
