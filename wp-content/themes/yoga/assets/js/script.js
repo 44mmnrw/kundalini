@@ -3739,7 +3739,7 @@ jQuery(document).ready(function($) {
 	}
 	
 	// Загрузка аватара
-	$(document).on('click', '.photo-input-custom', function(e) {
+	$(document).on('click', '.photo-input-custom__inner-photo', function(e) {
 		e.stopPropagation(); // Останавливаем всплытие
 		e.preventDefault(); // Отменяем действие по умолчанию
 		
@@ -3748,7 +3748,7 @@ jQuery(document).ready(function($) {
 		}, 50); // Небольшая задержка
 	});
 
-	$(document).on('keydown', '.photo-input-custom', function(e) {
+	$(document).on('keydown', '.photo-input-custom__inner-photo', function(e) {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			$(this).trigger('click');

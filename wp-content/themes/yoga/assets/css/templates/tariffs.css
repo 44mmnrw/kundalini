@@ -308,6 +308,14 @@
 }
 
 /* Desktop: тарифные карточки — Figma 265:4409, 265:4430, 265:4453, 265:4484 (ширина ≥1200px) */
+/* Один–три тарифа на широком экране: сохраняем штатный gap 20px и центрируем ряд. */
+@media (min-width: 1280px) {
+  .tariffs-items__slide:has(> .tariff):not(:has(> .tariff:nth-child(4))) {
+    justify-content: center;
+    gap: 1.25rem;
+  }
+}
+
 @media (min-width: 1200px) {
   .section-tariffs.section-tariffs_single .tariffs-items__slide {
     align-items: stretch;

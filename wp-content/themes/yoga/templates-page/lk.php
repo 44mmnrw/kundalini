@@ -58,9 +58,9 @@
 
 								<div class="lk-form__photo">
 									<div class="photo-input">
-										<div class="photo-input-custom" role="button" tabindex="0">
+										<div class="photo-input-custom">
 											<div class="photo-input-custom__inner">
-								<div class="photo-input-custom__inner-photo<?php echo $user_avatar_id > 0 ? ' has-avatar' : ''; ?>">
+								<div class="photo-input-custom__inner-photo<?php echo $user_avatar_id > 0 ? ' has-avatar' : ''; ?>" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Upload photo', 'yoga' ); ?>">
 									<button type="button" class="photo-input-delete" aria-label="<?php esc_attr_e('Удалить аватар', 'yoga'); ?>"<?php echo $user_avatar_id > 0 ? '' : ' hidden'; ?>>
 										<svg viewBox="0 0 9 9" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($lk_sprite_url); ?>#lk-avatar-delete"></use></svg>
 									</button>
