@@ -167,7 +167,7 @@
   padding-top: 3.125rem;
   background: transparent;
 }
-/* Фон карточки — только lime из faq_quest.svg; блок тянется на всю высоту контента (иначе на планшете «обрывался» бы по высоте картинки) */
+/* FAQ form: CSS fill with the Figma cutout applied as an SVG mask. */
 .faq__form-card-bg {
   position: absolute;
   inset: 0;
@@ -176,20 +176,9 @@
   height: 100%;
   z-index: 0;
   pointer-events: none;
-  border-radius: 1.875rem;
-  overflow: hidden;
-}
-.faq__form-card-bg img {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  min-width: 100%;
-  min-height: 100%;
-  max-width: none;
-  /* img + svg: браузеры часто ведут себя как preserveAspectRatio=meet если в svg не задано none */
-  object-fit: fill;
-  object-position: center top;
+  background-color: var(--color-green);
+  -webkit-mask: url("../../svg/faq_subtract.svg") center / 100% 100% no-repeat;
+  mask: url("../../svg/faq_subtract.svg") center / 100% 100% no-repeat;
 }
 .faq__form .form-questions__main {
   position: relative;
@@ -211,11 +200,18 @@
   height: 3.875rem;
   pointer-events: none;
   z-index: 2;
+  transform: none;
 }
 .faq__form .faq__form-badge-svg {
   display: block;
   width: 100%;
   height: auto;
+}
+.faq__form-submit-arrow {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-green);
 }
 .faq__form .form-questions::after {
   content: none;
@@ -224,7 +220,7 @@
 .faq__form .form-questions__main-form {
   margin-top: 1.25rem;}
 .faq__form .form-questions__main-form input.input {
-  height: 3.125rem;  line-height: 3.125rem;  font-size: 1rem;  padding-left: 1.25rem;  padding-right: 1.25rem;  border-radius: 1.25rem;  margin-top: 0.625rem;  width: 100%;
+  height: 3.125rem;  line-height: 3.125rem;  font-size: 1rem;  padding-left: 1.25rem;  padding-right: 1.25rem;  border-radius: 6.25rem;  margin-top: 0.625rem;  width: 100%;
 }
 .faq__form .form-questions__main-form input.input::placeholder {
   font-size: 1rem;}
@@ -235,7 +231,13 @@
 .faq__form .form-questions__main-form .form-questions-textarea textarea::placeholder {
   font-size: 1rem;}
 .faq__form .form-questions__main-form .form-questions-textarea .btn {
-  right: 0.625rem;  bottom: 0.625rem;}
+  right: 0.625rem;  bottom: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  color: var(--color-green);}
 
 @media (max-width: 1319px) {
   .section-faq {
@@ -270,7 +272,7 @@
     height: 3.375rem;
   }
 }
-@media (max-width: 1024px) {
+@media (max-width: 1279px) {
   .section-faq {
     padding-bottom: 5.625rem;  }
   .faq {
@@ -309,12 +311,20 @@
     /* Планшет + мобилка (колонка на всю ширину): лайм под SVG, чтобы не было белых полей и обрыва заливки */
     background: var(--color-green);
   }
+  .faq__form-card-bg {
+    -webkit-mask: none;
+    mask: none;
+  }
   .faq__form .form-questions__badge.faq__form-badge {
     left: 50%;
     right: auto;
     top: -2.25rem;
     width: 4.5rem;
     height: 4.5rem;
+    padding: 0.3125rem;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: var(--color-white);
     transform: translateX(-50%);
   }
   .faq__form .form-questions h4 {
@@ -381,9 +391,6 @@
     inset: 2.25rem 0 0;
     border-radius: 1.875rem;
     background: var(--color-green);
-  }
-  .faq__form-card-bg img {
-    display: none;
   }
   .faq__form .form-questions__badge.faq__form-badge {
     top: 0;
@@ -452,11 +459,13 @@
     line-height: 1.5;
   }
   .faq__form .form-questions__main-form .form-questions-textarea .btn {
+    left: auto;
     right: 1.1875rem;
     bottom: 1.1875rem;
     width: 2.5625rem;
     height: 2.5625rem;
     max-width: 2.5625rem;
+    margin: 0;
     padding: 0;
     border-radius: 50%;
     background: var(--color-black);
