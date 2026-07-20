@@ -85,6 +85,9 @@
 .form-search.active {
   border-bottom-left-radius: 0px;
   border-color: var(--color-violet);
+  /* The suggestion panel belongs to this stacking context. Raise the whole
+     search block so the following filter row cannot paint over its results. */
+  z-index: 50;
 }
 .form-search.active .form-search__btn .form-search__btn-icon {
   opacity: 1;
