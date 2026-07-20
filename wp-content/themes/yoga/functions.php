@@ -284,6 +284,77 @@
 	}
 	add_action('init', 'yoga_register_practice_library_rewrite_rules', 20);
 
+	// Служебный экран после отправки вопроса не является страницей из БД.
+	// Маршрут всегда обслуживается шаблоном темы, поэтому одинаково работает
+	// локально и после деплоя на любом окружении.
+	if (!function_exists('yoga_register_question_success_route')) {
+		function yoga_register_question_success_route(): void {
+			add_rewrite_rule(
+				'^question-sent/?$',
+				'index.php?yoga_question_success=1',
+				'top'
+			);
+		}
+	}
+	add_action('init', 'yoga_register_question_success_route', 20);
+
+	if (!function_exists('yoga_register_question_success_query_var')) {
+		function yoga_register_question_success_query_var(array $vars): array {
+			$vars[] = 'yoga_question_success';
+
+			return $vars;
+		}
+	}
+	add_filter('query_vars', 'yoga_register_question_success_query_var');
+
+	// Работает и при первом запросе после выкладки, до обновления rewrite rules.
+	if (!function_exists('yoga_force_question_success_request')) {
+		function yoga_force_question_success_request(array $query_vars): array {
+			if (is_admin()) {
+				return $query_vars;
+			}
+
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+			$path = $request_uri !== '' ? wp_parse_url($request_uri, PHP_URL_PATH) : '';
+			$normalized_path = is_string($path) ? untrailingslashit(strtolower($path)) : '';
+
+			if ($normalized_path !== '/question-sent') {
+				return $query_vars;
+			}
+
+			$query_vars['yoga_question_success'] = '1';
+			unset($query_vars['pagename'], $query_vars['name'], $query_vars['page'], $query_vars['page_id'], $query_vars['error']);
+
+			return $query_vars;
+		}
+	}
+	add_filter('request', 'yoga_force_question_success_request', 1);
+
+	if (!function_exists('yoga_is_question_success_screen')) {
+		function yoga_is_question_success_screen(): bool {
+			return (string) get_query_var('yoga_question_success') === '1';
+		}
+	}
+
+	if (!function_exists('yoga_load_question_success_template')) {
+		function yoga_load_question_success_template(string $template): string {
+			if (!yoga_is_question_success_screen()) {
+				return $template;
+			}
+
+			global $wp_query;
+			if ($wp_query instanceof WP_Query) {
+				$wp_query->is_404 = false;
+			}
+			status_header(200);
+
+			$route_template = locate_template('templates-page/question-success.php');
+
+			return $route_template !== '' ? $route_template : $template;
+		}
+	}
+	add_filter('template_include', 'yoga_load_question_success_template', 99);
+
 	if (!function_exists('yoga_redirect_legacy_practice_urls')) {
 		function yoga_redirect_legacy_practice_urls() {
 			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
@@ -347,7 +418,7 @@
 				return;
 			}
 
-			$version = 'yoga_practice_urls_v2';
+			$version = 'yoga_practice_urls_v3';
 			if (get_option('yoga_rewrite_version') === $version) {
 				return;
 			}
@@ -649,7 +720,8 @@
 		$is_order_received = function_exists('yoga_is_order_received_request') && yoga_is_order_received_request();
 		$is_checkout_page = function_exists('is_checkout') && is_checkout() && !$is_order_received;
 		$is_payment_success_page = function_exists('yoga_is_payment_success_screen') && yoga_is_payment_success_screen();
-		$is_question_success_template = is_page_template('templates-page/question-success.php');
+		$is_question_success_template = (function_exists('yoga_is_question_success_screen') && yoga_is_question_success_screen())
+			|| is_page_template('templates-page/question-success.php');
 		$common_style_deps = array('main-style');
 
 		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
@@ -849,10 +921,7 @@ function yoga_subscribe_handler() {
 	function yoga_ajax_localization() {
 
 		$current_user = wp_get_current_user();
-		$question_success_page = get_page_by_path('question-sent');
-		$question_success_url = $question_success_page
-			? get_permalink($question_success_page)
-			: home_url('/question-sent/');
+		$question_success_url = home_url('/question-sent/');
 
 		$yoga_ajax_data = array(
 			'ajax_url'       => admin_url('admin-ajax.php'),

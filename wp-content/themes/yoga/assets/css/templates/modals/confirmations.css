@@ -545,14 +545,14 @@
 .yoga-cart-clear__content {
   position: absolute;
   top: calc(50% + 0.03125rem);
-  left: 2.1875rem;
+  left: 50%;
   display: flex;
   width: 22.9375rem;
   max-width: calc(100% - 4.375rem);
   flex-direction: column;
   align-items: flex-start;
   gap: 1.6875rem;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
 }
 
 #yoga-cart-clear-modal .yoga-cart-clear__content h3 {
@@ -601,8 +601,19 @@
 }
 
 @media (max-width: 575px) {
+  #yoga-cart-clear-modal.modal-default,
+  #yoga-cart-clear-modal.modal-default.active {
+    width: min(28.5625rem, calc(100vw - 2.5rem));
+    max-width: calc(100vw - 2.5rem);
+    right: auto;
+    left: 50vw;
+    margin: 0;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+  }
+
   .yoga-cart-clear__content {
-    left: 1.25rem;
     width: calc(100% - 2.5rem);
     max-width: none;
   }
