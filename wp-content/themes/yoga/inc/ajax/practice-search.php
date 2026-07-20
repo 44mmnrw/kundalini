@@ -103,7 +103,7 @@ if (!defined('ABSPATH')) {
 			<?php }
 			wp_reset_postdata();
 			} else {
-			echo '<p>Нет практик по выбранным фильтрам.</p>';
+			echo '<div class="practice-search-empty"><p class="practice-search-empty__count">Найдено: 0</p><p class="practice-search-empty__message">По вашему запросу ничего не найдено, попробуйте другой запрос.</p></div>';
 		}
 		
 		wp_die();
@@ -321,7 +321,7 @@ if (!defined('ABSPATH')) {
         endif;
         
 		else :
-        echo '<p class="no-practices">По вашему запросу ничего не найдено.</p>';
+        echo '<div class="practice-search-empty"><p class="practice-search-empty__count">Найдено: 0</p><p class="practice-search-empty__message">По вашему запросу ничего не найдено, попробуйте другой запрос.</p></div>';
 		endif;
 		
 		$html = ob_get_clean();
