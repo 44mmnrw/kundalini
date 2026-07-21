@@ -95,9 +95,7 @@ $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-pr
 							<textarea name="contacts_message" id="" placeholder="Ваш вопрос" required class="input"></textarea>
 							<input type="submit" id="form-questions-submit">
 							<label for="form-questions-submit" class="btn practice-form-layout__submit practice-form-layout__submit--sprite" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
-								<svg class="practice-form-layout__submit-icon" viewBox="0 0 20 20" fill="none" focusable="false" aria-hidden="true">
-									<path d="M13 18L19 10.5L13 3M19 10.5H1" stroke="#E8FF57" stroke-width="1.5" stroke-linecap="square"></path>
-								</svg>
+								<svg class="practice-form-layout__submit-icon" viewBox="0 0 20 20" focusable="false" aria-hidden="true"><use href="<?php echo $practice_form_sprite_href; ?>#site-arrow-green"></use></svg>
 							</label>
 						</div>
 					</form>

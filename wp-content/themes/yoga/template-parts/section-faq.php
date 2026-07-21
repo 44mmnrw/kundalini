@@ -16,6 +16,11 @@
         $faq_prefill_email = (string) ($current_user->user_email ?? '');
     }
     $faq_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
+    $faq_arrow_sprite_href = esc_url(add_query_arg(
+        'ver',
+        (string) filemtime(get_template_directory() . '/assets/svg/sprite.svg'),
+        get_template_directory_uri() . '/assets/svg/sprite.svg'
+    ));
     ?>
     <div class="container">
         <div class="row">
@@ -38,7 +43,7 @@
                                                 <?php echo esc_html($question); ?>
                                             </span>
                                             <div class="question-icon">
-                                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url($faq_sprite_href); ?>#site-arrow"></use></svg>
+                                                <svg class="question-icon__arrow" aria-hidden="true" focusable="false"><use href="<?php echo $faq_sprite_href; ?>#site-arrow"></use></svg>
                                             </div>
                                         </div>
                                         <div class="question__sub">
@@ -85,8 +90,8 @@
                                     <input type="submit" id="faq-form-submit" style="display: none;">
 
                                     <label for="faq-form-submit" class="btn" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
-                                        <svg class="faq__form-submit-arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                            <use href="<?php echo $faq_sprite_href; ?>#button-diagonal-arrow"></use>
+                                        <svg class="faq__form-submit-arrow" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                            <use href="<?php echo $faq_arrow_sprite_href; ?>#site-arrow-green"></use>
                                         </svg>
                                     </label>
                                 </div>
