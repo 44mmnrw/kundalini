@@ -274,7 +274,7 @@ class VKID_Login_Plugin {
           scope: <?php echo wp_json_encode($scope); ?>,
           state: state,
           code_challenge: challenge,
-          code_challenge_method: 'S256'
+          code_challenge_method: 's256'
         });
         window.location.assign('https://id.vk.ru/authorize?' + query.toString());
       } catch (error) {
