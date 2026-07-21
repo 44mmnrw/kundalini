@@ -11,7 +11,7 @@
 ?><div class="modal-mobile-menu">
     <div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 17 17" width="17" height="17" aria-hidden="true" focusable="false">
-			<use href="<?php echo $sprite_href; ?>#email-confirmation-close" width="100%" height="100%"></use>
+			<use href="<?php echo $sprite_href; ?>#lk-modal-close" width="100%" height="100%"></use>
 		</svg>
     </div>
     <div class="mobile-menu-inner">
