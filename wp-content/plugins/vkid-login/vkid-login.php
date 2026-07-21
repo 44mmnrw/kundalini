@@ -270,10 +270,12 @@ class VKID_Login_Plugin {
         const query = new URLSearchParams({
           response_type: 'code',
           client_id: <?php echo wp_json_encode((string) $appId); ?>,
+          app_id: <?php echo wp_json_encode((string) $appId); ?>,
           redirect_uri: <?php echo wp_json_encode($redirect); ?>,
+          sdk_type: 'vkid',
+          v: '2.6.6',
           scope: <?php echo wp_json_encode($scope); ?>,
           state: state,
-          prompt: 'login',
           code_challenge: challenge,
           code_challenge_method: 's256'
         });
