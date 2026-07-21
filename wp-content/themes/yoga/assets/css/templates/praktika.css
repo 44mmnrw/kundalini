@@ -1242,7 +1242,6 @@ display: block !important;
   display: none;
 }
 
-/* Редактирование своего комментария — по макету Figma comment_edit (246:4137): колонка, кнопка справа снизу */
 .answer-main_comment-edit {
   flex-direction: column;
   align-items: flex-end;
@@ -1406,7 +1405,6 @@ display: block !important;
     width: 100%;
     margin-top: 1.375rem;
   }
-  /* Figma «крийи_mobile»: вертикальный ритм между оглавлением и текстом */
   .praktika-menu {
     width: 100%;
     order: 3;
@@ -1598,7 +1596,6 @@ display: block !important;
     top: 1.5rem;    left: 0.9375rem;  }
   .praktika-notice p {
     font-size: 0.875rem;  }
-  /* Figma «крийи_mobile»: слайдер и таймер столбиком на всю ширину карточки */
   .exercise-item__media {
     display: flex;
     flex-direction: column;
@@ -1623,7 +1620,6 @@ display: block !important;
   }
   .exercise-slider__media {
     height: 26.125rem;  }
-  /* Таймер — макет Figma timer_mobile (588:12786): карточка 311×полная ширина, отступы 30/15/30 */
   .exercise-timer {
     display: flex;
     flex-direction: column;

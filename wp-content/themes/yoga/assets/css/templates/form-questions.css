@@ -237,9 +237,8 @@
   }
 }
 
-/* Single practice: десктоп — карточка из subscribe.svg + декор из sprite (без подложки color-grey) */
+/* Техническое примечание. */
 @media (min-width: 1025px) {
-  /* Десктоп — Figma question_form (246:4302): lime-карточка subscribe.svg + декор из sprite */
   .section-form-questions_practice .form-questions.practice-form-layout {
     position: relative;
     max-width: 75.0625rem;
@@ -408,7 +407,6 @@
   justify-content: center;
 }
 
-/* Single practice: форма «Остались вопросы?» — Figma question_form_mobile (588:14576) */
 .section-form-questions_practice .form-questions__badge {
   display: none;
 }
@@ -567,13 +565,12 @@
   }
 }
 
-/* Section-form-questions_contacts — макет Figma «Контакты»: SVG из sprite.svg, без PNG-фонов */
 .section-form-questions_contacts {
   padding-top: 3rem;
   padding-bottom: 6.25rem;
   --contacts-form-panel-max: 63.5rem;
   --contacts-form-panel-half: 31.75rem;
-  /* Половина max-width текста над формой — якорь для восьмиконечной звезды справа от подзаголовка */
+  /* Техническое примечание. */
   --contacts-intro-half: 15.1875rem;
   /* Панель формы ниже декора по бокам; овал поверх карточки; звёзды и бейдж выше */
   --contacts-z-panel: 1;
@@ -641,7 +638,7 @@
   pointer-events: none;
 }
 
-/* Звёзды поверх овала и карточки; овал — поверх карточки по краю сцены */
+/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
 .section-form-questions_contacts .contacts-form-layout__decor--star-four,
 .section-form-questions_contacts .contacts-form-layout__decor--star {
   z-index: var(--contacts-z-decor);
@@ -651,7 +648,7 @@
   z-index: var(--contacts-z-oval);
 }
 
-/* Сдвиг вверх: подзаголовок вне .contacts-form-layout__scene, margin сцены + низ блока текста ≈ 4rem */
+/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
 .section-form-questions_contacts .contacts-form-layout__decor--star-four {
   left: calc(50% - var(--contacts-form-panel-half) - 0.25rem);
   transform: translateX(calc(-100% + 8rem));
@@ -660,7 +657,7 @@
   height: 3.1875rem;
 }
 
-/* Справа от центрированного подзаголовка (узкий intro), не от правого края формы */
+/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
 .section-form-questions_contacts .contacts-form-layout__decor--star-eight {
   left: calc(50% + var(--contacts-intro-half) + 1.125rem + 200px);
   right: auto;
@@ -801,7 +798,7 @@
   width: 100%;
   flex-wrap: wrap;
   padding-top: 1rem;
-  /* без border-top — иначе на десктопе заметная серая полоска между карточкой формы и иконками */
+  /* Техническое примечание. */
 }
 
 /* На странице контактов ссылки на мессенджеры не выводятся. */
@@ -862,7 +859,7 @@
     text-align: left;
   }
 
-  /* Узкая ширина: текст intro слева — звёзды по вертикали с подзаголовком (отрицательный top), по горизонтали у краёв сцены */
+  /* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
   .section-form-questions_contacts .contacts-form-layout__decor--star-four {
     left: 0.25rem;
     transform: none;
@@ -886,7 +883,7 @@
 }
 
 @media (max-width: 767px) {
-  /* Декор и бейдж на мобильных скрыты */
+  /* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
   .section-form-questions_contacts .contacts-form-layout__decor,
   .section-form-questions_contacts .contacts-form-layout__badge {
     display: none !important;

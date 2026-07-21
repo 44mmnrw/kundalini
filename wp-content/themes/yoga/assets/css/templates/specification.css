@@ -13,13 +13,10 @@
   --color-grey: #f6f6f9;
   --color-white: #ffffff;
   --transition-base: 0.4s ease;
-  /* Горизонтальный отступ от края вьюпорта до контента (в том числе max-width .container) */
+  /* Техническое примечание. */
   --container-inline-gutter: 10px;
-  /* Полоса шапки (#header): 12px + ряд ~48px + 12px = 4.5rem; нижний разделитель — box-shadow (не border). */
-  /* Figma desktop: visual header bar is 51px. */
   --header-bar-height: 3.1875rem;
   --header-top-offset: 1.125rem;
-  /* Reserve in document flow keeps the Figma content coordinates intact. */
   --header-page-offset: calc(4.5rem + var(--header-top-offset));
 }
 

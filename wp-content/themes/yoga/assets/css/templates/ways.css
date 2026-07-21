@@ -109,7 +109,6 @@
   }
 }
 
-/* Одна практика (single practice): макет Figma «крийи_mobile», заголовок и крошки */
 @media (max-width: var(--yoga-below-lg)) {
   .single-practice .ways {
     border-top: 0 none;

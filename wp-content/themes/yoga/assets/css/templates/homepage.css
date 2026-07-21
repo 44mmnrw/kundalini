@@ -827,7 +827,7 @@
     margin-top: 1.75rem;
     overflow: hidden;
     padding: 2.625rem 1.25rem 1.5625rem;
-    /* Центр номера совпадает с базовым (геометрия SVG одна на все брейкпоинты) */
+    /* Техническое примечание. */
     /* Высота пластины = ширина × 298/320; иначе absolute-пластина выступает ниже блока и наезжает на следующую карточку */
     min-height: calc(100cqw * 298 / 320);
   }
@@ -857,7 +857,6 @@
     top: calc(2.625rem + 8.8125rem / 2);
   }
 
-  /* Координаты номера масштабируются от плашки Figma 320×298. */
   .whyme-item__plate .whyme-item__number {
     left: calc(304 * 100% / 387);
     top: calc(72.3 * 100% / 383);
@@ -1030,8 +1029,7 @@
 
 /* Главная: более плотные секции (уменьшены отступы заголовков и паддинги секций) — с 1025 как остальной desktop */
 @media (min-width: 1025px) {
-  /* Figma 299:4303 / 35:415: верх баннера — Y=70px. */
-body.home {
+  body.home {
   padding-top: calc(4.375rem + var(--header-top-offset));
 }
 
@@ -2079,7 +2077,6 @@ body.home {
   }
 }
 
-/* Popular-practice slide image: fixed Figma height across slider breakpoints. */
 .popular-practice.slick-slide > img {
   height: 217px;
   align-self: stretch;

@@ -42,26 +42,23 @@ if (!function_exists('yoga_is_order_received_request')) {
 
 if (!function_exists('yoga_is_payment_success_screen')) {
 	function yoga_is_payment_success_screen(): bool {
-		if (is_page_template('templates-page/payment-success.php')) {
-			return true;
-		}
-
-		return yoga_is_order_received_request();
+		return yoga_is_virtual_payment_success_request() || yoga_is_order_received_request();
 	}
 }
 
 if (!function_exists('yoga_get_payment_success_page_url')) {
 	function yoga_get_payment_success_page_url(): string {
-		$pages = get_pages(array(
-			'meta_key'   => '_wp_page_template',
-			'meta_value' => 'templates-page/payment-success.php',
-			'number'     => 1,
-			'post_status' => 'publish',
-		));
-		if (!empty($pages)) {
-			return get_permalink($pages[0]->ID);
-		}
 		return home_url('/payment-success/');
+	}
+}
+
+if (!function_exists('yoga_is_virtual_payment_success_request')) {
+	function yoga_is_virtual_payment_success_request(): bool {
+		$request_uri = isset($_SERVER['REQUEST_URI']) ? (string) wp_unslash($_SERVER['REQUEST_URI']) : '';
+		$request_path = trim((string) wp_parse_url($request_uri, PHP_URL_PATH), '/');
+		$success_path = trim((string) wp_parse_url(home_url('/payment-success/'), PHP_URL_PATH), '/');
+
+		return $success_path !== '' && $request_path === $success_path;
 	}
 }
 
@@ -324,75 +321,33 @@ if (!function_exists('yoga_get_payment_success_context')) {
 	}
 }
 
-if (!function_exists('yoga_ensure_payment_success_page')) {
-	function yoga_ensure_payment_success_page(): int {
-		$existing = get_pages(array(
-			'meta_key'   => '_wp_page_template',
-			'meta_value' => 'templates-page/payment-success.php',
-			'number'     => 1,
-			'post_status' => array('publish', 'draft', 'private'),
-		));
-		if (!empty($existing)) {
-			$page_id = (int) $existing[0]->ID;
-			if (get_post_status($page_id) !== 'publish') {
-				wp_update_post(array(
-					'ID'          => $page_id,
-					'post_status' => 'publish',
-				));
-			}
-			return $page_id;
-		}
-
-		$by_path = get_page_by_path('payment-success');
-		if ($by_path instanceof WP_Post) {
-			update_post_meta($by_path->ID, '_wp_page_template', 'templates-page/payment-success.php');
-			if (get_post_status($by_path->ID) !== 'publish') {
-				wp_update_post(array(
-					'ID'          => $by_path->ID,
-					'post_status' => 'publish',
-				));
-			}
-			return (int) $by_path->ID;
-		}
-
-		$page_id = wp_insert_post(array(
-			'post_title'   => __('Оплата прошла успешно', 'yoga'),
-			'post_name'    => 'payment-success',
-			'post_status'  => 'publish',
-			'post_type'    => 'page',
-			'post_content' => '',
-		), true);
-
-		if (is_wp_error($page_id)) {
-			return 0;
-		}
-
-		update_post_meta($page_id, '_wp_page_template', 'templates-page/payment-success.php');
-
-		return (int) $page_id;
-	}
-}
-
 if (!function_exists('yoga_configure_yookassa_success_redirect')) {
 	function yoga_configure_yookassa_success_redirect(): void {
 		if (!function_exists('get_option')) {
 			return;
 		}
 
-		$page_id = yoga_ensure_payment_success_page();
-		if ($page_id <= 0) {
-			return;
-		}
-
-		$current = get_option('yookassa_success');
-		$allowed_builtin = array('wc_success', 'wc_checkout', 'wc_payment', false, '');
-
-		if (in_array($current, $allowed_builtin, true)) {
-			update_option('yookassa_success', (string) $page_id);
+		if (get_option('yookassa_success') !== 'wc_success') {
+			update_option('yookassa_success', 'wc_success');
 		}
 	}
 }
 add_action('init', 'yoga_configure_yookassa_success_redirect', 20);
+
+if (!function_exists('yoga_prepare_virtual_payment_success_screen')) {
+	function yoga_prepare_virtual_payment_success_screen(): void {
+		if (!yoga_is_virtual_payment_success_request()) {
+			return;
+		}
+
+		global $wp_query;
+		if ($wp_query instanceof WP_Query) {
+			$wp_query->is_404 = false;
+		}
+		status_header(200);
+	}
+}
+add_action('template_redirect', 'yoga_prepare_virtual_payment_success_screen', 0);
 
 if (!function_exists('yoga_yookassa_register_return_query_vars')) {
 	function yoga_yookassa_register_return_query_vars(array $vars): array {

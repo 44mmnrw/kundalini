@@ -1,4 +1,4 @@
-﻿/* Custom Plyr styles for podcast/audio player */
+/* Custom Plyr styles for podcast/audio player */
 .plyr--audio .plyr__controls {
     background: #ffffff;
     border-radius: 12px;
@@ -137,7 +137,7 @@
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-/* Responsive design */
+/* Адаптивные стили */
 @media (max-width: 768px) {
     .audio-player-container {
         padding: 20px;

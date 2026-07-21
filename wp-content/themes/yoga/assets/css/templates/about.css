@@ -124,7 +124,6 @@
 .about-img__cta {
   position: absolute;
   z-index: 3;
-  /* Figma: the circle's right and bottom edges match the photo frame. */
   right: 0;
   bottom: 0;
   display: flex;
@@ -280,8 +279,6 @@
     padding-top: 3.875rem;  }
 }
 
-/* Figma 674:11556 — mobile layout.  The desktop year layout uses absolute
-   dates; on mobile it becomes a sequential list with the date above its text. */
 @media (max-width: 575px) {
   .section-about .about__main_sec .about-img {
     height: auto;

@@ -16,8 +16,6 @@
 .modal-default.modal-default_logout {
   padding-bottom: 2.8125rem;}
 
-/* Unsaved LK profile changes — Figma 2220:20972. */
-/* Logout confirmation — Figma 2113:25374 (desktop). */
 @media (min-width: 576px) {
   .modal-default.modal-default_logout,
   .modal-default.modal-default_logout.active {
@@ -221,7 +219,6 @@
   }
 }
 
-/* Подтверждение очистки корзины — Figma 2039:17911. */
 #yoga-cart-clear-modal.modal-default {
   width: 28.5625rem;
   height: 18.4375rem;
@@ -232,7 +229,6 @@
   background: var(--color-green) !important;
 }
 
-/* Subscription success — Figma node 2198:20528. */
 #yoga-subscription-success-modal,
 #yoga-subscription-success-modal.active{width:28.5625rem;height:19.6875rem;max-width:calc(100vw - 1.875rem);padding:0;overflow:hidden;border-radius:1.875rem;background:#e8ff57!important}
 #yoga-subscription-success-modal .yoga-subscription-success-modal__close{position:absolute;top:.9375rem;right:.9375rem;width:3.1875rem;height:3.1875rem;padding:0;border:0;border-radius:50%;background:#fff;cursor:pointer}
@@ -265,7 +261,6 @@
   height: 1.125rem;
 }
 
-/* Удаление комментария — Figma 246:5523 и 246:5590. */
 .yoga-comment-delete-modal.modal-default {
   width: 28.5625rem;
   height: 19.0625rem;
@@ -396,7 +391,6 @@
   text-align: center;
 }
 
-/* Успешная отправка формы на странице контактов — Figma 2338:25160. */
 #yoga-contact-success-modal.modal-default,
 #yoga-contact-success-modal.modal-default.active {
   width: 28.5625rem;
@@ -711,7 +705,6 @@
 .thanksforqw {
   padding-left: 2.1875rem;  padding-right: 2.1875rem;  padding-top: 1rem;  padding-bottom: 0.9375rem;  max-width: 25.375rem;}
 
-/* Question submission confirmation — Figma 2338:25157 / 2335:24470. */
 .modal-default_formsucces,
 .modal-default_formsucces.active {
   width: 28.5625rem;

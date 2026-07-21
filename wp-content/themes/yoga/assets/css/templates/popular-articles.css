@@ -1,4 +1,3 @@
-/* Popular articles — Figma node 488:7623 */
 .section-popular-articles {
   padding-bottom: 5.625rem;
 }
@@ -199,6 +198,7 @@
   line-height: 1.1;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 .section-popular-articles .article-btn {

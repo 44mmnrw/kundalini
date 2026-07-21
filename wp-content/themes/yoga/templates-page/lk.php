@@ -43,8 +43,10 @@
 
 
 <section class="section-lk" id="section-lk" data-initial-target="<?php echo esc_attr($initial_lk_target); ?>" data-server-routed="<?php echo $requested_lk_section !== '' ? '1' : '0'; ?>">
-    <div class="container">
-        <div class="row">
+    <div class="lk-layout">
+        <main class="lk-layout__content">
+            <div class="container">
+                <div class="row">
             <div class="lk">
                 <div class="lk__slides">
 					<!-- Слайд "Мои данные" -->
@@ -780,9 +782,9 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
-<div class="sidebar">
+			</div>
+        </main>
+        <aside class="sidebar" aria-label="Personal account navigation">
 	<div class="sidebar-inner">
         <div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
         <nav class="sidebar-menu" aria-label="<?php esc_attr_e('Разделы личного кабинета', 'yoga'); ?>">
@@ -812,7 +814,7 @@
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 18 16" aria-hidden="true" focusable="false">
 						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-heart'); ?>" width="100%" height="100%"></use>
 					</svg>
 				</div>
@@ -870,6 +872,8 @@
 			<span class="sidebar-menu__label">Выйти</span>
 		</div>
 	</div>
-</div>
+        </aside>
+    </div>
+</section>
 <?php
 	get_footer();
