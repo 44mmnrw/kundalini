@@ -22,33 +22,17 @@
 @supports (-webkit-touch-callout: none) {
   @font-face {
     font-family: "Yoga Mulish iOS";
-    src: url("../fonts/mulish/Mulish-Regular.ttf") format("truetype");
-    font-weight: 400;
+    src: url("../fonts/Mulish-VariableFont_wght.ttf") format("truetype");
+    font-weight: 200 1000;
     font-style: normal;
     font-display: swap;
   }
 
   @font-face {
     font-family: "Yoga Mulish iOS";
-    src: url("../fonts/mulish/Mulish-Medium.ttf") format("truetype");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "Yoga Mulish iOS";
-    src: url("../fonts/mulish/Mulish-SemiBold.ttf") format("truetype");
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "Yoga Mulish iOS";
-    src: url("../fonts/mulish/Mulish-Bold.ttf") format("truetype");
-    font-weight: 700;
-    font-style: normal;
+    src: url("../fonts/Mulish-Italic-VariableFont_wght.ttf") format("truetype");
+    font-weight: 200 1000;
+    font-style: italic;
     font-display: swap;
   }
 
