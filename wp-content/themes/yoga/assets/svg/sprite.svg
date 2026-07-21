@@ -2,6 +2,12 @@
   <symbol id="site-arrow" viewBox="0 0 20 20" fill="none">
     <path d="M13 18L19 10.5L13 3M19 10.5H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
   </symbol>
+  <symbol id="site-arrow-green" viewBox="0 0 20 20" fill="none">
+    <path d="M13 18L19 10.5L13 3M19 10.5H1" stroke="#E8FF57" stroke-width="1.5" stroke-linecap="square"/>
+  </symbol>
+  <symbol id="site-arrow-black" viewBox="0 0 20 20" fill="none">
+    <path d="M13 18L19 10.5L13 3M19 10.5H1" stroke="#1F1F1F" stroke-width="1.5" stroke-linecap="square"/>
+  </symbol>
   <symbol id="menu-dropdown" viewBox="0 0 12 12" fill="none">
     <path d="M6 4 9.4641 10H2.5359L6 4Z" fill="currentColor"/>
   </symbol>

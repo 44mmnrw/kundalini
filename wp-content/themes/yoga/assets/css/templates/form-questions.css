@@ -793,7 +793,7 @@
   height: 20px;
   transform: rotate(-45deg);
   transform-origin: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .section-form-questions_contacts .contacts-form-layout__submit.btn:hover,
@@ -806,6 +806,7 @@
 .section-form-questions_contacts .contacts-form-layout__submit.btn:hover .contacts-form-layout__submit-arrow,
 .section-form-questions_contacts .contacts-form-layout__submit.btn:focus-visible .contacts-form-layout__submit-arrow {
   transform: rotate(0deg);
+  filter: brightness(0);
 }
 
 .contacts-social {

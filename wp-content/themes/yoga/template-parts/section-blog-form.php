@@ -67,12 +67,6 @@ if ($blog_search_value === '') {
 								<use href="<?php echo esc_url($sprite_href); ?>#search-icon"></use>
 							</svg>
 						</label>
-                        <label class="blog-search__delete-btn">
-                            <input type="reset">
-							<svg class="blog-search__delete-icon" aria-hidden="true" focusable="false">
-								<use href="<?php echo esc_url($sprite_href); ?>#lk-modal-close"></use>
-							</svg>
-						</label>
 					</div>
 				</form>
 			</div>

@@ -111,7 +111,7 @@
   border-color: var(--color-violet);
 }
 .blog-search.search-active .blog-search__btn {
-  opacity: 0;
+  opacity: 1;
 }
 .blog-search.search-active .blog-search__delete-btn {
   opacity: 1;
@@ -905,7 +905,7 @@
     pointer-events: auto;
   }
   .section-blog-form .blog-search.search-active .blog-search__btn {
-    display: none;
+    display: flex;
   }
   .section-blog-form .blog-search.search-active .blog-search__delete-btn {
     right: 0.75rem;

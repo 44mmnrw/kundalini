@@ -64,6 +64,10 @@
   width: 100%;
 }
 
+.section-kriyi .form-reset {
+  display: none !important;
+}
+
 .practice-search-empty {
   display: flex;
   flex-direction: column;
@@ -321,8 +325,13 @@
     height: 12.0625rem;  }
 }
 @media (max-width: 767px) {
+  .kriyi__items {
+    gap: 20px;
+  }
   .kriyi-item {
-    width: calc(50% - 0.4688rem);  }
+    width: calc(50% - 10px);
+    margin-top: 0;
+  }
   .kriyi-item__inner {
     padding-left: 0.9375rem;    padding-right: 0.9375rem;  }
   .kriya-info h3 {
