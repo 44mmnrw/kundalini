@@ -630,6 +630,7 @@
 		$theme_dir = get_template_directory();
 		$reset_style_ver = file_exists($theme_dir . '/assets/css/reset.css') ? filemtime($theme_dir . '/assets/css/reset.css') : '1.0.0';
 		$breakpoints_style_ver = file_exists($theme_dir . '/assets/css/breakpoints.css') ? filemtime($theme_dir . '/assets/css/breakpoints.css') : '1.0.0';
+		$mulish_style_ver = file_exists($theme_dir . '/assets/css/mulish.css') ? filemtime($theme_dir . '/assets/css/mulish.css') : '1.0.0';
 		$main_style_ver = file_exists($theme_dir . '/assets/css/style.css') ? filemtime($theme_dir . '/assets/css/style.css') : '1.0.0';
 		$specification_style_ver = file_exists($theme_dir . '/assets/css/templates/specification.css') ? filemtime($theme_dir . '/assets/css/templates/specification.css') : '1.0.0';
 		$header_style_ver = file_exists($theme_dir . '/assets/css/templates/header.css') ? filemtime($theme_dir . '/assets/css/templates/header.css') : '1.0.0';
@@ -674,6 +675,7 @@
 		if (defined('WP_DEBUG') && WP_DEBUG) {
 			$reset_style_ver = time();
 			$breakpoints_style_ver = time();
+			$mulish_style_ver = time();
 			$main_style_ver = time();
 			$specification_style_ver = time();
 			$header_style_ver = time();
@@ -727,7 +729,8 @@
 
 		wp_enqueue_style( 'reset-style', $theme_uri . '/assets/css/reset.css', array(), $reset_style_ver );
 		wp_enqueue_style( 'yoga-breakpoints', $theme_uri . '/assets/css/breakpoints.css', array(), $breakpoints_style_ver );
-		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array( 'reset-style', 'yoga-breakpoints' ), $main_style_ver );
+		wp_enqueue_style( 'mulish-style', $theme_uri . '/assets/css/mulish.css', array(), $mulish_style_ver );
+		wp_enqueue_style( 'main-style', $theme_uri . '/assets/css/style.css', array( 'reset-style', 'yoga-breakpoints', 'mulish-style' ), $main_style_ver );
 		wp_enqueue_style( 'specification-style', $theme_uri . '/assets/css/templates/specification.css', $common_style_deps, $specification_style_ver );
 		wp_enqueue_style( 'header-style', $theme_uri . '/assets/css/templates/header.css', $common_style_deps, $header_style_ver );
 		wp_enqueue_style( 'footer-style', $theme_uri . '/assets/css/templates/footer.css', $common_style_deps, $footer_style_ver );
@@ -836,7 +839,6 @@
 		) {
 			wp_enqueue_style( 'ways-style', $theme_uri . '/assets/css/templates/ways.css', array( 'specification-style' ), $ways_style_ver );
 		}
-		wp_enqueue_style( 'mulish-style', $theme_uri . '/assets/css/mulish.css', array(), '1.0.0' );
 		wp_enqueue_style( 'animate-style', $theme_uri . '/assets/css/animate.css', array(), '1.0.0' );
 		
 		// Проверка nonce для безопасности
