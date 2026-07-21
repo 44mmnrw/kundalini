@@ -224,10 +224,8 @@ class VKID_Login_Plugin {
       const deviceId = params.get('device_id');
       if (!code || !deviceId) return;
 
-      const verifier = sessionStorage.getItem('vkid_code_verifier') || '';
-      const challenge = sessionStorage.getItem('vkid_code_challenge') || '';
       const state = sessionStorage.getItem('vkid_state') || '';
-      if (!verifier || !state || params.get('state') !== state) {
+      if (!state || params.get('state') !== state) {
         console.error('VK ID callback state verification failed');
         return;
       }
@@ -236,13 +234,11 @@ class VKID_Login_Plugin {
         const response = await fetch(<?php echo wp_json_encode($endpoint); ?>, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({code: code, device_id: deviceId, code_verifier: verifier, code_challenge: challenge})
+          body: JSON.stringify({code: code, device_id: deviceId, state: state})
         });
         const result = await response.json();
         if (!result.ok) throw new Error(result.vk_error_description || result.message || 'Ошибка входа через VK');
 
-        sessionStorage.removeItem('vkid_code_verifier');
-        sessionStorage.removeItem('vkid_code_challenge');
         sessionStorage.removeItem('vkid_state');
         window.location.replace(cleanAuthParams());
       } catch (error) {
@@ -264,22 +260,17 @@ class VKID_Login_Plugin {
       trigger.setAttribute('aria-busy', 'true');
 
       try {
-        const { verifier, challenge } = await pkcePair();
-        const state = createState();
-        sessionStorage.setItem('vkid_code_verifier', verifier);
-        sessionStorage.setItem('vkid_code_challenge', challenge);
-        sessionStorage.setItem('vkid_state', state);
-
-        const query = new URLSearchParams({
-          response_type: 'code',
-          client_id: <?php echo wp_json_encode((string) $appId); ?>,
-          redirect_uri: <?php echo wp_json_encode($redirect); ?>,
-          scope: <?php echo wp_json_encode($scope); ?>,
-          state: state,
-          code_challenge: challenge,
-          code_challenge_method: 'S256'
+        const response = await fetch(<?php echo wp_json_encode(rest_url('vkid/v1/start')); ?>, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'}
         });
-        window.location.assign('https://id.vk.ru/authorize?' + query.toString());
+        const result = await response.json();
+        if (!result.ok || !result.authorization_url) throw new Error(result.message || 'Не удалось начать вход через VK');
+
+        const state = new URL(result.authorization_url).searchParams.get('state');
+        if (!state) throw new Error('VK ID не вернул state для авторизации');
+        sessionStorage.setItem('vkid_state', state);
+        window.location.assign(result.authorization_url);
       } catch (error) {
         console.error('VK ID authorization start error', error);
         delete trigger.dataset.vkidLoading;
@@ -351,6 +342,11 @@ class VKID_Login_Plugin {
   /* ---------- REST API: обмен кода + создание/логин пользователя ---------- */
 
   public function register_routes() {
+    register_rest_route('vkid/v1', '/start', [
+      'methods'  => 'POST',
+      'permission_callback' => '__return_true',
+      'callback' => [$this, 'start_login']
+    ]);
     register_rest_route('vkid/v1', '/login', [
       'methods'  => 'POST',
       'permission_callback' => '__return_true',
@@ -360,6 +356,36 @@ class VKID_Login_Plugin {
 
   private function error_response($message, $status, $extra = []) {
     return new \WP_REST_Response(array_merge(['ok' => false, 'message' => $message], $extra), $status);
+  }
+
+  public function start_login() {
+    $client_id = trim((string) get_option(self::OPTION_APP_ID));
+    $redirect_uri = trim((string) get_option(self::OPTION_REDIRECT_URL, home_url('/')));
+    if (!$client_id || !$redirect_uri) {
+      return $this->error_response('VK config is incomplete', 400);
+    }
+
+    try {
+      $state = bin2hex(random_bytes(24));
+      $code_verifier = rtrim(strtr(base64_encode(random_bytes(48)), '+/', '-_'), '=');
+    } catch (\Throwable $error) {
+      return $this->error_response('Unable to initialize VK authorization', 500);
+    }
+
+    $code_challenge = rtrim(strtr(base64_encode(hash('sha256', $code_verifier, true)), '+/', '-_'), '=');
+    set_transient('vkid_oauth_' . hash('sha256', $state), $code_verifier, 10 * MINUTE_IN_SECONDS);
+
+    $authorization_url = add_query_arg([
+      'response_type' => 'code',
+      'client_id' => $client_id,
+      'scope' => 'email',
+      'redirect_uri' => $redirect_uri,
+      'state' => $state,
+      'code_challenge' => $code_challenge,
+      'code_challenge_method' => 'S256',
+    ], 'https://id.vk.ru/authorize');
+
+    return new \WP_REST_Response(['ok' => true, 'authorization_url' => $authorization_url], 200);
   }
 
   private function exchange_code($code, $device_id, $code_verifier, $client_id, $redirect_uri) {
@@ -456,16 +482,16 @@ class VKID_Login_Plugin {
   public function handle_login(\WP_REST_Request $req) {
     $code         = sanitize_text_field( (string)$req->get_param('code') );
     $device_id    = sanitize_text_field( (string)$req->get_param('device_id') );
-    $code_verifier= sanitize_text_field( (string)$req->get_param('code_verifier') );
-    $code_challenge = sanitize_text_field( (string)$req->get_param('code_challenge') );
+    $state        = sanitize_text_field( (string)$req->get_param('state') );
 
-    if (!$code || !$device_id || !$code_verifier || !$code_challenge) {
-      return new \WP_REST_Response(['ok'=>false,'message'=>'No code/device_id/code_verifier/code_challenge'], 400);
+    if (!$code || !$device_id || !$state) {
+      return new \WP_REST_Response(['ok'=>false,'message'=>'No code/device_id/state'], 400);
     }
 
-    $expected_challenge = rtrim(strtr(base64_encode(hash('sha256', $code_verifier, true)), '+/', '-_'), '=');
-    if (!hash_equals($expected_challenge, $code_challenge)) {
-      return $this->error_response('PKCE verifier and challenge do not match', 400);
+    $verifier_key = 'vkid_oauth_' . hash('sha256', $state);
+    $code_verifier = get_transient($verifier_key);
+    if (!is_string($code_verifier) || $code_verifier === '') {
+      return $this->error_response('VK authorization session expired or is invalid', 400);
     }
 
     // --- one-time lock по коду (анти-дубль), 3 минуты ---
@@ -493,6 +519,8 @@ class VKID_Login_Plugin {
         'vk_error_description' => $data['vk_error_description'] ?? null,
       ]);
     }
+
+    delete_transient($verifier_key);
 
     $access_token = (string) ($tok['access_token'] ?? '');
     $refresh_token= (string) ($tok['refresh_token'] ?? '');
