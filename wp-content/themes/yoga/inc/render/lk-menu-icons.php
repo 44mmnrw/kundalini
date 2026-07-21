@@ -1,10 +1,10 @@
 <?php
 /**
- * Выводит иконку меню личного кабинета как обычный SVG, без элемента <use>.
- * Firefox не применяет к такой разметке отдельный viewport символа спрайта.
+ * Локальный спрайт меню ЛК. Символы объявляются в том же документе, где
+ * используются, поэтому Firefox не создаёт внешний SVG-документ для <use>.
  */
-if (!function_exists('yoga_render_lk_menu_icon')) {
-	function yoga_render_lk_menu_icon(string $symbol_id, string $class_name): void {
+if (!function_exists('yoga_get_lk_menu_sprite_symbols')) {
+	function yoga_get_lk_menu_sprite_symbols(): array {
 		static $symbols = null;
 
 		$allowed_symbols = array(
@@ -18,10 +18,6 @@ if (!function_exists('yoga_render_lk_menu_icon')) {
 			'lk-sidebar-settings',
 			'lk-sidebar-logout',
 		);
-
-		if (!in_array($symbol_id, $allowed_symbols, true)) {
-			return;
-		}
 
 		if ($symbols === null) {
 			$symbols = array();
@@ -37,23 +33,50 @@ if (!function_exists('yoga_render_lk_menu_icon')) {
 				if (!preg_match('/\\bviewBox=["\\\']([^"\\\']+)["\\\']/i', $attributes, $viewbox_match)) {
 					continue;
 				}
-				$symbols[$id_match[1]] = array(
-					'viewbox' => $viewbox_match[1],
-					'content' => $match[2] ?? '',
-				);
+				if (in_array($id_match[1], $allowed_symbols, true)) {
+					$symbols[$id_match[1]] = array(
+						'markup' => $match[0],
+						'viewbox' => $viewbox_match[1],
+					);
+				}
 			}
 		}
 
+		return $symbols;
+	}
+}
+
+if (!function_exists('yoga_render_lk_menu_sprite')) {
+	function yoga_render_lk_menu_sprite(): void {
+		static $rendered = false;
+		if ($rendered) {
+			return;
+		}
+
+		$rendered = true;
+		$symbols = yoga_get_lk_menu_sprite_symbols();
+		if (empty($symbols)) {
+			return;
+		}
+
+		echo '<svg class="lk-menu-sprite" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;overflow:visible;pointer-events:none;"><defs>';
+		echo implode('', array_column($symbols, 'markup'));
+		echo '</defs></svg>';
+	}
+}
+
+if (!function_exists('yoga_render_lk_menu_icon')) {
+	function yoga_render_lk_menu_icon(string $symbol_id, string $class_name): void {
+		$symbols = yoga_get_lk_menu_sprite_symbols();
 		if (empty($symbols[$symbol_id])) {
 			return;
 		}
 
-		$icon = $symbols[$symbol_id];
 		printf(
-			'<svg class="%1$s" viewBox="%2$s" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">%3$s</svg>',
+			'<svg class="%1$s" viewBox="%2$s" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><use href="#%3$s" width="100%%" height="100%%"></use></svg>',
 			esc_attr($class_name),
-			esc_attr($icon['viewbox']),
-			$icon['content']
+			esc_attr($symbols[$symbol_id]['viewbox']),
+			esc_attr($symbol_id)
 		);
 	}
 }
