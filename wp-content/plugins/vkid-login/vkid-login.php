@@ -206,6 +206,85 @@ class VKID_Login_Plugin {
       return { verifier: b64url(rand) };
     }
 
+    function createState() {
+      const random = new Uint8Array(16);
+      crypto.getRandomValues(random);
+      return b64url(random);
+    }
+
+    function cleanAuthParams() {
+      const url = new URL(window.location.href);
+      ['code', 'device_id', 'expires_in', 'state', 'type'].forEach((name) => url.searchParams.delete(name));
+      return url.pathname + (url.search ? url.search : '') + url.hash;
+    }
+
+    async function completeLoginFromRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const deviceId = params.get('device_id');
+      if (!code || !deviceId) return;
+
+      const verifier = sessionStorage.getItem('vkid_code_verifier') || '';
+      const state = sessionStorage.getItem('vkid_state') || '';
+      if (!verifier || !state || params.get('state') !== state) {
+        console.error('VK ID callback state verification failed');
+        return;
+      }
+
+      try {
+        const response = await fetch(<?php echo wp_json_encode($endpoint); ?>, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({code: code, device_id: deviceId, code_verifier: verifier})
+        });
+        const result = await response.json();
+        if (!result.ok) throw new Error(result.vk_error_description || result.message || 'Ошибка входа через VK');
+
+        sessionStorage.removeItem('vkid_code_verifier');
+        sessionStorage.removeItem('vkid_state');
+        window.location.replace(cleanAuthParams());
+      } catch (error) {
+        console.error('VK ID callback error', error);
+        alert(error && error.message ? error.message : 'Ошибка входа через VK');
+      }
+    }
+
+    void completeLoginFromRedirect();
+
+    document.addEventListener('click', async function(e){
+      const trigger = e.target.closest('.vkid-login-trigger');
+      if (!trigger) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (trigger.dataset.vkidLoading === '1') return;
+
+      trigger.dataset.vkidLoading = '1';
+      trigger.setAttribute('aria-busy', 'true');
+
+      try {
+        const { verifier, challenge } = await pkcePair();
+        const state = createState();
+        sessionStorage.setItem('vkid_code_verifier', verifier);
+        sessionStorage.setItem('vkid_state', state);
+
+        const query = new URLSearchParams({
+          response_type: 'code',
+          client_id: <?php echo wp_json_encode((string) $appId); ?>,
+          redirect_uri: <?php echo wp_json_encode($redirect); ?>,
+          scope: <?php echo wp_json_encode($scope); ?>,
+          state: state,
+          code_challenge: challenge,
+          code_challenge_method: 'S256'
+        });
+        window.location.assign('https://id.vk.ru/authorize?' + query.toString());
+      } catch (error) {
+        console.error('VK ID authorization start error', error);
+        delete trigger.dataset.vkidLoading;
+        trigger.removeAttribute('aria-busy');
+        alert(error && error.message ? error.message : 'Ошибка входа через VK');
+      }
+    }, true);
+
     document.addEventListener('click', async function(e){
       const trigger = e.target.closest('.vkid-login-trigger');
       if (!trigger) return;
