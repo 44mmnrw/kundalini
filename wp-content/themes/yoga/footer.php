@@ -22,13 +22,32 @@ $footer_nav_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls')
 		'library'  => home_url('/'),
 	);
 
+$footer_primary_menu_labels = array();
+$footer_primary_menu_locations = get_nav_menu_locations();
+$footer_primary_menu_id = (int) ($footer_primary_menu_locations['primary'] ?? 0);
+if ($footer_primary_menu_id > 0) {
+	$footer_primary_menu_items = wp_get_nav_menu_items($footer_primary_menu_id);
+	if (is_array($footer_primary_menu_items)) {
+		foreach ($footer_primary_menu_items as $footer_primary_menu_item) {
+			$item_url = trim((string) ($footer_primary_menu_item->url ?? ''));
+			$item_label = trim(wp_strip_all_tags((string) ($footer_primary_menu_item->title ?? '')));
+			if ($item_url !== '' && $item_label !== '') {
+				$footer_primary_menu_labels[untrailingslashit($item_url)] = $item_label;
+			}
+		}
+	}
+}
+$footer_main_label = static function($url, $fallback) use ($footer_primary_menu_labels) {
+	return $footer_primary_menu_labels[untrailingslashit((string) $url)] ?? $fallback;
+};
+
 $footer_main_links = array(
-	array('label' => 'FAQ', 'url' => $footer_nav_urls['faq'] ?? home_url('/')),
-	array('label' => 'Контакты', 'url' => $footer_nav_urls['contacts'] ?? home_url('/')),
-	array('label' => 'Блог', 'url' => $footer_nav_urls['blog'] ?? home_url('/blog/')),
-	array('label' => 'О нас', 'url' => $footer_nav_urls['about'] ?? home_url('/')),
-	array('label' => 'Тарифы и подписка', 'url' => $footer_nav_urls['tariffs'] ?? home_url('/')),
-	array('label' => 'Библиотека практик', 'url' => $footer_nav_urls['library'] ?? home_url('/')),
+	array('label' => $footer_main_label($footer_nav_urls['faq'] ?? home_url('/'), 'FAQ'), 'url' => $footer_nav_urls['faq'] ?? home_url('/')),
+	array('label' => $footer_main_label($footer_nav_urls['contacts'] ?? home_url('/'), 'Контакты'), 'url' => $footer_nav_urls['contacts'] ?? home_url('/')),
+	array('label' => $footer_main_label($footer_nav_urls['blog'] ?? home_url('/blog/'), 'Блог'), 'url' => $footer_nav_urls['blog'] ?? home_url('/blog/')),
+	array('label' => $footer_main_label($footer_nav_urls['about'] ?? home_url('/'), 'О нас'), 'url' => $footer_nav_urls['about'] ?? home_url('/')),
+	array('label' => $footer_main_label($footer_nav_urls['tariffs'] ?? home_url('/'), 'Тарифы и подписка'), 'url' => $footer_nav_urls['tariffs'] ?? home_url('/')),
+	array('label' => $footer_main_label($footer_nav_urls['library'] ?? home_url('/'), 'Библиотека практик'), 'url' => $footer_nav_urls['library'] ?? home_url('/')),
 );
 
 $footer_privacy_url = $footer_option('privacy_policy_link');
