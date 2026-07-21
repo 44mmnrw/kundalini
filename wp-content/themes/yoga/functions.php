@@ -541,6 +541,57 @@
 		}
 	}
 
+	if (!function_exists('yoga_get_secondary_site_navigation')) {
+		function yoga_get_secondary_site_navigation(): array {
+			$urls = yoga_lk_sidebar_secondary_nav_urls();
+			$links = array(
+				'library' => array('label' => 'Библиотека практик', 'url' => (string) ($urls['library'] ?? home_url('/'))),
+				'tariffs' => array('label' => 'Тарифы и подписка', 'url' => (string) ($urls['tariffs'] ?? home_url('/'))),
+				'about' => array('label' => 'О нас', 'url' => (string) ($urls['about'] ?? home_url('/'))),
+				'blog' => array('label' => 'Блог', 'url' => (string) ($urls['blog'] ?? home_url('/blog/'))),
+				'contacts' => array('label' => 'Контакты', 'url' => (string) ($urls['contacts'] ?? home_url('/'))),
+				'faq' => array('label' => 'FAQ', 'url' => (string) ($urls['faq'] ?? home_url('/'))),
+			);
+
+			$locations = get_nav_menu_locations();
+			$menu_id = (int) ($locations['primary'] ?? 0);
+			$menu_items = $menu_id > 0 ? wp_get_nav_menu_items($menu_id) : array();
+			if (!is_array($menu_items)) {
+				return $links;
+			}
+
+			$normalize_url = static function($url): string {
+				$parts = wp_parse_url((string) $url);
+				if (!is_array($parts)) {
+					return untrailingslashit((string) $url);
+				}
+
+				$path = isset($parts['path']) ? (string) $parts['path'] : '/';
+				$query = isset($parts['query']) ? '?' . (string) $parts['query'] : '';
+				return untrailingslashit($path) . $query;
+			};
+
+			foreach ($links as $key => $link) {
+				$expected_url = $normalize_url($link['url']);
+				foreach ($menu_items as $menu_item) {
+					$menu_url = trim((string) ($menu_item->url ?? ''));
+					$menu_label = trim(wp_strip_all_tags((string) ($menu_item->title ?? '')));
+					if ($menu_url === '' || $menu_label === '' || $normalize_url($menu_url) !== $expected_url) {
+						continue;
+					}
+
+					$links[$key] = array(
+						'label' => $menu_label,
+						'url' => $menu_url,
+					);
+					break;
+				}
+			}
+
+			return $links;
+		}
+	}
+
 	if (!function_exists('yoga_collect_practice_type_term_ids')) {
 		function yoga_collect_practice_type_term_ids(array $postarr): array {
 			$term_ids = array();
