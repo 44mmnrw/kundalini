@@ -154,29 +154,34 @@
 .form-categories.active .form-categories__value span.active {
   opacity: 1;
 }
-.form-categories.active .form-categories__value::after {
-  transform: translateY(-50%) rotate(-360deg);
+.form-categories.active .form-categories__arrow {
+  /* At 180deg the tip is 2/12 below the baseline; return it to the line. */
+  transform: translateY(-16.6667%) rotate(180deg);
 }
 
+.form-categories__label {
+  --form-category-font-size: 1.125rem;
+  display: inline-flex;
+  align-items: baseline;
+  align-self: center;
+  gap: 0.375rem;
+  max-width: min(22rem, 55vw);
+}
 .form-categories__value {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   text-align: center;
-  padding-right: 1.375rem;
+  white-space: nowrap;
   min-width: 0;
 
   width: max-content;
-  max-width: min(22rem, 55vw);
-  align-self: stretch;
-  min-height: 0;}
-.form-categories__value span {
+  max-width: 100%;
+}
+.form-categories__value > span {
   display: block;
-  font-size: 1.125rem;  color: var(--color-black);
+  font-size: var(--form-category-font-size);  color: var(--color-black);
   position: absolute;
   left: 0;
-  right: 1.375rem;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   opacity: 0;
@@ -186,7 +191,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.form-categories__value span.active {
+.form-categories__value > span.active {
   position: relative;
   left: auto;
   right: auto;
@@ -203,15 +208,26 @@
   line-height: 1.15;
   flex-shrink: 0;
 }
-.form-categories__value::after {
-  content: "";
-  display: block;
-  position: absolute;
-  right: 0px;
-  top: calc(50% + 0.5px);
-  transform: translateY(-50%) rotate(-180deg);
-  width: 0.75rem;  height: 0.75rem;  background: url(../../img/library-categories-arrow.png) no-repeat center center/100% auto;
+.form-categories__arrow {
+  display: inline-block;
+  align-self: baseline;
+  flex: 0 0 var(--form-category-font-size);
+  width: var(--form-category-font-size);
+  height: var(--form-category-font-size);
+  color: var(--color-black);
+  line-height: 1;
+  pointer-events: none;
+  /* Triangle centre: (4 + 10 + 10) / 3 = 8 of 12.  The SVG is shifted
+     down by 2 of 12 so its base shares the text baseline: 10 / 12. */
+  transform-origin: 50% 83.3333%;
+  transform: rotate(0deg);
   transition: 0.4s ease;
+}
+.form-categories__arrow svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translateY(16.6667%);
 }
 
 .filter-btn {
@@ -415,12 +431,16 @@
   color: rgba(31, 31, 31, 0.6);
 }
 .filter-item__main span::after {
-  content: "";
   display: block;
   position: absolute;
-  right: -1.5rem;  top: 50%;
-  transform: translateY(-50%);
-  width: 0.9375rem;  height: 0.9375rem;  background: url(../../img/filter-select-arrow.png) no-repeat center center/100% auto;
+  top: 50%;
+  right: -1.375rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 0.125rem solid currentColor;
+  border-bottom: 0.125rem solid currentColor;
+  content: "";
+  transform: translateY(-65%) rotate(45deg);
   transition: 0.4s ease;
 }
 
@@ -457,8 +477,11 @@
   border-color: var(--color-violet);
   background: var(--color-violet);
 }
-.filter-item__list .checkbox-item .checkbox.active::before {
-  background: url(../../img/checkbox-arrow_white.png) no-repeat center center/100% auto;
+.filter-item__list .checkbox-item .checkbox.active .checkbox__icon {
+  width: 0.6875rem;
+  height: 0.6875rem;
+  color: var(--color-white);
+  opacity: 1;
 }
 .filter-item__list .checkbox-item span {
   display: block;
@@ -472,8 +495,6 @@
 }
 .filter-item__list .checkbox {
   width: 1.25rem;  height: 1.25rem;}
-.filter-item__list .checkbox::before {
-  width: 0.6875rem;}
 
 input#filt-reset {
   position: absolute !important;
@@ -498,12 +519,6 @@ input#filt-reset {
 .form-reset:hover {
   color: var(--color-violet);
 }
-.form-reset:hover .form-reset__icon img {
-  opacity: 1;
-}
-.form-reset:hover .form-reset__icon img.active {
-  opacity: 0;
-}
 .form-reset.active {
   opacity: 1;
   pointer-events: auto;
@@ -515,18 +530,15 @@ input#filt-reset {
   top: 50%;
   transform: translateY(-50%);
 }
-.form-reset__icon img {
+.form-reset__icon svg {
   display: block;
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  opacity: 0;
+  height: 100%;
   transition: 0.4s ease;
-}
-.form-reset__icon img.active {
-  opacity: 1;
 }
 
 .library {

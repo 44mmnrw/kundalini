@@ -62,7 +62,7 @@ $yoga_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.s
 
                             <button type="submit" class="btn contacts-form-layout__submit" aria-label="<?php esc_attr_e('Отправить сообщение', 'yoga'); ?>">
                                 <svg class="contacts-form-layout__submit-arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#button-diagonal-arrow'); ?>"></use>
+                                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                                 </svg>
                             </button>
                         </div>

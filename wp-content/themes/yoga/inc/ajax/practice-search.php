@@ -279,8 +279,7 @@ if (!defined('ABSPATH')) {
 				</div>
 				<div class="kriya-btn">
 					<div class="kriya-btn__arrow">
-						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
-						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
+						<svg class="kriya-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
 					</div>
 				</div>
 			</div>
@@ -311,8 +310,7 @@ if (!defined('ABSPATH')) {
 				</div>
 				<div class="kriya-btn">
 					<div class="kriya-btn__arrow">
-						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
-						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
+						<svg class="kriya-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
 					</div>
 				</div>
 			</div>

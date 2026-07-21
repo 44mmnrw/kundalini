@@ -288,9 +288,6 @@
   .modal-mobile-menu-lk .mobile-menu-main-item span {
     color: #fff;
   }
-  .modal-mobile-menu-lk .mobile-menu-main-item:first-child::after {
-    background-image: url(../../img/mobile-menu-arrow_white.png);
-  }
   .modal-mobile-menu-lk .mobile-menu-switches {
     padding-top: 1.5rem;  }
   .modal-mobile-menu-lk .mobile-menu-sub-item span {
@@ -391,7 +388,7 @@
     font-family: var(--font-family-base);
     font-weight: 400;
   }
-  .modal-mobile-menu-lk .personal-status__img {
+  .modal-mobile-menu-lk .personal-status__icon {
     color: #e8ff57;
   }
   .modal-mobile-menu-lk .sidebar-menu__item {
@@ -561,15 +558,6 @@
     font-family: var(--font-family-base);
     font-weight: 500;
   }
-  .mobile-menu-main-item:first-child::after {
-    content: "";
-    display: block;
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0.5625rem;    height: 1rem;    background: url(../../img/mobile-menu-arrow.png) no-repeat center center/100% auto;
-  }
   .modal-mobile-menu .modal-close__icon {
     display: block;
     width: 1.875rem;
@@ -608,9 +596,6 @@
   .modal-mobile-menu .mobile-menu-main-item:last-child {
     border-bottom: 1px solid #e8e8e8;
   }
-  .modal-mobile-menu .mobile-menu-main-item:first-child::after {
-    display: none;
-  }
   .modal-mobile-menu .mobile-menu-main-item_sw {
     display: flex;
     align-items: center;
@@ -636,9 +621,6 @@
     display: block;
     width: 0.5rem;
     height: 1rem;
-  }
-  .modal-mobile-menu .mobile-menu-sub-item::after {
-    display: none;
   }
   .modal-mobile-menu .mobile-menu-sub-item > span:not(.mobile-menu-sub-item__chevron) {
     padding-right: 2.5rem;
@@ -751,15 +733,6 @@
     padding-right: 3.125rem;    font-size: 1rem;    color: var(--color-black);
     font-family: var(--font-family-base);
     font-weight: 500;
-  }
-  .mobile-menu-sub-item::after {
-    content: "";
-    display: block;
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1.625rem;    height: 1.625rem;    background: url(../../img/mobile-menu-arrow_sub.png) no-repeat center center/100% auto;
   }
   .mobile-menu-switches {
     display: flex;
@@ -1082,9 +1055,6 @@
     padding-left: 0.625rem;    padding-right: 0.625rem;  }
   .modal-mobile-menu-lk .mobile-menu__slide_sub {
     padding-left: 1.25rem;    padding-right: 1.25rem;  }
-  .modal-mobile-menu-lk .mobile-menu-main-item:first-child::after {
-    right: 0.625rem;    top: calc(50% + 1px);
-  }
   .modal-mobile-menu-lk .modal-close {
     top: 1.125rem;    width: 3.1875rem;    height: 3.1875rem;  }
   .modal-mobile-menu-lk .modal-close img {

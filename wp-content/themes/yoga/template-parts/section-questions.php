@@ -107,8 +107,7 @@ if ($questions_more_link === '') {
                                             <?php echo esc_html($question); ?>
                                         </span>
                                         <div class="question-icon">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/slick-arrow-next.png" alt="Раскрыть ответ" class="active">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/slick-arrow-next_active.png" alt="Скрыть ответ">
+                                            <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
                                         </div>
                                     </div>
                                     <div class="question__sub">
@@ -147,8 +146,7 @@ if ($questions_more_link === '') {
                                             <?php echo esc_html($question); ?>
                                         </span>
                                         <div class="question-icon">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/slick-arrow-next.png" alt="Раскрыть ответ" class="active">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/slick-arrow-next_active.png" alt="Скрыть ответ">
+                                            <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
                                         </div>
                                     </div>
                                     <div class="question__sub">
@@ -162,6 +160,7 @@ if ($questions_more_link === '') {
                     </div>
 
                     <a href="<?php echo esc_url($questions_more_link); ?>" class="questions-answers__more wow fadeIn delay-200ms">
+						<svg class="questions-answers__more-bg" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#questions-more-bg'); ?>"></use></svg>
                         <span>Ещё</span>
                     </a>
                 </div>

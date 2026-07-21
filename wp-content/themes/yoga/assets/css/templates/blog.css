@@ -161,16 +161,14 @@
   visibility: hidden !important;
   pointer-events: none !important;
 }
-.blog-search__delete-btn img {
+.blog-search__delete-icon {
   display: block;
-  width: 1.3125rem;  position: absolute;
+  position: absolute;
   left: 50%;
   top: 50%;
+  width: 1.3125rem;
+  height: 1.3125rem;
   transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: 0.4s ease;
-}
-.blog-search__delete-btn img.active {
   opacity: 1;
 }
 

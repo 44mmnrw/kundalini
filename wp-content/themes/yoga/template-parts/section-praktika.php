@@ -29,6 +29,7 @@ if (!empty($section_praktika_extra_class)) {
 							<?php echo esc_html($practice_level_label); ?>
 						</span>
 						<span class="praktika-details__time">
+							<svg class="praktika-details__time-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#time-read-icon'); ?>"></use></svg>
 							<?php echo get_field('practice_time') ?: '7 минут'; ?>
 						</span>
 					</div>

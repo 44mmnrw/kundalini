@@ -92,6 +92,7 @@ function initializePracticeSystem() {
             const playPauseBtn = version.querySelector('.timer-play-pause');
             const resetBtn = version.querySelector('.timer-reset');
             const presetBtns = version.querySelectorAll('.timer-preset');
+            const timerElement = version.querySelector('.exercise-timer');
             const playerElement = version.querySelector('.exercise-player');
             const endSignalSrc = version.dataset.endSignal === 'true' ? (version.dataset.endSignalSrc || '') : '';
 
@@ -291,6 +292,12 @@ function initializePracticeSystem() {
                 }
 
                 isPlaying = true;
+                document.querySelectorAll('.exercise-timer.timer-is-running').forEach(timer => {
+                    timer.classList.remove('timer-is-running');
+                });
+                if (timerElement) {
+                    timerElement.classList.add('timer-is-running');
+                }
                 if (playPauseBtn) {
                     playPauseBtn.querySelector('span').textContent = 'Пауза';
                 }
@@ -333,6 +340,9 @@ function initializePracticeSystem() {
 
             function pauseTimer() {
                 isPlaying = false;
+                if (timerElement) {
+                    timerElement.classList.remove('timer-is-running');
+                }
                 if (playPauseBtn) {
                     playPauseBtn.querySelector('span').textContent = 'Старт';
                 }
@@ -358,6 +368,9 @@ function initializePracticeSystem() {
                 clearInterval(timerInterval);
                 timerInterval = null;
                 isPlaying = false;
+                if (timerElement) {
+                    timerElement.classList.remove('timer-is-running');
+                }
                 if (playPauseBtn) {
                     playPauseBtn.querySelector('span').textContent = 'Старт';
                 }
@@ -385,6 +398,14 @@ function initializePracticeSystem() {
                 suppressAutoPlayUntil = Date.now() + 1500;
 
                 stopTimer();
+                if (timerElement) {
+                    timerElement.classList.add('timer-is-reset');
+                    window.requestAnimationFrame(() => {
+                        window.requestAnimationFrame(() => {
+                            timerElement.classList.remove('timer-is-reset');
+                        });
+                    });
+                }
                 remainingTime = duration;
                 updateTimerDisplay();
 

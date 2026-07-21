@@ -319,7 +319,7 @@
 					<div class="lk-slide lk-slide--notification-settings<?php echo $initial_lk_target === '9' ? ' active' : ''; ?>" data-target="9">
 						<div class="lk-slide__content">
 							<div class="notification-settings">
-								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#password-recovery-back'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
+								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
 								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
 								<?php $notification_settings = array(
 									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(
@@ -442,8 +442,7 @@
                                     </div>
                                     <div class="kriya-btn">
                                         <a href="<?php echo get_permalink($practice_id); ?>" class="kriya-btn__arrow">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
+                                            <svg class="kriya-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
                                         </a>
                                     </div>
                                 </div>
@@ -513,8 +512,7 @@
 																	</div>
 																	<div class="kriya-btn">
 																		<a href="<?php echo get_permalink($practice_id); ?>" class="kriya-btn__arrow">
-																			<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
-																			<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
+																										<svg class="kriya-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
 																		</a>
 																	</div>
 																</div>
@@ -603,7 +601,7 @@
 											<div class="lk-settings-item__col">
 												<p class="lk-settings-item__col-text">Ваш тариф:</p>
 												<div class="personal-status">
-													<img src="<?php echo get_template_directory_uri(); ?>/assets/img/personal-status-icon_settings.png" alt="" class="personal-status__img">
+											<svg class="personal-status__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use></svg>
 													<span>
 														<?php echo esc_html($current_subscription ? $current_subscription['name'] : 'Не активен'); ?>
 													</span>
@@ -651,8 +649,8 @@
 										<h4>Способы оплаты</h4>
 										<div class="lk-settings-item lk-settings-item_action" data-target="2">
 											<div class="lk-settings-item__col">
-												<div class="lk-settings-item__col-icon">
-													<img src="<?php echo get_template_directory_uri(); ?>/assets/img/lk-settings-icon.png" alt="">
+											<div class="lk-settings-item__col-icon">
+													<svg class="lk-settings-payment-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-payment-card-icon'); ?>"></use></svg>
 												</div>
 												<p class="lk-settings-item__col-text">Карты</p>
 											</div>
@@ -666,9 +664,9 @@
 															?>
 														</span>
 													</div>
-													<div class="lk-settings-item__col-action-arrow">
-														<img src="<?php echo get_template_directory_uri(); ?>/assets/img/lk-settings-arrow.png" alt="">
-													</div>
+											<div class="lk-settings-item__col-action-arrow">
+												<svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+											</div>
 												</div>
 											</div>
 										</div>
@@ -697,7 +695,7 @@
 														<span>Выбрать тариф</span>
 														<span class="lk-settings-tariffs-btn__icon" aria-hidden="true">
 															<svg class="lk-settings-tariffs-btn__arrow" width="16" height="16" viewBox="0 0 16 16" focusable="false">
-																<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#button-diagonal-arrow'); ?>"></use>
+																		<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 															</svg>
 														</span>
 													</a>
@@ -713,7 +711,7 @@
 								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2">
 									<div class="form-back" data-target="1">
 										<svg class="form-back__icon" width="9" height="16" aria-hidden="true" focusable="false">
-											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#form-back-arrow'); ?>"></use>
+											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 										</svg>
 										<span>назад</span>
 									</div>
@@ -753,7 +751,9 @@
 													<div class="lk-settings-item__col">
 														<div class="lk-settings-item__col-action">
 															<div class="lk-settings-item__col-action-options" aria-hidden="true">
-																<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-options.png'); ?>" alt="">
+																<svg class="lk-settings-item__col-action-option" width="4" height="4" viewBox="0 0 4 4" fill="none"><circle cx="2" cy="2" r="2" fill="currentColor"/></svg>
+																<svg class="lk-settings-item__col-action-option" width="4" height="4" viewBox="0 0 4 4" fill="none"><circle cx="2" cy="2" r="2" fill="currentColor"/></svg>
+																<svg class="lk-settings-item__col-action-option" width="4" height="4" viewBox="0 0 4 4" fill="none"><circle cx="2" cy="2" r="2" fill="currentColor"/></svg>
 															</div>
 														</div>
 													</div>
@@ -766,9 +766,7 @@
 										?>
 
 										<button type="button" class="lk-add-card js-ytr-bind-card" id="add-new-card">
-											<span class="lk-add-card__icon" aria-hidden="true">
-												<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/lk-payment-icon_add.png'); ?>" alt="" width="50" height="50">
-											</span>
+											<span class="lk-add-card__icon" aria-hidden="true"></span>
 											<span class="lk-add-card__text">Добавить карту</span>
 										</button>
 									</div>

@@ -690,13 +690,29 @@
   padding-top: 6.25rem;  transition: opacity 0.3s ease;
 }
 .delcomm__succes::before {
-  content: "";
-  display: block;
   position: absolute;
+  top: 0.1875rem;
   left: 50%;
+  display: block;
+  width: 4.8125rem;
+  height: 4.875rem;
+  border-radius: 50%;
+  background: var(--color-black);
+  content: "";
   transform: translateX(-50%);
-  top: 0.1875rem;  width: 4.8125rem;  height: 4.875rem;  border-radius: 50%;
-  background: url(../../img/delcomm-succes-before.png) no-repeat center center/100% auto;
+}
+
+.delcomm__succes::after {
+  position: absolute;
+  top: 1.55rem;
+  left: 50%;
+  display: block;
+  width: 2.25rem;
+  height: 1.125rem;
+  border: solid var(--color-green);
+  border-width: 0 0.3125rem 0.3125rem 0;
+  content: "";
+  transform: translateX(-55%) rotate(45deg);
 }
 .delcomm__succes b {
   display: block;
@@ -807,6 +823,3 @@
     font-size: 1.25rem;
   }
 }
-
-.modal-default_card {
-  padding-top: 1.5625rem;  padding-bottom: 1.5625rem;}

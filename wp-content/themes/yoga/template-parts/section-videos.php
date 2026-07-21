@@ -29,17 +29,18 @@ $videos_button_text = yoga_get_purchase_cta_text();
                             $video_fancybox_url = 'https://vimeo.com/' . basename(parse_url($video_url, PHP_URL_PATH));
                         }
                     ?>
-                    <a data-fancybox="videos"  href="<?php echo $video_fancybox_url; ?>" class="videos-item">
+                    <a data-fancybox="videos"  href="<?php echo $video_fancybox_url; ?>" class="videos-item" aria-label="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
                         <?php if ($video_bg) : ?>
                             <img src="<?php echo esc_url($video_bg); ?>" alt="" class="videos-item__bg">
                         <?php endif; ?>
 
                         <div class="videos-item__btn">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/play-btn-icon.png'); ?>" alt="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
+                            <svg class="videos-item__play-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#video-play'); ?>"></use></svg>
                         </div>
 
                         <div class="videos-person">
                             <div class="videos-person-img">
+								<svg class="videos-person-placeholder" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-meditation'); ?>"></use></svg>
                                 <?php if ($video_person) : ?>
                                     <img src="<?php echo esc_url($video_person); ?>" alt="">
                                 <?php endif; ?>
@@ -52,13 +53,14 @@ $videos_button_text = yoga_get_purchase_cta_text();
                 <div class="videos-slider wow fadeIn delay-200ms">
 
                     <?php for ($i = 1; $i <= 5; $i++) : ?>
-                    <a data-fancybox="videos" href="<?php echo esc_url(get_template_directory_uri() . '/assets/videos/test-video.mp4'); ?>" class="videos-item">
+                    <a data-fancybox="videos" href="<?php echo esc_url(get_template_directory_uri() . '/assets/videos/test-video.mp4'); ?>" class="videos-item" aria-label="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
                         <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/video-item_0' . min($i, 4) . '-min.png'); ?>" alt="" class="videos-item__bg">
                         <div class="videos-item__btn">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/play-btn-icon.png'); ?>" alt="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
+                            <svg class="videos-item__play-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#video-play'); ?>"></use></svg>
                         </div>
                         <div class="videos-person">
                             <div class="videos-person-img">
+								<svg class="videos-person-placeholder" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-meditation'); ?>"></use></svg>
                                 <?php if ($i >= 3 && $i <= 5) : ?>
                                     <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/videos-person-img_0' . ($i - 2) . '.png'); ?>" alt="">
                                 <?php endif; ?>
@@ -70,16 +72,16 @@ $videos_button_text = yoga_get_purchase_cta_text();
                 <?php endif; ?>
 
                 <div class="arrows-slick wow fadeIn delay-200ms">
-                    <div class="arrows-slick__arrow slick-prev">
+                    <button type="button" class="arrows-slick__arrow slick-prev" aria-label="Предыдущие видео">
                         <svg aria-hidden="true" focusable="false">
-                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                         </svg>
-                    </div>
-                    <div class="arrows-slick__arrow slick-next">
+                    </button>
+                    <button type="button" class="arrows-slick__arrow slick-next" aria-label="Следующие видео">
                         <svg aria-hidden="true" focusable="false">
-                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                         </svg>
-                    </div>
+                    </button>
                 </div>
 
                 <div class="videos__try wow fadeIn delay-200ms">
@@ -87,10 +89,10 @@ $videos_button_text = yoga_get_purchase_cta_text();
                         <span><?php echo esc_html($videos_button_text); ?></span>
                         <div class="btn-icon">
                             <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                             <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                         </div>
                     </div>

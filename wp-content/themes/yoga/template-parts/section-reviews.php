@@ -21,19 +21,19 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
         <div class="row">
             <div class="reviews">
                 <div class="reviews__head">
-                    <div class="arrows-slick__arrow slick-prev wow fadeIn delay-200ms">
+                    <button type="button" class="arrows-slick__arrow slick-prev wow fadeIn delay-200ms" aria-label="Предыдущий отзыв">
                         <svg aria-hidden="true" focusable="false">
-                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                         </svg>
-                    </div>
+                    </button>
                     <h2 class="wow flipInX delay-200ms">
                         <?php echo esc_html($reviews_title); ?>
                     </h2>
-                    <div class="arrows-slick__arrow slick-next wow fadeIn delay-200ms">
+                    <button type="button" class="arrows-slick__arrow slick-next wow fadeIn delay-200ms" aria-label="Следующий отзыв">
                         <svg aria-hidden="true" focusable="false">
-                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                         </svg>
-                    </div>
+                    </button>
                 </div>
 
                 <div class="reviews__main">
@@ -50,6 +50,7 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
                         ?>
                         <div class="review">
                             <div class="review-main <?php echo esc_attr($review_animation); ?> delay-200ms">
+								<div class="review-main__quote" aria-hidden="true"><svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#faq-quote-mark'); ?>"></use></svg></div>
                                 <?php if ($review_image) : ?>
                                     <div class="review-main__image">
                                         <img src="<?php echo esc_url($review_image); ?>" alt="<?php echo esc_attr($review_name); ?>">
@@ -98,6 +99,7 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
 
                         <div class="review">
                             <div class="review-main wow fadeIn delay-200ms">
+								<div class="review-main__quote" aria-hidden="true"><svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#faq-quote-mark'); ?>"></use></svg></div>
                                 <div class="review-main__image">
                                     <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/review-img-min.png'); ?>" alt="">
                                 </div>
@@ -133,7 +135,7 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
                     <?php if ($reviews_decor) : ?>
                         <img src="<?php echo esc_url($reviews_decor); ?>" alt="" class="review-decor wow fadeInUp delay-600ms">
                     <?php else : ?>
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/review-decor.png'); ?>" alt="" class="review-decor wow fadeInUp delay-600ms">
+                        <svg class="review-decor wow fadeInUp delay-600ms" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#review-decor'); ?>"></use></svg>
                     <?php endif; ?>
                 </div>
             </div>

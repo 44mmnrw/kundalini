@@ -64,7 +64,8 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 					<div class="kriyi-form-main">
 						<div class="form-search">
 							<div class="form-categories">
-								<div class="form-categories__value">
+								<div class="form-categories__label">
+									<div class="form-categories__value">
 									<span<?php echo $parent_term_link_attr; ?> data-target="<?php echo esc_attr((string) $parent_term->term_id); ?>">
 										<?php esc_html_e('Все практики', 'yoga'); ?>
 									</span>
@@ -82,8 +83,10 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 											<span<?php echo $sibling_link_attr; ?> data-target="<?php echo esc_attr((string) $sibling_term->term_id); ?>">
 												<?php echo esc_html($sibling_term->name); ?>
 											</span>
-										<?php endforeach; ?>
-									<?php endif; ?>
+									<?php endforeach; ?>
+								<?php endif; ?>
+								</div>
+									<i class="form-categories__arrow" aria-hidden="true"><svg focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#menu-dropdown'); ?>"></use></svg></i>
 								</div>
 							</div>
 							<input type="text" class="input" placeholder="Что ищете?">
@@ -149,7 +152,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 											: '';
 										echo '<input type="checkbox" id="filter-dif_' . sprintf('%02d', $i) . '" name="practice-difficulty" value="' . esc_attr((string) $term->term_id) . '">';
 										echo '<label for="filter-dif_' . sprintf('%02d', $i) . '" class="checkbox-item" data-level-key="' . esc_attr($level_slug) . '">';
-										echo '<div class="checkbox"></div>';
+										echo '<div class="checkbox"><svg class="checkbox__icon" aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check') . '"></use></svg></div>';
 										echo '<span>' . esc_html($level_label) . '</span>';
 										echo '</label>';
 										$i++;
@@ -176,7 +179,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 									foreach ($duration_terms as $term) {
 										echo '<input type="checkbox" id="filter-time_' . sprintf('%02d', $i) . '" name="practice-duration" value="' . esc_attr((string) $term->term_id) . '">';
 										echo '<label for="filter-time_' . sprintf('%02d', $i) . '" class="checkbox-item">';
-										echo '<div class="checkbox"></div>';
+										echo '<div class="checkbox"><svg class="checkbox__icon" aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check') . '"></use></svg></div>';
 										echo '<span>' . esc_html($term->name) . '</span>';
 										echo '</label>';
 										$i++;
@@ -201,7 +204,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 									foreach ($goal_terms as $term) {
 										echo '<input type="checkbox" id="filter-goal_' . sprintf('%02d', $i) . '" name="practice-goal" value="' . esc_attr((string) $term->term_id) . '">';
 										echo '<label for="filter-goal_' . sprintf('%02d', $i) . '" class="checkbox-item">';
-										echo '<div class="checkbox"></div>';
+										echo '<div class="checkbox"><svg class="checkbox__icon" aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check') . '"></use></svg></div>';
 										echo '<span>' . esc_html($term->name) . '</span>';
 										echo '</label>';
 										$i++;
@@ -214,8 +217,9 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 						<input type="reset" id="filt-reset">
 						<label for="filt-reset" class="form-reset">
 							<div class="form-reset__icon">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/form-reset-icon.png'); ?>" alt="" class="active">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/form-reset-icon_active.png'); ?>" alt="">
+								<svg aria-hidden="true" focusable="false">
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use>
+								</svg>
 							</div>
 							<span>Очистить</span>
 						</label>
@@ -270,8 +274,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 										</div>
 										<div class="kriya-btn">
 											<div class="kriya-btn__arrow">
-												<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/kriya-btn-arrow.png'); ?>" alt="" class="active">
-												<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/kriya-btn-arrow_active.png'); ?>" alt="">
+											<svg class="kriya-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
 											</div>
 										</div>
 									</div>

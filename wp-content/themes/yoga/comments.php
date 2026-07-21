@@ -21,7 +21,7 @@ if (get_post_type($post_id) === 'post') :
 				<button type="submit" class="btn">
 					<span class="comment-form-main__btn-label"><?php esc_html_e('ОТПРАВИТЬ', 'yoga'); ?></span>
 					<svg class="comment-form-main__btn-arrow" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 					</svg>
 				</button>
 

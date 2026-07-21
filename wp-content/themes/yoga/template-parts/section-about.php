@@ -19,8 +19,13 @@
                     </div>
 
                     <div class="about-img about-img--masked animated fadeInDown slow delay-500ms" aria-label="Марина Ксенофонтова">
+						<span class="about-img__decor" aria-hidden="true">
+							<svg class="about-img__decor-star about-img__decor-star--four" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#contacts-star-four'); ?>"></use></svg>
+							<svg class="about-img__decor-oval" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hero-practices-oval'); ?>"></use></svg>
+							<svg class="about-img__decor-star about-img__decor-star--eight" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#contacts-star-eight'); ?>"></use></svg>
+						</span>
                         <span class="about-img__cta" aria-hidden="true">
-                            <svg viewBox="0 0 16 16" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#button-diagonal-arrow'); ?>"></use></svg>
+                            <svg viewBox="0 0 16 16" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
                         </span>
                     </div>
                 </div>

@@ -60,6 +60,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                         </div>
                     <?php else: ?>
                         <div class="answer-btn" role="button" tabindex="0">
+                            <svg class="answer-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($yoga_sprite_href); ?>#praktika-answer-icon"></use></svg>
                             <span>Ответить</span>
                         </div>
                     <?php endif; ?>
@@ -172,4 +173,3 @@ function yoga_render_ajax_comment(int $comment_id): string {
 	custom_comment_template($comment, array('max_depth' => 5), $depth);
 	return (string) ob_get_clean();
 }
-

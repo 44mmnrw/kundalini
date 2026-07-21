@@ -154,9 +154,11 @@
 .footer-subscribe__submit svg {
   width: 1.25rem;
   height: 1.25rem;
+  transform: rotate(-45deg);
 }
 
 .footer-subscribe__agree {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -176,8 +178,19 @@
   cursor: pointer;
 }
 
-.footer-subscribe__agree input:checked {
-  background: transparent url("../../img/checkbox-arrow_white.png") center / 0.75rem auto no-repeat;
+.footer-subscribe__check-icon {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--color-white);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.footer-subscribe__agree input:checked + .footer-subscribe__check-icon {
+  opacity: 1;
 }
 
 .footer-subscribe__agree span {
@@ -242,18 +255,6 @@
   }
 }
 
-@property --footer-social-bg {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #383838;
-}
-
-@property --footer-social-icon {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #ffffff;
-}
-
 .footer__bottom {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -303,7 +304,7 @@
   background: var(--footer-social-bg);
   color: var(--footer-social-icon);
   text-decoration: none;
-  transition: --footer-social-bg 300ms ease, --footer-social-icon 300ms ease, background-color 300ms ease, color 300ms ease, opacity 300ms ease;
+  transition: background-color 300ms ease, color 300ms ease, opacity 300ms ease;
 }
 
 .footer__social:hover {
@@ -311,13 +312,18 @@
   --footer-social-icon: var(--color-black);
 }
 
+.footer__social:focus {
+  outline: none;
+}
+
+.footer__social:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: 3px;
+}
+
 .footer__social svg {
   width: 1.5rem;
   height: 1.5rem;
-}
-.footer__social svg,
-.footer__social svg * {
-  transition: fill 300ms ease, stroke 300ms ease;
 }
 
 .footer__copyright {

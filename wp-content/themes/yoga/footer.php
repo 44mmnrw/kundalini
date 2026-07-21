@@ -75,8 +75,8 @@ $footer_subscription_complete = $footer_current_user->exists()
 	<h2 class="home-footer-subscribe__title" id="home-footer-subscribe-title"><span class="home-footer-subscribe__mark">Подпишитесь,</span> чтобы <span class="home-footer-subscribe__always">всег<span class="home-footer-subscribe__star" aria-hidden="true"></span>да</span><br>быть в курсе <span class="home-footer-subscribe__green">новых материалов</span>,<br><span class="home-footer-subscribe__offers">акций и <span class="home-footer-subscribe__thumb" aria-hidden="true"></span> спецпредложений!</span></h2>
 	<form class="footer-subscribe home-footer-subscribe__form<?php echo $footer_subscription_complete ? ' is-subscribed' : ''; ?>" action="<?php echo esc_url(home_url('/')); ?>" method="post"<?php echo $footer_subscription_complete ? ' aria-label="Подписка оформлена"' : ''; ?>>
 		<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
-		<div class="footer-subscribe__field"><input id="home-footer-subscribe-email" name="footer_email" type="email" placeholder="эл. почта" aria-label="эл. почта"><button class="footer-subscribe__submit" type="submit" aria-label="Подписаться на новости"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-subscribe-arrow'); ?>"></use></svg></button></div>
-		<label class="footer-subscribe__agree"><input class="footer-subscribe__checkbox" type="checkbox" name="footer_subscribe_agree" checked><span>Я соглашаюсь на <a href="<?php echo esc_url(($footer_legal_links[3]['url'] ?? '') ?: $footer_privacy_url ?: home_url('/')); ?>">обработку персональных данных</a> и получение рассылок</span></label>
+		<div class="footer-subscribe__field"><input id="home-footer-subscribe-email" name="footer_email" type="email" placeholder="эл. почта" aria-label="эл. почта"><button class="footer-subscribe__submit" type="submit" aria-label="Подписаться на новости"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg></button></div>
+		<label class="footer-subscribe__agree"><input class="footer-subscribe__checkbox" type="checkbox" name="footer_subscribe_agree" checked><svg class="footer-subscribe__check-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use></svg><span>Я соглашаюсь на <a href="<?php echo esc_url(($footer_legal_links[3]['url'] ?? '') ?: $footer_privacy_url ?: home_url('/')); ?>">обработку персональных данных</a> и получение рассылок</span></label>
 		<div class="footer-subscribe__success" role="status" aria-live="polite">
 			<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/smile.png'); ?>" alt="">
 			<strong>Подписка оформлена!</strong>
@@ -143,13 +143,16 @@ $footer_subscription_complete = $footer_current_user->exists()
 							<input id="footer-subscribe-email" name="footer_email" type="email" placeholder="эл. почта">
 							<button class="footer-subscribe__submit" type="submit" aria-label="<?php echo esc_attr__('Подписаться на новости', 'yoga'); ?>">
 								<svg aria-hidden="true" focusable="false">
-									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#footer-subscribe-arrow'); ?>"></use>
+									<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 								</svg>
 							</button>
 						</div>
 					</div>
 					<label class="footer-subscribe__agree">
 						<input class="footer-subscribe__checkbox" type="checkbox" name="footer_subscribe_agree" checked>
+						<svg class="footer-subscribe__check-icon" aria-hidden="true" focusable="false">
+							<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use>
+						</svg>
 						<span>
 							Я соглашаюсь на
 							<a href="<?php echo esc_url(($footer_legal_links[3]['url'] ?? '') ?: $footer_privacy_url ?: home_url('/')); ?>">

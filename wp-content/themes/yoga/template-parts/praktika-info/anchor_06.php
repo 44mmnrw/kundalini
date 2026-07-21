@@ -19,7 +19,7 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
         <button type="submit" class="btn">
             <span class="comment-form-main__btn-label">ОТПРАВИТЬ</span>
             <svg class="comment-form-main__btn-arrow" aria-hidden="true" focusable="false">
-                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
             </svg>
         </button>
 

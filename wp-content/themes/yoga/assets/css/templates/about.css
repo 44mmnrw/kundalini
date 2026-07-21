@@ -113,8 +113,7 @@
   mask: url("../../svg/o_nas_desk.svg") center / 100% 100% no-repeat;
 }
 
-.about__main_start .about-img--masked::before {
-  content: "";
+.about-img__decor {
   position: absolute;
   z-index: 2;
   top: -2.5rem;
@@ -122,8 +121,30 @@
   width: 52.125rem;
   height: 21.4375rem;
   pointer-events: none;
-  background: url("../../img/about-img-before.png") center / 100% auto no-repeat;
   transform: translateX(-50%);
+}
+.about-img__decor svg {
+  position: absolute;
+  display: block;
+  color: var(--color-violet);
+}
+.about-img__decor-star--four {
+  top: 5.75rem;
+  left: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+}
+.about-img__decor-oval {
+  top: 0.4375rem;
+  right: 9.875rem;
+  width: 3.25rem;
+  height: 9.375rem;
+}
+.about-img__decor-star--eight {
+  right: 0;
+  bottom: 0.5rem;
+  width: 3rem;
+  height: 3rem;
 }
 
 .about-img__cta {
@@ -145,6 +166,7 @@
 .about-img__cta svg {
   width: 1rem;
   height: 1rem;
+  transform: rotate(-45deg);
 
   transform: rotate(90deg);
 }
@@ -304,12 +326,28 @@
     mask: url("../../svg/o_nas_mob.svg") center / 100% 100% no-repeat;
   }
 
-  .about__main_start .about-img--masked::before {
+  .about-img__decor {
     top: -1.5rem;
     left: calc(50% - 0.4375rem);
     width: 17.875rem;
     height: 15.25rem;
-    background-image: url("../../img/about-img-before_mob.png");
+  }
+
+  .about-img__decor-star--four {
+    top: 4.6875rem;
+    left: 0;
+  }
+
+  .about-img__decor-oval {
+    top: 0;
+    right: 0.625rem;
+    width: 2.25rem;
+    height: 6.5rem;
+  }
+
+  .about-img__decor-star--eight {
+    right: 0;
+    bottom: 0;
   }
 
   .about-img__cta {

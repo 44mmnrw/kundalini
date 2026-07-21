@@ -252,7 +252,8 @@
                     <b class="timer-main__title">Таймер</b>
                     <div class="timer-main__time">
                         <div class="timer-main__time-bg">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/timer-bg.png" alt="Таймер">
+							<img class="timer-main__time-bg-default" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/timer-bg-default.svg'); ?>" alt="">
+							<img class="timer-main__time-bg-hover" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/timer-bg-hover.svg'); ?>" alt="">
 						</div>
                         <span class="timer-display">0:00</span>
 					</div>
@@ -422,7 +423,8 @@
                     <b class="timer-main__title">Таймер</b>
                     <div class="timer-main__time">
                         <div class="timer-main__time-bg">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/timer-bg.png" alt="Таймер">
+							<img class="timer-main__time-bg-default" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/timer-bg-default.svg'); ?>" alt="">
+							<img class="timer-main__time-bg-hover" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/timer-bg-hover.svg'); ?>" alt="">
 						</div>
                         <span class="timer-display">0:00</span>
 					</div>
