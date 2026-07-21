@@ -386,14 +386,11 @@
   }
 
   .modal-login.active .modal-close {
-    position: sticky;
-    top: 0;
-    align-self: flex-end;
-    flex: 0 0 52px;
+    position: absolute;
     display: flex;
     width: 52px;
     height: 52px;
-    margin: 0 0 20px;
+    margin: 0;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
