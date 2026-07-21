@@ -273,6 +273,7 @@ class VKID_Login_Plugin {
           redirect_uri: <?php echo wp_json_encode($redirect); ?>,
           scope: <?php echo wp_json_encode($scope); ?>,
           state: state,
+          prompt: 'login',
           code_challenge: challenge,
           code_challenge_method: 's256'
         });
