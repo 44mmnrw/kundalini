@@ -1,6 +1,11 @@
-/* Section-faq */
+/**
+ * Стили компонента: faq.
+ *
+ * @package Yoga
+ */
+
 .section-faq {
-  padding-top: 1.9375rem;  /* min-height: calc(100vh + 88px); */
+  padding-top: 1.9375rem;
   min-height: calc(80vh + 0.5rem);}
 
 .faq {
@@ -62,7 +67,7 @@
   transition: all 0.5s ease-in-out;
 }
 
-/* Без этого на тачэкране первое касание «вешало» hover, второе открывало блок */
+
 @media (hover: hover) and (pointer: fine) {
   .faq__questions .question__main:hover::after {
     width: 100%;
@@ -160,7 +165,7 @@
   flex: 1 1 auto;
   align-self: stretch;
   width: 100%;
-  /* иначе flex min-height:auto может дать высоту < контента — лайм обрезается, поля уезжают на белый фон */
+
   min-height: min-content;
   overflow: visible;
   padding-left: 1.5625rem;
@@ -239,9 +244,9 @@
   line-height: 1;
   color: var(--color-green);}
 
-/* The FAQ answers expand independently of the contact card. Keeping the card
-   at the SVG mask's native proportions prevents its cutout from stretching
-   when an accordion item is opened. */
+
+
+
 @media (min-width: 1280px) {
   .faq__form {
     align-self: flex-start;
@@ -323,7 +328,7 @@
     padding-right: 3.75rem;
     padding-bottom: 2.5rem;
     overflow: visible;
-    /* Планшет + мобилка (колонка на всю ширину): лайм под SVG, чтобы не было белых полей и обрыва заливки */
+
     background: var(--color-green);
   }
   .faq__form-card-bg {

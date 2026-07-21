@@ -1,4 +1,9 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: section praktika.
+ *
+ * @package Yoga
+ */
 $practice_level_raw = trim((string) get_field('practice_level'));
 $practice_level_label = function_exists('yoga_normalize_practice_level_label')
 	? yoga_normalize_practice_level_label($practice_level_raw)
@@ -80,46 +85,46 @@ if (!empty($section_praktika_extra_class)) {
 										}
 
 										switch ($layout) {
-											
+
 											case 'anchor_01':
-											// Anchor 01 - О крийе
+
 											include(locate_template('template-parts/praktika-info/anchor_01.php'));
-											
-											
+
+
 											break;
-											
+
 											case 'anchor_02':
-											// Anchor 02 - Эффекты крийи
+
 											include(locate_template('template-parts/praktika-info/anchor_02.php'));
-											
+
 											break;
-											
+
 											case 'anchor_03':
-											// Anchor 03 - Философия практики
+
 											include(locate_template('template-parts/praktika-info/anchor_03.php'));
 											break;
-											
+
 											case 'anchor_04':
-											// Anchor 04 - Философия практики
+
 											include(locate_template('template-parts/praktika-info/anchor_04.php'));
 											break;
-											
+
 											case 'anchor_05':
-											//var_dump($section);
-											// Anchor 05 - Философия практики
+
+
 											include(locate_template('template-parts/praktika-info/anchor_05.php'));
 											break;
-											
+
 											case 'anchor_06':
-											// Anchor 06 - Философия практики
+
 											include(locate_template('template-parts/praktika-info/anchor_06.php'));
 											break;
-											
-											// Добавьте case для остальных anchor'ов по аналогии
-											// anchor_04, anchor_05, anchor_06...
-											
+
+
+
+
 											default:
-											// Дефолтная обработка
+
 											if ($section['title']) {
 												echo '<h3>' . esc_html($section['title']) . '</h3>';
 											}
@@ -129,7 +134,7 @@ if (!empty($section_praktika_extra_class)) {
 								}
 							?>
 						</div>
-						
+
                     <div class="praktika-menu">
                         <div class="praktika-fixed">
                             <h3>Содержание</h3>

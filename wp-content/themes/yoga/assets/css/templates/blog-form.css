@@ -1,4 +1,9 @@
-/* Section-blog-form */
+/**
+ * Стили компонента: blog form.
+ *
+ * @package Yoga
+ */
+
 .section-blog-form {
   padding-top: 0.3125rem;
   background: #fff;
@@ -18,7 +23,7 @@
   min-width: 0;
 }
 @media (max-width: var(--yoga-below-lg)) {
-  /* overflow-x: hidden обрезал горизонтальный скролл рубрик */
+
   .section-blog-form {
     overflow-x: visible;
     overflow-y: visible;

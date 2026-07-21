@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: ajax responses.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
     exit;
 }

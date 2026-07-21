@@ -1,10 +1,15 @@
-/* Техническое примечание. */
+/**
+ * Стили компонента: library.
+ *
+ * @package Yoga
+ */
+
 .section-library {
-  /* Не задавать overflow-x: hidden здесь: при overflow-y: visible браузер всё равно считает вертикальную ось как auto и обрезает выпадающие списки поиска */
+
   overflow: visible;
   padding-top: 1.5rem;  padding-bottom: 6.25rem;}
 
-/* Ширина .library шире контейнера — клип только здесь, не у всей секции */
+
 .library-x-clip {
   width: 100%;
   overflow-x: hidden;
@@ -24,7 +29,7 @@
   width: 100%;
 }
 
-/* Единственные input фильтра находятся в мобильном компоненте; десктоп управляет общим JS-состоянием. */
+
 @media (min-width: 1025px) {
   input.library-filter-input[type="checkbox"] {
     visibility: visible !important;
@@ -48,7 +53,7 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  /* Высота рамки с учётом вертикального padding у .form-search (0.4375rem × 2) */
+
   --library-search-row-height: 4.9375rem;
 }
 
@@ -56,7 +61,7 @@
   display: flex;
   align-items: stretch;
   position: relative;
-  /* Вертикальные отступы как в макете (≈7px): полоса категории и поле не касаются рамки сверху/снизу */
+
   padding: 0.4375rem 0 0.4375rem 0.4375rem;
   width: calc(100% - var(--library-search-row-height) - 1.25rem);
   border: 1px solid var(--color-black);
@@ -66,9 +71,9 @@
   z-index: 20;
   transition: 0.4s ease;
   box-sizing: border-box;
-  /* Техническое примечание. */
+
   height: var(--library-search-row-height);
-  /* не hidden — иначе обрезаются выпадающие .form-search-list / .form-cat-list */
+
   overflow: visible;
 }
 .form-search input {
@@ -88,8 +93,8 @@
 .form-search.active {
   border-bottom-left-radius: 0px;
   border-color: var(--color-violet);
-  /* The suggestion panel belongs to this stacking context. Raise the whole
-     search block so the following filter row cannot paint over its results. */
+
+
   z-index: 50;
 }
 .form-search.active .form-search__btn .form-search__btn-icon {
@@ -161,7 +166,7 @@
   text-align: center;
   padding-right: 1.375rem;
   min-width: 0;
-  /* Активный span в потоке задаёт ширину; абсолютные спаны не дают intrinsic width — без этого розовый блок схлопывается */
+
   width: max-content;
   max-width: min(22rem, 55vw);
   align-self: stretch;
@@ -239,7 +244,7 @@
   text-align: center;
   transition: 0.4s ease;
   opacity: 0;
-  /* Счётчик скрыт — не перехватывать тап по иконке фильтра */
+
   pointer-events: none;
 }
 .filter-btn__count.active {
@@ -778,12 +783,12 @@ input#filt-reset {
   .section-library {
     padding-bottom: 5rem;  }
   .library-form-main {
-    /* 3.125rem контент + вертикальный padding .form-search на мобиле */
+
     --library-search-row-height: 3.75rem;
   }
   .form-search {
     width: calc(100% - var(--library-search-row-height) - 0.4375rem);
-    /* вертикаль 0.3125rem — слева тот же зазор, как сверху/снизу (раньше 0 давало прилипание к рамке) */
+
     padding: 0.3125rem 0 0.3125rem 0.3125rem;
   }
   .form-search input {
@@ -811,8 +816,8 @@ input#filt-reset {
   .library-item {
     padding-left: 1.25rem;    padding-right: 1.25rem;    padding-bottom: 1.5625rem;    width: 100%;
     margin-right: 0px;
-    /* The corner button sits in the card cutout. Clipping the outer wrapper
-       cuts the circular SVG into an oval on mobile. */
+
+
     overflow: visible;
   }
   .library-item__img {

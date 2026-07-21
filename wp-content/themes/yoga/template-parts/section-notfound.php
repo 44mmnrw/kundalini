@@ -1,3 +1,10 @@
+<?php
+/**
+ * Переиспользуемый шаблонный блок: section notfound.
+ *
+ * @package Yoga
+ */
+?>
 <section class="section-notfound" id="section-notfound">
     <div class="container">
         <div class="row">

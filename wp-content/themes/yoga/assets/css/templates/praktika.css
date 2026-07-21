@@ -1,4 +1,9 @@
-/* Section-praktika */
+/**
+ * Стили компонента: praktika.
+ *
+ * @package Yoga
+ */
+
 .section-praktika_no-questions {
   padding-bottom: 6.25rem;
 }
@@ -98,14 +103,14 @@
   background: url(../../img/praktika-time-icon.png) no-repeat center center/100% auto;
 }
 
-/*
- * Избранное в строке .praktika-details (single practice).
- * Брейкпоинты только здесь для текста:
- *   — базово: все ширины;
- *   — ниже lg (--yoga-below-lg): размер/цвет подписи;
- *   — max-width 767px: меньший шрифт + flex-wrap у .praktika-details (ниже в файле);
- *   — max-width 575px: компактнее иконка и отступы у .praktika-fav__main.
- */
+
+
+
+
+
+
+
+
 .praktika-details .praktika-fav {
   display: flex;
   align-items: center;
@@ -123,7 +128,7 @@
   gap: 0.4375rem;
   max-width: 100%;
 }
-/* Одна ячейка сетки: подписи не стоят в одном ряду flex и не разъезжаются */
+
 .praktika-details .praktika-fav__labels {
   display: grid;
   align-items: center;
@@ -619,7 +624,7 @@ p.praktika-section-paywall__text {
   pointer-events: none;
 }
 .exercise-item.active {
-display: block !important;	
+display: block !important;
   position: relative;
   left: auto;
   top: auto;
@@ -1460,7 +1465,7 @@ display: block !important;
   .praktika-menu .btn {
     display: none;
   }
-  /* Flex min-width:auto иначе даёт «узкую колонку» на мобильных */
+
   .praktika-info {
     width: 100%;
     max-width: 100%;
@@ -1493,7 +1498,7 @@ display: block !important;
     column-gap: 0.5rem;
   }
 
-  /* Мобильная шапка блока: при нехватке ширины строки переносятся (nowrap + lvl без shrink давали горизонтальный overflow) */
+
   .section-praktika .praktika-details {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -1515,7 +1520,7 @@ display: block !important;
     flex: 0 0 auto;
   }
 
-  /* Страница практики: те же боковые поля, что у глобального .container */
+
   .section-praktika > .container {
     width: 100%;
     max-width: calc(100% - 2 * var(--container-inline-gutter, 0.625rem));
@@ -1523,7 +1528,7 @@ display: block !important;
     box-sizing: border-box;
   }
 
-  /* Соседи избранного: компактнее отступы; время может сжиматься и переноситься */
+
   .praktika-details__lvl {
     padding-left: 0.9375rem;
     padding-right: 0.9375rem;
@@ -1666,7 +1671,7 @@ display: block !important;
     line-height: 1.1;
   }
 
-  /* Кнопки прижаты к низу карточки; между кругом и рядом кнопок — свободное место как в макете */
+
   .exercise-timer .timer-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1701,7 +1706,7 @@ display: block !important;
     width: 100%;
   }
 
-  /* Полноширинные пресеты не подсвечиваются как интерактивные в макете */
+
   .exercise-timer .timer-buttons .btn.btn_big:hover {
     border-color: #fff;
     background: rgba(232, 255, 87, 0);
@@ -1918,7 +1923,7 @@ display: block !important;
   }
 }
 
-/* Планшетная ширина всё ещё использует мобильную форму комментария. */
+
 @media (min-width: 576px) and (max-width: 767px) {
   .comment-form-main textarea {
     height: 4.375rem;

@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * AJAX-обработчики: notifications.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }

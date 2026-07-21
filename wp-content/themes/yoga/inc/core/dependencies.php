@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: dependencies.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
     exit;
 }

@@ -1,8 +1,13 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: taxonomy biblioteka praktik.
+ *
+ * @package Yoga
+ */
 get_header(); ?>
 
 <?php
-// Подключаем все секции главной страницы
+
 get_template_part('template-parts/section', 'ways');
 get_template_part('template-parts/section', 'library');
 ?>

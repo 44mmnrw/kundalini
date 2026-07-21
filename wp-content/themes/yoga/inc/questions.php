@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: questions.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -13,7 +17,7 @@ function get_user_questions(int $user_id): array {
         'orderby' => 'date',
         'order' => 'DESC'
 	);
-	
+
 	return get_posts($args);
 }
 
@@ -45,10 +49,10 @@ function yoga_get_question_author_name(int $user_id): string {
 	return $name !== '' ? $name : (string) $user->user_login;
 }
 
-// Отправляем уведомление пользователю
+
 function register_question_post_type() {
-	// Axecode.tech: для второго FAQ-подобного CPT также применены UTF-8 labels.
-	// Зачем: единая и читаемая навигация в админке без кракозябр.
+
+
 	$args = array(
         'public' => false,
         'show_ui' => true,
@@ -70,19 +74,19 @@ function register_question_post_type() {
 	'not_found_in_trash' => 'Вопросы в корзине не найдены'
         )
 	);
-	
+
 	register_post_type('question', $args);
 }
 add_action('init', 'register_question_post_type');
 
-/** @return array<int, array<string, mixed>> */
+
 function yoga_get_question_answers(int $post_id): array {
 	$answers = get_post_meta($post_id, '_question_answers', true);
 	if (is_array($answers)) {
 		return $answers;
 	}
 
-	// Show an answer saved by the previous implementation without losing it.
+
 	$legacy_answer = (string) get_post_meta($post_id, '_answer', true);
 	if (trim(wp_strip_all_tags($legacy_answer)) === '') {
 		return array();

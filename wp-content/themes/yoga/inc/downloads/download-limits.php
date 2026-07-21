@@ -1,15 +1,19 @@
 <?php
-
+/**
+ * Компонент темы: download limits.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('yoga_get_tariff_download_limit')) {
-	/**
-	 * Лимит скачиваний для товара-тарифа. null = безлимит (поле пустое или 0).
-	 *
-	 * @return int|null
-	 */
+
+
+
+
+
 	function yoga_get_tariff_download_limit(int $product_id): ?int {
 		if ($product_id <= 0 || !function_exists('get_field')) {
 			return null;
@@ -41,11 +45,11 @@ if (!function_exists('yoga_get_tariff_download_limit')) {
 }
 
 if (!function_exists('yoga_get_user_download_limit')) {
-	/**
-	 * Лимит для текущего активного тарифа пользователя. null = безлимит.
-	 *
-	 * @return int|null
-	 */
+
+
+
+
+
 	function yoga_get_user_download_limit(?int $user_id = null): ?int {
 		if (!function_exists('get_current_user_tariff')) {
 			return null;
@@ -69,11 +73,11 @@ if (!function_exists('yoga_get_user_download_limit')) {
 }
 
 if (!function_exists('yoga_get_user_download_period_bounds')) {
-	/**
-	 * Границы текущего оплаченного периода подписки [start, end] (unix time).
-	 *
-	 * @return array{start:int,end:int}|null
-	 */
+
+
+
+
+
 	function yoga_get_user_download_period_bounds(?int $user_id = null): ?array {
 		if (!function_exists('get_current_user_tariff') || !function_exists('calculate_access_duration')) {
 			return null;
@@ -104,9 +108,9 @@ if (!function_exists('yoga_get_user_download_period_bounds')) {
 }
 
 if (!function_exists('yoga_get_user_download_log')) {
-	/**
-	 * @return array<int, array{practice_id:int,ts:int}>
-	 */
+
+
+
 	function yoga_get_user_download_log(int $user_id): array {
 		if ($user_id <= 0) {
 			return array();
@@ -164,9 +168,9 @@ if (!function_exists('yoga_get_user_downloads_used')) {
 }
 
 if (!function_exists('yoga_get_user_downloads_remaining')) {
-	/**
-	 * @return int|null null = безлимит
-	 */
+
+
+
 	function yoga_get_user_downloads_remaining(int $user_id = null): ?int {
 		$limit = yoga_get_user_download_limit($user_id);
 		if ($limit === null) {
@@ -196,9 +200,9 @@ if (!function_exists('yoga_url_to_upload_path')) {
 }
 
 if (!function_exists('yoga_get_practice_download_source')) {
-	/**
-	 * @return array{url:string,path:string,filename:string}|null
-	 */
+
+
+
 	function yoga_get_practice_download_source(int $practice_id): ?array {
 		if ($practice_id <= 0 || get_post_type($practice_id) !== 'practice' || !function_exists('get_field')) {
 			return null;
@@ -255,9 +259,9 @@ if (!function_exists('yoga_get_practice_download_source')) {
 }
 
 if (!function_exists('yoga_user_has_downloaded_practice')) {
-	/**
-	 * Был ли протокол этой практики уже скачан в текущем периоде подписки.
-	 */
+
+
+
 	function yoga_user_has_downloaded_practice(int $user_id, int $practice_id): bool {
 		if ($user_id <= 0 || $practice_id <= 0) {
 			return false;
@@ -314,7 +318,7 @@ if (!function_exists('yoga_record_practice_download')) {
 			return;
 		}
 
-		// Повторные скачивания в текущем периоде не должны повторно расходовать лимит.
+
 		if (yoga_user_has_downloaded_practice($user_id, $practice_id)) {
 			return;
 		}

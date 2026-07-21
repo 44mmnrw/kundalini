@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: legal documents.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -49,6 +53,17 @@ function yoga_get_legal_document_url($type, $fallback = '') {
 		$url = get_permalink($page_id);
 		if (is_string($url) && $url !== '') {
 			return $url;
+		}
+	}
+	return (string) $fallback;
+}
+
+function yoga_get_legal_document_title($type, $fallback = '') {
+	$page_id = yoga_get_legal_document_page_id($type);
+	if ($page_id > 0) {
+		$title = get_the_title($page_id);
+		if (is_string($title) && $title !== '') {
+			return $title;
 		}
 	}
 	return (string) $fallback;

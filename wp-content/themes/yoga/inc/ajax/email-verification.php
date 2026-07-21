@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * AJAX-обработчики: email verification.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }

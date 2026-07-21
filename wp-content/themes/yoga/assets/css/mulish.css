@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: mulish.
+ *
+ * @package Yoga
+ */
 @font-face {
   font-family: "Mulish";
   src: url("../fonts/Mulish-VariableFont_wght.woff2") format("woff2");

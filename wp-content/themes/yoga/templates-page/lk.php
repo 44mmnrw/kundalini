@@ -1,9 +1,11 @@
 <?php
-	/**
-		* Template Name: Личный кабинет
-	*/
+/**
+ * Шаблон страницы: lk.
+ *
+ * @package Yoga
+ */
 	get_header();
-	
+
 	if (!is_user_logged_in()) {
 		echo '<div class="container">';
 		echo '<p>Пожалуйста, <a href="' . wp_login_url(get_permalink()) . '">авторизуйтесь</a> для доступа к личному кабинету.</p>';
@@ -11,7 +13,7 @@
 		get_footer();
 		exit;
 	}
-	
+
 	$current_user = wp_get_current_user();
 	$user_id = get_current_user_id();
 	$unread_question_answers_count = function_exists('yoga_get_unread_question_answer_notifications')
@@ -49,7 +51,7 @@
                 <div class="row">
             <div class="lk">
                 <div class="lk__slides">
-					<!-- Слайд "Мои данные" -->
+
 					<div class="lk-slide<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 						<div class="lk-page-header">
 							<h1 class="lk-page-title">Мои данные</h1>
@@ -198,16 +200,16 @@
 							</form>
 						</div>
 					</div>
-                    
-					<!-- Остальные слайды будут здесь -->
+
+
 					<div class="lk-slide lk-slide--practice-history<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 						<div class="lk-page-header">
 							<h2 class="lk-page-title">История пройденных практик</h2>
 						</div>
 						<div class="lk-slide__content">
 							<?php
-							// Временная демонстрационная выборка по макету Figma.
-							// После реализации прохождения практик здесь будет источник истории пользователя.
+
+
 							$practice_history_preview = array(
 								array('level' => 'Начинающий', 'title' => 'Сат Крийя', 'excerpt' => 'усиливает поток энергии Кундалини, укрепляет нервную систему'),
 								array('level' => 'Средний', 'title' => 'Содаршан Чакра Крийя', 'excerpt' => 'очищает карму, улучшает ментальную концентрацию, балансирует нервную систему и повышает осознанность'),
@@ -362,7 +364,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="lk-slide<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" id="lk-slide-favorites" data-target="3">
 						<?php
 							$favorites = get_user_meta($user_id, 'favorite_practices', true);
@@ -406,14 +408,14 @@
 										<?php
 										foreach ($favorites as $practice_id) {
                     $practice = get_post($practice_id);
-                    
-                    // Проверяем, что запись существует и имеет правильный тип
+
+
                     if ($practice && $practice->post_type == 'practice') {
-                        // Получаем уровень практики
+
                         $level = get_the_terms($practice_id, 'practice-type');
                         $level_name = !empty($level) ? $level[0]->name : 'Не указан';
-                        
-                        // Проверяем, является ли практика избранной
+
+
                         $is_favorite = in_array($practice_id, $favorites);
                         ?>
                         <div class="kriyi-item">
@@ -446,7 +448,7 @@
                                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
                                         </a>
                                     </div>
-                                </div>      
+                                </div>
                             </div>
                         </div>
                         <?php
@@ -459,8 +461,8 @@
 							<?php endif; ?>
 						</div>
 					</div>
-					
-					<!-- Слайд "Рекомендации" -->
+
+
 					<div class="lk-slide<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 						<div class="lk-page-header">
 							<h2 class="lk-page-title">Рекомендации</h2>
@@ -468,9 +470,9 @@
 						<div class="lk-slide__content">
 							<?php
 								if (is_user_logged_in()) {
-									
+
 									$recommended_practices = get_recommended_practices($user_id);
-									
+
 									if (!empty($recommended_practices)) {
 									?>
 									<div class="lk-kriyi">
@@ -519,7 +521,7 @@
 																			<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
 																		</a>
 																	</div>
-																</div>      
+																</div>
 															</div>
 														</div>
 														<?php
@@ -542,9 +544,9 @@
 							?>
 						</div>
 					</div>
-					
-					
-					<!-- Слайд "Мои вопросы" -->
+
+
+
 					<div class="lk-slide<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 						<div class="lk-page-header">
 							<h2 class="lk-page-title">Мои вопросы</h2>
@@ -561,7 +563,7 @@
 									</label>
 								</form>
 							</div>
-							
+
 							<div class="lk-questions">
 								<?php
 									if (is_user_logged_in() && function_exists('yoga_render_user_questions_list')) {
@@ -573,8 +575,8 @@
 							</div>
 						</div>
 					</div>
-					
-					<!-- Слайд "Настройки подписки" -->
+
+
 					<div class="lk-slide<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" id="lk-slide-settings" data-target="6">
 						<div class="lk-page-header">
 							<h2 class="lk-page-title">Настройки подписки</h2>
@@ -648,7 +650,7 @@
 										</div>
 									</div>
 									<?php endif; ?>
-									
+
 									<div class="lk-settings-part lk-settings-part_payment-methods">
 										<h4>Способы оплаты</h4>
 										<div class="lk-settings-item lk-settings-item_action" data-target="2">
@@ -675,7 +677,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class="lk-settings-part lk-settings-part_purchase-history">
 										<h4>История покупок</h4>
 										<div class="lk-settings-purchases">
@@ -709,9 +711,9 @@
 										?>
 										</div>
 									</div>
-									
+
 								</div>
-								
+
 								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2">
 									<div class="form-back" data-target="1">
 										<svg class="form-back__icon" width="9" height="16" aria-hidden="true" focusable="false">
@@ -778,7 +780,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>

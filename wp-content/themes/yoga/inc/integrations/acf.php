@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: acf.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -59,8 +63,8 @@ if (!function_exists('yoga_register_tariff_frontend_access_fields')) {
 
 add_action('acf/init', 'yoga_register_tariff_frontend_access_fields', 15);
 
-// Группа «Поля тарифов» (group_tariff_fields) — только в ACF → Field Groups (БД).
-// Локальная регистрация удалена, чтобы не перебивать настройки из админки.
+
+
 
 if (!function_exists('yoga_register_practice_type_fields')) {
     function yoga_register_practice_type_fields() {
@@ -124,10 +128,10 @@ if (!function_exists('yoga_register_practice_type_fields')) {
 add_action('acf/init', 'yoga_register_practice_type_fields');
 
 if (!function_exists('yoga_sync_practice_type_term_fields')) {
-    /**
-     * Подстраховка сохранения полей taxonomy-term:
-     * пишем значения напрямую в termmeta, чтобы цвет/порядок гарантированно сохранялись.
-     */
+
+
+
+
     function yoga_sync_practice_type_term_fields($term_id) {
         if (!is_admin() || empty($_POST['acf']) || !is_array($_POST['acf'])) {
             return;

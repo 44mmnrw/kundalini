@@ -1,4 +1,9 @@
-/* Section-rules */
+/**
+ * Стили компонента: rules.
+ *
+ * @package Yoga
+ */
+
 .section-rules {
   padding-top: 0.3125rem;  padding-bottom: 6.25rem;}
 

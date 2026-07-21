@@ -1,8 +1,9 @@
 <?php
 /**
- * Модальное окно входа: восстановление пароля без страницы my-account/lost-password.
+ * Компонент темы: login modal.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }

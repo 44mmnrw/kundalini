@@ -1,8 +1,9 @@
 <?php
 /**
- * Корзина тарифов: один тариф, замена при выборе другого.
+ * Интеграция WooCommerce: tariff cart.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -92,9 +93,9 @@ if (!function_exists('yoga_get_tariff_form_action_url')) {
 	}
 }
 
-/**
- * Обработка POST удаления / добавления до вывода HTML (checkout.php).
- */
+
+
+
 if (!function_exists('yoga_handle_cart_mutation_request')) {
 	function yoga_handle_cart_mutation_request(): bool {
 		if (!function_exists('WC') || !WC()->cart || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
@@ -106,7 +107,7 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 
 		$checkout_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout/');
 
-		// Удаление тарифа.
+
 		if (!empty($_POST['yoga_remove'])) {
 			$key = sanitize_text_field(wp_unslash($_POST['yoga_remove']));
 			$nonce = isset($_POST['yoga_remove_nonce']) ? sanitize_text_field(wp_unslash($_POST['yoga_remove_nonce'])) : '';
@@ -129,7 +130,7 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 			exit;
 		}
 
-		// Добавление / замена тарифа (форма с главной / тарифов).
+
 		if (empty($_POST['yoga_add_tariff']) || !isset($_POST['add-to-cart'], $_POST['woocommerce-add-to-cart-nonce'])) {
 			return false;
 		}
@@ -206,11 +207,11 @@ if (!function_exists('yoga_is_tariff_add_to_cart_request')) {
 	}
 }
 
-/**
- * WooCommerce на wp_loaded:20 сам обрабатывает add-to-cart и пишет «added to your cart».
- * Наш обработчик — на :99. На проде/локалке поведение может отличаться из‑за настроек WC в БД,
- * но сообщение в любом случае лишнее: сразу редирект на /checkout/.
- */
+
+
+
+
+
 add_action('wp_loaded', 'yoga_prevent_wc_default_tariff_add_to_cart', 19);
 function yoga_prevent_wc_default_tariff_add_to_cart(): void {
 	if (!yoga_is_tariff_add_to_cart_request() || !class_exists('WC_Form_Handler')) {
@@ -221,12 +222,12 @@ function yoga_prevent_wc_default_tariff_add_to_cart(): void {
 }
 
 if (!function_exists('yoga_normalize_add_to_cart_product_ids')) {
-	/**
-	 * WC передаёт [ id => qty ] или [ 0 => id ].
-	 *
-	 * @param mixed $products
-	 * @return int[]
-	 */
+
+
+
+
+
+
 	function yoga_normalize_add_to_cart_product_ids($products): array {
 		if (!is_array($products) || $products === array()) {
 			return array();
@@ -242,11 +243,11 @@ if (!function_exists('yoga_normalize_add_to_cart_product_ids')) {
 }
 
 if (!function_exists('yoga_suppress_tariff_add_to_cart_message')) {
-	/**
-	 * @param string $message
-	 * @param mixed  $products
-	 * @return string
-	 */
+
+
+
+
+
 	function yoga_suppress_tariff_add_to_cart_message($message, $products): string {
 		$product_ids = yoga_normalize_add_to_cart_product_ids($products);
 		if ($product_ids === array()) {
@@ -266,9 +267,9 @@ if (!function_exists('yoga_suppress_tariff_add_to_cart_message')) {
 add_filter('wc_add_to_cart_message_html', 'yoga_suppress_tariff_add_to_cart_message', 10, 2);
 
 if (!function_exists('yoga_clear_tariff_add_to_cart_success_notices')) {
-	/**
-	 * wc_add_to_cart_message() добавляет notice даже с пустым HTML — убираем для тарифов.
-	 */
+
+
+
 	function yoga_clear_tariff_add_to_cart_success_notices(
 		string $cart_item_key,
 		int $product_id,
@@ -303,9 +304,9 @@ if (!function_exists('yoga_clear_tariff_add_to_cart_success_notices')) {
 add_action('woocommerce_add_to_cart', 'yoga_clear_tariff_add_to_cart_success_notices', 1000, 4);
 
 if (!function_exists('yoga_guess_tariff_product_for_order_total')) {
-	/**
-	 * Подбор тарифа по сумме заказа (fallback, если позиции не сохранились в БД).
-	 */
+
+
+
 	function yoga_guess_tariff_product_for_order_total(WC_Order $order): ?WC_Product {
 		$total = (float) $order->get_total();
 		if ($total <= 0 || !function_exists('wc_get_products')) {
@@ -375,12 +376,12 @@ if (!function_exists('yoga_sync_order_items_from_cart')) {
 }
 
 if (!function_exists('yoga_repair_order_tariff_line_items')) {
-	/**
-	 * Восстанавливает позицию тарифа в заказе, если сумма есть, а line items пустые.
-	 */
+
+
+
 	function yoga_repair_order_tariff_line_items(WC_Order $order): bool {
-		// Заказ привязки карты содержит только сервисный сбор. Тариф из текущей
-		// корзины в него добавлять нельзя, иначе 1 ₽ превращается в сумму тарифа + 1 ₽.
+
+
 		if ($order->get_meta('_ytr_card_binding') === 'yes') {
 			return false;
 		}
@@ -441,7 +442,7 @@ add_action('wp_loaded', 'yoga_handle_cart_mutation_request', 99);
 add_action('woocommerce_cart_item_removed', 'yoga_persist_cart', 20);
 add_action('woocommerce_add_to_cart', 'yoga_persist_cart', 20);
 
-/** Не показываем служебное WooCommerce-сообщение после удаления тарифа. */
+
 function yoga_suppress_removed_tariff_notice(): void {
 	add_filter('woocommerce_add_message', 'yoga_discard_removed_tariff_notice', PHP_INT_MAX);
 }

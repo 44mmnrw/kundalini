@@ -1,12 +1,16 @@
 <?php
-
+/**
+ * AJAX-обработчики: favorites.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/* Axecode.tech: Этап 3 (универсальность).
- * Модуль вынесенной логики избранного. Подготовлен для поэтапной миграции из functions.php.
- */
+
+
+
 
 if (!function_exists('toggle_favorite_practice')) {
     function yoga_normalize_favorites($favorites): array {
@@ -15,7 +19,7 @@ if (!function_exists('toggle_favorite_practice')) {
         }
 
         if (is_string($favorites)) {
-            // Поддержка legacy-формата: "1,2,3"
+
             $favorites = array_filter(array_map('trim', explode(',', $favorites)));
         }
 
@@ -32,7 +36,7 @@ if (!function_exists('toggle_favorite_practice')) {
     }
 
     function toggle_favorite_practice() {
-        /* Axecode.tech: CSRF-проверка обязательна для изменения пользовательских данных через AJAX. */
+
         check_ajax_referer('yoga_ajax_nonce', 'security');
 
         if (!is_user_logged_in()) {
@@ -67,7 +71,7 @@ if (!function_exists('toggle_favorite_practice')) {
     }
 }
 
-/* Axecode.tech: Этап 3 — после выноса логики регистрируем хук на уровне модуля. */
+
 add_action('wp_ajax_toggle_favorite_practice', 'toggle_favorite_practice');
 add_action('wp_ajax_nopriv_toggle_favorite_practice', 'toggle_favorite_practice');
 

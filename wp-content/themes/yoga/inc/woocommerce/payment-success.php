@@ -1,16 +1,17 @@
 <?php
 /**
- * Страница успешной оплаты (/payment-success/) и редирект после ЮKassa.
+ * Интеграция WooCommerce: payment success.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('yoga_get_order_received_id_from_request')) {
-	/**
-	 * ID заказа из endpoint order-received (fallback по URL, если WC ещё не выставил query var).
-	 */
+
+
+
 	function yoga_get_order_received_id_from_request(): int {
 		global $wp;
 
@@ -63,9 +64,9 @@ if (!function_exists('yoga_is_virtual_payment_success_request')) {
 }
 
 if (!function_exists('yoga_get_payment_success_order_from_request')) {
-	/**
-	 * @return WC_Order|null
-	 */
+
+
+
 	function yoga_get_payment_success_order_from_request() {
 		if (!function_exists('wc_get_order')) {
 			return null;
@@ -102,9 +103,9 @@ if (!function_exists('yoga_get_payment_success_order_from_request')) {
 }
 
 if (!function_exists('yoga_get_payment_success_order_from_session')) {
-	/**
-	 * @return WC_Order|null
-	 */
+
+
+
 	function yoga_get_payment_success_order_from_session() {
 		if (!function_exists('WC') || !WC()->session) {
 			return null;
@@ -162,9 +163,9 @@ if (!function_exists('yoga_order_contains_tariff_product')) {
 }
 
 if (!function_exists('yoga_finalize_tariff_order_after_payment')) {
-	/**
-	 * Тариф: доступ считается по оплаченному заказу — переводим в completed и фиксируем дату.
-	 */
+
+
+
 	function yoga_finalize_tariff_order_after_payment(int $order_id): void {
 		$order = wc_get_order($order_id);
 		if (!$order instanceof WC_Order || !yoga_order_contains_tariff_product($order)) {
@@ -179,9 +180,9 @@ if (!function_exists('yoga_finalize_tariff_order_after_payment')) {
 add_action('woocommerce_payment_complete', 'yoga_finalize_tariff_order_after_payment', 15, 1);
 
 if (!function_exists('yoga_get_payment_success_order')) {
-	/**
-	 * @return WC_Order|null
-	 */
+
+
+
 	function yoga_get_payment_success_order() {
 		$order = yoga_get_payment_success_order_from_request();
 		if ($order instanceof WC_Order) {
@@ -275,7 +276,7 @@ if (!function_exists('yoga_format_subscription_end_label')) {
 		}
 		$date = wp_date('j F Y', $timestamp);
 		return sprintf(
-			/* translators: %s: formatted date, e.g. 15 сентября 2027 */
+
 			__('До %s года', 'yoga'),
 			$date
 		);
@@ -296,9 +297,9 @@ if (!function_exists('yoga_get_payment_success_support_email')) {
 }
 
 if (!function_exists('yoga_get_payment_success_context')) {
-	/**
-	 * @return array{tariff_name:string,subscription_end:string,home_url:string,support_email:string,has_order:bool}
-	 */
+
+
+
 	function yoga_get_payment_success_context(): array {
 		$order = yoga_get_payment_success_order();
 		$tariff_name = '';
@@ -398,9 +399,9 @@ if (!function_exists('yoga_yookassa_get_order_by_key')) {
 }
 
 if (!function_exists('yoga_yookassa_payment_is_successful')) {
-	/**
-	 * @param \YooKassa\Model\PaymentInterface $payment
-	 */
+
+
+
 	function yoga_yookassa_payment_is_successful($payment): bool {
 		if (!class_exists('YooKassa\Model\PaymentStatus')) {
 			return false;
@@ -441,9 +442,9 @@ if (!function_exists('yoga_yookassa_payment_is_successful')) {
 }
 
 if (!function_exists('yoga_yookassa_sync_order_payment_status')) {
-	/**
-	 * Завершает заказ в WC, если ЮKassa уже приняла платёж (активирует подписку).
-	 */
+
+
+
 	function yoga_yookassa_sync_order_payment_status(WC_Order $order): bool {
 		if ($order->is_paid()) {
 			return true;
@@ -505,9 +506,9 @@ if (!function_exists('yoga_yookassa_get_payment_success_redirect_url')) {
 }
 
 if (!function_exists('yoga_yookassa_handle_payment_return')) {
-	/**
-	 * Синхронизация оплаты при return URL. Редирект на /payment-success/ — у плагина ЮKassa.
-	 */
+
+
+
 	function yoga_yookassa_handle_payment_return(): void {
 		if (!yoga_yookassa_is_return_url_request()) {
 			return;

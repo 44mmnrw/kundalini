@@ -1,7 +1,9 @@
 <?php
-
-
-
+/**
+ * Интеграция WooCommerce: cart helpers.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 
 	exit;
@@ -12,11 +14,11 @@ if (!defined('ABSPATH')) {
 
 if (!function_exists('yoga_format_cart_price_display')) {
 
-	/**
 
-	 * Цена в формате макета: 35.000 ₽
 
-	 */
+
+
+
 
 	function yoga_format_cart_price_display($amount): string {
 
@@ -115,7 +117,7 @@ if (!function_exists('yoga_normalize_tariff_period_slug')) {
 	function yoga_normalize_tariff_period_slug(string $period): string {
 		$raw = mb_strtolower(trim($period));
 
-		// ACF select иногда сохраняет value как "day: День", если choices заданы без пробелов вокруг ":".
+
 		if (str_contains($raw, ':')) {
 			$raw = trim((string) preg_replace('/\s*:.*$/u', '', $raw));
 		}
@@ -192,9 +194,9 @@ if (!function_exists('yoga_get_product_price_period')) {
 
 if (!function_exists('yoga_find_tariff_offer_for_period')) {
 
-	/**
-	 * @return array{product_id:int,price:string,price_text:string,attribute_period:string}|null
-	 */
+
+
+
 	function yoga_find_tariff_offer_for_period($product, string $period_slug): ?array {
 		if (!$product instanceof WC_Product) {
 			return null;
@@ -249,9 +251,9 @@ if (!function_exists('yoga_find_tariff_offer_for_period')) {
 
 if (!function_exists('yoga_get_tariffs_periods')) {
 
-	/**
-	 * Периоды переключателя на блоке тарифов (ACF + обязательный «День»).
-	 */
+
+
+
 	function yoga_get_tariffs_periods($post_id = null): array {
 		if (!$post_id) {
 			$post_id = get_the_ID();

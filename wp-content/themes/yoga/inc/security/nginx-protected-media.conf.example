@@ -1,8 +1,3 @@
-# Yoga protected uploads.
-# Put this block inside the site's server {} block, before generic static-file
-# locations for images/audio/video. Nginx does not read .htaccess.
-#
-# The PHP handler is wp-content/themes/yoga/inc/security/protected-media.php.
 
 location ^~ /wp-content/uploads/ {
     rewrite ^/wp-content/uploads/(.*)$ /index.php?yoga_protected_media=$1 last;

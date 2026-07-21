@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: header.
+ *
+ * @package Yoga
+ */
 :root {
   --header-desktop-logo-w: 3.125rem;
   --header-desktop-logo-h: 2rem;
@@ -11,7 +16,7 @@
   --header-mobile-border: 1px solid rgba(145, 83, 225, 0.07);
   --header-mobile-logo-w: 2.75rem;
   --header-mobile-logo-h: 1.75rem;
-  /* Отступ от вьюпорта для fixed .modal-close соответствует позиции .burger. */
+
   --header-mobile-close-top: max(
     0px,
     calc((var(--header-bar-height) - var(--header-mobile-icon-size)) / 2)
@@ -20,7 +25,7 @@
 }
 
 header {
-  /* specification.css: header column flex — здесь задаём точную высоту полосы */
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -39,7 +44,7 @@ header {
   transition: var(--transition-base, 0.4s ease);
 }
 
-/* Верхний inset — часть визуальной шапки, а не прозрачный зазор над ней. */
+
 header::before {
   content: "";
   position: absolute;
@@ -65,9 +70,9 @@ header > .container > .row {
   min-width: 0;
 }
 
-/* Единственный ребёнок .row — на всю ширину контейнера (иначе strip сжимается → иконки «кучей» по центру) */
+
 header > .container > .row > .header-content {
-  /* flex-basis: 0% — иначе при «auto» полоса может сжаться к контенту → иконки в центре */
+
   flex: 1 1 0%;
   min-width: 0;
   width: 100%;
@@ -141,7 +146,7 @@ header > .container > .row > .header-content {
   padding-right: 0;
 }
 
-/* Невидимая зона под пунктом «Библиотека»: шире самого li, чтобы диагональ к mega-menu не вызывала mouseleave */
+
 .main-menu-active-item::before {
   content: "";
   display: block;
@@ -677,10 +682,10 @@ header > .container > .row > .header-content {
 
 @media (min-width: 1025px) {
   :root {
-    /* Desktop: 51px content row + 12px inset above and below. */
+
     --header-bar-height: 4.6875rem;
     --header-top-offset: 0px;
-    /* Keep the first section at its established coordinate below the fixed header. */
+
     --header-page-offset: 5.625rem;
   }
 
@@ -689,7 +694,7 @@ header > .container > .row > .header-content {
     padding-bottom: 0.75rem;
   }
 
-  /* Fixed header and the document reserve use the same desktop geometry. */
+
   header {
     top: 0;
     height: 4.6875rem;
@@ -699,7 +704,7 @@ header > .container > .row > .header-content {
   body {
     padding-top: 5.625rem !important;
   }
-  /* Авторизованный: три колонки (лого | меню | ЛК) */
+
   .header-content {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -721,7 +726,7 @@ header > .container > .row > .header-content {
     max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-    /* CQ по ширине колонки меню: при широком ЛК средняя ячейка сетки уже, ширина всего header — та же */
+
     container-type: inline-size;
     container-name: nav-slot;
   }
@@ -906,7 +911,7 @@ header > .container > .row > .header-content {
     box-sizing: border-box;
   }
 
-  /* Гость: та же сетка и pill, без уведомлений/избранного. */
+
   .header-content:has(> .header-lk:not(.header-lk--logged)) {
     display: flex;
     align-items: center;
@@ -1070,7 +1075,7 @@ header > .container > .row > .header-content {
   }
 }
 
-/* Узкий десктоп + авторизованный: плотнее только блок ЛК — меню без уменьшения шрифта/gap */
+
 @media (min-width: 1025px) and (max-width: 1319px) {
   .header-content:has(> .header-lk.header-lk--logged) .header-lk--logged {
     gap: 0.4375rem;
@@ -1096,7 +1101,7 @@ header > .container > .row > .header-content {
   }
 }
 
-/* Очень узкая колонка nav: только пилюля; шрифт и gap меню не трогаем */
+
 @container nav-slot (max-width: 28rem) {
   .header-content:has(> .header-lk.header-lk--logged) .header-rate-pill:not(.header-rate-pill_inactive) {
     max-width: none;
@@ -1121,7 +1126,7 @@ header > .container > .row > .header-content {
     background: var(--color-white);
   }
 
-  /* Отступ основного контента = высота шапки (линия под шапкой — в box-shadow, не в layout) */
+
   body.body_main {
     padding-top: var(--header-page-offset);
   }
@@ -1134,7 +1139,7 @@ header > .container > .row > .header-content {
     box-shadow: none;
   }
 
-  /* Авторизованный: три колонки (лого | меню | ЛК) */
+
   .header-content {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -1143,7 +1148,7 @@ header > .container > .row > .header-content {
     gap: 0;
     width: 100%;
     box-sizing: border-box;
-    /* Контент строки центрируется внутри фиксированной высоты шапки */
+
     min-height: 0;
   }
 
@@ -1182,7 +1187,7 @@ header > .container > .row > .header-content {
     gap: var(--header-mobile-icon-gap);
   }
 
-  /* display:contents ломает flex в части браузеров — иконки съезжают в середину */
+
   .header-lk-logged-desktop {
     display: flex;
     align-items: center;

@@ -1,11 +1,13 @@
 <?php
 /**
- * Template Name: Шаблон главной страницы
+ * Шаблон страницы: homepage.
+ *
+ * @package Yoga
  */
 get_header(); ?>
 
 <?php
-// Подключаем все секции главной страницы
+
 $show_videos_section = true;
 
 if (function_exists('get_field')) {

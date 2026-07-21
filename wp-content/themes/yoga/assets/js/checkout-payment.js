@@ -1,3 +1,8 @@
+/**
+ * Клиентский модуль: checkout payment.
+ *
+ * @package Yoga
+ */
 (function ($) {
 	'use strict';
 

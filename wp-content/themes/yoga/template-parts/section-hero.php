@@ -1,7 +1,9 @@
 <?php
-// Проверяем, есть ли данные для этой секции
-// Можно проверять через get_field() или через гибкий контент (если решите его использовать)
-
+/**
+ * Переиспользуемый шаблонный блок: section hero.
+ *
+ * @package Yoga
+ */
 $tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
 $tariffs_url = home_url('/product-category/tariffs/');
 if ($tariffs_term && !is_wp_error($tariffs_term)) {
@@ -71,7 +73,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                                 $main_info_decor_svg,
                                 1
                             );
-                            echo $main_info_decor_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- локальный статический SVG из темы
+                            echo $main_info_decor_svg;
                         }
                     }
                     ?>

@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: questions.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -7,7 +11,7 @@ if (!defined('ABSPATH')) {
 function display_question_item(WP_Post $question, bool $hidden = false): void {
 	$question_id = $question->ID;
 	$answers = yoga_get_question_answers($question_id);
-	
+
 	$status_class = !empty($answers) ? '' : 'lk-questions-item_new';
 	$hidden_class = $hidden ? 'hidden' : '';
 	$extra_class = $hidden ? 'lk-questions-item_extra' : '';

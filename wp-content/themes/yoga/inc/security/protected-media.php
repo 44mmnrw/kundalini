@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент безопасности: protected media.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -110,9 +114,9 @@ if (!function_exists('yoga_protected_media_url_from_relative')) {
 }
 
 if (!function_exists('yoga_protected_media_find_candidate_practices')) {
-	/**
-	 * @return int[]
-	 */
+
+
+
 	function yoga_protected_media_find_candidate_practices(int $attachment_id, string $relative): array {
 		global $wpdb;
 

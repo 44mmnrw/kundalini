@@ -1,14 +1,18 @@
 <?php
-
+/**
+ * Компонент темы: practice tariff access.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('yoga_normalize_acf_post_ids')) {
-	/**
-	 * @param mixed $value
-	 * @return int[]
-	 */
+
+
+
+
 	function yoga_normalize_acf_post_ids($value): array {
 		if ($value === null || $value === '' || $value === false) {
 			return array();
@@ -62,11 +66,11 @@ if (!function_exists('yoga_get_tariff_product_root_id')) {
 }
 
 if (!function_exists('yoga_get_tariff_practice_ids')) {
-	/**
-	 * Практики, включённые в тариф. null = список не задан (доступны все практики).
-	 *
-	 * @return int[]|null
-	 */
+
+
+
+
+
 	function yoga_get_tariff_practice_ids(int $product_id): ?array {
 		return null;
 	}
@@ -93,18 +97,18 @@ if (!function_exists('yoga_user_has_active_tariff')) {
 }
 
 if (!function_exists('yoga_get_user_allowed_practice_ids')) {
-	/**
-	 * @return int[]|null null — ограничение по списку не задано (все практики тарифа).
-	 */
+
+
+
 	function yoga_get_user_allowed_practice_ids(?int $user_id = null): ?array {
 		return null;
 	}
 }
 
 if (!function_exists('yoga_user_can_access_practice')) {
-	/**
-	 * Доступ к практике по тарифу. Для гостей/без тарифа — true (действуют правила секций для гостей).
-	 */
+
+
+
 	function yoga_user_can_access_practice(?int $user_id = null, ?int $practice_id = null): bool {
 		if ($practice_id === null) {
 			$practice_id = (int) get_the_ID();
@@ -119,18 +123,18 @@ if (!function_exists('yoga_user_can_access_practice')) {
 }
 
 if (!function_exists('yoga_practice_is_tariff_locked_for_viewer')) {
-	/**
-	 * У подписчика нет этой практики в своём тарифе.
-	 */
+
+
+
 	function yoga_practice_is_tariff_locked_for_viewer(?int $practice_id = null, ?int $user_id = null): bool {
 		return false;
 	}
 }
 
 if (!function_exists('yoga_get_published_tariff_products')) {
-	/**
-	 * @return WC_Product[]
-	 */
+
+
+
 	function yoga_get_published_tariff_products(): array {
 		if (!function_exists('wc_get_products')) {
 			return array();
@@ -151,11 +155,11 @@ if (!function_exists('yoga_get_published_tariff_products')) {
 }
 
 if (!function_exists('yoga_get_tariffs_for_practice')) {
-	/**
-	 * Тарифы, в которых указана практика.
-	 *
-	 * @return array<int, array{id:int,name:string}>
-	 */
+
+
+
+
+
 	function yoga_get_tariffs_for_practice(int $practice_id): array {
 		return array();
 	}
@@ -193,7 +197,7 @@ if (!function_exists('yoga_get_practice_tariff_paywall_message')) {
 			return (string) apply_filters(
 				'yoga_practice_tariff_paywall_message_single',
 				sprintf(
-					/* translators: %s: tariff name */
+
 					__('Практика доступна в тарифе %s.', 'yoga'),
 					$names[0]
 				),
@@ -205,7 +209,7 @@ if (!function_exists('yoga_get_practice_tariff_paywall_message')) {
 		return (string) apply_filters(
 			'yoga_practice_tariff_paywall_message_multiple',
 			sprintf(
-				/* translators: %s: comma-separated tariff names */
+
 				__('Практика доступна в тарифах: %s.', 'yoga'),
 				implode(', ', $names)
 			),

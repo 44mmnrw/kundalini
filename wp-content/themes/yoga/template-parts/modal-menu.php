@@ -1,7 +1,9 @@
 <?php
-	/**
-		* Модальное окно меню (десктопная версия)
-	*/
+/**
+ * Переиспользуемый шаблонный блок: modal menu.
+ *
+ * @package Yoga
+ */
 	$theme_uri = get_template_directory_uri();
 ?><div class="modal-menu">
     <div class="container">
@@ -15,20 +17,20 @@
 					'orderby' => 'name',
 					'order' => 'ASC'
 					));
-					
+
 					if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
 					foreach ($parent_terms as $parent_term) :
 					$is_available = yoga_is_practice_type_term_available($parent_term);
-					
+
 					$column_class = $is_available ? 'modal-menu-column' : 'modal-menu-column modal-menu-column_unavailable';
 				?>
 				<div class="<?php echo esc_attr($column_class); ?>">
 					<h2><?php echo esc_html($parent_term->name); ?></h2>
-					
+
 					<?php if (!$is_available) : ?>
                     <span class="modal-menu-unavailable">в разработке</span>
 					<?php endif; ?>
-					
+
 					<nav>
 						<ul>
 							<li class="modal-menu-item modal-menu-item--all-practices">
@@ -51,7 +53,7 @@
 								</div>
 								<?php endif; ?>
 							</li>
-							
+
 							<?php
 								$child_terms = get_terms(array(
 								'taxonomy' => 'practice-type',
@@ -60,7 +62,7 @@
 								'orderby' => 'name',
 								'order' => 'ASC'
 								));
-								
+
 								if (!empty($child_terms) && !is_wp_error($child_terms)) :
 								foreach ($child_terms as $child_term) :
 							?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * Оформление подписки (/checkout/) — макет Figma (node 1984:15043).
- * WooCommerce cart используется только как техническая сессия, без шага «корзина».
+ * Переиспользуемый шаблонный блок: section checkout.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH') || !function_exists('WC') || !WC()->cart) {
 	return;
 }
@@ -142,8 +142,8 @@ if ($primary_line_label === '') {
 						<form id="yoga-checkout" name="checkout" method="post" class="yoga-checkout__form checkout woocommerce-checkout" action="<?php echo esc_url($checkout_url); ?>" enctype="multipart/form-data">
 							<?php
 							if (WC()->checkout) {
-								// The theme has its own promo-code field in the order summary.
-								// Prevent WooCommerce from rendering its standard nested coupon form here.
+
+
 								$coupon_form_priority = has_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form');
 								if ($coupon_form_priority !== false) {
 									remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', $coupon_form_priority);

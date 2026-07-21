@@ -1,6 +1,8 @@
 <?php
 /**
- * The header for our theme: главный сайт и ЛК — одна разметка, переключение через yoga_is_lk_shell().
+ * Шаблон общей шапки сайта.
+ *
+ * @package Yoga
  */
 $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 ?>
@@ -15,12 +17,12 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 		<meta name="author" content="w-owl.ru">
 		<meta name="copyright" content="">
 		<meta name="format-detection" content="telephone=no">
-		
+
 		<title><?php wp_title('|', true, 'right'); bloginfo('name'); ?></title>
 		<link rel="shortcut icon" href="<?php echo esc_url(get_template_directory_uri() . '/assets/img/favicon.png'); ?>" type="image/x-icon">
 		<?php wp_head(); ?>
 	</head>
-	
+
 	<body <?php body_class( $is_lk_shell ? 'body body_lk' : 'body body_main' ); ?> id="body">
 		<?php
 		$tariffs_term = get_term_by('slug', 'tariffs', 'product_cat');
@@ -252,4 +254,4 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 				</div>
 			</div>
 		</header>
-	<main>			
+	<main>

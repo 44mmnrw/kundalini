@@ -1,6 +1,8 @@
 <?php
 /**
- * Single post template (blog posts).
+ * Компонент темы: single.
+ *
+ * @package Yoga
  */
 get_header();
 get_template_part('template-parts/section', 'ways');
@@ -16,7 +18,7 @@ if (have_posts()) :
             static function ($matches) {
                 $blockquote_inner = $matches[4];
 
-                // If author is already provided as cite, keep original markup.
+
                 if (stripos($blockquote_inner, '<cite') !== false) {
                     return $matches[0];
                 }
@@ -31,7 +33,7 @@ if (have_posts()) :
                     )
                 );
 
-                // Supported input format: "Quote text" - Author.
+
                 if (!preg_match('/^[\"«“](.+)[\"»”]\s*[-—]\s*(.+)$/u', $raw_text, $parts)) {
                     return $matches[0];
                 }
@@ -75,7 +77,7 @@ if (have_posts()) :
         $count_reading_minutes = static function ($content) {
             $plain_text = wp_strip_all_tags((string) $content);
 
-            // Count words in any language (including Cyrillic), not only ASCII.
+
             preg_match_all('/[\p{L}\p{N}\']+/u', $plain_text, $matches);
             $word_count = isset($matches[0]) ? count($matches[0]) : 0;
 
@@ -110,7 +112,7 @@ if (have_posts()) :
                     return $url;
                 }
 
-                // For newly added fields in options page, ACF may not write option value yet.
+
                 $field_object = get_field_object($field_name, $source, false, false);
                 if (is_array($field_object)) {
                     $default_value = $field_object['default_value'] ?? '';
@@ -131,7 +133,7 @@ if (have_posts()) :
                 }
 
                 if (is_array($value)) {
-                    // ACF Link/Image fields often return arrays.
+
                     if (!empty($value['url']) && is_string($value['url'])) {
                         return trim($value['url']);
                     }
@@ -171,7 +173,7 @@ if (have_posts()) :
                 get_the_ID(),
             );
 
-            // Direct ACF fields from multiple possible locations.
+
             foreach ($acf_sources as $acf_source) {
                 $add_share_link($get_acf_field_with_default('watsapp_link', $acf_source), 'social-whatsapp', 'WhatsApp');
                 $add_share_link($get_acf_field_with_default('whatsapp_link', $acf_source), 'social-whatsapp', 'WhatsApp');
@@ -181,7 +183,7 @@ if (have_posts()) :
                 $add_share_link($get_acf_field_with_default('vkontakte_link', $acf_source), 'social-vk', 'VK');
             }
 
-            // Fallback from contacts repeater, if it is used in admin.
+
             $contacts_social_links = get_field('contacts_social_links', 'option');
             if (is_array($contacts_social_links)) {
                 foreach ($contacts_social_links as $social_item) {
@@ -236,7 +238,7 @@ if (have_posts()) :
                         <div class="post-layout__primary">
                             <article class="post-main" id="post-<?php the_ID(); ?>">
                                 <div class="entry-content post-main__content">
-                                    <?php echo $article_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $article_content; ?>
                                 </div>
                             </article>
 

@@ -1,10 +1,9 @@
 <?php
 /**
- * Шаблон комментариев: для записей блога — тот же AJAX-блок, что у практик; для прочих типов — стандартная разметка WordPress.
+ * Компонент темы: comments.
  *
- * @package yoga
+ * @package Yoga
  */
-
 if (post_password_required()) {
 	return;
 }

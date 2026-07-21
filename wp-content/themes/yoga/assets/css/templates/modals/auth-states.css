@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: auth states.
+ *
+ * @package Yoga
+ */
 @media (min-width: 576px) {
   .modal-login.active {
     overflow: hidden;
@@ -388,8 +393,8 @@
   .modal-login.active .modal-close {
     position: absolute;
     display: flex;
-    width: 52px;
-    height: 52px;
+    width: 3.1875rem;
+    height: 3.1875rem;
     margin: 0;
     align-items: center;
     justify-content: center;

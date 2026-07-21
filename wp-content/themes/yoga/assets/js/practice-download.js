@@ -1,3 +1,8 @@
+/**
+ * Клиентский модуль: practice download.
+ *
+ * @package Yoga
+ */
 (function ($) {
 	'use strict';
 

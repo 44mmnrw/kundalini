@@ -1,4 +1,9 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: modal comment delete.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -7,7 +12,7 @@ $theme_uri = get_template_directory_uri();
 ?>
 <div class="modal modal-default yoga-comment-delete-modal" id="yoga-comment-delete-confirm" role="dialog" aria-modal="true" aria-labelledby="yoga-comment-delete-title" aria-hidden="true">
 	<button type="button" class="modal-close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
 	</button>
 	<div class="yoga-comment-delete-modal__content">
 		<div class="yoga-comment-delete-modal__copy">
@@ -23,7 +28,7 @@ $theme_uri = get_template_directory_uri();
 
 <div class="modal modal-default yoga-comment-delete-modal yoga-comment-delete-modal_success" id="yoga-comment-delete-success" role="dialog" aria-modal="true" aria-labelledby="yoga-comment-delete-success-title" aria-hidden="true">
 	<button type="button" class="modal-close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
 	</button>
 	<div class="yoga-comment-delete-modal__success-content">
 		<img class="yoga-comment-delete-modal__success-icon" src="<?php echo esc_url($theme_uri . '/assets/svg/comment-delete-success.svg'); ?>" width="77" height="77" alt="">

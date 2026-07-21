@@ -1,13 +1,17 @@
 <?php
-
+/**
+ * AJAX-обработчики: auth sms.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/* Axecode.tech: Этап 3 (универсальность).
- * Модуль авторизации и SMS вынесен из functions.php.
- * Сохраняем исходные сигнатуры функций для обратной совместимости.
- */
+
+
+
+
 
 add_action('wp_ajax_send_sms_code', 'handle_send_sms_code');
 add_action('wp_ajax_nopriv_send_sms_code', 'handle_send_sms_code');
@@ -30,9 +34,9 @@ if (!function_exists('yoga_get_registration_role')) {
 }
 
 if (!function_exists('yoga_sanitize_ajax_notice_html')) {
-    /**
-     * WP/WooCommerce отдаёт часть текстов ошибок уже с HTML-сущностями и разметкой.
-     */
+
+
+
     function yoga_sanitize_ajax_notice_html($message) {
         return wp_kses_post(wp_specialchars_decode((string) $message, ENT_QUOTES));
     }
@@ -182,7 +186,7 @@ if (!function_exists('handle_send_sms_code')) {
 
 if (!function_exists('handle_resend_sms_code')) {
     function handle_resend_sms_code() {
-        /* Axecode.tech: Этап 3 (универсальность) — единая точка повторной отправки SMS-кода. */
+
         handle_send_sms_code();
     }
 }

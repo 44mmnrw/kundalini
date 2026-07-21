@@ -1,3 +1,8 @@
+/**
+ * Клиентский модуль: library filters.
+ *
+ * @package Yoga
+ */
 (function (window, $) {
 	'use strict';
 
@@ -37,7 +42,7 @@
 			stored[storageScope()] = selected;
 			window.sessionStorage.setItem(storageKey, JSON.stringify(stored));
 		} catch (error) {
-			// Фильтры продолжают работать, даже если storage запрещён браузером.
+
 		}
 	}
 

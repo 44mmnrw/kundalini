@@ -1,4 +1,9 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: section form questions.
+ *
+ * @package Yoga
+ */
 $contacts_prefill_name = '';
 $contacts_prefill_email = '';
 

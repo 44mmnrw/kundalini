@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: animate.
+ *
+ * @package Yoga
+ */
 ﻿@charset "UTF-8";
 
 
@@ -106,7 +111,7 @@
   animation-name: flash;
 }
 
-/* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+
 
 @-webkit-keyframes pulse {
   from {
@@ -484,7 +489,7 @@
   animation-name: tada;
 }
 
-/* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+
 
 @-webkit-keyframes wobble {
   from {
@@ -2842,7 +2847,7 @@
   animation-name: jackInTheBox;
 }
 
-/* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+
 
 @-webkit-keyframes rollIn {
   from {
@@ -2878,7 +2883,7 @@
 }
 
 
-/* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+
 
 @-webkit-keyframes rollInAlt {
   from {
@@ -2913,7 +2918,7 @@
   animation-name: rollInAlt;
 }
 
-/* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+
 
 @-webkit-keyframes rollOut {
   from {

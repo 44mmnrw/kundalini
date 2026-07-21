@@ -1,8 +1,9 @@
 <?php
 /**
- * Оформление подписки (/checkout/).
+ * Компонент темы: checkout.
+ *
+ * @package Yoga
  */
-
 if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
 	$success_template = get_template_directory() . '/payment-success.php';
 	if (is_readable($success_template)) {
@@ -50,7 +51,7 @@ $is_empty = !$wc_cart || $wc_cart->is_empty();
 						<?php
 						if ($tariff_name !== '') {
 							printf(
-								/* translators: %s: tariff name */
+
 								esc_html__('Тариф «%s» выбран. Для оплаты войдите в аккаунт или зарегистрируйтесь.', 'yoga'),
 								esc_html($tariff_name)
 							);

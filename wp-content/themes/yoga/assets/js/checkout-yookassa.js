@@ -1,3 +1,8 @@
+/**
+ * Клиентский модуль: checkout yookassa.
+ *
+ * @package Yoga
+ */
 (function ($) {
 	'use strict';
 

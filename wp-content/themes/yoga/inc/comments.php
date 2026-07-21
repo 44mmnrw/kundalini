@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: comments.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -73,9 +77,9 @@ if (!function_exists('yoga_get_user_avatar_html')) {
 	}
 }
 
-/**
- * Комментарий оставлен текущим залогиненным пользователем (по user_id или по email для legacy).
- */
+
+
+
 function yoga_comment_is_owned_by_logged_in_user(WP_Comment $comment): bool {
 	if (!is_user_logged_in()) {
 		return false;
@@ -96,9 +100,9 @@ function yoga_comment_is_owned_by_logged_in_user(WP_Comment $comment): bool {
 	return $c_email !== '' && strcasecmp($c_email, trim((string) $user->user_email)) === 0;
 }
 
-/**
- * После wp_new_comment/wp_insert_comment иногда остаётся user_id = 0 или пустой email — чиним привязку к автору.
- */
+
+
+
 function yoga_practice_comment_fix_author_binding(int $comment_id, int $author_user_id): void {
 	if ($comment_id <= 0 || $author_user_id <= 0) {
 		return;
@@ -124,17 +128,17 @@ function yoga_practice_comment_fix_author_binding(int $comment_id, int $author_u
 	}
 }
 
-/**
- * Типы записей, где включён единый AJAX-блок комментариев (практика, блог).
- */
+
+
+
 function yoga_ajax_comment_supported_post_types(): array {
 	return array('practice', 'post');
 }
 
-/**
- * Разрешить редактирование/удаление своего комментария без current_user_can('edit_comment'):
- * для CPT practice/post у автора часто нет edit_post на родительской записи.
- */
+
+
+
+
 function yoga_user_can_manage_own_theme_comment(int $comment_id): bool {
 	$c = get_comment($comment_id);
 	if (!$c instanceof WP_Comment) {
@@ -152,12 +156,12 @@ add_action('yoga_send_new_comment_notifications', static function (int $comment_
 	wp_new_comment_notify_postauthor($comment_id);
 });
 
-/**
- * Insert a comment without making the visitor wait for WordPress email delivery.
- * Validation and flood protection still run through wp_new_comment when requested.
- *
- * @return int|false|WP_Error
- */
+
+
+
+
+
+
 function yoga_insert_ajax_comment(array $comment_data, bool $validate = true) {
 	remove_action('comment_post', 'wp_new_comment_notify_moderator');
 	remove_action('comment_post', 'wp_new_comment_notify_postauthor');
@@ -179,8 +183,8 @@ function yoga_insert_ajax_comment(array $comment_data, bool $validate = true) {
 }
 
 
-	
-	// Отправка email администратору
+
+
 	function enable_comments_for_practice(bool $open, int $post_id): bool {
 		$post = get_post($post_id);
 		if ($post instanceof WP_Post && $post->post_type === 'practice') {
@@ -189,21 +193,21 @@ function yoga_insert_ajax_comment(array $comment_data, bool $validate = true) {
 		return $open;
 	}
 	add_filter('comments_open', 'enable_comments_for_practice', 10, 2);
-	
-	//$to = get_option('admin_email');
+
+
 	function add_comments_support_for_practice() {
 		add_post_type_support('practice', 'comments');
 	}
 	add_action('init', 'add_comments_support_for_practice');
-	
-	// Сохранение в базу данных (опционально)
+
+
 	add_filter('avatar_defaults', 'custom_avatar_defaults');
 	function custom_avatar_defaults(array $avatar_defaults): array {
 		$avatar_defaults[get_template_directory_uri() . '/assets/img/default-avatar.png'] = 'Default Avatar';
 		return $avatar_defaults;
 	}
-	
-	// Сохранение сообщения в базу данных
+
+
 	function russian_comment_time(string $date, string $d, WP_Comment $comment): string {
 		if (!is_admin()) {
 			return human_time_diff(get_comment_time('U'), current_time('timestamp')) . ' назад';

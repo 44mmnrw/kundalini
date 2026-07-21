@@ -1,6 +1,8 @@
 <?php
 /**
- * Успешная оплата — /payment-success/ и редирект с order-received.
+ * Компонент темы: payment success.
+ *
+ * @package Yoga
  */
 get_header();
 

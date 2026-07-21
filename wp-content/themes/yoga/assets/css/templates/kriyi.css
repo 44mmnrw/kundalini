@@ -1,6 +1,11 @@
-/* Техническое примечание. */
+/**
+ * Стили компонента: kriyi.
+ *
+ * @package Yoga
+ */
+
 .section-kriyi {
-  /* см. library.css .section-library — overflow-x на секции обрезает выпадающие списки категорий/поиска */
+
   overflow: visible;
   padding-top: 1.5rem;  padding-bottom: 6.25rem;}
 
@@ -24,7 +29,7 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  /* Те же значения, что у .library-form-main в library.css — иначе .form-search / .filter-btn без высоты и ширины */
+
   --library-search-row-height: 4.9375rem;
 }
 

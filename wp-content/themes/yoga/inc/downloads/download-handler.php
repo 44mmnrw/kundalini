@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: download handler.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -108,7 +112,7 @@ if (!function_exists('yoga_handle_practice_download')) {
 		header('Content-Length: ' . (string) filesize($real_path));
 		header('X-Robots-Tag: noindex, nofollow', true);
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
+
 		readfile($real_path);
 		exit;
 	}

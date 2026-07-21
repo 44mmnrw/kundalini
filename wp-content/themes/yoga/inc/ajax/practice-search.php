@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * AJAX-обработчики: practice search.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -16,7 +20,7 @@ if (!defined('ABSPATH')) {
 		}
 		$search  = sanitize_text_field($_POST['search'] ?? '');
 		$term_id = intval($_POST['term_id'] ?? 0);
-		
+
 		$tax_query = [];
 		if ($term_id) {
 			$term_ids = array($term_id);
@@ -35,7 +39,7 @@ if (!defined('ABSPATH')) {
             'include_children' => false,
 			];
 		}
-		
+
 		foreach ($filters as $taxonomy => $terms) {
 			$taxonomy = sanitize_text_field((string) $taxonomy);
 			if ($taxonomy === '' || empty($terms)) {
@@ -54,7 +58,7 @@ if (!defined('ABSPATH')) {
 				'terms'    => $terms,
 			];
 		}
-		
+
 		$args = [
         'post_type'      => 'practice',
         'posts_per_page' => -1,
@@ -65,9 +69,9 @@ if (!defined('ABSPATH')) {
 		if (!empty($search)) {
 			$args['s'] = $search;
 		}
-		
+
 		$query = new WP_Query($args);
-		
+
 		if ($query->have_posts()) {
 			while ($query->have_posts()) {
 			$query->the_post();
@@ -105,22 +109,22 @@ if (!defined('ABSPATH')) {
 			} else {
 			echo '<div class="practice-search-empty"><p class="practice-search-empty__count">Найдено: 0</p><p class="practice-search-empty__message">По вашему запросу ничего не найдено, попробуйте другой запрос.</p></div>';
 		}
-		
+
 		wp_die();
 	}
-	
-	// Дополнительные элементы если результатов больше 10
+
+
 	add_action('wp_ajax_filter_practices_kriyi', 'filter_practices_callback_kriyi');
 	add_action('wp_ajax_nopriv_filter_practices_kriyi', 'filter_practices_callback_kriyi');
 
 	add_action('wp_ajax_search_practices_suggest', 'yoga_search_practices_suggest');
 	add_action('wp_ajax_nopriv_search_practices_suggest', 'yoga_search_practices_suggest');
-	
+
 	function filter_practices_callback_kriyi() {
-		// Возвращаем HTML и количество результатов
+
 		check_ajax_referer('yoga_ajax_nonce', 'nonce');
-		
-		// Очистка корзины и добавление товара с редиректом
+
+
 		$args = array(
         'post_type' => 'practice',
         'posts_per_page' => -1,
@@ -140,7 +144,7 @@ if (!defined('ABSPATH')) {
 			});
 		}
 
-		// Базовый term_id используем только если отдельно не задан фильтр "По типу".
+
 		if (!empty($_POST['term_id']) && empty($selected_type_terms)) {
 			$args['tax_query'] = array(
 				array(
@@ -150,7 +154,7 @@ if (!defined('ABSPATH')) {
 				)
 			);
 		}
-		
+
 		$search_term = '';
 		if (!empty($_POST['search'])) {
 			$search_term = sanitize_text_field($_POST['search']);
@@ -158,17 +162,17 @@ if (!defined('ABSPATH')) {
 		$show_all = !empty($_POST['show_all']);
 		$library_results = !empty($_POST['library_results']);
 		$library_page = $library_results ? max(1, (int) ($_POST['library_page'] ?? 1)) : 1;
-		
-		// Очищаем корзину
+
+
 		if (!empty($raw_filters)) {
 			$filters = $raw_filters;
-			
+
 			if (!isset($args['tax_query'])) {
 				$args['tax_query'] = array('relation' => 'AND');
 				} else {
 				$args['tax_query']['relation'] = 'AND';
 			}
-			
+
 			foreach ($filters as $taxonomy => $terms) {
 				if (!empty($terms)) {
 					$args['tax_query'][] = array(
@@ -180,18 +184,18 @@ if (!defined('ABSPATH')) {
 				}
 			}
 		}
-		
+
 		$args['orderby'] = 'date';
 		$args['order'] = 'DESC';
 		if ($library_results) {
 			$args['posts_per_page'] = 10;
 			$args['paged'] = $library_page;
 		}
-		
+
 		if ($search_term !== '') {
 			$search_ids = array();
-			
-			// 1) Стандартный WP-поиск: title/content/excerpt.
+
+
 			$text_search_args = $args;
 			$text_search_args['fields'] = 'ids';
 			$text_search_args['posts_per_page'] = -1;
@@ -200,8 +204,8 @@ if (!defined('ABSPATH')) {
 			if (!empty($text_search_query->posts)) {
 				$search_ids = array_merge($search_ids, $text_search_query->posts);
 			}
-			
-			// 2) Поиск по всем ACF/meta значениям (включая "Основной текст") для post_type=practice.
+
+
 			global $wpdb;
 			$like_search = '%' . $wpdb->esc_like($search_term) . '%';
 			$meta_sql = $wpdb->prepare(
@@ -221,17 +225,17 @@ if (!defined('ABSPATH')) {
 			if (!empty($meta_search_ids)) {
 				$search_ids = array_merge($search_ids, $meta_search_ids);
 			}
-			
+
 			$search_ids = array_values(array_unique(array_map('intval', $search_ids)));
 			$args['post__in'] = !empty($search_ids) ? $search_ids : array(0);
 		}
-		
+
 		$query = new WP_Query($args);
 		$count = $query->found_posts;
-		
-		// Редирект на checkout
+
+
 		ob_start();
-		
+
 		if ($query->have_posts()) :
 		$user_id = get_current_user_id();
 		$user_favorites = get_user_meta($user_id, 'favorite_practices', true);
@@ -253,7 +257,7 @@ if (!defined('ABSPATH')) {
 			? yoga_practice_card_tariff_lock_class((int) get_the_ID(), $user_id)
 			: '';
 	?>
-	
+
 	<div class="kriyi-item <?php echo esc_attr(trim($hidden_class . ' ' . $tariff_lock_class)); ?>">
 		<div class="kriyi-item__inner">
 			<a href="<?php the_permalink(); ?>"></a>
@@ -279,16 +283,16 @@ if (!defined('ABSPATH')) {
 					<div class="kriya-btn__arrow">
 						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
 						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
-					</div>   
+					</div>
 				</div>
-			</div>      
+			</div>
 		</div>
 	</div>
-	
+
 	<?php
         endwhile;
-        
-        // Отключаем стандартную обработку WooCommerce для тарифов
+
+
 		if (!$show_all && !$library_results && $count > 10) :
 		for ($i = 0; $i < 2; $i++) :
 	?>
@@ -311,28 +315,28 @@ if (!defined('ABSPATH')) {
 					<div class="kriya-btn__arrow">
 						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
 						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
-					</div>   
+					</div>
 				</div>
-			</div> 
+			</div>
 		</div>
 	</div>
 	<?php
 		endfor;
         endif;
-        
+
 		else :
         echo '<div class="practice-search-empty"><p class="practice-search-empty__count">Найдено: 0</p><p class="practice-search-empty__message">По вашему запросу ничего не найдено, попробуйте другой запрос.</p></div>';
 		endif;
-		
+
 		$html = ob_get_clean();
-		
-		// Отключаем стандартный редирект
+
+
 		wp_send_json_success(array(
         'html' => $html,
 		'count' => $count,
 		'has_more' => $library_results && ($library_page * 10 < $count)
 		));
-		
+
 		wp_die();
 	}
 
@@ -363,7 +367,7 @@ if (!defined('ABSPATH')) {
 		}
 
 		$sql_params = array(
-			$like_search,        // has_meta_match CASE
+			$like_search,
 			'practice',
 			'publish',
 		);
@@ -378,10 +382,10 @@ if (!defined('ABSPATH')) {
 			$sql_params = array_merge($sql_params, $term_ids);
 		}
 
-		$sql_params[] = $like_search; // title
-		$sql_params[] = $like_search; // excerpt
-		$sql_params[] = $like_search; // content
-		$sql_params[] = 60;           // limit
+		$sql_params[] = $like_search;
+		$sql_params[] = $like_search;
+		$sql_params[] = $like_search;
+		$sql_params[] = 60;
 
 		$sql = "
 			SELECT
@@ -484,4 +488,4 @@ if (!defined('ABSPATH')) {
 
 		wp_send_json_success(array('items' => $items));
 	}
-	
+

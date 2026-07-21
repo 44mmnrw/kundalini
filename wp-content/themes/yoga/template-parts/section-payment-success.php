@@ -1,8 +1,8 @@
 <?php
 /**
- * Успешная оплата — Figma node 1989:15056.
+ * Переиспользуемый шаблонный блок: section payment success.
  *
- * @var array $ctx
+ * @package Yoga
  */
 $ctx = function_exists('yoga_get_payment_success_context')
 	? yoga_get_payment_success_context()

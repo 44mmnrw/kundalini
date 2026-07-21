@@ -1,4 +1,9 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: section library.
+ *
+ * @package Yoga
+ */
 $sprite_file = get_template_directory() . '/assets/svg/sprite.svg';
 $sprite_version = file_exists($sprite_file) ? (string) filemtime($sprite_file) : wp_get_theme()->get('Version');
 $sprite_href = add_query_arg('ver', rawurlencode($sprite_version), get_template_directory_uri() . '/assets/svg/sprite.svg');

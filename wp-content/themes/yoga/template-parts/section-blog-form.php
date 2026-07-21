@@ -1,16 +1,20 @@
 <?php
-	// Получаем родительскую рубрику "blog"
+/**
+ * Переиспользуемый шаблонный блок: section blog form.
+ *
+ * @package Yoga
+ */
 	$blog_category = get_category_by_slug('blog');
 	$radio_items = array();
-	
+
 	if ($blog_category) {
-		// Получаем дочерние рубрики
+
 		$child_categories = get_categories(array(
         'parent' => $blog_category->term_id,
         'hide_empty' => false
 		));
-		
-		// Формируем массив для радио-кнопок
+
+
 		foreach ($child_categories as $category) {
 			$radio_items[] = array(
             'category_name' => $category->name,
@@ -18,7 +22,7 @@
 			);
 		}
 	}
-// Всегда короткий URL блога: иначе POST на /category/blog/ даёт 301 на /blog/ без query — теряются s и фильтр.
+
 $form_action = home_url('/blog/');
 $sprite_file = get_template_directory() . '/assets/svg/sprite.svg';
 $sprite_version = file_exists($sprite_file) ? (string) filemtime($sprite_file) : wp_get_theme()->get('Version');
@@ -39,15 +43,15 @@ if ($blog_search_value === '') {
                 <form action="<?php echo esc_url($form_action); ?>" method="get">
                     <div class="blog-radios">
 						<?php if (!empty($radio_items)) : ?>
-						<!-- Кнопка "Все статьи" -->
+
 						<label class="active">
-							<input type="radio" name="category" value="" checked> 
+							<input type="radio" name="category" value="" checked>
 							<span>Все статьи</span>
 						</label>
-						
+
 						<?php foreach ($radio_items as $index => $item) : ?>
 						<label>
-							<input type="radio" name="category" value="<?php echo esc_attr($item['category_slug']); ?>"> 
+							<input type="radio" name="category" value="<?php echo esc_attr($item['category_slug']); ?>">
 							<span>
 								<?php echo esc_html($item['category_name']); ?>
 							</span>
