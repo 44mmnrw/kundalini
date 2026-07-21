@@ -264,8 +264,8 @@
 .hundreds-practices strong {
   display: block;
   font-size: 3.125rem;  color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.55px;
   text-transform: uppercase;
@@ -284,8 +284,8 @@
   padding-top: 1.9375rem;}
 
 .practices-categories__item {
-  margin-top: 0.625rem;  padding-left: 0.9062rem;  padding-right: 0.9062rem;  padding-top: 0.25rem;  padding-bottom: 0.3125rem;  border-radius: 6.25rem;  font-family: "Mulish-Medium", sans-serif;
-  font-weight: normal;
+  margin-top: 0.625rem;  padding-left: 0.9062rem;  padding-right: 0.9062rem;  padding-top: 0.25rem;  padding-bottom: 0.3125rem;  border-radius: 6.25rem;  font-family: "Mulish", sans-serif;
+  font-weight: 500;
   color: #fff;
   border: 1px solid #fff;
 }
@@ -678,7 +678,8 @@
   color: var(--color-black);
   font-size: 1.25rem;
   font-weight: 700;
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 700;
+  font-family: "Mulish", sans-serif;
   line-height: 1.1;
 }
 
@@ -686,7 +687,7 @@
   margin-top: 0.75rem;
   color: var(--color-black);
   font-size: 1rem;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-weight: 400;
   line-height: normal;
 }
@@ -716,8 +717,8 @@
   text-align: center;
   font-size: 1.125rem;
   line-height: 1;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
   color: var(--color-black);
   box-sizing: border-box;
   padding-inline: 0;
@@ -1215,16 +1216,16 @@ body.home {
   display: block;
   width: 100%;
   text-align: center;
-  font-size: 2rem;  margin-top: 1.125rem;  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-size: 2rem;  margin-top: 1.125rem;  font-family: "Mulish", sans-serif;
+  font-weight: 700;
 }
 
 .review-main__age {
   display: block;
   width: 100%;
   text-align: center;
-  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
   margin-top: -1px;
 }
 
@@ -1371,8 +1372,8 @@ body.home {
   .review-main__name {
     font-size: 1rem;  }
   .review-main__age {
-    font-size: 0.875rem;    font-family: "Mulish-Regular", sans-serif;
-    font-weight: normal;
+    font-size: 0.875rem;    font-family: "Mulish", sans-serif;
+    font-weight: 400;
     margin-top: 0.1875rem;  }
   .review-main__job {
     padding-left: 0.625rem;    padding-right: 0.625rem;    font-size: 0.75rem;    margin-top: 0.3125rem;  }
@@ -1778,8 +1779,8 @@ body.home {
 .questions-quote b {
   display: block;
   font-size: 1.5625rem;  line-height: 1.28em;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 .questions-quote__oval {
   position: absolute;
@@ -1874,13 +1875,14 @@ body.home {
 .question__main-text {
   display: block;
   width: 100%;
-  font-size: 1.125rem;  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-size: 1.125rem;  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 .question__main-text span {
   position: relative;
   display: inline-block;
-  padding-right: 0.625rem;  font-size: 1.25rem;  bottom: -0.0938rem;  font-family: "Mulish-Regular", sans-serif;
+  padding-right: 0.625rem;  font-size: 1.25rem;  bottom: -0.0938rem;  font-family: "Mulish", sans-serif; font-weight: 400;
+  padding-right: 0.625rem;  font-size: 1.25rem;  bottom: -0.0938rem;  font-family: "Mulish", sans-serif;
 }
 
 .question__main-text {

@@ -237,9 +237,9 @@
 
 .email-confirmation-modal h3 {
   margin: 0 0 0.9375rem;
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
-  font-weight: normal;
+  font-weight: 700;
   line-height: 1.1;
 }
 
@@ -275,9 +275,9 @@
   outline: 0;
   background: #f6f6f9;
   color: #1f1f1f;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
-  font-weight: normal;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.3em;
   text-align: center;
@@ -294,9 +294,9 @@
   border: 0;
   background: transparent;
   color: #9153e1;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 0.875rem;
-  font-weight: normal;
+  font-weight: 400;
   line-height: normal;
   text-decoration: underline dotted;
   text-underline-offset: 0.12em;
@@ -334,9 +334,9 @@
   padding: 0 0.9375rem;
   border: 1px solid #1f1f1f;
   border-radius: 9.375rem;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
-  font-weight: normal;
+  font-weight: 500;
   line-height: 1;
   cursor: pointer;
 }
@@ -424,9 +424,9 @@
   bottom: auto;
   color: var(--color-black);
   cursor: pointer;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
-  font-weight: normal;
+  font-weight: 600;
   line-height: 1.1;
   margin: 0;
   text-decoration: underline;
@@ -561,7 +561,8 @@
 
   .modal-login-inner__slide[data-target="1"].active .login-slide-switches h3 {
     font-size: 1.625rem;
-    font-family: "Mulish-Bold", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 700;
+    font-family: "Mulish", sans-serif;
     line-height: 1;
   }
 
@@ -592,7 +593,8 @@
     padding: 0 1.875rem;
     border-color: #383838;
     border-radius: 6.25rem;
-    font-family: "Mulish-Regular", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 400;
+    font-family: "Mulish", sans-serif;
     font-size: 1.125rem;
     line-height: 1.5;
   }
@@ -798,7 +800,7 @@ body.email-confirmation-is-open {
   left: auto;
   transform: none;
   color: #1f1f1f !important;
-  font: 400 1rem/1 "Mulish-Regular", sans-serif;
+  font: 400 1rem/1 "Mulish", sans-serif;
   white-space: nowrap;
 }
 
@@ -861,8 +863,8 @@ body.email-confirmation-is-open {
 
 .new-code__text {
   display: inline-block;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 .new-code__text div {
   display: inline-block;
@@ -1032,7 +1034,7 @@ label.checkbox {
   .modal-login-inner__slide[data-target="1"].active .login-slide-switches_login h3 {
     margin: 0;
     color: #1f1f1f;
-    font-family: "Mulish-Bold", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.1;
@@ -1051,9 +1053,9 @@ label.checkbox {
   margin-top: auto;
   margin-bottom: auto;
   bottom: -0.25rem;  color: #646464;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
-  font-weight: normal;
+  font-weight: 500;
   cursor: pointer;
 }
 /* Text actions in the auth modal use the same animated underline. */
@@ -1102,9 +1104,9 @@ p.login-rules a:hover {
 .yoga-form-login-message .yoga-login-forgot-link {
   margin-left: auto;
   margin-right: auto;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
-  font-weight: normal;
+  font-weight: 500;
   cursor: pointer;
   color: var(--color-black);
   text-decoration: underline;
@@ -1132,6 +1134,10 @@ p.login-rules a:hover {
   min-height: 100px;}
 .yoga-form-login > .login-smartcaptcha {
   margin-top: 1.25rem;
+}
+/* Registration: separate the consent checkboxes from the captcha by 25px. */
+.registration-consents + #login-reg-btn + .login-smartcaptcha {
+  margin-top: 1.5625rem;
 }
 .loggin-back {
   display: flex;

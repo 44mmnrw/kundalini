@@ -1,3 +1,61 @@
+/* Sidebar личного кабинета */
+.sidebar {
+  display: block;
+  position: absolute;
+  left: var(--lk-sidebar-left);
+  top: var(--header-bar-height);
+  z-index: 8;
+  width: 17.8125rem;
+  background: #f6f6f9;
+  border-radius: 1.875rem;
+}
+.sidebar-inner { display: flex; flex-direction: column; width: 100%; min-height: 0; padding: 1.25rem 0.9375rem; }
+.sidebar-logo { display: none; }
+.sidebar-logo img { display: block; width: 3.125rem; }
+.sidebar-menu { width: 100%; padding-top: 0; }
+.sidebar-menu-lk-group--primary .sidebar-menu { display: flex; flex-direction: column; gap: 0; }
+.sidebar-menu-lk-group--primary .sidebar-menu__item { margin-top: 0; }
+.sidebar-menu-sep { display: block; width: 100%; height: 1px; margin: 1.25rem 0 0; padding: 0; border: none; background: rgba(31, 31, 31, 0.18); }
+.sidebar-menu-sep--before-logout { margin-top: 1.25rem; }
+.sidebar-menu-secondary { display: flex; flex-direction: column; gap: 0.3125rem; width: 100%; }
+.sidebar-menu-secondary__link { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 1rem 1.25rem; border-radius: 0.4375rem; box-sizing: border-box; font-family: "Mulish", sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.1; color: #fff; text-decoration: none; transition: 0.4s ease; }
+.sidebar-menu-secondary__link--library { padding-right: 0.625rem; }
+.sidebar-menu-secondary__link span { flex: 1 1 auto; min-width: 0; text-align: left; }
+.sidebar-menu-secondary__chevron { display: block; width: calc(1rem * 9 / 16); height: 1rem; flex-shrink: 0; color: inherit; }
+.sidebar-inner:has(.sidebar-menu-secondary) .sidebar-exit::before { display: none; }
+.sidebar-menu__item, .sidebar-exit { display: flex; align-items: center; width: 100%; min-height: 0; margin-top: 0; padding: 0.75rem 1.25rem; background: transparent; border-radius: 0.4375rem; color: #1f1f1f; transition: background-color 0.2s ease; cursor: pointer; box-sizing: border-box; }
+.sidebar-menu__item .sidebar-menu__label, .sidebar-exit .sidebar-menu__label { display: block; flex: 1 1 auto; min-width: 0; padding-left: 0.75rem; font-family: "Mulish", sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.1; color: #1f1f1f; transition: color 0.2s ease; }
+.sidebar-menu__item.active, .sidebar-exit.active { background: #f4ecfc; }
+.sidebar-menu__item:hover, .sidebar-exit:hover { background: rgba(244, 236, 252, 0.72); }
+.sidebar-menu__item.active .sidebar-menu__label, .sidebar-exit.active .sidebar-menu__label { color: #1f1f1f; }
+.sidebar-menu__item-icon, .sidebar-exit__icon { position: relative; width: 1.25rem; height: 1.25rem; flex-shrink: 0; color: #1f1f1f; }
+.sidebar-menu__item.active .sidebar-menu__item-icon, .sidebar-exit__icon { color: #1f1f1f; }
+.sidebar-menu__item-svg, .sidebar-exit__svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.sidebar-menu__badge { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 1.125rem; height: 1.125rem; margin-left: 0.5rem; border-radius: 50%; background: #9153e1; color: #fff; font-family: "Mulish", sans-serif; font-size: 0.75rem; line-height: 1; } font-weight: 600;
+.sidebar-menu__badge { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 1.125rem; height: 1.125rem; margin-left: 0.5rem; border-radius: 50%; background: #9153e1; color: #fff; font-family: "Mulish", sans-serif; font-size: 0.75rem; line-height: 1; }
+.sidebar-exit { margin-top: 0.625rem; padding-top: 1rem; padding-bottom: 1rem; position: relative; }
+.sidebar-exit::before { display: none; }
+@media (max-width: 1319px) {
+  .sidebar { width: 17.8125rem; }
+  .sidebar-inner { padding-left: 0.9375rem; padding-right: 0.9375rem; }
+  .sidebar-menu__item, .sidebar-exit { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .sidebar-menu__item .sidebar-menu__label, .sidebar-exit .sidebar-menu__label { padding-left: 0.75rem; }
+  .sidebar-menu-secondary__link { padding-left: 0.9375rem; padding-right: 0.9375rem; }
+  .sidebar-menu-secondary__link--library { padding-right: 0.625rem; }
+}
+@media (max-width: 1279px) { .sidebar { display: none; } }
+
+/* Оболочка ЛК и статус тарифа. */
+.body_lk { padding-top: var(--header-page-offset); max-width: none; --lk-sidebar-left: max(var(--container-inline-gutter), calc((100vw - 75rem) / 2)); }
+.body_lk .header { width: 100%; left: 0; right: auto; padding-left: 0; padding-right: 0; height: var(--header-bar-height); min-height: var(--header-bar-height); }
+.personal-status { position: relative; display: flex; align-items: center; padding: 0.4375rem 0.9375rem 0.4375rem 2.5625rem; background: rgba(145, 83, 225, 0.07); border-radius: 6.25rem; margin-right: 1.125rem; overflow: hidden; }
+.personal-status_empty { padding-left: 0.625rem; padding-right: 0.625rem; min-height: 2.125rem; }
+.personal-status_empty .personal-status__img { position: static; transform: none; }
+.personal-status span { display: block; }
+.personal-status__img { display: block; position: absolute; left: 0.9375rem; top: 50%; width: 1.25rem; height: 1.25rem; transform: translateY(-50%); color: var(--color-violet); }
+@media (max-width: 1319px) { .body_lk { --lk-sidebar-left: max(var(--container-inline-gutter), calc((100vw - 70rem) / 2)); } .body_lk .header { width: 100%; padding-left: 0; } }
+@media (max-width: 1279px) { .body_lk .header { width: 100%; padding-left: 0; padding-right: 0; } }
+
 /* Section-lk */
 .body_lk {
   --lk-sidebar-left: max(var(--container-inline-gutter, 1.25rem), calc((100vw - 75rem) / 2));
@@ -86,7 +144,7 @@
   border-radius: 6.25rem;
   background: var(--color-white);
   color: var(--color-violet);
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.1;
@@ -146,7 +204,7 @@
 .lk-favorites-empty__text h3 {
   margin: 0 0 0.25rem;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -155,7 +213,7 @@
 .lk-favorites-empty__text p {
   margin: 0;
   color: #646464;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1;
@@ -171,7 +229,7 @@
   border-radius: 31.25rem;
   background: var(--color-black);
   color: var(--color-green);
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;
@@ -279,7 +337,8 @@
   padding: 0.3125rem 0.9375rem;
   border: 0.0625rem solid rgba(31, 31, 31, 0.6);
   border-radius: 6.25rem;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 0.875rem;
   line-height: normal;
 }
@@ -292,7 +351,7 @@
 .practice-history-card__copy h3 {
   margin: 0;
   color: inherit;
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
@@ -300,7 +359,7 @@
 .practice-history-card__copy p {
   margin: 0;
   color: inherit;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: normal;
@@ -312,7 +371,8 @@
   padding: 0.4375rem 0.625rem;
   border-radius: 0.4375rem;
   background: var(--color-grey);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 0.875rem;
   line-height: normal;
   white-space: nowrap;
@@ -357,7 +417,7 @@
   border-radius: 31.25rem;
   background: var(--color-black);
   color: var(--color-green);
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;
@@ -445,7 +505,7 @@
 .lk-notifications-empty__text h3 {
   margin: 0;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -454,7 +514,7 @@
 .lk-notifications-empty__text p {
   margin: 0;
   color: #646464;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1;
@@ -464,7 +524,7 @@
 .lk-notifications-page__actions { display: flex; flex: 0 0 auto; align-items: center; gap: 0.9375rem; }
 .lk-notifications-page__settings { display: grid; width: 2.5rem; height: 2.5rem; padding: 0; place-items: center; border: 0; border-radius: 50%; background: var(--color-grey); color: var(--color-black); cursor: pointer; }
 .lk-notifications-page__settings svg { width: 1.25rem; height: 1.25rem; }
-.lk-notifications-page__read-all { height: 2.6875rem; padding: 0 0.9375rem; border: 1px solid var(--color-violet); border-radius: 6.25rem; background: var(--color-white); color: var(--color-violet); font-family: "Mulish-SemiBold", sans-serif; font-size: 0.9375rem; font-weight: 600; line-height: 1.1; cursor: pointer; }
+.lk-notifications-page__read-all { height: 2.6875rem; padding: 0 0.9375rem; border: 1px solid var(--color-violet); border-radius: 6.25rem; background: var(--color-white); color: var(--color-violet); font-family: "Mulish", sans-serif; font-size: 0.9375rem; font-weight: 600; line-height: 1.1; cursor: pointer; }
 .lk-notifications-list { display: flex; flex-direction: column; overflow: hidden; margin: 0; border: 1px solid #e8e8e8; border-radius: 1.875rem; }
 .lk-notification { display: flex; flex-direction: column; gap: 0.625rem; padding: 0.75rem 1.5rem; border-bottom: 1px solid #e8e8e8; background: var(--color-white); color: var(--color-black); text-decoration: none; transition: background-color 0.2s ease; }
 .lk-notification:last-child { border-bottom: 0; }
@@ -481,7 +541,7 @@
 .lk-notification--comment_reply .lk-notification__icon svg { width: 1.6875rem; height: 1.375rem; }
 .lk-notification--question_answer .lk-notification__head strong { color: var(--color-violet); }
 .lk-notification__icon svg { width: 1.375rem; height: 1.5rem; }
-.lk-notification__head strong { flex: 1 1 auto; min-width: 0; font-family: "Mulish-Bold", sans-serif; font-size: 1rem; font-weight: 700; line-height: 1.1; }
+.lk-notification__head strong { flex: 1 1 auto; min-width: 0; font-family: "Mulish", sans-serif; font-size: 1rem; font-weight: 700; line-height: 1.1; }
 .lk-notification--unread .lk-notification__head strong { color: var(--color-violet); }
 .lk-notification__meta { display: flex; flex: 0 0 auto; align-items: center; gap: 0.625rem; color: #646464; font-size: 0.875rem; line-height: 1; white-space: nowrap; }
 .lk-notification__meta i { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--color-violet); }
@@ -490,7 +550,7 @@
 .lk-notification--payment_card_expiring .lk-notification__icon svg { width: 1.4375rem; height: 1.0625rem; }
 .lk-notification--subscription_expiring .lk-notification__icon { background: var(--color-green); color: var(--color-black); }
 .lk-notification--subscription_expiring .lk-notification__icon svg { width: 1.625rem; height: 1.375rem; }
-.lk-notification__action { display: inline-flex; align-self: flex-start; min-height: 2.375rem; margin-left: 3.5rem; align-items: center; justify-content: center; padding: 0.625rem 0.9375rem; border: 1px solid var(--color-violet); border-radius: 6.25rem; color: var(--color-violet); font-family: "Mulish-SemiBold", sans-serif; font-size: 0.875rem; font-weight: 600; line-height: 1.1; box-sizing: border-box; }
+.lk-notification__action { display: inline-flex; align-self: flex-start; min-height: 2.375rem; margin-left: 3.5rem; align-items: center; justify-content: center; padding: 0.625rem 0.9375rem; border: 1px solid var(--color-violet); border-radius: 6.25rem; color: var(--color-violet); font-family: "Mulish", sans-serif; font-size: 0.875rem; font-weight: 600; line-height: 1.1; box-sizing: border-box; }
 
 /* Mobile notifications page: the list is part of the page, not a desktop card. */
 @media (max-width: 1024px) {
@@ -616,17 +676,17 @@
 
 .notification-settings { display: flex; flex-direction: column; gap: 1.4375rem; width: 100%; }
 .notification-settings__title { display:grid; grid-template-columns:1.25rem minmax(0,1fr); align-items:baseline; column-gap:.625rem; }
-.notification-settings__title h2 { margin:0; font:700 2rem/1.1 "Mulish-Bold",sans-serif; }
+.notification-settings__title h2 { margin:0; font:700 2rem/1.1 "Mulish",sans-serif; }
 .notification-settings__back { display:inline-grid; width:1.25rem; height:1.25rem; padding:0; place-items:center; align-self:baseline; border:0; background:transparent; cursor:pointer; }
 .notification-settings__back svg { width:1.25rem; height:1.25rem; }
-.notification-settings__columns { display:grid; grid-template-columns:1fr 5.5625rem 5.5625rem; gap:.625rem; padding-bottom:.75rem; border-bottom:1px solid #e8e8e8; color:#646464; font:600 .8125rem/1 "Mulish-SemiBold",sans-serif; text-transform:uppercase; }
+.notification-settings__columns { display:grid; grid-template-columns:1fr 5.5625rem 5.5625rem; gap:.625rem; padding-bottom:.75rem; border-bottom:1px solid #e8e8e8; color:#646464; font:600 .8125rem/1 "Mulish",sans-serif; text-transform:uppercase; }
 .notification-settings__columns span:not(:first-child) { text-align:center; }
 .notification-settings__category { display:flex; flex-direction:column; gap:1.25rem; }
 .notification-settings__category-head { padding-bottom:.75rem; border-bottom:1px solid #e8e8e8; }
-.notification-settings__category-head h3 { margin:0 0 .25rem; color:var(--color-violet); font:700 1.25rem/1.1 "Mulish-Bold",sans-serif; }
+.notification-settings__category-head h3 { margin:0 0 .25rem; color:var(--color-violet); font:700 1.25rem/1.1 "Mulish",sans-serif; }
 .notification-settings__category-head p,.notification-settings__row span { margin:0; color:#646464; font-size:1rem; line-height:1.4; }
 .notification-settings__row { display:grid; grid-template-columns:1fr 11.375rem; align-items:center; gap:1rem; }
-.notification-settings__row > div:first-child { display:flex; flex-direction:column; }.notification-settings__row strong { font:700 1.125rem/1.5 "Mulish-Bold",sans-serif; }
+.notification-settings__row > div:first-child { display:flex; flex-direction:column; }.notification-settings__row strong { font:700 1.125rem/1.5 "Mulish",sans-serif; }
 .notification-settings__toggles { display:grid; grid-template-columns:5.5625rem 5.5625rem; gap:.625rem; place-items:center; }.notification-settings__toggles i { display:block; width:2.5rem; height:1.5rem; }
 .notification-toggle { width:2.5rem; height:1.5rem; padding:.125rem; border:0; border-radius:6.25rem; background:#dbdbdb; cursor:pointer; appearance:none; }.notification-toggle:after { content:""; display:block; width:1.125rem; height:1.125rem; border-radius:50%; background:#fff; transform:translateX(0); transition:transform .2s ease; }.notification-toggle.is-on { background:var(--color-violet); }.notification-toggle.is-on:after { transform:translateX(1.125rem); }
 .notification-toggle[aria-disabled="true"] { cursor:default; }
@@ -647,7 +707,7 @@
   border-radius: 6.25rem;
   background: var(--color-violet);
   color: var(--color-white);
-  font: 600 0.75rem/1 "Mulish-SemiBold", sans-serif;
+  font: 600 0.75rem/1 "Mulish", sans-serif;
   box-sizing: border-box;
 }
 
@@ -758,8 +818,8 @@
   font-size: 1rem;
   line-height: 1.1;
   color: var(--color-violet);
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 
 .photo-input-custom__inner-text {
@@ -804,8 +864,8 @@
 .lk-form-item h5 {
   font-size: 1rem;
   line-height: 1.1;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 .lk-form-item h5 span {
   display: inline;
@@ -820,14 +880,16 @@
   border-color: #E8E8E8;
   border-radius: 6.25rem;
   font-size: 1.125rem;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   color: var(--color-black);
   background: transparent;
 }
 .lk-form-item .input::placeholder {
   color: var(--color-black) !important;
   opacity: 0.6 !important;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
 }
 .lk-form-item .input:focus {
   border-color: var(--color-violet);
@@ -1015,7 +1077,7 @@
   border-radius: 1.25rem;
   background: rgba(145, 83, 225, 0.8);
   color: #fff;
-  font-family: "Mulish-Regular", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.25;
@@ -1052,7 +1114,8 @@
 }
 .lk-email-confirmation__link {
   min-width: 0;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   line-height: 1.1;
   color: var(--color-violet);
@@ -1123,7 +1186,8 @@
   appearance: none;
   outline: none;
   color: rgba(31, 31, 31, 0.6);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   line-height: 1.5;
 }
@@ -1153,7 +1217,7 @@
 }
 .lk-kriyi .kriya-info h3 {
   color: var(--color-black, #1F1F1F);
-  font-family: "Mulish-Bold", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
@@ -1220,7 +1284,8 @@
 .lk-questions-form .btn {
   position: absolute;
   right: 1.25rem;  height: 2.6875rem;  line-height: 2.6875rem;  padding-left: 0.9375rem;  padding-right: 0.9375rem;  top: 1.25rem;  background: var(--color-violet);
-  font-size: 0.9375rem;  font-family: "Mulish-SemiBold", sans-serif;
+  font-size: 0.9375rem;  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-size: 0.9375rem;  font-family: "Mulish", sans-serif;
   color: #fff;
   text-transform: uppercase;
 }
@@ -1274,7 +1339,8 @@
   width: calc(100% - 3.75rem);  margin-left: auto;
 }
 .lk-question.lk-question_answer .lk-question__text p {
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
 }
 
 .lk-question__time {
@@ -1282,8 +1348,8 @@
 }
 .lk-question__time b {
   display: inline-block;
-  font-size: 1.125rem;  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-size: 1.125rem;  font-family: "Mulish", sans-serif;
+  font-weight: 700;
   color: var(--color-violet);
   margin-right: 1.25rem;}
 .lk-question__time time {
@@ -1296,14 +1362,16 @@
   display: block;
 }
 .lk-question__text p {
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;  line-height: 1.5em;
   display: block;
   margin-top: 0.625rem;}
 
 .lk-question__status {
   display: inline-block;
-  margin-top: 1.125rem;  padding: 0.375rem;  padding-top: 0.2812rem;  padding-bottom: 0.2812rem;  font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
+  margin-top: 1.125rem;  padding: 0.375rem;  padding-top: 0.2812rem;  padding-bottom: 0.2812rem;  font-size: 1rem;  font-family: "Mulish", sans-serif; font-weight: 500;
+  margin-top: 1.125rem;  padding: 0.375rem;  padding-top: 0.2812rem;  padding-bottom: 0.2812rem;  font-size: 1rem;  font-family: "Mulish", sans-serif;
   color: var(--color-violet);
   border: 1px solid var(--color-violet);
   border-radius: 6.25rem;}
@@ -1336,7 +1404,7 @@
 .lk-settings__slide_main > h2 {
   margin: 0;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.1;
@@ -1367,7 +1435,7 @@
 .lk-settings__slide_main .lk-settings-item__col-text,
 .lk-settings__slide_main .lk-settings-item_main time {
   padding: 0;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -1381,7 +1449,7 @@
 }
 .lk-settings__slide_main .personal-status span {
   color: var(--color-violet);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -1401,7 +1469,7 @@
   border: 0;
   background: transparent;
   color: var(--color-violet);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.1;
@@ -1411,7 +1479,7 @@
   margin: 0 0 0.9375rem;
   padding: 0;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
@@ -1447,13 +1515,14 @@
 }
 .lk-settings-purchase time {
   color: var(--color-black);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   line-height: normal;
 }
 .lk-settings-purchase strong {
   color: var(--color-violet);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -1462,7 +1531,8 @@
 .lk-settings-purchase > span {
   min-width: 5.5rem;
   color: var(--color-black);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   line-height: 1.5;
   text-align: right;
@@ -1542,8 +1612,8 @@
   letter-spacing: -0.154px;
   text-transform: uppercase;
   text-align: center;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
   white-space: nowrap;
   color: var(--color-green);
 }
@@ -1577,7 +1647,8 @@
 .lk-auto-renew-status__title {
   margin: 0;
   font-size: 1.125rem;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: "Mulish", sans-serif;
   color: var(--color-violet);
 }
 
@@ -1650,8 +1721,8 @@
   font-size: 1.125rem;  line-height: 1.5em;
 }
 .lk-settings-item__col-text b {
-  font-family: "Mulish-Regular", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 400;
   padding-right: 0.9375rem;  color: var(--color-violet);
 }
 
@@ -1741,7 +1812,8 @@
   border: 0;
   background: transparent;
   cursor: pointer;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   line-height: 1.5;
   color: #1f1f1f;
@@ -1823,7 +1895,7 @@
     padding: 0;
     margin: 0;
     font-size: 16px;
-    font-family: "Mulish-Regular", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-weight: 400;
     line-height: normal;
     color: #1f1f1f;
@@ -2049,7 +2121,8 @@
     font-size: 0.875rem;
     line-height: 1em;
     color: var(--color-black);
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 500;
+    font-family: "Mulish", sans-serif;
   }
   .lk-kriyi .kriya-info {
     order: 3;
@@ -2078,7 +2151,7 @@
   }
   .lk-kriyi .kriya-info h3 {
     color: var(--black, #1F1F1F);
-    font-family: "Mulish-Bold", "Mulish", sans-serif;
+    font-family: "Mulish", "Mulish", sans-serif;
     font-size: 1.125rem;
     font-style: normal;
     font-weight: 700;
@@ -2086,7 +2159,7 @@
   }
   .lk-kriyi .kriya-info p {
     color: var(--black, #1F1F1F);
-    font-family: "Mulish-Regular", "Mulish", sans-serif;
+    font-family: "Mulish", "Mulish", sans-serif;
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
@@ -2157,7 +2230,8 @@
     bottom: 0px;
     transform: none;
     background: var(--color-violet);
-    font-size: 0.875rem;    font-family: "Mulish-Regular", sans-serif;
+    font-size: 0.875rem;    font-family: "Mulish", sans-serif; font-weight: 400;
+    font-size: 0.875rem;    font-family: "Mulish", sans-serif;
     text-transform: none;
   }
   .lk-questions .btn {
@@ -2225,7 +2299,7 @@
   width: 100%;
   margin: 0 0 1.25rem;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.1;
@@ -2275,7 +2349,7 @@
   margin: 0;
   padding: 0;
   color: #1f1f1f;
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
@@ -2290,7 +2364,7 @@
 #lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-text,
 #lk-slide-settings .lk-settings-part_payment-methods .lk-settings-item__col-action-numbers {
   color: #1f1f1f;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -2332,7 +2406,7 @@
   min-width: 0;
   margin: 0;
   color: #1f1f1f;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -2349,7 +2423,7 @@
   border-radius: 31.25rem;
   background: #1f1f1f;
   color: #e8ff57;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;

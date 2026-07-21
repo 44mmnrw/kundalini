@@ -232,7 +232,7 @@
   border-radius: 50%;
   color: var(--color-black);
   background: var(--color-pink);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 0.625rem;
   font-weight: 400;
   line-height: normal;
@@ -356,7 +356,7 @@
 
 .section-practice-category .form-cat-list__item--all-practices span {
   color: var(--color-violet, #9153e1);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.5;
@@ -547,7 +547,7 @@ input#filt-reset {
   background: var(--color-black);
   color: var(--color-green);
   cursor: pointer;
-  font-family: "Mulish-SemiBold", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;
@@ -675,8 +675,8 @@ input#filt-reset {
   z-index: 3;
   max-width: calc(100% - 1.25rem);  margin-right: auto;
   padding: 0.2812rem;  padding-left: 0.9375rem;  padding-right: 0.9375rem;  border: 1px solid var(--color-black);
-  border-radius: 6.25rem;  font-family: "Mulish-Medium", sans-serif;
-  font-weight: normal;
+  border-radius: 6.25rem;  font-family: "Mulish", sans-serif;
+  font-weight: 500;
   margin-bottom: 1.5625rem;}
 .library-item__cat a {
   position: absolute;
@@ -688,8 +688,8 @@ input#filt-reset {
 
 .library-item__text {
   display: block;
-  font-family: "Mulish-Medium", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 500;
   line-height: 1.5;
   margin-bottom: 1.375rem;
   min-height: 6.4375rem;}

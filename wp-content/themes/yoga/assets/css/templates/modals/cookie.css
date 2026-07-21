@@ -35,10 +35,10 @@
   flex: 1 1 auto;
   min-width: 0;
   margin: 0px;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   line-height: normal;
-  font-weight: normal;
+  font-weight: 400;
   color: var(--color-black);
 }
 
@@ -89,7 +89,7 @@
   display: block;
   min-width: 0px;
   font-size: 1rem;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-weight: 500;
   line-height: normal;
   text-align: center;

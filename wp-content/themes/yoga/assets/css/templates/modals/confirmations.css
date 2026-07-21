@@ -57,12 +57,12 @@
   }
 
   .modal-default_logout h3 {
-    font: 700 1.75rem/1.1 "Mulish-Bold", sans-serif;
+    font: 700 1.75rem/1.1 "Mulish", sans-serif;
   }
 
   .modal-default_logout p {
     margin-top: 0.9375rem;
-    font: 400 1rem/normal "Mulish-Regular", sans-serif;
+    font: 400 1rem/normal "Mulish", sans-serif;
   }
 
   .modal-default_logout .delcomm-buttons {
@@ -82,7 +82,7 @@
   }
 
   .modal-default_logout .delcomm-buttons .btn span {
-    font: 500 1rem/normal "Mulish-Medium", sans-serif;
+    font: 500 1rem/normal "Mulish", sans-serif;
   }
 }
 
@@ -140,11 +140,11 @@
 }
 
 #lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy h3 {
-  font: 700 1.75rem/1.1 "Mulish-Bold", sans-serif;
+  font: 700 1.75rem/1.1 "Mulish", sans-serif;
 }
 
 #lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy p {
-  font: 400 1rem/normal "Mulish-Regular", sans-serif;
+  font: 400 1rem/normal "Mulish", sans-serif;
 }
 
 .lk-unsaved-changes-modal__actions {
@@ -162,7 +162,7 @@
   justify-content: center;
   padding: 1rem 0.9375rem;
   border-radius: 9.375rem;
-  font: 500 1rem/normal "Mulish-Medium", sans-serif;
+  font: 500 1rem/normal "Mulish", sans-serif;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -238,7 +238,7 @@
 #yoga-subscription-success-modal .yoga-subscription-success-modal__close{position:absolute;top:.9375rem;right:.9375rem;width:3.1875rem;height:3.1875rem;padding:0;border:0;border-radius:50%;background:#fff;cursor:pointer}
 #yoga-subscription-success-modal .yoga-subscription-success-modal__close svg{display:block;width:1.0625rem;height:1.0625rem}
 .yoga-subscription-success-modal__content{position:absolute;top:calc(50% + .0625rem);left:50%;display:flex;width:20.125rem;flex-direction:column;align-items:center;gap:1.25rem;transform:translate(-50%,-50%);text-align:center}
-.yoga-subscription-success-modal__icon{display:block;width:4.8125rem;height:4.8125rem}.yoga-subscription-success-modal__content h3{margin:0;color:#1f1f1f;font:700 1.25rem/1.1 "Mulish-Bold",sans-serif}
+.yoga-subscription-success-modal__icon{display:block;width:4.8125rem;height:4.8125rem}.yoga-subscription-success-modal__content h3{margin:0;color:#1f1f1f;font:700 1.25rem/1.1 "Mulish",sans-serif}
 @media(max-width:575px){#yoga-subscription-success-modal,#yoga-subscription-success-modal.active{width:20rem;height:17.5rem}.yoga-subscription-success-modal__content{width:calc(100% - 2rem)}}
 
 #yoga-cart-clear-modal.modal-default.active {
@@ -314,14 +314,14 @@
 }
 
 .yoga-comment-delete-modal .yoga-comment-delete-modal__copy h3 {
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
 }
 
 .yoga-comment-delete-modal .yoga-comment-delete-modal__copy p {
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: normal;
@@ -344,7 +344,7 @@
   padding: 1rem 0.9375rem;
   border: 1px solid var(--color-black);
   border-radius: 9.375rem;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1;
@@ -389,7 +389,7 @@
   width: 100%;
   margin: 0;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
@@ -450,14 +450,14 @@
 }
 
 #yoga-contact-success-modal .yoga-contact-success-modal__content h3 {
-  font-family: "Mulish-Bold", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
 }
 
 #yoga-contact-success-modal .yoga-contact-success-modal__content p {
-  font-family: "Mulish-Regular", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: normal;
@@ -559,7 +559,7 @@
   width: 100%;
   margin: 0;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -582,7 +582,7 @@
   padding: 1rem 0.9375rem;
   border: 1px solid var(--color-black);
   border-radius: 9.375rem;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1;
@@ -654,8 +654,8 @@
 .delcomm-buttons .btn {
   width: calc(50% - 0.625rem);  padding-left: 0.3125rem;  padding-right: 0.3125rem;  height: 3.25rem;  min-height: 3.25rem;  line-height: 3.1875rem;}
 .delcomm-buttons .btn span {
-  font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
-  font-weight: normal;
+  font-size: 1rem;  font-family: "Mulish", sans-serif;
+  font-weight: 500;
 }
 .delcomm-buttons .btn_white {
   border: 1px solid var(--color-black);
@@ -704,8 +704,8 @@
   display: block;
   width: 100%;
   text-align: center;
-  font-size: 1.25rem;  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-size: 1.25rem;  font-family: "Mulish", sans-serif;
+  font-weight: 700;
 }
 
 .thanksforqw {
@@ -759,7 +759,7 @@
 }
 
 .modal-default_formsucces .thanksforqw h3 {
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -767,7 +767,7 @@
 
 .modal-default_formsucces .thanksforqw p {
   margin-top: 0;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: normal;

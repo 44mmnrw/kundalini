@@ -21,8 +21,8 @@
   margin-bottom: 1.875rem;}
 .about-text p b {
   font: inherit;
-  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
 }
 
 .about__main {
@@ -159,8 +159,8 @@
   display: inline-block;
   position: absolute;
   left: 0px;
-  top: 0.875rem;  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  top: 0.875rem;  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 
 .about-year__text {
@@ -248,8 +248,8 @@
   .about-year {
     padding-top: 3.9375rem;  }
   .about-year span {
-    font-size: 1.125rem;    font-family: "Mulish-Bold", sans-serif;
-    font-weight: normal;
+    font-size: 1.125rem;    font-family: "Mulish", sans-serif;
+    font-weight: 700;
     top: 1rem;  }
 }
 @media (max-width: 767px) {
@@ -398,9 +398,9 @@
   .section-about .about-year span {
     position: static;
     display: block;
-    font-family: "Mulish-Bold", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 1.125rem;
-    font-weight: normal;
+    font-weight: 700;
     line-height: 1.5;
   }
 

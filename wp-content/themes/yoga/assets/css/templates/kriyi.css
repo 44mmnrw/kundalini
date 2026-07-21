@@ -71,13 +71,13 @@
   margin: 0;
 }
 .practice-search-empty__count {
-  font-family: "Mulish-Bold", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1.1;
 }
 .practice-search-empty__message {
-  font-family: "Mulish-Medium", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1;
@@ -142,7 +142,8 @@
   line-height: normal;
   padding: 0.3125rem 0.9375rem;  border: 1px solid var(--color-violet);
   border-radius: 6.25rem;  color: var(--color-violet);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
 }
 
 .kriya-info {
@@ -153,7 +154,7 @@
 .kriya-info h3 {
   display: block;
   color: var(--color-black, #1F1F1F);
-  font-family: "Mulish-Bold", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
@@ -164,7 +165,7 @@
   display: block;
   margin-top: 0.3125rem;
   color: var(--color-black, #1F1F1F);
-  font-family: "Mulish-Regular", "Mulish", sans-serif;
+  font-family: "Mulish", "Mulish", sans-serif;
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
@@ -224,7 +225,8 @@
 }
 .kriya-fav__text {
   display: none;
-  font-family: "Mulish-Medium", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 500;
+  font-family: "Mulish", sans-serif;
   font-size: 0.6875rem;
   line-height: 1.25;
   color: var(--color-violet);
@@ -337,7 +339,8 @@
     font-size: 1rem;
     line-height: 1em;
     color: var(--color-black);
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 500;
+    font-family: "Mulish", sans-serif;
   }
   .kriya-info {
     order: 3;
@@ -366,7 +369,7 @@
     padding-left: 0.9375rem;    padding-right: 0.9375rem;  }
   .kriya-info h3 {
     color: var(--black, #1F1F1F);
-    font-family: "Mulish-Bold", "Mulish", sans-serif;
+    font-family: "Mulish", "Mulish", sans-serif;
     font-size: 1.125rem;
     font-style: normal;
     font-weight: 700;
@@ -374,7 +377,7 @@
   }
   .kriya-info p {
     color: var(--black, #1F1F1F);
-    font-family: "Mulish-Regular", "Mulish", sans-serif;
+    font-family: "Mulish", "Mulish", sans-serif;
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;

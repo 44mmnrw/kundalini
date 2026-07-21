@@ -53,8 +53,8 @@ img {
 }
 
 body {
-  font-family: "Mulish-Regular", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 400;
   font-size: 1rem;  color: var(--color-black);
   margin: 0;
   margin-left: auto;
@@ -111,7 +111,8 @@ footer {
   padding-right: 1.8125rem;
   font-size: 1.125rem;
   margin: 0;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   color: var(--color-black);
   border: 1px solid #e8e8e8;
   background: transparent;
@@ -121,7 +122,8 @@ footer {
   appearance: none;
   opacity: 0.6;
   font-size: 1.125rem;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   color: var(--color-black);
   transition: var(--transition-base, 0.4s ease);
 }
@@ -132,8 +134,8 @@ footer {
 p {
   margin: 0;
   display: block;
-  font-family: "Mulish-Regular", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 400;
   font-size: 1rem;}
 
 span {
@@ -148,9 +150,9 @@ ul {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   color: var(--color-black);
-  font-weight: normal;
+  font-weight: 700;
 }
 
 h1, .h1 {
@@ -273,8 +275,8 @@ h5, .h5 {
 .btn span {
   display: block;
   min-width: 100%;
-  font-size: 0.9375rem;  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-size: 0.9375rem;  font-family: "Mulish", sans-serif;
+  font-weight: 600;
   color: var(--color-green);
   text-decoration: none;
   text-align: center;
@@ -414,7 +416,8 @@ h5, .h5 {
 .ref {
   cursor: pointer;
   text-decoration: none;
-  font-size: 1rem;  font-family: "Mulish-Medium", sans-serif;
+  font-size: 1rem;  font-family: "Mulish", sans-serif; font-weight: 500;
+  font-size: 1rem;  font-family: "Mulish", sans-serif;
   color: var(--color-black);
   transition: 0.4s ease;
 }
