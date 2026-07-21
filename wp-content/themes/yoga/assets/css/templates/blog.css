@@ -42,7 +42,7 @@
 }
 .blog-radios label span {
   display: block;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 500;
   transition: 0.4s ease;
 }
@@ -183,7 +183,7 @@
 .blog-result h3, .blog-articles__intro h3, .popular-articles__intro h3 {
   display: inline-block;
   font-size: 1.75rem;  padding-left: 1.1875rem;  position: relative;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .blog-result h3::before, .blog-articles__intro h3::before, .popular-articles__intro h3::before {
@@ -196,7 +196,7 @@
   width: 0.25rem;  height: 1.375rem;  border-radius: 1.25rem;  background: var(--color-violet);
 }
 .blog-result b, .blog-articles__intro b, .popular-articles__intro b {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
   font-size: 0.9375rem;  display: inline-block;
   opacity: 0;
@@ -264,14 +264,14 @@
 
 .article-cat {
   padding: 0.9375rem;  padding-top: 0.2812rem;  padding-bottom: 0.2812rem;  color: var(--color-violet);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 500;
   border: 1px solid var(--color-violet);
   border-radius: 6.25rem;  margin-right: 0.6875rem;}
 
 .article-time {
   position: relative;
-  padding-left: 1rem;  font-family: "Mulish", sans-serif;
+  padding-left: 1rem;  font-family: var(--font-family-base);
   font-weight: 500;
 }
 .article-time::before {
@@ -293,7 +293,7 @@
   border-radius: 6.25rem;  margin-top: 1.25rem;  color: #fff;
   text-decoration: none;
   text-align: center;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
   transition: 0.4s ease;
   z-index: 3;
@@ -405,7 +405,7 @@
 
 
   .section-blog--search-results .blog-article-item h4 {
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 700;
     font-size: 1.25rem;
     line-height: 1.1;
@@ -721,7 +721,7 @@
     padding-left: 0.9375rem;    padding-right: 0.9375rem;    margin-right: 0.625rem;    white-space: nowrap;
   }
   .blog-radios label span {
-    font-size: 0.875rem;    font-family: "Mulish", sans-serif;
+    font-size: 0.875rem;    font-family: var(--font-family-base);
     font-weight: 400;
   }
   .blog-main__image img {
@@ -819,7 +819,7 @@
   }
   .section-blog-form .blog-radios label span {
     font-size: 0.875rem;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 400;
   }
   .section-blog-form .blog-form {
@@ -854,8 +854,8 @@
     box-shadow: none !important;
     line-height: normal;
     font-size: 0.875rem;
-    font-family: "Mulish", sans-serif; font-weight: 400;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 400;
+    font-family: var(--font-family-base);
     background: transparent;
     box-sizing: border-box;
   }

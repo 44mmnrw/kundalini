@@ -224,7 +224,7 @@
 
 .email-confirmation-modal h3 {
   margin: 0 0 0.9375rem;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -262,7 +262,7 @@
   outline: 0;
   background: #f6f6f9;
   color: #1f1f1f;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1;
@@ -281,7 +281,7 @@
   border: 0;
   background: transparent;
   color: #9153e1;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 0.875rem;
   font-weight: 400;
   line-height: normal;
@@ -321,7 +321,7 @@
   padding: 0 0.9375rem;
   border: 1px solid #1f1f1f;
   border-radius: 9.375rem;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 500;
   line-height: 1;
@@ -400,7 +400,7 @@
   bottom: auto;
   color: var(--color-black);
   cursor: pointer;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.1;
@@ -650,7 +650,7 @@ body.email-confirmation-is-open {
   left: auto;
   transform: none;
   color: #1f1f1f !important;
-  font: 400 1rem/1 "Mulish", sans-serif;
+  font: 400 1rem/1 var(--font-family-base);
   white-space: nowrap;
 }
 
@@ -696,7 +696,7 @@ body.email-confirmation-is-open {
 
 .new-code__text {
   display: inline-block;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
 }
 .new-code__text div {
@@ -866,7 +866,7 @@ label.checkbox {
   .modal-login-inner__slide[data-target="1"].active .login-slide-switches_login h3 {
     margin: 0;
     color: #1f1f1f;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.1;
@@ -885,7 +885,7 @@ label.checkbox {
   margin-top: auto;
   margin-bottom: auto;
   bottom: -0.25rem;  color: #646464;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -917,7 +917,7 @@ p.login-rules a:hover {
 .yoga-form-login-message .yoga-login-forgot-link {
   margin-left: auto;
   margin-right: auto;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;

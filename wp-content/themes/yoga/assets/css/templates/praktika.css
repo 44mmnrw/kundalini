@@ -75,7 +75,7 @@
   align-items: center;
   justify-content: center;
   padding: 0.3125rem;  padding-left: 1.0625rem;  padding-right: 1.0625rem;  color: var(--color-violet);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 500;
   font-size: 1rem;
   line-height: 1;
@@ -352,8 +352,8 @@
 }
 p.praktika-section-paywall__label {
   margin: 0;
-  font-family: "Mulish", sans-serif; font-weight: 600;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base); font-weight: 600;
+  font-family: var(--font-family-base);
   font-size: 1.25rem;
   line-height: 1.1;
   color: var(--color-black);
@@ -410,7 +410,7 @@ p.praktika-section-paywall__text {
   background: var(--color-green);
   padding-left: 4.375rem;  padding-right: 6.25rem;  padding-top: 2.1875rem;  padding-bottom: 3.125rem;  border-radius: 1.25rem;  margin-top: 1.875rem;  margin-bottom: 0.3125rem;}
 .praktika-quote p {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 400;
 }
 .praktika-quote::before, .praktika-quote::after {
@@ -432,8 +432,8 @@ p.praktika-section-paywall__text {
   display: inline-block;
   position: relative;
   padding-left: 2rem;  padding-right: 2rem;  font-size: 1.125rem;  line-height: 1.4em;
-  font-family: "Mulish", sans-serif; font-weight: 600;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base); font-weight: 600;
+  font-family: var(--font-family-base);
   margin-top: 1.125rem;}
 .praktika-quote__author::before, .praktika-quote__author::after {
   content: "";
@@ -482,7 +482,7 @@ p.praktika-section-paywall__text {
   margin-top: 0.5938rem;}
 .praktika-menu li a {
   display: block;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
   padding-left: 1.25rem;  padding-right: 1.25rem;  padding-top: 0.575rem;  padding-bottom: 0.575rem;  border-radius: 1.25rem;  background: rgba(232, 255, 87, 0);
   color: var(--color-black) !important;
@@ -496,7 +496,7 @@ p.praktika-section-paywall__text {
   background: rgba(232, 255, 87, 0);
   height: 3.25rem;  line-height: 3.25rem;  margin-top: 1.875rem;}
 .praktika-menu .btn span {
-  font-size: 1rem;  font-family: "Mulish", sans-serif;
+  font-size: 1rem;  font-family: var(--font-family-base);
   font-weight: 500;
   color: var(--color-black);
 }
@@ -529,7 +529,7 @@ p.praktika-section-paywall__text {
   opacity: 0.75;
 }
 .praktika-download__remaining span {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .praktika-menu-anchor {
@@ -555,13 +555,13 @@ p.praktika-section-paywall__text {
 .praktika-exercise i {
   display: block;
   margin-top: 1.875rem;  font-size: 1.125rem;  line-height: 1.5em;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 400;
   font-style: normal;
 }
 .praktika-exercise i b {
   font: inherit;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 
@@ -607,7 +607,7 @@ display: block !important;
   margin-top: 0.5rem;
 }
 .exercise-item__info-details b {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .exercise-item__info-details strong {
@@ -618,13 +618,13 @@ display: block !important;
   color: var(--color-violet);
 }
 .exercise-item__info-details .exercise-time-label {
-  font-family: "Mulish", sans-serif; font-weight: 600;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base); font-weight: 600;
+  font-family: var(--font-family-base);
   color: var(--color-black);
 }
 .exercise-item__info-details .exercise-time-value {
   color: var(--color-violet);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
 }
 .exercise-item__info-details .exercise-time-unit {
@@ -646,7 +646,7 @@ display: block !important;
   margin-right: 0px;
 }
 .exercise-switches__item b {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .exercise-switches__item.active {
@@ -779,8 +779,8 @@ display: block !important;
   width: 100%;
   text-align: center;
   color: #fff;
-  font-size: 1.125rem;  font-family: "Mulish", sans-serif; font-weight: 700;
-  font-size: 1.125rem;  font-family: "Mulish", sans-serif;
+  font-size: 1.125rem;  font-family: var(--font-family-base); font-weight: 700;
+  font-size: 1.125rem;  font-family: var(--font-family-base);
 }
 
 .timer-main__time {
@@ -798,7 +798,7 @@ display: block !important;
   z-index: 2;
   width: 100%;
   text-align: center;
-  font-size: 1.75rem;  font-family: "Mulish", sans-serif;
+  font-size: 1.75rem;  font-family: var(--font-family-base);
   font-weight: 700;
   color: var(--color-green);
 }
@@ -827,7 +827,7 @@ display: block !important;
   background: rgba(232, 255, 87, 0);
   height: 1.875rem;  line-height: 1.875rem;  padding-left: 0.3125rem;  padding-right: 0.3125rem;  margin-top: 0.625rem;}
 .timer-buttons .btn span {
-  font-size: 1rem;  font-family: "Mulish", sans-serif;
+  font-size: 1rem;  font-family: var(--font-family-base);
   font-weight: 500;
   color: #fff;
 }
@@ -902,7 +902,7 @@ display: block !important;
 .selected-text {
   margin-top: 0.9375rem !important;  margin-bottom: -0.5rem !important;  padding-left: 1.5625rem;  padding-right: 1.5625rem;  padding-top: 0.6875rem;  padding-bottom: 0.625rem;  background: var(--color-pink);
   border-radius: 0.4375rem;  font-size: 1.125rem !important;  line-height: 1.4em !important;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
 }
 
@@ -933,7 +933,7 @@ display: block !important;
   padding-top: 2.5rem;}
 .praktika-comments > h3 {
   margin: 0;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.1;
@@ -965,7 +965,7 @@ display: block !important;
   height: 5.1875rem;  padding-top: 1.25rem;  padding-bottom: 1.25rem;  padding-left: 1.25rem;  padding-right: 10.1875rem;  border-radius: 0.4375rem;  resize: none;
   outline: none !important;
   font-size: 1.125rem;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 400;}
 .comment-form-main textarea::placeholder {
   color: var(--color-black) !important;
@@ -989,7 +989,7 @@ display: block !important;
   align-items: center;
   justify-content: center;
   width: 7.6875rem;
-  padding-left: 0.9375rem;  padding-right: 0.9375rem;  height: 2.6875rem;  line-height: 2.75rem;  font-size: 0.9375rem;  font-family: "Mulish", sans-serif;
+  padding-left: 0.9375rem;  padding-right: 0.9375rem;  height: 2.6875rem;  font-size: 0.9375rem;  font-family: var(--font-family-base);
   line-height: 1;
   font-weight: 600;
   border: 0px !important;
@@ -1046,7 +1046,7 @@ display: block !important;
 
 .praktika-comment-name {
   display: inline-block;
-  padding-left: 0.625rem;  font-family: "Mulish", sans-serif;
+  padding-left: 0.625rem;  font-family: var(--font-family-base);
   font-weight: 700;
 }
 
@@ -1079,7 +1079,7 @@ display: block !important;
 }
 .answer-btn span {
   display: block;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
   color: var(--color-violet);
 }
@@ -1095,8 +1095,8 @@ display: block !important;
   font-size: 1rem;  line-height: 1.3em;
   margin-top: 0.625rem;}
 .praktika-comment-item__text p b {
-  font-family: "Mulish", sans-serif; font-weight: 700;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base); font-weight: 700;
+  font-family: var(--font-family-base);
 }
 .praktika-comment-item__text.hidden {
   display: none;
@@ -1146,7 +1146,7 @@ display: block !important;
 .answer-main .btn {
   margin-left: auto;
   margin-top: 1.25rem;  min-width: 7.6875rem;  text-align: center;
-  padding-left: 0.9375rem;  padding-right: 0.9375rem;  height: 2.375rem;  line-height: 2.375rem;  font-size: 1rem;  font-family: "Mulish", sans-serif;
+  padding-left: 0.9375rem;  padding-right: 0.9375rem;  height: 2.375rem;  line-height: 2.375rem;  font-size: 1rem;  font-family: var(--font-family-base);
   font-weight: 600;
   border: 0px !important;
   outline: none !important;
@@ -1222,7 +1222,7 @@ display: block !important;
   padding-right: 0.9375rem;
   border-radius: 6.25rem;
   font-size: 1rem;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
   background: var(--color-violet);
   color: #fff;
@@ -1350,8 +1350,8 @@ display: block !important;
     margin-top: 1.125rem;
     margin-bottom: 0;
     text-align: left;
-    font-family: "Mulish", sans-serif; font-weight: 700;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 700;
+    font-family: var(--font-family-base);
     font-size: 1.6875rem;
     line-height: 1.3;
   }
@@ -1401,7 +1401,7 @@ display: block !important;
     margin: 0;
     font-size: 1rem;
     line-height: normal;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 400;
     border-radius: 0;
     background: transparent !important;
@@ -1604,7 +1604,7 @@ display: block !important;
     margin: 0;
     font-size: 1.125rem;
     line-height: 1.5;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 700;
   }
 
@@ -1734,7 +1734,7 @@ display: block !important;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
     margin-right: 0;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 400;
   }
   .praktika-details__time {

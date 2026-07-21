@@ -39,7 +39,7 @@
   flex: 1 1 auto;
   min-width: 0;
   margin: 0px;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   line-height: normal;
   font-weight: 400;
@@ -93,7 +93,7 @@
   display: block;
   min-width: 0px;
   font-size: 1rem;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 500;
   line-height: normal;
   text-align: center;

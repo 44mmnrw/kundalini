@@ -25,7 +25,7 @@
   margin: 0;
   padding-left: 1.1875rem;
   color: #1f1f1f;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -162,7 +162,7 @@
   margin-top: 1.5625rem;
   gap: 0.9375rem;
   color: #1f1f1f;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 500;
   line-height: 1;
@@ -197,7 +197,7 @@
   padding: 0;
   overflow: hidden;
   color: #1f1f1f;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
@@ -221,7 +221,7 @@
   border-radius: 6.25rem;
   background: #9153e1;
   color: #fff;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.1;

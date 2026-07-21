@@ -72,7 +72,7 @@
   display: inline-block;
   position: absolute;
   right: 0px;
-  top: 0.4375rem;  padding-left: 0.875rem;  padding-right: 0.875rem;  padding-top: 0.375rem;  padding-bottom: 0.4688rem;  border-radius: 6.25rem;  font-size: 1rem;  line-height: 1rem;  font-family: "Mulish", sans-serif;
+  top: 0.4375rem;  padding-left: 0.875rem;  padding-right: 0.875rem;  padding-top: 0.375rem;  padding-bottom: 0.4688rem;  border-radius: 6.25rem;  font-size: 1rem;  line-height: 1rem;  font-family: var(--font-family-base);
   font-weight: 500;
   color: var(--color-violet);
   border: 1px solid var(--color-violet);
@@ -132,7 +132,7 @@
 }
 .modal-menu-item:hover .modal-menu-item__text {
   transition: 0.4s ease;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
 }
 
@@ -143,14 +143,14 @@
 
 .modal-menu-item--all-practices .modal-menu-item__text {
   color: var(--color-violet, #9153e1);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.125rem;
   line-height: 1.5;
 }
 
 .modal-menu-item--all-practices:hover .modal-menu-item__text {
   color: var(--color-violet, #9153e1);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.5;
@@ -244,7 +244,7 @@
     border: 1px solid var(--color-white);
     border-radius: 6.25rem;
     color: var(--color-white);
-    font: 400 0.875rem/1 "Mulish", sans-serif;
+    font: 400 0.875rem/1 var(--font-family-base);
     text-decoration: none;
   }
   .modal-mobile-menu-lk .lk-mobile-menu-rate svg {
@@ -356,7 +356,7 @@
     color: #fff;
     font-size: 1rem;
     line-height: 1.1;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 400;
     text-decoration: none;
     width: 100%;
@@ -388,7 +388,7 @@
     font-size: 1rem;
     line-height: 1.1;
     color: var(--color-white);
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 400;
   }
   .modal-mobile-menu-lk .personal-status__img {
@@ -399,7 +399,7 @@
     margin-top: 0;
     padding: 1rem 0.9375rem;
     color: var(--color-white);
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 400;
     font-size: 1rem;
   }
@@ -423,7 +423,7 @@
     border-radius: 50%;
     background: var(--color-green);
     color: #1f1f1f;
-    font: 600 0.75rem/1 "Mulish", sans-serif;
+    font: 600 0.75rem/1 var(--font-family-base);
   }
   .modal-mobile-menu-lk .sidebar-menu__item-icon,
   .modal-mobile-menu-lk .sidebar-exit__icon {
@@ -502,7 +502,7 @@
   }
   .mobile-menu-inner .btn span {
     white-space: nowrap;
-    font-size: 1rem;    font-family: "Mulish", sans-serif;
+    font-size: 1rem;    font-family: var(--font-family-base);
     font-weight: 500;
   }
   .mobile-menu {
@@ -558,7 +558,7 @@
   .mobile-menu-main-item span {
     display: block;
     padding-right: 1.5625rem;    font-size: 1rem;    color: var(--color-black);
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 500;
   }
   .mobile-menu-main-item:first-child::after {
@@ -681,7 +681,7 @@
     margin-top: 0.25rem;
     font-size: 0.6875rem;
     line-height: 1.15;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 500;
     color: var(--color-violet);
   }
@@ -749,7 +749,7 @@
   .mobile-menu-sub-item span {
     display: block;
     padding-right: 3.125rem;    font-size: 1rem;    color: var(--color-black);
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 500;
   }
   .mobile-menu-sub-item::after {
@@ -878,7 +878,7 @@
     border-radius: 0.4375rem;
     background: #fff;
     color: #1f1f1f;
-    font: 400 0.875rem/1 "Mulish", sans-serif;
+    font: 400 0.875rem/1 var(--font-family-base);
   }
 
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-switches__item.active {
@@ -890,7 +890,7 @@
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-switch-unavailable {
     margin: 0 0 0 0.1875rem;
     padding: 0;
-    font: 400 0.5rem/1 "Mulish", sans-serif;
+    font: 400 0.5rem/1 var(--font-family-base);
     color: #9153e1;
   }
 
@@ -933,7 +933,7 @@
     min-width: 0;
     padding: 0;
     color: #1f1f1f;
-    font: 500 1rem/normal "Mulish", sans-serif;
+    font: 500 1rem/normal var(--font-family-base);
   }
 
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-sub-item__chevron {
@@ -995,8 +995,8 @@
     border-radius: 6.25rem;
     background: rgba(145, 83, 225, 0.07);
     color: #1f1f1f;
-    font-family: "Mulish", sans-serif; font-weight: 400;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 400;
+    font-family: var(--font-family-base);
     font-size: 0.875rem;
     line-height: 1;
     text-decoration: none;
@@ -1017,8 +1017,8 @@
     border: 0;
     background: transparent;
     color: #1f1f1f;
-    font-family: "Mulish", sans-serif; font-weight: 500;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 500;
+    font-family: var(--font-family-base);
     font-size: 1rem;
     line-height: 1;
     cursor: pointer;

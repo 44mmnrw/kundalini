@@ -30,7 +30,7 @@
   color: var(--color-violet);
   font-size: 1rem;
   line-height: 1;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 500;
 }
 .post-intro .article-time {
@@ -41,7 +41,7 @@
   font-size: 1.125rem;
   line-height: 1.5;
   padding-left: 0;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 400;
 }
 .post-intro .article-time .article-time__icon {
@@ -174,7 +174,7 @@
 .post-main .wp-block-quote::after {
   position: absolute;
   color: var(--color-black);
-  font-family: "Mulish", sans-serif; font-weight: 700;
+  font-family: var(--font-family-base); font-weight: 700;
   font-size: 3.5rem;
   line-height: 1;
 }
@@ -192,7 +192,7 @@
   margin: 0;
   font-size: 1.125rem;
   line-height: 1.5;
-  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: var(--font-family-base); font-weight: 400;
   font-style: italic;
 }
 .post-main .wp-block-quote cite {
@@ -201,7 +201,7 @@
   color: var(--color-black);
   font-size: 1.125rem;
   line-height: 1.4;
-  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: var(--font-family-base); font-weight: 600;
   font-style: normal;
 }
 .post-main .wp-block-quote cite::before,
@@ -231,7 +231,7 @@
   border-radius: 50%;
   background: var(--color-violet);
   color: #fff;
-  font-family: "Mulish", sans-serif; font-weight: 700;
+  font-family: var(--font-family-base); font-weight: 700;
   font-size: 0.875rem;
   line-height: 1.375rem;
   text-align: center;
@@ -241,7 +241,7 @@
   color: var(--color-black);
   font-size: 1.125rem;
   line-height: 1.4;
-  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: var(--font-family-base); font-weight: 600;
   font-style: normal;
 }
 .post-main .wp-block-pullquote cite {
@@ -293,13 +293,13 @@
 .post-main table th {
   font-size: 1.125rem;
   line-height: 1.5;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .post-main table tbody tr:first-child td {
   font-size: 1.125rem;
   line-height: 1.5;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .post-main table td {
@@ -307,7 +307,7 @@
   line-height: normal;
 }
 .post-main table td:first-child {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
   line-height: 1.1;
 }
@@ -322,7 +322,7 @@
   font-size: 1.125rem;  line-height: 1.71em;
   padding-left: 1.6875rem;}
 .post-main ul li b {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 .post-main ul li::before {
@@ -341,7 +341,7 @@
   border-radius: 1.25rem;  margin-top: 2.875rem;}
 .post-main .praktika-notice p {
   font-size: 1.125rem;  line-height: 1.4em;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
 }
 .post-main .praktika-quote {
@@ -392,7 +392,7 @@
   padding-top: 0.9375rem;  padding-bottom: 0.7625rem;  padding-right: 0.625rem;  border-bottom: 1px solid rgba(31, 31, 31, 0.6);
 }
 .post-table-col span b {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 
@@ -430,7 +430,7 @@
 
 .post-author-name {
   display: block;
-  font-size: 1.125rem;  font-family: "Mulish", sans-serif;
+  font-size: 1.125rem;  font-family: var(--font-family-base);
   font-weight: 600;
 }
 
@@ -481,7 +481,7 @@
 }
 
 .post-comments-yoga__title {
-  font-family: "Mulish", sans-serif; font-weight: 700;
+  font-family: var(--font-family-base);
   font-weight: normal;
   font-size: 2rem;
   line-height: 1.1;
@@ -490,7 +490,7 @@
 
 .post-comments .comments-title,
 .post-comments .comment-reply-title {
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
   font-size: 1.5rem;
   margin: 0 0 1.25rem;
@@ -519,7 +519,7 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: var(--font-family-base); font-weight: 400;
   font-size: 1rem;
   padding: 0.75rem 1rem;
   border: 1px solid rgba(31, 31, 31, 0.2);
@@ -533,7 +533,7 @@
 }
 
 .post-comments .form-submit .submit {
-  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: var(--font-family-base); font-weight: 600;
   cursor: pointer;
   padding: 0.75rem 1.5rem;
   border: 0;
@@ -691,7 +691,7 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     color: var(--color-black);
-    font-family: "Mulish", sans-serif; font-weight: 400;
+    font-family: var(--font-family-base); font-weight: 400;
     font-size: 1rem;
     line-height: 1.3;
     word-break: normal;
@@ -706,7 +706,7 @@
     white-space: normal;
     font-size: 1rem;
     color: var(--color-black);
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 600;
   }
   .post-main table td[data-label=""]::before {
@@ -733,7 +733,7 @@
   .post-table-col::before {
     display: inline-block;
     width: calc(50% - 0.9375rem);    font-size: 1rem;    color: var(--color-black);
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 600;
   }
   .post-table-col:nth-child(1)::before {
@@ -747,11 +747,11 @@
   }
   .post-table-col span {
     width: calc(50% - 0.3125rem);    display: inline-block;
-    font-family: "Mulish", sans-serif; font-weight: 400;
+    font-family: var(--font-family-base); font-weight: 400;
     color: #646464;
   }
   .post-table-col span b {
-    font-family: "Mulish", sans-serif; font-weight: 400;
+    font-family: var(--font-family-base); font-weight: 400;
     color: #646464;
   }
 }

@@ -44,7 +44,7 @@
   width: 100%;
   max-width: 100%;
   text-align: left;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0;
@@ -75,8 +75,8 @@
 }
 
 .ways-item {
-  font-size: 0.875rem;  font-family: "Mulish", sans-serif; font-weight: 400;
-  font-size: 0.875rem;  font-family: "Mulish", sans-serif;
+  font-size: 0.875rem;  font-family: var(--font-family-base); font-weight: 400;
+  font-size: 0.875rem;  font-family: var(--font-family-base);
 }
 
 @media (max-width: var(--yoga-below-tight-desktop)) {
@@ -121,7 +121,7 @@
   }
 
   .single-practice #section-ways h2.ways-heading {
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-weight: 700;
     font-size: 1.6875rem;
     line-height: 1.3;

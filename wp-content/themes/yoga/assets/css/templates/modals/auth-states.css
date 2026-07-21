@@ -46,7 +46,7 @@
 
   .modal-login-inner__slide_succes.active > p {
     margin: 0 0 1.25rem;
-    font: 400 1rem/1.25 "Mulish", sans-serif;
+    font: 400 1rem/1.25 var(--font-family-base);
     text-align: left;
   }
 
@@ -56,7 +56,7 @@
     border-radius: 0.1875rem;
     background: #ddf354;
     color: #1f1f1f;
-    font: 400 1rem/1.25 "Mulish", sans-serif;
+    font: 400 1rem/1.25 var(--font-family-base);
     text-align: center;
   }
 
@@ -86,8 +86,8 @@
   .modal-login-inner__slide_succes.active .loggin-back__link {
     margin: 0;
     color: #646464;
-    font-family: "Mulish", sans-serif; font-weight: 600;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 600;
+    font-family: var(--font-family-base);
     font-size: 1rem;
     line-height: 1.1;
     text-decoration: none;
@@ -101,13 +101,13 @@
   .modal-login.active .modal-login-inner { display: flex; flex: 1 1 auto; flex-direction: column; width: 100%; height: 100%; min-height: 0; max-height: none; margin: 0; padding: calc(env(safe-area-inset-top) + 20px) 1.25rem calc(env(safe-area-inset-bottom) + 30px); border-radius: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .modal-login-inner__slide[data-target="1"].active { position: relative; display: flex; flex: 0 0 auto; box-sizing: border-box; width: 100%; min-width: 0; min-height: 100%; margin: 0; padding: 0; flex-direction: column; align-items: stretch; justify-content: center; }
   .modal-login-inner__slide[data-target="1"].active .login-slide-switches { flex: 0 0 auto; }
-  .modal-login-inner__slide[data-target="1"].active .login-slide-switches h3 { font: 700 1.625rem/1 "Mulish", sans-serif; }
+  .modal-login-inner__slide[data-target="1"].active .login-slide-switches h3 { font: 700 1.625rem/1 var(--font-family-base); }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login { display: flex; flex: 0 0 auto; flex-direction: column; gap: 1.25rem; margin-top: 1.25rem; padding: 0; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input-password,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .btn { width: 100%; margin: 0; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-form-links { width: 100%; margin: 0.75rem 0 0; }
-  .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border: 1px solid var(--input_stroke_dark_bg, #383838); border-radius: 100px; font: 400 1.125rem/1.5 "Mulish", sans-serif; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border: 1px solid var(--input_stroke_dark_bg, #383838); border-radius: 100px; font: 400 1.125rem/1.5 var(--font-family-base); }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login .btn { height: 3.8125rem; margin: 0; line-height: 3.8125rem; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-smartcaptcha { margin-top: 0; }
   .modal-login-inner__slide[data-target="1"].active .login-form-links { display: flex; gap: 1.875rem; justify-content: center; margin-top: 0; }
@@ -144,7 +144,7 @@
 
   .modal-login-inner__slide[data-target="2"].active .login-slide-switches h3 {
     width: 100%;
-    font: 700 1.625rem/1 "Mulish", sans-serif;
+    font: 700 1.625rem/1 var(--font-family-base);
     text-align: center;
   }
 
@@ -174,7 +174,7 @@
     padding: 0 1.875rem;
     border: 1px solid var(--input_stroke_dark_bg, #383838);
     border-radius: 100px;
-    font: 400 1.125rem/1.5 "Mulish", sans-serif;
+    font: 400 1.125rem/1.5 var(--font-family-base);
   }
 
   .modal-login-inner__slide[data-target="2"].active .registration-consents {
@@ -184,7 +184,7 @@
 
   .modal-login-inner__slide[data-target="2"].active .registration-consent {
     gap: 0.75rem;
-    font: 400 0.875rem/1.15 "Mulish", sans-serif;
+    font: 400 0.875rem/1.15 var(--font-family-base);
   }
 
   .modal-login-inner__slide[data-target="2"].active .registration-consent input {
@@ -208,8 +208,8 @@
 
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob .loggin-back__link {
     margin: 0;
-    font-family: "Mulish", sans-serif; font-weight: 600;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 600;
+    font-family: var(--font-family-base);
     font-size: 1rem;
     line-height: 1.1;
     text-decoration: none;
@@ -251,14 +251,14 @@
 
   .modal-login-inner__slide[data-target="3"].active .login-slide-switches h3 {
     width: 100%;
-    font: 700 1.625rem/1 "Mulish", sans-serif;
+    font: 700 1.625rem/1 var(--font-family-base);
     text-align: center;
   }
 
   .modal-login-inner__slide[data-target="3"].active > p {
     width: 100%;
     margin: 0.625rem 0 0;
-    font: 400 1rem/1.2 "Mulish", sans-serif;
+    font: 400 1rem/1.2 var(--font-family-base);
     text-align: center;
   }
 
@@ -279,7 +279,7 @@
     padding: 0 1.875rem;
     border: 1px solid var(--input_stroke_dark_bg, #383838);
     border-radius: 100px;
-    font: 400 1.125rem/1.5 "Mulish", sans-serif;
+    font: 400 1.125rem/1.5 var(--font-family-base);
   }
 
   .modal-login-inner__slide[data-target="3"].active .form_recovery > .btn {
@@ -304,8 +304,8 @@
 
   .modal-login-inner__slide[data-target="3"].active .loggin-back__link {
     margin: 0;
-    font-family: "Mulish", sans-serif; font-weight: 600;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 600;
+    font-family: var(--font-family-base);
     font-size: 1rem;
     line-height: 1.1;
     text-decoration: none;
@@ -341,7 +341,7 @@
     width: 100%;
     margin: 0;
     color: #1f1f1f;
-    font: 400 1rem/1.25 "Mulish", sans-serif;
+    font: 400 1rem/1.25 var(--font-family-base);
     text-align: center;
   }
 
@@ -352,7 +352,7 @@
     border-radius: 0.1875rem;
     background: #ddf354;
     color: #1f1f1f;
-    font: 400 1rem/1.25 "Mulish", sans-serif;
+    font: 400 1rem/1.25 var(--font-family-base);
     text-align: center;
   }
 
@@ -388,8 +388,8 @@
   .modal-login-inner__slide_succes.active .loggin-back__link {
     margin: 0;
     color: #1f1f1f;
-    font-family: "Mulish", sans-serif; font-weight: 600;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base); font-weight: 600;
+    font-family: var(--font-family-base);
     font-size: 1rem;
     line-height: 1.1;
     text-decoration: none;
@@ -445,6 +445,6 @@
   .modal-login-inner__slide[data-target="2"].active { padding: 0; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register { gap: 0.625rem; margin-top: 1rem; }
   .modal-login-inner__slide[data-target="2"].active .registration-consents { margin: 0.9375rem 0; }
-  .modal-login-inner__slide[data-target="2"].active > .login-switch-link--mobile { display: block; align-self: center; margin-top: 1.375rem; color: #1f1f1f; font: 600 1rem/1.1 "Mulish", sans-serif; text-decoration: none; cursor: pointer; }
+  .modal-login-inner__slide[data-target="2"].active > .login-switch-link--mobile { display: block; align-self: center; margin-top: 1.375rem; color: #1f1f1f; font: 600 1rem/1.1 var(--font-family-base); text-decoration: none; cursor: pointer; }
   .modal-login-inner__slide[data-target="2"].active > .registration-vk-link { margin: 2.875rem auto 0; }
 }

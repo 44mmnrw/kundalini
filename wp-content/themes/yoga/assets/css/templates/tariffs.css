@@ -110,7 +110,7 @@
   letter-spacing: -0.154px;
   text-transform: uppercase;
   text-align: center;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
   white-space: nowrap;}
 .tariff .btn .btn-icon,
@@ -142,8 +142,8 @@
   color: #4A4A4A;
   font-size: 1rem;}
 .tariff-price b {
-  font-family: "Mulish", sans-serif; font-weight: 700;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base); font-weight: 700;
+  font-family: var(--font-family-base);
   color: var(--color-black);
   font-size: 2.5rem;  padding-right: 0.125rem;}
 

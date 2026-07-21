@@ -60,7 +60,7 @@
 }
 
 .question-success__text h1 {
-  font-family: 'Mulish', sans-serif;
+  font-family: var(--font-family-base);
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.1;
@@ -87,7 +87,7 @@
   border-radius: 31.25rem;
   background: #1f1f1f;
   color: #e8ff57;
-  font-family: 'Mulish', sans-serif;
+  font-family: var(--font-family-base);
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;
