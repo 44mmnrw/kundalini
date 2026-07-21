@@ -12,7 +12,7 @@ $mobile_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_ini
 $mobile_lk_tariff = function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
 $mobile_lk_tariff_label = is_array($mobile_lk_tariff) && !empty($mobile_lk_tariff['product_name']) ? (string) $mobile_lk_tariff['product_name'] : __('Подписка не активна', 'yoga');
 $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array_fill_keys(array('library', 'tariffs', 'about', 'blog', 'contacts', 'faq'), home_url('/'));
-?><?php yoga_render_lk_menu_sprite(); ?><div class="modal-mobile-menu-lk">
+?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
 			<use href="#lk-modal-close" width="100%" height="100%"></use>
