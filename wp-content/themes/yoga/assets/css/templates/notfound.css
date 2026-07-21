@@ -108,7 +108,7 @@
 .notfound__info h3 {
   margin: 0;
   color: var(--color-black);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.4375rem;
   font-weight: 700;
   line-height: 1.1;
@@ -117,7 +117,7 @@
 .notfound__info p {
   margin: 0.3125rem 0 0;
   color: var(--color-black);
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;

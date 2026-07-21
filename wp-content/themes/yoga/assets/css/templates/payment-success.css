@@ -45,7 +45,7 @@
 .yoga-payment-success__title {
 	margin: 0;
 	width: 100%;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-weight: 700;
 	font-size: 3.125rem;
 	line-height: 1.3;
@@ -56,15 +56,15 @@
 .yoga-payment-success__lead {
 	margin: 0;
 	max-width: 33.125rem;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1.125rem;
 	line-height: 1.5;
 	color: var(--color-black);
 }
 
 .yoga-payment-success__tariff {
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-weight: 700;
 	color: var(--color-violet);
 }
@@ -82,8 +82,8 @@
 
 .yoga-payment-success__panel-label {
 	margin: 0;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: #646464;
@@ -91,7 +91,7 @@
 
 .yoga-payment-success__panel-value {
 	margin: 0;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-weight: 700;
 	font-size: 1.25rem;
 	line-height: 1.1;
@@ -114,8 +114,8 @@
 }
 
 .yoga-payment-success__btn span {
-	font-family: "Mulish", sans-serif; font-weight: 500;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 500;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: var(--color-white);
@@ -134,8 +134,8 @@
 	width: 100%;
 	max-width: 33.125rem;
 	padding-top: 0.625rem;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: #646464;

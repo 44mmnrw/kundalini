@@ -26,7 +26,7 @@
   margin-bottom: 1.875rem;}
 .about-text p b {
   font: inherit;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 700;
 }
 
@@ -163,7 +163,7 @@
   display: inline-block;
   position: absolute;
   left: 0px;
-  top: 0.875rem;  font-family: "Mulish", sans-serif;
+  top: 0.875rem;  font-family: var(--font-family-base);
   font-weight: 600;
 }
 
@@ -252,7 +252,7 @@
   .about-year {
     padding-top: 3.9375rem;  }
   .about-year span {
-    font-size: 1.125rem;    font-family: "Mulish", sans-serif;
+    font-size: 1.125rem;    font-family: var(--font-family-base);
     font-weight: 700;
     top: 1rem;  }
 }
@@ -400,7 +400,7 @@
   .section-about .about-year span {
     position: static;
     display: block;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-size: 1.125rem;
     font-weight: 700;
     line-height: 1.5;

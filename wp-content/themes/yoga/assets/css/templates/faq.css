@@ -92,7 +92,7 @@
   position: relative;
   padding-left: 2.5rem;
   font-size: 1.125rem;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 600;
 }
 
@@ -103,8 +103,8 @@
   display: inline-block;
   padding-right: 0.625rem;
   font-size: 1.25rem;
-  font-family: "Mulish", sans-serif; font-weight: 400;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-family-base); font-weight: 400;
+  font-family: var(--font-family-base);
 }
 
 .faq__questions .question-icon {
@@ -432,7 +432,7 @@
     margin: 0 auto;
   }
   .faq__form .form-questions h4 {
-    font-family: "Mulish", sans-serif;
+    font-family: var(--font-family-base);
     font-size: 1.625rem;
     font-weight: 700;
     line-height: 1;

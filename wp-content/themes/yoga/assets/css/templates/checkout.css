@@ -18,8 +18,8 @@
 	align-items: center;
 	flex-wrap: wrap;
 	margin-bottom: 1.875rem;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	line-height: 1;
 }
@@ -53,7 +53,7 @@
 .yoga-checkout__title {
 	margin: 0 0 1.25rem;
 	width: 100%;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-weight: 700;
 	font-size: 3.125rem;
 	line-height: 1.3;
@@ -141,8 +141,8 @@
 	padding: 0.25rem 0.75rem;
 	border-radius: 62.5rem;
 	background: var(--color-white);
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 0.75rem;
 	line-height: normal;
 	color: #a75ee8;
@@ -150,8 +150,8 @@
 
 .yoga-checkout-tariff__name {
 	margin: 0;
-	font-family: "Mulish", sans-serif; font-weight: 700;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 700;
+	font-family: var(--font-family-base);
 	font-size: 1.75rem;
 	line-height: 1.1;
 	color: var(--color-black);
@@ -159,8 +159,8 @@
 
 .yoga-checkout-tariff__period {
 	margin: 0;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: #646464;
@@ -183,8 +183,8 @@
 	border: none;
 	background: transparent;
 	color: var(--color-violet);
-	font-family: "Mulish", sans-serif; font-weight: 500;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 500;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	line-height: 1.2;
 	cursor: pointer;
@@ -204,8 +204,8 @@
 	border: none;
 	background: transparent;
 	color: var(--color-violet);
-	font-family: "Mulish", sans-serif; font-weight: 500;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 500;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	line-height: 1.3;
 	text-decoration: underline;
@@ -243,8 +243,8 @@
 
 .yoga-checkout-tariff__total-label {
 	flex: 1 1 auto;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: #646464;
@@ -252,8 +252,8 @@
 
 .yoga-checkout-tariff__total-value {
 	flex-shrink: 0;
-	font-family: "Mulish", sans-serif; font-weight: 700;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 700;
+	font-family: var(--font-family-base);
 	font-size: 1.75rem;
 	line-height: 1.1;
 	color: var(--color-black);
@@ -274,8 +274,8 @@
 
 .yoga-checkout-block__title {
 	margin: 0;
-	font-family: "Mulish", sans-serif; font-weight: 700;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 700;
+	font-family: var(--font-family-base);
 	font-size: 1.25rem;
 	line-height: 1.1;
 	color: var(--color-black);
@@ -344,8 +344,8 @@
 	border: none;
 	background: transparent;
 	outline: none;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1.125rem;
 	line-height: 1.5;
 	color: var(--color-black);
@@ -424,8 +424,8 @@
 }
 
 .yoga-checkout-payment__label {
-	font-family: "Mulish", sans-serif; font-weight: 600;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 600;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	line-height: 1.1;
 	text-align: center;
@@ -504,8 +504,8 @@
 }
 
 .yoga-checkout-checkbox__text {
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: var(--color-black);
@@ -532,8 +532,8 @@
 
 .yoga-checkout-summary__title {
 	margin: 0;
-	font-family: "Mulish", sans-serif; font-weight: 700;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 700;
+	font-family: var(--font-family-base);
 	font-size: 1.25rem;
 	line-height: 1.1;
 	color: #1c1c1c;
@@ -556,8 +556,8 @@
 
 .yoga-checkout-summary__line-label {
 	flex: 1 1 auto;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1rem;
 	line-height: normal;
 	color: #646464;
@@ -565,8 +565,8 @@
 
 .yoga-checkout-summary__line-value {
 	flex-shrink: 0;
-	font-family: "Mulish", sans-serif; font-weight: 600;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 600;
+	font-family: var(--font-family-base);
 	font-size: 1.125rem;
 	line-height: 1.4;
 	color: var(--color-black);
@@ -613,7 +613,7 @@
 	border: none;
 	background: transparent;
 	outline: none;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	font-weight: 400;
 	line-height: normal;
@@ -622,7 +622,7 @@
 
 .yoga-checkout-promo__input::placeholder {
 	color: #646464;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	font-weight: 400;
 	line-height: normal;
@@ -634,8 +634,8 @@
 	border: none;
 	padding: 0;
 	background: transparent;
-	font-family: "Mulish", sans-serif; font-weight: 600;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 600;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	line-height: normal;
 	color: var(--color-violet);
@@ -656,16 +656,16 @@
 }
 
 .yoga-checkout-summary__total-label {
-	font-family: "Mulish", sans-serif; font-weight: 700;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 700;
+	font-family: var(--font-family-base);
 	font-size: 1.25rem;
 	line-height: 1.1;
 	color: var(--color-black);
 }
 
 .yoga-checkout-summary__total-value {
-	font-family: "Mulish", sans-serif; font-weight: 700;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 700;
+	font-family: var(--font-family-base);
 	font-size: 1.75rem;
 	line-height: 1.1;
 	color: var(--color-black);
@@ -683,8 +683,8 @@
 .yoga-checkout-summary__legal {
 	margin: 0;
 	max-width: 100%;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 0.75rem;
 	line-height: normal;
 	text-align: center;
@@ -749,7 +749,7 @@
 }
 
 .yoga-checkout-empty__copy h1 {
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-size: 1.75rem;
 	font-weight: 700;
 	line-height: 1.1;
@@ -757,7 +757,7 @@
 }
 
 .yoga-checkout-empty__copy p {
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-size: 1.3rem;
 	font-weight: 400;
 	line-height: 1;
@@ -777,7 +777,7 @@
 }
 
 .yoga-checkout-empty__button > span:first-child {
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base);
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 1;
@@ -814,8 +814,8 @@
 
 .yoga-checkout-auth__text {
 	margin: 0 0 1.5rem;
-	font-family: "Mulish", sans-serif; font-weight: 400;
-	font-family: "Mulish", sans-serif;
+	font-family: var(--font-family-base); font-weight: 400;
+	font-family: var(--font-family-base);
 	font-size: 1.125rem;
 	color: #646464;
 }
