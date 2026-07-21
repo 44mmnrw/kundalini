@@ -117,6 +117,11 @@
   .modal-login-inner__slide[data-target="1"].active .login-vk-link::before { display: none; }
   .modal-login-inner__slide[data-target="1"].active .login-vk-link > span { text-decoration: underline; text-underline-offset: 0.125rem; }
 
+  /* The login form fits in the viewport; do not turn it into a scroll container. */
+  .modal-login:has(.modal-login-inner__slide[data-target="1"].active) .modal-login-inner {
+    overflow: hidden;
+  }
+
   .modal-login-inner__slide[data-target="2"].active {
     position: relative;
     display: flex;
