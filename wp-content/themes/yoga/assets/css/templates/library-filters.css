@@ -1,12 +1,8 @@
-/* Мобильный экран фильтров библиотеки — Figma pop_up (node 582:10993).
- * Разметка должна быть ВНЕ .library-form и .section-library: иначе z-index родителя (4)
- * держит fixed-панель под хедером, а overflow-x у секции обрезает скругления. */
-
 .library-filters-screen {
   display: none;
 }
 
-/* Литералы в условии: Safari и часть движков не применяют @media с var(); иначе экран фильтров вечно display:none */
+/* Техническое примечание. */
 @media (min-width: 1025px) {
   /* Не display:none: input остаются источником сериализуемого состояния для общего JS-модуля. */
   .library-filters-screen {
@@ -93,7 +89,6 @@
     }
   }
 
-  /* Кнопка закрытия: Figma top 12px, right 10px, 51×51, зелёный круг */
   .library-filters-screen__close {
     position: absolute;
     top: 0.75rem;
@@ -149,7 +144,6 @@
     transform: translate(-50%, -50%) rotate(-45deg);
   }
 
-  /* Контент: Figma left 60px от края экрана − 40px край панели = 20px от края панели; top 88px */
   .library-filters-screen__scroll {
     flex: 1;
     min-height: 0;

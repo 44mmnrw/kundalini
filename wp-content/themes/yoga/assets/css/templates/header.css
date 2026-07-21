@@ -1,28 +1,17 @@
-/**
- * Единая шапка главного сайта и ЛК.
- * Desktop: Figma header 2098:25907.
- * Mobile: Figma header_mobile 593:16211 — py 12px, px 10px, круги 48px, gap 7px, лого 44×28, иконки внутри круга 24px.
- */
-
 :root {
   --header-desktop-logo-w: 3.125rem;
   --header-desktop-logo-h: 2rem;
   --header-desktop-logo-nav-gap: 1.875rem;
   --header-desktop-nav-item-gap: 2.1875rem;
   --header-desktop-lk-gap: 0.625rem;
-  /* Figma header_mobile: 12px */
   --header-mobile-py: 0.75rem;
-  /* Figma: 48px круги log_in + burger */
   --header-mobile-icon-size: 3rem;
-  /* Внутри круга 48px: Figma User_duotone_line / три линии burger — графика 24×24 */
-  --header-mobile-figma-icon-inner: calc(24 / 16 * 1rem);
-  /* Figma 2266:20647: gap 5px между иконками справа */
+  --header-mobile-icon-inner: calc(24 / 16 * 1rem);
   --header-mobile-icon-gap: 0.3125rem;
   --header-mobile-border: 1px solid rgba(145, 83, 225, 0.07);
-  /* Figma: logo 44×28 */
   --header-mobile-logo-w: 2.75rem;
   --header-mobile-logo-h: 1.75rem;
-  /* Inset от viewport для fixed .modal-close = позиция .burger (py строки + py центрирование; справа — gutter контейнера) */
+  /* Отступ от вьюпорта для fixed .modal-close соответствует позиции .burger. */
   --header-mobile-close-top: max(
     0px,
     calc((var(--header-bar-height) - var(--header-mobile-icon-size)) / 2)
@@ -254,7 +243,6 @@ header > .container > .row > .header-content {
   flex-shrink: 0;
   height: auto;
   line-height: normal;
-  /* Figma button_green_border: py 16px, px 15px */
   padding: 1rem 0.9375rem;
 }
 
@@ -946,7 +934,6 @@ header > .container > .row > .header-content {
   }
 }
 
-/* Mobile notifications popup — Figma 2341:26152. */
 @media (max-width: 1024px) {
   .header-lk .lk-notifications-popup {
     position: fixed;
@@ -1147,7 +1134,7 @@ header > .container > .row > .header-content {
     box-shadow: none;
   }
 
-  /* Grid надёжнее flex: при скрытом nav нет «схлопывания» полосы — лого слева, ЛК справа */
+  /* Авторизованный: три колонки (лого | меню | ЛК) */
   .header-content {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -1268,8 +1255,8 @@ header > .container > .row > .header-content {
   }
 
   .login-icon svg {
-    width: var(--header-mobile-figma-icon-inner);
-    height: var(--header-mobile-figma-icon-inner);
+    width: var(--header-mobile-icon-inner);
+    height: var(--header-mobile-icon-inner);
   }
 
   .login-icon.login-icon_logged {

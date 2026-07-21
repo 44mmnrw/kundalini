@@ -1,11 +1,9 @@
-/* Sidebar личного кабинета */
+/* Боковое меню личного кабинета */
 .sidebar {
   display: block;
-  position: absolute;
-  left: var(--lk-sidebar-left);
-  top: var(--header-bar-height);
-  z-index: 8;
+  grid-area: sidebar;
   width: 17.8125rem;
+  min-width: 0;
   background: #f6f6f9;
   border-radius: 1.875rem;
 }
@@ -18,23 +16,40 @@
 .sidebar-menu-sep { display: block; width: 100%; height: 1px; margin: 1.25rem 0 0; padding: 0; border: none; background: rgba(31, 31, 31, 0.18); }
 .sidebar-menu-sep--before-logout { margin-top: 1.25rem; }
 .sidebar-menu-secondary { display: flex; flex-direction: column; gap: 0.3125rem; width: 100%; }
-.sidebar-menu-secondary__link { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 1rem 1.25rem; border-radius: 0.4375rem; box-sizing: border-box; font-family: "Mulish", sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.1; color: #fff; text-decoration: none; transition: 0.4s ease; }
+.sidebar-menu-secondary__link { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 1rem 1.25rem; border-radius: 0.4375rem; box-sizing: border-box; font-family: "Mulish", sans-serif; font-weight: 400; font-size: 1rem; line-height: 1.1; color: #fff; text-decoration: none; transition: 0.4s ease; }
 .sidebar-menu-secondary__link--library { padding-right: 0.625rem; }
 .sidebar-menu-secondary__link span { flex: 1 1 auto; min-width: 0; text-align: left; }
 .sidebar-menu-secondary__chevron { display: block; width: calc(1rem * 9 / 16); height: 1rem; flex-shrink: 0; color: inherit; }
 .sidebar-inner:has(.sidebar-menu-secondary) .sidebar-exit::before { display: none; }
 .sidebar-menu__item, .sidebar-exit { display: flex; align-items: center; width: 100%; min-height: 0; margin-top: 0; padding: 0.75rem 1.25rem; background: transparent; border-radius: 0.4375rem; color: #1f1f1f; transition: background-color 0.2s ease; cursor: pointer; box-sizing: border-box; }
-.sidebar-menu__item .sidebar-menu__label, .sidebar-exit .sidebar-menu__label { display: block; flex: 1 1 auto; min-width: 0; padding-left: 0.75rem; font-family: "Mulish", sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.1; color: #1f1f1f; transition: color 0.2s ease; }
+.sidebar-menu__item .sidebar-menu__label, .sidebar-exit .sidebar-menu__label { display: block; flex: 1 1 auto; min-width: 0; padding-left: 0.75rem; font-family: "Mulish", sans-serif; font-weight: 400; font-size: 1rem; line-height: 1.1; color: #1f1f1f; transition: color 0.2s ease; }
 .sidebar-menu__item.active, .sidebar-exit.active { background: #f4ecfc; }
 .sidebar-menu__item:hover, .sidebar-exit:hover { background: rgba(244, 236, 252, 0.72); }
 .sidebar-menu__item.active .sidebar-menu__label, .sidebar-exit.active .sidebar-menu__label { color: #1f1f1f; }
-.sidebar-menu__item-icon, .sidebar-exit__icon { position: relative; width: 1.25rem; height: 1.25rem; flex-shrink: 0; color: #1f1f1f; }
+.sidebar-menu__item-icon, .sidebar-exit__icon { display: grid; position: relative; width: 1.25rem; height: 1.25rem; flex-shrink: 0; place-items: center; color: #1f1f1f; }
 .sidebar-menu__item.active .sidebar-menu__item-icon, .sidebar-exit__icon { color: #1f1f1f; }
 .sidebar-menu__item-svg, .sidebar-exit__svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.sidebar-menu__badge { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 1.125rem; height: 1.125rem; margin-left: 0.5rem; border-radius: 50%; background: #9153e1; color: #fff; font-family: "Mulish", sans-serif; font-size: 0.75rem; line-height: 1; } font-weight: 600;
-.sidebar-menu__badge { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 1.125rem; height: 1.125rem; margin-left: 0.5rem; border-radius: 50%; background: #9153e1; color: #fff; font-family: "Mulish", sans-serif; font-size: 0.75rem; line-height: 1; }
+.sidebar-menu__item[data-target="3"] .sidebar-menu__item-svg { width: 1.1875rem; height: 1.0625rem; transform: translateX(0.5px); }
+.sidebar-menu__item[data-target="4"] .sidebar-menu__item-svg { width: 1.0625rem; height: 1.0625rem; transform: translateX(0.5px); }
+.sidebar-menu__item[data-target="7"] .sidebar-menu__item-svg { width: 21.17px; height: 21.56px; transform: translateX(0.5px); }
+.sidebar-menu__item[data-target="8"] .sidebar-menu__item-svg { width: 1rem; height: 1.125rem; transform: translateX(0.5px); }
 .sidebar-exit { margin-top: 0.625rem; padding-top: 1rem; padding-bottom: 1rem; position: relative; }
 .sidebar-exit::before { display: none; }
+
+@media (min-width: 1280px) {
+  .sidebar-menu__item .sidebar-menu__label,
+  .sidebar-exit .sidebar-menu__label,
+  .sidebar-menu-secondary__link {
+    font-weight: 600;
+  }
+
+  .sidebar-menu__item .sidebar-menu__label,
+  .sidebar-exit .sidebar-menu__label,
+  .sidebar-menu-secondary__link span {
+    align-self: flex-end;
+  }
+}
+
 @media (max-width: 1319px) {
   .sidebar { width: 17.8125rem; }
   .sidebar-inner { padding-left: 0.9375rem; padding-right: 0.9375rem; }
@@ -46,28 +61,34 @@
 @media (max-width: 1279px) { .sidebar { display: none; } }
 
 /* Оболочка ЛК и статус тарифа. */
-.body_lk { padding-top: var(--header-page-offset); max-width: none; --lk-sidebar-left: max(var(--container-inline-gutter), calc((100vw - 75rem) / 2)); }
+.body_lk { padding-top: var(--header-page-offset); max-width: none; }
 .body_lk .header { width: 100%; left: 0; right: auto; padding-left: 0; padding-right: 0; height: var(--header-bar-height); min-height: var(--header-bar-height); }
 .personal-status { position: relative; display: flex; align-items: center; padding: 0.4375rem 0.9375rem 0.4375rem 2.5625rem; background: rgba(145, 83, 225, 0.07); border-radius: 6.25rem; margin-right: 1.125rem; overflow: hidden; }
 .personal-status_empty { padding-left: 0.625rem; padding-right: 0.625rem; min-height: 2.125rem; }
 .personal-status_empty .personal-status__img { position: static; transform: none; }
 .personal-status span { display: block; }
 .personal-status__img { display: block; position: absolute; left: 0.9375rem; top: 50%; width: 1.25rem; height: 1.25rem; transform: translateY(-50%); color: var(--color-violet); }
-@media (max-width: 1319px) { .body_lk { --lk-sidebar-left: max(var(--container-inline-gutter), calc((100vw - 70rem) / 2)); } .body_lk .header { width: 100%; padding-left: 0; } }
+@media (max-width: 1319px) { .body_lk .header { width: 100%; padding-left: 0; } }
 @media (max-width: 1279px) { .body_lk .header { width: 100%; padding-left: 0; padding-right: 0; } }
 
-/* Section-lk */
-.body_lk {
-  --lk-sidebar-left: max(var(--container-inline-gutter, 1.25rem), calc((100vw - 75rem) / 2));
-}
+/* Секция личного кабинета. */
 .section-lk {
-  width: calc(75rem - 17.8125rem - 1.875rem);
-  margin-left: calc(var(--lk-sidebar-left, 0px) + 17.8125rem + 1.875rem);
-  padding-left: 0;
-  padding-right: 0;
   min-height: calc(100vh - 12.5rem);
 }
-.section-lk > .container {
+.lk-layout {
+  display: grid;
+  grid-template-columns: 17.8125rem minmax(0, 1fr);
+  grid-template-areas: "sidebar content";
+  gap: 2.5rem;
+  align-items: start;
+  width: min(75rem, calc(100% - 2 * var(--container-inline-gutter, 1.25rem)));
+  margin: 0 auto;
+}
+.lk-layout__content {
+  grid-area: content;
+  min-width: 0;
+}
+.lk-layout__content > .container {
   width: 100%;
   max-width: 100%;
   margin-left: 0;
@@ -76,16 +97,15 @@
   background: transparent;
 }
 
-/* Mobile LK shell: Figma uses a 320px content area on a 340px viewport. */
 @media (max-width: 767px) {
-  .section-lk > .container {
+  .lk-layout__content > .container {
     width: calc(100% - 2 * var(--container-inline-gutter, 10px));
     max-width: none;
     margin-left: auto;
     margin-right: auto;
   }
 
-  .section-lk > .container > .row,
+  .lk-layout__content > .container > .row,
   .section-lk .lk,
   .section-lk .lk__slides,
   .section-lk .lk-slide,
@@ -307,7 +327,6 @@
   }
 }
 
-/* Practice history preview — Figma 2113:21037. Data wiring follows with completion logic. */
 .practice-history-preview__list {
   display: flex;
   flex-direction: column;
@@ -668,7 +687,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3.125rem;
+  gap: 1.875rem;
   width: 100%;
   justify-content: flex-start;
   margin-top: 0;
@@ -1395,7 +1414,6 @@
   pointer-events: auto;
 }
 
-/* Subscription settings — Figma 2113:22097. */
 .lk-settings__slide_main {
   display: flex;
   flex-direction: column;
@@ -1975,13 +1993,11 @@
   padding-left: 5.625rem;}
 
 @media (max-width: 1319px) {
-  .body_lk {
-    --lk-sidebar-left: max(var(--container-inline-gutter, 1.25rem), calc((100vw - 70rem) / 2));
-  }
   .section-lk {
-    width: calc(70rem - 17.8125rem - 1.875rem);
-    margin-left: calc(var(--lk-sidebar-left, 0px) + 17.8125rem + 1.875rem);
-    padding-left: 0;
+    min-height: calc(100vh - 12.5rem);
+  }
+  .lk-layout {
+    width: min(70rem, calc(100% - 2 * var(--container-inline-gutter, 1.25rem)));
   }
   .lk-slide {
     padding-bottom: 5.625rem;  }
@@ -1997,11 +2013,11 @@
 }
 @media (max-width: 1279px) {
   .section-lk {
-    padding-left: 0px;
-    padding-right: 0px;
-    width: 100%;
-    margin-left: 0;
     min-height: 100vh;
+  }
+  .lk-layout {
+    display: block;
+    width: 100%;
   }
   .lk-form-item {
     margin-bottom: 0;
@@ -2321,13 +2337,17 @@
   margin-bottom: 0;
 }
 
+.lk-slide[data-target="1"] > .lk-page-header {
+  min-height: 0;
+  margin-bottom: 1.25rem;
+}
+
 .lk-page-header .lk-notifications-page__actions {
   position: static;
   flex: 0 0 auto;
   margin: 0;
 }
 
-/* Subscription settings — Figma 2113:24748. Keep every override inside this slide. */
 #lk-slide-settings > .lk-page-header {
   min-height: 2.1875rem;
   margin-bottom: 1.25rem;
@@ -2512,7 +2532,6 @@
     margin: 0;
   }
 
-  /* Настройки подписки — Figma 620:16031. */
   #lk-slide-settings > .lk-page-header {
     min-height: 0;
     margin: 0 0 1.25rem;

@@ -1,4 +1,4 @@
-/* Section-library */
+/* Техническое примечание. */
 .section-library {
   /* Не задавать overflow-x: hidden здесь: при overflow-y: visible браузер всё равно считает вертикальную ось как auto и обрезает выпадающие списки поиска */
   overflow: visible;
@@ -66,7 +66,7 @@
   z-index: 20;
   transition: 0.4s ease;
   box-sizing: border-box;
-  /* Одна высота строки: иначе блок категории (розовый) может стать выше инпута и «вылезти» из рамки */
+  /* Техническое примечание. */
   height: var(--library-search-row-height);
   /* не hidden — иначе обрезаются выпадающие .form-search-list / .form-cat-list */
   overflow: visible;

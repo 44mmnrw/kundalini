@@ -1,4 +1,3 @@
-/* Figma 1700:14537 — подтверждение отправки письма, desktop. */
 @media (min-width: 576px) {
   .modal-login.active {
     overflow: hidden;
@@ -402,7 +401,6 @@
   }
 }
 
-/* Figma 2266:23021 — mobile registration. */
 .login-switch-link--mobile { display: none; }
 @media (max-width: 575px) {
   .modal-login:has(.modal-login-inner__slide[data-target="2"].active) .modal-close { position: absolute; top: 0.625rem; right: 0.625rem; margin: 0; }

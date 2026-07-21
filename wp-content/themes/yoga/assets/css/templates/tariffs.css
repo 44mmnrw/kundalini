@@ -80,7 +80,6 @@
   margin-top: 0px;}
 .tariff .check-list__text {
   font-size: 1rem;  line-height: 1.28em;}
-/* Кнопка CTA в карточке тарифа и на checkout — Figma 593:15474 */
 .tariff .btn.btn_icon,
 .yoga-checkout-summary__submit.btn.btn_icon {
   display: flex;
@@ -308,7 +307,6 @@
     font-size: 1rem;  }
 }
 
-/* Desktop: тарифные карточки — Figma 265:4409, 265:4430, 265:4453, 265:4484 (ширина ≥1200px) */
 /* Один–три тарифа на широком экране: сохраняем штатный gap 20px и центрируем ряд. */
 @media (min-width: 1280px) {
   .tariffs-items__slide:has(> .tariff):not(:has(> .tariff:nth-child(4))) {
@@ -353,7 +351,7 @@
     min-height: 0;
   }
 
-  /* Цена + список: середина колонки, список с мин. высотой — нижний край текста совпадает между карточками. */
+  /* Зона заголовка: отступ до строки цены как в макете (y 40→190 ≈150px). */
   .section-tariffs.section-tariffs_single .tariff__center {
     flex: 1 1 auto;
     display: flex;
@@ -389,7 +387,6 @@
     margin-top: 0;
   }
 
-  /* Декор звёзд (px как в Dev Mode Figma при высоте карточки 644px) */
   .tariff_visual_1 .tariff__bg::after {
     left: 52px;
     top: 415px;

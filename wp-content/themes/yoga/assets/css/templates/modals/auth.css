@@ -1,4 +1,4 @@
-/* Modal-login */
+/* Модальное окно входа */
 .modal-login, .modal-addnewcard {
   display: flex;
   position: fixed;
@@ -196,7 +196,6 @@
   position: absolute;
 }
 
-/* Figma 2113:20632 — подтверждение электронной почты. */
 .modal-login.modal-login--email-confirmation {
   align-items: center;
   justify-content: center;
@@ -523,7 +522,6 @@
 
 }
 
-/* Figma 1700:17003 — полноэкранный мобильный вход. */
 @media (max-width: 575px) {
   .modal-login.active {
     width: 100%;
@@ -787,7 +785,6 @@ body.email-confirmation-is-open {
   left: calc(50% - 1.1875rem);  transform: translateX(-50%);
   margin-top: 1rem;}
 
-/* VK ID: Figma 1694:12743 — текст и логотип составляют одну центрированную группу. */
 .modal-login-inner__slide .form-link_vk.vkid-login-trigger {
   display: flex;
   width: max-content;
@@ -1004,7 +1001,6 @@ label.checkbox {
   display: inline-block;
 }
 
-/* Figma 1694:12743 — desktop login slide. */
 @media (min-width: 576px) {
   .modal-login.active:not(.modal-login--success) .modal-login-inner {
     width: 31.6875rem;

@@ -1,4 +1,3 @@
-/* YTR, шаг 1 — Figma 2113:22650 (delete_credit_card). */
 #ytr-modal-cancel-subscription.modal-default {
   display: flex;
   flex-direction: column;
@@ -10,7 +9,6 @@
   box-sizing: border-box;
 }
 
-/* Figma 2331:23220 — mobile card-deletion confirmation. */
 @media (max-width: 575px) {
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel,
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel.active {
@@ -225,7 +223,6 @@
   text-align: center;
 }
 
-/* Подтверждение удаления карты — Figma 2113:22871. */
 #ytr-modal-cancel-subscription-confirm.modal-default_carddel,
 #ytr-modal-cancel-subscription-confirm.modal-default_carddel.active {
   width: 28.5625rem;
@@ -485,7 +482,6 @@
   .modal-default_cardsucces .delcomm {
     min-height: 15rem;  }
 }
-/* Modal-addnewcard — Figma 2113:23344. */
 .modal-addnewcard {
   width: 0%;
 }
@@ -561,7 +557,6 @@
   caret-color: var(--color-black);
 }
 
-/* Figma 2113:23352 — disabled pill button. */
 #ytr-modal-bind-card .ytr-bind-card-submit-native {
   display: none !important;
 }
@@ -739,8 +734,6 @@
     min-width: 100% !important;
   }
 
-  /* Figma 2331:23431 — the card-binding flow is a full-screen mobile view,
-     not a bottom sheet. */
   #ytr-modal-bind-card.modal-addnewcard {
     width: 100%;
   }
@@ -793,7 +786,6 @@
   }
 }
 
-/* Figma 620:16482 — мобильный предпросмотр и удаление сохранённой карты. */
 @media (max-width: 575px) {
   #ytr-modal-cancel-subscription.modal-default,
   #ytr-modal-cancel-subscription.modal-default.active {
@@ -945,7 +937,6 @@
   }
 }
 
-/* Figma 2331:23285 — mobile card-deletion success state. */
 @media (max-width: 575px) {
   #ytr-modal-cancel-subscription-success.modal-default_cardsucces,
   #ytr-modal-cancel-subscription-success.modal-default_cardsucces.active {
@@ -1008,7 +999,6 @@
   }
 }
 
-/* Figma 2331:23220 — mobile card-deletion confirmation. */
 @media (max-width: 575px) {
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel,
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel.active {

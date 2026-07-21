@@ -371,7 +371,6 @@
   width: calc(100% + 1.25rem);  min-width: calc(100% + 1.25rem);  flex-wrap: wrap;
   padding-top: 0.625rem;}
 
-/* Результаты поиска — сетка карточек по макету Figma (node 486:7103): 3 колонки, gap 20px */
 .section-blog--search-results .blog-main {
   display: none !important;
 }
@@ -818,7 +817,6 @@
     font-family: "Mulish", sans-serif;
     font-weight: 400;
   }
-  /* Figma: рамка #9153E1, поле на всю ширину колонки (до 1279px). Block + absolute иконки — иначе input схлопывается */
   .section-blog-form .blog-form {
     padding-top: 1.25rem;
   }

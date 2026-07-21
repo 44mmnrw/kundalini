@@ -168,7 +168,6 @@
   padding-top: 3.125rem;
   background: transparent;
 }
-/* FAQ form: CSS fill with the Figma cutout applied as an SVG mask. */
 .faq__form-card-bg {
   position: absolute;
   inset: 0;
