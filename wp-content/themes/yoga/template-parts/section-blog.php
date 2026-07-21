@@ -245,17 +245,13 @@ if ($is_blog_search_ui) {
                                 </div>
 
                                 <div class="blog-article-item__date">
+                                    <?php $post_category = $get_article_category((int) get_the_ID()); ?>
+                                    <?php if ($post_category) : ?>
+                                        <div class="article-cat"><?php echo esc_html($post_category->name); ?></div>
+                                    <?php endif; ?>
                                     <time class="article-time">
                                         <?php echo get_the_date('j F, Y'); ?>
                                     </time>
-                                    <?php
-
-
-
-
-
-
-                                    ?>
                                 </div>
 
                                 <h4>
