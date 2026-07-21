@@ -426,6 +426,21 @@
     transform: translateX(0);
   }
 
+  .modal-login-inner__slide[data-target="1"].active .login-vk-link {
+    right: auto;
+    left: 50%;
+    width: max-content;
+    transform: translateX(-50%);
+  }
+
+  .modal-login:has(.modal-login-inner__slide[data-target="3"].active) .password-recovery-back {
+    position: absolute;
+    top: calc(env(safe-area-inset-top) + 1.25rem);
+    left: 1.25rem;
+    display: flex;
+    z-index: 31;
+  }
+
   .modal-login:has(.modal-login-inner__slide[data-target="2"].active) .modal-close { position: absolute; top: 0.625rem; right: 0.625rem; margin: 0; }
   .modal-login-inner__slide[data-target="2"].active { padding: 0; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register { gap: 0.625rem; margin-top: 1rem; }
