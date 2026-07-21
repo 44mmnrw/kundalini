@@ -231,7 +231,7 @@ class VKID_Login_Plugin {
             codeVerifier: verifier
           });
 
-          const result = await VKID.Auth.login({provider: 'vkid'});
+          const result = await VKID.Auth.login();
           if (result?.code && result?.device_id) {
             const cv = sessionStorage.getItem('vkid_code_verifier') || '';
             const r = await fetch(<?php echo wp_json_encode($endpoint); ?>, {
