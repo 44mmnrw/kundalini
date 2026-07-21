@@ -23,7 +23,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
     </button>
     <div class="modal-login-inner">
         <div class="modal-close">
-			<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+			<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
         </div>
         <div class="modal-login-inner__slide active" data-target="1">
             <div class="login-slide-switches login-slide-switches_login">
@@ -191,7 +191,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
     <div class="email-confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="email-confirmation-title">
         <button type="button" class="email-confirmation-modal__close" aria-label="Закрыть">
             <svg aria-hidden="true" focusable="false">
-				<use href="#lk-modal-close"></use>
+				<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use>
             </svg>
         </button>
                 <h3 id="email-confirmation-title">Подтверждение<br>электронной почты</h3>
