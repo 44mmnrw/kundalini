@@ -82,15 +82,18 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 					<div class="library-form-main">
 						<div class="form-search">
 							<div class="form-categories">
-								<div class="form-categories__value">
+								<div class="form-categories__label">
+									<div class="form-categories__value">
 									<?php if ($current_term instanceof WP_Term && $current_term->taxonomy === 'practice-type') : ?>
 										<span class="active" data-target="<?php echo esc_attr((string) $default_library_term_id); ?>"><?php echo esc_html($current_term->name); ?></span>
 									<?php endif; ?>
 									<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 										<?php foreach ($category_terms as $term) : ?>
 											<span data-target="<?php echo esc_attr((string) $term->term_id); ?>"><?php echo esc_html($term->name); ?></span>
-										<?php endforeach; ?>
-									<?php endif; ?>
+									<?php endforeach; ?>
+								<?php endif; ?>
+								</div>
+									<i class="form-categories__arrow" aria-hidden="true"><svg focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#menu-dropdown'); ?>"></use></svg></i>
 								</div>
 							</div>
 							<input type="text" class="input" name="s" placeholder="Что ищете?">
@@ -145,7 +148,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php foreach ($library_difficulty_terms as $index => $difficulty_term) : ?>
 									<?php $input_id = 'library-filter-difficulty-' . ($index + 1); ?>
 					<button type="button" data-filter-input="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-						<div class="checkbox library-filter-faux-checkbox"></div>
+						<div class="checkbox library-filter-faux-checkbox"><svg class="checkbox__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use></svg></div>
 						<span><?php echo esc_html((string) $difficulty_term->name); ?></span>
 					</button>
 								<?php endforeach; ?>
@@ -160,7 +163,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php foreach ($library_duration_terms as $index => $duration_term) : ?>
 									<?php $input_id = 'library-filter-duration-' . ($index + 1); ?>
 					<button type="button" data-filter-input="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-						<div class="checkbox library-filter-faux-checkbox"></div>
+						<div class="checkbox library-filter-faux-checkbox"><svg class="checkbox__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use></svg></div>
 						<span><?php echo esc_html((string) $duration_term->name); ?></span>
 					</button>
 								<?php endforeach; ?>
@@ -175,7 +178,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php foreach ($library_goal_terms as $index => $goal_term) : ?>
 									<?php $input_id = 'library-filter-goal-' . ($index + 1); ?>
 					<button type="button" data-filter-input="<?php echo esc_attr($input_id); ?>" class="checkbox-item">
-						<div class="checkbox library-filter-faux-checkbox"></div>
+						<div class="checkbox library-filter-faux-checkbox"><svg class="checkbox__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use></svg></div>
 						<span><?php echo esc_html((string) $goal_term->name); ?></span>
 					</button>
 								<?php endforeach; ?>

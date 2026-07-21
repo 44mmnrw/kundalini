@@ -1,0 +1,100 @@
+/**
+ * Shared form controls.
+ *
+ * @package Yoga
+ */
+
+input[type="checkbox"]:not(.footer-subscribe__checkbox),
+input[type="radio"] {
+  position: absolute !important;
+  z-index: -10 !important;
+  max-width: 1px;
+  max-height: 1px;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+label.checkbox {
+  display: inline-block;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  pointer-events: auto !important;
+  transition: 0.4s ease;
+}
+
+.checkbox-item {
+  position: relative;
+  display: flex;
+  margin-top: 0.625rem;
+}
+
+.checkbox-item span {
+  display: block;
+  width: calc(100% - 1.375rem);
+  padding-right: 1.125rem;
+  padding-left: 0.75rem;
+}
+
+.checkbox-item span .ref {
+  position: relative;
+  color: var(--color-black) !important;
+  font: inherit !important;
+}
+
+.checkbox-item span .ref::before {
+  position: absolute;
+  bottom: 0.125rem;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 0.6px;
+  background: var(--color-black);
+  content: "";
+  transition: 0.4s ease;
+}
+
+.checkbox-item span .ref:hover::before {
+  width: 0;
+}
+
+.checkbox {
+  position: relative;
+  display: inline-block;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin-top: 0.1875rem;
+  margin-bottom: auto;
+  border: 1px solid var(--color-black);
+  border-radius: 0.125rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.checkbox__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 0.8125rem;
+  height: 0.8125rem;
+  color: var(--color-black);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: 0.4s ease;
+}
+
+.checkbox.active .checkbox__icon {
+  opacity: 1;
+}
+
+.checkbox.disabled {
+  border-color: #fafafa;
+  background: #fafafa;
+  pointer-events: none !important;
+}

@@ -38,8 +38,7 @@
                                                 <?php echo esc_html($question); ?>
                                             </span>
                                             <div class="question-icon">
-                                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/slick-arrow-next.png" alt="" class="active">
-                                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/slick-arrow-next_active.png" alt="">
+                                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url($faq_sprite_href); ?>#site-arrow"></use></svg>
                                             </div>
                                         </div>
                                         <div class="question__sub">

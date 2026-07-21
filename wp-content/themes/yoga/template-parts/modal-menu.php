@@ -39,17 +39,19 @@
                                 <span class="modal-menu-item__text">Все практики</span>
                                 <div class="btn-icon">
                                     <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                                     </svg>
                                     <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
-                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                                     </svg>
 								</div>
 								<?php else : ?>
                                 <a href="#"></a>
                                 <span class="modal-menu-item__text">Все практики</span>
                                 <div class="btn-icon">
-                                    <img src="<?php echo esc_url($theme_uri . '/assets/img/btn-arrow_grey.png'); ?>" alt="" class="active">
+                                    <svg class="btn-icon-arrow btn-icon-arrow_grey active" aria-hidden="true" focusable="false">
+                                        <use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
+                                    </svg>
 								</div>
 								<?php endif; ?>
 							</li>
@@ -72,17 +74,19 @@
 								<span class="modal-menu-item__text"><?php echo esc_html($child_term->name); ?></span>
 								<div class="btn-icon">
 									<svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 									</svg>
 									<svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 									</svg>
 								</div>
 								<?php else : ?>
 								<a href="#"></a>
 								<span class="modal-menu-item__text"><?php echo esc_html($child_term->name); ?></span>
 								<div class="btn-icon">
-									<img src="<?php echo esc_url($theme_uri . '/assets/img/btn-arrow_grey.png'); ?>" alt="" class="active">
+									<svg class="btn-icon-arrow btn-icon-arrow_grey active" aria-hidden="true" focusable="false">
+										<use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
+									</svg>
 								</div>
 								<?php endif; ?>
 							</li>

@@ -32,11 +32,7 @@ $begin_items = get_field('begin_items', get_the_ID());
 
 
                         $is_last = ($index === count($begin_items) - 1);
-                        $button_src = $item_button ?: (
-                            $is_last ?
-                            get_template_directory_uri() . '/assets/img/begin-button_last.png' :
-                            get_template_directory_uri() . '/assets/img/begin-button.png'
-                        );
+                        $button_src = $item_button ?: '';
                     ?>
                     <div class="begin-item <?php echo esc_attr($item_animation); ?> <?php echo esc_attr($item_delay); ?>">
                         <?php if ($item_image) : ?>
@@ -51,11 +47,17 @@ $begin_items = get_field('begin_items', get_the_ID());
                                 </h5>
                             <?php endif; ?>
 
-                            <?php if ($button_src) : ?>
-                                <div class="begin-button">
+                            <div class="begin-button">
+                                <?php if ($button_src) : ?>
                                     <img src="<?php echo esc_url($button_src); ?>" alt="<?php echo esc_attr($item_title); ?>">
-                                </div>
-                            <?php endif; ?>
+                                <?php elseif ($is_last) : ?>
+                                    <svg class="begin-button__meditation" aria-hidden="true" focusable="false">
+                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-meditation'); ?>"></use>
+                                    </svg>
+                                <?php else : ?>
+                                    <span class="begin-button__arrow" aria-hidden="true"></span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                     <?php
@@ -74,7 +76,7 @@ $begin_items = get_field('begin_items', get_the_ID());
                                     Выберите нужную практику
                                 </h5>
                                 <div class="begin-button">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/begin-button.png'); ?>" alt="">
+                                    <span class="begin-button__arrow" aria-hidden="true"></span>
                                 </div>
                             </div>
                         </div>
@@ -86,7 +88,7 @@ $begin_items = get_field('begin_items', get_the_ID());
                                     Установите таймер
                                 </h5>
                                 <div class="begin-button">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/begin-button.png'); ?>" alt="">
+                                    <span class="begin-button__arrow" aria-hidden="true"></span>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +100,9 @@ $begin_items = get_field('begin_items', get_the_ID());
                                     Начните заниматься
                                 </h5>
                                 <div class="begin-button">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/begin-button_last.png'); ?>" alt="">
+                                    <svg class="begin-button__meditation" aria-hidden="true" focusable="false">
+                                        <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-meditation'); ?>"></use>
+                                    </svg>
                                 </div>
                             </div>
                         </div>

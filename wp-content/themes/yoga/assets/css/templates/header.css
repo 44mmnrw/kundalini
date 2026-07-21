@@ -163,25 +163,22 @@ header > .container > .row > .header-content {
 
 .ref-icon {
   position: relative;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 12px;
+  height: 12px;
+  aspect-ratio: 1 / 1;
   flex-shrink: 0;
-  transform: none;
+  /* The triangle base sits on the text baseline; rotate around its centre. */
+  transform: rotate(0deg);
+  transform-origin: 50% 83.3333%;
   transition: var(--transition-base, 0.4s ease);
 }
 
-.ref-icon img {
+.ref-icon svg {
   display: block;
-  position: absolute;
-  inset: 0;
-  width: 0.75rem;
-  height: 0.75rem;
-  opacity: 0;
-  transition: var(--transition-base, 0.4s ease);
-}
-
-.ref-icon img.active {
-  opacity: 1;
+  width: 100%;
+  height: 100%;
+  color: var(--color-violet);
+  transform: translateY(16.6667%);
 }
 
 .main-menu-active-item:hover::before,
@@ -190,15 +187,7 @@ header > .container > .row > .header-content {
 }
 
 .main-menu-active-item .ref:hover .ref-icon {
-  transform: rotate(-180deg);
-}
-
-.main-menu-active-item .ref:hover .ref-icon img {
-  opacity: 1;
-}
-
-.main-menu-active-item .ref:hover .ref-icon img.active {
-  opacity: 0;
+  transform: translateY(-16.6667%) rotate(-180deg);
 }
 
 .main-menu-active-item.active .ref {
@@ -206,15 +195,7 @@ header > .container > .row > .header-content {
 }
 
 .main-menu-active-item.active .ref .ref-icon {
-  transform: rotate(-180deg);
-}
-
-.main-menu-active-item.active .ref .ref-icon img {
-  opacity: 1;
-}
-
-.main-menu-active-item.active .ref .ref-icon img.active {
-  opacity: 0;
+  transform: translateY(-16.6667%) rotate(-180deg);
 }
 
 .main-menu ul li.current-menu-item > .ref,

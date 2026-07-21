@@ -69,8 +69,9 @@ if ($blog_search_value === '') {
 						</label>
                         <label class="blog-search__delete-btn">
                             <input type="reset">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/close-search-btn-icon.png" alt="" class="active">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/close-search-btn-icon.png" alt="">
+							<svg class="blog-search__delete-icon" aria-hidden="true" focusable="false">
+								<use href="<?php echo esc_url($sprite_href); ?>#lk-modal-close"></use>
+							</svg>
 						</label>
 					</div>
 				</form>

@@ -128,6 +128,20 @@
 			return $featured ? (string) $featured : '';
 		}
 	}
+
+	if (!function_exists('yoga_add_praktika_notice_icon')) {
+		function yoga_add_praktika_notice_icon($content) {
+			if (!is_string($content) || strpos($content, 'praktika-notice') === false || strpos($content, 'praktika-notice__icon') !== false) {
+				return $content;
+			}
+
+			$icon = '<svg class="praktika-notice__icon" aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#praktika-notice-before') . '"></use></svg>';
+			$pattern = '/(<[a-z][a-z0-9:-]*\\b[^>]*\\bclass=(["\\\'])[^"\\\']*\\bpraktika-notice\\b[^"\\\']*\\2[^>]*>)/i';
+
+			return preg_replace($pattern, '$1' . $icon, $content);
+		}
+		add_filter('the_content', 'yoga_add_praktika_notice_icon', 20);
+	}
 	if (!function_exists('yoga_ajax_error')) {
 
 
@@ -695,15 +709,16 @@
 		$header_style_ver = file_exists($theme_dir . '/assets/css/templates/header.css') ? filemtime($theme_dir . '/assets/css/templates/header.css') : '1.0.0';
 		$footer_style_ver = file_exists($theme_dir . '/assets/css/templates/footer.css') ? filemtime($theme_dir . '/assets/css/templates/footer.css') : '1.0.0';
 		$notifications_style_ver = file_exists($theme_dir . '/assets/css/templates/notifications.css') ? filemtime($theme_dir . '/assets/css/templates/notifications.css') : '1.0.0';
-		$modals_style_ver = file_exists($theme_dir . '/assets/css/templates/modals.css') ? filemtime($theme_dir . '/assets/css/templates/modals.css') : '1.0.0';
+		$form_controls_style_ver = file_exists($theme_dir . '/assets/css/templates/forms.css') ? filemtime($theme_dir . '/assets/css/templates/forms.css') : '1.0.0';
 		$modal_component_styles = array(
+			'modal-base'          => 'base.css',
+			'modal-review'        => 'review.css',
 			'modal-mobile-menus'  => 'mobile-menus.css',
 			'modal-auth'          => 'auth.css',
 			'modal-confirmations' => 'confirmations.css',
 			'modal-cards'         => 'cards.css',
 			'modal-cookie'        => 'cookie.css',
 			'modal-utilities'     => 'utilities.css',
-			'modal-auth-states'   => 'auth-states.css',
 		);
 		$homepage_style_ver = file_exists($theme_dir . '/assets/css/templates/homepage.css') ? filemtime($theme_dir . '/assets/css/templates/homepage.css') : '1.0.0';
 		$kriyi_style_ver = file_exists($theme_dir . '/assets/css/templates/kriyi.css') ? filemtime($theme_dir . '/assets/css/templates/kriyi.css') : '1.0.0';
@@ -739,7 +754,7 @@
 			$specification_style_ver = time();
 			$header_style_ver = time();
 			$footer_style_ver = time();
-			$modals_style_ver = time();
+			$form_controls_style_ver = time();
 			$homepage_style_ver = time();
 			$kriyi_style_ver = time();
 			$library_style_ver = time();
@@ -794,15 +809,20 @@
 		wp_enqueue_style( 'header-style', $theme_uri . '/assets/css/templates/header.css', $common_style_deps, $header_style_ver );
 		wp_enqueue_style( 'footer-style', $theme_uri . '/assets/css/templates/footer.css', $common_style_deps, $footer_style_ver );
 		wp_enqueue_style( 'notifications-style', $theme_uri . '/assets/css/templates/notifications.css', $common_style_deps, $notifications_style_ver );
-		wp_enqueue_style( 'modals-style', $theme_uri . '/assets/css/templates/modals.css', $common_style_deps, $modals_style_ver );
-		$modal_style_dependency = 'modals-style';
+		wp_enqueue_style( 'form-controls-style', $theme_uri . '/assets/css/templates/forms.css', $common_style_deps, $form_controls_style_ver );
 		foreach ($modal_component_styles as $modal_style_handle => $modal_style_file) {
 			$modal_style_path = '/assets/css/templates/modals/' . $modal_style_file;
 			$modal_style_version = (defined('WP_DEBUG') && WP_DEBUG)
 				? time()
 				: (file_exists($theme_dir . $modal_style_path) ? filemtime($theme_dir . $modal_style_path) : '1.0.0');
-			wp_enqueue_style($modal_style_handle, $theme_uri . $modal_style_path, array($modal_style_dependency), $modal_style_version);
-			$modal_style_dependency = $modal_style_handle;
+			$modal_style_dependencies = ('modal-base' === $modal_style_handle)
+				? array('specification-style')
+				: array('modal-base');
+
+			if ('modal-auth' === $modal_style_handle) {
+				$modal_style_dependencies[] = 'form-controls-style';
+			}
+			wp_enqueue_style($modal_style_handle, $theme_uri . $modal_style_path, $modal_style_dependencies, $modal_style_version);
 		}
 
 		if ($is_homepage) {
@@ -820,7 +840,7 @@
 			wp_enqueue_style(
 				'praktika-style',
 				$theme_uri . '/assets/css/templates/praktika.css',
-				array( 'form-questions-style', 'modals-style' ),
+				array( 'form-questions-style', 'modal-base' ),
 				$praktika_style_ver
 			);
 		}
@@ -912,6 +932,9 @@
 
 		wp_enqueue_script( 'library-filters-script', $theme_uri . '/assets/js/library-filters.js', array('jquery'), $library_filters_script_ver, true );
 		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox', 'library-filters-script'), $main_script_ver, true );
+		wp_localize_script( 'main-script', 'yoga_theme_assets', array(
+			'sprite_url' => get_template_directory_uri() . '/assets/svg/sprite.svg',
+		) );
 
 
 		wp_enqueue_style('plyr-css', get_template_directory_uri() . '/assets/css/plyr.css');
@@ -1273,8 +1296,7 @@ function yoga_subscribe_handler() {
 
 			if ($is_first_item) {
 				$item_output .= '<div class="ref-icon">';
-				$item_output .= '<img src="' . get_template_directory_uri() . '/assets/img/menu-ref-icon.png" alt="" class="active">';
-				$item_output .= '<img src="' . get_template_directory_uri() . '/assets/img/menu-ref-icon_violet.png" alt="">';
+				$item_output .= '<svg aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#menu-dropdown') . '"></use></svg>';
 				$item_output .= '</div>';
 			}
 
@@ -1336,7 +1358,7 @@ function yoga_subscribe_handler() {
 				$sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
 				$output .= '<span class="mobile-menu-main-item__chevron" aria-hidden="true">';
 				$output .= '<svg class="mobile-menu-main-item__chevron-svg" viewBox="0 0 9 16" width="9" height="16" focusable="false">';
-				$output .= '<use href="' . $sprite_href . '#lk-library-chevron" width="100%" height="100%"></use>';
+				$output .= '<use href="' . $sprite_href . '#site-arrow" width="100%" height="100%"></use>';
 				$output .= '</svg></span>';
 			}
 		}
@@ -1817,8 +1839,7 @@ function yoga_subscribe_handler() {
 									</div>
                                     <div class="kriya-btn">
                                         <div class="kriya-btn__arrow">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
+                                            <svg class="kriya-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
 										</div>
 									</div>
 								</div>
@@ -1858,7 +1879,7 @@ function yoga_subscribe_handler() {
                     <div class="lk-settings-item__col">
                         <p class="lk-settings-item__col-text">Ваш тариф:</p>
                         <div class="personal-status">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/personal-status-icon_settings.png" alt="" class="personal-status__img">
+                            <svg class="personal-status__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use></svg>
                             <span>
                                 <?php
 
@@ -2209,9 +2230,6 @@ function yoga_subscribe_handler() {
 				echo '<img class="lk-payment-card-icon lk-payment-card-icon--yoo_money" src="' . esc_url(get_template_directory_uri() . '/assets/svg/YooMoney.svg') . '" alt="YooMoney" width="50" height="16">';
 				return;
 			}
-
-			$icon_url = get_template_directory_uri() . '/assets/img/lk-payment-icon_' . $type . '.png';
-			echo '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr($brand) . '">';
 		}
 	}
 

@@ -327,16 +327,16 @@ if (have_posts()) :
                             <div class="popular-articles__intro blog-articles__intro">
                                 <h3>Популярное</h3>
                                 <div class="arrows-slick">
-                                    <div class="arrows-slick__arrow slick-prev">
+                                    <button type="button" class="arrows-slick__arrow slick-prev" aria-label="Предыдущие статьи">
                                         <svg aria-hidden="true" focusable="false">
-                                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                                         </svg>
-                                    </div>
-                                    <div class="arrows-slick__arrow slick-next">
+                                    </button>
+                                    <button type="button" class="arrows-slick__arrow slick-next" aria-label="Следующие статьи">
                                         <svg aria-hidden="true" focusable="false">
-                                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                                         </svg>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
 

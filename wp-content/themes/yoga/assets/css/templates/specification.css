@@ -359,6 +359,10 @@ h5, .h5 {
   color: var(--color-green);
 }
 
+.btn-icon .btn-icon-arrow_grey {
+  color: #646464;
+}
+
 .btn_alt {
   background: var(--color-green);
 }
@@ -583,12 +587,15 @@ input::-moz-placeholder {
   width: 1.25rem;
   height: 1.25rem;
   color: var(--color-black);
+  pointer-events: none;
   transition: 0.4s ease;
 }
-.arrows-slick__arrow:hover {
+.arrows-slick__arrow:hover,
+.arrows-slick__arrow:focus-visible {
   background: var(--color-black);
 }
-.arrows-slick__arrow:hover svg {
+.arrows-slick__arrow:hover svg,
+.arrows-slick__arrow:focus-visible svg {
   color: var(--color-green);
 }
 

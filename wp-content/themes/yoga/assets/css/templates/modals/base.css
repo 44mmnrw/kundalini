@@ -1,0 +1,151 @@
+/**
+ * Shared modal shell.
+ *
+ * @package Yoga
+ */
+
+.overlay,
+.overlay-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  background: var(--color-black);
+  opacity: 0;
+  z-index: -2;
+  transition: opacity 0.4s ease;
+}
+
+.overlay-modal {
+  opacity: 0.15;
+}
+
+.overlay.active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.15;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.overlay__close {
+  position: fixed;
+  top: 0.1875rem;
+  right: 0;
+  z-index: 30;
+  display: inline-block;
+  margin-right: -0.1875rem;
+  color: var(--color-green);
+  font-size: 3.75rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: -624.9375rem;
+  width: 0;
+  height: 0;
+  border-radius: 1.875rem;
+  opacity: 0;
+  z-index: -2;
+  transform: translate(-50%, 0);
+}
+
+.modal .modal-close {
+  top: 1.8125rem;
+  right: 1.875rem;
+  background: var(--color-green);
+}
+
+.modal.active {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 36.875rem;
+  max-width: calc(100% - 1.875rem);
+  height: auto;
+  border-radius: 1.875rem;
+  background: #fff;
+  opacity: 1;
+  z-index: 101;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s ease;
+}
+
+.modal-close {
+  position: absolute;
+  display: block;
+  width: 3.1875rem;
+  height: 3.1875rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  appearance: none;
+  background: #fff;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: 0.4s ease;
+}
+
+.modal-close:hover {
+  transform: rotate(45deg);
+}
+
+.modal-close img,
+.modal-close > svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: auto;
+  height: 1rem;
+  max-width: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.modal .modal-close > .modal-close__icon {
+  width: 1.875rem;
+  height: 1.875rem;
+  max-width: none;
+}
+
+.modal .modal-close,
+.modal-mobile-menu .modal-close,
+.modal-mobile-menu-lk .modal-close {
+  width: 51px !important;
+  min-width: 51px;
+  height: 51px !important;
+  min-height: 51px;
+}
+
+.modal .modal-close > .modal-close__icon,
+.modal-mobile-menu .modal-close > .modal-close__icon,
+.modal-mobile-menu-lk .modal-close > .modal-close__icon {
+  width: 14.849px !important;
+  height: 15px !important;
+  max-width: none;
+}
+
+@media (max-width: 575px) {
+  .modal,
+  .modal.active {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    transform: translate(-50%, 0);
+  }
+
+  .modal .modal-close {
+    display: none;
+  }
+}

@@ -41,10 +41,10 @@ $paywall_text         = function_exists('yoga_get_section_paywall_text')
 			<span><?php echo esc_html(function_exists('yoga_get_purchase_cta_text') ? yoga_get_purchase_cta_text() : __('Выбрать тариф', 'yoga')); ?></span>
 			<div class="btn-icon" aria-hidden="true">
 				<svg class="btn-icon-arrow btn-icon-arrow_black active" focusable="false">
-					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 				</svg>
 				<svg class="btn-icon-arrow btn-icon-arrow_green" focusable="false">
-					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 				</svg>
 			</div>
 		</a>

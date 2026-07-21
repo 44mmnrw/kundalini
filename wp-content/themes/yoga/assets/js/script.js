@@ -716,6 +716,8 @@ jQuery(document).ready(function($) {
 
 	$('.exercise-slider_active').each(function () {
 		var $slider = $(this);
+		var spriteUrl = window.yoga_theme_assets && window.yoga_theme_assets.sprite_url ? window.yoga_theme_assets.sprite_url : '';
+		var arrowSvg = '<svg aria-hidden="true" focusable="false"><use href="' + spriteUrl + '#site-arrow"></use></svg>';
 
 		if ($slider.hasClass('slick-initialized')) {
 			return;
@@ -725,6 +727,8 @@ jQuery(document).ready(function($) {
 			infinite: false,
 			dots: true,
 			arrows: true,
+			prevArrow: '<button type="button" class="slick-prev" aria-label="Предыдущий слайд">' + arrowSvg + '</button>',
+			nextArrow: '<button type="button" class="slick-next" aria-label="Следующий слайд">' + arrowSvg + '</button>',
 			slide: '.exercise-slider__item',
 			slidesToShow: 1,
 			slidesToScroll: 1

@@ -92,15 +92,15 @@
   font-size: 1rem;
   line-height: 1;
 }
-.praktika-details__time::before {
-  content: "";
+.praktika-details__time-icon {
   display: block;
   position: absolute;
   left: 0px;
   top: 50%;
   transform: translateY(-50%);
-  width: 1.875rem;  height: 1.875rem;  border-radius: 50%;
-  background: url(../../img/praktika-time-icon.png) no-repeat center center/100% auto;
+  width: 1.875rem;
+  height: 1.875rem;
+  color: var(--color-violet);
 }
 
 
@@ -347,7 +347,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5625rem;
+  gap: 0.5rem;
   max-width: 22rem;
 }
 p.praktika-section-paywall__label {
@@ -355,7 +355,7 @@ p.praktika-section-paywall__label {
   font-family: var(--font-family-base); font-weight: 600;
   font-family: var(--font-family-base);
   font-size: 1.25rem;
-  line-height: 1.1;
+  line-height: 1.75;
   color: var(--color-black);
 }
 p.praktika-section-paywall__text {
@@ -373,10 +373,14 @@ p.praktika-section-paywall__text {
 }
 
 @media (max-width: 767px) {
-  .praktika-section-paywall__label {
-    font-size: 1.25rem;
+  .praktika-section-paywall__copy {
+    gap: 0.1875rem;
   }
-  .praktika-section-paywall__text {
+  p.praktika-section-paywall__label {
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+  p.praktika-section-paywall__text {
     font-size: 1rem;
   }
 }
@@ -413,19 +417,23 @@ p.praktika-section-paywall__text {
   font-family: var(--font-family-base);
   font-weight: 400;
 }
-.praktika-quote::before, .praktika-quote::after {
-  content: "";
+.praktika-quote__before {
   display: block;
   position: absolute;
-  width: 1.5625rem;  height: 1.25rem;  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 100% auto;
+  left: 1.5625rem;
+  top: 1.5625rem;
+  width: 1.5625rem;
+  height: 1.25rem;
+  color: var(--color-black);
 }
-.praktika-quote::before {
-  left: 1.5625rem;  top: 1.5625rem;  background-image: url(../../img/praktika-quote-before.png);
-}
-.praktika-quote::after {
-  right: 1.5625rem;  bottom: 1.5625rem;  background-image: url(../../img/praktika-quote-after.png);
+.praktika-quote__after {
+  display: block;
+  position: absolute;
+  right: 1.5625rem;
+  bottom: 1.5625rem;
+  width: 1.5625rem;
+  height: 1.25rem;
+  color: var(--color-black);
 }
 
 .praktika-quote__author {
@@ -679,10 +687,31 @@ display: block !important;
   width: 1.25rem;  height: 1.25rem;  z-index: 4;
 }
 .exercise-slider .slick-prev {
-  left: 1.25rem;  background: url(../../img/slick-arrow-prev.png) no-repeat center center/100% auto;
+  left: 1.25rem;
 }
 .exercise-slider .slick-next {
-  right: 1.25rem;  background: url(../../img/slick-arrow-next.png) no-repeat center center/100% auto;
+  right: 1.25rem;
+}
+.exercise-slider .slick-prev svg,
+.exercise-slider .slick-next svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--color-black);
+  pointer-events: none;
+}
+.exercise-slider .slick-prev svg {
+  transform: rotate(180deg);
+}
+.exercise-slider .slick-prev:focus-visible,
+.exercise-slider .slick-next:focus-visible {
+  outline: 2px solid var(--color-violet);
+  outline-offset: 0.25rem;
+}
+.exercise-slider .slick-prev.slick-disabled,
+.exercise-slider .slick-next.slick-disabled {
+  cursor: default;
+  opacity: 0.35 !important;
 }
 .exercise-slider .slick-dots {
   display: flex !important;
@@ -809,11 +838,40 @@ display: block !important;
   top: 0px;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 .timer-main__time-bg img {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  transition: opacity 0.3s ease;
+  animation: timer-gradient-turn 60s linear infinite paused;
+  transform-origin: center;
+}
+.exercise-timer.timer-is-running .timer-main__time-bg img {
+  animation-play-state: running;
+}
+.exercise-timer.timer-is-reset .timer-main__time-bg img {
+  animation: none;
+  transform: rotate(0deg);
+}
+.timer-main__time-bg-hover {
+  opacity: 0;
+}
+.exercise-timer:hover .timer-main__time-bg-default,
+.exercise-timer:focus-within .timer-main__time-bg-default {
+  opacity: 0;
+}
+.exercise-timer:hover .timer-main__time-bg-hover,
+.exercise-timer:focus-within .timer-main__time-bg-hover {
+  opacity: 1;
+}
+@keyframes timer-gradient-turn {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .timer-buttons {
@@ -911,11 +969,14 @@ display: block !important;
   width: 100%;
   margin-top: 1.25rem;  padding: 1.875rem;  padding-top: 1.25rem;  padding-left: 4.1875rem;  border-radius: 1.875rem;  background: var(--color-grey);
 }
-.praktika-notice::before {
-  content: "";
+.praktika-notice__icon {
   display: block;
   position: absolute;
-  left: 1.875rem;  top: 1.875rem;  width: 1.375rem;  height: 1.6875rem;  background: url(../../img/praktika-notice-before.png) no-repeat center bottom/100% auto;
+  left: 1.875rem;
+  top: 1.875rem;
+  width: 1.375rem;
+  height: 1.375rem;
+  color: var(--color-violet);
 }
 .praktika-notice p {
   display: block;
@@ -1068,14 +1129,15 @@ display: block !important;
   padding-left: 1.5rem;  cursor: pointer;
   transition: 0.4s ease;
 }
-.answer-btn::before {
-  content: "";
+.answer-btn__icon {
   display: block;
   position: absolute;
   left: 0px;
   top: 50%;
   transform: translateY(-50%);
-  width: 0.875rem;  height: 0.875rem;  background: url(../../img/praktika-answer-icon.png) no-repeat center center/100% auto;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--color-violet);
 }
 .answer-btn span {
   display: block;
@@ -1497,7 +1559,7 @@ display: block !important;
     font-size: 0.9375rem;
     line-height: 1;
   }
-  .praktika-details__time::before {
+  .praktika-details__time-icon {
     width: 1.4375rem;
     height: 1.4375rem;
   }
@@ -1548,7 +1610,7 @@ display: block !important;
   }
   .praktika-notice {
     padding-left: 3.25rem;    padding-right: 0.9375rem;    padding-top: 0.9375rem;    padding-bottom: 1.25rem;  }
-  .praktika-notice::before {
+  .praktika-notice__icon {
     top: 1.5rem;    left: 0.9375rem;  }
   .praktika-notice p {
     font-size: 0.875rem;  }
@@ -1743,7 +1805,7 @@ display: block !important;
     line-height: 1;
     min-height: 1.3125rem;
   }
-  .praktika-details__time::before {
+  .praktika-details__time-icon {
     width: 1.3125rem;
     height: 1.3125rem;
   }

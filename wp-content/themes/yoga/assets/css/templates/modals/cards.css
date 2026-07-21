@@ -14,6 +14,11 @@
   box-sizing: border-box;
 }
 
+.modal-default_card {
+  padding-top: 1.5625rem;
+  padding-bottom: 1.5625rem;
+}
+
 @media (max-width: 575px) {
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel,
   #ytr-modal-cancel-subscription-confirm.modal-default_carddel.active {

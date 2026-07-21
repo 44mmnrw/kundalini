@@ -26,7 +26,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                     </svg>
                 </span>
                 <svg class="main__decor main__decor--arrow" aria-hidden="true" focusable="false">
-                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#contacts-decor-arrow'); ?>"></use>
+                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                 </svg>
                 <div class="main__info">
                     <h2 class="">
@@ -42,10 +42,10 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                         <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                         <div class="btn-icon">
                             <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                             <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                         </div>
                     </a>
@@ -54,10 +54,10 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                         <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                         <div class="btn-icon">
                             <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                             <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
+                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                         </div>
                     </div>
@@ -102,10 +102,10 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                         </div>
                         <a class="hundreds-practices__arrow" href="<?php echo esc_url($tariffs_url); ?>" aria-label="Перейти к тарифам">
                             <svg class="hundreds-practices__arrow-icon hundreds-practices__arrow-icon_default" aria-hidden="true">
-                                <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-arrow'); ?>"></use>
+                                <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#arrow45-green'); ?>"></use>
                             </svg>
                             <svg class="hundreds-practices__arrow-icon hundreds-practices__arrow-icon_hover" aria-hidden="true">
-                                <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#hundreds-practices-arrow-hover'); ?>"></use>
+                                <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#arrow45-black'); ?>"></use>
                             </svg>
                         </a>
                     </div>
