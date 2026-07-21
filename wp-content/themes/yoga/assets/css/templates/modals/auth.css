@@ -683,22 +683,9 @@ body.email-confirmation-is-open {
 }
 
 .form-link {
-  position: relative;
   color: var(--color-black) !important;
-}
-.form-link::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0px;
-  bottom: 1px;
-  width: 100%;
-  height: 0.6px;
-  background: var(--color-black);
-  transition: all 0.3s ease;
-}
-.form-link:hover::before {
-  width: 0%;
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
 }
 
 .form-link_vk {
@@ -728,25 +715,8 @@ body.email-confirmation-is-open {
 }
 
 .vkid-login-trigger__text {
-  position: relative;
-  text-decoration: none;
-}
-
-.vkid-login-trigger__text::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -0.1875rem;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  pointer-events: none;
-  transition: width 0.4s ease;
-}
-
-.vkid-login-trigger:hover .vkid-login-trigger__text::after {
-  width: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
 }
 
 .vkid-login-trigger__icon {
@@ -979,27 +949,8 @@ label.checkbox {
 .modal-login-inner .login-form-links a,
 .modal-login-inner .login-switch-link,
 .modal-login-inner .loggin-back__link {
-  position: relative;
-  text-decoration: none;
-}
-.modal-login-inner .login-form-links a::after,
-.modal-login-inner .login-switch-link::after,
-.modal-login-inner .loggin-back__link::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -0.1875rem;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  pointer-events: none;
-  transition: width 0.4s ease;
-}
-.modal-login-inner .login-form-links a:hover::after,
-.modal-login-inner .login-switch-link:hover::after,
-.modal-login-inner .loggin-back__link:hover::after {
-  width: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
 }
 p.login-rules {
   display: block;
