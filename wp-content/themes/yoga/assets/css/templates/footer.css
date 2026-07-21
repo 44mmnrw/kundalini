@@ -36,7 +36,7 @@
 .footer-subscribe__label,
 .footer-subscribe__agree,
 .footer__copyright {
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1;
@@ -113,7 +113,7 @@
   appearance: none;
   background: transparent;
   color: var(--color-white);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -122,8 +122,8 @@
 .footer-subscribe__field input::placeholder {
   color: rgba(255, 255, 255, 0.6);
   opacity: 1;
-  font-family: "Mulish-Regular", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 400;
 }
 
 .footer-subscribe__submit {
@@ -213,7 +213,7 @@
 }
 
 .footer-subscribe__success strong {
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;

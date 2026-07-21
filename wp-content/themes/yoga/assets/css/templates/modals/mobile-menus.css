@@ -67,8 +67,8 @@
   display: inline-block;
   position: absolute;
   right: 0px;
-  top: 0.4375rem;  padding-left: 0.875rem;  padding-right: 0.875rem;  padding-top: 0.375rem;  padding-bottom: 0.4688rem;  border-radius: 6.25rem;  font-size: 1rem;  line-height: 1rem;  font-family: "Mulish-Medium", sans-serif;
-  font-weight: normal;
+  top: 0.4375rem;  padding-left: 0.875rem;  padding-right: 0.875rem;  padding-top: 0.375rem;  padding-bottom: 0.4688rem;  border-radius: 6.25rem;  font-size: 1rem;  line-height: 1rem;  font-family: "Mulish", sans-serif;
+  font-weight: 500;
   color: var(--color-violet);
   border: 1px solid var(--color-violet);
 }
@@ -127,8 +127,8 @@
 }
 .modal-menu-item:hover .modal-menu-item__text {
   transition: 0.4s ease;
-  font-family: "Mulish-SemiBold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
 }
 
 .modal-menu-item__text {
@@ -139,7 +139,7 @@
 .modal-menu-item--all-practices .modal-menu-item__text,
 .modal-menu-item--all-practices:hover .modal-menu-item__text {
   color: var(--color-violet, #9153e1);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.5;
@@ -325,7 +325,7 @@
     color: #fff;
     font-size: 1rem;
     line-height: 1.1;
-    font-family: "Mulish-SemiBold", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-weight: 600;
     text-decoration: none;
     width: 100%;
@@ -443,7 +443,8 @@
     border-radius: 50%;
     background: #9153e1;
     color: #fff;
-    font-family: "Mulish-SemiBold", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 600;
+    font-family: "Mulish", sans-serif;
     font-size: 0.75rem;
     line-height: 1;
   }
@@ -457,8 +458,8 @@
   }
   .lk-mobile-menu-item span {
     display: block;
-    padding-left: 0.75rem;    font-family: "Mulish-SemiBold", sans-serif;
-    font-weight: normal;
+    padding-left: 0.75rem;    font-family: "Mulish", sans-serif;
+    font-weight: 600;
     color: #fff;
     transition: 0.4s ease;
   }
@@ -508,8 +509,8 @@
   }
   .mobile-menu-inner .btn span {
     white-space: nowrap;
-    font-size: 1rem;    font-family: "Mulish-Medium", sans-serif;
-    font-weight: normal;
+    font-size: 1rem;    font-family: "Mulish", sans-serif;
+    font-weight: 500;
   }
   .mobile-menu {
     position: relative;
@@ -564,8 +565,8 @@
   .mobile-menu-main-item span {
     display: block;
     padding-right: 1.5625rem;    font-size: 1rem;    color: var(--color-black);
-    font-family: "Mulish-Medium", sans-serif;
-    font-weight: normal;
+    font-family: "Mulish", sans-serif;
+    font-weight: 500;
   }
   .mobile-menu-main-item:first-child::after {
     content: "";
@@ -687,8 +688,8 @@
     margin-top: 0.25rem;
     font-size: 0.6875rem;
     line-height: 1.15;
-    font-family: "Mulish-Medium", sans-serif;
-    font-weight: normal;
+    font-family: "Mulish", sans-serif;
+    font-weight: 500;
     color: var(--color-violet);
   }
   .modal-mobile-menu .mobile-menu-sub-item_unavailable {
@@ -755,8 +756,8 @@
   .mobile-menu-sub-item span {
     display: block;
     padding-right: 3.125rem;    font-size: 1rem;    color: var(--color-black);
-    font-family: "Mulish-Medium", sans-serif;
-    font-weight: normal;
+    font-family: "Mulish", sans-serif;
+    font-weight: 500;
   }
   .mobile-menu-sub-item::after {
     content: "";
@@ -884,7 +885,7 @@
     border-radius: 0.4375rem;
     background: #fff;
     color: #1f1f1f;
-    font: 400 0.875rem/1 "Mulish-Regular", sans-serif;
+    font: 400 0.875rem/1 "Mulish", sans-serif;
   }
 
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-switches__item.active {
@@ -896,7 +897,7 @@
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-switch-unavailable {
     margin: 0 0 0 0.1875rem;
     padding: 0;
-    font: 400 0.5rem/1 "Mulish-Regular", sans-serif;
+    font: 400 0.5rem/1 "Mulish", sans-serif;
     color: #9153e1;
   }
 
@@ -939,7 +940,7 @@
     min-width: 0;
     padding: 0;
     color: #1f1f1f;
-    font: 500 1rem/normal "Mulish-Medium", sans-serif;
+    font: 500 1rem/normal "Mulish", sans-serif;
   }
 
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-sub-item__chevron {
@@ -1001,7 +1002,8 @@
     border-radius: 6.25rem;
     background: rgba(145, 83, 225, 0.07);
     color: #1f1f1f;
-    font-family: "Mulish-Regular", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 400;
+    font-family: "Mulish", sans-serif;
     font-size: 0.875rem;
     line-height: 1;
     text-decoration: none;
@@ -1022,7 +1024,8 @@
     border: 0;
     background: transparent;
     color: #1f1f1f;
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif; font-weight: 500;
+    font-family: "Mulish", sans-serif;
     font-size: 1rem;
     line-height: 1;
     cursor: pointer;
@@ -1106,12 +1109,12 @@
   .modal-mobile-menu-lk .mobile-menu-inner { background: #9153e1; padding: 1.25rem 0.625rem 0; }
   .modal-mobile-menu-lk .mobile-menu-inner::before { display: none; }
   .modal-mobile-menu-lk .lk-mobile-menu-head { display: flex; min-height: 2.5rem; align-items: center; padding-right: 3.125rem; flex-shrink: 0; }
-  .modal-mobile-menu-lk .lk-mobile-menu-rate { display: inline-flex; align-items: center; gap: 0.3125rem; max-width: 100%; padding: 0.3125rem 0.9375rem; border: 1px solid #fff; border-radius: 6.25rem; color: #fff; font: 400 0.875rem/1 "Mulish-Regular", sans-serif; text-decoration: none; }
+  .modal-mobile-menu-lk .lk-mobile-menu-rate { display: inline-flex; align-items: center; gap: 0.3125rem; max-width: 100%; padding: 0.3125rem 0.9375rem; border: 1px solid #fff; border-radius: 6.25rem; color: #fff; font: 400 0.875rem/1 "Mulish", sans-serif; text-decoration: none; }
   .modal-mobile-menu-lk .lk-mobile-menu-rate svg { width: 1rem; height: 0.9958125rem; color: #e8ff57; flex: 0 0 auto; }
   .modal-mobile-menu-lk .mobile-menu__slide { padding: 1.25rem 0; }
   .modal-mobile-menu-lk .sidebar-menu-sep { background: rgba(255,255,255,.35); }
-  .modal-mobile-menu-lk .sidebar-menu__item { min-height: 3.25rem; padding: 1rem 0.9375rem; color: #00ff00; font-family: "Mulish-SemiBold", sans-serif; font-weight: 600; }
-  .modal-mobile-menu-lk .sidebar-menu__item .sidebar-menu__label { color: #00ff00; font-family: "Mulish-SemiBold", sans-serif; font-weight: 600; }
+  .modal-mobile-menu-lk .sidebar-menu__item { min-height: 3.25rem; padding: 1rem 0.9375rem; color: #fff; font-family: "Mulish", sans-serif; font-weight: 600; }
+  .modal-mobile-menu-lk .sidebar-menu__item .sidebar-menu__label { color: #fff; font-family: "Mulish", sans-serif; font-weight: 600; }
   .modal-mobile-menu-lk .sidebar-menu__item-icon, .modal-mobile-menu-lk .sidebar-exit__icon { color: #fff; }
   .modal-mobile-menu-lk .sidebar-menu__item.active { background: #e8ff57; color: #1f1f1f; }
   .modal-mobile-menu-lk .sidebar-menu__item.active .sidebar-menu__label, .modal-mobile-menu-lk .sidebar-menu__item.active .sidebar-menu__item-icon { color: #1f1f1f; }

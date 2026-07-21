@@ -69,7 +69,7 @@
     margin: 0;
     padding: 1rem 0.9375rem;
     border-radius: 9.375rem;
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 1rem;
     font-weight: 500;
     line-height: 1;
@@ -130,7 +130,8 @@
   display: block;
   font-size: 1rem;
   line-height: 1.25rem;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   color: #E8E8E8;
   opacity: 0.5;
 }
@@ -139,8 +140,8 @@
   margin-top: 0.25rem;
   font-size: 1.75rem;
   line-height: 1.75rem;
-  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
   color: #fff;
 }
 
@@ -260,7 +261,7 @@
 #ytr-modal-cancel-subscription-confirm .delcomm__main h3 {
   margin: 0;
   color: var(--color-black);
-  font-family: "Mulish-Bold", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -269,7 +270,7 @@
 #ytr-modal-cancel-subscription-confirm .delcomm__main p {
   margin: 0.9375rem 0 0;
   color: var(--color-black);
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: normal;
@@ -505,8 +506,8 @@
 }
 
 #ytr-modal-bind-card h3 {
-  font-family: "Mulish-Bold", sans-serif;
-  font-weight: normal;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
   font-size: 2rem;
   line-height: 1.1;
   color: var(--color-black);
@@ -514,7 +515,8 @@
 
 #ytr-modal-bind-card p {
   margin-top: 0.625rem;
-  font-family: "Mulish-Regular", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 400;
+  font-family: "Mulish", sans-serif;
   font-size: 1rem;
   line-height: normal;
   color: var(--color-black);
@@ -582,7 +584,8 @@
 
 #ytr-modal-bind-card .ytr-bind-card-btn span {
   color: #646464;
-  font-family: "Mulish-SemiBold", sans-serif;
+  font-family: "Mulish", sans-serif; font-weight: 600;
+  font-family: "Mulish", sans-serif;
   font-size: 0.9375rem;
   line-height: 1;
   text-transform: uppercase;
@@ -849,7 +852,7 @@
   #ytr-modal-cancel-subscription .card-info__text span {
     margin: 0 0 5px;
     color: #e8e8e8;
-    font-family: "Mulish-Regular", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: normal;
@@ -859,7 +862,7 @@
   #ytr-modal-cancel-subscription .card-info__text b {
     display: block;
     color: #fff;
-    font-family: "Mulish-Bold", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 28px;
     font-weight: 700;
     line-height: 1.1;
@@ -900,7 +903,7 @@
     padding: 16px 15px;
     border-radius: 150px;
     box-sizing: border-box;
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 16px;
     font-weight: 500;
     line-height: normal;
@@ -1064,7 +1067,7 @@
     margin: 0;
     padding: 1rem 0.9375rem;
     border-radius: 9.375rem;
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 1rem;
     font-weight: 500;
     line-height: 1;

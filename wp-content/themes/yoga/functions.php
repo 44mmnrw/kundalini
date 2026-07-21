@@ -764,7 +764,7 @@
 		if ($is_privacy_template) {
 			wp_enqueue_style( 'rules-style', $theme_uri . '/assets/css/templates/rules.css', $common_style_deps, $rules_style_ver );
 		}
-		if ($is_faq_template || $is_lk_template || is_user_logged_in()) {
+		if ($is_faq_template || (is_user_logged_in() && !$is_lk_template)) {
 			wp_enqueue_style( 'faq-style', $theme_uri . '/assets/css/templates/faq.css', $common_style_deps, $faq_style_ver );
 		}
 		if ($is_lk_template) {

@@ -196,8 +196,8 @@
   .library-filters-screen__heading {
     margin: 0 0 1.25rem;
     width: 100%;
-    font-family: "Mulish-Bold", sans-serif;
-    font-weight: normal;
+    font-family: "Mulish", sans-serif;
+    font-weight: 700;
     font-size: 1.125rem;
     line-height: 1.5;
     color: #1f1f1f;
@@ -309,8 +309,8 @@
     flex: 1 1 auto;
     min-width: 0;
     padding: 0;
-    font-family: "Mulish-Regular", sans-serif;
-    font-weight: normal;
+    font-family: "Mulish", sans-serif;
+    font-weight: 400;
     font-size: 1rem;
     line-height: normal;
     color: #1f1f1f;
@@ -345,7 +345,7 @@
     border-radius: 9.375rem;
     background: var(--color-black);
     color: var(--color-white);
-    font-family: "Mulish-Medium", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 1rem;
     font-weight: 500;
     line-height: normal;
@@ -363,7 +363,7 @@
     border: 0;
     background: transparent;
     color: var(--color-black);
-    font-family: "Mulish-Regular", sans-serif;
+    font-family: "Mulish", sans-serif;
     font-size: 1rem;
     font-weight: 400;
     line-height: normal;
