@@ -64,7 +64,6 @@ body {
   margin-right: auto;
   width: 100%;
   max-width: 125rem;  text-align: left;
-  font-weight: 100;
   padding-top: var(--header-page-offset);  min-height: 100vh;
   min-height: 100dvh;
   display: flex;
