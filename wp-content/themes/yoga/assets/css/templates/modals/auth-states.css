@@ -97,13 +97,14 @@
   .modal-login-inner__slide[data-target="1"].active { position: relative; display: flex; flex: 0 0 auto; box-sizing: border-box; width: 100%; min-width: 0; min-height: 100%; margin: 0; padding: 0; flex-direction: column; align-items: stretch; justify-content: center; }
   .modal-login-inner__slide[data-target="1"].active .login-slide-switches { flex: 0 0 auto; }
   .modal-login-inner__slide[data-target="1"].active .login-slide-switches h3 { font: 700 1.625rem/1 "Mulish", sans-serif; }
-  .modal-login-inner__slide[data-target="1"].active .yoga-form-login { display: flex; flex: 0 0 auto; flex-direction: column; gap: 0.625rem; margin-top: 1.25rem; padding: 0; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login { display: flex; flex: 0 0 auto; flex-direction: column; gap: 1.25rem; margin-top: 1.25rem; padding: 0; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .input-password,
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .btn { width: 100%; margin: 0; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-form-links { width: 100%; margin: 0.75rem 0 0; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border: 1px solid var(--input_stroke_dark_bg, #383838); border-radius: 100px; font: 400 1.125rem/1.5 "Mulish", sans-serif; }
   .modal-login-inner__slide[data-target="1"].active .yoga-form-login .btn { height: 3.8125rem; margin: 0; line-height: 3.8125rem; }
+  .modal-login-inner__slide[data-target="1"].active .yoga-form-login > .login-smartcaptcha { margin-top: 0; }
   .modal-login-inner__slide[data-target="1"].active .login-form-links { display: flex; gap: 1.875rem; justify-content: center; margin-top: 0; }
   .modal-login-inner__slide[data-target="1"].active .login-form-links a,
   .modal-login-inner__slide[data-target="1"].active .login-form-links .login-switch-link { display: inline-block; font-size: 1rem; line-height: 1.1; white-space: nowrap; }
@@ -398,6 +399,12 @@
     border-radius: 50%;
     background: #fff;
     z-index: 50;
+  }
+
+  .modal-login .modal-close > .modal-close__icon {
+    width: 1.875rem;
+    height: 1.875rem;
+    max-width: none;
   }
 }
 
