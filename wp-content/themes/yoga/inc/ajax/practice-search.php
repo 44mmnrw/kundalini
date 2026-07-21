@@ -276,8 +276,6 @@ if (!defined('ABSPATH')) {
 					<span class="kriya-fav__icon" aria-hidden="true">
 						<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
 					</span>
-					<span class="kriya-fav__text kriya-fav__text--add">В избранное</span>
-					<span class="kriya-fav__text kriya-fav__text--remove">Убрать</span>
 				</div>
 				<div class="kriya-btn">
 					<div class="kriya-btn__arrow">
@@ -488,4 +486,3 @@ if (!defined('ABSPATH')) {
 
 		wp_send_json_success(array('items' => $items));
 	}
-

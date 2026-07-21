@@ -42,10 +42,6 @@ if (!empty($section_praktika_extra_class)) {
 								<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
 								<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
 							</span>
-							<span class="praktika-fav__labels">
-								<span class="praktika-fav__text praktika-fav__text--add">В избранное</span>
-								<span class="praktika-fav__text praktika-fav__text--remove">Убрать</span>
-							</span>
 						</span>
 					</div>
 				</div>
