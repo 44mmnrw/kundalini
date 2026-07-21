@@ -17,6 +17,7 @@ if (!function_exists('yoga_get_lk_menu_sprite_symbols')) {
 			'lk_bell',
 			'lk-sidebar-settings',
 			'lk-sidebar-logout',
+			'lk-modal-close',
 		);
 
 		if ($symbols === null) {

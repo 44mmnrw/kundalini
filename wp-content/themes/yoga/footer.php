@@ -197,16 +197,6 @@ $is_lk_shell = is_page_template('templates-page/lk.php')
 	|| is_page('my-account')
 	|| (function_exists('is_account_page') && is_account_page());
 if ($is_lk_shell) {
-	$lk_inline_sprite = get_template_directory() . '/assets/svg/sprite.svg';
-	if (is_readable($lk_inline_sprite)) {
-		$lk_inline_sprite_markup = (string) file_get_contents($lk_inline_sprite);
-		$lk_inline_sprite_markup = str_replace(
-			'<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">',
-			'<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;overflow:visible;pointer-events:none;">',
-			$lk_inline_sprite_markup
-		);
-		echo $lk_inline_sprite_markup;
-	}
 	get_template_part('template-parts/modal', 'mobile-menu-lk');
 	get_template_part('template-parts/modal', 'subscription-cancel');
 	get_template_part('template-parts/modal', 'card-binding');
