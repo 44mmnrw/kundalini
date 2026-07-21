@@ -351,6 +351,10 @@
 
 @media (max-width: 767px) {
   .footer {
+    flex: 0 0 auto;
+    min-height: 0;
+    height: auto;
+    align-self: stretch;
     border-radius: 2.5rem 2.5rem 0 0;
     padding: 2.5rem var(--container-inline-gutter) 0.625rem;
   }
