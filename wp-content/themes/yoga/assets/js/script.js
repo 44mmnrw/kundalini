@@ -3944,7 +3944,7 @@ jQuery(document).ready(function($) {
 			var spriteUrl = currentHref.indexOf('#') !== -1
 				? currentHref.split('#')[0]
 				: (yoga_ajax.sprite_url || '');
-			$use.attr('href', spriteUrl + (count > 0 ? '#header-heart-filled' : '#header-heart'));
+			$use.attr('href', spriteUrl + (count > 0 ? '#site-heart-filled' : '#site-heart'));
 		});
 
 		var $counter = $link.find('.header-favorites-link__count');
@@ -3971,7 +3971,7 @@ jQuery(document).ready(function($) {
 		$content.html(
 			'<div class="no-favorites lk-favorites-empty">' +
 				'<div class="lk-favorites-empty__message">' +
-					'<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="' + spriteUrl + '#noun-heart"></use></svg></span>' +
+					'<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="' + spriteUrl + '#site-heart"></use></svg></span>' +
 					'<div class="lk-favorites-empty__text"><h3>Здесь пока ничего нет</h3><p>Здесь появятся крийи, когда вы их добавите в избранное</p></div>' +
 				'</div>' +
 				'<a class="lk-favorites-empty__button" href="' + libraryUrl + '"><span>В библиотеку практик</span><i aria-hidden="true"><svg><use href="' + spriteUrl + '#footer-arrow-up-right"></use></svg></i></a>' +
@@ -4042,8 +4042,17 @@ jQuery(document).ready(function($) {
 				if (response.success) {
 					$(document).trigger('yoga:favorites-updated', [response.data || {}]);
 					$this.toggleClass('active');
+					var isFavorite = $this.hasClass('active');
+					$this.find('.kriya-fav__icon use, .praktika-fav__icon use').each(function() {
+						var $use = $(this);
+						var currentHref = $use.attr('href') || $use.attr('xlink:href') || '';
+						var spriteUrl = currentHref.indexOf('#') !== -1
+							? currentHref.split('#')[0]
+							: (yoga_ajax.sprite_url || '');
+						$use.attr('href', spriteUrl + (isFavorite ? '#site-heart-filled' : '#site-heart'));
+					});
 					if ($this.attr('role') === 'button') {
-						var pressed = $this.hasClass('active');
+						var pressed = isFavorite;
 						$this.attr('aria-pressed', pressed ? 'true' : 'false');
 						$this.attr('aria-label', pressed ? 'Убрать' : 'В избранное');
 					}

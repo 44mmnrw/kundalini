@@ -274,7 +274,7 @@ if (!defined('ABSPATH')) {
 				</div>
 				<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo get_the_ID(); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 					<span class="kriya-fav__icon" aria-hidden="true">
-						<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+						<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#<?php echo $is_favorite ? 'site-heart-filled' : 'site-heart'; ?>"></use></svg>
 					</span>
 				</div>
 				<div class="kriya-btn">
@@ -306,7 +306,7 @@ if (!defined('ABSPATH')) {
 				<div class="kriya-img"></div>
 				<div class="kriya-fav kriya-fav--icon-only">
 					<span class="kriya-fav__icon" aria-hidden="true">
-						<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+						<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#site-heart"></use></svg>
 					</span>
 				</div>
 				<div class="kriya-btn">

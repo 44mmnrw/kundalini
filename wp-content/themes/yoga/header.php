@@ -211,7 +211,7 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 								</div>
 								<a class="header-favorites-link<?php echo $header_favorites_count > 0 ? ' header-favorites-link--active' : ''; ?>" href="<?php echo esc_url($favorites_href); ?>" aria-label="<?php echo esc_attr(sprintf(__('Избранное: %d', 'yoga'), $header_favorites_count)); ?>">
 									<svg aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($header_favorites_count > 0 ? 'header-heart-filled' : 'header-heart')); ?>"></use>
+										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($header_favorites_count > 0 ? 'site-heart-filled' : 'site-heart')); ?>"></use>
 									</svg>
 									<?php if ($header_favorites_count > 0) : ?>
 										<span class="header-favorites-link__count" aria-hidden="true"><?php echo esc_html((string) $header_favorites_count); ?></span>
