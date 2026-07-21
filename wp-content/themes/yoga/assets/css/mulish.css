@@ -5,7 +5,7 @@
  */
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/Mulish-VariableFont_wght.woff2") format("woff2");
+  src: url("../fonts/Mulish-VariableFont_wght.ttf") format("truetype");
   font-weight: 200 1000;
   font-style: normal;
   font-display: swap;
@@ -13,35 +13,8 @@
 
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/Mulish-Italic-VariableFont_wght.woff2") format("woff2");
+  src: url("../fonts/Mulish-Italic-VariableFont_wght.ttf") format("truetype");
   font-weight: 200 1000;
   font-style: italic;
   font-display: swap;
-}
-
-@supports (-webkit-touch-callout: none) {
-  @font-face {
-    font-family: "Yoga Mulish iOS";
-    src: url("../fonts/Mulish-VariableFont_wght.ttf") format("truetype");
-    font-weight: 200 1000;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "Yoga Mulish iOS";
-    src: url("../fonts/Mulish-Italic-VariableFont_wght.ttf") format("truetype");
-    font-weight: 200 1000;
-    font-style: italic;
-    font-display: swap;
-  }
-
-  body,
-  body button,
-  body input,
-  body select,
-  body textarea,
-  body * {
-    font-family: "Yoga Mulish iOS", sans-serif !important;
-  }
 }
