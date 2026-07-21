@@ -412,6 +412,20 @@
 
 .login-switch-link--mobile { display: none; }
 @media (max-width: 575px) {
+  .modal-login {
+    right: 0;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    height: 100dvh;
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+  }
+
+  .modal-login.active {
+    transform: translateX(0);
+  }
+
   .modal-login:has(.modal-login-inner__slide[data-target="2"].active) .modal-close { position: absolute; top: 0.625rem; right: 0.625rem; margin: 0; }
   .modal-login-inner__slide[data-target="2"].active { padding: 0; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register { gap: 0.625rem; margin-top: 1rem; }
