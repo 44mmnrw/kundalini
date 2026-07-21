@@ -129,51 +129,6 @@
   max-width: 100%;
 }
 
-.praktika-details .praktika-fav__labels {
-  display: grid;
-  align-items: center;
-  justify-items: start;
-  align-self: center;
-  flex: 0 1 auto;
-  min-width: 0;
-}
-.praktika-details .praktika-fav__labels > .praktika-fav__text {
-  grid-area: 1 / 1;
-  margin: 0;
-  white-space: nowrap;
-}
-.praktika-details .praktika-fav__text {
-  font-family: "Mulish", sans-serif;
-  font-size: 1.125rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-.praktika-details .praktika-fav__text--remove {
-  visibility: hidden;
-}
-.praktika-details .praktika-fav.active .praktika-fav__text--add {
-  visibility: hidden;
-}
-.praktika-details .praktika-fav.active .praktika-fav__text--remove {
-  visibility: visible;
-}
-
-@media (max-width: 1024px) {
-  .praktika-details .praktika-fav__text {
-    color: var(--color-black);
-    font-size: 0.9375rem;
-    line-height: 1;
-    font-family: "Mulish", sans-serif; font-weight: 500;
-    font-family: "Mulish", sans-serif;
-  }
-}
-@media (max-width: 767px) {
-  .praktika-details .praktika-fav__text {
-    font-size: 0.8125rem;
-    line-height: 1;
-  }
-}
-
 .praktika-details .praktika-fav__icon {
   display: block;
   position: relative;
@@ -1795,10 +1750,6 @@ display: block !important;
   .praktika-details__time::before {
     width: 1.3125rem;
     height: 1.3125rem;
-  }
-  .praktika-details .praktika-fav__text {
-    font-size: 0.75rem;
-    line-height: 1;
   }
   .praktika-details .praktika-fav__main {
     gap: 0.5rem;

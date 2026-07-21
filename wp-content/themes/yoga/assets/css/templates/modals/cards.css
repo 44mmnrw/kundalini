@@ -488,11 +488,60 @@
     min-height: 15rem;  }
 }
 .modal-addnewcard {
-  width: 0%;
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 21;
+  transition: width 0.4s ease;
 }
 .modal-addnewcard.active {
   width: 38rem;
+  overflow: visible;
   pointer-events: auto;
+}
+
+.addnewcard-inner {
+  width: 0;
+  min-width: 38rem;
+  max-width: 100%;
+  margin-left: auto;
+  padding: 4.25rem 3.875rem 3.125rem;
+  border-radius: 3.125rem 0 0 3.125rem;
+  background: var(--color-green);
+  color: var(--color-black);
+  pointer-events: auto;
+  transition: width 0.4s ease;
+}
+
+.modal-addnewcard.active .addnewcard-inner {
+  width: 38rem;
+}
+
+.modal-addnewcard .modal-close {
+  width: 51px !important;
+  height: 51px !important;
+  min-width: 51px;
+  min-height: 51px;
+}
+
+.modal-addnewcard .modal-close > .modal-close__icon {
+  width: 14.849px !important;
+  height: 15px !important;
+  max-width: none;
+}
+
+.addnewcard-inner .input {
+  border-color: var(--color-black);
+  color: var(--color-black);
+}
+
+.addnewcard-inner .input::placeholder {
+  color: rgba(31, 31, 31, 0.6);
 }
 
 #ytr-modal-bind-card .modal-close {
@@ -610,8 +659,6 @@
   color: var(--color-green);
 }
 
-.addnewcard-inner {
-  min-width: 38rem;}
 .addnewcard-inner h3 {
   font-size: 2rem;}
 .addnewcard-inner p {
@@ -681,26 +728,60 @@
 }
 
 @media (max-width: 1319px) {
+  .modal-addnewcard .modal-close {
+    top: 0.9375rem;
+  }
+  .addnewcard-inner {
+    padding-top: 3.75rem;
+  }
   .addnewcard-inner .form {
     padding-top: 1.5625rem;  }
   .addnewcard-inner .btn {
     margin-top: 1.25rem;  }
 }
 @media (max-width: 1279px) {
+  .modal-addnewcard.active .addnewcard-inner {
+    width: 33.75rem;
+  }
   .addnewcard-inner {
     min-width: 33.75rem;    padding-left: 2.5rem;    padding-right: 5rem;  }
+}
+@media (max-width: 1024px) {
+  .modal-addnewcard .modal-close {
+    top: 0.75rem;
+  }
 }
 @media (max-width: 575px) {
   .modal-addnewcard {
     width: 100%;
+    height: 0;
+    top: auto;
+    bottom: 0;
+    transition: height 0.4s ease;
   }
   .modal-addnewcard.active {
     width: 100%;
+    height: 100%;
+    pointer-events: auto;
+  }
+  .modal-addnewcard .modal-close {
+    display: none;
   }
   .addnewcard-inner {
+    position: relative;
+    z-index: 20;
+    display: block;
+    height: auto;
+    min-height: auto;
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: 0;
     min-width: 100% !important;
     width: 100% !important;
-    padding-left: 1.25rem;    padding-right: 1.25rem;    padding-bottom: 2.8125rem;  }
+    max-width: 100%;
+    border-radius: 1.875rem 1.875rem 0 0;
+    padding: 3rem 1.25rem 2.8125rem;
+  }
   .addnewcard-inner h3 {
     font-size: 1.375rem;  }
   .addnewcard-inner p {

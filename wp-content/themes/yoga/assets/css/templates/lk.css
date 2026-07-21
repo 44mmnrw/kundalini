@@ -1249,12 +1249,6 @@
 }
 
 
-@media (min-width: 1025px) {
-  .lk-kriyi .kriya-fav.active .kriya-fav__text--remove {
-    display: none !important;
-  }
-}
-
 .kriyi_fav .kriya-fav {
   pointer-events: none;
 }
@@ -2131,19 +2125,6 @@
     width: max-content;
     max-width: calc(100% - 0.25rem);
     z-index: 3;
-  }
-  .lk-kriyi .kriya-fav:not(.active) .kriya-fav__text--add {
-    display: block;
-  }
-  .lk-kriyi .kriya-fav:not(.active) .kriya-fav__text--remove {
-    display: none;
-  }
-  .lk-kriyi .kriya-fav__text {
-    font-size: 0.875rem;
-    line-height: 1em;
-    color: var(--color-black);
-    font-family: "Mulish", sans-serif; font-weight: 500;
-    font-family: "Mulish", sans-serif;
   }
   .lk-kriyi .kriya-info {
     order: 3;

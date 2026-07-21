@@ -228,30 +228,6 @@
 .kriya-fav.active .kriya-fav__icon svg {
   --heart-fill: currentColor;
 }
-.kriya-fav__text {
-  display: none;
-  font-family: "Mulish", sans-serif; font-weight: 500;
-  font-family: "Mulish", sans-serif;
-  font-size: 0.6875rem;
-  line-height: 1.25;
-  color: var(--color-violet);
-  text-align: right;
-  max-width: 10rem;
-}
-.kriya-fav--icon-only .kriya-fav__text {
-  display: none !important;
-}
-.kriya-fav.active .kriya-fav__text--add {
-  display: none;
-}
-.kriya-fav.active .kriya-fav__text--remove {
-  display: block;
-}
-@media (min-width: 1025px) {
-  .section-practice-category .kriya-fav__text {
-    display: none !important;
-  }
-}
 
 .kriya-btn {
   width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;
@@ -334,19 +310,6 @@
     max-width: calc(100% - 0.25rem);
     z-index: 3;
   }
-  .kriya-fav:not(.active) .kriya-fav__text--add {
-    display: block;
-  }
-  .kriya-fav:not(.active) .kriya-fav__text--remove {
-    display: none;
-  }
-  .kriya-fav__text {
-    font-size: 1rem;
-    line-height: 1em;
-    color: var(--color-black);
-    font-family: "Mulish", sans-serif; font-weight: 500;
-    font-family: "Mulish", sans-serif;
-  }
   .kriya-info {
     order: 3;
     flex: 1 0 100%;
@@ -391,9 +354,6 @@
   .kriya-level {
     width: auto;
     font-size: 0.875rem;    padding: 0.9375rem;    padding-top: 0.4062rem;    padding-bottom: 0.4062rem;  }
-  .kriya-fav__text {
-    font-size: 0.875rem;
-  }
   .kriya-img img {
     height: 9.6875rem;  }
 }
