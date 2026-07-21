@@ -128,6 +128,8 @@ class VKID_Login_Plugin {
       return window.vkidSdkLoading;
     }
 
+    void getSdk().catch((error) => console.warn('VK ID SDK loading error', error));
+
     // --- PKCE ---
     function b64url(buf){
       return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
@@ -198,14 +200,10 @@ class VKID_Login_Plugin {
       return bytes;
     }
 
-    async function pkcePair(){
-      const rand = new Uint8Array(32); crypto.getRandomValues(rand);
-      const verifier = b64url(rand);
-      const digest = crypto.subtle && typeof crypto.subtle.digest === 'function'
-        ? await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))
-        : sha256Fallback(verifier);
-      const challenge = b64url(digest);
-      return { verifier, challenge };
+    function pkcePair(){
+      const rand = new Uint8Array(32);
+      crypto.getRandomValues(rand);
+      return { verifier: b64url(rand) };
     }
 
     document.addEventListener('click', async function(e){
@@ -218,8 +216,9 @@ class VKID_Login_Plugin {
       trigger.setAttribute('aria-busy', 'true');
 
       try {
-          const VKID = await getSdk();
-          const { verifier } = await pkcePair();
+          const VKID = window.VKIDSDK;
+          if (!VKID) throw new Error('VK ID ещё загружается. Повторите попытку через секунду.');
+          const { verifier } = pkcePair();
           sessionStorage.setItem('vkid_code_verifier', verifier);
 
           VKID.Config.init({
@@ -231,7 +230,8 @@ class VKID_Login_Plugin {
             codeVerifier: verifier
           });
 
-          const result = await VKID.Auth.login();
+          const loginRequest = VKID.Auth.login();
+          const result = await loginRequest;
           if (result?.code && result?.device_id) {
             const cv = sessionStorage.getItem('vkid_code_verifier') || '';
             const r = await fetch(<?php echo wp_json_encode($endpoint); ?>, {
