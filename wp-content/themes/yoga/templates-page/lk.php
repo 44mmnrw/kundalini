@@ -791,7 +791,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-user'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-user" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои данные</span>
@@ -799,7 +799,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-history'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-history" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">История практик</span>
@@ -807,7 +807,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 21 20" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-lotus'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-lotus" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои садханы</span>
@@ -815,7 +815,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 18 16" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-heart'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-heart" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Избранное</span>
@@ -823,7 +823,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 17 17" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-smile'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-smile" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Рекомендации</span>
@@ -831,7 +831,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-question'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-question" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Мои вопросы</span>
@@ -841,8 +841,8 @@
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
 				<div class="sidebar-menu__item-icon">
-					<svg class="sidebar-menu__item-svg" viewBox="0 0 21 23" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#notification-bell-icon'); ?>" width="100%" height="100%"></use>
+					<svg class="sidebar-menu__item-svg" viewBox="0 0 16 18" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+						<use href="#lk_bell" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Уведомления</span>
@@ -853,7 +853,7 @@
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
 				<div class="sidebar-menu__item-icon">
 					<svg class="sidebar-menu__item-svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-						<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-settings'); ?>" width="100%" height="100%"></use>
+						<use href="#lk-sidebar-settings" width="100%" height="100%"></use>
 					</svg>
 				</div>
 				<span class="sidebar-menu__label">Настройки подписки</span>
@@ -866,7 +866,7 @@
         <div class="sidebar-exit modal-call modal-call_logout">
 			<div class="sidebar-exit__icon">
 				<svg class="sidebar-exit__svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-					<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-sidebar-logout'); ?>" width="100%" height="100%"></use>
+					<use href="#lk-sidebar-logout" width="100%" height="100%"></use>
 				</svg>
 			</div>
 			<span class="sidebar-menu__label">Выйти</span>
