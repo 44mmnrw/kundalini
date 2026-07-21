@@ -235,7 +235,7 @@ class VKID_Login_Plugin {
         const response = await fetch(<?php echo wp_json_encode($endpoint); ?>, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({code: code, device_id: deviceId, code_verifier: verifier, state: state})
+          body: JSON.stringify({code: code, device_id: deviceId, code_verifier: verifier})
         });
         const result = await response.json();
         if (!result.ok) throw new Error(result.vk_error_description || result.message || 'Ошибка входа через VK');
@@ -270,14 +270,11 @@ class VKID_Login_Plugin {
         const query = new URLSearchParams({
           response_type: 'code',
           client_id: <?php echo wp_json_encode((string) $appId); ?>,
-          app_id: <?php echo wp_json_encode((string) $appId); ?>,
           redirect_uri: <?php echo wp_json_encode($redirect); ?>,
-          sdk_type: 'vkid',
-          v: '2.6.6',
           scope: <?php echo wp_json_encode($scope); ?>,
           state: state,
           code_challenge: challenge,
-          code_challenge_method: 's256'
+          code_challenge_method: 'S256'
         });
         window.location.assign('https://id.vk.ru/authorize?' + query.toString());
       } catch (error) {
@@ -362,7 +359,7 @@ class VKID_Login_Plugin {
     return new \WP_REST_Response(array_merge(['ok' => false, 'message' => $message], $extra), $status);
   }
 
-  private function exchange_code($code, $device_id, $code_verifier, $state, $client_id, $redirect_uri) {
+  private function exchange_code($code, $device_id, $code_verifier, $client_id, $redirect_uri) {
     $response = wp_remote_post(self::TOKEN_ENDPOINT, [
       'timeout' => 20,
       'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
@@ -373,7 +370,6 @@ class VKID_Login_Plugin {
         'client_id'     => $client_id,
         'device_id'     => $device_id,
         'code_verifier' => $code_verifier,
-        'state'         => $state,
       ],
     ]);
 
@@ -458,10 +454,9 @@ class VKID_Login_Plugin {
     $code         = sanitize_text_field( (string)$req->get_param('code') );
     $device_id    = sanitize_text_field( (string)$req->get_param('device_id') );
     $code_verifier= sanitize_text_field( (string)$req->get_param('code_verifier') );
-    $state        = sanitize_text_field( (string)$req->get_param('state') );
 
-    if (!$code || !$device_id || !$code_verifier || !$state) {
-      return new \WP_REST_Response(['ok'=>false,'message'=>'No code/device_id/code_verifier/state'], 400);
+    if (!$code || !$device_id || !$code_verifier) {
+      return new \WP_REST_Response(['ok'=>false,'message'=>'No code/device_id/code_verifier'], 400);
     }
 
     // --- one-time lock по коду (анти-дубль), 3 минуты ---
@@ -479,7 +474,7 @@ class VKID_Login_Plugin {
       return $this->error_response('VK config is incomplete', 400);
     }
 
-    $tok = $this->exchange_code($code, $device_id, $code_verifier, $state, $client_id, $redirect_uri);
+    $tok = $this->exchange_code($code, $device_id, $code_verifier, $client_id, $redirect_uri);
     if (is_wp_error($tok)) {
       delete_transient($lock_key);
       $data = $tok->get_error_data();
