@@ -73,7 +73,7 @@ if (!function_exists('yoga_render_lk_menu_icon')) {
 		}
 
 		printf(
-			'<svg class="%1$s" viewBox="%2$s" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><use href="#%3$s" width="100%%" height="100%%"></use></svg>',
+			'<svg class="%1$s" viewBox="%2$s" preserveAspectRatio="xMidYMid meet" overflow="visible" aria-hidden="true" focusable="false"><use href="#%3$s" width="100%%" height="100%%" overflow="visible"></use></svg>',
 			esc_attr($class_name),
 			esc_attr($symbols[$symbol_id]['viewbox']),
 			esc_attr($symbol_id)
