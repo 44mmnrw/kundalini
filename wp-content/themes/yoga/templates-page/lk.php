@@ -388,7 +388,7 @@
 								?>
 								<div class="no-favorites lk-favorites-empty">
 									<div class="lk-favorites-empty__message">
-										<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#noun-heart"></use></svg></span>
+										<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#site-heart"></use></svg></span>
 										<div class="lk-favorites-empty__text">
 											<h3>Здесь пока ничего нет</h3>
 											<p>Здесь появятся крийи, когда вы их добавите в избранное</p>
@@ -437,7 +437,7 @@
                                     </div>
                                     <div class="kriya-fav fav active" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="true" aria-label="Убрать">
 										<span class="kriya-fav__icon" aria-hidden="true">
-											<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
+											<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-heart-filled'); ?>"></use></svg>
 										</span>
                                     </div>
                                     <div class="kriya-btn">
@@ -508,7 +508,7 @@
 																	</div>
 																	<div class="kriya-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo $practice_id; ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 																		<span class="kriya-fav__icon" aria-hidden="true">
-																																								<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#noun-heart'); ?>"></use></svg>
+																																		<svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . ($is_favorite ? 'site-heart-filled' : 'site-heart')); ?>"></use></svg>
 																		</span>
 																	</div>
 																	<div class="kriya-btn">

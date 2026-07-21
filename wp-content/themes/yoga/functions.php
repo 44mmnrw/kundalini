@@ -1812,7 +1812,7 @@ function yoga_subscribe_handler() {
 									</div>
                                     <div class="kriya-fav kriya-fav--icon-only">
 										<span class="kriya-fav__icon" aria-hidden="true">
-											<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
+											<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#site-heart"></use></svg>
 										</span>
 									</div>
                                     <div class="kriya-btn">

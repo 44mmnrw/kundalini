@@ -39,8 +39,7 @@ if (!empty($section_praktika_extra_class)) {
                     <div class="praktika-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo esc_attr((string) get_the_ID()); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
 						<span class="praktika-fav__main">
 							<span class="praktika-fav__icon" aria-hidden="true">
-								<svg class="<?php echo !$is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart"></use></svg>
-								<svg class="<?php echo $is_favorite ? 'active' : ''; ?>"><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#noun-heart-filled"></use></svg>
+								<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#<?php echo $is_favorite ? 'site-heart-filled' : 'site-heart'; ?>"></use></svg>
 							</span>
 						</span>
 					</div>

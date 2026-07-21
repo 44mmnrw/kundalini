@@ -222,12 +222,6 @@
   opacity: 1;
   transition: fill 0.4s ease;
 }
-.kriya-fav__icon svg {
-  --heart-fill: none;
-}
-.kriya-fav.active .kriya-fav__icon svg {
-  --heart-fill: currentColor;
-}
 
 .kriya-btn {
   width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;

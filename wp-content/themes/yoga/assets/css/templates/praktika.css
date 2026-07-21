@@ -150,12 +150,8 @@
   height: 85%;
   max-width: 85%;
   max-height: 85%;
-  opacity: 0;
-  transition: 0.4s ease;
-}
-.praktika-details .praktika-fav__icon img.active,
-.praktika-details .praktika-fav__icon svg.active {
   opacity: 1;
+  transition: opacity 0.4s ease;
 }
 .praktika-details .praktika-fav__icon span {
   display: block;
