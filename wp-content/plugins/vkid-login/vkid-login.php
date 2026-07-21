@@ -219,7 +219,7 @@ class VKID_Login_Plugin {
 
       try {
           const VKID = await getSdk();
-          const { verifier, challenge } = await pkcePair();
+          const { verifier } = await pkcePair();
           sessionStorage.setItem('vkid_code_verifier', verifier);
 
           VKID.Config.init({
@@ -228,8 +228,7 @@ class VKID_Login_Plugin {
             responseMode: VKID.ConfigResponseMode.Callback,
             source: VKID.ConfigSource.LOWCODE,
             scope: <?php echo wp_json_encode($scope); ?>,
-            codeChallenge: challenge,
-            codeChallengeMethod: 'S256'
+            codeVerifier: verifier
           });
 
           const result = await VKID.Auth.login({provider: 'vkid'});

@@ -23,7 +23,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
     </button>
     <div class="modal-login-inner">
         <div class="modal-close">
-			<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
+			<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
         </div>
         <div class="modal-login-inner__slide active" data-target="1">
             <div class="login-slide-switches login-slide-switches_login">
