@@ -225,6 +225,7 @@ class VKID_Login_Plugin {
       if (!code || !deviceId) return;
 
       const verifier = sessionStorage.getItem('vkid_code_verifier') || '';
+      const challenge = sessionStorage.getItem('vkid_code_challenge') || '';
       const state = sessionStorage.getItem('vkid_state') || '';
       if (!verifier || !state || params.get('state') !== state) {
         console.error('VK ID callback state verification failed');
@@ -235,12 +236,13 @@ class VKID_Login_Plugin {
         const response = await fetch(<?php echo wp_json_encode($endpoint); ?>, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({code: code, device_id: deviceId, code_verifier: verifier})
+          body: JSON.stringify({code: code, device_id: deviceId, code_verifier: verifier, code_challenge: challenge})
         });
         const result = await response.json();
         if (!result.ok) throw new Error(result.vk_error_description || result.message || 'Ошибка входа через VK');
 
         sessionStorage.removeItem('vkid_code_verifier');
+        sessionStorage.removeItem('vkid_code_challenge');
         sessionStorage.removeItem('vkid_state');
         window.location.replace(cleanAuthParams());
       } catch (error) {
@@ -265,6 +267,7 @@ class VKID_Login_Plugin {
         const { verifier, challenge } = await pkcePair();
         const state = createState();
         sessionStorage.setItem('vkid_code_verifier', verifier);
+        sessionStorage.setItem('vkid_code_challenge', challenge);
         sessionStorage.setItem('vkid_state', state);
 
         const query = new URLSearchParams({
@@ -454,9 +457,15 @@ class VKID_Login_Plugin {
     $code         = sanitize_text_field( (string)$req->get_param('code') );
     $device_id    = sanitize_text_field( (string)$req->get_param('device_id') );
     $code_verifier= sanitize_text_field( (string)$req->get_param('code_verifier') );
+    $code_challenge = sanitize_text_field( (string)$req->get_param('code_challenge') );
 
-    if (!$code || !$device_id || !$code_verifier) {
-      return new \WP_REST_Response(['ok'=>false,'message'=>'No code/device_id/code_verifier'], 400);
+    if (!$code || !$device_id || !$code_verifier || !$code_challenge) {
+      return new \WP_REST_Response(['ok'=>false,'message'=>'No code/device_id/code_verifier/code_challenge'], 400);
+    }
+
+    $expected_challenge = rtrim(strtr(base64_encode(hash('sha256', $code_verifier, true)), '+/', '-_'), '=');
+    if (!hash_equals($expected_challenge, $code_challenge)) {
+      return $this->error_response('PKCE verifier and challenge do not match', 400);
     }
 
     // --- one-time lock по коду (анти-дубль), 3 минуты ---
