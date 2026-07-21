@@ -9,9 +9,9 @@
 if (!defined('ABSPATH')) exit;
 
 class VKID_Login_Plugin {
-  const TOKEN_ENDPOINT       = 'https://id.vk.com/oauth2/auth';
-  const USER_INFO_ENDPOINT   = 'https://id.vk.com/oauth2/user_info';
-  const VK_API_ENDPOINT      = 'https://api.vk.com/method/users.get';
+  const TOKEN_ENDPOINT       = 'https://id.vk.ru/oauth2/auth';
+  const USER_INFO_ENDPOINT   = 'https://id.vk.ru/oauth2/user_info';
+  const VK_API_ENDPOINT      = 'https://api.vk.ru/method/users.get';
   const OPTION_APP_ID         = 'vkid_app_id';
   const OPTION_CLIENT_SECRET  = 'vkid_client_secret'; // для refresh потока; на обмен кода не обязателен
   const OPTION_REDIRECT_URL   = 'vkid_redirect_url';  // ДОЛЖЕН совпадать 1:1 с VK ID (без фрагмента #)

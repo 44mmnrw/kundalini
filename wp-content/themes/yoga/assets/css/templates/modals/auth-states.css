@@ -398,11 +398,6 @@
     z-index: 50;
   }
 
-  .modal-login .modal-close > .modal-close__icon {
-    width: 1.875rem;
-    height: 1.875rem;
-    max-width: none;
-  }
 }
 
 .login-switch-link--mobile { display: none; }
