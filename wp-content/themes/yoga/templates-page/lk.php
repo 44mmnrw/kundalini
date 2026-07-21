@@ -785,7 +785,6 @@
 			</div>
         </main>
         <aside class="sidebar" aria-label="Personal account navigation">
-	<?php yoga_render_lk_menu_sprite(); ?>
 	<div class="sidebar-inner">
         <div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
         <nav class="sidebar-menu" aria-label="<?php esc_attr_e('Разделы личного кабинета', 'yoga'); ?>">

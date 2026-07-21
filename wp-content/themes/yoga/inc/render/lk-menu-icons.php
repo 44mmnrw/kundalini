@@ -37,7 +37,8 @@ if (!function_exists('yoga_get_lk_menu_sprite_symbols')) {
 				if (in_array($id_match[1], $allowed_symbols, true)) {
 					$symbols[$id_match[1]] = array(
 						'markup' => $match[0],
-						'viewbox' => $viewbox_match[1],
+					'viewbox' => $viewbox_match[1],
+					'content' => $match[2] ?? '',
 					);
 				}
 			}
@@ -74,10 +75,10 @@ if (!function_exists('yoga_render_lk_menu_icon')) {
 		}
 
 		printf(
-			'<svg class="%1$s" viewBox="%2$s" preserveAspectRatio="xMidYMid meet" overflow="visible" aria-hidden="true" focusable="false"><use href="#%3$s" width="100%%" height="100%%" overflow="visible"></use></svg>',
+			'<svg class="%1$s" viewBox="%2$s" preserveAspectRatio="xMidYMid meet" overflow="visible" aria-hidden="true" focusable="false">%3$s</svg>',
 			esc_attr($class_name),
 			esc_attr($symbols[$symbol_id]['viewbox']),
-			esc_attr($symbol_id)
+			$symbols[$symbol_id]['content']
 		);
 	}
 }
