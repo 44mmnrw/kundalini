@@ -15,7 +15,7 @@ $mobile_lk_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_l
 ?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
-			<use href="#lk-modal-close" width="100%" height="100%"></use>
+			<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>" width="100%" height="100%"></use>
 		</svg>
 	</div>
 	<div class="mobile-menu-inner">

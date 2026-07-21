@@ -208,7 +208,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 }
 ?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_cardsucces">
 	<div class="modal-close">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</div>
 	<div class="delcomm active">
         <div class="delcomm__succes">
@@ -218,14 +218,14 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 		</div>
 	</div>
 </div><div class="modal modal-default yoga-subscription-success-modal" id="yoga-subscription-success-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="yoga-subscription-success-title">
-	<button class="modal-close yoga-subscription-success-modal__close" type="button" aria-label="Закрыть"><svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg></button>
+	<button class="modal-close yoga-subscription-success-modal__close" type="button" aria-label="Закрыть"><svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg></button>
 	<div class="yoga-subscription-success-modal__content">
 		<img class="yoga-subscription-success-modal__icon" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/subscription-success-check.svg'); ?>" alt="">
 		<h3 id="yoga-subscription-success-title">Подписка оформлена!<br>Обещаем отсутствие спама :)</h3>
 	</div>
 </div><div class="modal modal-default modal-default_formsucces">
 	<button class="modal-close" type="button" aria-label="Закрыть">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</button>
 	<div class="thanksforqw">
         <h3>
@@ -237,7 +237,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 	</div>
 </div><?php if (is_page_template('templates-page/contacts.php')) : ?><div class="modal modal-default yoga-contact-success-modal" id="yoga-contact-success-modal" role="dialog" aria-modal="true" aria-labelledby="yoga-contact-success-title" aria-hidden="true">
 	<button class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</button>
 	<div class="yoga-contact-success-modal__content">
 		<div class="yoga-contact-success-modal__heading">
@@ -249,7 +249,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 </div><?php endif; ?><?php if (is_user_logged_in()) : ?>
 <div class="modal modal-default lk-unsaved-changes-modal" id="lk-unsaved-changes-modal" role="dialog" aria-modal="true" aria-labelledby="lk-unsaved-changes-title" aria-describedby="lk-unsaved-changes-description" aria-hidden="true">
 	<button class="modal-close lk-unsaved-changes-modal__cancel" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</button>
 	<div class="lk-unsaved-changes-modal__content">
 		<div class="lk-unsaved-changes-modal__copy">
@@ -264,7 +264,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 </div>
 <?php endif; ?><div class="modal modal-default modal-default_logout">
 	<div class="modal-close">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</div>
 	<div class="delcomm">
         <div class="delcomm__main">

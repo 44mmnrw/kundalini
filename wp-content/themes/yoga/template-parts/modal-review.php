@@ -24,6 +24,6 @@ $theme_uri = get_template_directory_uri();
         </div>
     </div>
     <div class="modal-close">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($theme_uri . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
     </div>
 </div>
