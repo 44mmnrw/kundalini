@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: popular articles.
+ *
+ * @package Yoga
+ */
 .section-popular-articles {
   padding-bottom: 5.625rem;
 }
@@ -75,7 +80,7 @@
   padding-bottom: 2.5rem;
 }
 
-/* Keep the first paint identical to Slick's desktop layout. */
+
 .popular-articles-slider:not(.slick-initialized) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

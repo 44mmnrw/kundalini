@@ -1,8 +1,9 @@
 <?php
 /**
- * /checkout/ — оформление подписки. Страницы корзины нет в UX.
+ * Интеграция WooCommerce: checkout template.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -47,9 +48,9 @@ function yoga_checkout_page_template(string $template): string {
 	return $template;
 }
 
-/**
- * Checkout тарифов: только имя, фамилия, email (без адреса доставки).
- */
+
+
+
 add_filter('woocommerce_cart_needs_shipping_address', '__return_false');
 
 add_filter('woocommerce_checkout_fields', 'yoga_checkout_minimal_billing_fields', 20);

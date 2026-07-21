@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Компонент темы: notifications.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -32,7 +36,7 @@ function yoga_notification_has_live_source(array $notification): bool {
 		&& $question->post_status !== 'trash';
 }
 
-/** @return array<int, array<string, mixed>> */
+
 function yoga_get_user_notifications(int $user_id, int $limit = 50): array {
 	$notifications = get_user_meta($user_id, 'yoga_notifications', true);
 	if (!is_array($notifications)) {
@@ -47,7 +51,7 @@ function yoga_get_user_notifications(int $user_id, int $limit = 50): array {
 	return array_slice($notifications, 0, max(1, $limit));
 }
 
-/** @return array<int, array<string, mixed>> */
+
 function yoga_get_unread_user_notifications(int $user_id): array {
 	$notifications = yoga_get_user_notifications($user_id, 100);
 	return array_values(array_filter($notifications, static function (array $notification): bool {
@@ -55,7 +59,7 @@ function yoga_get_unread_user_notifications(int $user_id): array {
 	}));
 }
 
-/** @return array<int, array<string, mixed>> */
+
 function yoga_get_unread_question_answer_notifications(int $user_id): array {
 	return array_values(array_filter(
 		yoga_get_unread_user_notifications($user_id),

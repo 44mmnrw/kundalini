@@ -1,8 +1,9 @@
 <?php
 /**
- * Helpers for rendering practice text content.
+ * Компонент темы: practice content.
+ *
+ * @package Yoga
  */
-
 if (!function_exists('yoga_practice_content_images_lightbox')) {
 	function yoga_practice_content_images_lightbox($html): string {
 		$html = (string) $html;

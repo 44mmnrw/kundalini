@@ -1,10 +1,9 @@
 <?php
-	/**
-	 * Шаблон: якорь 05 — техника выполнения
-	 *
-	 * @var string $anchor_id
-	 */
-	
+/**
+ * Переиспользуемый шаблонный блок: anchor 05.
+ *
+ * @package Yoga
+ */
 	if (!isset($section['steps']) || empty($section['steps'])) {
 		return;
 	}
@@ -12,7 +11,7 @@
 	$anchor_id = isset($anchor_id) && $anchor_id !== ''
 		? (string) $anchor_id
 		: 'anchor_05';
-	
+
 	$steps = $section['steps'];
 
 	if (!function_exists('yoga_get_timing_label_short')) {
@@ -32,9 +31,9 @@
 ?>
 <?php
 	if (!function_exists('yoga_normalize_practice_exercise_gallery')) {
-		/**
-		 * @return array<int, array{url: string, alt: string}>
-		 */
+
+
+
 		function yoga_normalize_practice_exercise_gallery($gallery): array {
 			if (!is_array($gallery)) {
 				return array();
@@ -135,18 +134,18 @@
 	$gallery_mod_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-mod';
 	$show_timer = !empty($timing);
 	$show_timer_mod = !empty($timing_mod);
-	$content =  $exercise['content'] ?? []; // Основной контент из поля WYSIWYG
-	$content_mod =  $exercise['content_mod'] ?? []; // Контент модификации (WYSIWYG)
+	$content =  $exercise['content'] ?? [];
+	$content_mod =  $exercise['content_mod'] ?? [];
 	$allow_fullscreen = true;
 	$restrict_scrub = false;
 	$auto_play = true;
 	$end_signal_enabled = !empty($exercise['signal_v_koncze']) && $practice_timer_end_signal_url !== '';
-	
+
 	$media_source = '';
 	if ($media_type !== 'none' && !empty($media_file) && isset($media_file['url'])) {
 		$media_source = $media_file['url'];
 	}
-	
+
 	$media_source_mod = '';
 	if ($has_modifications && $media_type_mod !== 'none' && !empty($media_file_mod) && isset($media_file_mod['url'])) {
 		$media_source_mod = $media_file_mod['url'];
@@ -154,17 +153,17 @@
 ?>
 
 <div class="praktika-exercise" data-exercise-id="<?php echo esc_attr($index . '-' . $ex_idx); ?>">
-    <!-- Основная версия -->
+
     <div class="exercise-item active" data-version="main" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>">
         <div class="exercise-item__info">
             <?php if ($title): ?>
             <h3><?php echo esc_html($title); ?></h3>
             <?php endif; ?>
-            
+
             <?php if ($subtitle): ?>
             <h4><?php echo esc_html($subtitle); ?></h4>
             <?php endif; ?>
-            
+
             <?php if ($has_modifications): ?>
             <div class="exercise-switches">
                 <div class="exercise-switches__item active" data-target="main">
@@ -175,13 +174,13 @@
 				</div>
 			</div>
             <?php endif; ?>
-            
+
             <div class="exercise-item__info-details">
                 <?php if (!empty($matter)): ?>
                 <?php foreach ($matter as $item): ?>
                 <div>
                     <?php if (!empty($item['title'])): ?>
-                    <b><?php echo esc_html($item['title']); ?>:</b> 
+                    <b><?php echo esc_html($item['title']); ?>:</b>
                     <?php endif; ?>
                     <?php if (!empty($item['description'])): ?>
                     <?php
@@ -193,10 +192,10 @@
 				</div>
                 <?php endforeach; ?>
                 <?php endif; ?>
-                
+
 				<?php if (!empty($timing)): ?>
 				<div>
-					<b>Время:</b> 
+					<b>Время:</b>
 					<?php foreach ($timing as $timing_idx => $value): ?>
 					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
 					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
@@ -205,7 +204,7 @@
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>
-                
+
                 <?php if ($details): ?>
                 <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
 					echo function_exists('yoga_practice_format_rich_text')
@@ -215,20 +214,20 @@
                 <?php endif; ?>
 			</div>
 		</div>
-        
+
         <div class="exercise-item__media">
             <?php if (!empty($gallery)): ?>
-            <?php 
+            <?php
                 $slider_class = 'exercise-slider';
                 if (!$show_timer) {
                     $slider_class .= ' exercise-slider_full';
 				}
-                // Добавляем класс _active, если изображений больше одного
+
                 if (count($gallery) > 1) {
                     $slider_class .= ' exercise-slider_active';
 				}
 			?>
-            
+
             <div class="<?php echo esc_attr($slider_class); ?>">
                 <?php foreach ($gallery as $image): ?>
                 <div class="exercise-slider__item">
@@ -246,7 +245,7 @@
                 <?php endforeach; ?>
 			</div>
             <?php endif; ?>
-            
+
             <?php if ($show_timer): ?>
             <div class="exercise-timer" data-version="main">
                 <div class="timer-main">
@@ -260,9 +259,9 @@
 				</div>
                 <div class="timer-buttons">
 					<?php if (!empty($timing)): ?>
-					<?php 
+					<?php
 						$timing_count = count($timing);
-						foreach ($timing as $value): 
+						foreach ($timing as $value):
 						if($timing_count == 2){
 							$button_class = 'btn';
 							}else{
@@ -274,7 +273,7 @@
 					</button>
 					<?php endforeach; ?>
 					<?php endif; ?>
-					
+
 					<button type="button" class="btn timer-play-pause">
 						<span>Старт</span>
 					</button>
@@ -285,18 +284,18 @@
 			</div>
             <?php endif; ?>
 		</div>
-        
+
         <div class="player">
             <div class="player__plug">
                 <?php if ($media_file && $media_type !== 'none'): ?>
-                <div class="exercise-player" 
+                <div class="exercise-player"
                 data-version="main"
                 data-media-type="<?php echo esc_attr($media_type); ?>"
                 data-media-src="<?php echo esc_url($media_file['url'] ?? ''); ?>"
                 data-allow-fullscreen="<?php echo $allow_fullscreen ? 'true' : 'false'; ?>"
                 data-restrict-scrub="<?php echo $restrict_scrub ? 'true' : 'false'; ?>"
                 data-auto-play="<?php echo $auto_play ? 'true' : 'false'; ?>">
-                    
+
                     <?php if ($media_type === 'audio'): ?>
                     <audio controls>
                         <source src="<?php echo esc_url($media_file['url'] ?? ''); ?>" type="audio/mp3">
@@ -311,8 +310,8 @@
                 <?php endif; ?>
 			</div>
 		</div>
-        
-        
+
+
         <?php if ($content): ?>
         <div class="exercise-content">
             <?php
@@ -323,19 +322,19 @@
 		</div>
         <?php endif; ?>
 	</div>
-    
-    <!-- Модифицированная версия -->
+
+
     <?php if ($has_modifications): ?>
     <div class="exercise-item" data-version="mod" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>" style="display: none;">
         <div class="exercise-item__info">
             <?php if ($title): ?>
             <h3><?php echo esc_html($title); ?> (Модификация)</h3>
             <?php endif; ?>
-            
+
             <?php if ($subtitle): ?>
             <h4><?php echo esc_html($subtitle); ?></h4>
             <?php endif; ?>
-            
+
             <div class="exercise-switches">
                 <div class="exercise-switches__item" data-target="main">
                     <b>Основная</b>
@@ -344,13 +343,13 @@
                     <b>Модификация</b>
 				</div>
 			</div>
-            
+
             <div class="exercise-item__info-details">
                 <?php if (!empty($matter)): ?>
                 <?php foreach ($matter as $item): ?>
                 <div>
                     <?php if (!empty($item['title'])): ?>
-                    <b><?php echo esc_html($item['title']); ?>:</b> 
+                    <b><?php echo esc_html($item['title']); ?>:</b>
                     <?php endif; ?>
                     <?php if (!empty($item['description'])): ?>
                     <?php
@@ -362,10 +361,10 @@
 				</div>
                 <?php endforeach; ?>
                 <?php endif; ?>
-                
+
 				<?php if (!empty($timing_mod)): ?>
 				<div>
-					<b>Время:</b> 
+					<b>Время:</b>
 					<?php foreach ($timing_mod as $timing_idx => $value): ?>
 					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
 					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
@@ -374,7 +373,7 @@
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>
-                
+
                 <?php if ($details): ?>
                 <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
 					echo function_exists('yoga_practice_format_rich_text')
@@ -384,10 +383,10 @@
                 <?php endif; ?>
 			</div>
 		</div>
-        
+
         <div class="exercise-item__media">
             <?php if (!empty($gallery_mod)): ?>
-            <?php 
+            <?php
                 $slider_class_mod = 'exercise-slider';
                 if (!$show_timer_mod) {
                     $slider_class_mod .= ' exercise-slider_full';
@@ -395,7 +394,7 @@
                 if (count($gallery_mod) > 1) {
                     $slider_class_mod .= ' exercise-slider_active';
 				}
-				//var_dump($gallery_mod);
+
 			?>
             <div class="<?php echo esc_attr($slider_class_mod); ?>">
                 <?php foreach ($gallery_mod as $image): ?>
@@ -414,9 +413,9 @@
                 <?php endforeach; ?>
 			</div>
             <?php endif; ?>
-            
-            
-            
+
+
+
             <?php if ($show_timer_mod): ?>
             <div class="exercise-timer" data-version="mod">
                 <div class="timer-main">
@@ -430,9 +429,9 @@
 				</div>
                 <div class="timer-buttons">
 					<?php if (!empty($timing_mod)): ?>
-					<?php 
+					<?php
 						$timing_count = count($timing_mod);
-						foreach ($timing_mod as $value): 
+						foreach ($timing_mod as $value):
 						if($timing_count == 2){
 							$button_class = 'btn';
 							}else{
@@ -444,7 +443,7 @@
 					</button>
 					<?php endforeach; ?>
 					<?php endif; ?>
-					
+
 					<button type="button" class="btn timer-play-pause">
 						<span>Старт</span>
 					</button>
@@ -454,20 +453,20 @@
 				</div>
 			</div>
             <?php endif; ?>
-			
+
 		</div>
-		
+
         <div class="player">
 				<div class="player__plug">
 					<?php if ($media_file_mod && $media_type_mod !== 'none'): ?>
-					<div class="exercise-player" 
+					<div class="exercise-player"
 					data-version="mod"
 					data-media-type="<?php echo esc_attr($media_type_mod); ?>"
 					data-media-src="<?php echo esc_url($media_file_mod['url'] ?? ''); ?>"
 					data-allow-fullscreen="<?php echo $allow_fullscreen ? 'true' : 'false'; ?>"
 					data-restrict-scrub="<?php echo $restrict_scrub ? 'true' : 'false'; ?>"
 					data-auto-play="<?php echo $auto_play ? 'true' : 'false'; ?>">
-						
+
 						<?php if ($media_type_mod === 'audio'): ?>
 						<audio controls>
 							<source src="<?php echo esc_url($media_file_mod['url'] ?? ''); ?>" type="audio/mp3">
@@ -482,7 +481,7 @@
 					<?php endif; ?>
 				</div>
 			</div>
-			
+
         <?php if ($content_mod): ?>
         <div class="exercise-content">
             <?php

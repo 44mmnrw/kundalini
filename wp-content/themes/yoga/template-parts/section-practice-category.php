@@ -1,6 +1,8 @@
 <?php
 /**
- * Универсальный шаблон дочерней категории практик (practice-type).
+ * Переиспользуемый шаблонный блок: section practice category.
+ *
+ * @package Yoga
  */
 if (!defined('ABSPATH')) {
 	exit;

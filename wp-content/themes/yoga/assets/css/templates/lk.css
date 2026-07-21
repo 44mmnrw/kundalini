@@ -1,4 +1,9 @@
-/* Боковое меню личного кабинета */
+/**
+ * Стили компонента: lk.
+ *
+ * @package Yoga
+ */
+
 .sidebar {
   display: block;
   grid-area: sidebar;
@@ -60,7 +65,7 @@
 }
 @media (max-width: 1279px) { .sidebar { display: none; } }
 
-/* Оболочка ЛК и статус тарифа. */
+
 .body_lk { padding-top: var(--header-page-offset); max-width: none; }
 .body_lk .header { width: 100%; left: 0; right: auto; padding-left: 0; padding-right: 0; height: var(--header-bar-height); min-height: var(--header-bar-height); }
 .personal-status { position: relative; display: flex; align-items: center; padding: 0.4375rem 0.9375rem 0.4375rem 2.5625rem; background: rgba(145, 83, 225, 0.07); border-radius: 6.25rem; margin-right: 1.125rem; overflow: hidden; }
@@ -71,7 +76,7 @@
 @media (max-width: 1319px) { .body_lk .header { width: 100%; padding-left: 0; } }
 @media (max-width: 1279px) { .body_lk .header { width: 100%; padding-left: 0; padding-right: 0; } }
 
-/* Секция личного кабинета. */
+
 .section-lk {
   min-height: calc(100vh - 12.5rem);
 }
@@ -571,7 +576,7 @@
 .lk-notification--subscription_expiring .lk-notification__icon svg { width: 1.625rem; height: 1.375rem; }
 .lk-notification__action { display: inline-flex; align-self: flex-start; min-height: 2.375rem; margin-left: 3.5rem; align-items: center; justify-content: center; padding: 0.625rem 0.9375rem; border: 1px solid var(--color-violet); border-radius: 6.25rem; color: var(--color-violet); font-family: "Mulish", sans-serif; font-size: 0.875rem; font-weight: 600; line-height: 1.1; box-sizing: border-box; }
 
-/* Mobile notifications page: the list is part of the page, not a desktop card. */
+
 @media (max-width: 1024px) {
   .lk-slide--notifications > .lk-page-header {
     display: grid;
@@ -1243,7 +1248,7 @@
   line-height: 1.1;
 }
 
-/* Рекомендации ЛК на десктопе: в избранном только иконка, без текста «Убрать» */
+
 @media (min-width: 1025px) {
   .lk-kriyi .kriya-fav.active .kriya-fav__text--remove {
     display: none !important;
@@ -2075,7 +2080,7 @@
     margin-right: 0.8125rem;  }
   .lk-settings-item__col-action-options {
     margin-right: 0.8125rem;  }
-  /* Карточки крий в ЛК (рекомендации / избранное): на мобильных — колонка, а не строка с фикс. ширинами */
+
   .lk-kriyi .kriyi {
     margin-top: 0;
   }
@@ -2303,7 +2308,7 @@
   }
 }
 
-/* Shared page shell for every primary LK menu section. */
+
 .lk-slide h1,
 .lk-slide h2,
 .lk-slide h3,

@@ -1,4 +1,9 @@
-/* Homepage: Section-main */
+/**
+ * Стили компонента: homepage.
+ *
+ * @package Yoga
+ */
+
 .main {
   display: flex;
   position: relative;
@@ -343,19 +348,19 @@
     display: none;
   }
   .main__img {
-    /* Было right: 17rem при width 21rem — на ~1180px левый край фото заходил на .main__info */
+
     width: 20rem;
     max-width: none;
     right: clamp(6rem, calc(18vw - 2rem), 15rem);
   }
 }
-/* Как header/mobile lg: до 1024 включительно — не «узкий десктоп» flex hero */
+
 @media (max-width: 1024px) {
-  /*
-   * section — flex (specification.css); у .container фикс. width + inline-block.
-   * margin у контейнера давал неровную «рамку»: справа оставался пустой зазор.
-   * Поля 10px задаём padding на секции, контент растягиваем на 100%.
-   */
+
+
+
+
+
   #section-main {
     padding-left: 10px;
     padding-right: 10px;
@@ -381,7 +386,7 @@
   .main__info h2 {
     font-size: 2.875rem;    text-align: center;
   }
-  /* Иначе от 1279px остаётся width: 0% + typing — строки рвутся/обрезаются */
+
   .main__info h2 p {
     display: block;
     width: 100%;
@@ -425,7 +430,7 @@
     width: 18.625rem;
     right: calc(50% - 0.25rem);
     transform: translateX(50%);
-    /* Верх кнопки .main__info .btn = её bottom (2.1875rem) + высота .btn (4.4375rem) — без зазора под картинкой */
+
     bottom: calc(2.1875rem + 4.4375rem);
   }
 }
@@ -459,7 +464,7 @@
   .main__info .main__info-text {
     font-size: 1.125rem;    text-align: left;
     margin-top: 0.4375rem;  }
-  /* Отступы кнопки снизу и по бокам как у .main (1.25rem) */
+
   .main__info .btn {
     position: absolute;
     left: 1.25rem;
@@ -513,12 +518,12 @@
     bottom: auto;
     width: 2.3125rem;    height: 2.3125rem;  }
   .main__img {
-    /* Как у кнопки: bottom 1.25rem + высота .btn */
+
     bottom: calc(1.25rem + 4.4375rem);
   }
 }
 
-/* Section-advantages */
+
 .section-advantages {
   overflow-x: hidden;
   padding-top: 2.5rem;  padding-bottom: 12.75rem;  margin-bottom: -12.5rem;  pointer-events: none;
@@ -586,7 +591,7 @@
     width: 5rem;  }
 }
 
-/* Section-whyme */
+
 .section-whyme {
   position: relative;
   padding-bottom: 7.25rem;
@@ -827,12 +832,12 @@
     margin-top: 1.75rem;
     overflow: hidden;
     padding: 2.625rem 1.25rem 1.5625rem;
-    /* Техническое примечание. */
-    /* Высота пластины = ширина × 298/320; иначе absolute-пластина выступает ниже блока и наезжает на следующую карточку */
+
+
     min-height: calc(100cqw * 298 / 320);
   }
 
-  /* Фон: как viewBox SVG 320×298 */
+
   .whyme-item__plate {
     inset: 0;
     width: auto;
@@ -883,7 +888,7 @@
   }
 }
 
-/* Звёзды по вариантам карточки (координаты из макета); номер — общая система notch-cx/notch-cy выше */
+
 @media (min-width: 768px) {
   .whyme-item__plate .whyme-item__number {
     left: calc(304 * 100% / 387);
@@ -925,7 +930,7 @@
   }
 }
 
-/* Section-begin */
+
 .begin {
   width: 100%;
 }
@@ -1027,7 +1032,7 @@
     padding-top: 0.75rem;  }
 }
 
-/* Главная: более плотные секции (уменьшены отступы заголовков и паддинги секций) — с 1025 как остальной desktop */
+
 @media (min-width: 1025px) {
   body.home {
   padding-top: calc(4.375rem + var(--header-top-offset));
@@ -1057,7 +1062,7 @@
     padding-bottom: 0.75rem;
   }
 
-  /* Паддинги как в теме */
+
   .home #section-main .main {
     padding-top: 4.1875rem;
     padding-bottom: 5.125rem;
@@ -1131,7 +1136,7 @@
   }
 }
 
-/* Section-reviews */
+
 .reviews {
   width: 100%;
 }
@@ -1395,7 +1400,7 @@
   }
 }
 
-/* Section-videos */
+
 .section-videos {
   position: relative;
   padding-top: 2.8125rem;  overflow: hidden;
@@ -1573,7 +1578,7 @@
   }
 }
 
-/* Section-popular-practices */
+
 .section-popular-practices {
   position: relative;
   margin-top: -0.125rem;  overflow: hidden;
@@ -1675,7 +1680,7 @@
     height: 12.5rem;
   }
 }
-/* Один слайд в слайдере при ширине <640px — выше блок под портретные фото */
+
 @media (max-width: 639px) {
   .popular-practice {
     min-height: auto;
@@ -1705,7 +1710,7 @@
   }
 }
 
-/* Section-questions */
+
 .section-questions {
   padding-bottom: 4.5rem;}
 

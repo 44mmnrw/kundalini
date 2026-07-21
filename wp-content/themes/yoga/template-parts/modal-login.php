@@ -1,6 +1,8 @@
 <?php
 /**
- * Login Modal Template — вход и регистрация по почте
+ * Переиспользуемый шаблонный блок: modal login.
+ *
+ * @package Yoga
  */
 $legal_option = static function($key) {
     return function_exists('get_field') ? trim((string) get_field($key, 'option')) : '';

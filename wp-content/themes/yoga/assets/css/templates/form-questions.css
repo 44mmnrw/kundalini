@@ -1,4 +1,9 @@
-/* Section-form-questions */
+/**
+ * Стили компонента: form questions.
+ *
+ * @package Yoga
+ */
+
 .section-form-questions {
   padding-top: 4.375rem;  padding-bottom: 7.25rem;}
 
@@ -237,7 +242,7 @@
   }
 }
 
-/* Техническое примечание. */
+
 @media (min-width: 1025px) {
   .section-form-questions_practice .form-questions.practice-form-layout {
     position: relative;
@@ -390,7 +395,7 @@
   }
 }
 
-/* Иконка отправки на странице практики — sprite (все ширины экрана) */
+
 .section-form-questions_practice .practice-form-layout__submit--sprite .practice-form-layout__submit-icon {
   width: 72%;
   height: 72%;
@@ -570,9 +575,9 @@
   padding-bottom: 6.25rem;
   --contacts-form-panel-max: 63.5rem;
   --contacts-form-panel-half: 31.75rem;
-  /* Техническое примечание. */
+
   --contacts-intro-half: 15.1875rem;
-  /* Панель формы ниже декора по бокам; овал поверх карточки; звёзды и бейдж выше */
+
   --contacts-z-panel: 1;
   --contacts-z-oval: 2;
   --contacts-z-decor: 3;
@@ -616,14 +621,14 @@
   border-radius: 0;
   overflow: visible;
   background: none;
-  /* Не наследовать «общую» секцию формы .form-questions (100vw/center/transform) — даёт полоску/артефакт по нижнему краю */
+
   display: block;
   left: auto;
   transform: none;
   min-width: 0;
 }
 
-/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
+
 .section-form-questions_contacts .contacts-form-layout__scene.form-questions::before,
 .section-form-questions_contacts .contacts-form-layout__scene.form-questions::after {
   content: none !important;
@@ -638,7 +643,7 @@
   pointer-events: none;
 }
 
-/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
+
 .section-form-questions_contacts .contacts-form-layout__decor--star-four,
 .section-form-questions_contacts .contacts-form-layout__decor--star {
   z-index: var(--contacts-z-decor);
@@ -648,7 +653,7 @@
   z-index: var(--contacts-z-oval);
 }
 
-/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
+
 .section-form-questions_contacts .contacts-form-layout__decor--star-four {
   left: calc(50% - var(--contacts-form-panel-half) - 0.25rem);
   transform: translateX(calc(-100% + 8rem));
@@ -657,7 +662,7 @@
   height: 3.1875rem;
 }
 
-/* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
+
 .section-form-questions_contacts .contacts-form-layout__decor--star-eight {
   left: calc(50% + var(--contacts-intro-half) + 1.125rem + 200px);
   right: auto;
@@ -798,10 +803,10 @@
   width: 100%;
   flex-wrap: wrap;
   padding-top: 1rem;
-  /* Техническое примечание. */
+
 }
 
-/* На странице контактов ссылки на мессенджеры не выводятся. */
+
 .section-form-questions_contacts .contacts-social {
   display: none;
 }
@@ -859,7 +864,7 @@
     text-align: left;
   }
 
-  /* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
+
   .section-form-questions_contacts .contacts-form-layout__decor--star-four {
     left: 0.25rem;
     transform: none;
@@ -883,7 +888,7 @@
 }
 
 @media (max-width: 767px) {
-  /* Общие секции у .form-questions задают ::after; на контактах псевдоэлементы отключены — свой декор/sprite */
+
   .section-form-questions_contacts .contacts-form-layout__decor,
   .section-form-questions_contacts .contacts-form-layout__badge {
     display: none !important;

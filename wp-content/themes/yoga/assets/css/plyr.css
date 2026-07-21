@@ -1,4 +1,9 @@
-﻿/*! plyr - v3.7.8 - 2023-02-16 | MIT License | https://github.com/sampotts/plyr */
+/**
+ * Стили компонента: plyr.
+ *
+ * @package Yoga
+ */
+﻿
 .plyr {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -795,7 +800,7 @@ a.plyr__control {
   display: none !important;
 }
 
-/* Custom styles for our implementation */
+
 .exercise-player .plyr {
     border-radius: 8px;
     margin: 1rem 0;

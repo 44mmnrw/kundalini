@@ -1,3 +1,10 @@
+<?php
+/**
+ * Переиспользуемый шаблонный блок: section rules.
+ *
+ * @package Yoga
+ */
+?>
 <section class="section-rules" id="section-rules">
 	<div class="container">
         <div class="row">

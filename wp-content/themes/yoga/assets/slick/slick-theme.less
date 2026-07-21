@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: slick theme.
+ *
+ * @package Yoga
+ */
 @charset "UTF-8";
 
 // Default Variables
@@ -16,12 +21,12 @@
 @slick-opacity-on-hover: 1;
 @slick-opacity-not-active: 0.25;
 
-/* Slider */
+
 .slick-loading .slick-list{
     background: #fff url('@{slick-loader-path}ajax-loader.gif') center center no-repeat;
 }
 
-/* Arrows */
+
 .slick-prev,
 .slick-next {
     position: absolute;
@@ -61,9 +66,9 @@
     opacity: @slick-opacity-default;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    
+
     & when ( @slick-font-family = 'slick' ) {
-        /* Icons */
+
         @font-face {
             font-family: 'slick';
             font-weight: normal;
@@ -102,7 +107,7 @@
     }
 }
 
-/* Dots */
+
 
 .slick-dotted .slick-slider {
     margin-bottom: 30px;

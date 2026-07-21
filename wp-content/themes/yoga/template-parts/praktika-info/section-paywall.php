@@ -1,13 +1,9 @@
 <?php
 /**
- * Заглушка для секции practice_sections без доступа.
+ * Переиспользуемый шаблонный блок: section paywall.
  *
- * @var array  $section
- * @var string $layout
- * @var string $anchor_id
- * @var string $section_title
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }

@@ -1,16 +1,17 @@
 <?php
 /**
- * Блок «Способ оплаты» на checkout — сетка по Figma (node 1979:14114).
+ * Интеграция WooCommerce: checkout payment.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('yoga_get_checkout_payment_methods')) {
-	/**
-	 * @return array<int, array{id: string, label: string, icon?: string, icon_sprite?: string, icon_active?: string, icon_bg: string}>
-	 */
+
+
+
 	function yoga_get_checkout_payment_methods(): array {
 		$base = get_template_directory_uri() . '/assets/images/checkout/';
 		$svg_base = get_template_directory_uri() . '/assets/svg/';
@@ -32,7 +33,7 @@ if (!function_exists('yoga_get_checkout_payment_methods')) {
 				'line_icon'   => true,
 			),
 			array(
-				'id'      => 'sberpay', // API ЮKassa: sberbank
+				'id'      => 'sberpay',
 				'label'   => 'SberPay',
 				'icon'    => $svg_base . 'SberPay.svg',
 				'icon_bg' => 'light',

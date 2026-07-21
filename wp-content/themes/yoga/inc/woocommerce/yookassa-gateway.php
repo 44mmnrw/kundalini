@@ -1,8 +1,9 @@
 <?php
 /**
- * Расширение шлюза ЮKassa: детальные ошибки API и корректный createPayment.
+ * Интеграция WooCommerce: yookassa gateway.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -56,13 +57,13 @@ if (!function_exists('yoga_yookassa_translate_api_error_message')) {
 }
 
 if (!function_exists('yoga_yookassa_create_payment_with_body')) {
-	/**
-	 * Создание платежа по готовому JSON (для alfa_pay — тип ещё не в SDK плагина).
-	 *
-	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/alfa-pay
-	 *
-	 * @return \YooKassa\Request\Payments\CreatePaymentResponse|WP_Error
-	 */
+
+
+
+
+
+
+
 	function yoga_yookassa_create_payment_with_body(array $serialized_data) {
 		$shop_id = (string) get_option('yookassa_shop_id', '');
 		$secret  = (string) get_option('yookassa_secret_key', '');
@@ -140,9 +141,9 @@ if (!function_exists('yoga_yookassa_store_api_error')) {
 
 if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayEPL')) {
 	class Yoga_YooKassa_Gateway_EPL extends YooKassaGatewayEPL {
-		/**
-		 * @param WC_Order|null $order
-		 */
+
+
+
 		protected function yoga_resolve_save_order($order = null): ?WC_Order {
 			if ($order instanceof WC_Order) {
 				return $order;
@@ -163,9 +164,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			$this->yoga_sync_save_from_checkout($this->yoga_resolve_save_order(null));
 		}
 
-		/**
-		 * @param WC_Order|null $order
-		 */
+
+
+
 		protected function yoga_sync_save_from_checkout($order): void {
 			if (!$order instanceof WC_Order || !class_exists('YTR_Checkout')) {
 				return;
@@ -178,11 +179,11 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			}
 		}
 
-		/**
-		 * Галочка «Сохранить карту»: только явно включаем save (false в API не передаём).
-		 *
-		 * @param WC_Order $order
-		 */
+
+
+
+
+
 		private function yoga_apply_save_preference(WC_Order $order): void {
 			if (!class_exists('YTR_Checkout')) {
 				return;
@@ -215,15 +216,15 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			$this->savePaymentMethod = true;
 		}
 
-		/**
-		 * T-Pay / СБП / SberPay / Alfa Pay: самостоятельная интеграция (redirect + payment_method_data).
-		 *
-		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank#create-payment
-		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
-		 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/alfa-pay
-		 *
-		 * @param WC_Order $order
-		 */
+
+
+
+
+
+
+
+
+
 		private function yoga_prepare_manual_payment(WC_Order $order): void {
 			$GLOBALS['yoga_yookassa_checkout_order'] = $order;
 
@@ -246,17 +247,17 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 					$this->confirmationType = \YooKassa\Model\ConfirmationType::REDIRECT;
 				}
 
-				// СБП не поддерживает save_payment_method (см. документацию ЮKassa).
+
 				$this->savePaymentMethod = false;
 			}
 		}
 
-		/**
-		 * СБП: обязательно capture=true; подписка/холд ломают создание платежа.
-		 *
-		 * @param WC_Order $order
-		 * @return \YooKassa\Request\Payments\CreatePaymentRequestBuilder
-		 */
+
+
+
+
+
+
 		protected function getBuilder($order) {
 			if ($order instanceof WC_Order) {
 				$this->yoga_apply_save_preference($order);
@@ -271,7 +272,7 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			if (in_array($type, array('sbp', 'alfa_pay'), true)) {
 				$this->subscribe = false;
 			}
-			// SDK плагина не знает alfa_pay — не передаём тип в factory при сборке билдера.
+
 			if ($type === 'alfa_pay') {
 				$this->paymentMethod = '';
 			}
@@ -296,10 +297,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			return $builder;
 		}
 
-		/**
-		 * @param WC_Order $order
-		 * @return mixed|WP_Error|\YooKassa\Request\Payments\CreatePaymentResponse
-		 */
+
+
+
+
 		public function createPayment($order) {
 			if ($order instanceof WC_Order && class_exists('YTR_Checkout')) {
 				YTR_Checkout::ensure_order_billing_phone($order);
@@ -362,10 +363,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 			}
 		}
 
-		/**
-		 * @param int $order_id
-		 * @return array
-		 */
+
+
+
+
 		public function process_payment($order_id) {
 			$order = wc_get_order($order_id);
 			if ($order instanceof WC_Order) {
@@ -405,9 +406,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 
 if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidgetGateway')) {
 	class Yoga_YooKassa_Gateway_Widget extends YooKassaWidgetGateway {
-		/**
-		 * @param WC_Order|null $order
-		 */
+
+
+
 		protected function yoga_resolve_save_order($order = null): ?WC_Order {
 			if ($order instanceof WC_Order) {
 				return $order;
@@ -428,9 +429,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 			$this->yoga_sync_save_from_checkout($this->yoga_resolve_save_order(null));
 		}
 
-		/**
-		 * @param WC_Order|null $order
-		 */
+
+
+
 		protected function yoga_sync_save_from_checkout($order): void {
 			if (!$order instanceof WC_Order || !class_exists('YTR_Checkout')) {
 				return;
@@ -443,9 +444,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 			}
 		}
 
-		/**
-		 * @param WC_Order $order
-		 */
+
+
+
 		private function yoga_apply_save_preference(WC_Order $order): void {
 			if (!class_exists('YTR_Checkout')) {
 				return;
@@ -462,10 +463,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 			$this->savePaymentMethod = true;
 		}
 
-		/**
-		 * @param int $order_id
-		 * @return array
-		 */
+
+
+
+
 		public function process_payment($order_id) {
 			$order = wc_get_order($order_id);
 			if ($order instanceof WC_Order) {
@@ -478,10 +479,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 			return parent::process_payment($order_id);
 		}
 
-		/**
-		 * @param WC_Order $order
-		 * @return \YooKassa\Request\Payments\CreatePaymentRequestBuilder
-		 */
+
+
+
+
 		protected function getBuilder($order) {
 			if ($order instanceof WC_Order) {
 				$this->yoga_apply_save_preference($order);

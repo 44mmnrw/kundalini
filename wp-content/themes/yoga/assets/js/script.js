@@ -1,7 +1,12 @@
 /**
- * Ширины viewport — те же числа, что в assets/css/breakpoints.css (Tailwind sm/md/lg/xl/2xl + tight-desktop).
- * @type {{sm:number,md:number,lg:number,xl:number,xxl:number,tightDesktop:number}}
+ * Клиентский модуль: script.
+ *
+ * @package Yoga
  */
+
+
+
+
 var yogaViewportBp = { sm: 640, md: 768, lg: 1025, xl: 1280, xxl: 1536, tightDesktop: 1320 };
 
 jQuery(document).ready(function($) {
@@ -18,14 +23,14 @@ jQuery(document).ready(function($) {
 			}
 		} catch (ignore) {}
 	};
-	
+
 	new WOW().init();
-    
-	$('.no_link').on('click', function (e) { e.preventDefault() }); /* Отключаем ссылку */
-    
-	$('.ws_box').matchHeight(); /* Блоки одинаковой высоты */
-	
-	
+
+	$('.no_link').on('click', function (e) { e.preventDefault() });
+
+	$('.ws_box').matchHeight();
+
+
 	$("#header").removeClass("header_fixed");
 	$(window).scroll(function(){
         if ($(window).scrollTop() > 1) {
@@ -33,18 +38,18 @@ jQuery(document).ready(function($) {
 			} else {
 			$("#header").removeClass("header_fixed");
 		};
-	});   
-	
+	});
+
 	$(".body_main .logo-header").click(function () {
 		var elementClick = $(this).attr("href");
 		var destination = $(elementClick).offset().top;
 		$('html, body').animate({ scrollTop: destination }, 1200);
 		return false;
 	});
-	
-	/* Библиотека практик: пункт и .modal-menu не соседи (зазор до fixed-панели).
-	 * Один обработчик .hover() вызывается и на enter, и на leave → toggle гасит меню при уходе с пункта.
-	 * Закрытие с задержкой + отмена при наведении на панель. */
+
+
+
+
 	var yogaLibraryMenuCloseTimer = null;
 	function yogaOpenLibraryMenu() {
 		if (yogaLibraryMenuCloseTimer) {
@@ -68,13 +73,13 @@ jQuery(document).ready(function($) {
 	$('.main-menu-active-item').on('mouseleave', yogaScheduleCloseLibraryMenu);
 	$('.modal-menu').on('mouseenter', yogaOpenLibraryMenu);
 	$('.modal-menu').on('mouseleave', yogaScheduleCloseLibraryMenu);
-	
-	// Кастомные «чекбоксы» (не мобильный оверлей библиотеки — там свой перехват по строке)
+
+
 	$(document).on('click', '.checkbox:not(.library-filters-screen__box):not(.library-filter-faux-checkbox)', function () {
 		$(this).toggleClass("active");
 	});
-	
-	/* Бургер главного сайта: без класса modal-call (иначе конфликт с общим обработчиком .modal-call). */
+
+
 	$(document).on('click', '.body_main .burger', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -88,73 +93,73 @@ jQuery(document).ready(function($) {
 		$('.modal').removeClass('active');
 		$('.modal-login').removeClass('active');
 	});
-	
-	
-	/*
-		$('.login-icon').click(function () {
-		$('.overlay').addClass("active");
-		$('.modal-login').addClass("active");
-		});    
-	*/
-	
-	/* Section-tariffs */
-	
+
+
+
+
+
+
+
+
+
+
+
 	$('.switches-item').click(function () {
 		$(this).closest('.switches').find('.switches-item').removeClass("active");
 		$(this).addClass("active");
-		
+
 		var switchcurrent = $(this).attr('data-target');
 		$('.tariffs-items__slide').removeClass("active");
 		$(this).closest('.tariffs').find('.tariffs-items__slide[data-target=' + switchcurrent + ']').addClass("active");
-	});      
-	
-	
+	});
+
+
 	$('.modal-call_login').click(function () {
 		$('.overlay').addClass("active");
 		$('.modal-login').addClass("active");
 		$('.modal-mobile-menu').removeClass("active");
 	});
-	
-	/* Section-reviews */
-	
+
+
+
 	$('.reviews-slider').slick({
 		infinite: true,
 		dots: false,
 		arrows: true,
 		slidesToShow: 1,
 		slidesToScroll: 1,
-		
+
 		prevArrow: ".section-reviews .slick-prev",
 		nextArrow: ".section-reviews .slick-next",
 	});
-    
-	
+
+
 	jQuery(function($){
 		let menuItems = document.querySelectorAll(".review-people__item");
-		
+
 		for (let i = 0; i < menuItems.length; i++) {
 			menuItems[i].style.zIndex = i*-1;
 		}
 	});
-	
-	
-	/* Section-videos */
-	
+
+
+
+
 	$('.videos-slider').slick({
 		infinite: true,
 		dots: true,
 		arrows: true,
 		slidesToShow: 5,
 		slidesToScroll: 5,
-		
+
 		prevArrow: ".section-videos .slick-prev",
 		nextArrow: ".section-videos .slick-next",
 		responsive: [
 			{
 				breakpoint: yogaViewportBp.xl,
-				settings: {   
+				settings: {
 					slidesToShow: 4,
-					slidesToScroll: 4,   
+					slidesToScroll: 4,
 				}
 			},
 			{
@@ -168,31 +173,31 @@ jQuery(document).ready(function($) {
 				breakpoint: yogaViewportBp.md,
 				settings: {
 					slidesToShow: 1,
-					slidesToScroll: 1,  
+					slidesToScroll: 1,
 					variableWidth: true,
 				}
 			}
 		]
 	});
-	
-	
-	/* Section-popular-practicess */
-	
+
+
+
+
 	$('.popular-practices-slider').slick({
 		infinite: true,
 		dots: true,
 		arrows: true,
 		slidesToShow: 4,
 		slidesToScroll: 4,
-		
+
 		prevArrow: ".section-popular-practices .slick-prev",
 		nextArrow: ".section-popular-practices .slick-next",
 		responsive: [
 			{
 				breakpoint: yogaViewportBp.xl,
-				settings: {   
+				settings: {
 					slidesToShow: 3,
-					slidesToScroll: 3,   
+					slidesToScroll: 3,
 				}
 			},
 			{
@@ -211,49 +216,49 @@ jQuery(document).ready(function($) {
 			}
 		]
 	});
-	
-	/* Section-questions */
-	
+
+
+
 	$('.question__main').click(function () {
 		$(this).closest('.question').toggleClass("active");
-	});   
-	
-	
-	
-	
-	/* Section-subscription */
-	
-	
+	});
+
+
+
+
+
+
+
 	$('.section-subscription .input').keyup(function(){
 		var $this = $(this),
 		vall = $this.val();
-		
+
 		if(vall.length >= 1){
 			$('.input:valid').closest('.form').addClass("active");
 			$('.input:invalid').closest('.form').removeClass("active");
-			
+
 			$('.input:valid').closest('.form').removeClass("disabled");
 			$('.input:invalid').closest('.form').removeClass("disabled");
 			}else {
-			
+
 		}
 	});
-	
-	
+
+
 	$('.section-subscription .form-btn').click(function () {
 		$(this).closest('.form').find('.input:invalid').closest('.form').addClass("disabled");
-	});   
-	
+	});
+
 	$(".section-subscription .form:not(.subscription-form)").submit(function(e) {
 		e.preventDefault();
 		$(this).closest('.subscription').addClass("succes");
 	});
-	
-	
-	
-	/* Section-library */
-	
-	/* Делегирование: надёжнее на мобилке; z-index у .filter-btn выше .form-search (20), иначе тапы уходят в строку поиска */
+
+
+
+
+
+
 	$(document).on('click', '.library-form-main .filter-btn, .kriyi-form-main .filter-btn', function () {
 		var $btn = $(this);
 		var $lib = $btn.closest('.section-library, .section-kriyi');
@@ -275,24 +280,24 @@ jQuery(document).ready(function($) {
 			$('.filter').toggleClass('active');
 		}
 	});
-	
-	
+
+
 	if ($(window).width() >= yogaViewportBp.lg ) {
         jQuery(function($){
-			$(document).mouseup(function (e){ // событие клика по веб-документу
+			$(document).mouseup(function (e){
 				$('.filter-item__list .checkbox-item').not('.active').closest('.library-form').find('.filter-btn span').removeClass("active");
 				$('.filter-item__list .checkbox-item.active').closest('.library-form').find('.filter-btn span').addClass("active");
 			});
 		});
 	};
-	
+
 	jQuery(function($){
 		$(document).on('mouseup', function (e) {
-			/* Закрываем все выпадающие части виджета поиска только при клике ВНЕ .form-search
-			 * (внутрь входят инпут, подсказки и список категорий .form-cat-list).
-			 * Раньше проверялись только инпут и .form-search-list__item — при открытом списке категорий
-			 * снимался .active только с .form-search, а .form-cat-list оставался active → «ломалась» строка поиска
-			 * после клика по практике или другому месту страницы. */
+
+
+
+
+
 			if ($(e.target).closest('.form-search').length) {
 				return;
 			}
@@ -302,11 +307,11 @@ jQuery(document).ready(function($) {
 			$('.form-categories').removeClass('active');
 		});
 	});
-	
-	
+
+
 	$('.form-search .input').keyup(function(){
-		// Practice/library suggestions are filled asynchronously below. Do not
-		// open an empty dropdown here while their request is still pending.
+
+
 		if ($(this).closest('.section-library, .section-kriyi').length) {
 			return;
 		}
@@ -314,7 +319,7 @@ jQuery(document).ready(function($) {
 		vall = $this.val();
 		var $search = $(this).closest('.form-search');
 		var $form = $(this).closest('form');
-		
+
 		if(vall.length >= 1){
 			$search.find('.form-search-list').addClass("active");
 			$search.addClass("active");
@@ -329,17 +334,17 @@ jQuery(document).ready(function($) {
 			$search.removeClass("active");
 		}
 	});
-	
-	
+
+
 	$('.form-search-list__item').click(function () {
 		var $search = $(this).closest('.form-search');
 		$search.removeClass("active");
 		$(this).closest('.form-search-list').removeClass("active");
 		var libsearchtext = $(this).find('span').text();
 		$search.find('.input').val(libsearchtext);
-	}); 
-	
-	
+	});
+
+
 	$('.form-categories').click(function () {
 		var $search = $(this).closest('.form-search');
 		var $form = $(this).closest('form');
@@ -351,10 +356,10 @@ jQuery(document).ready(function($) {
 			$form.find('.filter-item').removeClass("active");
 			$form.find('.filter-item__list').removeClass("active");
 		}
-	}); 
-	
-	
-	
+	});
+
+
+
 	$('.form-cat-list__item').click(function () {
 		var $search = $(this).closest('.form-search');
 		$search.removeClass("active");
@@ -362,31 +367,31 @@ jQuery(document).ready(function($) {
 		$(this).closest('.form-cat-list').removeClass("active");
 		$(this).closest('.form-cat-list').find('.form-cat-list__item').removeClass("active");
 		$(this).addClass("active");
-		
+
 		var libcat = $(this).attr('data-target');
 		$search.find('.form-categories__value span').removeClass("active");
 		$search.find('.form-categories__value span[data-target=' + libcat + ']').addClass("active");
-	}); 
-	
-	
-	
+	});
+
+
+
 	jQuery(function($){
-		
-		$(document).mouseup(function (e){ // событие клика по веб-документу
-			var div = $(".filter-item"); // тут указываем ID элемента
+
+		$(document).mouseup(function (e){
+			var div = $(".filter-item");
 			var val = div.val();
-			if (!div.is(e.target) // если клик был не по нашему блоку
-				&& div.has(e.target).length === 0 ) { // и не по его дочерним элементам
+			if (!div.is(e.target)
+				&& div.has(e.target).length === 0 ) {
 				$('.filter-item').removeClass("active");
 				$('.filter-item__list').removeClass("active");
-				
+
 				$('.filter-item__list .checkbox-item').not('.active').closest('.filter-item').removeClass("focused");
 				$('.filter-item__list .checkbox-item.active').closest('.filter-item').addClass("focused");
 			}
 		});
 	});
-	
-	
+
+
 	$(document).on('click', '.filter-item__main', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -416,11 +421,11 @@ jQuery(document).ready(function($) {
 		$currentFilter.find('.filter-item__list .checkbox-item').not('.active').closest('.filter-item').removeClass("focused");
 		$currentFilter.find('.filter-item__list .checkbox-item.active').closest('.filter-item').addClass("focused");
 	});
-	
-	
-	
+
+
+
 	$(document).on('click', '.filter-item__list .checkbox-item', function (e) {
-		
+
 		$('.form-categories').removeClass("active");
 		$('.form-search').removeClass("active");
 		$('.form-cat-list').removeClass("active");
@@ -439,10 +444,10 @@ jQuery(document).ready(function($) {
 		$(this).find('.checkbox').toggleClass("active");
 		$('.filter-item__list .checkbox-item').not('.active').closest('.library-form').find('.form-reset').removeClass("active");
 		$('.filter-item__list .checkbox-item.active').closest('.library-form').find('.form-reset').addClass("active");
-		/*
-			var filttext = $(this).find('span').text();
-			$(this).closest('.filter-item').find('.filter-item__main span').html(filttext);
-		*/
+
+
+
+
 	});
 
 	$('.form-reset').click(function (e) {
@@ -459,30 +464,30 @@ jQuery(document).ready(function($) {
 			loadLibraryPractices();
 		}
 	});
-	
-	
-	/* $('.kriya-fav').click(function () {
-		$(this).toggleClass("active");
-	}); */
-	
+
+
+
+
+
+
 	$('.kriyi > .btn').click(function () {
 		$(this).find('span').toggleClass("active");
 		$('.kriyi-item_last').toggleClass("hidden");
-		
+
 	});
-	
-	
-	
-	
-	
-	/* Section-praktika */
-	
-	
-	
-	/* $('.praktika-fav').click(function () {
-		$(this).find('.praktika-fav__icon img').toggleClass("active");
-	}); */
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
 	function initPraktikaMenuSync() {
 		var $section = $('.section-praktika');
 		var $menu = $section.find('.praktika-menu').first();
@@ -605,13 +610,13 @@ jQuery(document).ready(function($) {
 			var viewportHeight = $(window).height() || 0;
 			var documentHeight = $(document).height() || 0;
 			var headerProbe = getScrollOffset() + 20;
-			// Смещаем точку активации глубже в экран, чтобы секция
-			// переключалась не "по касанию шапки", а когда реально вошла в viewport.
+
+
 			var viewportProbe = Math.floor(viewportHeight * 0.35);
 			var probeY = scrollTop + Math.max(headerProbe, viewportProbe);
 
-			// На самом низу страницы всегда активируем последний пункт
-			// (иначе высокий offset шапки может не дать "дотянуться" до последнего якоря).
+
+
 			if (scrollTop + viewportHeight >= documentHeight - 4) {
 				setActive(sections.length - 1);
 				return;
@@ -707,8 +712,8 @@ jQuery(document).ready(function($) {
 	}
 
 	initPraktikaMenuSync();
-	
-	
+
+
 	$('.exercise-slider_active').each(function () {
 		var $slider = $(this);
 
@@ -726,7 +731,7 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-	/* После смены ширины контейнера (мобильная вёрстка) slick оставляет старую геометрию списка */
+
 	var exerciseSliderLayoutTimer;
 	function refreshExerciseSliders() {
 		$('.exercise-slider_active.slick-initialized').each(function () {
@@ -738,85 +743,85 @@ jQuery(document).ready(function($) {
 		clearTimeout(exerciseSliderLayoutTimer);
 		exerciseSliderLayoutTimer = setTimeout(refreshExerciseSliders, 150);
 	});
-	
-	/* $('.exercise-switches__item').click(function () {
-		
-		$(this).closest('.praktika-exercise').find('.exercise-item').removeClass("active");
-		
-		var exsw = $(this).attr('data-target');
-		$(this).closest('.praktika-exercise').find('.exercise-item[data-target=' + exsw + ']').addClass("active");
-	});  */
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
 	$('.textarea-resize').keydown(function () {
 		var el = this;
 		setTimeout(function() {
 			el.style.cssText = 'height:auto; padding:0';
 			el.style.cssText = 'height:' + el.scrollHeight + 'px';
 		}, 1);
-	}); 
-	
+	});
+
 	$('.comment-form-main textarea').keyup(function(){
 		var $this = $(this),
 		vall = $this.val();
-		
+
 		if(vall.length >= 1){
 			$(this).closest('form').addClass("active");
 			}else {
 			$(this).closest('form').removeClass("active");
 		}
 	});
-	
+
 	$('.answer-main textarea').keyup(function(){
 		var $this = $(this),
 		vall = $this.val();
-		
+
 		if(vall.length >= 1){
 			$(this).closest('.answer-main').addClass("active");
 			}else {
 			$(this).closest('.answer-main').removeClass("active");
 		}
 	});
-	
-	
+
+
 	$('.praktika-comment-item__edit .textarea-resize').focus(function () {
 		var el = this;
 		setTimeout(function() {
 			el.style.cssText = 'height:auto; padding:0';
 			el.style.cssText = 'height:' + el.scrollHeight + 'px';
 		}, 1);
-	}); 
-	
-	
+	});
+
+
 	$(".comment-form-main form, .praktika-comment__answer, .praktika-comment-item__edit").submit(function(e) {
 		e.preventDefault();
 	});
-	
-	
-	
-	
-	
-	/* Section-form-questions */
-	
+
+
+
+
+
+
+
 	$(".form-questions__main-form").not('#faqContactForm').submit(function(e) {
 		e.preventDefault();
 	});
-	
+
 	$('.form-questions__main-form').not('#faqContactForm').submit(function () {
 		$(this).closest('.form-questions').addClass("active");
 	});
-	
+
 	$('.form-questions__succes .btn').click(function () {
 		$(this).closest('.form-questions').removeClass("active");
 	});
-	
-	
-	
-	
-	
-	/* ЛК использует общий .burger, но открывает свою панель .modal-mobile-menu-lk. */
+
+
+
+
+
+
 	$(document).on('click', '.body_lk .burger', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -887,22 +892,22 @@ jQuery(document).ready(function($) {
 			closeLkNotifications();
 		}
 	});
-	
-	
-	/* Sidebar */
-	
+
+
+
+
 	$('.sidebar-menu__item').not('.sidebar-menu__item_exit').click(function () {
 		$(this).closest('.sidebar-menu').find('.sidebar-menu__item').removeClass("active");
 		$(this).addClass("active");
 	});
-	
+
 	$('.sidebar-menu__item').not('.sidebar-menu__item_exit').click(function () {
 		var smt = $(this).attr('data-target');
 		$('.lk-slide').removeClass("active");
 		$('.lk-slide[data-target=' + smt + ']').addClass("active");
-	}); 
-	
-	
+	});
+
+
 	if ($(window).width() < yogaViewportBp.lg ) {
 		$('.sidebar-menu__item').click(function () {
 			$('.overlay').removeClass("active");
@@ -923,7 +928,7 @@ jQuery(document).ready(function($) {
 			closeLibraryFiltersScreen(true);
 		});
 	};
-	
+
 	if ($(window).width() < yogaViewportBp.lg ) {
 		$(".sidebar-menu__item").click(function () {
 			var elementClick = $('#section-lk');
@@ -932,95 +937,95 @@ jQuery(document).ready(function($) {
 			return false;
 		});
 	};
-	
-	
-	
-	/* Section-lk */
-	
+
+
+
+
+
 	$('.lk-gender-item').click(function () {
 		$(this).closest('.lk-gender').find('.lk-gender-item').removeClass("active");
 		$(this).addClass("active");
 	});
-	
+
 	$(".lk-form").submit(function(e) {
 		e.preventDefault();
 	});
-	
-	/* «Показать еще» для вопросов ЛК — см. делегированный обработчик .show-more-questions во втором $(document).ready */
-	
+
+
+
 	$('.lk-questions-form .input').keydown(function () {
 		var el = this;
 		setTimeout(function() {
 			el.style.cssText = 'height:auto; padding:0';
 			el.style.cssText = 'height:' + el.scrollHeight + 'px';
 		}, 1);
-	}); 
-	
+	});
+
 	$('.lk-questions-form .input').focus(function () {
 		var el = this;
 		setTimeout(function() {
 			el.style.cssText = 'height:auto; padding:0';
 			el.style.cssText = 'height:' + el.scrollHeight + 'px';
 		}, 1);
-	}); 
-	
-	
+	});
+
+
 	$(".lk-questions-form form").submit(function(e) {
 		e.preventDefault();
 	});
-	
-	
+
+
 	$('.lk-form-safe .btn').on('click', function () {
-		
+
 		var val1 = $('.lk-form-item_newpass .input').val();
 		var val2 = $('.lk-form-item_newpassrepeat .input').val();
-		
+
 		if (val1 !== val2) {
 			$('.lk-form-item_newpassrepeat').addClass('error');
 			} else {
 			$('.lk-form-item_newpassrepeat').removeClass('error');
 		}
 	});
-	
-	
-	
+
+
+
 	$('.lk-form-item .input').on('input', function () {
 		$(this).closest('.lk-form-item').removeClass("error");
 	});
-	
-	
+
+
 	$('.lk-settings__slide_main .lk-settings-item_action').click(function () {
 		$('.lk-settings__slide').removeClass("active");
 		$('.lk-settings__slide_payment').addClass("active");
-		
+
 	});
-	
+
 	$('.lk-settings__slide_payment .form-back').click(function () {
 		$('.lk-settings__slide').removeClass("active");
 		$('.lk-settings__slide_main').addClass("active");
-		
+
 	});
-	
-	
-	/* Section-blog */
-	
-	
+
+
+
+
+
 	$('.blog-radios label').click(function () {
 		$(this).closest('.blog-radios').find('label').removeClass("active");
 		$(this).addClass("active");
-		
-		
+
+
 	});
-	
-	// Поиск блога: обычный GET на action формы (/blog/?s=…). Раньше был preventDefault() —
-	// страница не перезагружалась, .blog-main скрывался — визуально «ничего не найдено».
-	
+
+
+
+
 	$('.blog-articles__more > .btn, .popular-articles__media-more > .btn').click(function () {
 		$(this).find('span').toggleClass("active");
 		$('.blog-article-item_last').toggleClass("hidden");
-		
+
 	});
-	
+
 	if ($(window).width() >= yogaViewportBp.lg ) {
 		$(window).scroll(function(){
 			if ($(window).scrollTop() > 107) {
@@ -1028,15 +1033,15 @@ jQuery(document).ready(function($) {
 				} else {
 				$(".section-blog-form").removeClass("active");
 			};
-		});  
+		});
 		if ($(window).scrollTop() > 107) {
 			$(".section-blog-form").addClass("active");
 			} else {
 			$(".section-blog-form").removeClass("active");
 		};
 	};
-	
-	
+
+
 	if ($(window).width() > yogaViewportBp.tightDesktop ) {
 		$(window).scroll(function(){
 			if ($(window).scrollTop() > 119) {
@@ -1044,48 +1049,48 @@ jQuery(document).ready(function($) {
 				} else {
 				$(".section-blog-form").removeClass("active");
 			};
-		});  
+		});
 		if ($(window).scrollTop() > 119) {
 			$(".section-blog-form").addClass("active");
 			} else {
 			$(".section-blog-form").removeClass("active");
 		};
 	};
-	
+
 	$(document).ready(function () {
 		$('.blog-search input').on('input', function () {
 			const $parent = $(this).parent();
 			const value = $(this).val();
-			
+
 			if (value.length >= 1) {
 				$parent.addClass('active');
 				$parent.removeClass('search-active');
-				
+
 				} else {
 				$parent.removeClass('active');
 				$parent.removeClass('search-active');
 			}
 		});
 	});
-	
+
 	$(document).ready(function () {
 		$('.blog-search__delete-btn').on('click', function () {
 			const $parent = $(this).parent();
 			const value = $(this).val();
-			
+
 			if (value.length >= 1) {
 				$parent.addClass('active');
 				$parent.removeClass('search-active');
-				
+
 				} else {
 				$parent.removeClass('active');
 				$parent.removeClass('search-active');
 			}
 		});
 	});
-	
-	
-	/* Section-post — липкая колонка автора только на ширине > lg (≤1024: вертикальная вёрстка, без sticky) */
+
+
+
 	$(document).ready(function () {
 		var $postAside = $('.post-author-fixed');
 		if (!$postAside.length) {
@@ -1160,9 +1165,9 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
-	
-	
+
+
+
 	$(document).ready(function () {
 		function checkWidthAndInitSlick() {
 			var $popularArticlesSlider = $('.popular-articles-slider');
@@ -1174,21 +1179,21 @@ jQuery(document).ready(function($) {
 			if ($(window).width() >= yogaViewportBp.sm) {
 				if (!$popularArticlesSlider.hasClass('slick-initialized')) {
 					$popularArticlesSlider.slick({
-						// твои настройки слайдера
+
 						infinite: true,
 						dots: true,
 						arrows: true,
 						slidesToShow: 3,
 						slidesToScroll: 1,
-						
+
 						prevArrow: ".popular-articles__intro .slick-prev",
 						nextArrow: ".popular-articles__intro .slick-next",
 						responsive: [
 							{
 								breakpoint: yogaViewportBp.lg,
-								settings: {   
+								settings: {
 									slidesToShow: 2,
-									slidesToScroll: 1,   
+									slidesToScroll: 1,
 								}
 							}
 						]
@@ -1200,40 +1205,40 @@ jQuery(document).ready(function($) {
 				}
 			}
 		}
-		
-		// Инициализация при загрузке
+
+
 		checkWidthAndInitSlick();
-		
-		// Проверка при изменении размера окна
+
+
 		$(window).on('resize', function () {
 			checkWidthAndInitSlick();
 		});
 	});
-	
-	
-	
-	/* Section-popular-articles */
-	
-	
-	/* Section-contacts */
-	
-	/* $(".section-form-questions_contacts .form-questions__main-form").submit(function(e) {
-		e.preventDefault();
-		$('.body').addClass("body-fixed");
-		$('.overlay').addClass("active");
-		$('.modal').removeClass("active");
-		$('.modal-login').removeClass("active");
-		$('.modal-default_formsucces').addClass("active");
-	}); */
-	
-	
-	/* Section- */
-	
-	
-	
-	
-	/* Modals */
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	$('.overlay').click(function () {
 		$(this).removeClass("active");
 		$('.modal').removeClass("active");
@@ -1247,7 +1252,7 @@ jQuery(document).ready(function($) {
 		$('.body_lk .burger').removeClass("active");
 		closeLibraryFiltersScreen(true);
 	});
-	
+
 	$('.modal-close').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
@@ -1276,7 +1281,7 @@ jQuery(document).ready(function($) {
 			return;
 		}
 		event.preventDefault();
-		// Fixed positioning must be calculated from the viewport, not from a page container.
+
 		if (!$modal.parent().is('body')) {
 			$modal.appendTo(document.body);
 		}
@@ -1367,48 +1372,48 @@ jQuery(document).ready(function($) {
 			applyCheckoutCoupon();
 		}
 	});
-	
+
 	jQuery(function($){
 		$(".input_phone").mask("+7 (999) 999 99 99");
 	});
-	
+
 	jQuery(function($){
 		$(".input_birth").mask("99.99.9999");
 	});
-	
+
 	jQuery(function($){
 		$(".input_card").mask("9999 9999 9999 9999");
 	});
-	
+
 	jQuery(function($){
 		$(".input_carddate").mask("99/99");
 	});
-	
+
 	jQuery(function($){
 		$(".input_cardcode").mask("999");
 	});
-	
-	
+
+
 	$('.modal-login-inner__slide .input').keyup(function(){
 		var $this = $(this),
 		vall = $this.val();
-		
+
 		if(vall.length >= 1){
 			$('.input:valid').closest('.form').addClass("active");
 			$('.input:invalid').closest('.form').removeClass("active");
-			
+
 			$('.input:valid').closest('.form').removeClass("disabled");
 			$('.input:invalid').closest('.form').removeClass("disabled");
 			}else {
-			
+
 		}
 	});
-	
+
 	$('.modal-login-inner button').click(function () {
 		$(this).closest('.form').find('.input:invalid').closest('.form').addClass("disabled");
-	});   
-	
-	
+	});
+
+
 	function yogaOpenLoginModal(slideTarget) {
 		$('.overlay').addClass('active');
 		$('.body').addClass('body-fixed');
@@ -1461,17 +1466,17 @@ jQuery(document).ready(function($) {
 			window.history.replaceState({}, document.title, cleanCheckoutUrl);
 		}
 	})();
-	
+
 	$(".modal-login .form").submit(function(e) {
 		e.preventDefault();
 	});
-	
+
 	$(document).on('input focus', '.yoga-form-login .input', function() {
 		var $msg = $(this).closest('.yoga-form-login').find('.yoga-form-login-message');
 		$msg.removeClass('is-visible').empty();
 	});
 
-	// AJAX: форма входа по почте
+
 	$(document).on('submit', '.yoga-form-login', function(e) {
 		e.preventDefault();
 		var $form = $(this);
@@ -1531,8 +1536,8 @@ jQuery(document).ready(function($) {
 			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
-	
-	// AJAX: форма регистрации по почте
+
+
 	$(document).on('submit', '.yoga-form-register', function(e) {
 		e.preventDefault();
 		var $form = $(this);
@@ -1585,8 +1590,8 @@ jQuery(document).ready(function($) {
 			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
-	
-	// AJAX: восстановление пароля — после успеха показываем слайд 4
+
+
 	$(document).on('submit', '.yoga-form-recovery', function(e) {
 		e.preventDefault();
 		var $form = $(this);
@@ -1640,21 +1645,21 @@ jQuery(document).ready(function($) {
 			})
 			.always(function() { $btn.prop('disabled', false); });
 	});
-	
-	
-	
+
+
+
 	$('.modal-call').click(function () {
 		$('.body').addClass("body-fixed");
 		$('.overlay').addClass("active");
 		$('.modal').removeClass("active");
 		$('.modal-login').removeClass("active");
 	});
-	
-	
-	// Обработка клика по "Развернуть" в отзывах
+
+
+
 	jQuery(document).on('click', '.modal-call_review', function(e) {
 		e.preventDefault();
-		
+
 		var reviewData = {
 			name: jQuery(this).data('review-name'),
 			age: jQuery(this).data('review-age'),
@@ -1662,58 +1667,58 @@ jQuery(document).ready(function($) {
 			image: jQuery(this).data('review-image'),
 			text: jQuery(this).data('review-text')
 		};
-		
-		// Заполняем модальное окно данными
+
+
 		jQuery('.review-modal-name').text(reviewData.name);
 		jQuery('.review-modal-age').text(reviewData.age);
 		jQuery('.review-modal-job').text(reviewData.job);
 		jQuery('.review-modal__main-image img').attr('src', reviewData.image);
 		jQuery('.review-modal__text').html('<p>' + reviewData.text + '</p>');
-		
-		// Показываем модальное окно
+
+
 		jQuery('.modal_review').addClass('active');
 		jQuery('body').addClass('modal-open');
 	});
-	
-	
-	
-	
-	/*
-		$('.mobile-menu-switches__item').click(function () {
-		$(this).closest('.mobile-menu-switches').find('.mobile-menu-switches__item').removeClass("active");
-		$(this).addClass("active");
-		
-		var mobsw = $(this).attr('data-target');
-		$('.mobile-menu-sub').removeClass("active");
-		$('.mobile-menu-sub[data-target=' + mobsw + ']').addClass("active");
-		}); 
-	*/
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	$('.mobile-menu-main-item_sw').click(function () {
 		var $menu = $(this).closest('.mobile-menu-inner');
 		$menu.addClass('mobile-menu-inner_library');
 		$menu.find('.mobile-menu__slide_sub').addClass("active");
 		$menu.find('.mobile-menu__slide_main').removeClass("active");
 	});
-	
+
 	$('.mobile-menu-back').click(function () {
 		var $menu = $(this).closest('.mobile-menu-inner');
 		$menu.removeClass('mobile-menu-inner_library');
 		$menu.find('.mobile-menu__slide_sub').removeClass("active");
 		$menu.find('.mobile-menu__slide_main').addClass("active");
 	});
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	$('.modal-call_delcomm').click(function () {
 		$('.modal-default_delcomm').addClass("active");
 	});
-	
+
 	(function cookieBannerInit() {
 		var cookieName = 'yoga_cookie_consent';
 		var legacyLsKey = 'yoga_cookie_consent_v1';
@@ -1744,7 +1749,7 @@ jQuery(document).ready(function($) {
 					return window.localStorage.getItem(legacyLsKey) || '';
 				}
 			} catch (e3) {
-				// ignore
+
 			}
 			return '';
 		}
@@ -1757,7 +1762,7 @@ jQuery(document).ready(function($) {
 					window.localStorage.setItem(legacyLsKey, val);
 				}
 			} catch (e) {
-				// ignore
+
 			}
 		}
 		function hideCookieBanner() {
@@ -1780,8 +1785,8 @@ jQuery(document).ready(function($) {
 			hideCookieBanner();
 		});
 	})();
-	
-	
+
+
 	(function initLkUnsavedChangesGuard() {
 		var $profileForm = $('#profile-form');
 		if (!$profileForm.length) {
@@ -1904,8 +1909,8 @@ jQuery(document).ready(function($) {
 		$('.modal-default_logout').addClass('active');
 		$('.body').addClass('body-fixed');
 	});
-	
-	// Закрытие модального окна выхода по кнопке "Нет, остаться" или крестику
+
+
 	$('.modal-default_logout .modal-close, .modal-default_logout .modal-close-logout').click(function () {
 		$('.overlay').removeClass("active");
 		$('.modal').removeClass("active");
@@ -1914,43 +1919,43 @@ jQuery(document).ready(function($) {
 		$('.modal-mobile-menu-lk').removeClass("active");
 		$('.body').removeClass("body-fixed");
 	});
-	
-	// Кнопка "Да, выйти" - редирект на wp_logout_url уже настроен в HTML
-	
-	// Инициализация fancybox для видео
-	/* jQuery(document).ready(function($) {
-		// Настройки для fancybox
-		$('[data-fancybox="videos"]').fancybox({
-		type: 'iframe',
-		iframe: {
-		preload: false,
-		css: {
-		width: '80%',
-		height: '80%'
-		}
-		},
-		beforeShow: function() {
-		// Для MP4 видео используем HTML5 video
-		var href = this.src;
-		if (href.includes('.mp4') || href.includes('.webm') || href.includes('.ogg')) {
-		this.type = 'html';
-		this.content = $('<video controls autoplay style="width:100%;height:100%">' +
-		'<source src="' + href + '" type="video/mp4">' +
-		'Your browser does not support the video tag.' +
-		'</video>');
-		}
-		},
-		afterClose: function() {
-		// Останавливаем видео при закрытии
-		$('video').each(function() {
-		this.pause();
-		this.currentTime = 0;
-		});
-		}
-		});
-	}); */
-	
-	// Обработка формы подписки
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	jQuery(document).ready(function($) {
 		if ($.fn.fancybox) {
 			$('[data-fancybox^="practice-"]').fancybox({
@@ -1965,27 +1970,27 @@ jQuery(document).ready(function($) {
 
 		$('#subscription-form').on('submit', function(e) {
 			e.preventDefault();
-			
+
 			var $form = $(this);
 			var $email = $form.find('input[type="email"]');
 			var $success = $form.next('.form__succes');
 			var formAction = $form.attr('action');
-			
-			// Валидация email
+
+
 			if (!isValidEmail($email.val())) {
 				$email.addClass('error');
 				return false;
 			}
-			
+
 			$email.removeClass('error');
-			
-			// Если указан action формы, отправляем стандартным способом
+
+
 			if (formAction && formAction !== '#') {
 				$form[0].submit();
 				return true;
 			}
-			
-			// AJAX отправка формы
+
+
 			$.ajax({
 				type: 'POST',
 				url: yoga_ajax.ajax_url,
@@ -1999,17 +2004,17 @@ jQuery(document).ready(function($) {
 				},
 				success: function(response) {
 					if (response.success) {
-						// Показываем сообщение об успехе
+
 						$form.closest('.subscription').addClass("succes");
-						//$success.fadeIn(300);
+
 						$email.val('');
-						
-						// Скрываем сообщение через 3 секунды
-						/* setTimeout(function() {
-							$success.fadeOut(300);
-							}, 3000);
-							} else {
-						alert('Ошибка: ' + response.data); */
+
+
+
+
+
+
+
 					}
 				},
 				error: function() {
@@ -2019,12 +2024,12 @@ jQuery(document).ready(function($) {
 					$form.find('button').prop('disabled', false);
 				}
 			});
-			
+
 			return false;
 		});
-		
-		
-		// Валидация в реальном времени
+
+
+
 		$('input[type="email"]').on('blur', function() {
 			if (!isValidEmail($(this).val())) {
 				$(this).addClass('error');
@@ -2033,19 +2038,19 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
 	document.addEventListener('DOMContentLoaded', function() {
-		// Обработка избранного
-		/* const favElements = document.querySelectorAll('.praktika-fav');
-			
-			favElements.forEach(fav => {
-			fav.addEventListener('click', function() {
-			this.classList.toggle('active');
-			// Здесь можно добавить AJAX запрос для сохранения в избранное
-			});
-		}); */
-		
-		// Плавная прокрутка только к якорям (#...), без перехвата обычных ссылок.
+
+
+
+
+
+
+
+
+
+
+
 		document.querySelectorAll('.ref[href^="#"]').forEach(link => {
 			link.addEventListener('click', function(e) {
 				const targetId = this.getAttribute('href');
@@ -2054,7 +2059,7 @@ jQuery(document).ready(function($) {
 				}
 
 				const targetElement = document.querySelector(targetId);
-				
+
 				if (targetElement) {
 					e.preventDefault();
 					targetElement.scrollIntoView({
@@ -2065,8 +2070,8 @@ jQuery(document).ready(function($) {
 			});
 		});
 	});
-	
-	// Обработка формы подписки (DOM уже готов в этом jQuery.ready — второй DOMContentLoaded уже не сработает)
+
+
 	(function initSubscriptionForms() {
 		const subscriptionForms = document.querySelectorAll('.subscription-form');
 
@@ -2111,8 +2116,8 @@ jQuery(document).ready(function($) {
 			});
 		});
 	})();
-	
-	
+
+
 	function yogaSubscriptionAjaxMessage(payload, fallback) {
 		if (!payload || typeof payload !== 'object') {
 			return fallback;
@@ -2130,11 +2135,11 @@ jQuery(document).ready(function($) {
 	function subscribeUser(email, nonce, form) {
 		const button = form.querySelector('.form-btn');
 		const originalHtml = button.innerHTML;
-		
-		// Показываем лоадер
+
+
 		button.innerHTML = '<span class="spinner"></span>';
 		button.style.pointerEvents = 'none';
-		
+
 		fetch(yoga_ajax.ajax_url, {
 			method: 'POST',
 			headers: {
@@ -2163,12 +2168,12 @@ jQuery(document).ready(function($) {
 			showSubscriptionError('Ошибка сети. Попробуйте еще раз.');
 		})
 		.finally(() => {
-			// Восстанавливаем кнопку
+
 			button.innerHTML = originalHtml;
 			button.style.pointerEvents = 'auto';
 		});
 	}
-	
+
 	function showSubscriptionSuccess(message, form) {
 		openSubscriptionSuccessModal();
 		const subscription = form ? form.closest('.subscription') : null;
@@ -2239,37 +2244,37 @@ jQuery(document).ready(function($) {
 				.finally(() => { if (!this.classList.contains('is-subscribed')) button.disabled = false; });
 		});
 	});
-	
+
 	function showSubscriptionError(message) {
 		console.error('Subscription error:', message);
 		alert(message);
 	}
-	
+
 	console.log('Contact form handler initialized');
-	
-	// Проверяем, загружен ли DOM полностью
+
+
 	if (document.readyState === 'loading') {
-		// DOM ещё загружается, ждём события
+
 		document.addEventListener('DOMContentLoaded', function() {
 			initContactForm();
 		});
 		} else {
-		// DOM уже загружен, выполняем сразу
+
 		initContactForm();
 	}
-	
+
 	function initContactForm() {
 		console.log('Initializing contact form handlers...');
-		
-		// Маска для телефона
+
+
 		const phoneInputs = document.querySelectorAll('.input_phone');
 		phoneInputs.forEach(input => {
 			input.addEventListener('input', function(e) {
 				this.value = this.value.replace(/[^\d+\(\)\s-]/g, '');
 			});
 		});
-		
-		// Обработка отправки формы
+
+
 		const contactForms = document.querySelectorAll('.contacts-form');
 		const submitLabels = document.querySelectorAll('label[for="form-questions-submit"]');
 
@@ -2279,8 +2284,8 @@ jQuery(document).ready(function($) {
 				processContactForm(form);
 			});
 		});
-		
-		// Клик по кнопке отправки
+
+
 		submitLabels.forEach(label => {
 			label.addEventListener('click', function(e) {
 				e.preventDefault();
@@ -2288,8 +2293,8 @@ jQuery(document).ready(function($) {
 				processContactForm(form);
 			});
 		});
-		
-		// Отправка по Enter в textarea
+
+
 		const textareas = document.querySelectorAll('.contacts-form textarea');
 		textareas.forEach(textarea => {
 			textarea.addEventListener('keydown', function(e) {
@@ -2300,11 +2305,11 @@ jQuery(document).ready(function($) {
 				}
 			});
 		});
-		
+
 		console.log('Contact form handlers initialized successfully');
 	}
-	
-	// Обработка формы контактов
+
+
 	function processContactForm(form) {
 		const formData = new FormData(form);
 		const name = formData.get('contacts_name');
@@ -2312,10 +2317,10 @@ jQuery(document).ready(function($) {
 		const phone = formData.get('contacts_phone');
 		const message = formData.get('contacts_message');
 		const nonce = formData.get('contacts_nonce_field');
-		
+
 		formData.append('action', 'process_contact_form');
-		
-		// Валидация
+
+
 		if (!name || !email || !message) {
 			alert('Пожалуйста, заполните все поля');
 			return;
@@ -2326,17 +2331,17 @@ jQuery(document).ready(function($) {
 			alert('Пожалуйста, укажите телефон');
 			return;
 		}
-		
+
 		if (!isValidEmail(email)) {
 			alert('Пожалуйста, введите корректный email');
 			return;
 		}
-		
-		// Отправка AJAX
+
+
 		submitContactForm(formData, form);
 	}
-	
-	// AJAX отправка формы контактов
+
+
 	function submitContactForm(formData, form) {
 		const submitControl = form.querySelector('.contacts-form-layout__submit[type="submit"]')
 			|| form.querySelector('label[for="form-questions-submit"]');
@@ -2344,11 +2349,11 @@ jQuery(document).ready(function($) {
 			return;
 		}
 		const originalHtml = submitControl.innerHTML;
-		
-		// Показываем лоадер
+
+
 		submitControl.innerHTML = '<span class="spinner"></span>';
 		submitControl.style.pointerEvents = 'none';
-		
+
 		fetch(yoga_ajax.ajax_url, {
 			method: 'POST',
 			body: formData
@@ -2373,7 +2378,7 @@ jQuery(document).ready(function($) {
 			submitControl.style.pointerEvents = 'auto';
 		});
 	}
-	
+
 	function showContactSuccess(message, form) {
 		if (form && form.closest('.section-form-questions_contacts')) {
 			openContactSuccessModal();
@@ -2397,29 +2402,29 @@ jQuery(document).ready(function($) {
 		$('.modal-login').removeClass("active");
 		$('.modal-default_formsucces').addClass("active");
 	}
-	
+
 	function showContactError(message) {
 		alert(message);
 	}
-	
+
 	jQuery(document).ready(function($) {
 		$('.mobile-menu-switches__item').on('click', function() {
 			if ($(this).hasClass('mobile-menu-switches__item_unavailable') || $(this).attr('data-unavailable') === '1') {
 				return;
 			}
 			var target = $(this).data('target');
-			
-			// Активируем переключатель
+
+
 			$('.mobile-menu-switches__item').removeClass('active');
 			$(this).addClass('active');
-			
-			// Показываем соответствующее меню
+
+
 			$('.mobile-menu-sub').removeClass('active');
 			$('.mobile-menu-sub[data-target="' + target + '"]').addClass('active');
 		});
 	});
-	
-	// Обработка формы FAQ
+
+
 	$(document).on('click', '#faqContactForm label[for="faq-form-submit"]', function(e) {
 		e.preventDefault();
 		const faqForm = this.closest('form');
@@ -2427,37 +2432,37 @@ jQuery(document).ready(function($) {
 			$(faqForm).trigger('submit');
 		}
 	});
-	
+
 	$(document).on('submit', '#faqContactForm', function(e) {
 		e.preventDefault();
-		
+
 		const faqForm = this;
 		const submitLabel = faqForm.querySelector('label[for="faq-form-submit"]');
 		if (!submitLabel) {
 			return;
 		}
-		
+
 		const formData = new FormData(faqForm);
 		formData.append('action', 'faq_contact_form');
-		
+
 		const name = (formData.get('name') || '').toString().trim();
 		const email = (formData.get('email') || '').toString().trim();
 		const message = (formData.get('message') || '').toString().trim();
-		
+
 		if (!name || !email || !message) {
 			alert('Пожалуйста, заполните все поля');
 			return;
 		}
-		
+
 		if (!isValidEmail(email)) {
 			alert('Пожалуйста, введите корректный email');
 			return;
 		}
-		
+
 		const originalHtml = submitLabel.innerHTML;
 		submitLabel.innerHTML = '<span class="spinner"></span>';
 		submitLabel.style.pointerEvents = 'none';
-		
+
 		fetch((typeof yoga_ajax !== 'undefined' && yoga_ajax.ajax_url) ? yoga_ajax.ajax_url : '/wp-admin/admin-ajax.php', {
 			method: 'POST',
 			body: formData
@@ -2484,13 +2489,13 @@ jQuery(document).ready(function($) {
 			submitLabel.style.pointerEvents = 'auto';
 		});
 	});
-	
+
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
 	}
 
-	/** Форма подписки: до 30 символов и базовый формат email (итог проверяет сервер через is_email). */
+
 	function isValidSubscriptionEmail(email) {
 		const trimmed = (email || '').trim();
 		if (trimmed.length < 1 || trimmed.length > 30) {
@@ -2574,9 +2579,9 @@ jQuery(document).ready(function($) {
         $('.body').removeClass('body-fixed');
     }
 
-    /**
-     * @param {boolean} immediate — без анимации (другие модалки, оверлей, ниже lg init).
-     */
+
+
+
     function closeLibraryFiltersScreen(immediate) {
         var $screen = $('.library-filters-screen');
         if (!$screen.length) {
@@ -2725,8 +2730,8 @@ jQuery(document).ready(function($) {
             }
         });
     }
-	
-	/** Заголовок h2 в #section-ways синхронизировать с выбранной категорией practice-type (AJAX без перезагрузки). */
+
+
 	function syncPracticeTaxonomyPageHeading() {
 		var $active = $('.section-library .form-categories__value span.active').first();
 		if (!$active.length) {
@@ -2745,19 +2750,19 @@ jQuery(document).ready(function($) {
 		}
 	}
 
-	// Функция для установки активного элемента по term ID
+
 	function setActiveLibraryTerm(termId) {
-		// Убираем активный класс у всех элементов
+
 		$('.section-library .form-categories__value span, .section-library .form-cat-list__item').removeClass('active');
-		
-		// Добавляем активный класс элементам с соответствующим data-target
+
+
 		$(`.section-library .form-categories__value span[data-target="${termId}"]`).addClass('active');
 		$(`.section-library .form-cat-list__item[data-target="${termId}"]`).addClass('active');
 		syncPracticeTaxonomyPageHeading();
 	}
-	
-	// Выбор подкатегории в поиске библиотеки → переход на URL архива термина (список практик),
-	// а не подмена сетки AJAX тем же видом карточек library-item.
+
+
+
 	$(document).on('click', '.section-library .form-cat-list__item', function(e) {
 		e.preventDefault();
 		var $item = $(this);
@@ -2781,8 +2786,8 @@ jQuery(document).ready(function($) {
 					$search.find('.form-categories').removeClass('active');
 					$search.find('.form-cat-list').removeClass('active');
 					setActiveLibraryTerm($item.data('target'));
-					// The parent category is the current URL, so it does not navigate.
-					// In this case replace its subcategory cards with practice results.
+
+
 					loadLibraryPractices();
 					requestLibrarySuggestions();
 					return;
@@ -2795,10 +2800,10 @@ jQuery(document).ready(function($) {
 		loadLibraryPractices();
 		requestLibrarySuggestions();
 	});
-	
-	// Также можно вызвать при загрузке страницы для установки начального активного элемента
+
+
 	$(document).ready(function() {
-		const initialActiveTerm = $('.section-library .form-categories__value span.active').data('target') || 
+		const initialActiveTerm = $('.section-library .form-categories__value span.active').data('target') ||
 		$('.section-library .form-cat-list__item.active').data('target') ||
 		getLibraryDefaultTermId();
 		if (initialActiveTerm) {
@@ -2811,8 +2816,8 @@ jQuery(document).ready(function($) {
 			loadLibraryPractices();
 		}
 	});
-	
-	// поиск
+
+
 	$('.section-library #practice-filter-form').on('submit', function(e) {
 		e.preventDefault();
 		loadLibraryPractices();
@@ -2830,8 +2835,8 @@ jQuery(document).ready(function($) {
             window.location.href = url;
         }
     });
-	
-	// Мобильный оверлей фильтров: тап по строке — программный toggle (делегирование на .library-filters-screen__row + проверка .active)
+
+
 	(function ($) {
 		var touchStart = { x: 0, y: 0, row: null };
 		var suppressRowClickUntil = 0;
@@ -2943,11 +2948,11 @@ jQuery(document).ready(function($) {
         return Number.isNaN(rawTermId) ? 0 : rawTermId;
     }
 
-    // Функция загрузки практик
+
     function loadPractices() {
-        // Показываем индикатор загрузки
+
         $('.kriyi__items').addClass('loading');
-        
+
         let data = {
             action: 'filter_practices_kriyi',
             nonce: yoga_ajax.nonce,
@@ -2955,8 +2960,8 @@ jQuery(document).ready(function($) {
             search: $('.section-kriyi .input').val(),
 			term_id: getActivePracticeTermId()
 		};
-		
-        // Собираем чекбоксы
+
+
 		if ($(window).width() < yogaViewportBp.lg) {
 			data.filters = YogaLibraryFiltersCore.selectedByTaxonomy();
 		} else {
@@ -2966,7 +2971,7 @@ jQuery(document).ready(function($) {
 				data.filters[taxonomy].push($(this).val());
 			});
 		}
-		
+
         YogaLibraryFiltersCore.request('practices', {
             url: yoga_ajax.ajax_url,
             type: 'POST',
@@ -2974,8 +2979,8 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     $('.kriyi__items').html(response.data.html);
-                    
-                    // Показываем/скрываем кнопку "Показать еще"
+
+
                     if (response.data.count > 10) {
                         $('.section-kriyi .kriyi > .btn').show();
 						} else {
@@ -3094,18 +3099,18 @@ jQuery(document).ready(function($) {
             }
         });
     }
-	
+
     // Функция для установки активного элемента по term ID
     function setActiveTerm(termId) {
         // Убираем активный класс у всех элементов
         $('.section-kriyi .form-categories__value span, .section-kriyi .form-cat-list__item').removeClass('active');
-        
+
         // Добавляем активный класс элементам с соответствующим data-target
         $(`.section-kriyi .form-categories__value span[data-target="${termId}"]`).addClass('active');
         $(`.section-kriyi .form-cat-list__item[data-target="${termId}"]`).addClass('active');
         syncPracticeTaxonomyPageHeading();
 	}
-	
+
     // Обработчики кликов по категориям: переход на канонический URL архива (роутинг), иначе остаёмся на странице с AJAX.
     $(document).on('click', '.section-kriyi .form-categories__value span, .section-kriyi .form-cat-list__item', function(e) {
         e.preventDefault();
@@ -3136,7 +3141,7 @@ jQuery(document).ready(function($) {
         loadPractices();
         requestPracticeSuggestions();
 	});
-	
+
     // Поиск
     $('.section-kriyi form').on('submit', function(e) {
         e.preventDefault();
@@ -3155,7 +3160,7 @@ jQuery(document).ready(function($) {
             window.location.href = url;
         }
     });
-	
+
     // Чекбоксы
     $('.section-kriyi .filter input[type=checkbox]').on('change', function() {
 		YogaLibraryFiltersCore.set(this, this.checked);
@@ -3167,12 +3172,12 @@ jQuery(document).ready(function($) {
 		var nextPage = Number($(this).attr('data-next-page')) || 2;
 		loadLibraryPractices(nextPage);
 	});
-	
+
     // Кнопка "Показать еще/Свернуть"
     $('.section-kriyi .btn').on('click', function() {
         $(this).toggleClass('active');
         $('.section-kriyi .kriyi-item.hidden').toggleClass('hidden');
-        
+
         // Меняем текст кнопки
         if ($(this).hasClass('active')) {
             $(this).find('span:first').text('Свернуть');
@@ -3244,7 +3249,7 @@ jQuery(document).ready(function($) {
 
 		return applied;
 	}
-	
+
     // Добавление в избранное
     /* $(document).on('click', '.section-kriyi .kriya-fav', function(e) {
         e.preventDefault();
@@ -3252,9 +3257,9 @@ jQuery(document).ready(function($) {
         $(this).find('img').toggleClass('active');
         // Здесь можно добавить AJAX запрос для сохранения в избранное
 	}); */
-	
+
     // Инициализация при загрузке страницы
-    const initialActiveTerm = $('.section-kriyi .form-categories__value span.active').data('target') || 
+    const initialActiveTerm = $('.section-kriyi .form-categories__value span.active').data('target') ||
 	$('.section-kriyi .form-cat-list__item.active').data('target');
     if (initialActiveTerm) {
         setActiveTerm(initialActiveTerm);
@@ -3265,8 +3270,8 @@ jQuery(document).ready(function($) {
 	if (hasUrlPracticeFilters || YogaLibraryFiltersCore.selectedCount() > 0) {
 		loadPractices();
 	}
-	
-	
+
+
 });
 
 jQuery(document).ready(function($) {
@@ -3641,7 +3646,7 @@ jQuery(document).ready(function($) {
 			persistLkSlide(activeTarget);
 		}
 	});
-    
+
     // Отправка формы через AJAX
 	$('#profile-form').on('submit', function(e) {
 		e.preventDefault();
@@ -3649,28 +3654,28 @@ jQuery(document).ready(function($) {
 		console.log('AJAX URL:', yoga_ajax.ajax_url);
 		console.log('Nonce:', yoga_ajax.nonce);
 		console.log('User logged in:', yoga_ajax.user_logged_in);
-		
+
 		var $form = $(this);
 		var $submitBtn = $form.find('.lk-form-safe label[for="lk-safe-btn"]').first();
 		var $submitInput = $form.find('#lk-safe-btn');
 		var $submitText = $submitBtn.children('span').first();
 		var originalText = $submitText.text();
 		var $notification = $('.lk-form-safe__text');
-		
+
 		// Валидация паролей
 		var newPassword = $form.find('input[name="new_password"]').val();
 		var repeatPassword = $form.find('input[name="repeat_password"]').val();
-		
+
 		if (newPassword && newPassword !== repeatPassword) {
 			showNotification('Пароли не совпадают', 'error');
 			return false;
 		}
-		
+
 		// Показываем индикатор загрузки
 		$submitText.text('Сохранение...');
 		$submitInput.prop('disabled', true);
 		$submitBtn.attr('aria-busy', 'true');
-		
+
 		// Создаем FormData
 		var formData = new FormData(this);
 		formData.append('action', 'update_user_profile');
@@ -3723,10 +3728,10 @@ jQuery(document).ready(function($) {
 				console.error('Status Code:', xhr.status);
 				console.error('Status Text:', xhr.statusText);
 				console.groupEnd();
-				
+
 				// Показываем подробное сообщение об ошибке
 				var errorMessage = 'Ошибка при сохранении данных';
-				
+
 				if (xhr.responseText) {
 					try {
 						var response = JSON.parse(xhr.responseText);
@@ -3737,9 +3742,9 @@ jQuery(document).ready(function($) {
 						errorMessage = 'Ошибка сервера: ' + xhr.status + ' ' + xhr.statusText;
 					}
 				}
-				
+
 				showNotification(errorMessage, 'error');
-				
+
 				// Не пытаемся отправлять стандартным способом - убираем эту строку
 				// $form.off('submit').submit();
 			},
@@ -3751,7 +3756,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
 	// Функция показа уведомлений
 	function showNotification(message, type = 'success') {
 		$('.practice-notification').remove();
@@ -3772,12 +3777,12 @@ jQuery(document).ready(function($) {
 			});
 		}, 3000);
 	}
-	
+
 	// Загрузка аватара
 	$(document).on('click', '.photo-input-custom__inner-photo', function(e) {
 		e.stopPropagation(); // Останавливаем всплытие
 		e.preventDefault(); // Отменяем действие по умолчанию
-		
+
 		setTimeout(function() {
 			$('#avatar-upload').click();
 		}, 50); // Небольшая задержка
@@ -3789,7 +3794,7 @@ jQuery(document).ready(function($) {
 			$(this).trigger('click');
 		}
 	});
-	
+
 	$(document).on('change', '#avatar-upload', function() {
 		var file = this.files && this.files[0];
 		if (!file) return;
@@ -3857,7 +3862,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
 	// Удаление аватара
 	$(document).on('click', '.photo-input-delete', function(e) {
 		e.preventDefault();
@@ -3901,13 +3906,13 @@ jQuery(document).ready(function($) {
 				}
 			});
 	});
-	
+
 	// Показать/скрыть пароль
 	$('.input-password__btn').on('click', function() {
 		var $input = $(this).closest('.input-password').find('input');
 		var $showBtn = $(this).closest('.input-password').find('.input-password__btn_show');
 		var $hideBtn = $(this).closest('.input-password').find('.input-password__btn_hide');
-		
+
 		if ($input.attr('type') === 'password') {
 			$input.attr('type', 'text');
 			$showBtn.removeClass('active');
@@ -3918,8 +3923,8 @@ jQuery(document).ready(function($) {
 			$hideBtn.removeClass('active');
 		}
 	});
-	
-	
+
+
 	// Обработка избранного в рекомендациях
 	function updateHeaderFavorites(favoritesCount) {
 		var count = Math.max(0, parseInt(favoritesCount, 10) || 0);
@@ -4018,13 +4023,13 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		$('.practice-notification').remove();
-		
+
 		var $this = $(this);
-		var practiceId = $this.data('practice-id'); 
+		var practiceId = $this.data('practice-id');
 		if (!practiceId) {
 			return;
 		}
-		
+
 		$.ajax({
 			url: yoga_ajax.ajax_url,
 			type: 'POST',
@@ -4076,11 +4081,11 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
 	// Обработка формы вопроса
 	$('#question-form').on('submit', function(e) {
 		e.preventDefault();
-		
+
 		var $form = $(this);
 		var $submitBtn = $form.find('.btn');
 		var $nativeSubmit = $form.find('[type="submit"]');
@@ -4089,10 +4094,10 @@ jQuery(document).ready(function($) {
 			$submitBtn.text(originalText).removeClass('is-loading');
 			$nativeSubmit.prop('disabled', false);
 		};
-		
+
 		$submitBtn.text('Отправка...').addClass('is-loading');
 		$nativeSubmit.prop('disabled', true);
-		
+
 		$.ajax({
 			url: (typeof yoga_ajax !== 'undefined' ? yoga_ajax.ajax_url : $form.attr('action')),
 			type: 'POST',
@@ -4136,7 +4141,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
 	// Показать/скрыть дополнительные вопросы (делегирование; скрытый span с absolute не должен перехватывать клик — см. lk.css pointer-events)
 	$(document).on('click', '.lk-questions .show-more-questions', function(e) {
 		e.preventDefault();
@@ -4158,7 +4163,7 @@ jQuery(document).ready(function($) {
 		$btn.removeClass('is-expanded');
 		$btn.find('span').toggleClass('active');
 	});
-	
+
 	// Управление настройками подписки — только пункты с data-target (например «Карты»)
 	$('.lk-settings-item_action[data-target]').on('click', function() {
 		var target = $(this).data('target');
@@ -4168,29 +4173,29 @@ jQuery(document).ready(function($) {
 		$('.lk-settings__slide').removeClass('active');
 		$('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
 	});
-	
+
 	$('.form-back').on('click', function() {
 		var target = $(this).data('target');
 		$('.lk-settings__slide').removeClass('active');
 		$('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
 	});
-	
+
 	// Показать/скрыть дополнительные статьи
 	document.querySelectorAll('.blog-articles__more .btn').forEach(btn => {
 		btn.addEventListener('click', function() {
 			const hiddenItems = document.querySelectorAll('.blog-article-item.hidden');
 			const activeSpan = this.querySelector('.active');
 			const inactiveSpan = this.querySelector('span:not(.active)');
-			
+
 			hiddenItems.forEach(item => {
 				item.classList.toggle('hidden');
 			});
-			
+
 			activeSpan.classList.remove('active');
 			inactiveSpan.classList.add('active');
 		});
 	});
-	
+
 	// Обработка радио-кнопок
 	document.querySelectorAll('input[name="category"]').forEach(radio => {
 		radio.addEventListener('change', function() {
@@ -4198,19 +4203,19 @@ jQuery(document).ready(function($) {
 				label.classList.remove('active');
 			});
 			this.parentElement.classList.add('active');
-			
+
 			// Здесь можно добавить AJAX загрузку постов по категории
 		});
 	});
-	
+
 	// Отправка номера телефона
     $('#phone-form').on('submit', function(e) {
         e.preventDefault();
-        
+
         var $form = $(this);
         var formData = $form.serialize();
         var phone = $form.find('input[name="phone"]').val();
-		
+
         $.ajax({
             type: 'POST',
             url: yoga_ajax.ajax_url,
@@ -4233,13 +4238,13 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
     // Проверка SMS кода
     $('#code-form').on('submit', function(e) {
         e.preventDefault();
-        
+
         var formData = $(this).serialize();
-		
+
         $.ajax({
             type: 'POST',
             url: yoga_ajax.ajax_url,
@@ -4256,7 +4261,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
     // Повторная отправка кода
     $('#resend-code').on('click', function() {
         $.ajax({
@@ -4274,7 +4279,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-	
+
     // Таймер для повторной отправки
     function startTimer() {
         var timeLeft = 60;
@@ -4298,7 +4303,7 @@ jQuery(document).ready(function($) {
         var $form = $(this);
         var $button = $form.find('button[type="submit"]');
         var formData = $form.serialize();
-        
+
         $.ajax({
             type: 'POST',
             url: yoga_ajax.ajax_url,
@@ -4332,7 +4337,7 @@ jQuery(document).ready(function($) {
             alert('Для ответа необходимо авторизоваться');
             return;
         }
-        
+
         var commentId = $(this).closest('.praktika-comment').attr('id').replace('comment-', '');
         toggleReplyForm(commentId);
     });
@@ -4454,12 +4459,12 @@ function submitReply(parentId) {
     var $form = jQuery('#reply-form-' + parentId);
     var $button = $form.find('.btn');
     var content = $form.find('textarea').val();
-    
+
     if (!content.trim()) {
         alert('Введите текст ответа');
         return;
     }
-    
+
     var data = {
         action: 'submit_comment_reply',
         parent_id: parentId,
@@ -4467,7 +4472,7 @@ function submitReply(parentId) {
         content: content,
         security: yoga_ajax.nonce
     };
-    
+
     $button.prop('disabled', true).addClass('is-loading');
     jQuery.post(yoga_ajax.ajax_url, data, function(response) {
         if (response.success && response.data && response.data.html) {
@@ -4488,19 +4493,19 @@ function updateComment(commentId) {
     var $form = jQuery('#edit-form-' + commentId);
     var $button = $form.find('.btn_comment-update');
     var content = $form.find('textarea').val();
-    
+
     if (!content.trim()) {
         alert('Введите текст комментария');
         return;
     }
-    
+
     var data = {
         action: 'update_comment',
         comment_id: commentId,
         content: content,
         security: yoga_ajax.nonce
     };
-    
+
     $button.prop('disabled', true).addClass('is-loading');
     jQuery.post(yoga_ajax.ajax_url, data, function(response) {
         if (response.success && response.data && response.data.html) {
@@ -4588,7 +4593,7 @@ jQuery(document).on('click', function(e) {
     if (!jQuery(e.target).closest('.praktika-comment__answer, .answer-btn').length) {
         jQuery('.praktika-comment__answer').removeClass('active').addClass('hidden');
     }
-    
+
     if (!jQuery(e.target).closest('.praktika-comment-item__edit, .your-comm__btn_edit').length) {
         closeAllPracticeCommentEdits();
     }

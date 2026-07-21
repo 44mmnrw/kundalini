@@ -1,4 +1,9 @@
-/* Подвал сайта */
+/**
+ * Стили компонента: footer.
+ *
+ * @package Yoga
+ */
+
 .footer {
   width: 100%;
   display: block;

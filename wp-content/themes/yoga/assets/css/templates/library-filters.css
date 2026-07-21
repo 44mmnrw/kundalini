@@ -1,10 +1,15 @@
+/**
+ * Стили компонента: library filters.
+ *
+ * @package Yoga
+ */
 .library-filters-screen {
   display: none;
 }
 
-/* Техническое примечание. */
+
 @media (min-width: 1025px) {
-  /* Не display:none: input остаются источником сериализуемого состояния для общего JS-модуля. */
+
   .library-filters-screen {
     display: block !important;
     position: absolute;
@@ -28,7 +33,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    /* Выше .overlay (20) и типичных модалок (101), чтобы окно было поверх всего */
+
     z-index: 120;
     pointer-events: none;
     visibility: hidden;
@@ -42,7 +47,7 @@
     opacity: 1;
   }
 
-  /* Макет 340px: тёмный фон на всю ширину @ 30% opacity; белая панель с left 40px. Полоса слева 40/340. */
+
   .library-filters-screen__backdrop {
     position: absolute;
     left: 0;
@@ -69,12 +74,12 @@
     flex-direction: column;
     overflow: hidden;
     backface-visibility: hidden;
-    /* Закрыто / закрытие: панель за правым краем; открыто — .active → translateX(0). */
+
     transform: translateX(100%) translateZ(0);
     transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  /* Открыто. Ниже — --closing с тем же translateX(100%), что в базовом (уезд вправо, без проезда через экран). */
+
   .library-filters-screen.active .library-filters-screen__panel {
     transform: translateX(0) translateZ(0);
   }
@@ -149,7 +154,7 @@
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    /* Без своего скругления прямоугольный scroll-layer перекрывает radius у панели */
+
     border-radius: 30px 0 0 30px;
     background: #fff;
     padding: 5.5rem 1.25rem 1.5rem;
@@ -173,7 +178,7 @@
     border-radius: 0.125rem;
   }
 
-  /* Колонка блоков, gap 30px (без <section>: глобально section { display:flex } ломает сетку) */
+
   .library-filters-screen__block {
     display: flex;
     flex-direction: column;
@@ -186,7 +191,7 @@
     margin-top: 0;
   }
 
-  /* Bold 18 / 1.5 */
+
   .library-filters-screen__heading {
     margin: 0 0 1.25rem;
     width: 100%;
@@ -197,7 +202,7 @@
     color: #1f1f1f;
   }
 
-  /* Между строками 15px */
+
   .library-filters-screen__options {
     display: flex;
     flex-direction: column;
@@ -206,7 +211,7 @@
     width: 100%;
   }
 
-  /* Чекбокс + текст gap 12px; position для полноразмерного невидимого input (тап по строке в iOS) */
+
   .library-filters-screen__row {
     display: flex;
     flex-direction: row;
@@ -222,7 +227,7 @@
     -webkit-tap-highlight-color: rgba(31, 31, 31, 0.06);
   }
 
-  /* Строка кликабельна целиком через JS; input хранит состояние и отправляется общей формой. */
+
   .library-filters-screen__row input.library-filter-input[type="checkbox"] {
     position: absolute !important;
     left: 0 !important;
@@ -242,7 +247,7 @@
     visibility: visible !important;
   }
 
-  /* modals.css: .checkbox-item span { width: calc(100% - 1.375rem) } — растягивает чекбокс в полоску */
+
   .library-filters-screen .checkbox-item {
     margin-top: 0;
     align-items: center;
@@ -255,7 +260,7 @@
     padding-right: 0 !important;
   }
 
-  /* Квадрат 20×20, radius 2px по макету */
+
   .library-filters-screen__box.checkbox {
     box-sizing: border-box;
     flex: 0 0 1.25rem;
@@ -282,7 +287,7 @@
     background: var(--color-violet);
   }
 
-  /* Галочка через ::after; modals.css задаёт .checkbox::after { opacity: 0 } — без opacity:1 здесь галочка невидима */
+
   .library-filters-screen__box.checkbox.active::after {
     content: "";
     position: absolute;
@@ -297,7 +302,7 @@
     opacity: 1 !important;
   }
 
-  /* Regular 16 */
+
   .library-filters-screen__text {
     display: block;
     flex: 1 1 auto;

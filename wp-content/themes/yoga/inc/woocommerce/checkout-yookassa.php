@@ -1,8 +1,9 @@
 <?php
 /**
- * Связка checkout с ЮKassa: выбор шлюза, тип способа оплаты, редирект.
+ * Интеграция WooCommerce: checkout yookassa.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -10,9 +11,9 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/yookassa-gateway.php';
 
 if (!function_exists('yoga_yookassa_payment_type_map')) {
-	/**
-	 * @return array<string, string>
-	 */
+
+
+
 	function yoga_yookassa_payment_type_map(): array {
 		return array(
 			'sbp'          => 'sbp',
@@ -26,20 +27,20 @@ if (!function_exists('yoga_yookassa_payment_type_map')) {
 }
 
 if (!function_exists('yoga_yookassa_widget_payment_types')) {
-	/**
-	 * Способы, которые оплачиваются через виджет (на сайте), не через «умный платёж».
-	 *
-	 * @return string[]
-	 */
+
+
+
+
+
 	function yoga_yookassa_widget_payment_types(): array {
 		return array('bank_card', 'yoo_money');
 	}
 }
 
 if (!function_exists('yoga_yookassa_gateway_candidates')) {
-	/**
-	 * @return string[]
-	 */
+
+
+
 	function yoga_yookassa_gateway_candidates(): array {
 		return array('yookassa_widget', 'yookassa_epl');
 	}
@@ -56,9 +57,9 @@ if (!function_exists('yoga_yookassa_is_custom_checkout_payment_flow')) {
 }
 
 if (!function_exists('yoga_yookassa_get_active_gateway')) {
-	/**
-	 * Включить шлюз в опциях и обновить объект (WC кэширует enabled при init).
-	 */
+
+
+
 	function yoga_yookassa_get_active_gateway(string $gateway_id): ?WC_Payment_Gateway {
 		if ($gateway_id === 'yookassa_epl') {
 			yoga_yookassa_ensure_epl_gateway_enabled();
@@ -83,11 +84,11 @@ if (!function_exists('yoga_yookassa_get_active_gateway')) {
 }
 
 if (!function_exists('yoga_resolve_checkout_yookassa_gateway_id')) {
-	/**
-	 * Виджет — карта/ЮMoney на сайте; EPL — T-Pay/СБП/SberPay и явные типы (не умный платёж).
-	 *
-	 * @param array<string, WC_Payment_Gateway>|null $gateways Уже отфильтрованный список (без повторного get_available).
-	 */
+
+
+
+
+
 	function yoga_resolve_checkout_yookassa_gateway_id(?array $gateways = null): string {
 		if (!function_exists('WC') || !WC()->payment_gateways()) {
 			return '';
@@ -142,9 +143,9 @@ if (!function_exists('yoga_resolve_checkout_yookassa_gateway_id')) {
 }
 
 if (!function_exists('yoga_yookassa_bootstrap_epl_gateway')) {
-	/**
-	 * После мастера ЮKassa EPL иногда не создаётся в WooCommerce → Платежи.
-	 */
+
+
+
 	function yoga_yookassa_bootstrap_epl_gateway(): void {
 		if (!get_option('yookassa_shop_id')) {
 			return;
@@ -190,11 +191,11 @@ if (!function_exists('yoga_get_checkout_yookassa_gateway_id')) {
 }
 
 if (!function_exists('yoga_yookassa_get_merchant_payment_method_types')) {
-	/**
-	 * Список type из API /me (кэш плагина ЮKassa).
-	 *
-	 * @return string[]
-	 */
+
+
+
+
+
 	function yoga_yookassa_get_merchant_payment_method_types(bool $force_refresh = false): array {
 		if ($force_refresh) {
 			delete_transient('yoga_yookassa_merchant_payment_methods');
@@ -277,7 +278,7 @@ if (!function_exists('yoga_yookassa_validate_selected_payment_type')) {
 		$label = yoga_yookassa_get_payment_method_label($api_type);
 		wc_add_notice(
 			sprintf(
-				/* translators: %s payment method label */
+
 				__('Способ оплаты «%s» не подключён в личном кабинете ЮKassa для этого магазина.', 'yoga'),
 				$label
 			),
@@ -288,9 +289,9 @@ if (!function_exists('yoga_yookassa_validate_selected_payment_type')) {
 add_action('woocommerce_checkout_process', 'yoga_yookassa_validate_selected_payment_type', 6);
 
 if (!function_exists('yoga_yookassa_can_use_specific_payment_type')) {
-	/**
-	 * Можно ли передать выбранный тип в API (иначе — умный платёж без payment_method_data).
-	 */
+
+
+
 	function yoga_yookassa_can_use_specific_payment_type(string $api_type = ''): bool {
 		if ($api_type === '') {
 			$api_type = yoga_get_selected_yookassa_payment_type_for_api();
@@ -393,9 +394,9 @@ if (!function_exists('yoga_store_checkout_payment_type_in_session')) {
 add_action('woocommerce_checkout_process', 'yoga_store_checkout_payment_type_in_session', 1);
 
 if (!function_exists('yoga_yookassa_apply_gateway_to_posted_checkout_data')) {
-	/**
-	 * До валидации WC: СБП / T-Pay / SberPay должны идти через EPL (redirect), не виджет.
-	 */
+
+
+
 	function yoga_yookassa_apply_gateway_to_posted_checkout_data(array $data): array {
 		if (!empty($_POST['yoga_checkout_payment_type'])) {
 			$slug = sanitize_key(wp_unslash((string) $_POST['yoga_checkout_payment_type']));
@@ -449,9 +450,9 @@ if (!function_exists('yoga_map_checkout_payment_type_to_api')) {
 }
 
 if (!function_exists('yoga_get_selected_yookassa_payment_type_for_api')) {
-	/**
-	 * Тип для API ЮKassa — по выбору пользователя, без фильтра по кэшу /me.
-	 */
+
+
+
 	function yoga_get_selected_yookassa_payment_type_for_api(): string {
 		$slug = yoga_get_checkout_payment_type_slug();
 		if ($slug === '') {
@@ -463,9 +464,9 @@ if (!function_exists('yoga_get_selected_yookassa_payment_type_for_api')) {
 }
 
 if (!function_exists('yoga_get_selected_yookassa_payment_type')) {
-	/**
-	 * Тип с учётом доступности у мерчанта — для UI checkout.
-	 */
+
+
+
 	function yoga_get_selected_yookassa_payment_type(): string {
 		$api_type = yoga_get_selected_yookassa_payment_type_for_api();
 		if ($api_type === '' || !yoga_yookassa_is_merchant_type_available($api_type)) {
@@ -477,11 +478,11 @@ if (!function_exists('yoga_get_selected_yookassa_payment_type')) {
 }
 
 if (!function_exists('yoga_yookassa_redirect_confirmation_types')) {
-	/**
-	 * Способы, которые API принимает только с confirmation.type=redirect.
-	 *
-	 * @return string[]
-	 */
+
+
+
+
+
 	function yoga_yookassa_redirect_confirmation_types(): array {
 		return array('sbp', 'sberbank', 'alfa_pay', 'tinkoff_bank');
 	}
@@ -521,9 +522,9 @@ if (!function_exists('yoga_yookassa_get_return_url_for_order')) {
 }
 
 if (!function_exists('yoga_yookassa_create_payment_data')) {
-	/**
-	 * @return \YooKassa\Model\PaymentData\AbstractPaymentData|null
-	 */
+
+
+
 	function yoga_yookassa_create_payment_data(string $type) {
 		if ($type === '' || !class_exists('YooKassa\Model\PaymentData\PaymentDataFactory')) {
 			return null;
@@ -540,9 +541,9 @@ if (!function_exists('yoga_yookassa_create_payment_data')) {
 }
 
 if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
-	/**
-	 * @param \YooKassa\Request\Payments\CreatePaymentRequest $paymentRequest
-	 */
+
+
+
 	function yoga_yookassa_apply_payment_type_to_request($paymentRequest) {
 		if (!method_exists($paymentRequest, 'setPaymentMethodData')) {
 			return $paymentRequest;
@@ -589,7 +590,7 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 			}
 		}
 
-		// СБП / Alfa Pay: capture=true обязателен, холд запрещён (документация ЮKassa).
+
 		if (in_array($type, array('sbp', 'alfa_pay'), true)) {
 			if (method_exists($paymentRequest, 'setCapture')) {
 				$paymentRequest->setCapture(true);
@@ -646,12 +647,12 @@ if (!function_exists('yoga_yookassa_bootstrap_widget_gateway')) {
 add_action('init', 'yoga_yookassa_bootstrap_widget_gateway', 20);
 
 if (!function_exists('yoga_yookassa_widget_settings_respect_save_checkbox')) {
-	/**
-	 * Виджет ЮKassa читает save_payment_method из настроек шлюза — подставляем галочку чекаута.
-	 *
-	 * @param mixed $value
-	 * @return mixed
-	 */
+
+
+
+
+
+
 	function yoga_yookassa_widget_settings_respect_save_checkbox($value) {
 		if (!function_exists('is_checkout') || !is_checkout()) {
 			return $value;
@@ -709,9 +710,9 @@ if (!function_exists('yoga_yookassa_user_selected_redirect_payment_type')) {
 }
 
 if (!function_exists('yoga_yookassa_register_payment_gateways')) {
-	/**
-	 * Виджет + EPL: карта через виджет, T-Pay/СБП через EPL с явным типом (не умный платёж).
-	 */
+
+
+
 	function yoga_yookassa_register_payment_gateways(array $methods): array {
 		if (!get_option('yookassa_shop_id')) {
 			return $methods;
@@ -786,13 +787,13 @@ if (!function_exists('yoga_yookassa_capture_payment_api_response')) {
 add_filter('http_response', 'yoga_yookassa_capture_payment_api_response', 10, 3);
 
 if (!function_exists('yoga_yookassa_get_payment_confirmation_redirect_url')) {
-	/**
-	 * СБП, T-Pay, SberPay и Alfa Pay требуют confirmation.type=redirect.
-	 *
-	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp
-	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/tinkoff-bank
-	 * @see https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/alfa-pay
-	 */
+
+
+
+
+
+
+
 	function yoga_yookassa_get_payment_confirmation_redirect_url(WC_Order $order): string {
 		$payment_id = (string) $order->get_transaction_id();
 		if ($payment_id === '' || !class_exists('YooKassaClientFactory')) {
@@ -821,9 +822,9 @@ if (!function_exists('yoga_yookassa_get_payment_confirmation_redirect_url')) {
 }
 
 if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_success')) {
-	/**
-	 * В режиме виджета плагин ведёт на order-pay, хотя СБП ждёт redirect на confirmation_url.
-	 */
+
+
+
 	function yoga_yookassa_redirect_confirmation_url_on_success(array $result, int $order_id): array {
 		if (($result['result'] ?? '') !== 'success') {
 			return $result;
@@ -856,9 +857,9 @@ if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_success')) {
 add_filter('woocommerce_payment_successful_result', 'yoga_yookassa_redirect_confirmation_url_on_success', 5, 2);
 
 if (!function_exists('yoga_yookassa_redirect_confirmation_url_on_pay_page')) {
-	/**
-	 * Fallback: прямой заход на order-pay (обновление страницы, повтор оплаты).
-	 */
+
+
+
 	function yoga_yookassa_redirect_confirmation_url_on_pay_page(): void {
 		if (!function_exists('is_checkout_pay_page') || !is_checkout_pay_page()) {
 			return;

@@ -1,10 +1,14 @@
 <?php
-// Получаем настройки из ACF
+/**
+ * Переиспользуемый шаблонный блок: section blog.
+ *
+ * @package Yoga
+ */
 $new_title = get_field('blog_new_title', 'option');
 $posts_count = get_field('blog_posts_count', 'option') ?: 9;
 $blog_category = get_category_by_slug('blog');
 
-/** Возвращает дочернюю рубрику раздела «Блог», назначенную статье. */
+
 $get_article_category = static function (int $post_id) use ($blog_category): ?WP_Term {
     if (!$blog_category instanceof WP_Term) {
         return null;
@@ -32,7 +36,7 @@ if ($search_q === '') {
 $has_search = ($search_q !== '');
 $is_blog_search_ui = ($has_search || is_search());
 
-// На /blog/?s=… основной запрос — архив рубрики (is_search() = false), но строка поиска в URL есть.
+
 $category_filter_term_id = null;
 
 if ($blog_category && !is_wp_error($blog_category) && is_category()) {
@@ -46,8 +50,8 @@ if ($blog_category && !is_wp_error($blog_category) && is_category()) {
     }
 }
 
-// Узкая рубрика из формы (радио «Все статьи» / дочерние). Без этого — не навязываем родителя «blog»:
-// статьи часто лежат не в дереве рубрики blog, и жёсткий tax_query давал 0 результатов.
+
+
 if ($category_filter_term_id === null && $blog_category && !is_wp_error($blog_category) && $is_blog_search_ui) {
     if (!empty($_GET['category'])) {
         $slug = sanitize_title(wp_unslash($_GET['category']));
@@ -86,16 +90,16 @@ if ($category_filter_term_id) {
 $main_post = null;
 $secondary_post = null;
 
-/**
- * Результаты поиска (макет Figma — одна сетка карточек): без блока «Новое», все посты в grid.
- */
+
+
+
 if ($is_blog_search_ui) {
     $current_posts = new WP_Query(array_merge($query_common, array(
         'posts_per_page' => $posts_count,
     )));
     $blog_posts_total = (int) $current_posts->found_posts;
 } else {
-    // Верхний блок «Новое»: 2 самых свежих поста.
+
     $latest_posts_query = new WP_Query(array_merge($query_common, array(
         'posts_per_page' => 2,
     )));
@@ -107,7 +111,7 @@ if ($is_blog_search_ui) {
 
     $blog_posts_total = (int) $latest_posts_query->found_posts;
 
-    // «Популярное»: все статьи по убыванию просмотров; при равенстве — свежие выше.
+
     $popular_query_common = $query_common;
     unset($popular_query_common['orderby'], $popular_query_common['order']);
 
@@ -158,7 +162,7 @@ if ($is_blog_search_ui) {
                 </b>
             </div>
         </div>
-        
+
         <?php if (!$is_blog_search_ui) : ?>
         <div class="row">
             <div class="blog-main">
@@ -168,7 +172,7 @@ if ($is_blog_search_ui) {
                         <a href="<?php echo get_permalink($main_post); ?>"></a>
                     </div>
                 <?php endif; ?>
-                
+
                 <div class="blog-main__articles">
                     <?php if ($main_post) : ?>
                         <div class="blog-main-article-main">
@@ -192,7 +196,7 @@ if ($is_blog_search_ui) {
                             <a href="<?php echo get_permalink($main_post); ?>" class="blog-main-article-main__link"></a>
                         </div>
                     <?php endif; ?>
-                    
+
                     <?php if ($secondary_post) : ?>
                         <div class="blog-main-article-sub">
                             <div class="blog-main-article-sub__image">
@@ -220,7 +224,7 @@ if ($is_blog_search_ui) {
             </div>
         </div>
         <?php endif; ?>
-        
+
         <div class="row">
             <div class="blog-articles">
                 <?php if (!$is_blog_search_ui) : ?>
@@ -228,7 +232,7 @@ if ($is_blog_search_ui) {
                     <h3><?php esc_html_e('Популярное', 'yoga'); ?></h3>
                 </div>
                 <?php endif; ?>
-                
+
                 <div class="blog-articles__items">
                     <?php if ($current_posts->have_posts()) : ?>
                         <?php $counter = 1; ?>
@@ -239,29 +243,29 @@ if ($is_blog_search_ui) {
                                         <?php the_post_thumbnail('medium'); ?>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <div class="blog-article-item__date">
                                     <time class="article-time">
                                         <?php echo get_the_date('j F, Y'); ?>
                                     </time>
                                     <?php
-                                    // Axecode: временно скрываем время чтения по задаче.
-                                    /*
-                                    <time class="article-time article-time_time">
-                                        <?php echo reading_time(); ?> мин
-                                    </time>
-                                    */
+
+
+
+
+
+
                                     ?>
                                 </div>
-                                
+
                                 <h4>
                                     <?php the_title(); ?>
                                 </h4>
-                                
+
                                 <div class="article-btn">
                                     Читать
                                 </div>
-                                
+
                                 <a href="<?php the_permalink(); ?>"></a>
                             </div>
                             <?php $counter++; ?>
@@ -269,7 +273,7 @@ if ($is_blog_search_ui) {
                         <?php wp_reset_postdata(); ?>
                     <?php endif; ?>
                 </div>
-                
+
                 <?php if ($current_posts->found_posts > $posts_count) : ?>
                     <div class="blog-articles__more">
                         <div class="btn">

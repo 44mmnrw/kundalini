@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: checkout.
+ *
+ * @package Yoga
+ */
 .section-checkout {
 	padding-top: 0.625rem;
 	padding-bottom: 6.25rem;
@@ -86,7 +91,7 @@
 	min-width: 0;
 }
 
-/* —— Карточка тарифа —— */
+
 .yoga-checkout-tariff {
 	position: relative;
 	display: flex;
@@ -255,7 +260,7 @@
 	white-space: nowrap;
 }
 
-/* —— Блоки формы —— */
+
 .yoga-checkout-block {
 	display: flex;
 	flex-direction: column;
@@ -289,7 +294,7 @@
 	width: 100%;
 }
 
-/* The paired name fields must keep the same control height as full-width fields. */
+
 .yoga-checkout-fields__row > .yoga-checkout-field {
 	height: 4.0625rem;
 	min-height: 4.0625rem;
@@ -506,7 +511,7 @@
 	color: var(--color-black);
 }
 
-/* —— Сайдбар заказа —— */
+
 .yoga-checkout-summary {
 	display: flex;
 	flex-direction: column;
@@ -692,7 +697,7 @@
 	text-underline-position: from-font;
 }
 
-/* Пустая корзина */
+
 .yoga-checkout-empty {
 	display: flex;
 	height: 22.4375rem;
@@ -819,14 +824,14 @@
 	min-width: 12rem;
 }
 
-/* Скрываем дефолтную таблицу WooCommerce, если она попадёт в разметку */
+
 .section-checkout .shop_table,
 .section-checkout .cart-collaterals,
 .section-checkout .woocommerce-cart-form__contents thead {
 	display: none !important;
 }
 
-/* WooCommerce / YooKassa — скрыто, логика остаётся для checkout */
+
 .yoga-checkout-wc-payment {
 	position: absolute;
 	width: 1px;

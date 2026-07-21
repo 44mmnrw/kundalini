@@ -1,4 +1,9 @@
-/* Модальное окно */
+/**
+ * Стили компонента: modals.
+ *
+ * @package Yoga
+ */
+
 .overlay {
   position: absolute;
   width: 0vw;

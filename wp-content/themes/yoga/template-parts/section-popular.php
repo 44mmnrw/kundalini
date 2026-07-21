@@ -1,6 +1,8 @@
 <?php
 /**
- * Секция "Популярные практики"
+ * Переиспользуемый шаблонный блок: section popular.
+ *
+ * @package Yoga
  */
 $popular_title = get_field('popular_practices_title', get_the_ID())
     ?: get_field('popular_practices_title', 'option')

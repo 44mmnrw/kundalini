@@ -1,4 +1,9 @@
-/* Section-tariffs */
+/**
+ * Стили компонента: tariffs.
+ *
+ * @package Yoga
+ */
+
 .section-tariffs.section-tariffs_single {
   padding-top: 0.625rem;  padding-bottom: 6.25rem;}
 
@@ -240,7 +245,7 @@
   margin-top: 1.5rem;
 }
 
-/* В условии @media нельзя использовать var() — блоки бы игнорировались (см. breakpoints.css для чисел). */
+
 @media (max-width: 1319px) {
   .section-tariffs.section-tariffs_single {
     padding-bottom: 5.625rem;  }
@@ -285,7 +290,7 @@
   }
 }
 @media (max-width: 575px) {
-  /* 320px при viewport 340px; на остальных мобильных ширина масштабируется пропорционально. */
+
   .tariff {
     width: min(94.117647vw, 100%);
     max-width: min(94.117647vw, 100%);
@@ -307,7 +312,7 @@
     font-size: 1rem;  }
 }
 
-/* Один–три тарифа на широком экране: сохраняем штатный gap 20px и центрируем ряд. */
+
 @media (min-width: 1280px) {
   .tariffs-items__slide:has(> .tariff):not(:has(> .tariff:nth-child(4))) {
     justify-content: center;
@@ -327,7 +332,7 @@
     border-radius: 30px;
   }
 
-  /* Зона заголовка: отступ до строки цены как в макете (y 40→190 ≈150px). */
+
   .section-tariffs.section-tariffs_single .tariff__top {
     display: flex;
     flex-direction: column;
@@ -351,7 +356,7 @@
     min-height: 0;
   }
 
-  /* Зона заголовка: отступ до строки цены как в макете (y 40→190 ≈150px). */
+
   .section-tariffs.section-tariffs_single .tariff__center {
     flex: 1 1 auto;
     display: flex;

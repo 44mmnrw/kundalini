@@ -1,3 +1,8 @@
+/**
+ * Клиентский модуль: runtime.
+ *
+ * @package Yoga
+ */
 (function () {
 	'use strict';
 

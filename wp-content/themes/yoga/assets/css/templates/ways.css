@@ -1,4 +1,9 @@
-/* Section-ways */
+/**
+ * Стили компонента: ways.
+ *
+ * @package Yoga
+ */
+
 .ways {
   width: 100%;
 }
@@ -30,7 +35,7 @@
 .ways li:last-child {
   pointer-events: none;
 }
-/* Заголовок под крошками: глобальный h2 из specification.css (# по ID перебивает margin/size/center) */
+
 #section-ways :is(h1, h2).ways-heading {
   box-sizing: border-box;
   margin-top: 1.875rem;
@@ -54,7 +59,7 @@
   }
 }
 
-/* On blog posts the title belongs above the main article column, not the author sidebar. */
+
 @media (min-width: 1280px) {
   .single-post #section-ways h2.ways-heading {
     width: calc(100% - 19.0625rem);

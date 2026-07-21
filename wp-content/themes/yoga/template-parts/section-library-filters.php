@@ -1,9 +1,9 @@
 <?php
 /**
- * Мобильные фильтры библиотеки — Figma pop_up (node 582:10993).
- * Input хранит доступное состояние мобильного интерфейса и отправляется общей формой; десктоп управляет им через единый JS state.
+ * Переиспользуемый шаблонный блок: section library filters.
+ *
+ * @package Yoga
  */
-
 if (!isset($difficulty_terms) || !is_array($difficulty_terms)) {
 	$difficulty_terms = get_terms(array(
 		'taxonomy' => 'practice-difficulty',

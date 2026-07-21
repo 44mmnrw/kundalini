@@ -1,4 +1,9 @@
-/* Basic browser reset */
+/**
+ * Стили компонента: reset.
+ *
+ * @package Yoga
+ */
+
 *,
 *::before,
 *::after {

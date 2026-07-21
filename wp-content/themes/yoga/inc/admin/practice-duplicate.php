@@ -1,13 +1,17 @@
 <?php
-
+/**
+ * Компонент темы: practice duplicate.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('yoga_get_practice_duplicate_excluded_meta_keys')) {
-	/**
-	 * @return string[]
-	 */
+
+
+
 	function yoga_get_practice_duplicate_excluded_meta_keys(): array {
 		return array(
 			'_edit_lock',
@@ -20,11 +24,11 @@ if (!function_exists('yoga_get_practice_duplicate_excluded_meta_keys')) {
 }
 
 if (!function_exists('yoga_duplicate_practice_post')) {
-	/**
-	 * Создаёт черновик-копию практики с мета и таксономиями.
-	 *
-	 * @return int|WP_Error ID новой записи.
-	 */
+
+
+
+
+
 	function yoga_duplicate_practice_post(int $source_id) {
 		$source = get_post($source_id);
 

@@ -1,6 +1,8 @@
 <?php
 /**
- * Template Name: Успешная оплата
+ * Шаблон страницы: payment success.
+ *
+ * @package Yoga
  */
 get_header();
 

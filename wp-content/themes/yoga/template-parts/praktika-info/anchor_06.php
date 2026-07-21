@@ -1,9 +1,8 @@
 <?php
 /**
- * Подключается из section-praktika.php внутри цикла practice_sections.
+ * Переиспользуемый шаблонный блок: anchor 06.
  *
- * @var array $section Текущая строка гибкого контента (ACF), макет anchor_06.
- * @var string $anchor_id
+ * @package Yoga
  */
 $anchor_id = isset($anchor_id) && $anchor_id !== ''
 	? (string) $anchor_id
@@ -12,8 +11,8 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
 <span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 <div class="praktika-comments">
     <h3><?php echo esc_html($section['title']); ?></h3>
-    
-    <!-- Упрощённая форма комментариев -->
+
+
     <div class="comment-form-main">
     <form id="custom-comment-form" class="comment-form">
         <textarea name="comment" class="input textarea-resize" placeholder="Оставьте комментарий |" rows="1" required></textarea>
@@ -23,14 +22,14 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
                 <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#slick-arrow'); ?>"></use>
             </svg>
         </button>
-        
+
         <input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
         <input type="hidden" name="action" value="submit_custom_comment">
         <?php wp_nonce_field('yoga_ajax_nonce', 'comment_security'); ?>
     </form>
 </div>
 
-    <!-- Список комментариев -->
+
     <div class="comments-items">
         <?php yoga_render_threaded_ajax_comments_list((int) get_the_ID()); ?>
     </div>

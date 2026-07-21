@@ -1,4 +1,9 @@
 <?php
+/**
+ * Компонент темы: single practice.
+ *
+ * @package Yoga
+ */
 get_header();
 
 $practice_prefill_name = '';
@@ -22,7 +27,7 @@ $practice_form_title = get_the_title(get_the_ID());
 $show_practice_questions_form = !function_exists('yoga_can_view_practice_questions_form')
 	|| yoga_can_view_practice_questions_form(get_current_user_id());
 $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-praktika_no-questions';
-	
+
 	include(locate_template('template-parts/section-ways.php'));
 	include(locate_template('template-parts/section-praktika.php'));
 	unset($section_praktika_extra_class);
@@ -33,7 +38,7 @@ $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-pr
         <div class="row">
 			<?php $practice_form_sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg'); ?>
 			<div class="form-questions practice-form-layout">
-				<!-- Декор — Figma question_form 246:4302 (sprite) -->
+
 				<div class="practice-form-layout__decor practice-form-layout__decor--oval" aria-hidden="true">
 					<svg class="practice-form-layout__decor-svg" focusable="false" aria-hidden="true">
 						<use href="<?php echo $practice_form_sprite_href; ?>#contacts-decor-oval"></use>
@@ -64,7 +69,7 @@ $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-pr
 							if ($practice_form_type_name !== '') {
 								echo esc_html(
 									sprintf(
-										/* translators: 1 = practice type (taxonomy practice-type name), 2 = practice post title */
+
 										__('Поделитесь опытом от практики %1$s «%2$s» или задайте вопрос о ее выполнении.', 'yoga'),
 										$practice_form_type_name,
 										$practice_form_title
@@ -73,7 +78,7 @@ $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-pr
 							} else {
 								echo esc_html(
 									sprintf(
-										/* translators: %s practice post title */
+
 										__('Поделитесь опытом от практики «%s» или задайте вопрос о ее выполнении.', 'yoga'),
 										$practice_form_title
 									)

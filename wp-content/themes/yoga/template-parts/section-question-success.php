@@ -1,4 +1,9 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: section question success.
+ *
+ * @package Yoga
+ */
 $sprite_url = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
 $faq_pages = get_posts(array(
     'post_type'      => 'page',

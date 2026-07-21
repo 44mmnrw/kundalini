@@ -1,8 +1,9 @@
 <?php
-	/**
-	 * Модальное окно мобильного меню (Figma pop_up 582:10836).
-	 * Иконки закрытия / назад / стрелки — sprite.svg (единый спрайт).
-	 */
+/**
+ * Переиспользуемый шаблонный блок: modal mobile menu.
+ *
+ * @package Yoga
+ */
 	$theme_uri   = get_template_directory_uri();
 	$sprite_href = esc_url($theme_uri . '/assets/svg/sprite.svg');
 	$mobile_header_tariff = is_user_logged_in() && function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
@@ -41,7 +42,7 @@
 				</button>
                 <div class="mobile-menu-switches">
 					<?php
-						// Родительские термины practice-type; «в разработке» — как в modal-menu.php
+
 						$parent_terms = get_terms(array(
 							'taxonomy'   => 'practice-type',
 							'parent'     => 0,
@@ -86,7 +87,7 @@
 						endforeach;
 					?>
 				</div>
-				
+
 				<?php foreach ($parent_terms as $index => $parent_term) : ?>
 					<?php
 					$pt_available = function_exists('yoga_is_practice_type_term_available') ? yoga_is_practice_type_term_available($parent_term) : true;
@@ -130,7 +131,7 @@
 							</span>
 							</<?php echo $pt_available ? 'a' : 'span'; ?>>
 						</li>
-						
+
 						<?php if (!empty($child_terms) && !is_wp_error($child_terms)) : ?>
 						<?php foreach ($child_terms as $child_term) : ?>
                         <li class="mobile-menu-sub-item<?php echo $pt_available ? '' : ' mobile-menu-sub-item_unavailable'; ?>">

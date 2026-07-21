@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: notifications.
+ *
+ * @package Yoga
+ */
 .practice-notification {
   position: fixed;
   top: 132px;

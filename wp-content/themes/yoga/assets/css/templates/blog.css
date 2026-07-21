@@ -1,4 +1,9 @@
-/* Section-blog */
+/**
+ * Стили компонента: blog.
+ *
+ * @package Yoga
+ */
+
 .section-blog {
   padding-bottom: 6.25rem;}
 
@@ -15,7 +20,7 @@
   max-width: 100%;
   min-width: 0;
   justify-content: space-between;
-  /* stretch: при колонке (mobile) поперечная ось — ширина; flex-start даёт узкий .blog-search по контенту */
+
   align-items: stretch;
   gap: 1.25rem;
   box-sizing: border-box;
@@ -90,14 +95,14 @@
   border-color: var(--color-violet);
 }
 .blog-search:has(input:focus) .blog-search__btn {
-  /*
-  img {
-     	opacity: 1;
-      &.active {
-      	opacity: 0;
-      }
-     }
-     */
+
+
+
+
+
+
+
+
 }
 .blog-search.active .blog-search__delete-btn {
   opacity: 1;
@@ -398,7 +403,7 @@
     box-sizing: border-box;
   }
 
-  /* Заголовок карточки — h5 в макете (20px, Mulish Bold) */
+
   .section-blog--search-results .blog-article-item h4 {
     font-family: "Mulish", sans-serif;
     font-weight: 700;
@@ -547,7 +552,7 @@
     margin-top: 2.5rem;  }
 }
 @media (max-width: var(--yoga-below-xl)) {
-  /* Колонка + без space-between: иначе на узкой ширине поле поиска «прилипает» вправо */
+
   .blog-form form {
     flex-direction: column;
     flex-wrap: nowrap;
@@ -701,7 +706,7 @@
     font-size: 0.875rem;  }
   .blog-search input::placeholder {
     font-size: 0.875rem;  }
-  /* nowrap + большой min-width раньше раздували всю форму → поиск уезжал за край экрана */
+
   .blog-radios {
     width: 100%;
     max-width: 100%;
@@ -749,12 +754,12 @@
   }
 }
 
-/*
- * Критично для мобильных: при flex-row + justify-content: space-between блок с рубриками
- * уезжает влево, .blog-search — вправо и схлопывается в «узкую таблетку».
- * Fallback на px (не только var в media): если правило с --yoga-below-xl не сработало,
- * всё равно включаем колонку внутри #section-blog-form.
- */
+
+
+
+
+
+
 @media (max-width: 1279px) {
   .section-blog-form .row {
     flex-direction: column;

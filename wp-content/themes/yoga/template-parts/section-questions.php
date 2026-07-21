@@ -1,4 +1,9 @@
 <?php
+/**
+ * Переиспользуемый шаблонный блок: section questions.
+ *
+ * @package Yoga
+ */
 $faq_source_id = (int) get_option('page_on_front');
 if ($faq_source_id <= 0) {
     $faq_source_id = (int) get_the_ID();
@@ -46,7 +51,7 @@ if ($questions_more_link === '') {
                 <h2 class="wow flipInX delay-200ms">
                     <?php echo esc_html($questions_title); ?>
                 </h2>
-            </div>    
+            </div>
         </div>
         <div class="row">
             <div class="questions">
@@ -85,7 +90,7 @@ if ($questions_more_link === '') {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="questions-answers">
                     <div class="questions-items">
                         <?php
@@ -114,7 +119,7 @@ if ($questions_more_link === '') {
                                 $counter++;
                             endforeach;
                         else :
-                            // Fallback если нет вопросов в ACF
+
                             $default_questions = array(
                                 'Какой тариф мне выбрать, если я только начинаю заниматься йогой?',
                                 'Что входит в пробный период и чем он ограничен?',
@@ -123,7 +128,7 @@ if ($questions_more_link === '') {
                                 'Можно ли общаться с учителем и задавать вопросы?',
                                 'Как отменить подписку, если я решу больше не пользоваться платформой?'
                             );
-                            
+
                             $default_answers = array(
                                 'Если вы новичок, рекомендуем начать с Базового тарифа – он включает все необходимые текстовые материалы для самостоятельной практики. Если хотите лучше понимать философию йоги, выбирайте тариф «Углублённый».',
                                 'Пробный период дает доступ ко всем основным функциям платформы на ограниченное время. Вы можете ознакомиться с интерфейсом, попробовать несколько практик и оценить удобство использования.',
@@ -132,7 +137,7 @@ if ($questions_more_link === '') {
                                 'Да, на тарифе «Премиум» доступна возможность задавать вопросы учителю через специальную форму в личном кабинете.',
                                 'Чтобы отменить автопродление, удалите карту с пометкой «Для автопродления» в личном кабинете → Настройки подписки → Способы оплаты. Доступ к платным материалам сохранится до конца оплаченного периода.'
                             );
-                            
+
                             foreach ($default_questions as $index => $question) :
                                 ?>
                                 <div class="question wow fadeIn delay-200ms" data-delay="<?php echo ($index * 100) + 200; ?>ms">
@@ -155,7 +160,7 @@ if ($questions_more_link === '') {
                         endif;
                         ?>
                     </div>
-                    
+
                     <a href="<?php echo esc_url($questions_more_link); ?>" class="questions-answers__more wow fadeIn delay-200ms">
                         <span>Ещё</span>
                     </a>

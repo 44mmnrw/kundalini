@@ -1,3 +1,8 @@
+/**
+ * Стили компонента: cards.
+ *
+ * @package Yoga
+ */
 #ytr-modal-cancel-subscription.modal-default {
   display: flex;
   flex-direction: column;
@@ -546,7 +551,7 @@
   border-color: #383838;
 }
 
-/* Не даём браузеру подменять фон сохранённых значений автозаполнения. */
+
 #ytr-modal-bind-card .input:-webkit-autofill,
 #ytr-modal-bind-card .input:-webkit-autofill:hover,
 #ytr-modal-bind-card .input:-webkit-autofill:focus,
@@ -779,8 +784,8 @@
   }
 
   #ytr-modal-bind-card .modal-close {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
     top: 1rem;
     right: 0.6875rem;
   }
@@ -920,7 +925,7 @@
     color: #fff;
   }
 
-  /* Card preview opens as a 200 ms bottom sheet. */
+
   #ytr-modal-cancel-subscription.modal-default {
     left: 50% !important;
     z-index: 101;

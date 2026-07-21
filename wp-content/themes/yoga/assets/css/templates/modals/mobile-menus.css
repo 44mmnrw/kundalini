@@ -1,4 +1,9 @@
-/* Основное и мобильное меню */
+/**
+ * Стили компонента: mobile menus.
+ *
+ * @package Yoga
+ */
+
 .modal-mobile-menu, .modal-mobile-menu-lk {
   display: none;
 }
@@ -168,11 +173,11 @@
   .modal-mobile-menu.active, .modal-mobile-menu-lk.active {
     width: 100%;
   }
-  /* Fixed-крестик не обрезается во время анимации ширины оболочки. */
+
   .modal-mobile-menu.active {
     overflow: visible;
   }
-  /* Список, разделители и CTA используют те же горизонтальные поля, что и крестик. */
+
   .modal-mobile-menu {
     --mm-menu-inline-gutter: calc((100vw - min(45rem, 100vw - 2.1875rem)) / 2);
   }
@@ -186,16 +191,16 @@
     align-items: center;
     justify-content: center;
   }
-  /*
-   * Крестик главного мобильного меню остаётся на месте бургера.
-   * При закрытии скрываем его без смены position, чтобы избежать скачка вправо.
-   */
+
+
+
+
   .modal-mobile-menu .modal-close {
     position: fixed;
     z-index: 25;
     top: 0.75rem;
     right: var(--mm-menu-inline-gutter);
-    width: 3.25rem;
+    width: 3.1875rem;
     height: 3.1875rem;
     box-sizing: border-box;
     background: var(--color-green);
@@ -439,8 +444,8 @@
   }
   .modal-mobile-menu-lk .modal-close__icon {
     display: block;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.875rem;
+    height: 1.875rem;
     color: #1f1f1f;
   }
   .modal-mobile-menu-lk .mobile-menu__slide.active {
@@ -449,7 +454,7 @@
     align-items: stretch;
   }
 
-  /* В меню ЛК пункт «Выйти» остаётся в потоке и не перекрывает последний пункт. */
+
   .modal-mobile-menu-lk .mobile-menu-exit.sidebar-exit {
     position: relative;
     bottom: auto;
@@ -561,8 +566,8 @@
   }
   .modal-mobile-menu .modal-close__icon {
     display: block;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.875rem;
+    height: 1.875rem;
     color: var(--color-black);
   }
   .modal-mobile-menu .mobile-menu__slide_main {
@@ -789,7 +794,7 @@
   }
 }
 
-/* Mobile practice library. Isolated from the legacy main/LK menu layouts. */
+
 @media (max-width: 575px) {
   .modal-mobile-menu .mobile-menu-inner.mobile-menu-inner_library {
     width: min(18.75rem, calc(100vw - 2.5rem));
@@ -953,12 +958,12 @@
     display: flex;
   }
 
-  /* Крестик совпадает с бургером по top, right и размеру 48×48. */
+
   .modal-mobile-menu .modal-close {
     top: var(--header-mobile-close-top);
     right: var(--header-mobile-close-right);
-    width: var(--header-mobile-icon-size);
-    height: var(--header-mobile-icon-size);
+    width: 3.1875rem;
+    height: 3.1875rem;
     border-radius: 50%;
     box-sizing: border-box;
   }
@@ -1075,13 +1080,13 @@
     right: 0.625rem;    top: calc(50% + 1px);
   }
   .modal-mobile-menu-lk .modal-close {
-    top: 1.125rem;    width: 2.5rem;    height: 2.5rem;  }
+    top: 1.125rem;    width: 3.1875rem;    height: 3.1875rem;  }
   .modal-mobile-menu-lk .modal-close img {
     display: none;
   }
   .modal-mobile-menu-lk .modal-close__icon {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.875rem;
+    height: 1.875rem;
   }
   .modal-mobile-menu-lk .personal-status {
     top: 1.375rem;    left: 0.625rem;    font-size: 0.875rem;  }

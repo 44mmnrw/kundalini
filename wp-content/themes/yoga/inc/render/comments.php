@@ -1,12 +1,16 @@
 <?php
-
+/**
+ * Компонент темы: comments.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
-// Определяем автора
-// Axecode.tech: шаблон комментария с разделением собственных/чужих действий.
-// Зачем: один рендер-блок для списка, редактирования и ответа без дублирования HTML.
+
+
+
 function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = yoga_comment_is_owned_by_logged_in_user($comment);
@@ -62,7 +66,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                 </div>
             </div>
             <div class="praktika-comment-item__text">
-                <?php 
+                <?php
                 if ($comment->comment_parent != 0) {
                     $parent_comment = get_comment($comment->comment_parent);
                     if ($parent_comment) {
@@ -76,11 +80,11 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                         echo '<b>@' . esc_html($parent_author_name) . '</b> ';
                     }
                 }
-                comment_text(); 
+                comment_text();
                 ?>
             </div>
-            
-            <!-- Форма редактирования (только для своих комментариев) -->
+
+
             <?php if ($is_own_comment): ?>
             <form class="praktika-comment-item__edit hidden" id="edit-form-<?php echo $comment->comment_ID; ?>">
                 <div class="answer-main answer-main_comment-edit">
@@ -93,7 +97,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
             <?php endif; ?>
         </div>
 
-        <!-- Форма ответа -->
+
         <div class="praktika-comment__answer hidden" id="reply-form-<?php echo $comment->comment_ID; ?>">
             <div class="answer-main">
                 <div class="answer-main__image">
@@ -109,9 +113,9 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     <?php
 }
 
-/**
- * Дерево комментариев для AJAX-блока (практика и запись блога).
- */
+
+
+
 function yoga_render_threaded_ajax_comments_list(int $post_id): void {
 	if ($post_id <= 0) {
 		return;
@@ -149,7 +153,7 @@ function yoga_render_threaded_ajax_comments_list(int $post_id): void {
 	echo '</div>';
 }
 
-/** Render one comment with the same markup used by the initial comments tree. */
+
 function yoga_render_ajax_comment(int $comment_id): string {
 	$comment = get_comment($comment_id);
 	if (!$comment instanceof WP_Comment) {

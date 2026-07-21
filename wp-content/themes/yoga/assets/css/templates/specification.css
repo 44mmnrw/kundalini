@@ -1,10 +1,15 @@
-/* Specification */
+/**
+ * Стили компонента: specification.
+ *
+ * @package Yoga
+ */
+
 @import "../mulish.css";
 @import "../../slick/slick.css";
 @import "../../slick/slick-theme.css";
 @import "../../libs/fancybox/jquery.fancybox.min.css";
 @import "../animate.css";
-/* Design tokens */
+
 :root {
   --color-black: #1f1f1f;
   --color-violet: #9153e1;
@@ -13,7 +18,7 @@
   --color-grey: #f6f6f9;
   --color-white: #ffffff;
   --transition-base: 0.4s ease;
-  /* Техническое примечание. */
+
   --container-inline-gutter: 10px;
   --header-bar-height: 3.1875rem;
   --header-top-offset: 1.125rem;
@@ -37,7 +42,7 @@ html {
 header, section, footer {
   width: 100%;
   display: flex;
-  /* row по умолчанию сжимал inline-block .container по контенту и центрировал margin:auto */
+
   flex-direction: column;
   align-items: stretch;
   position: relative;
@@ -97,7 +102,7 @@ footer {
   display: flex;
 }
 
-/* Shared pill input (subscription overrides in subscription.css) */
+
 .input {
   display: block;
   width: 100%;
@@ -228,8 +233,8 @@ h4, .h4 {
 }
 @media (max-width: 767px) {
   h4, .h4 {
-    font-size: 1.25rem;    /*
-    margin-top: 3.625rem;    */
+    font-size: 1.25rem;
+
   }
 }
 @media (max-width: 575px) {
@@ -464,7 +469,7 @@ input::-moz-placeholder {
 
 @media (max-width: 1319px) {
   :root {
-    /* Adaptive/mobile: 48px controls + 12px vertical insets. */
+
     --header-bar-height: 4.5rem;
     --header-top-offset: 0px;
     --header-page-offset: 4.5rem;

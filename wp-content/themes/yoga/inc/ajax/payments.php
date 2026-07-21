@@ -1,13 +1,17 @@
 <?php
-
+/**
+ * AJAX-обработчики: payments.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('handle_add_payment_method')) {
-	/**
-	 * Fallback, если плагин yoga-tariff-renewal не активен.
-	 */
+
+
+
 	function handle_add_payment_method(): void {
 		if (class_exists('YTR_LK')) {
 			return;
@@ -30,9 +34,9 @@ if (!function_exists('handle_add_payment_method')) {
 }
 
 if (!function_exists('handle_remove_payment_method')) {
-	/**
-	 * Fallback, если плагин yoga-tariff-renewal не активен.
-	 */
+
+
+
 	function handle_remove_payment_method(): void {
 		if (class_exists('YTR_LK')) {
 			return;

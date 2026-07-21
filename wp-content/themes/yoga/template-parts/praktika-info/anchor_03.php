@@ -1,9 +1,8 @@
 <?php
 /**
- * Подключается из section-praktika.php внутри цикла practice_sections.
+ * Переиспользуемый шаблонный блок: anchor 03.
  *
- * @var array $section Текущая строка гибкого контента (ACF), макет anchor_03.
- * @var string $anchor_id То же, что $section['anchor_id'], задаётся перед подключением.
+ * @package Yoga
  */
 ?>
 <span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
@@ -35,9 +34,9 @@
 <p><?php echo esc_html($section['before_list_text']); ?></p>
 
 <ul>
-    <?php 
+    <?php
 		$habits = explode("\n", $section['habits_text']);
-		foreach ($habits as $habit) : 
+		foreach ($habits as $habit) :
         $habit = trim($habit);
 	if (!empty($habit)) : ?>
 	<li><?php echo esc_html($habit); ?></li>

@@ -1,4 +1,9 @@
-/* Modal-default */
+/**
+ * Стили компонента: confirmations.
+ *
+ * @package Yoga
+ */
+
 .modal-default {
   width: 28.5625rem;  max-width: 100%;
   padding-top: 3.9375rem;  padding-bottom: 4.0625rem;  background: var(--color-green) !important;
@@ -15,7 +20,6 @@
   margin-top: 0.8125rem;}
 .modal-default.modal-default_logout {
   padding-bottom: 2.8125rem;}
-
 @media (min-width: 576px) {
   .modal-default.modal-default_logout,
   .modal-default.modal-default_logout.active {
@@ -193,15 +197,15 @@
   }
 
   #lk-unsaved-changes-modal .modal-close {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
     top: 0.9375rem;
     right: 0.9375rem;
   }
 
   #lk-unsaved-changes-modal .modal-close svg {
-    width: 1.0625rem;
-    height: 1.0625rem;
+    width: 1.875rem;
+    height: 1.875rem;
   }
 
   #lk-unsaved-changes-modal .lk-unsaved-changes-modal__copy h3 {
@@ -502,8 +506,8 @@
 
   #yoga-comment-delete-success .modal-close {
     display: block;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
     top: 0.9375rem;
     right: 0.9375rem;
   }
@@ -780,8 +784,8 @@
 
   .modal-default_formsucces .modal-close {
     display: block;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 3.1875rem;
+    height: 3.1875rem;
     top: 0.9375rem;
     right: 0.9375rem;
   }

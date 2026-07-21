@@ -1,9 +1,8 @@
 <?php
 /**
- * Выезжающая панель навигации ЛК (мобильная / планшет).
- * Макет Figma sidebar_lk 2113:20086: разделы ЛК + «Выйти».
- * У каждого <svg> задан viewBox как у symbol + <use width/height="100%">,
- * чтобы иконки стабильно масштабировались по CSS.
+ * Переиспользуемый шаблонный блок: modal mobile menu lk.
+ *
+ * @package Yoga
  */
 if (!is_user_logged_in()) {
 	return;

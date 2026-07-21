@@ -1,7 +1,8 @@
 <?php
 /**
- * Универсальная секция "Хлебные крошки и заголовок"
- * Работает на всех типах страниц WordPress
+ * Переиспользуемый шаблонный блок: section ways.
+ *
+ * @package Yoga
  */
 ?>
 <section class="section-ways" id="section-ways">
@@ -10,10 +11,10 @@
             <div class="ways">
                 <ul>
                     <?php
-                    // Главная страница
+
                     echo '<li><a href="' . esc_url(home_url('/')) . '" class="ways-item ref">Главная</a></li>';
-                    
-                    // Для практики выводим полный путь по иерархии practice-type.
+
+
                     if (is_singular('practice')) {
                         $practice_terms = get_the_terms(get_the_ID(), 'practice-type');
                         $primary_term = null;
@@ -51,31 +52,31 @@
 
                         echo '<li><span class="ways-item">' . esc_html(get_the_title()) . '</span></li>';
                     }
-                    // Если это страница записи или постоянной страницы
+
                     elseif (is_single() || is_page()) {
                         $post_type = get_post_type_object(get_post_type());
-                        
-                        // Если это запись и у нее есть архив
+
+
                         if (is_single() && $post_type->has_archive) {
                             echo '<li><a href="' . esc_url(get_post_type_archive_link(get_post_type())) . '" class="ways-item ref">' . esc_html($post_type->labels->name) . '</a></li>';
                         }
-                        
-                        // Если у записи есть категории
+
+
                         if (is_single() && has_category()) {
                             $categories = get_the_category();
                             $category = $categories[0];
                             echo '<li><a href="' . esc_url(get_category_link($category->term_id)) . '" class="ways-item ref">' . esc_html($category->name) . '</a></li>';
                         }
-                        
-                        // Текущая страница/запись
+
+
                         echo '<li><span class="ways-item">' . esc_html(get_the_title()) . '</span></li>';
-                    } 
-                    // Если это архив записей
+                    }
+
                     elseif (is_post_type_archive()) {
                         $post_type = get_post_type_object(get_post_type());
                         echo '<li><span class="ways-item">' . esc_html($post_type->labels->name) . '</span></li>';
                     }
-                    // Для категории практик выводим всю иерархию practice-type.
+
                     elseif (is_tax('practice-type')) {
                         $current_term = get_queried_object();
 
@@ -105,45 +106,45 @@
                             echo '<li><span class="ways-item">' . esc_html($current_term->name) . '</span></li>';
                         }
                     }
-                    // Если это таксономия (категория, метка или пользовательская таксономия)
+
                     elseif (is_tax() || is_category() || is_tag()) {
                         $current_term = get_queried_object();
                         $taxonomy = get_taxonomy($current_term->taxonomy);
-                        
-                        // Если это категория записи и у записи есть архив
+
+
                         if (is_category() && $taxonomy->object_type[0] == 'post') {
                             $is_blog_root_category = isset($current_term->slug) && $current_term->slug === 'blog';
                             if (!$is_blog_root_category) {
                                 echo '<li><a href="' . esc_url(get_post_type_archive_link('post')) . '" class="ways-item ref">Блог</a></li>';
                             }
-                        } 
-                        // Если это пользовательская таксономия
+                        }
+
                         elseif (!is_tax('product_cat', 'tariffs') && !empty($taxonomy->object_type)) {
                             $post_type = get_post_type_object($taxonomy->object_type[0]);
                             if ($post_type->has_archive) {
                                 echo '<li><a href="' . esc_url(get_post_type_archive_link($post_type->name)) . '" class="ways-item ref">' . esc_html($post_type->labels->name) . '</a></li>';
                             }
                         }
-                        
-                        // Текущий термин.
+
+
                         echo '<li><span class="ways-item">' . esc_html($current_term->name) . '</span></li>';
                     }
-                    // Если это страница поиска
+
                     elseif (is_search()) {
                         echo '<li><span class="ways-item">Результаты поиска: ' . esc_html(get_search_query()) . '</span></li>';
                     }
-                    // Если это страница 404
+
                     elseif (is_404()) {
                         echo '<li><span class="ways-item">Страница не найдена</span></li>';
                     }
-                    // Если это авторский архив
+
                     elseif (is_author()) {
                         echo '<li><span class="ways-item">Автор: ' . esc_html(get_the_author()) . '</span></li>';
                     }
                     ?>
                 </ul>
                 <?php
-                /** На странице «Контакты» заголовок под крошками не показываем */
+
                 $yoga_hide_ways_heading = is_page_template('templates-page/contacts.php');
                 ?>
                 <?php if (!$yoga_hide_ways_heading && !is_singular('practice')) : ?>

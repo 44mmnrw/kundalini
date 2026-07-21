@@ -1,9 +1,9 @@
 <?php
 /**
- * Привязка карты в ЛК — Figma 2113:23344.
- * Данные карты вводятся на странице ЮKassa; поля в модалке — только UI перед редиректом.
+ * Переиспользуемый шаблонный блок: modal card binding.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -16,7 +16,7 @@ $img_uri = get_template_directory_uri() . '/assets/img';
 ?>
 <div class="modal-addnewcard" id="ytr-modal-bind-card" aria-hidden="true">
 	<button type="button" class="modal-close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use></svg>
 	</button>
 	<div class="addnewcard-inner">
 		<h3><?php esc_html_e('Привязка новой карты', 'yoga'); ?></h3>

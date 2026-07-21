@@ -1,9 +1,9 @@
 <?php
 /**
- * Служебный просмотрщик всех символов SVG-спрайта.
- * Доступен по прямому адресу /sprite-icons/ без создания страницы в админке.
+ * Компонент темы: sprite icons page.
+ *
+ * @package Yoga
  */
-
 if (!function_exists('yoga_render_sprite_icons_page')) {
 	function yoga_render_sprite_icons_page(): void {
 		if (is_admin() || wp_doing_ajax()) {

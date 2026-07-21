@@ -1,4 +1,9 @@
-/* Section-subscription */
+/**
+ * Стили компонента: subscription.
+ *
+ * @package Yoga
+ */
+
 .section-subscription {
   position: relative;
   background-color: var(--color-black);
@@ -76,7 +81,7 @@
   transform: translateX(-50%);
   width: 36.875rem;  max-width: 100%;
   padding-top: 3.3125rem;  padding-bottom: 3.3125rem;}
-/* Ряд только с инпутом и круглой кнопкой — чтобы .form-btn (top 50%) центрировалась по полю, а не по паддингам формы */
+
 .subscription .subscription-form-field {
   position: relative;
   width: 100%;

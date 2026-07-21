@@ -1,4 +1,9 @@
-/* Section-post */
+/**
+ * Стили компонента: post.
+ *
+ * @package Yoga
+ */
+
 .section-post {
   padding-top: 1.875rem;  padding-bottom: 7.75rem;}
 
@@ -554,7 +559,7 @@
   }
 }
 
-/* литералы вместо var() в @media — см. breakpoints.css (надёжная мобилка Safari и др.) */
+
 @media (max-width: 1319px) {
   .section-post {
     padding-top: 1.4375rem;    padding-bottom: 5.75rem;  }

@@ -1,7 +1,8 @@
 <?php
 /**
- * Локальный спрайт меню ЛК. Символы объявляются в том же документе, где
- * используются, поэтому Firefox не создаёт внешний SVG-документ для <use>.
+ * Компонент темы: lk menu icons.
+ *
+ * @package Yoga
  */
 if (!function_exists('yoga_get_lk_menu_sprite_symbols')) {
 	function yoga_get_lk_menu_sprite_symbols(): array {

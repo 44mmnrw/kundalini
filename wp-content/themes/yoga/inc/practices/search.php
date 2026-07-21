@@ -1,16 +1,20 @@
 <?php
-
+/**
+ * Компонент темы: search.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 	if (!function_exists('yoga_is_practice_type_term_available')) {
-		/**
-		 * Термин practice-type доступен в меню (не «в разработке»).
-		 * С ACF — поле practice_type_available; без ACF — term meta practice_type_available / синонимы ACF.
-		 *
-		 * @param WP_Term|int|string $term Термин, ID или slug.
-		 */
+
+
+
+
+
+
 		function yoga_is_practice_type_term_available($term): bool {
 			if (is_numeric($term)) {
 				$t = get_term((int) $term, 'practice-type');
@@ -59,10 +63,10 @@ if (!defined('ABSPATH')) {
 	}
 
 	if (!function_exists('yoga_get_practice_type_card_data')) {
-		/**
-		 * @param int $post_id Practice post ID.
-		 * @return array<string, string>
-		 */
+
+
+
+
 		function yoga_get_practice_type_card_data($post_id) {
 			$data = array(
 				'term_name' => '',

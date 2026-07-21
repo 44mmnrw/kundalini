@@ -1,8 +1,13 @@
 <?php
+/**
+ * Загрузка темы, регистрация маршрутов и подключение интеграций WordPress.
+ *
+ * @package Yoga
+ */
 	@ini_set( 'upload_max_size' , '256M' );
 	@ini_set( 'post_max_size', '256M');
 	@ini_set( 'max_execution_time', '300' );
-	// Регистрация меню
+
 	require_once get_template_directory() . '/inc/core/ajax-responses.php';
 	require_once get_template_directory() . '/inc/core/dependencies.php';
 	require_once get_template_directory() . '/inc/notifications.php';
@@ -20,9 +25,9 @@
 	require_once get_template_directory() . '/inc/core/legal-documents.php';
 	require_once get_template_directory() . '/inc/security/smartcaptcha.php';
 	require_once get_template_directory() . '/inc/security/copy-protection.php';
-	// Axecode.tech: интеграция ACF вынесена в /inc/integrations/acf.php.
-	// Зачем: не держим bootstrap/hooks ACF в template-parts и централизуем
-	// все регистрации на acf/init, чтобы избежать побочных эффектов ранней загрузки.
+
+
+
 	require_once get_template_directory() . '/inc/integrations/acf.php';
 	require_once get_template_directory() . '/inc/practice-tariff-access.php';
 	require_once get_template_directory() . '/inc/practice-visibility.php';
@@ -39,20 +44,20 @@
 	require_once get_template_directory() . '/inc/woocommerce/checkout-payment.php';
 	require_once get_template_directory() . '/inc/woocommerce/checkout-yookassa.php';
 	require_once get_template_directory() . '/inc/woocommerce/payment-success.php';
-	// Подключение стилей и скриптов
+
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 	require_once get_template_directory() . '/inc/ajax/email-verification.php';
 	require_once get_template_directory() . '/inc/auth/login-modal.php';
 	require_once get_template_directory() . '/inc/sprite-icons-page.php';
 
-	// Стили
-		// Скрипты (jQuery уже входит в состав WordPress)
-	// Plyr CSS
-	// Axecode.tech: guard для fallback ACF только на фронтенде.
-	// Зачем:
-	// 1) Шаблоны темы напрямую вызывают ACF-хелперы и не должны падать, если ACF временно отключен.
-	// 2) В админке и WP-CLI нельзя регистрировать заглушки, иначе при активации ACF возможен
-	//    фатал "Cannot redeclare get_field()".
+
+
+
+
+
+
+
+
 	$yoga_allow_acf_fallback = !is_admin() && !(defined('WP_CLI') && WP_CLI) && (php_sapi_name() !== 'cli');
 	if ($yoga_allow_acf_fallback) {
 		if (!function_exists('get_field')) {
@@ -92,11 +97,11 @@
 		}
 	}
 	if (!function_exists('yoga_get_practice_card_image_url')) {
-		/**
-		 * URL обложки карточки практики: ACF поле image, иначе миниатюра записи.
-		 *
-		 * @param string $size Размер вложения / миниатюры (large, medium и т.д.).
-		 */
+
+
+
+
+
 		function yoga_get_practice_card_image_url(int $post_id, string $size = 'large'): string {
 			if ($post_id <= 0) {
 				return '';
@@ -124,9 +129,9 @@
 		}
 	}
 	if (!function_exists('yoga_ajax_error')) {
-		// Plyr JS - загружаем первым
-		// Axecode.tech: единый формат ошибок AJAX.
-		// Зачем: фронтенд стабильно получает поля code/message и HTTP-статус.
+
+
+
 		function yoga_ajax_error(string $message, string $code = 'error', int $status = 400, array $extra = array()) {
 			$payload = array_merge(array(
 				'code' => $code,
@@ -136,7 +141,7 @@
 		}
 	}
 	if (!function_exists('yoga_ajax_success')) {
-		// Кастомный скрипт - зависит от plyr-js и jQuery
+
 		function yoga_ajax_success($message = '', $data = array(), $status = 200) {
 			$payload = array_merge(array(
 				'message' => $message,
@@ -144,7 +149,7 @@
 			wp_send_json_success($payload, $status);
 		}
 	}
-	// Локализация базовых строк (переводы/подписи)
+
 	function my_theme_setup() {
 		register_nav_menus( array(
         'primary' => __( 'Primary Menu', 'yoga' ),
@@ -154,14 +159,14 @@
 	}
 	add_action( 'after_setup_theme', 'my_theme_setup' );
 
-	/** Поиск на сайте — только записи блога (post), без практик и прочих CPT. */
+
 	if (!function_exists('yoga_search_main_query_only_posts')) {
-		/**
-		 * Limit the main front-end search query to blog posts.
-		 *
-		 * @param WP_Query $query Current WordPress query instance.
-		 * @return void
-		 */
+
+
+
+
+
+
 		function yoga_search_main_query_only_posts($query) {
 			if (is_admin() || !($query instanceof WP_Query) || !$query->is_main_query() || !$query->is_search()) {
 				return;
@@ -171,14 +176,14 @@
 	}
 	add_action('pre_get_posts', 'yoga_search_main_query_only_posts', 9);
 
-	// Логичная структура URL для практик:
-	// /library/{category}/{type}/{practice}
+
+
 	if (!function_exists('yoga_customize_practice_post_type_rewrite')) {
-		/**
-		 * @param array<string, mixed> $args Post type registration arguments.
-		 * @param string               $post_type Post type key.
-		 * @return array<string, mixed>
-		 */
+
+
+
+
+
 		function yoga_customize_practice_post_type_rewrite($args, $post_type) {
 			if ($post_type !== 'practice') {
 				return $args;
@@ -196,11 +201,11 @@
 	add_filter('register_post_type_args', 'yoga_customize_practice_post_type_rewrite', 20, 2);
 
 	if (!function_exists('yoga_customize_practice_type_taxonomy_rewrite')) {
-		/**
-		 * @param array<string, mixed> $args Taxonomy registration arguments.
-		 * @param string               $taxonomy Taxonomy key.
-		 * @return array<string, mixed>
-		 */
+
+
+
+
+
 		function yoga_customize_practice_type_taxonomy_rewrite($args, $taxonomy) {
 			if ($taxonomy !== 'practice-type') {
 				return $args;
@@ -219,10 +224,10 @@
 	add_filter('register_taxonomy_args', 'yoga_customize_practice_type_taxonomy_rewrite', 20, 2);
 
 	if (!function_exists('yoga_get_practice_primary_term_path')) {
-		/**
-		 * @param int $post_id Practice post ID.
-		 * @return string
-		 */
+
+
+
+
 		function yoga_get_practice_primary_term_path($post_id) {
 			$terms = get_the_terms((int) $post_id, 'practice-type');
 			if (empty($terms) || is_wp_error($terms)) {
@@ -251,13 +256,13 @@
 	}
 
 	if (!function_exists('yoga_filter_practice_permalink')) {
-		/**
-		 * @param string  $post_link Existing permalink.
-		 * @param WP_Post $post Post object.
-		 * @param bool    $leavename Whether to retain the post name placeholder.
-		 * @param bool    $sample Whether this is a sample permalink.
-		 * @return string
-		 */
+
+
+
+
+
+
+
 		function yoga_filter_practice_permalink($post_link, $post, $leavename, $sample) {
 			if (!$post instanceof WP_Post || $post->post_type !== 'practice') {
 				return $post_link;
@@ -285,9 +290,9 @@
 	}
 	add_action('init', 'yoga_register_practice_library_rewrite_rules', 20);
 
-	// Служебный экран после отправки вопроса не является страницей из БД.
-	// Маршрут всегда обслуживается шаблоном темы, поэтому одинаково работает
-	// локально и после деплоя на любом окружении.
+
+
+
 	if (!function_exists('yoga_register_question_success_route')) {
 		function yoga_register_question_success_route(): void {
 			add_rewrite_rule(
@@ -308,7 +313,7 @@
 	}
 	add_filter('query_vars', 'yoga_register_question_success_query_var');
 
-	// Работает и при первом запросе после выкладки, до обновления rewrite rules.
+
 	if (!function_exists('yoga_force_question_success_request')) {
 		function yoga_force_question_success_request(array $query_vars): array {
 			if (is_admin()) {
@@ -346,6 +351,9 @@
 			global $wp_query;
 			if ($wp_query instanceof WP_Query) {
 				$wp_query->is_404 = false;
+				$wp_query->is_home = false;
+				$wp_query->is_front_page = false;
+				$wp_query->is_page = false;
 			}
 			status_header(200);
 
@@ -443,11 +451,11 @@
 	}
 
 	if (!function_exists('yoga_lk_sidebar_secondary_nav_urls')) {
-		/**
-		 * URL внешних пунктов бокового меню ЛК (Figma sidebar_lk 620:12651).
-		 *
-		 * @return array{library:string,tariffs:string,about:string,blog:string,contacts:string,faq:string}
-		 */
+
+
+
+
+
 		function yoga_lk_sidebar_secondary_nav_urls(): array {
 			$fallback = home_url('/');
 
@@ -623,8 +631,8 @@
 		}
 	}
 	add_action('admin_notices', 'yoga_show_practice_publish_block_notice');
-	
-	// Опции ACF
+
+
 	function my_theme_scripts() {
 		$theme_uri = get_template_directory_uri();
 		$theme_dir = get_template_directory();
@@ -670,8 +678,8 @@
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
 		$library_filters_script_ver = file_exists($theme_dir . '/assets/js/library-filters.js') ? filemtime($theme_dir . '/assets/js/library-filters.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
-		
-		// В режиме разработки принудительно отключаем кэш ассетов.
+
+
 		if (defined('WP_DEBUG') && WP_DEBUG) {
 			$reset_style_ver = time();
 			$breakpoints_style_ver = time();
@@ -705,8 +713,8 @@
 			$main_script_ver = time();
 			$practice_player_script_ver = time();
 		}
-		
-		// Обработчик AJAX для формы подписки
+
+
 		$is_homepage = is_front_page() || is_page_template('templates-page/homepage.php');
 		$is_lk_template = is_page_template('templates-page/lk.php') || is_page('my-account') || (function_exists('is_account_page') && is_account_page());
 		$is_contacts_template = is_page_template('templates-page/contacts.php');
@@ -753,7 +761,7 @@
 			wp_enqueue_style( 'library-style', $theme_uri . '/assets/css/templates/library.css', $common_style_deps, $library_style_ver );
 			wp_enqueue_style( 'library-filters-style', $theme_uri . '/assets/css/templates/library-filters.css', array( 'library-style' ), $library_filters_style_ver );
 		}
-		/* Форма «Остались вопросы» подключается до praktika.css, чтобы стили страницы практики шли последними среди темы и не перебивались соседним листом с тем же приоритетом специфичности. */
+
 		if ($is_practice_single || $is_contacts_template || $is_faq_template) {
 			wp_enqueue_style( 'form-questions-style', $theme_uri . '/assets/css/templates/form-questions.css', $common_style_deps, $form_questions_style_ver );
 		}
@@ -795,8 +803,8 @@
 			wp_enqueue_style( 'about-style', $theme_uri . '/assets/css/templates/about.css', $common_style_deps, $about_style_ver );
 		}
 
-		// Parent practice-type archives also render the existing kriyi list after
-		// search/filtering, so its styles must be available there as well.
+
+
 		$load_kriyi_style = $is_practice_tax;
 		if ($is_lk_template) {
 			$load_kriyi_style = true;
@@ -840,36 +848,36 @@
 			wp_enqueue_style( 'ways-style', $theme_uri . '/assets/css/templates/ways.css', array( 'specification-style' ), $ways_style_ver );
 		}
 		wp_enqueue_style( 'animate-style', $theme_uri . '/assets/css/animate.css', array(), '1.0.0' );
-		
-		// Проверка nonce для безопасности
+
+
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'spincrement', $theme_uri . '/assets/js/jquery.spincrement.min.js', array('jquery'), null, true );
 		wp_enqueue_script( 'machheight', $theme_uri . '/assets/js/machheight.js', array('jquery'), null, true );
 		wp_enqueue_script( 'wow', $theme_uri . '/assets/js/wow.min.js', array('jquery'), null, true );
 		wp_enqueue_script( 'slick', $theme_uri . '/assets/slick/slick.min.js', array('jquery'), null, true );
 		wp_enqueue_script( 'maskedinput', $theme_uri . '/assets/js/jquery.maskedinput.js', array('jquery'), null, true );
-		
+
 		wp_enqueue_script( 'fancybox', $theme_uri . '/assets/libs/fancybox/jquery.fancybox.min.js', array('jquery', 'slick'), null, true );
-		
+
 		wp_enqueue_script( 'library-filters-script', $theme_uri . '/assets/js/library-filters.js', array('jquery'), $library_filters_script_ver, true );
 		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox', 'library-filters-script'), $main_script_ver, true );
-		
-		// Здесь можно добавить логику подписки:
+
+
 		wp_enqueue_style('plyr-css', get_template_directory_uri() . '/assets/css/plyr.css');
-		
+
 		wp_enqueue_style('plyr-audio-custom', get_template_directory_uri() . '/assets/css/plyr-custom.css');
-		
-		// - Добавление в базу данных
+
+
 		wp_enqueue_script('plyr-js', get_template_directory_uri() . '/assets/js/plyr.min.js', array(), '3.7.8', true);
-		
-		// - Интеграция с сервисом рассылок (Mailchimp, SendPulse и т.д.)
-		wp_enqueue_script('practice-player', get_template_directory_uri() . '/assets/js/practice-player.js', 
+
+
+		wp_enqueue_script('practice-player', get_template_directory_uri() . '/assets/js/practice-player.js',
         array('plyr-js', 'jquery'), $practice_player_script_ver, true);
-		
-		
-		
-		
-		// Локализация базовых строк (переводы/подписи)
+
+
+
+
+
 		wp_localize_script('practice-js', 'practiceI18n', [
 		'pause' => 'Пауза',
 		'play' => 'Пуск',
@@ -881,46 +889,46 @@
 		]);
 	}
 	add_action( 'wp_enqueue_scripts', 'my_theme_scripts' );
-	
-	// Пример: сохранение в опции WordPress
-	// Отправка email администратору (опционально)
+
+
+
 function yoga_subscribe_handler() {
-		// Проверка nonce для безопасности
+
 		if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
 			wp_die('Ошибка безопасности');
 		}
-		
+
 		$email = sanitize_email($_POST['email']);
-		
+
 		if (!is_email($email)) {
 			wp_send_json_error('Некорректный email адрес');
 		}
-		
-		// Здесь можно добавить логику подписки:
-		// Обработка AJAX комментариев
-		// Проверка nonce - используем ваш 'yoga_ajax_nonce'
-		// Определяем автора используя ваши данные
-		
-		// Данные комментария
+
+
+
+
+
+
+
 		$subscribers = get_option('yoga_subscribers', array());
 		if (!in_array($email, $subscribers)) {
 			$subscribers[] = $email;
 			update_option('yoga_subscribers', $subscribers);
-			
-			// Отправка email администратору (опционально)
+
+
 			$admin_email = get_option('admin_email');
 			$subject = 'Новый подписчик на сайте ' . get_bloginfo('name');
 			$message = "Новый email подписчика: $email\n";
 			$message .= "Время: " . current_time('mysql') . "\n";
 			wp_mail($admin_email, $subject, $message);
 		}
-		
+
 		wp_send_json_success('Подписка успешно оформлена');
 	}
 	add_action('wp_ajax_yoga_subscribe', 'yoga_subscribe_handler');
 	add_action('wp_ajax_nopriv_yoga_subscribe', 'yoga_subscribe_handler');
-	
-	// Обработка ответов на комментарии
+
+
 	function yoga_ajax_localization() {
 
 		$current_user = wp_get_current_user();
@@ -970,19 +978,19 @@ function yoga_subscribe_handler() {
 		}
 	}
 	add_action('wp_enqueue_scripts', 'yoga_ajax_localization');
-	
-	
-	// Обработка AJAX подписки
+
+
+
 	add_action('wp_ajax_process_contact_form', 'process_contact_form');
 	add_action('wp_ajax_nopriv_process_contact_form', 'process_contact_form');
-	
+
 	function process_contact_form() {
-		// Счетчик пунктов меню
+
 		if (!isset($_POST['contacts_nonce_field']) || !wp_verify_nonce($_POST['contacts_nonce_field'], 'contacts_nonce')) {
 			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 		}
-		
-		// Проверяем, является ли это первый пункт меню
+
+
 		$name = isset($_POST['contacts_name']) ? sanitize_text_field($_POST['contacts_name']) : '';
 		$email = isset($_POST['contacts_email']) ? sanitize_email($_POST['contacts_email']) : '';
 		$phone = isset($_POST['contacts_phone']) ? sanitize_text_field($_POST['contacts_phone']) : '';
@@ -998,17 +1006,17 @@ function yoga_subscribe_handler() {
 				$email = $profile_email;
 			}
 		}
-		
+
 		if (empty($name) || empty($email) || empty($message)) {
 			wp_send_json_error(array('message' => 'Пожалуйста, заполните все поля'));
 		}
-		
+
 		if (!is_email($email)) {
 			wp_send_json_error(array('message' => 'Пожалуйста, введите корректный email'));
 		}
-		
-		// Добавляем класс main-menu-active-item только первому пункту
-		// Создаем ссылку
+
+
+
 		$to = 'sshell72@yandex.ru';
 		$subject = 'Новое сообщение с формы контактов';
 		$body = "
@@ -1017,26 +1025,26 @@ function yoga_subscribe_handler() {
         Телефон: $phone
         Сообщение: $message
 		";
-		
+
 		$headers = array('Content-Type: text/html; charset=UTF-8');
-		
-		// Сначала всегда сохраняем обращение в БД, чтобы не терять заявки.
+
+
 		$saved = save_contact_message($name, $email, $phone, $message);
 		$sent = wp_mail($to, $subject, nl2br($body), $headers);
-		
+
 		if (!$saved) {
 			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
 		}
-		
+
 		if (!$sent) {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
 		}
 
-		
+
 		wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
 	}
-	
-	// Увеличиваем счетчик после обработки элемента
+
+
 	function save_contact_message(string $name, string $email, string $phone, string $message): bool {
 		$post_data = array(
 		'post_title' => 'Вопрос от ' . $name,
@@ -1050,15 +1058,15 @@ function yoga_subscribe_handler() {
 		'question_source' => 'practice_form'
         )
 		);
-		
+
 		$post_id = wp_insert_post($post_data, true);
 		return !is_wp_error($post_id) && (int) $post_id > 0;
 	}
-	
-	// Сбрасываем счетчик при начале нового уровня меню
+
+
 	add_action('wp_ajax_process_subscription', 'process_subscription');
 	add_action('wp_ajax_nopriv_process_subscription', 'process_subscription');
-	
+
 	function yoga_subscription_email_domain_is_valid(string $email): bool {
 		$at_pos = strrpos($email, '@');
 		if ($at_pos === false || $at_pos >= strlen($email) - 1) {
@@ -1104,28 +1112,28 @@ function yoga_subscribe_handler() {
 		}
 
 		$saved = save_subscription_email($email);
-		
+
 		if ($saved) {
 			wp_mail(
             get_option('admin_email'),
             'Новая подписка на сайте',
             'Новый email для подписки: ' . $email
 			);
-			
+
 			wp_send_json_success(array('message' => 'Подписка оформлена успешно!'));
 			} else {
 			wp_send_json_error(array('message' => 'Ошибка при сохранении подписки'));
 		}
 	}
-	
+
 	function save_subscription_email(string $email): bool {
 		$existing_emails = get_option('subscription_emails', array());
-		
+
 		if (!in_array($email, $existing_emails)) {
 			$existing_emails[] = $email;
 			return update_option('subscription_emails', $existing_emails);
 		}
-		
+
 		return true;
 	}
 
@@ -1151,26 +1159,26 @@ function yoga_subscribe_handler() {
 
 		return false;
 	}
-	
+
 	class Custom_Menu_Walker extends Walker_Nav_Menu {
-		private $item_counter = 0; // Сбрасываем счетчик при завершении уровня меню
-		
+		private $item_counter = 0;
+
 		function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
-			// Сбрасываем счетчик для новых уровней
+
 			$is_first_item = ($this->item_counter === 0);
-			
-			// Добавляем классы
+
+
 			$active_class = $is_first_item ? 'main-menu-active-item' : '';
-			
+
 			$output .= '<li class="' . $active_class . '">';
-			
-			// Добавляем special класс для первого пункта
+
+
 			$attributes = !empty($item->attr_title) ? ' title="' . esc_attr($item->attr_title) . '"' : '';
 			$attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
 			$attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
 			$attributes .= !empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '';
-			
-			// Для первого пункта не добавляем ссылку, для остальных - добавляем
+
+
 			$args_before = is_object($args) ? ($args->before ?? '') : (is_array($args) ? ($args['before'] ?? '') : '');
 			$args_link_before = is_object($args) ? ($args->link_before ?? '') : (is_array($args) ? ($args['link_before'] ?? '') : '');
 			$args_link_after = is_object($args) ? ($args->link_after ?? '') : (is_array($args) ? ($args['link_after'] ?? '') : '');
@@ -1210,69 +1218,69 @@ function yoga_subscribe_handler() {
 			$item_output = $args_before;
 			$item_output .= '<a class="ref"' . $attributes . '>';
 			$item_output .= $args_link_before . $item_title . $args_link_after;
-			
-			// Добавляем span с текстом
+
+
 			if ($is_first_item) {
 				$item_output .= '<div class="ref-icon">';
 				$item_output .= '<img src="' . get_template_directory_uri() . '/assets/img/menu-ref-icon.png" alt="" class="active">';
 				$item_output .= '<img src="' . get_template_directory_uri() . '/assets/img/menu-ref-icon_violet.png" alt="">';
 				$item_output .= '</div>';
 			}
-			
+
 			$item_output .= '</a>';
 			$item_output .= $args_after;
-			
+
 			$output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
-			
-			// Кастомный walker
+
+
 			$this->item_counter++;
 		}
-		
-		// Обработка AJAX формы FAQ
+
+
 		function start_lvl(&$output, $depth = 0, $args = array()) {
 			$this->item_counter = 0;
 			parent::start_lvl($output, $depth, $args);
 		}
-		
-		// Проверка nonce
+
+
 		function end_lvl(&$output, $depth = 0, $args = array()) {
 			$this->item_counter = 0;
 			parent::end_lvl($output, $depth, $args);
 		}
 	}
-	
+
 	class Mobile_Menu_Walker extends Walker_Nav_Menu {
 		private $item_count = 0;
-		
+
 		function start_lvl(&$output, $depth = 0, $args = array()) {
-			$this->item_count = 0; // Валидация данных
+			$this->item_count = 0;
 		}
-		
+
 		function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
 			$this->item_count++;
-			
-			// Проверка обязательных полей
+
+
 			$class_names = 'mobile-menu-main-item';
-			
-			// Проверка email
+
+
 			if ($this->item_count === 1) {
 				$class_names .= ' mobile-menu-main-item_sw';
 			}
-			
+
 			$output .= '<li class="' . $class_names . '">';
-			
-			// Отправка email администратору
+
+
 			if ($this->item_count !== 1) {
 				$attributes = !empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '';
 				$attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
 				$attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
-				
+
 				$output .= '<a' . $attributes . '></a>';
 			}
-			
-			// Отправка email
+
+
 			$output .= '<span>' . apply_filters('the_title', $item->title, $item->ID) . '</span>';
-			
+
 			if ($this->item_count === 1) {
 				$sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
 				$output .= '<span class="mobile-menu-main-item__chevron" aria-hidden="true">';
@@ -1281,22 +1289,22 @@ function yoga_subscribe_handler() {
 				$output .= '</svg></span>';
 			}
 		}
-		
+
 		function end_el(&$output, $item, $depth = 0, $args = array()) {
 			$output .= '</li>';
 		}
 	}
-	
-	
-	// Альтернативное решение: создаем свою обработку checkout
+
+
+
 	function theme_woocommerce_support() {
 		add_theme_support('woocommerce');
-		
-		// Проверяем nonce
+
+
 	}
 	add_action('after_setup_theme', 'theme_woocommerce_support');
-	
-	// Обрабатываем заказ
+
+
 	function theme_enqueue_checkout_scripts() {
 		if (function_exists('is_checkout') && is_checkout()) {
 			wp_enqueue_script('jquery');
@@ -1307,15 +1315,15 @@ function yoga_subscribe_handler() {
 	}
 	add_action('wp_enqueue_scripts', 'theme_enqueue_checkout_scripts');
 
-	/**
-	 * Чекаут WooCommerce: для авторизованных подставить имя и фамилию из метаполей профиля (как в ЛК).
-	 */
+
+
+
 	add_filter('woocommerce_checkout_get_value', 'yoga_wc_checkout_prefill_names_from_profile', 10, 2);
-	/**
-	 * @param mixed  $value Current checkout field value.
-	 * @param string $input Checkout field key.
-	 * @return mixed
-	 */
+
+
+
+
+
 	function yoga_wc_checkout_prefill_names_from_profile($value, string $input) {
 		if (!function_exists('is_user_logged_in') || !is_user_logged_in()) {
 			return $value;
@@ -1332,8 +1340,8 @@ function yoga_subscribe_handler() {
 		}
 		return $value;
 	}
-	
-	// Добавляем возможности для пользователей
+
+
 	add_action('template_redirect', 'fix_checkout_issues');
 	function fix_checkout_issues() {
 	if (!function_exists('WC')) {
@@ -1346,99 +1354,99 @@ function yoga_subscribe_handler() {
 			}
 		}
 	}
-	
-	/* function update_user_profile() {
-		if (!isset($_POST['profile_nonce']) || !wp_verify_nonce($_POST['profile_nonce'], 'update_user_profile')) {
-        wp_die('Ошибка безопасности');
-		}
-		
-		if (!is_user_logged_in()) {
-        wp_die('Вы не авторизованы');
-		}
-		
-		$user_id = get_current_user_id();
-		$user_data = array('ID' => $user_id);
-		
-		// Обновление основных данных
-		if (!empty($_POST['first_name'])) {
-        $user_data['first_name'] = sanitize_text_field($_POST['first_name']);
-		}
-		
-		if (!empty($_POST['last_name'])) {
-        $user_data['last_name'] = sanitize_text_field($_POST['last_name']);
-		}
-		
-		if (!empty($_POST['email'])) {
-        $user_data['user_email'] = sanitize_email($_POST['email']);
-		}
-		
-		wp_update_user($user_data);
-		
-		// Обновление метаполей
-		if (!empty($_POST['phone'])) {
-        update_user_meta($user_id, 'phone', sanitize_text_field($_POST['phone']));
-		}
-		
-		if (!empty($_POST['birthdate'])) {
-        update_user_meta($user_id, 'birthdate', sanitize_text_field($_POST['birthdate']));
-		}
-		
-		if (!empty($_POST['gender'])) {
-        update_user_meta($user_id, 'gender', sanitize_text_field($_POST['gender']));
-		}
-		
-		// Обработка смены пароля
-		if (!empty($_POST['current_password']) && !empty($_POST['new_password']) && !empty($_POST['repeat_password'])) {
-        if ($_POST['new_password'] === $_POST['repeat_password']) {
-		$user = get_user_by('id', $user_id);
-		
-		if (wp_check_password($_POST['current_password'], $user->user_pass, $user_id)) {
-		wp_set_password($_POST['new_password'], $user_id);
-		}
-        }
-		}
-		
-		// Обработка загрузки аватара
-		if (!empty($_FILES['avatar'])) {
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
-        require_once(ABSPATH . 'wp-admin/includes/file.php');
-        require_once(ABSPATH . 'wp-admin/includes/media.php');
-        
-        $attachment_id = media_handle_upload('avatar', 0);
-        
-        if (!is_wp_error($attachment_id)) {
-		update_user_meta($user_id, 'simple_local_avatar', $attachment_id);
-        }
-		}
-		
-		wp_redirect(add_query_arg('updated', 'true', wp_get_referer()));
-		exit;
-		}
-		add_action('admin_post_update_user_profile', 'update_user_profile');
-	add_action('admin_post_nopriv_update_user_profile', 'update_user_profile'); */
-	
-	
-	// AJAX обработчик для обновления профиля
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	function add_custom_capabilities() {
 		$version = 'yoga_caps_v1';
 		if (get_option('yoga_caps_version') === $version) {
 			return;
 		}
-		
+
 		$subscriber = get_role('subscriber');
 		if ($subscriber instanceof WP_Role) {
 			$subscriber->add_cap('read_private_practices');
 			$subscriber->add_cap('edit_user_profile');
 		}
-		
+
 		update_option('yoga_caps_version', $version, false);
 	}
 	add_action('after_switch_theme', 'add_custom_capabilities');
 	add_action('admin_init', 'add_custom_capabilities');
-	
-	// Логируем запрос для отладки
-	// Проверяем nonce
-	// Обновление основных данных
+
+
+
+
 	function yoga_get_russian_timezone_options() {
 		return array(
 			'America/Los_Angeles'          => 'UTC−8 — Лос-Анджелес',
@@ -1463,27 +1471,27 @@ function yoga_subscribe_handler() {
 	}
 
 	function yoga_update_profile_ajax() {
-		// Обновление метаполей
-		// Обработка смены пароля
+
+
 		if (!isset($_POST['nonce'])) {
 			wp_send_json_error('Ошибка безопасности', 400);
 		}
-		
+
 		if (!wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
 			wp_send_json_error('Ошибка безопасности', 403);
 		}
-		
+
 		if (!is_user_logged_in()) {
 			wp_send_json_error('Вы не авторизованы', 401);
 		}
-		
+
 		$user_id = get_current_user_id();
 		$old_user = get_user_by('id', $user_id);
 		$old_email = $old_user ? sanitize_email((string) $old_user->user_email) : '';
 		$new_email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : $old_email;
 		$email_changed = $new_email !== '' && strcasecmp($new_email, $old_email) !== 0;
 		$response = array();
-		
+
 		try {
 			$user_data = array('ID' => $user_id);
 
@@ -1497,20 +1505,20 @@ function yoga_subscribe_handler() {
 					wp_send_json_error('Эта эл. почта уже используется другим пользователем.', 422);
 				}
 			}
-			
-			// Обработка загрузки аватара
+
+
 			if (!empty($_POST['first_name'])) {
 				$user_data['first_name'] = sanitize_text_field($_POST['first_name']);
 			}
-			
+
 			if (!empty($_POST['last_name'])) {
 				$user_data['last_name'] = sanitize_text_field($_POST['last_name']);
 			}
-			
+
 			if ($email_changed) {
 				$user_data['user_email'] = $new_email;
 			}
-			
+
 			$update_result = wp_update_user($user_data);
 			if (is_wp_error($update_result)) {
 				wp_send_json_error($update_result->get_error_message(), 422);
@@ -1558,29 +1566,29 @@ function yoga_subscribe_handler() {
 					update_user_meta($user_id, 'billing_phone', $phone);
 				}
 			}
-			
+
 			if (!empty($_POST['birthdate'])) {
 				update_user_meta($user_id, 'birthdate', sanitize_text_field($_POST['birthdate']));
 			}
-			
+
 			if (!empty($_POST['gender'])) {
 				update_user_meta($user_id, 'gender', sanitize_text_field($_POST['gender']));
 			}
-			
-			/* $current_user = wp_get_current_user();
-				$user_id = $current_user->ID; */
+
+
+
 			if (!empty($_POST['current_password']) && !empty($_POST['new_password']) && !empty($_POST['repeat_password'])) {
 				if ($_POST['new_password'] === $_POST['repeat_password']) {
 					$user = get_user_by('id', $user_id);
-					
+
 					if (wp_check_password($_POST['current_password'], $user->user_pass, $user_id)) {
 						wp_set_password($_POST['new_password'], $user_id);
 					}
 				}
 			}
-			
-			// Обновляем поле ACF для текущего пользователя
-			// Обработчик удаления аватара
+
+
+
 			if (
 				isset($_FILES['avatar']['error'])
 				&& (int) $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE
@@ -1588,9 +1596,9 @@ function yoga_subscribe_handler() {
 				require_once(ABSPATH . 'wp-admin/includes/image.php');
 				require_once(ABSPATH . 'wp-admin/includes/file.php');
 				require_once(ABSPATH . 'wp-admin/includes/media.php');
-				
-				// Шорткод для истории практик
-				
+
+
+
 				$attachment_id = media_handle_upload('avatar', 0);
 				if (is_wp_error($attachment_id)) {
 					wp_send_json_error($attachment_id->get_error_message(), 400);
@@ -1620,9 +1628,9 @@ function yoga_subscribe_handler() {
 					}
 				}
 			}
-			
+
 			wp_send_json_success('Данные успешно сохранены');
-			
+
 			} catch (Exception $e) {
 			wp_send_json_error('Не удалось обновить профиль. Попробуйте еще раз.', 500);
 		}
@@ -1680,16 +1688,16 @@ function yoga_subscribe_handler() {
 	}
 	add_action('wp_ajax_upload_user_avatar', 'yoga_upload_avatar_ajax');
 
-	// Функция для получения рекомендованных практик
+
 	function delete_avatar_ajax() {
 		if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'yoga_ajax_nonce')) {
 			wp_send_json_error('Ошибка безопасности');
 		}
-		
+
 		if (!is_user_logged_in()) {
 			wp_send_json_error('Не авторизован');
 		}
-		
+
 		$user_id = get_current_user_id();
 		$avatar_id = yoga_get_user_avatar_id($user_id);
 
@@ -1706,28 +1714,28 @@ function yoga_subscribe_handler() {
 		}
 
 		delete_user_meta($user_id, 'simple_local_avatar');
-		
+
 		wp_send_json_success('Аватар удален');
 	}
 	add_action('wp_ajax_delete_avatar', 'delete_avatar_ajax');
-	
-	// Если пользователь новый, показываем популярные практики
+
+
 	function practice_history_shortcode() {
 		if (!is_user_logged_in()) return '';
-		
+
 		$user_id = get_current_user_id();
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true);
-		
+
 		if (empty($completed_practices)) {
 			return '<p>Вы еще не завершили ни одной практики.</p>';
 		}
-		
+
 		ob_start();
 	?>
     <div class="lk-kriyi">
         <div class="kriyi">
             <div class="kriyi__items">
-                <?php 
+                <?php
 					foreach ($completed_practices as $practice_id) {
 						$practice = get_post($practice_id);
 						if ($practice) {
@@ -1760,9 +1768,9 @@ function yoga_subscribe_handler() {
                                         <div class="kriya-btn__arrow">
                                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow.png" alt="" class="active">
                                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/kriya-btn-arrow_active.png" alt="">
-										</div>   
+										</div>
 									</div>
-								</div>      
+								</div>
 							</div>
 						</div>
                         <?php
@@ -1776,19 +1784,19 @@ function yoga_subscribe_handler() {
 		return ob_get_clean();
 	}
 	add_shortcode('practice_history', 'practice_history_shortcode');
-	
-	// Получаем практики на основе предпочтений пользователя
+
+
 	function subscription_settings_shortcode() {
 		if (!is_user_logged_in()) return '';
 		if (!function_exists('wc_get_orders')) return '';
-		
+
 		$user_id = get_current_user_id();
 		$orders = wc_get_orders(array(
         'customer_id' => $user_id,
         'status' => 'completed',
         'limit' => -1
 		));
-		
+
 		ob_start();
 	?>
     <div class="lk-settings">
@@ -1801,8 +1809,8 @@ function yoga_subscribe_handler() {
                         <div class="personal-status">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/personal-status-icon_settings.png" alt="" class="personal-status__img">
                             <span>
-                                <?php 
-							// 1. По уровню сложности (на основе завершенных практик)
+                                <?php
+
 									$active_subscriptions = function_exists('wcs_get_users_subscriptions')
 										? wcs_get_users_subscriptions($user_id)
 										: array();
@@ -1839,7 +1847,7 @@ function yoga_subscribe_handler() {
 					</div>
 				</div>
 			</div>
-            
+
             <div class="lk-settings-part">
                 <h4>История покупок</h4>
                 <?php
@@ -1870,62 +1878,62 @@ function yoga_subscribe_handler() {
 		return ob_get_clean();
 	}
 	add_shortcode('subscription_settings', 'subscription_settings_shortcode');
-	
-	// 2. Похожие на избранные
+
+
 	function get_recommended_practices(int $user_id): array {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		$favorite_practices = get_user_meta($user_id, 'favorite_practices', true) ?: array();
-		
-	// 3. Новые практики, которые пользователь еще не проходил
+
+
 		if (empty($completed_practices) && empty($favorite_practices)) {
 			return get_popular_practices();
 		}
-		
-	// Убираем дубликаты и уже завершенные практики
+
+
 		$recommended = array();
-		
-	// Ограничиваем количество рекомендаций
+
+
 		$user_levels = get_user_practice_levels($user_id);
 		if (!empty($user_levels)) {
 			$level_practices = get_practices_by_levels($user_levels, 6);
 			$recommended = array_merge($recommended, $level_practices);
 		}
-		
-		// Вспомогательные функции
+
+
 		if (!empty($favorite_practices)) {
 			$similar_practices = get_similar_practices($favorite_practices, 4);
 			$recommended = array_merge($recommended, $similar_practices);
 		}
-		
-		// Можно реализовать систему подсчета популярности на основе просмотров
+
+
 		$new_practices = get_new_practices($user_id, 3);
 		$recommended = array_merge($recommended, $new_practices);
-		
-		// Пока просто возвращаем последние практики
+
+
 		$recommended = array_unique($recommended);
 		$recommended = array_diff($recommended, $completed_practices);
-		
-		// Функция для получения вопросов пользователя
+
+
 		return array_slice($recommended, 0, 12);
 	}
-	
-	// Функция для отображения вопроса
+
+
 	function get_user_practice_levels(int $user_id): array {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
 		$levels = array();
-		
+
 		foreach ($completed_practices as $practice_id) {
 			$practice_levels = wp_get_post_terms($practice_id, 'practice-type', array('fields' => 'ids'));
 			$levels = array_merge($levels, $practice_levels);
 		}
-		
+
 		return array_count_values($levels);
 	}
-	
+
 	function get_practices_by_levels(array $level_counts, int $limit = 6): array {
 		arsort($level_counts);
 		$most_common_levels = array_slice(array_keys($level_counts), 0, 2);
-		
+
 		$args = array(
         'post_type' => 'practice',
         'posts_per_page' => $limit,
@@ -1938,19 +1946,19 @@ function yoga_subscribe_handler() {
         ),
         'fields' => 'ids'
 		);
-		
+
 		$practices = get_posts($args);
 		return $practices;
 	}
-	
+
 	function get_similar_practices(array $favorite_practice_ids, int $limit = 4): array {
 		if (empty($favorite_practice_ids)) return array();
-		
+
 		$similar = array();
-		
+
 		foreach ($favorite_practice_ids as $practice_id) {
 			$practice_levels = wp_get_post_terms($practice_id, 'practice-type', array('fields' => 'ids'));
-			
+
 			if (!empty($practice_levels)) {
 				$args = array(
                 'post_type' => 'practice',
@@ -1965,18 +1973,18 @@ function yoga_subscribe_handler() {
                 ),
                 'fields' => 'ids'
 				);
-				
+
 				$similar_practices = get_posts($args);
 				$similar = array_merge($similar, $similar_practices);
 			}
 		}
-		
+
 		return array_slice($similar, 0, $limit);
 	}
-	
+
 	function get_new_practices(int $user_id, int $limit = 3): array {
 		$completed_practices = get_user_meta($user_id, 'completed_practices', true) ?: array();
-		
+
 		$args = array(
         'post_type' => 'practice',
         'posts_per_page' => $limit,
@@ -1985,13 +1993,13 @@ function yoga_subscribe_handler() {
         'order' => 'DESC',
         'fields' => 'ids'
 		);
-		
+
 		return get_posts($args);
 	}
-	
+
 	function get_popular_practices($limit = 8) {
-		// Обработчик отправки вопроса
-		// Создаем пост вопроса
+
+
 		$args = array(
         'post_type' => 'practice',
         'posts_per_page' => $limit,
@@ -1999,21 +2007,21 @@ function yoga_subscribe_handler() {
         'order' => 'DESC',
         'fields' => 'ids'
 		);
-		
+
 		return get_posts($args);
 	}
-	
-	
 
-	// Отправляем уведомление администратору
-	
-	// Функция для получения сохраненных карт
+
+
+
+
+
 	function get_user_active_subscription() {
 		if (!is_user_logged_in()) {
 			return false;
 		}
 
-		// Основной источник — оплаченные заказы тарифов (тот же, что в header.php).
+
 		if (function_exists('get_current_user_tariff')) {
 			$tariff = get_current_user_tariff();
 			if (is_array($tariff) && !empty($tariff['product_name'])) {
@@ -2031,7 +2039,7 @@ function yoga_subscribe_handler() {
 
 		if (class_exists('WC_Subscriptions') && function_exists('wcs_get_users_subscriptions')) {
 			$subscriptions = wcs_get_users_subscriptions($user_id);
-			
+
 			foreach ($subscriptions as $subscription) {
 				if ($subscription->has_status('active')) {
 					return array(
@@ -2044,21 +2052,21 @@ function yoga_subscribe_handler() {
 				}
 			}
 		}
-		
-		// Здесь должна быть интеграция с платежной системой (Stripe, etc.)
+
+
 		$active_subscription = get_user_meta($user_id, 'active_subscription', true);
 		if ($active_subscription && $active_subscription['end_date'] > current_time('mysql')) {
 			return $active_subscription;
 		}
-		
+
 		return false;
 	}
-	
-	// Это упрощенный пример
+
+
 	function get_user_orders_history() {
 		if (!is_user_logged_in()) return array();
 		if (!function_exists('wc_get_orders')) return array();
-		
+
 		$user_id = get_current_user_id();
 		$orders = wc_get_orders(array(
         'customer_id' => $user_id,
@@ -2067,9 +2075,9 @@ function yoga_subscribe_handler() {
         'orderby' => 'date',
         'order' => 'DESC'
 		));
-		
+
 		$order_history = array();
-		
+
 		foreach ($orders as $order) {
 			if ($order->get_meta('_ytr_card_binding') === 'yes') {
 				$order_history[] = array(
@@ -2093,11 +2101,11 @@ function yoga_subscribe_handler() {
 				);
 			}
 		}
-		
+
 		return $order_history;
 	}
-	
-	// Сохранённые карты для ЛК (только маска + токен ЮKassa, без PAN/CVC).
+
+
 	function get_user_saved_cards() {
 		if (!is_user_logged_in()) {
 			return array();
@@ -2113,9 +2121,9 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_lk_render_payment_card_icon')) {
-		/**
-		 * Иконка платёжной системы в ЛК (спрайт или PNG-fallback).
-		 */
+
+
+
 		function yoga_lk_render_payment_card_icon(string $type, string $brand = ''): void {
 			$type = preg_replace('/[^a-z0-9_-]/', '', $type);
 			if ($type === '') {
@@ -2155,12 +2163,12 @@ function yoga_subscribe_handler() {
 			echo '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr($brand) . '">';
 		}
 	}
-	
-	// Функция для подключения разных header'ов
+
+
 	function subscription_management_shortcode() {
 		ob_start();
 	?>
-    <!-- Axecode.tech: блок управления подпиской в ЛК; статус, срок и действия в одном месте. -->
+
     <div class="subscription-management">
         <h3>Управление подпиской</h3>
         <?php
@@ -2172,7 +2180,7 @@ function yoga_subscribe_handler() {
                 <p><strong>Действует до:</strong> <?php echo date('d.m.Y', strtotime($subscription['end_date'])); ?></p>
                 <p><strong>Статус:</strong> <?php echo $subscription['status']; ?></p>
 			</div>
-            
+
             <div class="subscription-actions">
                 <a href="<?php echo esc_url(home_url('/lk/')); ?>#lk-slide-settings" class="btn btn-renew">Настройки подписки</a>
 			</div>
@@ -2194,38 +2202,38 @@ function yoga_subscribe_handler() {
 		return ob_get_clean();
 	}
 	add_shortcode('subscription_management', 'subscription_management_shortcode');
-	
-	// Проверяем, используется ли шаблон «Личный кабинет» / WooCommerce account — одна шапка header.php.
+
+
 	function yoga_is_lk_shell() {
 		return is_page_template( 'templates-page/lk.php' )
 			|| is_page( 'my-account' )
 			|| ( function_exists( 'is_account_page' ) && is_account_page() );
 	}
 
-// Переопределяем стандартный get_header()
+
 	function custom_get_header() {
 		locate_template( 'header.php', true );
 	}
-	
-	// Добавление AJAX обработчиков
+
+
 	remove_action('get_header', 'wp_get_header');
 	add_action('get_header', 'custom_get_header');
-	
+
 	function reading_time() {
 		$content = get_post_field('post_content', get_the_ID());
 		$plain_text = wp_strip_all_tags((string) $content);
-		
-		// Count words for any language, including Cyrillic.
+
+
 		preg_match_all('/[\p{L}\p{N}\']+/u', $plain_text, $matches);
 		$word_count = isset($matches[0]) ? count($matches[0]) : 0;
-		
+
 		return max(1, (int) ceil($word_count / 180));
 	}
 
 	if (!function_exists('yoga_track_blog_post_view')) {
-		/**
-		 * Count real front-end article views used by the blog's Popular section.
-		 */
+
+
+
 		function yoga_track_blog_post_view(): void {
 			if (!is_singular('post') || is_preview() || is_feed() || wp_doing_ajax()) {
 				return;
@@ -2254,10 +2262,10 @@ function yoga_subscribe_handler() {
 	add_action('template_redirect', 'yoga_track_blog_post_view', 20);
 
 	if (!function_exists('yoga_minutes_word')) {
-		/**
-		 * @param int|string $minutes Number of minutes.
-		 * @return string
-		 */
+
+
+
+
 		function yoga_minutes_word($minutes) {
 			$minutes = abs((int) $minutes);
 			$mod10 = $minutes % 10;
@@ -2278,11 +2286,11 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_format_minutes')) {
-		/**
-		 * @param int|string $minutes Number of minutes.
-		 * @param bool       $short Whether to use the abbreviated label.
-		 * @return string
-		 */
+
+
+
+
+
 		function yoga_format_minutes($minutes, $short = false) {
 			$minutes = max(1, (int) $minutes);
 
@@ -2298,14 +2306,14 @@ function yoga_subscribe_handler() {
 		if (!$user_id) {
 			$user_id = get_current_user_id();
 		}
-		
+
 		if (!$user_id) return false;
 		if (!yoga_has_woocommerce() || !function_exists('wc_get_orders')) return false;
 
 		$paid_statuses = function_exists('wc_get_is_paid_statuses')
 			? wc_get_is_paid_statuses()
 			: array('processing', 'completed');
-		
+
 		$orders = wc_get_orders(array(
         'customer_id' => $user_id,
         'status' => $paid_statuses,
@@ -2313,11 +2321,11 @@ function yoga_subscribe_handler() {
         'orderby' => 'date_paid',
         'order' => 'DESC'
 		));
-		
+
 		$current_time = current_time('timestamp');
 		$latest_tariff = null;
 		$latest_end = 0;
-		
+
 		foreach ($orders as $order) {
 			foreach ($order->get_items() as $item) {
 				$product = $item->get_product();
@@ -2355,7 +2363,7 @@ function yoga_subscribe_handler() {
 					$order_date = $order_date_obj->getTimestamp();
 					$access_duration = calculate_access_duration($period);
 					$access_end = $order_date + $access_duration;
-					
+
 					if ($access_end > $current_time && $access_end > $latest_end) {
 						$latest_end = $access_end;
 						$latest_tariff = array(
@@ -2372,14 +2380,14 @@ function yoga_subscribe_handler() {
 				}
 			}
 		}
-		
+
 		return $latest_tariff;
 	}
 
 	if (!function_exists('yoga_get_lk_page_url')) {
-		/**
-		 * URL страницы с шаблоном «Личный кабинет» (templates-page/lk.php).
-		 */
+
+
+
 		function yoga_get_lk_page_url(): string {
 			static $cached = null;
 			if ($cached !== null) {
@@ -2437,11 +2445,11 @@ function yoga_subscribe_handler() {
 		return add_query_arg('lk-section', $section, $lk_url);
 	}
 
-	// Axecode.tech: расчет периода доступа вынесен в отдельный helper для повторного использования.
+
 	if (!function_exists('calculate_access_duration')) {
-		// Восстановление пароля
-		// Axecode.tech: нормализация периода доступа в секунды.
-		// Зачем: поддержка форматов "30", "30d", "2m", "1y" и безопасный fallback по умолчанию.
+
+
+
 		function calculate_access_duration(string $period): int {
 			$period = strtolower(trim((string) $period));
 
@@ -2494,7 +2502,7 @@ function yoga_subscribe_handler() {
 		}
 	}
 
-	// Дружелюбный роут блога: /blog/ -> архив рубрики со slug "blog".
+
 	if (!function_exists('theme_register_blog_friendly_route')) {
 		function theme_register_blog_friendly_route() {
 			add_rewrite_rule('^blog/?$', 'index.php?category_name=blog', 'top');
@@ -2502,7 +2510,7 @@ function yoga_subscribe_handler() {
 		add_action('init', 'theme_register_blog_friendly_route');
 	}
 
-	// 301-редирект со старого адреса /category/blog/ на /blog/.
+
 	if (!function_exists('theme_redirect_legacy_blog_category_url')) {
 		function theme_redirect_legacy_blog_category_url() {
 			if (is_admin() || wp_doing_ajax()) {
@@ -2532,12 +2540,12 @@ function yoga_subscribe_handler() {
 		add_action('template_redirect', 'theme_redirect_legacy_blog_category_url', 1);
 	}
 
-	// Обработка /blog/ без необходимости вручную сбрасывать rewrite rules.
+
 	if (!function_exists('theme_force_blog_request_to_category')) {
-		/**
-		 * @param array<string, mixed> $query_vars Parsed request variables.
-		 * @return array<string, mixed>
-		 */
+
+
+
+
 		function theme_force_blog_request_to_category($query_vars) {
 			if (is_admin()) {
 				return $query_vars;
@@ -2566,13 +2574,13 @@ function yoga_subscribe_handler() {
 		add_filter('request', 'theme_force_blog_request_to_category', 1);
 	}
 
-	// Кастомный роутинг product_cat без префикса /product-category/.
-	// Важно: это намеренный компромисс и может конфликтовать с одинаковыми slug страниц.
+
+
 	if (!function_exists('yoga_get_product_cat_path')) {
-		/**
-		 * @param int|WP_Term $term Product category term or ID.
-		 * @return string
-		 */
+
+
+
+
 		function yoga_get_product_cat_path($term): string {
 			$term = get_term($term, 'product_cat');
 			if (!$term instanceof WP_Term || is_wp_error($term)) {
@@ -2633,12 +2641,12 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_filter_product_cat_link_without_base')) {
-		/**
-		 * @param string  $termlink Existing term link.
-		 * @param WP_Term $term Term object.
-		 * @param string  $taxonomy Taxonomy key.
-		 * @return string
-		 */
+
+
+
+
+
+
 		function yoga_filter_product_cat_link_without_base($termlink, $term, $taxonomy) {
 			if ($taxonomy !== 'product_cat' || !$term instanceof WP_Term) {
 				return $termlink;
@@ -2721,10 +2729,10 @@ function yoga_subscribe_handler() {
 			return false;
 		}
 
-		/**
-		 * @param array<string, mixed> $query_vars Parsed request variables.
-		 * @return array<string, mixed>
-		 */
+
+
+
+
 		function yoga_route_product_cat_without_base($query_vars) {
 			if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
 				return $query_vars;
@@ -2736,12 +2744,12 @@ function yoga_subscribe_handler() {
 				return $query_vars;
 			}
 
-			// Старый адрес обработается отдельным редиректом.
+
 			if (strpos($path, 'product-category/') === 0) {
 				return $query_vars;
 			}
 
-			// Системные маршруты и ресурсы не перехватываем.
+
 			if (
 				strpos($path, 'wp-') === 0 ||
 				strpos($path, 'wc-') === 0 ||
@@ -2751,7 +2759,7 @@ function yoga_subscribe_handler() {
 				return $query_vars;
 			}
 
-			// Если путь занят публичным контентом/архивом CPT, приоритет у него.
+
 			if (yoga_product_cat_path_conflicts_with_public_content($path)) {
 				return $query_vars;
 			}
@@ -2804,9 +2812,9 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_normalize_practice_level_label')) {
-		/**
-		 * @param mixed $value Raw practice level value.
-		 */
+
+
+
 		function yoga_normalize_practice_level_label($value): string {
 			$raw_value = trim((string) $value);
 			if ($raw_value === '') {
@@ -2843,9 +2851,9 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_get_practice_level_slug')) {
-		/**
-		 * @param mixed $value Raw practice level value.
-		 */
+
+
+
 		function yoga_get_practice_level_slug($value): string {
 			$normalized = yoga_normalize_practice_level_label($value);
 			$key = function_exists('mb_strtolower')
@@ -2863,9 +2871,9 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_get_practice_difficulty_label')) {
-		/**
-		 * @param WP_Term $term Practice difficulty term.
-		 */
+
+
+
 		function yoga_get_practice_difficulty_label($term): string {
 			if (!$term instanceof WP_Term) {
 				return '';
@@ -2881,10 +2889,10 @@ function yoga_subscribe_handler() {
 	}
 
 	if (!function_exists('yoga_get_practice_level_raw_for_cards')) {
-		/**
-		 * Уровень для карточек в списках: ACF practice_level (как на странице практики),
-		 * затем legacy level, затем таксономия practice-difficulty.
-		 */
+
+
+
+
 		function yoga_get_practice_level_raw_for_cards(int $post_id): string {
 			if ($post_id <= 0) {
 				return '';

@@ -1,21 +1,25 @@
 <?php
-
+/**
+ * Компонент безопасности: copy protection.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
-/**
- * Защита текстового контента от копирования на фронтенде.
- *
- * Блокирует выделение, контекстное меню, Ctrl+C и «Сохранить как» (Ctrl+S).
- * Сохранённая локальная копия (file://) не показывает защищённый текст.
- * Формы, поля ввода и элементы с data-yoga-copy-allow остаются доступными.
- */
+
+
+
+
+
+
+
 
 if (!function_exists('yoga_copy_protection_is_enabled')) {
-	/**
-	 * @return bool
-	 */
+
+
+
 	function yoga_copy_protection_is_enabled(): bool {
 		if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) {
 			return false;
@@ -55,11 +59,11 @@ if (!function_exists('yoga_copy_protection_is_blog_context')) {
 }
 
 if (!function_exists('yoga_copy_protection_selectors')) {
-	/**
-	 * CSS-селекторы областей с защищённым текстом.
-	 *
-	 * @return string[]
-	 */
+
+
+
+
+
 	function yoga_copy_protection_selectors(): array {
 		$selectors = array(
 			'.praktika-info',
@@ -74,9 +78,9 @@ if (!function_exists('yoga_copy_protection_selectors')) {
 }
 
 if (!function_exists('yoga_copy_protection_offline_message')) {
-	/**
-	 * @return string
-	 */
+
+
+
 	function yoga_copy_protection_offline_message(): string {
 		return (string) apply_filters(
 			'yoga_copy_protection_offline_message',
@@ -96,9 +100,9 @@ if (!function_exists('yoga_copy_protection_block_devtools_shortcuts')) {
 }
 
 if (!function_exists('yoga_copy_protection_inline_head_guard')) {
-	/**
-	 * Ранняя проверка file:// до отрисовки body — без вспышки текста в сохранённой копии.
-	 */
+
+
+
 	function yoga_copy_protection_inline_head_guard(): void {
 		if (!yoga_copy_protection_is_enabled()) {
 			return;
@@ -186,10 +190,10 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 add_action('wp_enqueue_scripts', 'yoga_copy_protection_enqueue_assets');
 
 if (!function_exists('yoga_copy_protection_body_class')) {
-	/**
-	 * @param string[] $classes
-	 * @return string[]
-	 */
+
+
+
+
 	function yoga_copy_protection_body_class(array $classes): array {
 		if (yoga_copy_protection_is_enabled() && yoga_copy_protection_selectors() !== array()) {
 			$classes[] = 'yoga-copy-protected';

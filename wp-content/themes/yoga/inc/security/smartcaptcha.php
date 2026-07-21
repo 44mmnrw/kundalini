@@ -1,28 +1,32 @@
 <?php
-
+/**
+ * Компонент безопасности: smartcaptcha.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Yandex SmartCaptcha (Yandex Cloud).
- *
- * Ключи (по приоритету):
- * 1) Константы в wp-config.php (перекрывают админку):
- *    define( 'YOGA_SMARTCAPTCHA_CLIENT_KEY', '...' );
- *    define( 'YOGA_SMARTCAPTCHA_SERVER_KEY', '...' );
- * 2) Поля в админке: «Настройки темы» → блок Yandex SmartCaptcha (ACF options).
- *
- * @see https://yandex.cloud/ru/docs/smartcaptcha/
- */
+
+
+
+
+
+
+
+
+
+
+
 
 if (!function_exists('yoga_smartcaptcha_normalize_key')) {
-    /**
-     * Убираем пробелы/переносы строк (часто после вставки ключей из почты/дока).
-     *
-     * @param mixed $raw
-     * @return string
-     */
+
+
+
+
+
+
     function yoga_smartcaptcha_normalize_key($raw) {
         if ($raw === null || $raw === '' || !is_string($raw)) {
             return '';
@@ -32,9 +36,9 @@ if (!function_exists('yoga_smartcaptcha_normalize_key')) {
 }
 
 if (!function_exists('yoga_smartcaptcha_client_key')) {
-    /**
-     * @return string
-     */
+
+
+
     function yoga_smartcaptcha_client_key() {
         if (defined('YOGA_SMARTCAPTCHA_CLIENT_KEY') && yoga_smartcaptcha_normalize_key(YOGA_SMARTCAPTCHA_CLIENT_KEY) !== '') {
             return apply_filters('yoga_smartcaptcha_client_key', yoga_smartcaptcha_normalize_key((string) YOGA_SMARTCAPTCHA_CLIENT_KEY));
@@ -62,9 +66,9 @@ if (!function_exists('yoga_smartcaptcha_client_key')) {
 }
 
 if (!function_exists('yoga_smartcaptcha_server_key')) {
-    /**
-     * @return string
-     */
+
+
+
     function yoga_smartcaptcha_server_key() {
         if (defined('YOGA_SMARTCAPTCHA_SERVER_KEY') && yoga_smartcaptcha_normalize_key(YOGA_SMARTCAPTCHA_SERVER_KEY) !== '') {
             return apply_filters('yoga_smartcaptcha_server_key', yoga_smartcaptcha_normalize_key((string) YOGA_SMARTCAPTCHA_SERVER_KEY));
@@ -104,9 +108,9 @@ if (!function_exists('yoga_smartcaptcha_validate_url')) {
 }
 
 if (!function_exists('yoga_smartcaptcha_remote_ip')) {
-    /**
-     * IP для параметра запроса валидации (учёт простых прокси).
-     */
+
+
+
     function yoga_smartcaptcha_remote_ip() {
         $keys = array('HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR');
         foreach ($keys as $header) {
@@ -126,12 +130,12 @@ if (!function_exists('yoga_smartcaptcha_remote_ip')) {
 }
 
 if (!function_exists('yoga_smartcaptcha_verify_token')) {
-    /**
-     * Токен из поля формы smart-token.
-     *
-     * @param string $token
-     * @return bool
-     */
+
+
+
+
+
+
     function yoga_smartcaptcha_verify_token($token) {
         $token = trim((string) $token);
         $secret = yoga_smartcaptcha_server_key();
@@ -168,9 +172,9 @@ if (!function_exists('yoga_smartcaptcha_verify_token')) {
 }
 
 if (!function_exists('yoga_smartcaptcha_require_valid')) {
-    /**
-     * Прекращает обработчик через yoga_ajax_error, если капча обязательна и не прошла проверку.
-     */
+
+
+
     function yoga_smartcaptcha_require_valid() {
         if (!yoga_smartcaptcha_is_enforced()) {
             return;

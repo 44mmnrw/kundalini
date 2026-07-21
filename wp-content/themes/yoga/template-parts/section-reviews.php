@@ -1,6 +1,8 @@
 <?php
 /**
- * Секция "Отзывы"
+ * Переиспользуемый шаблонный блок: section reviews.
+ *
+ * @package Yoga
  */
 $reviews_title = get_field('reviews_title', get_the_ID()) ?: 'отзывы';
 $reviews_decor = get_field('reviews_decor', get_the_ID());
@@ -37,7 +39,7 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
                 <div class="reviews__main">
                     <?php if ($reviews_items) : ?>
                     <div class="reviews-slider">
-                        <?php foreach ($reviews_items as $review) : 
+                        <?php foreach ($reviews_items as $review) :
                             $review_image = $review['review_image'] ?? '';
                             $review_name = $review['review_name'] ?? '';
                             $review_age = $review['review_age'] ?? '';
@@ -53,31 +55,31 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
                                         <img src="<?php echo esc_url($review_image); ?>" alt="<?php echo esc_attr($review_name); ?>">
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($review_name) : ?>
                                     <span class="review-main__name"><?php echo esc_html($review_name); ?></span>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($review_age) : ?>
                                     <span class="review-main__age"><?php echo esc_html($review_age); ?></span>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($review_job) : ?>
                                     <div class="review-main__job"><?php echo esc_html($review_job); ?></div>
                                 <?php endif; ?>
                             </div>
-                            
+
                             <div class="review-info <?php echo esc_attr($review_animation); ?> delay-200ms">
                                 <?php if ($review_excerpt) : ?>
                                     <p><?php echo esc_html($review_excerpt); ?></p>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($review_full_text) : ?>
                                     <span class="review-expand modal-call modal-call_review" data-review-name="<?php echo esc_attr($review_name); ?>" data-review-age="<?php echo esc_attr($review_age); ?>" data-review-job="<?php echo esc_attr($review_job); ?>" data-review-image="<?php echo esc_url($review_image); ?>" data-review-text="<?php echo esc_attr(wp_strip_all_tags($review_full_text)); ?>">
                                         Развернуть
                                     </span>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($show_review_people_photos && $review_people) : ?>
                                     <div class="review-people">
                                         <?php foreach ($review_people as $person) : ?>
@@ -93,7 +95,7 @@ $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_sh
                     </div>
                     <?php else : ?>
                     <div class="reviews-slider">
-                        <!-- Fallback контент -->
+
                         <div class="review">
                             <div class="review-main wow fadeIn delay-200ms">
                                 <div class="review-main__image">

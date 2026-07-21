@@ -1,4 +1,9 @@
-/* Custom Plyr styles for podcast/audio player */
+/**
+ * Стили компонента: plyr custom.
+ *
+ * @package Yoga
+ */
+
 .plyr--audio .plyr__controls {
     background: #ffffff;
     border-radius: 12px;
@@ -23,7 +28,7 @@
     color: white;
 }
 
-/* Progress bar */
+
 .plyr--audio .plyr__progress__buffer {
     color: #e1e5e9;
 }
@@ -46,21 +51,21 @@
     width: 18px;
 }
 
-/* Time display */
+
 .plyr__time {
     font-size: 14px;
     font-weight: 500;
     color: #6c757d;
 }
 
-/* Volume control */
+
 .plyr--audio .plyr__volume input[type='range']::-webkit-slider-runnable-track {
     background: linear-gradient(to right, #00b3ff var(--value, 0%), #e1e5e9 var(--value, 0%));
     height: 4px;
     border-radius: 2px;
 }
 
-/* Player container with episode info */
+
 .audio-player-container {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
@@ -119,7 +124,7 @@
     backdrop-filter: blur(10px);
 }
 
-/* Custom play button */
+
 .plyr__control--overlaid {
     background: #00b3ff;
     border: none;
@@ -137,32 +142,32 @@
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-/* Адаптивные стили */
+
 @media (max-width: 768px) {
     .audio-player-container {
         padding: 20px;
         margin: 15px 0;
     }
-    
+
     .audio-player-title {
         font-size: 20px;
     }
-    
+
     .audio-player-show {
         font-size: 14px;
     }
-    
+
     .plyr--audio .plyr__controls {
         padding: 15px;
     }
 }
 
-/* Animation for play state */
+
 .plyr--playing .plyr__controls {
     box-shadow: 0 4px 25px rgba(0, 179, 255, 0.15);
 }
 
-/* Custom icons size */
+
 .plyr__control svg {
     width: 20px;
     height: 20px;

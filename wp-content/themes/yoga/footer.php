@@ -1,7 +1,9 @@
 <?php
-	/**
-		* The footer for our theme
-	*/
+/**
+ * Шаблон общего подвала сайта и формы подписки.
+ *
+ * @package Yoga
+ */
 ?>
 </main>
 <?php
@@ -33,14 +35,17 @@ $footer_privacy_url = $footer_option('privacy_policy_link');
 $legal_url = static function($type, $fallback = '') {
 	return function_exists('yoga_get_legal_document_url') ? yoga_get_legal_document_url($type, $fallback) : $fallback;
 };
+$legal_label = static function($type, $fallback) {
+	return function_exists('yoga_get_legal_document_title') ? yoga_get_legal_document_title($type, $fallback) : $fallback;
+};
 $footer_privacy_url = $legal_url('privacy_policy', $footer_privacy_url);
 $footer_legal_links = array(
-	array('label' => 'Публичная оферта', 'url' => $legal_url('public_offer', $footer_option('public_offer_link'))),
-	array('label' => 'Политика конфиденциальности', 'url' => $footer_privacy_url),
-	array('label' => 'Политика куки', 'url' => $legal_url('cookie_policy', $footer_option('cookie_policy_link') ?: $footer_privacy_url)),
-	array('label' => 'Согласие на обработку персональных данных', 'url' => $legal_url('personal_data', $footer_option('personal_data_processing_link') ?: $footer_option('personal_data_link') ?: $footer_privacy_url)),
-	array('label' => 'Противопоказания и отказ от ответственности', 'url' => $legal_url('contraindications', $footer_option('contraindications_link') ?: $footer_option('disclaimer_link') ?: $footer_privacy_url)),
-	array('label' => 'Пользовательское соглашение', 'url' => $legal_url('user_agreement', $footer_option('user_agreement_link'))),
+	array('label' => $legal_label('public_offer', 'Публичная оферта'), 'url' => $legal_url('public_offer', $footer_option('public_offer_link'))),
+	array('label' => $legal_label('privacy_policy', 'Политика конфиденциальности'), 'url' => $footer_privacy_url),
+	array('label' => $legal_label('cookie_policy', 'Политика куки'), 'url' => $legal_url('cookie_policy', $footer_option('cookie_policy_link') ?: $footer_privacy_url)),
+	array('label' => $legal_label('personal_data', 'Согласие на обработку персональных данных'), 'url' => $legal_url('personal_data', $footer_option('personal_data_processing_link') ?: $footer_option('personal_data_link') ?: $footer_privacy_url)),
+	array('label' => $legal_label('contraindications', 'Противопоказания и отказ от ответственности'), 'url' => $legal_url('contraindications', $footer_option('contraindications_link') ?: $footer_option('disclaimer_link') ?: $footer_privacy_url)),
+	array('label' => $legal_label('user_agreement', 'Пользовательское соглашение'), 'url' => $legal_url('user_agreement', $footer_option('user_agreement_link'))),
 );
 
 $footer_socials = array(
@@ -61,13 +66,12 @@ $is_blog_footer = is_home()
 	|| is_date()
 	|| is_author();
 
-// Динамический /question-sent/ не имеет записи страницы в БД: без явного
-// исключения WordPress ошибочно считает его главной и выводит home-подписку.
-$is_question_success_screen = function_exists('yoga_is_question_success_screen')
-	&& yoga_is_question_success_screen();
-$is_home_footer = !$is_question_success_screen && (is_front_page()
+
+
+
+$is_home_footer = is_front_page()
 	|| is_page_template('templates-page/homepage.php')
-	|| $is_blog_footer);
+	|| $is_blog_footer;
 $footer_current_user = wp_get_current_user();
 $footer_subscription_complete = $footer_current_user->exists()
 	&& function_exists('yoga_is_subscription_email_subscribed')
@@ -208,7 +212,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 }
 ?><?php get_template_part('template-parts/modal', 'login'); ?><?php get_template_part('template-parts/modal', 'review'); ?><div class="modal modal-default modal-default_cardsucces">
 	<div class="modal-close">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</div>
 	<div class="delcomm active">
         <div class="delcomm__succes">
@@ -218,14 +222,14 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 		</div>
 	</div>
 </div><div class="modal modal-default yoga-subscription-success-modal" id="yoga-subscription-success-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="yoga-subscription-success-title">
-	<button class="modal-close yoga-subscription-success-modal__close" type="button" aria-label="Закрыть"><svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg></button>
+	<button class="modal-close yoga-subscription-success-modal__close" type="button" aria-label="Закрыть"><svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg></button>
 	<div class="yoga-subscription-success-modal__content">
 		<img class="yoga-subscription-success-modal__icon" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/subscription-success-check.svg'); ?>" alt="">
 		<h3 id="yoga-subscription-success-title">Подписка оформлена!<br>Обещаем отсутствие спама :)</h3>
 	</div>
 </div><div class="modal modal-default modal-default_formsucces">
 	<button class="modal-close" type="button" aria-label="Закрыть">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</button>
 	<div class="thanksforqw">
         <h3>
@@ -237,7 +241,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 	</div>
 </div><?php if (is_page_template('templates-page/contacts.php')) : ?><div class="modal modal-default yoga-contact-success-modal" id="yoga-contact-success-modal" role="dialog" aria-modal="true" aria-labelledby="yoga-contact-success-title" aria-hidden="true">
 	<button class="modal-close" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</button>
 	<div class="yoga-contact-success-modal__content">
 		<div class="yoga-contact-success-modal__heading">
@@ -249,7 +253,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 </div><?php endif; ?><?php if (is_user_logged_in()) : ?>
 <div class="modal modal-default lk-unsaved-changes-modal" id="lk-unsaved-changes-modal" role="dialog" aria-modal="true" aria-labelledby="lk-unsaved-changes-title" aria-describedby="lk-unsaved-changes-description" aria-hidden="true">
 	<button class="modal-close lk-unsaved-changes-modal__cancel" type="button" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</button>
 	<div class="lk-unsaved-changes-modal__content">
 		<div class="lk-unsaved-changes-modal__copy">
@@ -264,7 +268,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 </div>
 <?php endif; ?><div class="modal modal-default modal-default_logout">
 	<div class="modal-close">
-		<svg class="modal-close__icon" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
+		<svg class="modal-close__icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><use href="<?=get_template_directory_uri()?>/assets/svg/sprite.svg#lk-modal-close"></use></svg>
 	</div>
 	<div class="delcomm">
         <div class="delcomm__main">
@@ -286,7 +290,7 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 					</span>
 				</a>
 			</div>
-		</div>   
+		</div>
 	</div>
 </div><?php
 if (function_exists('yoga_is_theme_checkout_context') && yoga_is_theme_checkout_context()) {

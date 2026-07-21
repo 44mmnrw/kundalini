@@ -1,6 +1,8 @@
 <?php
 /**
- * Секция "Почему мы?"
+ * Переиспользуемый шаблонный блок: section whyme.
+ *
+ * @package Yoga
  */
 $whyme_title = get_field('whyme_title', get_the_ID()) ?: 'почему мы?';
 $whyme_items = get_field('whyme_items', get_the_ID());
@@ -25,10 +27,10 @@ $whyme_shape_base_uri = get_template_directory_uri() . '/assets/svg/';
                 <h2 class="wow flipInX delay-200ms">
                     <?php echo esc_html($whyme_title); ?>
                 </h2>
-                
+
                 <?php if ($whyme_items) : ?>
                 <div class="whyme__items">
-                    <?php foreach ($whyme_items as $item) : 
+                    <?php foreach ($whyme_items as $item) :
                         $item_class = $item['item_class'] ?? 'whyme-item_green';
                         $item_number = $item['item_number'] ?? '01.';
                         $item_image = $item['item_image'] ?? '';
@@ -36,7 +38,7 @@ $whyme_shape_base_uri = get_template_directory_uri() . '/assets/svg/';
                         $item_text = $item['item_text'] ?? '';
                         $item_animation = $item['item_animation'] ?? 'wow rollIn';
                     ?>
-                                       
+
                     <div class="whyme-item <?php echo esc_attr($item_class); ?> <?php echo esc_attr($item_animation); ?> delay-200ms slow">
                         <?php
                         $shape_file = $whyme_shape_by_class[ $item_class ] ?? $whyme_shape_by_class['whyme-item_green'];
@@ -51,15 +53,15 @@ $whyme_shape_base_uri = get_template_directory_uri() . '/assets/svg/';
                             </span>
                             <span class="whyme-item__number"><?php echo esc_html($item_number); ?></span>
                         </div>
-                        
+
                         <?php if ($item_image) : ?>
                             <img src="<?php echo esc_url($item_image); ?>" alt="<?php echo esc_attr($item_title); ?>" class="whyme-item__image">
                         <?php endif; ?>
-                        
+
                         <?php if ($item_title) : ?>
                             <h4><?php echo esc_html($item_title); ?></h4>
                         <?php endif; ?>
-                        
+
                         <?php if ($item_text) : ?>
                             <p><?php echo esc_html($item_text); ?></p>
                         <?php endif; ?>

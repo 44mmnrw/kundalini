@@ -1,4 +1,9 @@
-/* Section-about */
+/**
+ * Стили компонента: about.
+ *
+ * @package Yoga
+ */
+
 .section-about {
   padding-top: 2.125rem;  padding-bottom: 5.625rem;}
 
@@ -47,7 +52,7 @@
   display: block;
   width: 100%;
 }
-/* The photo silhouette is a CSS mask, not a baked layout image. */
+
 .about__main_start .about-img--masked {
   aspect-ratio: 319 / 301;
 }
@@ -100,7 +105,7 @@
   display: block;
   background-color: var(--color-green);
   background-image: url("../../img/o_nas_mob-photo.png");
-  /* Match the original SVG: the portrait is intentionally shifted left. */
+
   background-position: -5.5625rem top;
   background-size: 108% 100%;
   background-repeat: no-repeat;
@@ -140,7 +145,7 @@
 .about-img__cta svg {
   width: 1rem;
   height: 1rem;
-  /* The sprite is drawn up-right; the layout uses a down-right arrow. */
+
   transform: rotate(90deg);
 }
 
@@ -362,7 +367,7 @@
   }
 
   .section-about .about__main_start .about-img {
-    /* 319 × 300.076 px in a 340 px mobile viewport; scales proportionally. */
+
     width: 93.823529vw;
     aspect-ratio: 319 / 300.076;
     max-width: none;

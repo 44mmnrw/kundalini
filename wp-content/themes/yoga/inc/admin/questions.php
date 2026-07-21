@@ -1,13 +1,17 @@
 <?php
-
+/**
+ * Компонент темы: questions.
+ *
+ * @package Yoga
+ */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
-/**
- * Questions are conversation records, not editorial content. Normalize legacy
- * statuses once so wp-admin does not expose a draft/publishing workflow.
- */
+
+
+
+
 function yoga_migrate_question_record_statuses(): void {
 	if ((int) get_option('yoga_question_record_schema_version', 0) >= 1) {
 		return;
@@ -55,17 +59,17 @@ function yoga_question_admin_post_states(array $post_states, WP_Post $post): arr
 }
 add_filter('display_post_states', 'yoga_question_admin_post_states', 10, 2);
 
-/**
- * Keep the FAQ request screen free of WordPress's post title/editor UI.
- * This runs after all CPT registration hooks, including plugins.
- */
+
+
+
+
 function yoga_question_remove_default_editor(): void {
 	remove_post_type_support('question', 'title');
 	remove_post_type_support('question', 'editor');
 }
 add_action('init', 'yoga_question_remove_default_editor', 999);
 
-// Функция для получения активной подписки пользователя
+
 function add_question_answer_meta_box() {
 	add_meta_box(
 		'question_request',
@@ -87,10 +91,10 @@ function add_question_answer_meta_box() {
 }
 add_action('add_meta_boxes', 'add_question_answer_meta_box');
 
-/**
- * The question screen is a conversation, not a publishing workflow.
- * Reply actions are handled by the dedicated "Отправить ответ" button.
- */
+
+
+
+
 function yoga_question_remove_publish_box(WP_Post $post): void {
 	remove_meta_box('submitdiv', 'question', 'side');
 }
@@ -271,18 +275,18 @@ function yoga_question_admin_styles(): void {
 add_action('admin_head-post.php', 'yoga_question_admin_styles');
 add_action('admin_head-post-new.php', 'yoga_question_admin_styles');
 
-// Если используете WooCommerce Subscriptions
-// Axecode.tech: сохранение ответа администратора и отправка email пользователю.
-// Зачем: синхронно фиксируем текст ответа, дату/автора и уведомление в одном хуке.
+
+
+
 function save_question_answer(int $post_id): void {
 	if (!isset($_POST['answer_nonce']) || !wp_verify_nonce($_POST['answer_nonce'], 'save_question_answer')) {
 		return;
 	}
-	
+
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 		return;
 	}
-	
+
 	if (!current_user_can('edit_post', $post_id)) {
 		return;
 	}
@@ -302,7 +306,7 @@ function save_question_answer(int $post_id): void {
 		return;
 	}
 
-	// A sent reply becomes an immutable history entry; the compose field stays empty after reload.
+
 	if (!empty($_POST['question_send_reply']) && isset($_POST['question_answer'])) {
 		$answer = wp_kses_post((string) $_POST['question_answer']);
 		if (trim(wp_strip_all_tags($answer)) === '') {
@@ -360,18 +364,18 @@ function save_question_answer(int $post_id): void {
 		}
 		return;
 	}
-	
+
 	if (isset($_POST['question_answer'])) {
 		$answer = wp_kses_post($_POST['question_answer']);
 		$old_answer = get_post_meta($post_id, '_answer', true);
-		
+
 		update_post_meta($post_id, '_answer', $answer);
 		if ($answer !== $old_answer) {
 			update_post_meta($post_id, '_answer_date', current_time('mysql'));
 			update_post_meta($post_id, '_answer_admin', get_current_user_id());
 		}
 
-		// Обычное сохранение ответа не отправляет письмо: для этого есть отдельная кнопка в метабоксе.
+
 		if (empty($_POST['question_send_reply'])) {
 			return;
 		}
@@ -409,13 +413,13 @@ function save_question_answer(int $post_id): void {
 		}
 
 		return;
-		
-		// Альтернатива: проверка через метаполя
+
+
 		if ($answer !== $old_answer) {
 			update_post_meta($post_id, '_answer_date', current_time('mysql'));
 			update_post_meta($post_id, '_answer_admin', get_current_user_id());
-			
-			// Функция для получения истории заказов
+
+
 			$question = get_post($post_id);
 			$user = get_userdata($question->post_author);
 			$subject = 'Ответ на ваш вопрос';
@@ -424,7 +428,7 @@ function save_question_answer(int $post_id): void {
 			$message .= "Вопрос: {$question->post_content}\n\n";
 			$message .= "Ответ: {$answer}\n\n";
 			$message .= "С уважением, администрация сайта";
-			
+
 			wp_mail($user->user_email, $subject, $message);
 		}
 	}

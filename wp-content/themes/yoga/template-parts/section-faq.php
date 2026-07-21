@@ -1,3 +1,10 @@
+<?php
+/**
+ * Переиспользуемый шаблонный блок: section faq.
+ *
+ * @package Yoga
+ */
+?>
 <section class="section-faq" id="section-faq">
     <?php
     $faq_prefill_name = '';
@@ -66,18 +73,18 @@
                             </div>
                             <form action="#" class="form-questions__main-form" id="faqContactForm">
                                 <?php wp_nonce_field('faq_contact_nonce', 'faq_nonce'); ?>
-                                
+
                                 <input type="text" name="name" class="input" required value="<?php echo esc_attr($faq_prefill_name); ?>"<?php echo $faq_prefill_name !== '' ? ' readonly' : ''; ?>
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_name') ?: 'Имя'); ?>">
-                                
+
                                 <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"<?php echo $faq_prefill_email !== '' ? ' readonly' : ''; ?>
                                        placeholder="эл. почта">
-                                
+
                                 <div class="form-questions-textarea">
                                     <textarea name="message" placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_question') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
-                                    
+
                                     <input type="submit" id="faq-form-submit" style="display: none;">
-                                    
+
                                     <label for="faq-form-submit" class="btn" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
                                         <svg class="faq__form-submit-arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                                             <use href="<?php echo $faq_sprite_href; ?>#button-diagonal-arrow"></use>

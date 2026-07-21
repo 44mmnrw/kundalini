@@ -1,4 +1,9 @@
-/* Модальное окно входа */
+/**
+ * Стили компонента: auth.
+ *
+ * @package Yoga
+ */
+
 .modal-login, .modal-addnewcard {
   display: flex;
   position: fixed;
@@ -143,7 +148,7 @@
   text-underline-offset: 0.1em;
 }
 
-/* Prevent browser autofill from repainting the input background */
+
 .modal-login-inner .input:-webkit-autofill,
 .modal-login-inner .input:-webkit-autofill:hover,
 .modal-login-inner .input:-webkit-autofill:focus,
@@ -187,9 +192,30 @@
   transform: translate(-50%, -50%);
 }
 
-.modal-login .modal-close > .modal-close__icon {
+.modal .modal-close > .modal-close__icon,
+.modal-addnewcard .modal-close > .modal-close__icon {
   width: 1.875rem;
   height: 1.875rem;
+  max-width: none;
+}
+
+
+.modal .modal-close,
+.modal-addnewcard .modal-close,
+.modal-mobile-menu .modal-close,
+.modal-mobile-menu-lk .modal-close {
+  width: 51px !important;
+  height: 51px !important;
+  min-width: 51px;
+  min-height: 51px;
+}
+
+.modal .modal-close > .modal-close__icon,
+.modal-addnewcard .modal-close > .modal-close__icon,
+.modal-mobile-menu .modal-close > .modal-close__icon,
+.modal-mobile-menu-lk .modal-close > .modal-close__icon {
+  width: 14.849px !important;
+  height: 15px !important;
   max-width: none;
 }
 
@@ -638,7 +664,7 @@
   }
 }
 
-/* Independent e-mail confirmation modal (does not inherit the auth drawer). */
+
 body.email-confirmation-is-open {
   overflow: hidden;
 }
@@ -884,7 +910,7 @@ input[type=checkbox]:not(.footer-subscribe__checkbox), input[type=radio] {
   pointer-events: none !important;
 }
 
-/* Registration uses visible native controls instead of the theme's faux checkbox. */
+
 .registration-consent input[type=checkbox] {
   position: relative !important;
   z-index: auto !important;
@@ -973,7 +999,7 @@ label.checkbox {
   pointer-events: none !important;
 }
 
-/* Форма входа и регистрации по электронной почте. */
+
 .yoga-form-login-message {
   display: none;
   margin: 0;
@@ -1060,7 +1086,7 @@ label.checkbox {
   font-weight: 500;
   cursor: pointer;
 }
-/* Text actions in the auth modal use the same animated underline. */
+
 .modal-login-inner .login-form-links a,
 .modal-login-inner .login-switch-link,
 .modal-login-inner .loggin-back__link {
@@ -1137,7 +1163,7 @@ p.login-rules a:hover {
 .yoga-form-login > .login-smartcaptcha {
   margin-top: 1.25rem;
 }
-/* Registration: separate the consent checkboxes from the captcha by 25px. */
+
 .registration-consents + #login-reg-btn + .login-smartcaptcha {
   margin-top: 1.5625rem;
 }
@@ -1352,7 +1378,7 @@ p.login-rules a:hover {
   }
 }
 
-/* Email confirmation: final overrides after the generic auth modal breakpoints. */
+
 .modal-login.modal-login--email-confirmation {
   right: 0;
   width: 100%;

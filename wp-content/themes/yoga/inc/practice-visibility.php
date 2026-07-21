@@ -1,16 +1,17 @@
 <?php
 /**
- * Видимость секций practice_sections на фронте (не путать с Conditional Logic ACF в админке).
+ * Компонент темы: practice visibility.
+ *
+ * @package Yoga
  */
-
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 if (!function_exists('yoga_get_practice_section_layout_choices')) {
-	/**
-	 * @return array<string, string> layout name => label
-	 */
+
+
+
 	function yoga_get_practice_section_layout_choices(): array {
 		return array(
 			'anchor_01' => 'Anchor 01 — О крийе',
@@ -72,7 +73,7 @@ if (!function_exists('yoga_get_practice_section_anchor_id')) {
 				$base = 'anchor';
 			}
 
-			// Гарантируем уникальность even при одинаковых кастомных anchor_id.
+
 			return $base . '-' . ($index + 1);
 		}
 
@@ -81,11 +82,11 @@ if (!function_exists('yoga_get_practice_section_anchor_id')) {
 }
 
 if (!function_exists('yoga_get_guest_visible_practice_layouts')) {
-	/**
-	 * Белый список layout'ов для гостей (Настройки темы).
-	 *
-	 * @return string[]
-	 */
+
+
+
+
+
 	function yoga_get_guest_visible_practice_layouts(): array {
 		if (!function_exists('get_field')) {
 			return array();
@@ -116,10 +117,10 @@ if (!function_exists('yoga_guest_practice_section_filter_enabled')) {
 }
 
 if (!function_exists('yoga_get_practice_section_allowed_tariff_ids')) {
-	/**
-	 * @param array<string, mixed> $section
-	 * @return array<int>
-	 */
+
+
+
+
 	function yoga_get_practice_section_allowed_tariff_ids(array $section): array {
 		$value = $section['section_allowed_tariffs'] ?? null;
 		if (empty($value)) {
@@ -195,10 +196,10 @@ if (!function_exists('yoga_get_practice_section_tariff_name_key')) {
 }
 
 if (!function_exists('yoga_get_practice_section_allowed_tariff_names')) {
-	/**
-	 * @param array<string, mixed> $section
-	 * @return string[]
-	 */
+
+
+
+
 	function yoga_get_practice_section_allowed_tariff_names(array $section): array {
 		$tariff_ids = yoga_get_practice_section_allowed_tariff_ids($section);
 		if ($tariff_ids === array()) {
@@ -243,9 +244,9 @@ if (!function_exists('yoga_get_practice_section_allowed_tariff_names')) {
 }
 
 if (!function_exists('yoga_get_practice_section_allowed_tariff_label')) {
-	/**
-	 * @param array<string, mixed> $section
-	 */
+
+
+
 	function yoga_get_practice_section_allowed_tariff_label(array $section): string {
 		$names = yoga_get_practice_section_allowed_tariff_names($section);
 		if ($names === array()) {
@@ -254,14 +255,14 @@ if (!function_exists('yoga_get_practice_section_allowed_tariff_label')) {
 
 		if (count($names) === 1) {
 			return sprintf(
-				/* translators: %s: tariff name */
+
 				__('Доступно на тарифе %s', 'yoga'),
 				$names[0]
 			);
 		}
 
 		return sprintf(
-			/* translators: %s: comma-separated tariff names */
+
 			__('Доступно на тарифах: %s', 'yoga'),
 			implode(', ', $names)
 		);
@@ -269,9 +270,9 @@ if (!function_exists('yoga_get_practice_section_allowed_tariff_label')) {
 }
 
 if (!function_exists('yoga_get_viewer_active_tariff_ids')) {
-	/**
-	 * @return array<int>
-	 */
+
+
+
 	function yoga_get_viewer_active_tariff_ids(?int $user_id = null): array {
 		if (!function_exists('get_current_user_tariff')) {
 			return array();
@@ -305,9 +306,9 @@ if (!function_exists('yoga_get_viewer_active_tariff_ids')) {
 }
 
 if (!function_exists('yoga_practice_section_has_media_type')) {
-	/**
-	 * @param array<string, mixed> $section
-	 */
+
+
+
 	function yoga_practice_section_has_media_type(array $section, string $media_type): bool {
 		$media_type = sanitize_key($media_type);
 		if ($media_type === '') {
@@ -380,9 +381,9 @@ if (!function_exists('yoga_viewer_hides_audio_section_paywall')) {
 }
 
 if (!function_exists('yoga_should_hide_practice_section_paywall')) {
-	/**
-	 * @param array<string, mixed> $section
-	 */
+
+
+
 	function yoga_should_hide_practice_section_paywall(array $section, ?int $user_id = null): bool {
 		return yoga_practice_section_has_media_type($section, 'audio')
 			&& yoga_viewer_hides_audio_section_paywall($user_id);
@@ -414,9 +415,9 @@ if (!function_exists('yoga_get_tariff_display_name_by_id')) {
 }
 
 if (!function_exists('yoga_get_viewer_active_tariff_name_keys')) {
-	/**
-	 * @return string[]
-	 */
+
+
+
 	function yoga_get_viewer_active_tariff_name_keys(?int $user_id = null): array {
 		$tariff_ids = yoga_get_viewer_active_tariff_ids($user_id);
 		if ($tariff_ids === array()) {
@@ -443,9 +444,9 @@ if (!function_exists('yoga_get_viewer_active_tariff_name_keys')) {
 }
 
 if (!function_exists('yoga_can_view_practice_section')) {
-	/**
-	 * @param array<string, mixed> $section
-	 */
+
+
+
 	function yoga_can_view_practice_section(array $section, ?int $user_id = null): bool {
 		$allowed_tariff_ids = yoga_get_practice_section_allowed_tariff_ids($section);
 		if ($allowed_tariff_ids === array()) {
@@ -478,9 +479,9 @@ if (!function_exists('yoga_can_view_practice_section')) {
 }
 
 if (!function_exists('yoga_get_practice_questions_hidden_tariff_ids')) {
-	/**
-	 * @return array<int>
-	 */
+
+
+
 	function yoga_get_practice_questions_hidden_tariff_ids(): array {
 		if (!function_exists('get_field')) {
 			return array();
@@ -548,9 +549,9 @@ if (!function_exists('yoga_can_view_practice_questions_form')) {
 }
 
 if (!function_exists('yoga_viewer_has_full_practice_sections')) {
-	/**
-	 * Полный доступ ко всем якорям — только при активном оплаченном тарифе.
-	 */
+
+
+
 	function yoga_viewer_has_full_practice_sections(?int $user_id = null, ?int $practice_id = null): bool {
 		if (!function_exists('get_current_user_tariff')) {
 			return false;
@@ -578,9 +579,9 @@ if (!function_exists('yoga_viewer_has_full_practice_sections')) {
 }
 
 if (!function_exists('yoga_practice_is_fully_open_for_guests')) {
-	/**
-	 * Практика полностью открыта гостям (перекрывает ограничение из «Настройки темы»).
-	 */
+
+
+
 	function yoga_practice_is_fully_open_for_guests(?int $practice_id = null): bool {
 		if ($practice_id === null) {
 			$practice_id = (int) get_the_ID();
@@ -595,10 +596,10 @@ if (!function_exists('yoga_practice_is_fully_open_for_guests')) {
 }
 
 if (!function_exists('yoga_should_apply_guest_practice_section_filter')) {
-	/**
-	 * Ограничение из «Настройки темы» для гостей, пользователей без тарифа
-	 * и подписчиков, у которых практики нет в tariff_practices их тарифа.
-	 */
+
+
+
+
 	function yoga_should_apply_guest_practice_section_filter(?int $practice_id = null): bool {
 		if (!yoga_guest_practice_section_filter_enabled()) {
 			return false;
@@ -617,9 +618,9 @@ if (!function_exists('yoga_should_apply_guest_practice_section_filter')) {
 }
 
 if (!function_exists('yoga_can_view_practice_section_layout')) {
-	/**
-	 * Можно ли показать layout practice_sections текущему посетителю.
-	 */
+
+
+
 	function yoga_can_view_practice_section_layout(string $layout, ?int $practice_id = null): bool {
 		$layout = sanitize_key($layout);
 		if ($layout === '') {
@@ -639,10 +640,10 @@ if (!function_exists('yoga_can_view_practice_section_layout')) {
 }
 
 if (!function_exists('yoga_filter_practice_sections_for_viewer')) {
-	/**
-	 * @param array<int, array<string, mixed>>|null $sections
-	 * @return array<int, array<string, mixed>>
-	 */
+
+
+
+
 	function yoga_filter_practice_sections_for_viewer($sections, ?int $practice_id = null): array {
 		if (!is_array($sections) || $sections === array()) {
 			return array();
