@@ -34,6 +34,11 @@ if (isset($_GET['s']) && is_string($_GET['s'])) {
 if ($blog_search_value === '') {
 	$blog_search_value = get_search_query();
 }
+
+$selected_category_slug = '';
+if (isset($_GET['category']) && is_string($_GET['category'])) {
+	$selected_category_slug = sanitize_title(wp_unslash($_GET['category']));
+}
 ?>
 
 <section class="section-blog-form animated fadeIn slow delay-200ms" id="section-blog-form">
@@ -44,14 +49,14 @@ if ($blog_search_value === '') {
                     <div class="blog-radios">
 						<?php if (!empty($radio_items)) : ?>
 
-						<label class="active">
-							<input type="radio" name="category" value="" checked>
+						<label class="<?php echo $selected_category_slug === '' ? 'active' : ''; ?>">
+							<input type="radio" name="category" value="" <?php checked($selected_category_slug, ''); ?>>
 							<span>Все статьи</span>
 						</label>
 
 						<?php foreach ($radio_items as $index => $item) : ?>
-						<label>
-							<input type="radio" name="category" value="<?php echo esc_attr($item['category_slug']); ?>">
+						<label class="<?php echo $selected_category_slug === $item['category_slug'] ? 'active' : ''; ?>">
+							<input type="radio" name="category" value="<?php echo esc_attr($item['category_slug']); ?>" <?php checked($selected_category_slug, $item['category_slug']); ?>>
 							<span>
 								<?php echo esc_html($item['category_name']); ?>
 							</span>
