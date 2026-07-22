@@ -911,19 +911,24 @@
 
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-sub-item__chevron {
     position: static;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 1.625rem;
     height: 1.625rem;
     margin: 0 0 0 0.9375rem;
     padding: 0;
     flex: 0 0 1.625rem;
+    border-radius: 50%;
+    background: var(--color-green);
     transform: none;
   }
 
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-sub-item__chevron-svg {
     display: block;
-    width: 1.625rem;
-    height: 1.625rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    transform: rotate(-45deg);
   }
 
   .modal-mobile-menu .mobile-menu-inner_library > .btn,
