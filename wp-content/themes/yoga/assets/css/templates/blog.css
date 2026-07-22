@@ -295,7 +295,7 @@
   text-align: center;
   font-family: var(--font-family-base);
   font-weight: 600;
-  transition: background-color 300ms ease, color 300ms ease;
+  transition: background-color 600ms ease, color 600ms ease;
   z-index: 3;
 }
 .article-btn:hover {

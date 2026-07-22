@@ -224,20 +224,14 @@
   border-radius: 1.25rem;
   background: var(--color-grey);
 }
-.post-main .wp-block-pullquote blockquote::before {
-  content: "i";
+.post-main .wp-block-pullquote__icon {
+  display: block;
   position: absolute;
   left: 1.875rem;
   top: 1.875rem;
   width: 1.375rem;
   height: 1.375rem;
-  border-radius: 50%;
-  background: var(--color-violet);
-  color: #fff;
-  font-family: var(--font-family-base); font-weight: 700;
-  font-size: 0.875rem;
-  line-height: 1.375rem;
-  text-align: center;
+  color: var(--color-violet);
 }
 .post-main .wp-block-pullquote p {
   margin: 0;
@@ -547,6 +541,13 @@
   resize: vertical;
 }
 
+.post-comments .comment-form-main textarea.textarea-resize {
+  height: 5.1875rem;
+  min-height: 5.1875rem;
+  overflow-y: hidden;
+  resize: none;
+}
+
 .post-comments .form-submit .submit {
   font-family: var(--font-family-base); font-weight: 600;
   cursor: pointer;
@@ -668,7 +669,7 @@
   .post-main .wp-block-pullquote blockquote {
     padding: 1.25rem 1.25rem 1.25rem 3rem;
   }
-  .post-main .wp-block-pullquote blockquote::before {
+  .post-main .wp-block-pullquote__icon {
     left: 1rem;
     top: 1.25rem;
   }

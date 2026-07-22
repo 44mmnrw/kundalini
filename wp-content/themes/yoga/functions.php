@@ -131,14 +131,25 @@
 
 	if (!function_exists('yoga_add_praktika_notice_icon')) {
 		function yoga_add_praktika_notice_icon($content) {
-			if (!is_string($content) || strpos($content, 'praktika-notice') === false || strpos($content, 'praktika-notice__icon') !== false) {
+			if (!is_string($content)) {
 				return $content;
 			}
 
-			$icon = '<svg class="praktika-notice__icon" aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#praktika-notice-before') . '"></use></svg>';
-			$pattern = '/(<[a-z][a-z0-9:-]*\\b[^>]*\\bclass=(["\\\'])[^"\\\']*\\bpraktika-notice\\b[^"\\\']*\\2[^>]*>)/i';
+			$icon_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#praktika-notice-before');
 
-			return preg_replace($pattern, '$1' . $icon, $content);
+			if (strpos($content, 'praktika-notice') !== false && strpos($content, 'praktika-notice__icon') === false) {
+				$icon = '<svg class="praktika-notice__icon" aria-hidden="true" focusable="false"><use href="' . $icon_href . '"></use></svg>';
+				$pattern = '/(<[a-z][a-z0-9:-]*\\b[^>]*\\bclass=(["\\\'])[^"\\\']*\\bpraktika-notice\\b[^"\\\']*\\2[^>]*>)/i';
+				$content = preg_replace($pattern, '$1' . $icon, $content);
+			}
+
+			if (strpos($content, 'wp-block-pullquote') !== false && strpos($content, 'wp-block-pullquote__icon') === false) {
+				$icon = '<svg class="wp-block-pullquote__icon" aria-hidden="true" focusable="false"><use href="' . $icon_href . '"></use></svg>';
+				$pattern = '/(<figure\\b[^>]*\\bclass=(["\\\'])[^"\\\']*\\bwp-block-pullquote\\b[^"\\\']*\\2[^>]*>\\s*<blockquote\\b[^>]*>)/i';
+				$content = preg_replace($pattern, '$1' . $icon, $content);
+			}
+
+			return $content;
 		}
 		add_filter('the_content', 'yoga_add_praktika_notice_icon', 20);
 	}
