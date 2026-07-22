@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Faq
+ *
  * Шаблон страницы: faq.
  *
  * @package Yoga

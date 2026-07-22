@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: 404
+ *
  * Шаблон страницы: 404.
  *
  * @package Yoga

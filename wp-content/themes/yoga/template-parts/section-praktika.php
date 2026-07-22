@@ -37,10 +37,14 @@ if (!empty($section_praktika_extra_class)) {
 					$user_id = get_current_user_id();
 					$is_favorite = in_array(get_the_ID(), get_user_meta($user_id, 'favorite_practices', true) ?: array(), true);
 					?>
-                    <div class="praktika-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo esc_attr((string) get_the_ID()); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Убрать' : 'В избранное'); ?>">
+                    <div class="praktika-fav fav<?php echo $is_favorite ? ' active' : ''; ?>" data-practice-id="<?php echo esc_attr((string) get_the_ID()); ?>" role="button" tabindex="0" aria-pressed="<?php echo $is_favorite ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr($is_favorite ? 'Удалить' : 'В избранное'); ?>">
 						<span class="praktika-fav__main">
 							<span class="praktika-fav__icon" aria-hidden="true">
 								<svg><use href="<?php echo get_template_directory_uri(); ?>/assets/svg/sprite.svg#<?php echo $is_favorite ? 'site-heart-filled' : 'site-heart'; ?>"></use></svg>
+							</span>
+							<span class="praktika-fav__labels" aria-hidden="true">
+								<span class="praktika-fav__text praktika-fav__text--add">В избранное</span>
+								<span class="praktika-fav__text praktika-fav__text--remove">Удалить</span>
 							</span>
 						</span>
 					</div>

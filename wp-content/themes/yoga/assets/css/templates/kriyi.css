@@ -105,7 +105,7 @@
   color: var(--color-violet);
 }
 .kriyi-item:hover .kriya-btn {
-  transform: rotate(40deg);
+  transform: rotate(45deg);
   background: var(--color-green);
 }
 .kriyi-item:hover .kriya-btn__icon {

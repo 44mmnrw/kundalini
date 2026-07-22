@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Личный кабинет
+ *
  * Шаблон страницы: lk.
  *
  * @package Yoga

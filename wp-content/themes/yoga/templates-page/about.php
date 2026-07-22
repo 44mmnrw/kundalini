@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: About
+ *
  * Шаблон страницы: about.
  *
  * @package Yoga
