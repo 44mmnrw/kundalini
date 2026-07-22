@@ -1358,7 +1358,7 @@ function yoga_subscribe_handler() {
 				$sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
 				$output .= '<span class="mobile-menu-main-item__chevron" aria-hidden="true">';
 				$output .= '<svg class="mobile-menu-main-item__chevron-svg" viewBox="0 0 9 16" width="9" height="16" focusable="false">';
-				$output .= '<use href="' . $sprite_href . '#site-arrow" width="100%" height="100%"></use>';
+				$output .= '<use href="' . $sprite_href . '#chevron-right" width="100%" height="100%"></use>';
 				$output .= '</svg></span>';
 			}
 		}
