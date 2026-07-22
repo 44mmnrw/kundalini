@@ -66,6 +66,8 @@ if ($blog_category && !is_wp_error($blog_category)) {
 // category is the regular blog landing page.
 $has_selected_blog_category = $category_filter_term_id !== null
     && (!($blog_category instanceof WP_Term) || $category_filter_term_id !== (int) $blog_category->term_id);
+$category_filter_term = $has_selected_blog_category ? get_category($category_filter_term_id) : null;
+$is_blog_category_listing = $has_selected_blog_category && !$has_search;
 $is_blog_search_ui = ($has_search || is_search() || $has_selected_blog_category);
 
 $query_common = array(
@@ -154,16 +156,20 @@ if ($is_blog_search_ui) {
             <div class="blog-result">
                 <h3>
                     <?php
-                    if ($is_blog_search_ui) {
+                    if ($is_blog_category_listing && $category_filter_term instanceof WP_Term) {
+                        echo esc_html($category_filter_term->name);
+                    } elseif ($is_blog_search_ui) {
                         echo esc_html($search_q !== '' ? $search_q : 'Результаты поиска');
                     } else {
                         echo esc_html($new_title ?: 'Новое');
                     }
                     ?>
                 </h3>
-                <b class="<?php echo $is_blog_search_ui ? 'active' : ''; ?>">
-                    <?php echo esc_html($blog_count_label); ?> <?php echo $blog_count_value; ?>
-                </b>
+                <?php if (!$is_blog_category_listing) : ?>
+                    <b class="<?php echo $is_blog_search_ui ? 'active' : ''; ?>">
+                        <?php echo esc_html($blog_count_label); ?> <?php echo $blog_count_value; ?>
+                    </b>
+                <?php endif; ?>
             </div>
         </div>
 

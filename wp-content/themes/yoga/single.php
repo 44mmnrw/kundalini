@@ -71,8 +71,20 @@ if (have_posts()) :
             }
         }
 
+        // Keep the article label in sync with cards on the blog page:
+        // both use the direct child category of the parent "blog" category.
         $categories = get_the_category();
-        $main_category = !empty($categories) ? $categories[0] : null;
+        $main_category = null;
+        $blog_category = get_category_by_slug('blog');
+
+        if ($blog_category instanceof WP_Term) {
+            foreach ($categories as $category) {
+                if ($category instanceof WP_Term && (int) $category->parent === (int) $blog_category->term_id) {
+                    $main_category = $category;
+                    break;
+                }
+            }
+        }
 
         $count_reading_minutes = static function ($content) {
             $plain_text = wp_strip_all_tags((string) $content);
