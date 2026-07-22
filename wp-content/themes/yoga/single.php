@@ -337,7 +337,7 @@ if (have_posts()) :
                     <div class="row">
                         <div class="popular-articles">
                             <div class="popular-articles__intro blog-articles__intro">
-                                <h3>Популярное</h3>
+                                <h3>Читайте также</h3>
                                 <div class="arrows-slick">
                                     <button type="button" class="arrows-slick__arrow slick-prev" aria-label="Предыдущие статьи">
                                         <svg aria-hidden="true" focusable="false">
