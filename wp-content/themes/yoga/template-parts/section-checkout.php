@@ -180,7 +180,7 @@ if ($primary_line_label === '') {
 												<use href="<?php echo $sprite_href; ?>#checkout-email-icon"></use>
 											</svg>
 										</span>
-										<input type="email" class="yoga-checkout-field__input" name="billing_email" value="<?php echo esc_attr($prefill_email); ?>" placeholder="<?php esc_attr_e('эл. почта', 'yoga'); ?>" autocomplete="email" required>
+										<input type="email" class="yoga-checkout-field__input" name="billing_email" value="<?php echo esc_attr($prefill_email); ?>" placeholder="<?php esc_attr_e('Эл. почта', 'yoga'); ?>" autocomplete="email" required>
 									</label>
 									<label class="yoga-checkout-field yoga-checkout-field_full">
 										<span class="yoga-checkout-field__icon" aria-hidden="true">

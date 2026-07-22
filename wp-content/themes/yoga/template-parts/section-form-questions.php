@@ -58,7 +58,7 @@ $yoga_arrow_sprite_href = esc_url(add_query_arg(
                                    placeholder="<?php echo esc_attr(get_field('contacts_placeholder_name', 'option') ?: 'Имя'); ?>">
 
                             <input type="email" name="contacts_email" class="input" required value="<?php echo esc_attr($contacts_prefill_email); ?>"<?php echo $contacts_prefill_email !== '' ? ' readonly aria-readonly="true"' : ''; ?>
-                                   placeholder="эл. почта">
+                                   placeholder="Эл. почта">
 
                         </div>
 

@@ -82,7 +82,7 @@
                                        placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_name') ?: 'Имя'); ?>">
 
                                 <input type="email" name="email" class="input" required value="<?php echo esc_attr($faq_prefill_email); ?>"<?php echo $faq_prefill_email !== '' ? ' readonly' : ''; ?>
-                                       placeholder="эл. почта">
+                                       placeholder="Эл. почта">
 
                                 <div class="form-questions-textarea">
                                     <textarea name="message" placeholder="<?php echo esc_attr(get_field('faq_form_placeholder_question') ?: 'Ваш вопрос'); ?>" required class="input"></textarea>
