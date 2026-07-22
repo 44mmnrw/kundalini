@@ -68,21 +68,6 @@
 }
 
 
-@media (hover: hover) and (pointer: fine) {
-  .faq__questions .question__main:hover::after {
-    width: 100%;
-  }
-
-  .faq__questions .question__main:hover .question-icon {
-    background: var(--color-black);
-    color: var(--color-green);
-  }
-
-  .faq__questions .question__main:hover .question-icon svg {
-    color: var(--color-green);
-  }
-}
-
 .faq__questions .question__main-text {
   display: block;
   width: 100%;
