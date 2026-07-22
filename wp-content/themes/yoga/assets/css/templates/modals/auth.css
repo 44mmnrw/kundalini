@@ -140,6 +140,13 @@
   text-decoration: underline;
   text-underline-offset: 0.1em;
 }
+
+.yoga-form-register label[for="login-reg-btn"].is-disabled,
+.modal-login-inner__slide .registration-vk-link.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 .modal-login-inner .input:-webkit-autofill,
 .modal-login-inner .input:-webkit-autofill:hover,
 .modal-login-inner .input:-webkit-autofill:focus,

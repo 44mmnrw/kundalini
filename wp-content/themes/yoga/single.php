@@ -13,9 +13,6 @@ if (have_posts()) :
         the_post();
 
         $article_content = apply_filters('the_content', get_the_content());
-        // The article template controls typography; keep editor content intact,
-        // but remove presentational <strong> wrappers from the rendered markup.
-        $article_content = (string) preg_replace('/<\/?strong\b[^>]*>/i', '', $article_content);
         $article_content = preg_replace_callback(
             '/<blockquote([^>]*)class="([^"]*wp-block-quote[^"]*)"([^>]*)>(.*?)<\/blockquote>/si',
             static function ($matches) {
@@ -74,8 +71,8 @@ if (have_posts()) :
             }
         }
 
-        // Keep the article label in sync with cards on the blog page:
-        // both use the direct child category of the parent "blog" category.
+        // Синхронизируем рубрику статьи с карточками на странице блога:
+        // в обоих случаях используем дочернюю рубрику категории «blog».
         $main_category = function_exists('yoga_get_blog_article_category')
             ? yoga_get_blog_article_category((int) get_the_ID())
             : null;

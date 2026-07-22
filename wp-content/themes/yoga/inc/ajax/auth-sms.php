@@ -90,7 +90,7 @@ if (!function_exists('handle_yoga_email_register')) {
         $name = sanitize_text_field($_POST['user_name']);
         $pass = $_POST['user_pass'];
 
-        $required_consents = array('accept_terms', 'accept_personal_data', 'accept_contraindications');
+        $required_consents = array('accept_terms', 'accept_personal_data', 'accept_contraindications', 'accept_marketing');
         foreach ($required_consents as $consent) {
             if (empty($_POST[$consent])) {
                 yoga_ajax_error('Необходимо принять обязательные условия регистрации', 'validation_error', 422);
