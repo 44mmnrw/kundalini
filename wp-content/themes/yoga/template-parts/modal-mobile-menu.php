@@ -125,8 +125,8 @@
 							<<?php echo $pt_available ? 'a href="' . esc_url(get_term_link($parent_term)) . '"' : 'span'; ?> class="mobile-menu-sub-item__link">
 							<span><?php esc_html_e('Все практики', 'yoga'); ?></span>
 							<span class="mobile-menu-sub-item__chevron" aria-hidden="true">
-								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 205.8 205.8" width="26" height="26" focusable="false">
-									<use href="<?php echo $sprite_href; ?>#hundreds-practices-arrow" width="100%" height="100%"></use>
+								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 20 20" width="14" height="14" focusable="false">
+									<use href="<?php echo $sprite_href; ?>#site-arrow" width="100%" height="100%"></use>
 								</svg>
 							</span>
 							</<?php echo $pt_available ? 'a' : 'span'; ?>>
@@ -138,8 +138,8 @@
 							<<?php echo $pt_available ? 'a href="' . esc_url(get_term_link($child_term)) . '"' : 'span'; ?> class="mobile-menu-sub-item__link">
 							<span><?php echo esc_html($child_term->name); ?></span>
 							<span class="mobile-menu-sub-item__chevron" aria-hidden="true">
-								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 205.8 205.8" width="26" height="26" focusable="false">
-									<use href="<?php echo $sprite_href; ?>#hundreds-practices-arrow" width="100%" height="100%"></use>
+								<svg class="mobile-menu-sub-item__chevron-svg" viewBox="0 0 20 20" width="14" height="14" focusable="false">
+									<use href="<?php echo $sprite_href; ?>#site-arrow" width="100%" height="100%"></use>
 								</svg>
 							</span>
 							</<?php echo $pt_available ? 'a' : 'span'; ?>>
