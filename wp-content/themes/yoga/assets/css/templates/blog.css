@@ -717,8 +717,10 @@
     font-size: 0.875rem;    font-family: var(--font-family-base);
     font-weight: 400;
   }
+  .blog-main__image,
   .blog-main__image img {
-    height: 14.9375rem;  }
+    height: 14.9375rem;
+  }
   /* Расстояние от изображения до текста статьи на мобильных. */
   .blog-main__articles {
     padding-top: 25px;
