@@ -260,7 +260,9 @@
   position: relative;
 }
 
-.article-cat {
+.section-blog .article-cat {
+  display: inline-flex;
+  width: fit-content;
   padding: 0.9375rem;  padding-top: 0.2812rem;  padding-bottom: 0.2812rem;  color: var(--color-violet);
   font-family: var(--font-family-base);
   font-weight: 500;
@@ -727,9 +729,6 @@
   }
   .blog-article-item__date {
     margin-top: 25px;
-  }
-  .section-blog .article-cat {
-    display: none;
   }
   .article-cat {
     padding-left: 0.875rem;    padding-right: 0.875rem;    font-size: 0.875rem;  }
