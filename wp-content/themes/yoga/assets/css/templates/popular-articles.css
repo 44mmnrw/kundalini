@@ -225,6 +225,7 @@
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.1;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 .section-popular-articles .blog-article-item > a {
@@ -239,6 +240,7 @@
   transform: scale(1.05);
 }
 
+.section-popular-articles .article-btn:hover,
 .section-popular-articles .blog-article-item:hover .article-btn {
   background: #e8ff57;
   color: #9153e1;
