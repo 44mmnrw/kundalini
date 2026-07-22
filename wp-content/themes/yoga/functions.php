@@ -153,6 +153,23 @@
 		}
 		add_filter('the_content', 'yoga_add_praktika_notice_icon', 20);
 	}
+
+	if (!function_exists('yoga_get_blog_article_category')) {
+		function yoga_get_blog_article_category(int $post_id): ?WP_Term {
+			$blog_category = get_category_by_slug('blog');
+			if (!$blog_category instanceof WP_Term) {
+				return null;
+			}
+
+			foreach (get_the_category($post_id) as $category) {
+				if ($category instanceof WP_Term && (int) $category->parent === (int) $blog_category->term_id) {
+					return $category;
+				}
+			}
+
+			return null;
+		}
+	}
 	if (!function_exists('yoga_ajax_error')) {
 
 
