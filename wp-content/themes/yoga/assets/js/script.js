@@ -759,13 +759,18 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.textarea-resize').keydown(function () {
-		var el = this;
-		setTimeout(function() {
-			el.style.cssText = 'height:auto; padding:0';
-			el.style.cssText = 'height:' + el.scrollHeight + 'px';
-		}, 1);
-	});
+	function resizeCommentTextarea(el) {
+		el.style.height = 'auto';
+		el.style.height = el.scrollHeight + 'px';
+	}
+
+	$('.comment-form-main textarea.textarea-resize')
+		.each(function () {
+			resizeCommentTextarea(this);
+		})
+		.on('input focus', function () {
+			resizeCommentTextarea(this);
+		});
 
 	$('.comment-form-main textarea').keyup(function(){
 		var $this = $(this),
@@ -787,15 +792,6 @@ jQuery(document).ready(function($) {
 			}else {
 			$(this).closest('.answer-main').removeClass("active");
 		}
-	});
-
-
-	$('.praktika-comment-item__edit .textarea-resize').focus(function () {
-		var el = this;
-		setTimeout(function() {
-			el.style.cssText = 'height:auto; padding:0';
-			el.style.cssText = 'height:' + el.scrollHeight + 'px';
-		}, 1);
 	});
 
 
