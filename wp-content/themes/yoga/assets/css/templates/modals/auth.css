@@ -91,6 +91,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
+  margin: 1.5625rem 0 0;
+}
+
+.modal-login-inner__slide .yoga-form-register > label[for="login-reg-btn"] {
   margin-top: 1.5625rem;
 }
 
@@ -987,10 +991,12 @@ p.login-rules a:hover {
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register > .input,
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register > .input-password { width: 100%; height: 3.8125rem; margin: 0; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register .input { height: 3.8125rem; margin: 0; padding: 0 1.875rem; border: 1px solid var(--input_stroke_dark_bg, #383838); border-radius: 100px; font: 400 1.125rem/1.5 var(--font-family-base); }
-  .modal-login-inner__slide[data-target="2"].active .registration-consents { gap: 0.625rem; margin: 0.9375rem 0; }
+  .modal-login-inner__slide[data-target="2"].active .registration-consents { gap: 0.625rem; margin: 0.9375rem 0 0; }
   .modal-login-inner__slide[data-target="2"].active .registration-consent { gap: 0.75rem; font: 400 0.875rem/1.15 var(--font-family-base); }
   .modal-login-inner__slide[data-target="2"].active .registration-consent input { flex-basis: 1.25rem; width: 1.25rem; height: 1.25rem; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register > .btn { width: 100%; height: 3.8125rem; margin: 0; line-height: 3.8125rem; }
+  .modal-login-inner__slide[data-target="2"].active .registration-consents + #login-reg-btn + .login-smartcaptcha,
+  .modal-login-inner__slide[data-target="2"].active .yoga-form-register > label[for="login-reg-btn"] { margin-top: 0.9375rem; }
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob { display: flex; margin-top: 0.625rem; align-items: center; }
   .modal-login-inner__slide[data-target="2"].active .loggin-back_mob .loggin-back__link { margin: 0; font: 600 1rem/1.1 var(--font-family-base); text-decoration: none; }
   .modal-login-inner__slide[data-target="2"].active .registration-vk-link { position: static; display: flex; width: max-content; margin: 18px auto 0; align-items: center; justify-content: center; }
@@ -1029,7 +1035,7 @@ p.login-rules a:hover {
   .modal-login:has(.modal-login-inner__slide[data-target="2"].active) .modal-close { position: absolute; top: 0.625rem; right: 0.625rem; margin: 0; }
   .modal-login-inner__slide[data-target="2"].active { padding: 0; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register { gap: 0.625rem; margin-top: 1rem; }
-  .modal-login-inner__slide[data-target="2"].active .registration-consents { margin: 0.9375rem 0; }
+  .modal-login-inner__slide[data-target="2"].active .registration-consents { margin: 0.9375rem 0 0; }
   .modal-login-inner__slide[data-target="2"].active > .login-switch-link--mobile { display: block; align-self: center; margin-top: 1.375rem; color: #1f1f1f; font: 600 1rem/1.1 var(--font-family-base); text-decoration: none; cursor: pointer; }
   .modal-login-inner__slide[data-target="2"].active > .registration-vk-link { margin: 2.875rem auto 0; }
 }
