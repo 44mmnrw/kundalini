@@ -101,34 +101,34 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 </div>
                 <div class="registration-consents">
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_terms" value="1" required checked>
+                        <input type="checkbox" name="accept_terms" value="1" required>
                         <span>Я ознакомлен(а) с <a href="<?php echo esc_url($terms_url); ?>" target="_blank" rel="noopener">Пользовательским соглашением</a> и <a href="<?php echo esc_url($public_offer_url); ?>" target="_blank" rel="noopener">публичной офертой</a>, <a href="<?php echo esc_url($privacy_url); ?>" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_personal_data" value="1" required checked>
+                        <input type="checkbox" name="accept_personal_data" value="1" required>
                         <span>Я даю согласие на <a href="<?php echo esc_url($personal_data_url); ?>" target="_blank" rel="noopener">обработку персональных данных</a></span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_contraindications" value="1" required checked>
-                        <span>Я подтверждаю, что ознакомлен(а) с <a href="<?php echo esc_url($contraindications_url); ?>" target="_blank" rel="noopener">информацией о противопоказаниях и отказом от ответственности</a>.</span>
+                        <input type="checkbox" name="accept_contraindications" value="1" required>
+                        <span>Я подтверждаю, что мне исполнилось 18 лет, также ознакомлен(а) с <a href="<?php echo esc_url($contraindications_url); ?>" target="_blank" rel="noopener">информацией о противопоказаниях и отказом от ответственности</a>.</span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_marketing" value="1" checked>
+                        <input type="checkbox" name="accept_marketing" value="1" required checked>
                         <span>Согласен(а) на получение рекламы и информации. Отказаться можно в любой момент.</span>
                     </label>
                 </div>
-                <button type="submit" id="login-reg-btn"></button>
+                <button type="submit" id="login-reg-btn" disabled></button>
                 <?php if ($yoga_smart_captcha) : ?>
                 <div class="login-smartcaptcha yoga-smart-captcha-mount smart-captcha" data-sitekey="<?php echo esc_attr($yoga_sc_sitekey); ?>" data-hl="ru"></div>
                 <?php endif; ?>
-                <label for="login-reg-btn" class="btn">
+                <label for="login-reg-btn" class="btn is-disabled" aria-disabled="true">
                     <span>
                         зарегистрироваться
                     </span>
                 </label>
             </form>
             <span class="login-switch-link login-switch-link--mobile ml-sl-switch" data-target="1">Войти</span>
-            <a href="#" class="ref form-link form-link_vk registration-vk-link vkid-login-trigger">
+            <a href="#" class="ref form-link form-link_vk registration-vk-link vkid-login-trigger is-disabled" aria-disabled="true" tabindex="-1">
                 <span class="vkid-login-trigger__text">Войти через VK</span>
                 <svg class="vkid-login-trigger__icon" aria-hidden="true" focusable="false">
                     <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#vk-login-logo'); ?>"></use>

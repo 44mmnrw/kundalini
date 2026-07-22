@@ -1550,11 +1550,47 @@ jQuery(document).ready(function($) {
 	});
 
 
+	function registrationConsentsAccepted($form) {
+		var $consents = $form.find('.registration-consents input[type="checkbox"]');
+		return $consents.length > 0 && $consents.filter(':checked').length === $consents.length;
+	}
+
+	function updateRegistrationConsentState() {
+		$('.yoga-form-register').each(function() {
+			var $form = $(this);
+			var enabled = registrationConsentsAccepted($form);
+			var $submit = $form.find('#login-reg-btn');
+			var $submitLabel = $form.find('label[for="login-reg-btn"]');
+			var $vkLink = $form.closest('.modal-login-inner__slide').find('.registration-vk-link');
+
+			$submit.prop('disabled', !enabled);
+			$submitLabel.toggleClass('is-disabled', !enabled).attr('aria-disabled', String(!enabled));
+			$vkLink.toggleClass('is-disabled', !enabled).attr('aria-disabled', String(!enabled));
+
+			if (enabled) {
+				$vkLink.removeAttr('tabindex');
+			} else {
+				$vkLink.attr('tabindex', '-1');
+			}
+		});
+	}
+
+	$(document).on('change', '.yoga-form-register .registration-consents input[type="checkbox"]', updateRegistrationConsentState);
+	$(document).on('click', '.registration-vk-link.is-disabled', function(e) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+	});
+	updateRegistrationConsentState();
+
 	$(document).on('submit', '.yoga-form-register', function(e) {
 		e.preventDefault();
 		var $form = $(this);
 		var $btn = $form.find('label[for="login-reg-btn"]');
 		if (typeof yoga_ajax === 'undefined') return;
+		if (!registrationConsentsAccepted($form)) {
+			updateRegistrationConsentState();
+			return;
+		}
 		var extractAjaxError = function(xhr, fallbackText) {
 			var json = xhr && xhr.responseJSON ? xhr.responseJSON : null;
 			if (json && json.data) {

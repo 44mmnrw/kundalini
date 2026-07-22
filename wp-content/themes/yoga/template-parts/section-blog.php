@@ -49,7 +49,7 @@ if ($blog_category && !is_wp_error($blog_category) && is_category()) {
 
 
 
-// The explicit form filter must take priority over the base /blog/ category route.
+// Явно выбранная в форме рубрика имеет приоритет над базовым маршрутом /blog/.
 if ($blog_category && !is_wp_error($blog_category)) {
     if (!empty($_GET['category'])) {
         $slug = sanitize_title(wp_unslash($_GET['category']));
@@ -62,8 +62,8 @@ if ($blog_category && !is_wp_error($blog_category)) {
     }
 }
 
-// A selected child category is also a search result, but the base `blog`
-// category is the regular blog landing page.
+// Выбранная дочерняя рубрика считается отфильтрованной выдачей,
+// а базовая категория «blog» остаётся главной страницей блога.
 $has_selected_blog_category = $category_filter_term_id !== null
     && (!($blog_category instanceof WP_Term) || $category_filter_term_id !== (int) $blog_category->term_id);
 $category_filter_term = $has_selected_blog_category ? get_category($category_filter_term_id) : null;
