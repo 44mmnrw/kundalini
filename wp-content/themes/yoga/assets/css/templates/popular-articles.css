@@ -246,7 +246,7 @@
   transition: background-color 300ms ease, color 300ms ease;
 }
 
-.section-popular-articles .blog-article-item > a {
+.section-popular-articles .blog-article-item > .blog-article-item__link {
   position: absolute;
   z-index: 2;
   inset: 0;

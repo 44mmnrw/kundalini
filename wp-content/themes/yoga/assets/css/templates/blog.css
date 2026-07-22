@@ -454,7 +454,7 @@
   line-height: 1.1em;
   margin-top: 0.625rem;  padding-bottom: 1.25rem;  min-height: 5.375rem;  transition: 0.4s ease;
 }
-.blog-article-item a {
+.blog-article-item > .blog-article-item__link {
   display: block;
   position: absolute;
   left: 0px;
