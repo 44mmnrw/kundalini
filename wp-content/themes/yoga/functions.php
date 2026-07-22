@@ -1355,7 +1355,9 @@ function yoga_subscribe_handler() {
 			$output .= '<span>' . apply_filters('the_title', $item->title, $item->ID) . '</span>';
 
 			if ($this->item_count === 1) {
-				$sprite_href = esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg');
+				$sprite_path = get_template_directory() . '/assets/svg/sprite.svg';
+				$sprite_version = file_exists($sprite_path) ? (string) filemtime($sprite_path) : '';
+				$sprite_href = esc_url(add_query_arg('ver', $sprite_version, get_template_directory_uri() . '/assets/svg/sprite.svg'));
 				$output .= '<span class="mobile-menu-main-item__chevron" aria-hidden="true">';
 				$output .= '<svg class="mobile-menu-main-item__chevron-svg" viewBox="0 0 9 16" width="9" height="16" focusable="false">';
 				$output .= '<use href="' . $sprite_href . '#chevron-right" width="100%" height="100%"></use>';
