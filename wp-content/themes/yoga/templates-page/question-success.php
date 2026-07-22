@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Question Success
+ *
  * Шаблон страницы: question success.
  *
  * @package Yoga

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Contacts
+ *
  * Шаблон страницы: contacts.
  *
  * @package Yoga

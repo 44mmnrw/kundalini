@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Tariffs
+ *
  * Шаблон страницы: tariffs.
  *
  * @package Yoga

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Шаблон главной страницы
+ *
  * Шаблон страницы: homepage.
  *
  * @package Yoga

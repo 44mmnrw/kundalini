@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Privacy-policy
+ *
  * Шаблон страницы: privacy policy.
  *
  * @package Yoga
