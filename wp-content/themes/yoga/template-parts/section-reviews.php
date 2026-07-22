@@ -14,9 +14,10 @@ if ($reviews_source_id <= 0) {
 }
 $raw_show_review_people_photos = get_field('show_review_people_photos', $reviews_source_id);
 $show_review_people_photos = ($raw_show_review_people_photos === null || $raw_show_review_people_photos === '') ? true : (bool) $raw_show_review_people_photos;
+$videos_hidden = !empty($args['videos_hidden']);
 ?>
 
-<section class="section-reviews" id="section-reviews">
+<section class="section-reviews<?php echo $videos_hidden ? ' section-reviews_videos-hidden' : ''; ?>" id="section-reviews">
     <div class="container">
         <div class="row">
             <div class="reviews">

@@ -42,7 +42,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                     <?php echo esc_html($comment_author_name); ?>
                 </b>
                 <span class="praktika-comment-time">
-                    <?php printf(_x('%s назад', '%s = human-readable time difference', 'textdomain'), human_time_diff(get_comment_time('U'), current_time('timestamp'))); ?>
+                    <?php echo esc_html(yoga_get_comment_time_label($comment)); ?>
                 </span>
                 <div class="praktika-comment-item__main-action">
                     <?php if ($is_own_comment): ?>

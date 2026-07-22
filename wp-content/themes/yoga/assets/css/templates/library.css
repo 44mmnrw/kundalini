@@ -155,8 +155,7 @@
   opacity: 1;
 }
 .form-categories.active .form-categories__arrow {
-  /* At 180deg the tip is 2/12 below the baseline; return it to the line. */
-  transform: translateY(-16.6667%) rotate(180deg);
+  transform: rotate(0deg);
 }
 
 .form-categories__label {
@@ -220,7 +219,8 @@
   /* Triangle centre: (4 + 10 + 10) / 3 = 8 of 12.  The SVG is shifted
      down by 2 of 12 so its base shares the text baseline: 10 / 12. */
   transform-origin: 50% 83.3333%;
-  transform: rotate(0deg);
+  /* At 180deg the tip is 2/12 below the baseline; return it to the line. */
+  transform: translateY(-16.6667%) rotate(180deg);
   transition: 0.4s ease;
 }
 .form-categories__arrow svg {

@@ -136,6 +136,21 @@ function yoga_ajax_comment_supported_post_types(): array {
 }
 
 
+function yoga_get_comment_time_label(WP_Comment $comment): string {
+	$comment_timestamp = strtotime($comment->comment_date_gmt . ' UTC');
+	if ($comment_timestamp === false) {
+		return '';
+	}
+
+	$current_timestamp = current_time('timestamp', true);
+	if (($current_timestamp - $comment_timestamp) >= DAY_IN_SECONDS) {
+		return wp_date('d.m.Y', $comment_timestamp, wp_timezone());
+	}
+
+	return human_time_diff($comment_timestamp, $current_timestamp) . ' ' . __('назад', 'yoga');
+}
+
+
 
 
 
@@ -215,4 +230,3 @@ function yoga_insert_ajax_comment(array $comment_data, bool $validate = true) {
 		return $date;
 	}
 	add_filter('get_comment_date', 'russian_comment_time', 10, 3);
-

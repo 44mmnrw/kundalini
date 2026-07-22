@@ -469,10 +469,6 @@
 .blog-article-item:hover h4 {
   color: var(--color-violet);
 }
-.blog-article-item:hover .article-btn {
-  background: var(--color-green);
-  color: var(--color-violet);
-}
 .blog-article-item:hover .blog-article-item__image img {
   transform: scale(1.1);
 }
