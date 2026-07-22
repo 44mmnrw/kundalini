@@ -167,8 +167,8 @@ header > .container > .row > .header-content {
   height: 12px;
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
-  /* The triangle base sits on the text baseline; rotate around its centre. */
-  transform: rotate(0deg);
+  /* Closed state: point down and keep the rotated tip aligned to the text. */
+  transform: translateY(-16.6667%) rotate(180deg);
   transform-origin: 50% 83.3333%;
   transition: var(--transition-base, 0.4s ease);
 }
@@ -187,7 +187,7 @@ header > .container > .row > .header-content {
 }
 
 .main-menu-active-item .ref:hover .ref-icon {
-  transform: translateY(-16.6667%) rotate(-180deg);
+  transform: rotate(0deg);
 }
 
 .main-menu-active-item.active .ref {
@@ -195,7 +195,7 @@ header > .container > .row > .header-content {
 }
 
 .main-menu-active-item.active .ref .ref-icon {
-  transform: translateY(-16.6667%) rotate(-180deg);
+  transform: rotate(0deg);
 }
 
 .main-menu ul li.current-menu-item > .ref,

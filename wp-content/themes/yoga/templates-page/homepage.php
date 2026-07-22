@@ -25,7 +25,9 @@ get_template_part('template-parts/section', 'advantages');
 get_template_part('template-parts/section', 'whyme');
 get_template_part('template-parts/section', 'begin');
 get_template_part('template-parts/section', 'tariffs');
-get_template_part('template-parts/section', 'reviews');
+get_template_part('template-parts/section', 'reviews', array(
+	'videos_hidden' => !$show_videos_section,
+));
 if ($show_videos_section) {
 	get_template_part('template-parts/section', 'videos');
 }

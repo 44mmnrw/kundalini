@@ -1881,6 +1881,18 @@
   }
 }
 
+.section-reviews_videos-hidden .review {
+  margin-bottom: 0;
+}
+
+.section-reviews_videos-hidden + .section-popular-practices {
+  padding-top: 5rem;
+}
+
+.section-reviews_videos-hidden + .section-popular-practices h2 {
+  margin-top: 0;
+}
+
 
 .section-questions {
   padding-bottom: 4.5rem;}
