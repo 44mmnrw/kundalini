@@ -73,18 +73,9 @@ if (have_posts()) :
 
         // Keep the article label in sync with cards on the blog page:
         // both use the direct child category of the parent "blog" category.
-        $categories = get_the_category();
-        $main_category = null;
-        $blog_category = get_category_by_slug('blog');
-
-        if ($blog_category instanceof WP_Term) {
-            foreach ($categories as $category) {
-                if ($category instanceof WP_Term && (int) $category->parent === (int) $blog_category->term_id) {
-                    $main_category = $category;
-                    break;
-                }
-            }
-        }
+        $main_category = function_exists('yoga_get_blog_article_category')
+            ? yoga_get_blog_article_category((int) get_the_ID())
+            : null;
 
         $count_reading_minutes = static function ($content) {
             $plain_text = wp_strip_all_tags((string) $content);
@@ -364,16 +355,11 @@ if (have_posts()) :
                                                 </div>
 
                                                 <div class="blog-article-item__date">
+                                                    <?php $popular_category = yoga_get_blog_article_category((int) get_the_ID()); ?>
+                                                    <?php if ($popular_category instanceof WP_Term) : ?>
+                                                        <div class="article-cat"><?php echo esc_html($popular_category->name); ?></div>
+                                                    <?php endif; ?>
                                                     <time class="article-time"><?php echo esc_html(get_the_date('j F, Y')); ?></time>
-                                                    <time class="article-time article-time_time">
-                                                        <?php
-                                                        $popular_reading_minutes = function_exists('reading_time')
-                                                            ? (int) reading_time()
-                                                            : $count_reading_minutes(get_the_content());
-
-                                                        echo esc_html(function_exists('yoga_format_minutes') ? yoga_format_minutes($popular_reading_minutes, true) : ($popular_reading_minutes . ' мин'));
-                                                        ?>
-                                                    </time>
                                                 </div>
 
                                                 <h4><?php the_title(); ?></h4>
