@@ -682,9 +682,6 @@
   .post-main table tbody tr.responsive-table-label-row {
     display: none;
   }
-  .post-main table tbody tr.responsive-table-label-row td {
-    font-weight: 600;
-  }
   .post-main table,
   .post-main table tbody,
   .post-main table tr,

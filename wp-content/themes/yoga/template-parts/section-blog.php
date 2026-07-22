@@ -256,7 +256,7 @@ if ($is_blog_search_ui) {
 
                                 <div class="blog-article-item__date">
                                     <?php $post_category = $get_article_category((int) get_the_ID()); ?>
-                                    <?php if ($post_category && !$is_blog_search_ui) : ?>
+                                    <?php if ($post_category) : ?>
                                         <div class="article-cat"><?php echo esc_html($post_category->name); ?></div>
                                     <?php endif; ?>
                                     <time class="article-time">
@@ -268,11 +268,11 @@ if ($is_blog_search_ui) {
                                     <?php the_title(); ?>
                                 </h4>
 
-                                <div class="article-btn">
+                                <a class="article-btn" href="<?php the_permalink(); ?>">
                                     Читать
-                                </div>
+                                </a>
 
-                                <a href="<?php the_permalink(); ?>"></a>
+                                <a class="blog-article-item__link" href="<?php the_permalink(); ?>" aria-label="<?php the_title_attribute(); ?>"></a>
                             </div>
                             <?php $counter++; ?>
                         <?php endwhile; ?>

@@ -764,13 +764,14 @@ jQuery(document).ready(function($) {
 		el.style.height = el.scrollHeight + 'px';
 	}
 
-	$('.comment-form-main textarea.textarea-resize')
+	$('.textarea-resize')
 		.each(function () {
 			resizeCommentTextarea(this);
-		})
-		.on('input focus', function () {
-			resizeCommentTextarea(this);
 		});
+
+	$(document).on('input focus', '.textarea-resize', function () {
+			resizeCommentTextarea(this);
+	});
 
 	$('.comment-form-main textarea').keyup(function(){
 		var $this = $(this),
