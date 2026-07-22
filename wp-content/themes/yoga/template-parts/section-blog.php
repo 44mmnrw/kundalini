@@ -239,7 +239,7 @@ if ($is_blog_search_ui) {
             <div class="blog-articles">
                 <?php if (!$is_blog_search_ui) : ?>
                 <div class="blog-articles__intro">
-                    <h3><?php esc_html_e('Популярное', 'yoga'); ?></h3>
+                    <h3><?php esc_html_e('Читайте также', 'yoga'); ?></h3>
                 </div>
                 <?php endif; ?>
 
