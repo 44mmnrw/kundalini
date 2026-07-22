@@ -34,9 +34,6 @@ if ($search_q === '') {
     $search_q = is_string(get_search_query()) ? get_search_query() : '';
 }
 $has_search = ($search_q !== '');
-$is_blog_search_ui = ($has_search || is_search());
-
-
 $category_filter_term_id = null;
 
 if ($blog_category && !is_wp_error($blog_category) && is_category()) {
@@ -52,7 +49,8 @@ if ($blog_category && !is_wp_error($blog_category) && is_category()) {
 
 
 
-if ($category_filter_term_id === null && $blog_category && !is_wp_error($blog_category) && $is_blog_search_ui) {
+// The explicit form filter must take priority over the base /blog/ category route.
+if ($blog_category && !is_wp_error($blog_category)) {
     if (!empty($_GET['category'])) {
         $slug = sanitize_title(wp_unslash($_GET['category']));
         if ($slug !== '') {
@@ -63,6 +61,12 @@ if ($category_filter_term_id === null && $blog_category && !is_wp_error($blog_ca
         }
     }
 }
+
+// A selected child category is also a search result, but the base `blog`
+// category is the regular blog landing page.
+$has_selected_blog_category = $category_filter_term_id !== null
+    && (!($blog_category instanceof WP_Term) || $category_filter_term_id !== (int) $blog_category->term_id);
+$is_blog_search_ui = ($has_search || is_search() || $has_selected_blog_category);
 
 $query_common = array(
     'post_type' => 'post',
@@ -246,7 +250,7 @@ if ($is_blog_search_ui) {
 
                                 <div class="blog-article-item__date">
                                     <?php $post_category = $get_article_category((int) get_the_ID()); ?>
-                                    <?php if ($post_category) : ?>
+                                    <?php if ($post_category && !$is_blog_search_ui) : ?>
                                         <div class="article-cat"><?php echo esc_html($post_category->name); ?></div>
                                     <?php endif; ?>
                                     <time class="article-time">

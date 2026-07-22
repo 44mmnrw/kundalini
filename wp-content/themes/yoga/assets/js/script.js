@@ -1017,8 +1017,19 @@ jQuery(document).ready(function($) {
 	$('.blog-radios label').click(function () {
 		$(this).closest('.blog-radios').find('label').removeClass("active");
 		$(this).addClass("active");
+	});
 
-
+	// Рубрика — это фильтр выдачи блога. Отправляем форму сразу после выбора,
+	// чтобы пользователь попадал на уже свёрстанную страницу результатов.
+	$(document).on('change', '.blog-radios input[name="category"]', function () {
+		var form = this.closest('form');
+		if (form) {
+			var searchInput = form.querySelector('input[name="s"]');
+			if (searchInput && !searchInput.value.trim()) {
+				searchInput.disabled = true;
+			}
+			form.submit();
+		}
 	});
 
 
