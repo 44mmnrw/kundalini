@@ -719,6 +719,16 @@
   }
   .blog-main__image img {
     height: 14.9375rem;  }
+  /* Расстояние от изображения до текста статьи на мобильных. */
+  .blog-main__articles {
+    padding-top: 25px;
+  }
+  .blog-article-item__date {
+    margin-top: 25px;
+  }
+  .section-blog .blog-main .article-cat {
+    display: none;
+  }
   .article-cat {
     padding-left: 0.875rem;    padding-right: 0.875rem;    font-size: 0.875rem;  }
   .blog-article-item {
