@@ -192,9 +192,15 @@ $footer_subscription_complete = $footer_current_user->exists()
 		</div>
 	</div>
 </footer><?php get_template_part('template-parts/modal', 'cookie'); ?><div class="overlay"></div><div class="overlay-modal"></div><?php get_template_part('template-parts/modal', 'menu'); ?><?php get_template_part('template-parts/modal', 'mobile-menu'); ?><?php
+if (is_singular('practice')) {
+	get_template_part('template-parts/modal', 'sadhana');
+}
 $is_lk_shell = is_page_template('templates-page/lk.php')
 	|| is_page('my-account')
 	|| (function_exists('is_account_page') && is_account_page());
+if (is_singular('practice')) {
+	get_template_part('template-parts/modal', 'sadhana-reset');
+}
 if ($is_lk_shell) {
 	get_template_part('template-parts/modal', 'mobile-menu-lk');
 	get_template_part('template-parts/modal', 'subscription-cancel');
