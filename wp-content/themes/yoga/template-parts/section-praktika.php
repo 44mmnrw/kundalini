@@ -48,6 +48,9 @@ if (!empty($section_praktika_extra_class)) {
 							</span>
 						</span>
 					</div>
+					<button class="praktika-sadhana-btn" type="button" aria-haspopup="dialog" aria-controls="yoga-sadhana-modal">
+						<?php esc_html_e('Взять в садхану', 'yoga'); ?>
+					</button>
 				</div>
 				<div class="praktika-info">
 							<?php

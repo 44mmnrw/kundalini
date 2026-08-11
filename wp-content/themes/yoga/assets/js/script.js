@@ -1252,6 +1252,9 @@ jQuery(document).ready(function($) {
 
 
 	$('.overlay').click(function () {
+		if ($('#yoga-sadhana-modal, #yoga-sadhana-reset-modal').filter('.active').length) {
+			return;
+		}
 		$(this).removeClass("active");
 		$('.modal').removeClass("active");
 		$('.modal-login').removeClass("active");
@@ -1276,6 +1279,141 @@ jQuery(document).ready(function($) {
 		$('.body_lk .header').removeClass("active");
 		$('.body_lk .burger').removeClass("active");
 		closeLibraryFiltersScreen(true);
+	});
+
+	var yogaSadhanaModalTrigger = null;
+
+	function setCustomSadhanaState(isCustom, focusInput) {
+		var $form = $('#yoga-sadhana-modal .yoga-sadhana-modal__form');
+		var $customControl = $form.find('.yoga-sadhana-option__custom');
+		var $customInput = $form.find('.yoga-sadhana-option__input');
+
+		$form.toggleClass('yoga-sadhana-modal__form--custom', isCustom);
+		$customControl.attr('aria-hidden', isCustom ? 'false' : 'true');
+		$customInput.prop('disabled', !isCustom).prop('required', isCustom);
+
+		if (isCustom && focusInput) {
+			window.setTimeout(function () {
+				$customInput.trigger('focus').trigger('select');
+			}, 0);
+		}
+	}
+
+	function closeSadhanaModal(restoreFocus) {
+		var $modal = $('#yoga-sadhana-modal');
+		if (!$modal.length) {
+			return;
+		}
+
+		$modal.removeClass('active').attr('aria-hidden', 'true');
+		$('.overlay').removeClass('active');
+		$('.body').removeClass('body-fixed');
+
+		if (restoreFocus && yogaSadhanaModalTrigger) {
+			$(yogaSadhanaModalTrigger).trigger('focus');
+		}
+	}
+
+	$(document).on('click', '.praktika-sadhana-btn', function () {
+		var $modal = $('#yoga-sadhana-modal');
+		if (!$modal.length) {
+			return;
+		}
+
+		yogaSadhanaModalTrigger = this;
+		$modal.find('input[name="sadhana_days"][value="40"]').prop('checked', true);
+		$modal.find('.yoga-sadhana-option__input').val('7');
+		setCustomSadhanaState(false, false);
+		$('.modal, .modal-login').removeClass('active').attr('aria-hidden', 'true');
+		$modal.addClass('active').attr('aria-hidden', 'false');
+		$('.overlay').addClass('active');
+		$('.body').addClass('body-fixed');
+		$modal.scrollTop(0);
+		window.requestAnimationFrame(function () {
+			$modal.scrollTop(0);
+		});
+	});
+
+	$(document).on('change', '#yoga-sadhana-modal input[name="sadhana_days"]', function () {
+		setCustomSadhanaState(this.value === 'custom', this.value === 'custom');
+	});
+
+	$(document).on('click', '#yoga-sadhana-modal .yoga-sadhana-option__clear', function (event) {
+		event.preventDefault();
+		event.stopPropagation();
+		$('#yoga-sadhana-modal .yoga-sadhana-option__input').val('').trigger('focus');
+	});
+
+	$(document).on('click', '#yoga-sadhana-modal .yoga-sadhana-modal__cancel, #yoga-sadhana-modal .modal-close', function () {
+		closeSadhanaModal(true);
+	});
+
+	$(document).on('keydown', function (event) {
+		if (event.key === 'Escape' && $('#yoga-sadhana-modal').hasClass('active')) {
+			closeSadhanaModal(true);
+		}
+	});
+
+	$(document).on('submit', '#yoga-sadhana-modal .yoga-sadhana-modal__form', function (event) {
+		event.preventDefault();
+		var selectedDays = $(this).find('input[name="sadhana_days"]:checked').val();
+		if (selectedDays === 'custom') {
+			var customInput = $(this).find('.yoga-sadhana-option__input').get(0);
+			if (!customInput || !customInput.checkValidity()) {
+				if (customInput) {
+					customInput.reportValidity();
+				}
+				return;
+			}
+			selectedDays = customInput.value;
+		}
+		$(document).trigger('yoga:sadhana:start', [{
+			practiceId: $(this).data('practice-id'),
+			days: selectedDays
+		}]);
+		closeSadhanaModal(true);
+	});
+
+	var yogaSadhanaResetTrigger = null;
+
+	function closeSadhanaResetModal(restoreFocus) {
+		var $modal = $('#yoga-sadhana-reset-modal');
+		$modal.removeClass('active').attr('aria-hidden', 'true');
+		$('.overlay').removeClass('active');
+		$('.body').removeClass('body-fixed');
+		if (restoreFocus && yogaSadhanaResetTrigger) {
+			$(yogaSadhanaResetTrigger).trigger('focus');
+		}
+	}
+
+	$(document).on('click', '.yoga-sadhana-reset-trigger', function () {
+		var $modal = $('#yoga-sadhana-reset-modal');
+		if (!$modal.length) {
+			return;
+		}
+		yogaSadhanaResetTrigger = this;
+		$('.modal, .modal-login').removeClass('active').attr('aria-hidden', 'true');
+		$modal.addClass('active').attr('aria-hidden', 'false').scrollTop(0);
+		$('.overlay').addClass('active');
+		$('.body').addClass('body-fixed');
+	});
+
+	$(document).on('click', '#yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__cancel, #yoga-sadhana-reset-modal .modal-close', function () {
+		closeSadhanaResetModal(true);
+	});
+
+	$(document).on('click', '#yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__confirm', function () {
+		var $content = $('#yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__content');
+		$(document).trigger('yoga:sadhana:reset', [{
+			practiceId: $content.data('practice-id')
+		}]);
+		closeSadhanaResetModal(true);
+	});
+
+	$(document).on('keydown', function (event) {
+		if (event.key === 'Escape' && $('#yoga-sadhana-reset-modal').hasClass('active')) {
+			closeSadhanaResetModal(true);
+		}
 	});
 
 	var pendingCartRemoveForm = null;
