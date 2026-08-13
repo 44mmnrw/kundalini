@@ -24,6 +24,9 @@
 	$unread_notifications_count = function_exists('yoga_get_unread_user_notifications')
 		? count(yoga_get_unread_user_notifications((int) $user_id))
 		: 0;
+	$active_sadhanas_count = function_exists('yoga_sadhana_active_count')
+		? yoga_sadhana_active_count((int) $user_id)
+		: 0;
 	$email_verified = function_exists('yoga_is_user_email_verified') && yoga_is_user_email_verified($user_id);
 	$user_timezone = get_user_meta($user_id, 'timezone', true);
 	$user_timezone = is_string($user_timezone) ? $user_timezone : '';
@@ -248,11 +251,13 @@
 						</div>
 					</div>
 
-					<div class="lk-slide<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
+					<div class="lk-slide lk-slide--sadhanas<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 						<div class="lk-page-header">
 							<h2 class="lk-page-title">Мои садханы</h2>
 						</div>
-						<div class="lk-slide__content"></div>
+						<div class="lk-slide__content">
+							<?php get_template_part('template-parts/lk-sadhanas'); ?>
+						</div>
 					</div>
 
 					<div class="lk-slide lk-slide--notifications<?php echo $initial_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
@@ -330,9 +335,9 @@
 										array('Подписка закончилась', '', 1, 1, 'subscription_ended_site', 'subscription_ended_email'),
 									)),
 									array('Садхана', 'Всё, что касается садхан', array(
-										array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1, '', ''),
-										array('Садхана прервана', '', 0, 0, '', ''),
-										array('Садхана завершена', '', 1, 1, '', ''),
+					array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1, 'sadhana_progress_site', 'sadhana_progress_email'),
+					array('Садхана прервана', '', 0, 0, 'sadhana_interrupted_site', 'sadhana_interrupted_email'),
+					array('Садхана завершена', '', 1, 1, 'sadhana_completed_site', 'sadhana_completed_email'),
 									)),
 									array('Сообщения', 'Ответы преподавателя, поддержки и других пользователей.', array(
 										array('Ответ преподавателя или поддержки', '', 1, 0, 'question_answer_site', 'question_answer_email'),
@@ -803,6 +808,9 @@
 					<?php yoga_render_lk_menu_icon('lk-sidebar-lotus', 'sidebar-menu__item-svg'); ?>
 				</div>
 				<span class="sidebar-menu__label">Мои садханы</span>
+				<?php if ($active_sadhanas_count > 0) : ?>
+					<span class="sidebar-menu__count" data-sadhana-active-count aria-label="<?php echo esc_attr(sprintf(_n('%d активная садхана', '%d активных садхан', $active_sadhanas_count, 'yoga'), $active_sadhanas_count)); ?>"><?php echo esc_html((string) $active_sadhanas_count); ?></span>
+				<?php endif; ?>
 			</div>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 				<div class="sidebar-menu__item-icon">

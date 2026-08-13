@@ -1356,6 +1356,8 @@ jQuery(document).ready(function($) {
 
 	$(document).on('submit', '#yoga-sadhana-modal .yoga-sadhana-modal__form', function (event) {
 		event.preventDefault();
+		var $form = $(this);
+		var $submit = $form.find('.yoga-sadhana-modal__submit');
 		var selectedDays = $(this).find('input[name="sadhana_days"]:checked').val();
 		if (selectedDays === 'custom') {
 			var customInput = $(this).find('.yoga-sadhana-option__input').get(0);
@@ -1367,11 +1369,170 @@ jQuery(document).ready(function($) {
 			}
 			selectedDays = customInput.value;
 		}
-		$(document).trigger('yoga:sadhana:start', [{
-			practiceId: $(this).data('practice-id'),
-			days: selectedDays
-		}]);
-		closeSadhanaModal(true);
+		if (typeof yoga_ajax === 'undefined' || $submit.prop('disabled')) {
+			return;
+		}
+		$submit.prop('disabled', true).attr('aria-busy', 'true');
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_sadhana_start',
+			nonce: yoga_ajax.nonce,
+			practice_id: $form.data('practice-id'),
+			target_days: selectedDays
+		}).done(function(response) {
+			if (!response || response.success !== true || !response.data || !response.data.sadhana) {
+				showSadhanaMessage(response, 'Не удалось начать садхану.', 'error');
+				return;
+			}
+			window.location.reload();
+		}).fail(function(xhr) {
+			showSadhanaMessage(xhr.responseJSON, 'Не удалось начать садхану.', 'error');
+		}).always(function() {
+			$submit.prop('disabled', false).removeAttr('aria-busy');
+		});
+	});
+
+	function showSadhanaMessage(response, fallback, type) {
+		var message = response && response.data && response.data.message ? response.data.message : fallback;
+		if (typeof showNotification === 'function') {
+			showNotification(message, type || 'success');
+			return;
+		}
+		$('.practice-notification').remove();
+		var $notice = $('<div class="practice-notification" role="status" aria-live="polite"></div>')
+			.addClass(type || 'success')
+			.text(message)
+			.appendTo('body')
+			.hide()
+			.fadeIn(200);
+		window.setTimeout(function() { $notice.fadeOut(200, function() { $notice.remove(); }); }, 3000);
+	}
+
+	function updateSadhanaActiveCounts(count) {
+		count = Math.max(0, parseInt(count, 10) || 0);
+		var $sadhanaItems = $('.sidebar-menu__item[data-target="7"]');
+		$sadhanaItems.each(function() {
+			var $item = $(this);
+			var $count = $item.find('[data-sadhana-active-count]');
+			if (!count) {
+				$count.remove();
+				return;
+			}
+			if (!$count.length) {
+				$count = $('<span class="sidebar-menu__count" data-sadhana-active-count></span>').appendTo($item);
+			}
+			$count.text(count).attr('aria-label', count + ' активных садхан');
+		});
+	}
+
+	function updatePracticeSadhanaCounter($counter) {
+		var completedDays = parseInt($counter.attr('data-completed-days'), 10) || 0;
+		var totalDays = parseInt($counter.attr('data-total-days'), 10) || 1;
+		var nextDayAt = parseInt($counter.attr('data-next-day-at'), 10) || 0;
+		var markedToday = $counter.attr('data-marked-today') === '1';
+		var dayResetTimer = $counter.data('sadhana-day-reset-timer');
+		if (dayResetTimer) {
+			window.clearTimeout(dayResetTimer);
+			$counter.removeData('sadhana-day-reset-timer');
+		}
+		if (markedToday && nextDayAt > 0 && Date.now() >= nextDayAt) {
+			markedToday = false;
+			$counter.attr('data-marked-today', '0');
+		}
+		completedDays = Math.max(0, Math.min(completedDays, totalDays));
+		$counter.attr('data-completed-days', completedDays);
+		$counter.find('.praktika-sadhana-counter__completed').text(completedDays);
+		$counter.find('.praktika-sadhana-counter__total').text(totalDays);
+		$counter.find('.praktika-sadhana-counter__mark-completed').text(completedDays);
+		$counter.find('.praktika-sadhana-counter__mark-total').text(totalDays);
+		$counter.find('.praktika-sadhana-counter__progress span').css('width', ((completedDays / totalDays) * 100) + '%');
+		$counter.find('.praktika-sadhana-counter__mark')
+			.toggleClass('is-marked', markedToday)
+			.prop('disabled', completedDays >= totalDays || markedToday)
+			.attr('aria-label', markedToday ? 'Садхана. День ' + completedDays + ' из ' + totalDays + ' отмечен' : 'Отметить новый день');
+		if (markedToday && nextDayAt > Date.now()) {
+			$counter.data('sadhana-day-reset-timer', window.setTimeout(function () {
+				$counter.attr('data-marked-today', '0');
+				updatePracticeSadhanaCounter($counter);
+			}, Math.min(nextDayAt - Date.now() + 250, 2147483647)));
+		}
+	}
+
+	$('.praktika-sadhana-counter').each(function () {
+		updatePracticeSadhanaCounter($(this));
+	});
+
+	$(document).on('yoga:sadhana:start', function (event, data) {
+		var $counter = $('.praktika-sadhana-counter');
+		var totalDays = parseInt(data && data.total_days, 10);
+		if (!totalDays || totalDays < 1) {
+			return;
+		}
+		$('.praktika-sadhana-btn').attr('hidden', 'hidden').hide();
+		if (!$counter.length && data.progress_html) {
+			$counter = $(data.progress_html).insertAfter('.praktika-details');
+		}
+		if (!$counter.length) {
+			window.location.reload();
+			return;
+		}
+		$counter
+			.attr('data-sadhana-id', data.id || '')
+			.attr('data-total-days', totalDays)
+			.attr('data-completed-days', data.completed_days || 0)
+			.attr('data-marked-today', data.marked_today ? '1' : '0')
+			.attr('data-next-day-at', data.next_day_at || '')
+			.removeAttr('hidden')
+			.show();
+		updatePracticeSadhanaCounter($counter);
+	});
+
+	$(document).on('click', '.praktika-sadhana-counter__mark', function () {
+		var $button = $(this);
+		var $counter = $(this).closest('.praktika-sadhana-counter');
+		var practiceId = $counter.attr('data-practice-id');
+		var $counters = $('.praktika-sadhana-counter').filter(function () {
+			return $(this).attr('data-practice-id') === practiceId;
+		});
+		if (typeof yoga_ajax === 'undefined' || $button.prop('disabled')) {
+			return;
+		}
+		$counters.find('.praktika-sadhana-counter__mark').prop('disabled', true).attr('aria-busy', 'true');
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_sadhana_mark_day',
+			nonce: yoga_ajax.nonce,
+			sadhana_id: $counter.attr('data-sadhana-id')
+		}).done(function(response) {
+			if (!response || response.success !== true || !response.data || !response.data.sadhana) {
+				showSadhanaMessage(response, 'Не удалось отметить день.', 'error');
+				return;
+			}
+			var sadhana = response.data.sadhana;
+			if (sadhana.status === 'completed') {
+				$counters.prop('hidden', true);
+				$('.praktika-sadhana-btn').prop('hidden', false);
+			} else {
+				$counters.attr('data-completed-days', sadhana.completed_days).attr('data-marked-today', sadhana.marked_today ? '1' : '0').attr('data-next-day-at', sadhana.next_day_at || '');
+				$counters.each(function () {
+					updatePracticeSadhanaCounter($(this));
+				});
+			}
+			updateSadhanaActiveCounts(response.data.active_count);
+			showSadhanaMessage(response, 'День отмечен.', 'success');
+		}).fail(function(xhr) {
+			showSadhanaMessage(xhr.responseJSON, 'Не удалось отметить день.', 'error');
+		}).always(function() {
+			$counters.find('.praktika-sadhana-counter__mark').removeAttr('aria-busy');
+			$counters.each(function () {
+				updatePracticeSadhanaCounter($(this));
+			});
+		});
+	});
+
+	$(document).on('yoga:sadhana:reset', function () {
+		var $counter = $('.praktika-sadhana-counter');
+		$counter.attr('data-sadhana-id', '').attr('data-completed-days', '0').attr('data-marked-today', '0').prop('hidden', true);
+		$('.praktika-sadhana-btn').prop('hidden', false);
+		updatePracticeSadhanaCounter($counter);
 	});
 
 	var yogaSadhanaResetTrigger = null;
@@ -1392,6 +1553,12 @@ jQuery(document).ready(function($) {
 			return;
 		}
 		yogaSadhanaResetTrigger = this;
+		var $trigger = $(this);
+		var $counter = $trigger.closest('.praktika-sadhana-counter');
+		var $card = $trigger.closest('.lk-sadhana-card');
+		var sadhanaId = $trigger.data('sadhana-id') || $counter.attr('data-sadhana-id') || $card.attr('data-sadhana-id') || '';
+		var practiceId = $trigger.data('practice-id') || $counter.attr('data-practice-id') || $card.attr('data-practice-id') || '';
+		$modal.find('.yoga-sadhana-reset-modal__content').attr('data-sadhana-id', sadhanaId).attr('data-practice-id', practiceId);
 		$('.modal, .modal-login').removeClass('active').attr('aria-hidden', 'true');
 		$modal.addClass('active').attr('aria-hidden', 'false').scrollTop(0);
 		$('.overlay').addClass('active');
@@ -1403,11 +1570,91 @@ jQuery(document).ready(function($) {
 	});
 
 	$(document).on('click', '#yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__confirm', function () {
+		var $button = $(this);
 		var $content = $('#yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__content');
-		$(document).trigger('yoga:sadhana:reset', [{
-			practiceId: $content.data('practice-id')
-		}]);
-		closeSadhanaResetModal(true);
+		if (typeof yoga_ajax === 'undefined' || $button.prop('disabled') || !$content.attr('data-sadhana-id')) {
+			return;
+		}
+		$button.prop('disabled', true).attr('aria-busy', 'true');
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_sadhana_cancel',
+			nonce: yoga_ajax.nonce,
+			sadhana_id: $content.attr('data-sadhana-id'),
+			practice_id: $content.attr('data-practice-id')
+		}).done(function(response) {
+			if (!response || response.success !== true) {
+				showSadhanaMessage(response, 'Не удалось отменить садхану.', 'error');
+				return;
+			}
+			var sadhanaId = String($content.attr('data-sadhana-id'));
+			$(document).trigger('yoga:sadhana:reset', [{ practiceId: $content.data('practice-id') }]);
+			$('.lk-sadhana-card[data-sadhana-id="' + sadhanaId + '"]').remove();
+			ensureSadhanaPanelState('active');
+			updateSadhanaActiveCounts(response.data.active_count);
+			closeSadhanaResetModal(true);
+			showSadhanaMessage(response, 'Садхана отменена.', 'success');
+		}).fail(function(xhr) {
+			showSadhanaMessage(xhr.responseJSON, 'Не удалось отменить садхану.', 'error');
+		}).always(function() {
+			$button.prop('disabled', false).removeAttr('aria-busy');
+		});
+	});
+
+	function ensureSadhanaPanelState(type) {
+		var $panel = $('[data-sadhanas-panel="' + type + '"]');
+		if (!$panel.length) {
+			return;
+		}
+		var $cards = $panel.find('.lk-sadhana-card');
+		if ($cards.length) {
+			$panel.find('.lk-sadhanas-empty').remove();
+			if (!$panel.find('.lk-sadhanas__grid').length) {
+				$cards.wrapAll('<div class="lk-sadhanas__grid"></div>');
+			}
+			return;
+		}
+		$panel.find('.lk-sadhanas__grid').remove();
+		if (!$panel.find('.lk-sadhanas-empty').length) {
+			var template = document.querySelector('template[data-sadhanas-empty-template="' + type + '"]');
+			if (template) {
+				$panel.append(template.content.cloneNode(true));
+			}
+		}
+	}
+
+	$(document).on('click', '.lk-sadhana-card__restart', function() {
+		var $button = $(this);
+		if (typeof yoga_ajax === 'undefined' || $button.prop('disabled')) {
+			return;
+		}
+		$button.prop('disabled', true).attr('aria-busy', 'true');
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_sadhana_restart',
+			nonce: yoga_ajax.nonce,
+			sadhana_id: $button.data('sadhana-id')
+		}).done(function(response) {
+			if (!response || response.success !== true || !response.data) {
+				showSadhanaMessage(response, 'Не удалось начать садхану снова.', 'error');
+				return;
+			}
+			var sadhana = response.data.sadhana || {};
+			var $activePanel = $('[data-sadhanas-panel="active"]');
+			if (response.data.active_card_html && !$activePanel.find('.lk-sadhana-card[data-sadhana-id="' + sadhana.id + '"]').length) {
+				$activePanel.find('.lk-sadhanas-empty').remove();
+				var $grid = $activePanel.find('.lk-sadhanas__grid');
+				if (!$grid.length) {
+					$grid = $('<div class="lk-sadhanas__grid"></div>').appendTo($activePanel);
+				}
+				$grid.prepend(response.data.active_card_html);
+			}
+			updateSadhanaActiveCounts(response.data.active_count);
+			$('[data-sadhanas-tab="active"]').trigger('click');
+			showSadhanaMessage(response, 'Садхана началась снова.', 'success');
+		}).fail(function(xhr) {
+			showSadhanaMessage(xhr.responseJSON, 'Не удалось начать садхану снова.', 'error');
+		}).always(function() {
+			$button.prop('disabled', false).removeAttr('aria-busy');
+		});
 	});
 
 	$(document).on('keydown', function (event) {
@@ -2989,6 +3236,20 @@ jQuery(document).ready(function($) {
 
 
 	$(document).ready(function() {
+		$('[data-sadhanas-layout]').each(function() {
+			var $layout = $(this);
+			var $tabs = $layout.find('[data-sadhanas-tab]');
+			var $panels = $layout.find('[data-sadhanas-panel]');
+
+			$tabs.on('click', function() {
+				var target = String($(this).attr('data-sadhanas-tab') || '');
+
+				$tabs.removeClass('is-active').attr('aria-selected', 'false');
+				$(this).addClass('is-active').attr('aria-selected', 'true');
+				$panels.removeClass('is-active').prop('hidden', true);
+				$panels.filter('[data-sadhanas-panel="' + target + '"]').addClass('is-active').prop('hidden', false);
+			});
+		});
 		const initialActiveTerm = $('.section-library .form-categories__value span.active').data('target') ||
 		$('.section-library .form-cat-list__item.active').data('target') ||
 		getLibraryDefaultTermId();

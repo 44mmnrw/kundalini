@@ -6,6 +6,9 @@
  */
 
 $reset_practice_id = is_singular('practice') ? (int) get_queried_object_id() : 0;
+$reset_sadhana = $reset_practice_id > 0 && is_user_logged_in() && function_exists('yoga_sadhana_get_active')
+	? yoga_sadhana_get_active((int) get_current_user_id(), $reset_practice_id)
+	: null;
 $reset_sprite_url  = get_template_directory_uri() . '/assets/svg/sprite.svg';
 ?>
 <div
@@ -23,7 +26,7 @@ $reset_sprite_url  = get_template_directory_uri() . '/assets/svg/sprite.svg';
 		</svg>
 	</button>
 
-	<div class="yoga-sadhana-reset-modal__content" data-practice-id="<?php echo esc_attr((string) $reset_practice_id); ?>">
+	<div class="yoga-sadhana-reset-modal__content" data-practice-id="<?php echo esc_attr((string) $reset_practice_id); ?>" data-sadhana-id="<?php echo esc_attr($reset_sadhana ? (string) $reset_sadhana['id'] : ''); ?>">
 		<div class="yoga-sadhana-reset-modal__copy">
 			<h2 id="yoga-sadhana-reset-title"><?php esc_html_e('Хотите сбросить прогресс?', 'yoga'); ?></h2>
 			<p id="yoga-sadhana-reset-description"><?php esc_html_e('Прогресс будет потерян, но вы сможете всегда начать сначала.', 'yoga'); ?></p>

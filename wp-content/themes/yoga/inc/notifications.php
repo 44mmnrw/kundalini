@@ -86,6 +86,12 @@ function yoga_get_notification_preference_defaults(): array {
 		'question_answer_email' => false,
 		'comment_reply_site' => false,
 		'comment_reply_email' => true,
+		'sadhana_progress_site' => true,
+		'sadhana_progress_email' => true,
+		'sadhana_interrupted_site' => false,
+		'sadhana_interrupted_email' => false,
+		'sadhana_completed_site' => true,
+		'sadhana_completed_email' => true,
 		'new_practices_email' => true,
 		'new_articles_email' => false,
 		'promotions_email' => true,
@@ -114,6 +120,9 @@ function yoga_add_user_notification(int $user_id, string $type, string $title, s
 		'subscription_expiring' => 'subscription_expiring_site',
 		'payment_card_expiring' => 'payment_card_expiring_site',
 		'subscription_ended' => 'subscription_ended_site',
+		'sadhana_progress' => 'sadhana_progress_site',
+		'sadhana_interrupted' => 'sadhana_interrupted_site',
+		'sadhana_completed' => 'sadhana_completed_site',
 	);
 	if (isset($site_preference_keys[$type])) {
 		$preference_key = $site_preference_keys[$type];

@@ -24,6 +24,9 @@ $mobile_lk_about_link = $mobile_lk_link('about', 'О нас');
 $mobile_lk_blog_link = $mobile_lk_link('blog', 'Блог');
 $mobile_lk_contacts_link = $mobile_lk_link('contacts', 'Контакты');
 $mobile_lk_faq_link = $mobile_lk_link('faq', 'FAQ');
+$mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
+	? yoga_sadhana_active_count((int) get_current_user_id())
+	: 0;
 ?><div class="modal-mobile-menu-lk">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
@@ -53,6 +56,9 @@ $mobile_lk_faq_link = $mobile_lk_link('faq', 'FAQ');
 								<?php yoga_render_lk_menu_icon('lk-sidebar-lotus', 'sidebar-menu__item-svg'); ?>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои садханы', 'yoga'); ?></span>
+							<?php if ($mobile_active_sadhanas_count > 0) : ?>
+								<span class="sidebar-menu__count" data-sadhana-active-count aria-label="<?php echo esc_attr(sprintf(_n('%d активная садхана', '%d активных садхан', $mobile_active_sadhanas_count, 'yoga'), $mobile_active_sadhanas_count)); ?>"><?php echo esc_html((string) $mobile_active_sadhanas_count); ?></span>
+							<?php endif; ?>
 						</div>
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
 						<div class="sidebar-menu__item-icon">
