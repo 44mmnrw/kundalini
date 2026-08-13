@@ -12,9 +12,12 @@
 	require_once get_template_directory() . '/inc/core/dependencies.php';
 	require_once get_template_directory() . '/inc/notifications.php';
 	require_once get_template_directory() . '/inc/ajax/notifications.php';
+	require_once get_template_directory() . '/inc/sadhanas.php';
 	require_once get_template_directory() . '/inc/questions.php';
 	require_once get_template_directory() . '/inc/render/questions.php';
+	require_once get_template_directory() . '/inc/render/sadhanas.php';
 	require_once get_template_directory() . '/inc/ajax/questions.php';
+	require_once get_template_directory() . '/inc/ajax/sadhanas.php';
 	require_once get_template_directory() . '/inc/admin/questions.php';
 	require_once get_template_directory() . '/inc/practices/search.php';
 	require_once get_template_directory() . '/inc/ajax/practice-search.php';
