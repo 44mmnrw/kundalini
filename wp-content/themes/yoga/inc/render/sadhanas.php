@@ -67,8 +67,8 @@ if (!function_exists('yoga_render_practice_sadhana_counter')) {
 					<p><?php esc_html_e('Садхана началась. Можно отметить сегодняшний день после практики.', 'yoga'); ?></p>
 				</div>
 				<div class="praktika-sadhana-counter__actions">
-					<button class="praktika-sadhana-counter__mark<?php echo $marked_today ? ' is-marked' : ''; ?>" type="button"<?php echo $marked_today ? ' disabled' : ''; ?> aria-label="<?php echo $marked_today ? esc_attr(sprintf(__('Садхана. День %1$d из %2$d отмечен', 'yoga'), $completed_days, $total_days)) : esc_attr__('Отметить новый день', 'yoga'); ?>">
-						<span class="praktika-sadhana-counter__mark-default"><?php esc_html_e('Отметить новый день', 'yoga'); ?></span>
+					<button class="praktika-sadhana-counter__mark<?php echo $marked_today ? ' is-marked' : ''; ?>" type="button"<?php echo $marked_today ? ' disabled' : ''; ?> aria-label="<?php echo $marked_today ? esc_attr(sprintf(__('Садхана. День %1$d из %2$d отмечен', 'yoga'), $completed_days, $total_days)) : esc_attr__('Отметить день', 'yoga'); ?>">
+						<span class="praktika-sadhana-counter__mark-default"><?php esc_html_e('Отметить день', 'yoga'); ?></span>
 						<span class="praktika-sadhana-counter__mark-state" aria-hidden="true">
 							<span class="praktika-sadhana-counter__mark-label"><?php esc_html_e('САДХАНА', 'yoga'); ?></span>
 							<span><?php esc_html_e('День', 'yoga'); ?> <span class="praktika-sadhana-counter__mark-completed"><?php echo esc_html((string) $completed_days); ?></span> <?php esc_html_e('из', 'yoga'); ?> <span class="praktika-sadhana-counter__mark-total"><?php echo esc_html((string) $total_days); ?></span></span>

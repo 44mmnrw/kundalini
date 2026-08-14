@@ -116,6 +116,8 @@
 <?php foreach ($step['exercise_items'] as $ex_idx => $exercise): ?>
 <?php
 	$has_modifications = $exercise['has_modifications'] ?? false;
+	$modification_name = trim((string) ($exercise['modification_name'] ?? ''));
+	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация';
 	$title = $exercise['title'] ?? '';
 	$subtitle = $exercise['subtitle'] ?? '';
 	$matter = $exercise['matter'] ?? '';
@@ -167,10 +169,10 @@
             <?php if ($has_modifications): ?>
             <div class="exercise-switches">
                 <div class="exercise-switches__item active" data-target="main">
-                    <b>Основная</b>
+                    <b>Выполнение</b>
 				</div>
                 <div class="exercise-switches__item" data-target="mod">
-                    <b>Модификация</b>
+                    <b><?php echo esc_html($modification_label); ?></b>
 				</div>
 			</div>
             <?php endif; ?>
@@ -329,7 +331,7 @@
     <div class="exercise-item" data-version="mod" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>" style="display: none;">
         <div class="exercise-item__info">
             <?php if ($title): ?>
-            <h3><?php echo esc_html($title); ?> (Модификация)</h3>
+            <h3><?php echo esc_html($title); ?> (<?php echo esc_html($modification_label); ?>)</h3>
             <?php endif; ?>
 
             <?php if ($subtitle): ?>
@@ -338,10 +340,10 @@
 
             <div class="exercise-switches">
                 <div class="exercise-switches__item" data-target="main">
-                    <b>Основная</b>
+                    <b>Выполнение</b>
 				</div>
                 <div class="exercise-switches__item active" data-target="mod">
-                    <b>Модификация</b>
+                    <b><?php echo esc_html($modification_label); ?></b>
 				</div>
 			</div>
 

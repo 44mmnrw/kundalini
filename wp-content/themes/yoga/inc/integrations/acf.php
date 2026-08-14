@@ -448,6 +448,74 @@ if (!function_exists('yoga_register_practice_guest_access_fields')) {
 
 add_action('acf/init', 'yoga_register_practice_guest_access_fields', 15);
 
+if (!function_exists('yoga_add_practice_exercise_modification_name_field')) {
+	/**
+	 * Adds a deployable name field to the database-defined exercise repeater.
+	 */
+	function yoga_add_practice_exercise_modification_name_field(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			$field['sub_fields'] = array();
+		}
+
+		foreach ($field['sub_fields'] as $sub_field) {
+			if (
+				(isset($sub_field['key']) && $sub_field['key'] === 'field_ex_modification_name')
+				|| (isset($sub_field['name']) && $sub_field['name'] === 'modification_name')
+			) {
+				return $field;
+			}
+		}
+
+		$modification_name_field = array(
+			'ID'                => 0,
+			'key'               => 'field_ex_modification_name',
+			'label'             => 'Название модификации',
+			'name'              => 'modification_name',
+			'_name'             => 'modification_name',
+			'prefix'            => 'acf',
+			'type'              => 'text',
+			'instructions'      => 'Например: Для спины',
+			'required'          => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field'    => 'field_ex_has_modifications',
+						'operator' => '==',
+						'value'    => '1',
+					),
+				),
+			),
+			'wrapper'           => array(
+				'width' => '',
+				'class' => '',
+				'id'    => '',
+			),
+			'default_value'     => '',
+			'placeholder'       => 'Для спины',
+			'parent'            => $field['ID'] ?? 0,
+			'parent_repeater'   => 'field_exercise_items',
+		);
+
+		if (function_exists('acf_get_valid_field')) {
+			$modification_name_field = acf_get_valid_field($modification_name_field);
+		}
+
+		$insert_at = 0;
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			if (isset($sub_field['key']) && $sub_field['key'] === 'field_ex_has_modifications') {
+				$insert_at = $index + 1;
+				break;
+			}
+		}
+
+		array_splice($field['sub_fields'], $insert_at, 0, array($modification_name_field));
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_modification_name_field', 20);
+
 if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 	function yoga_delay_acf_wysiwyg_editors(array $field): array {
 		if (!is_admin()) {
