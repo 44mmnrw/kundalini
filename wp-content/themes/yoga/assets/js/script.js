@@ -1448,7 +1448,7 @@ jQuery(document).ready(function($) {
 		$counter.find('.praktika-sadhana-counter__mark')
 			.toggleClass('is-marked', markedToday)
 			.prop('disabled', completedDays >= totalDays || markedToday)
-			.attr('aria-label', markedToday ? 'Садхана. День ' + completedDays + ' из ' + totalDays + ' отмечен' : 'Отметить новый день');
+			.attr('aria-label', markedToday ? 'Садхана. День ' + completedDays + ' из ' + totalDays + ' отмечен' : 'Отметить день');
 		if (markedToday && nextDayAt > Date.now()) {
 			$counter.data('sadhana-day-reset-timer', window.setTimeout(function () {
 				$counter.attr('data-marked-today', '0');

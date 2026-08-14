@@ -17,7 +17,14 @@ function yoga_sadhana_table(): string {
 	return $wpdb->prefix . 'yoga_sadhanas';
 }
 
-function yoga_sadhana_install_storage(): void {
+function yoga_sadhana_storage_exists(): bool {
+	global $wpdb;
+	$table = yoga_sadhana_table();
+	$found = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table)));
+	return is_string($found) && $found === $table;
+}
+
+function yoga_sadhana_install_storage(): bool {
 	global $wpdb;
 	$table = yoga_sadhana_table();
 	$charset_collate = $wpdb->get_charset_collate();
@@ -45,6 +52,7 @@ function yoga_sadhana_install_storage(): void {
 		KEY last_marked_on (last_marked_on)
 	) {$charset_collate};";
 	dbDelta($sql);
+	return yoga_sadhana_storage_exists();
 }
 
 function yoga_sadhana_legacy_status(string $status): string {
@@ -60,11 +68,16 @@ function yoga_sadhana_legacy_status(string $status): string {
  */
 function yoga_sadhana_migrate_legacy_posts(): void {
 	global $wpdb;
-	if ((string) get_option('yoga_sadhana_storage_version', '') === YOGA_SADHANA_STORAGE_VERSION) {
+	if (
+		(string) get_option('yoga_sadhana_storage_version', '') === YOGA_SADHANA_STORAGE_VERSION
+		&& yoga_sadhana_storage_exists()
+	) {
 		return;
 	}
 
-	yoga_sadhana_install_storage();
+	if (!yoga_sadhana_install_storage()) {
+		return;
+	}
 	$table = yoga_sadhana_table();
 	$legacy_posts = get_posts(array(
 		'post_type' => 'sadhana_cycle',
