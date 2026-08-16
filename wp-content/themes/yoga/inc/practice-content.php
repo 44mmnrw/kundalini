@@ -55,6 +55,34 @@ if (!function_exists('yoga_practice_format_rich_text')) {
 	}
 }
 
+if (!function_exists('yoga_practice_format_detail_text')) {
+	/**
+	 * Formats textarea detail rows and emphasizes the label before the first colon.
+	 * Example: "Мантра: текст" becomes "<b>Мантра:</b> текст".
+	 */
+	function yoga_practice_format_detail_text($value): string {
+		$html = yoga_practice_format_rich_text($value);
+		if ($html === '') {
+			return '';
+		}
+
+		$formatted = preg_replace_callback(
+			'/(^|<p\b[^>]*>|<br\s*\/?\s*>)(\s*)([^<:\r\n]+):/iu',
+			static function (array $matches): string {
+				$label = trim((string) $matches[3]);
+				if ($label === '') {
+					return $matches[0];
+				}
+
+				return $matches[1] . $matches[2] . '<b>' . $label . ':</b>';
+			},
+			$html
+		);
+
+		return is_string($formatted) ? $formatted : $html;
+	}
+}
+
 if (!function_exists('yoga_practice_prepare_existing_image_link')) {
 	function yoga_practice_prepare_existing_image_link(string $anchor_html): string {
 		if (!preg_match('/<img\b[^>]*>/i', $anchor_html, $image_match)) {
