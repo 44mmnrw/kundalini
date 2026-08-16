@@ -284,7 +284,7 @@
 				<?php endif; ?>
 
                 <?php if ($details): ?>
-                <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
+                <div class="exercise-detail-rich"><?php
 					echo function_exists('yoga_practice_format_detail_text')
 						? yoga_practice_format_detail_text($details)
 						: wp_kses_post(wpautop((string) $details));
@@ -456,7 +456,7 @@
 				<?php endif; ?>
 
                 <?php if ($details_mod): ?>
-                <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
+                <div class="exercise-detail-rich"><?php
 					echo function_exists('yoga_practice_format_detail_text')
 						? yoga_practice_format_detail_text($details_mod)
 						: wp_kses_post(wpautop((string) $details_mod));
