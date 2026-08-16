@@ -1251,6 +1251,24 @@ display: block !important;
   color: inherit;
 }
 
+.praktika-exercise .exercise-violet-heading {
+  color: var(--violet, #9153e1);
+  font-family: var(--font-family-base, "Mulish", sans-serif);
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.praktika-exercise .exercise-black-heading {
+  color: var(--black, #1f1f1f);
+  font-family: var(--font-family-base, "Mulish", sans-serif);
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
 .exercise-switches {
   display: flex;
   flex-wrap: wrap;
