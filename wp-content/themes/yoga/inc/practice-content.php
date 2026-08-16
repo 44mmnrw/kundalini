@@ -207,7 +207,7 @@ if (!function_exists('yoga_practice_register_focus_tinymce_format')) {
 			JSON_UNESCAPED_UNICODE
 		);
 
-		$focus_editor_css = '.exercise-focus{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;margin:15px 0 0;padding:10px 25px;border-radius:7px;background:#f8bdf6;color:#1f1f1f;font-family:Mulish,sans-serif;font-size:18px;font-weight:600;line-height:1.4}.exercise-focus p{width:100%;margin:0;font:inherit;color:inherit}.exercise-violet-heading{color:#9153e1;font-family:Mulish,sans-serif;font-size:20px;font-style:normal;font-weight:700;line-height:1.1}.exercise-black-heading{color:#1f1f1f;font-family:Mulish,sans-serif;font-size:16px;font-style:normal;font-weight:700;line-height:1.1}';
+		$focus_editor_css = '.exercise-focus{display:flex;flex-direction:column;align-items:stretch;justify-content:center;width:100%;box-sizing:border-box;margin:15px 0 0;padding:10px 25px;border-radius:7px;background:#f8bdf6;color:#1f1f1f;font-family:Mulish,sans-serif;font-size:18px;font-weight:600;line-height:1.4}.exercise-focus p{width:100%;margin:0;font:inherit;color:inherit}.exercise-focus p+p{margin-top:10px}.exercise-violet-heading{color:#9153e1;font-family:Mulish,sans-serif;font-size:20px;font-style:normal;font-weight:700;line-height:1.1}.exercise-black-heading{color:#1f1f1f;font-family:Mulish,sans-serif;font-size:16px;font-style:normal;font-weight:700;line-height:1.1}';
 		$settings['content_style'] = trim((string) ($settings['content_style'] ?? '') . ' ' . $focus_editor_css);
 
 		return $settings;
