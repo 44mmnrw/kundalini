@@ -26,8 +26,12 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 
 <div class="exercise-item" data-version="<?php echo esc_attr($additional_modification_version); ?>" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>" style="display: none;">
 	<div class="exercise-item__info">
-		<?php if ($exercise_heading): ?>
-		<h4 class="exercise-heading"><?php echo esc_html($exercise_heading); ?> (<?php echo esc_html($additional_modification_label); ?>)</h4>
+		<?php if ($title): ?>
+		<h3><?php echo esc_html($title); ?> (<?php echo esc_html($additional_modification_label); ?>)</h3>
+		<?php endif; ?>
+
+		<?php if ($subtitle): ?>
+		<h4><?php echo esc_html($subtitle); ?></h4>
 		<?php endif; ?>
 
 		<div class="exercise-switches">

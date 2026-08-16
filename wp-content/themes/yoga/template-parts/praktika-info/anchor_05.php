@@ -120,9 +120,8 @@
 	$execution_label = $execution_name !== '' ? $execution_name : 'Выполнение';
 	$modification_name = trim((string) ($exercise['modification_name'] ?? ''));
 	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация';
-	$title = trim((string) ($exercise['title'] ?? ''));
-	$subtitle = trim((string) ($exercise['subtitle'] ?? ''));
-	$exercise_heading = $title !== '' ? $title : $subtitle;
+	$title = $exercise['title'] ?? '';
+	$subtitle = $exercise['subtitle'] ?? '';
 	$matter = $exercise['matter'] ?? '';
 	$details = $exercise['details'] ?? '';
 	$matter_mod = !empty($exercise['matter_mod']) && is_array($exercise['matter_mod']) ? $exercise['matter_mod'] : array();
@@ -187,8 +186,12 @@
 
     <div class="exercise-item active" data-version="main" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>">
         <div class="exercise-item__info">
-			<?php if ($exercise_heading): ?>
-			<h4 class="exercise-heading"><?php echo esc_html($exercise_heading); ?></h4>
+            <?php if ($title): ?>
+            <h3><?php echo esc_html($title); ?></h3>
+            <?php endif; ?>
+
+            <?php if ($subtitle): ?>
+            <h4><?php echo esc_html($subtitle); ?></h4>
             <?php endif; ?>
 
             <?php if ($has_modifications): ?>
@@ -357,8 +360,12 @@
     <?php if ($has_modifications): ?>
     <div class="exercise-item" data-version="mod" data-end-signal="<?php echo $end_signal_enabled ? 'true' : 'false'; ?>" data-end-signal-src="<?php echo esc_url($practice_timer_end_signal_url); ?>" style="display: none;">
         <div class="exercise-item__info">
-			<?php if ($exercise_heading): ?>
-			<h4 class="exercise-heading"><?php echo esc_html($exercise_heading); ?> (<?php echo esc_html($modification_label); ?>)</h4>
+            <?php if ($title): ?>
+            <h3><?php echo esc_html($title); ?> (<?php echo esc_html($modification_label); ?>)</h3>
+            <?php endif; ?>
+
+            <?php if ($subtitle): ?>
+            <h4><?php echo esc_html($subtitle); ?></h4>
             <?php endif; ?>
 
             <div class="exercise-switches">
