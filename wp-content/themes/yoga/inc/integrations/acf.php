@@ -479,6 +479,17 @@ if (!function_exists('yoga_add_practice_exercise_content_format_hint')) {
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_content_format_hint', 19);
 
+if (!function_exists('yoga_hide_practice_exercise_subtitle_field')) {
+	/**
+	 * Keeps legacy subtitle data readable while removing the redundant editor control.
+	 */
+	function yoga_hide_practice_exercise_subtitle_field($field) {
+		return false;
+	}
+}
+
+add_filter('acf/prepare_field/key=field_ex_subtitle', 'yoga_hide_practice_exercise_subtitle_field');
+
 if (!function_exists('yoga_add_practice_exercise_modification_name_field')) {
 	/**
 	 * Adds a deployable name field to the database-defined exercise repeater.
