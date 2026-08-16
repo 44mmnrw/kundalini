@@ -905,6 +905,81 @@ if (!function_exists('yoga_add_practice_exercise_additional_modifications_field'
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_additional_modifications_field', 23);
 
+if (!function_exists('yoga_add_practice_exercise_admin_hints')) {
+	/**
+	 * Explains in plain language where every exercise field appears on the frontend.
+	 */
+	function yoga_add_practice_exercise_admin_hints(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			return $field;
+		}
+
+		$instructions_by_key = array(
+			'field_ex_has_modifications' => 'Включите, если у упражнения есть другие варианты выполнения. На странице появятся вкладки для переключения между основной версией и модификациями.',
+			'field_ex_execution_name' => 'Название вкладки основной версии упражнения. Видно только когда включены модификации. Если оставить пустым, будет «Выполнение».',
+			'field_ex_modification_name' => 'Название вкладки первой модификации. Например: «Для спины» или «Облегчённый вариант».',
+			'field_ex_title' => 'Главный чёрный заголовок упражнения на странице. Он общий для основной версии и всех модификаций.',
+			'field_ex_subtitle' => 'Фиолетовый заголовок сразу под главным заголовком. Он общий для основной версии и всех модификаций.',
+			'field_ex_allow_fullscreen' => 'Служебная настройка полноэкранного режима встроенного аудио- или видеоплеера.',
+			'field_ex_restrict_scrub' => 'Служебная настройка перемотки аудио или видео для пользователей без подписки.',
+			'field_ex_auto_play' => 'Служебная настройка автоматического запуска медиа вместе с таймером.',
+			'field_68aebe989eeb1' => 'Если включено, после завершения таймера упражнения прозвучит сигнал, заданный в общих настройках темы.',
+		);
+
+		$instructions_by_name = array(
+			'modification_name' => 'Название этой вкладки модификации на странице. Например: «Для спины» или «Облегчённый вариант».',
+			'matter' => 'Короткие характеристики сразу под фиолетовым подзаголовком. В каждой строке «Заголовок» выводится жирным до двоеточия, «Описание» — обычным текстом.',
+			'matter_mod' => 'Короткие характеристики первой модификации сразу под фиолетовым подзаголовком. Заполняйте только то, что должно показываться в этой вкладке.',
+			'details' => 'Текст в блоке «Доп. детали» под подзаголовком. Каждый пункт пишите с новой строки в виде «Название: описание» — часть до двоеточия будет жирной.',
+			'details_mod' => 'Дополнительные детали первой модификации. Каждый пункт пишите с новой строки в виде «Название: описание» — часть до двоеточия будет жирной. Пустое поле на странице не выводится.',
+			'timing' => 'Отмеченные варианты времени или циклов показываются под характеристиками упражнения и доступны для запуска таймера.',
+			'timing_mod' => 'Время или циклы только для первой модификации. Отмеченные варианты показываются в её вкладке и доступны для таймера.',
+			'media_type' => 'Выберите, какой плеер показать в этой версии упражнения: аудио, видео или без медиа.',
+			'media_type_mod' => 'Выберите тип плеера для первой модификации: аудио, видео или без медиа.',
+			'media_file' => 'Файл, который будет воспроизводиться в плеере выбранной версии упражнения.',
+			'media_file_mod' => 'Аудио- или видеофайл для первой модификации.',
+			'duration' => 'Продолжительность медиа в секундах. Это техническое значение для работы плеера.',
+			'duration_mod' => 'Продолжительность медиа первой модификации в секундах.',
+			'gallery' => 'Изображения этой версии упражнения. На странице они показываются в галерее под информацией об упражнении.',
+			'gallery_mod' => 'Изображения первой модификации. Они показываются только в её вкладке.',
+			'content' => 'Большое текстовое описание под плеером и галереей. Для розового блока или специальных заголовков выделите абзац и выберите нужный вариант в списке «Стили».',
+			'content_mod' => 'Большое текстовое описание первой модификации под её плеером и галереей. Для розового блока или специальных заголовков используйте список «Стили».',
+			'additional_modifications' => 'Здесь добавляются вторая и следующие модификации. Каждая строка создаёт отдельную вкладку упражнения; первая модификация заполняется в полях выше.',
+		);
+
+		$decorate_fields = static function (array $fields, string $parent_name = '') use (&$decorate_fields, $instructions_by_key, $instructions_by_name): array {
+			foreach ($fields as $index => $sub_field) {
+				$key = (string) ($sub_field['key'] ?? '');
+				$name = (string) ($sub_field['name'] ?? '');
+
+				if (isset($instructions_by_key[$key])) {
+					$sub_field['instructions'] = $instructions_by_key[$key];
+				} elseif (in_array($parent_name, array('matter', 'matter_mod'), true) && $name === 'title') {
+					$sub_field['instructions'] = 'Жирная подпись до двоеточия. Например: «Асана» или «Мантра».';
+				} elseif (in_array($parent_name, array('matter', 'matter_mod'), true) && $name === 'description') {
+					$sub_field['instructions'] = 'Обычный текст после двоеточия.';
+				} elseif (isset($instructions_by_name[$name])) {
+					$sub_field['instructions'] = $instructions_by_name[$name];
+				}
+
+				if (!empty($sub_field['sub_fields']) && is_array($sub_field['sub_fields'])) {
+					$sub_field['sub_fields'] = $decorate_fields($sub_field['sub_fields'], $name);
+				}
+
+				$fields[$index] = $sub_field;
+			}
+
+			return $fields;
+		};
+
+		$field['sub_fields'] = $decorate_fields($field['sub_fields']);
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_admin_hints', 24);
+
 if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 	function yoga_delay_acf_wysiwyg_editors(array $field): array {
 		if (!is_admin()) {

@@ -1215,6 +1215,11 @@ display: block !important;
   font-weight: normal !important;
   color: var(--color-violet);
 }
+.exercise-item__info-details .exercise-detail-rich strong {
+  font-family: var(--font-family-base) !important;
+  font-weight: 700 !important;
+  color: var(--color-black);
+}
 .exercise-item__info-details .exercise-time-label {
   font-family: var(--font-family-base); font-weight: 600;
   font-family: var(--font-family-base);

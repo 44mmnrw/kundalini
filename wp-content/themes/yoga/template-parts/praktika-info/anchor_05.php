@@ -239,8 +239,8 @@
 
                 <?php if ($details): ?>
                 <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
-					echo function_exists('yoga_practice_format_rich_text')
-						? yoga_practice_format_rich_text($details)
+					echo function_exists('yoga_practice_format_detail_text')
+						? yoga_practice_format_detail_text($details)
 						: wp_kses_post(wpautop((string) $details));
 				?></div>
                 <?php endif; ?>
@@ -411,8 +411,8 @@
 
                 <?php if ($details_mod): ?>
                 <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
-					echo function_exists('yoga_practice_format_rich_text')
-						? yoga_practice_format_rich_text($details_mod)
+					echo function_exists('yoga_practice_format_detail_text')
+						? yoga_practice_format_detail_text($details_mod)
 						: wp_kses_post(wpautop((string) $details_mod));
 				?></div>
                 <?php endif; ?>
