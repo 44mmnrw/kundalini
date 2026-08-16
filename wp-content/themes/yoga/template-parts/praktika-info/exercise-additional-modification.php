@@ -76,7 +76,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			<?php endif; ?>
 
 			<?php if ($variant_details): ?>
-			<div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
+			<div class="exercise-detail-rich"><?php
 				echo function_exists('yoga_practice_format_detail_text')
 					? yoga_practice_format_detail_text($variant_details)
 					: wp_kses_post(wpautop((string) $variant_details));
