@@ -1135,6 +1135,38 @@ if (!function_exists('yoga_add_practice_exercise_admin_hints')) {
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_admin_hints', 26);
 
+if (!function_exists('yoga_set_practice_steps_admin_column_widths')) {
+	/**
+	 * Keeps the table layout predictable: section title 25%, exercises 75%.
+	 */
+	function yoga_set_practice_steps_admin_column_widths(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			return $field;
+		}
+
+		$widths = array(
+			'section_title'  => '25',
+			'exercise_items' => '75',
+		);
+
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			$name = (string) ($sub_field['name'] ?? '');
+			if (!isset($widths[$name])) {
+				continue;
+			}
+
+			$field['sub_fields'][$index]['wrapper'] = is_array($sub_field['wrapper'] ?? null)
+				? $sub_field['wrapper']
+				: array();
+			$field['sub_fields'][$index]['wrapper']['width'] = $widths[$name];
+		}
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_anchor_05_steps', 'yoga_set_practice_steps_admin_column_widths', 20);
+
 if (!function_exists('yoga_migrate_practice_exercise_modifications')) {
 	/**
 	 * Copies legacy first/additional modification fields into the unified repeater.
