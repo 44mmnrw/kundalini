@@ -905,6 +905,161 @@ if (!function_exists('yoga_add_practice_exercise_additional_modifications_field'
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_additional_modifications_field', 23);
 
+if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
+	/**
+	 * Replaces the legacy toggle/first-modification controls with clear visual blocks
+	 * and one repeater containing every optional modification.
+	 */
+	function yoga_restructure_practice_exercise_modifications(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			return $field;
+		}
+
+		$by_name = array();
+		foreach ($field['sub_fields'] as $sub_field) {
+			$name = (string) ($sub_field['name'] ?? '');
+			if ($name !== '') {
+				$by_name[$name] = $sub_field;
+			}
+		}
+
+		$legacy_repeater = $by_name['additional_modifications'] ?? array();
+		$modification_fields = !empty($legacy_repeater['sub_fields']) && is_array($legacy_repeater['sub_fields'])
+			? $legacy_repeater['sub_fields']
+			: array();
+
+		foreach ($modification_fields as $index => $modification_field) {
+			$name = (string) ($modification_field['name'] ?? $index);
+			$modification_field['ID'] = 0;
+			$modification_field['key'] = 'field_ex_modifications_' . sanitize_key($name);
+			$modification_field['parent'] = 0;
+			$modification_field['parent_repeater'] = 'field_ex_modifications';
+			$modification_field['conditional_logic'] = 0;
+
+			if ($name === 'modification_name') {
+				$modification_field['label'] = 'Название модификации';
+				$modification_field['instructions'] = 'Так будет называться вкладка на странице. Например: «Для спины» или «Облегчённый вариант».';
+				$modification_field['placeholder'] = 'Например: Для спины';
+			}
+
+			if (!empty($modification_field['sub_fields']) && is_array($modification_field['sub_fields'])) {
+				foreach ($modification_field['sub_fields'] as $child_index => $child_field) {
+					$child_name = (string) ($child_field['name'] ?? $child_index);
+					$child_field['ID'] = 0;
+					$child_field['key'] = $modification_field['key'] . '_' . sanitize_key($child_name);
+					$child_field['parent'] = 0;
+					$child_field['parent_repeater'] = $modification_field['key'];
+					$modification_field['sub_fields'][$child_index] = $child_field;
+				}
+			}
+
+			$modification_fields[$index] = $modification_field;
+		}
+
+		$accordion = static function (string $key, string $label, bool $open = false): array {
+			return array(
+				'ID'           => 0,
+				'key'          => $key,
+				'label'        => $label,
+				'name'         => '',
+				'_name'        => '',
+				'type'         => 'accordion',
+				'instructions' => '',
+				'required'     => 0,
+				'wrapper'      => array('width' => '', 'class' => 'yoga-exercise-admin-section', 'id' => ''),
+				'open'         => $open ? 1 : 0,
+				'multi_expand' => 1,
+				'endpoint'     => 0,
+				'parent'       => 0,
+				'parent_repeater' => 'field_exercise_items',
+			);
+		};
+
+		$modifications = array(
+			'ID'                => 0,
+			'key'               => 'field_ex_modifications',
+			'label'             => 'Модификации упражнения',
+			'name'              => 'modifications',
+			'_name'             => 'modifications',
+			'prefix'            => 'acf',
+			'type'              => 'repeater',
+			'instructions'      => 'Добавляйте столько вариантов выполнения, сколько нужно. Каждая строка станет отдельной вкладкой рядом с «Основной модификацией».',
+			'required'          => 0,
+			'conditional_logic' => 0,
+			'wrapper'           => array('width' => '', 'class' => 'yoga-exercise-modifications', 'id' => ''),
+			'layout'            => 'block',
+			'min'               => 0,
+			'max'               => 0,
+			'collapsed'         => 'field_ex_modifications_modification_name',
+			'button_label'      => 'Добавить модификацию',
+			'rows_per_page'     => 20,
+			'parent'            => $field['ID'] ?? 0,
+			'parent_repeater'   => 'field_exercise_items',
+			'sub_fields'        => $modification_fields,
+		);
+
+		$append_named = static function (array &$target, array $names) use ($by_name): void {
+			foreach ($names as $name) {
+				if (isset($by_name[$name])) {
+					$target[] = $by_name[$name];
+				}
+			}
+		};
+
+		$restructured = array($accordion('field_ex_admin_common', 'Общие данные упражнения', true));
+		$append_named($restructured, array('title', 'subtitle'));
+		$restructured[] = $accordion('field_ex_admin_main_modification', 'Основная модификация', true);
+		$append_named($restructured, array('matter', 'details', 'timing', 'media_type', 'media_file', 'duration', 'gallery', 'content'));
+		$main_labels = array(
+			'timing'     => 'Время/циклы',
+			'media_type' => 'Тип медиа',
+			'media_file' => 'Медиафайл',
+			'duration'   => 'Длительность (сек)',
+			'gallery'    => 'Галерея изображений',
+			'content'    => 'Описание упражнения',
+		);
+		foreach ($restructured as $index => $sub_field) {
+			$name = (string) ($sub_field['name'] ?? '');
+			if (isset($main_labels[$name])) {
+				$restructured[$index]['label'] = $main_labels[$name];
+			}
+		}
+		$restructured[] = $accordion('field_ex_admin_modifications', 'Дополнительные модификации');
+		$restructured[] = $modifications;
+		$restructured[] = $accordion('field_ex_admin_player_settings', 'Общие настройки плеера');
+		$append_named($restructured, array('allow_fullscreen', 'restrict_scrub', 'auto_play', 'signal_v_koncze'));
+
+		// Keep old fields registered but invisible so existing values can be migrated safely.
+		$legacy_names = array(
+			'has_modifications', 'execution_name', 'modification_name', 'matter_mod', 'details_mod',
+			'timing_mod', 'media_type_mod', 'media_file_mod', 'duration_mod', 'gallery_mod',
+			'content_mod', 'additional_modifications',
+		);
+		foreach ($legacy_names as $legacy_name) {
+			if (!isset($by_name[$legacy_name])) {
+				continue;
+			}
+
+			$legacy_field = $by_name[$legacy_name];
+			$legacy_field['wrapper'] = is_array($legacy_field['wrapper'] ?? null) ? $legacy_field['wrapper'] : array();
+			$legacy_field['wrapper']['class'] = trim((string) ($legacy_field['wrapper']['class'] ?? '') . ' acf-hidden yoga-legacy-exercise-field');
+			$restructured[] = $legacy_field;
+		}
+
+		if (function_exists('acf_get_valid_field')) {
+			foreach ($restructured as $index => $sub_field) {
+				$restructured[$index] = acf_get_valid_field($sub_field);
+			}
+		}
+
+		$field['sub_fields'] = $restructured;
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_restructure_practice_exercise_modifications', 24);
+
 if (!function_exists('yoga_add_practice_exercise_admin_hints')) {
 	/**
 	 * Explains in plain language where every exercise field appears on the frontend.
@@ -978,7 +1133,154 @@ if (!function_exists('yoga_add_practice_exercise_admin_hints')) {
 	}
 }
 
-add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_admin_hints', 24);
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_admin_hints', 26);
+
+if (!function_exists('yoga_migrate_practice_exercise_modifications')) {
+	/**
+	 * Copies legacy first/additional modification fields into the unified repeater.
+	 * Old metadata is intentionally retained as a rollback-safe backup.
+	 */
+	function yoga_migrate_practice_exercise_modifications(): void {
+		if (!is_admin() || !function_exists('get_field') || !function_exists('update_field')) {
+			return;
+		}
+
+		$schema_version = 3;
+		$previous_schema_version = (int) get_option('yoga_exercise_modifications_schema_version', 0);
+		if ($previous_schema_version >= $schema_version) {
+			return;
+		}
+
+		$legacy_map = array(
+			'field_ex_modification_name' => 'field_ex_modifications_modification_name',
+			'field_ex_matter_mod'        => 'field_ex_modifications_matter',
+			'field_ex_details_mod'       => 'field_ex_modifications_details',
+			'field_ex_timing_mod'        => 'field_ex_modifications_timing',
+			'field_ex_media_type_mod'    => 'field_ex_modifications_media_type',
+			'field_ex_media_file_mod'    => 'field_ex_modifications_media_file',
+			'field_ex_duration_mod'      => 'field_ex_modifications_duration',
+			'field_ex_gallery_mod'       => 'field_ex_modifications_gallery',
+			'field_ex_content_mod'       => 'field_ex_modifications_content',
+		);
+		$additional_map = array(
+			'field_ex_additional_modification_name'       => 'field_ex_modifications_modification_name',
+			'field_ex_additional_modification_matter'     => 'field_ex_modifications_matter',
+			'field_ex_additional_modification_details'    => 'field_ex_modifications_details',
+			'field_ex_additional_modification_timing'     => 'field_ex_modifications_timing',
+			'field_ex_additional_modification_media_type' => 'field_ex_modifications_media_type',
+			'field_ex_additional_modification_media_file' => 'field_ex_modifications_media_file',
+			'field_ex_additional_modification_duration'   => 'field_ex_modifications_duration',
+			'field_ex_additional_modification_gallery'    => 'field_ex_modifications_gallery',
+			'field_ex_additional_modification_content'    => 'field_ex_modifications_content',
+		);
+
+		$row_has_content = static function (array $row): bool {
+			foreach ($row as $key => $value) {
+				if (str_ends_with((string) $key, '_media_type') && in_array($value, array('', 'none', null), true)) {
+					continue;
+				}
+				if (is_array($value) && $value === array()) {
+					continue;
+				}
+				if (!in_array($value, array('', false, null), true)) {
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		$map_row = static function (array $source, array $map): array {
+			$row = array();
+			foreach ($map as $source_key => $target_key) {
+				$row[$target_key] = $source[$source_key] ?? '';
+			}
+
+			return $row;
+		};
+
+		$migrate_node = static function (&$node) use (&$migrate_node, $legacy_map, $additional_map, $row_has_content, $map_row, $previous_schema_version): bool {
+			if (!is_array($node)) {
+				return false;
+			}
+
+			$changed = false;
+			$is_exercise = array_key_exists('field_ex_title', $node) || array_key_exists('field_ex_has_modifications', $node);
+			if ($is_exercise && ($node['field_ex_execution_name'] ?? '') !== '__unified__') {
+				// This retired field doubles as a migration marker, preventing deleted
+				// unified rows from being resurrected from the legacy backup.
+				$node['field_ex_execution_name'] = '__unified__';
+				$changed = true;
+			}
+			if (
+				$is_exercise
+				&& $previous_schema_version === 1
+				&& empty($node['field_ex_has_modifications'])
+				&& !empty($node['field_ex_modifications'])
+			) {
+				$node['field_ex_modifications'] = false;
+				$changed = true;
+			}
+
+			if ($is_exercise && empty($node['field_ex_modifications'])) {
+				$rows = array();
+				$legacy_row = $map_row($node, $legacy_map);
+				if (!empty($node['field_ex_has_modifications'])) {
+					$rows[] = $legacy_row;
+				}
+
+				$additional_rows = $node['field_ex_additional_modifications'] ?? array();
+				if (is_array($additional_rows)) {
+					foreach ($additional_rows as $additional_row) {
+						if (!is_array($additional_row)) {
+							continue;
+						}
+
+						$mapped_row = $map_row($additional_row, $additional_map);
+						if ($row_has_content($mapped_row)) {
+							$rows[] = $mapped_row;
+						}
+					}
+				}
+
+				if ($rows !== array()) {
+					$node['field_ex_modifications'] = $rows;
+					$changed = true;
+				}
+			}
+
+			foreach ($node as &$child) {
+				if (is_array($child) && $migrate_node($child)) {
+					$changed = true;
+				}
+			}
+			unset($child);
+
+			return $changed;
+		};
+
+		$practice_ids = get_posts(array(
+			'post_type'      => 'practice',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+		));
+
+		foreach ($practice_ids as $practice_id) {
+			$sections = get_field('field_practice_sections', $practice_id, false);
+			if (!is_array($sections) || !$migrate_node($sections)) {
+				continue;
+			}
+
+			update_field('field_practice_sections', $sections, $practice_id);
+		}
+
+		update_option('yoga_exercise_modifications_schema_version', $schema_version, false);
+	}
+}
+
+add_action('admin_init', 'yoga_migrate_practice_exercise_modifications', 20);
 
 if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 	function yoga_delay_acf_wysiwyg_editors(array $field): array {
