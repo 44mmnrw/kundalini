@@ -118,12 +118,13 @@
 	$uses_unified_modification_schema = ($exercise['execution_name'] ?? '') === '__unified__'
 		|| !empty($exercise['modifications']);
 	$legacy_has_modifications = !$uses_unified_modification_schema && !empty($exercise['has_modifications']);
-	$execution_label = 'Основная модификация';
+	$main_modification_name = trim((string) ($exercise['main_modification_name'] ?? ''));
+	$execution_label = $main_modification_name !== '' ? $main_modification_name : 'Основная модификация';
 	$modification_name = trim((string) ($exercise['modification_name'] ?? ''));
 	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация 1';
 	$title = $exercise['title'] ?? '';
 	$subtitle = $exercise['subtitle'] ?? '';
-	$matter = $exercise['matter'] ?? '';
+	$matter = $uses_unified_modification_schema ? array() : ($exercise['matter'] ?? '');
 	$details = $exercise['details'] ?? '';
 	$matter_mod = !empty($exercise['matter_mod']) && is_array($exercise['matter_mod']) ? $exercise['matter_mod'] : array();
 	$details_mod = trim((string) ($exercise['details_mod'] ?? ''));
@@ -176,7 +177,7 @@
 		$first_modification = array_shift($unified_modification_rows);
 		$modification_name = trim((string) ($first_modification['modification_name'] ?? ''));
 		$modification_label = $modification_name !== '' ? $modification_name : 'Модификация 1';
-		$matter_mod = !empty($first_modification['matter']) && is_array($first_modification['matter']) ? $first_modification['matter'] : array();
+		$matter_mod = array();
 		$details_mod = trim((string) ($first_modification['details'] ?? ''));
 		$timing_mod = !empty($first_modification['timing']) && is_array($first_modification['timing']) ? $first_modification['timing'] : array();
 		$media_type_mod = (string) ($first_modification['media_type'] ?? 'none');
