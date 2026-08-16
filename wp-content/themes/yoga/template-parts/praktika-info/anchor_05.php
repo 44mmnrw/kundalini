@@ -143,6 +143,30 @@
 	$show_timer_mod = !empty($timing_mod);
 	$content =  $exercise['content'] ?? [];
 	$content_mod =  $exercise['content_mod'] ?? [];
+	$additional_modification_rows = !empty($exercise['additional_modifications']) && is_array($exercise['additional_modifications'])
+		? $exercise['additional_modifications']
+		: array();
+	$modification_tabs = array();
+	if ($has_modifications) {
+		$modification_tabs[] = array(
+			'version' => 'mod',
+			'label'   => $modification_label,
+			'data'    => null,
+		);
+
+		foreach ($additional_modification_rows as $additional_index => $additional_modification) {
+			if (!is_array($additional_modification)) {
+				continue;
+			}
+
+			$additional_label = trim((string) ($additional_modification['modification_name'] ?? ''));
+			$modification_tabs[] = array(
+				'version' => 'mod-' . ((int) $additional_index + 2),
+				'label'   => $additional_label !== '' ? $additional_label : 'Модификация ' . ((int) $additional_index + 2),
+				'data'    => $additional_modification,
+			);
+		}
+	}
 	$allow_fullscreen = true;
 	$restrict_scrub = false;
 	$auto_play = true;
@@ -176,9 +200,11 @@
                 <div class="exercise-switches__item active" data-target="main">
                     <b><?php echo esc_html($execution_label); ?></b>
 				</div>
-                <div class="exercise-switches__item" data-target="mod">
-                    <b><?php echo esc_html($modification_label); ?></b>
+				<?php foreach ($modification_tabs as $modification_tab): ?>
+				<div class="exercise-switches__item" data-target="<?php echo esc_attr($modification_tab['version']); ?>">
+					<b><?php echo esc_html($modification_tab['label']); ?></b>
 				</div>
+				<?php endforeach; ?>
 			</div>
             <?php endif; ?>
 
@@ -347,9 +373,11 @@
                 <div class="exercise-switches__item" data-target="main">
                     <b><?php echo esc_html($execution_label); ?></b>
 				</div>
-                <div class="exercise-switches__item active" data-target="mod">
-                    <b><?php echo esc_html($modification_label); ?></b>
+				<?php foreach ($modification_tabs as $modification_tab): ?>
+				<div class="exercise-switches__item<?php echo $modification_tab['version'] === 'mod' ? ' active' : ''; ?>" data-target="<?php echo esc_attr($modification_tab['version']); ?>">
+					<b><?php echo esc_html($modification_tab['label']); ?></b>
 				</div>
+				<?php endforeach; ?>
 			</div>
 
             <div class="exercise-item__info-details">
@@ -502,6 +530,16 @@
         <?php endif; ?>
 	</div>
     <?php endif; ?>
+
+	<?php foreach ($modification_tabs as $modification_tab): ?>
+	<?php if ($modification_tab['version'] === 'mod' || !is_array($modification_tab['data'])) { continue; } ?>
+	<?php
+		$additional_modification = $modification_tab['data'];
+		$additional_modification_version = (string) $modification_tab['version'];
+		$additional_modification_label = (string) $modification_tab['label'];
+		include get_template_directory() . '/template-parts/praktika-info/exercise-additional-modification.php';
+	?>
+	<?php endforeach; ?>
 </div>
 <?php endforeach; ?>
 <?php endif; ?>

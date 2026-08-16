@@ -735,6 +735,151 @@ if (!function_exists('yoga_add_practice_exercise_modification_detail_fields')) {
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_modification_detail_fields', 22);
 
+if (!function_exists('yoga_add_practice_exercise_additional_modifications_field')) {
+	/**
+	 * Adds a repeater for any exercise modifications after the legacy first one.
+	 */
+	function yoga_add_practice_exercise_additional_modifications_field(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			return $field;
+		}
+
+		foreach ($field['sub_fields'] as $sub_field) {
+			if (($sub_field['name'] ?? '') === 'additional_modifications') {
+				return $field;
+			}
+		}
+
+		$source_fields = array();
+		foreach ($field['sub_fields'] as $sub_field) {
+			$name = (string) ($sub_field['name'] ?? '');
+			if ($name !== '') {
+				$source_fields[$name] = $sub_field;
+			}
+		}
+
+		$field_map = array(
+			'modification_name' => array('name' => 'modification_name', 'label' => 'Название варианта', 'key' => 'field_ex_additional_modification_name'),
+			'matter_mod'        => array('name' => 'matter', 'label' => 'Содержание', 'key' => 'field_ex_additional_modification_matter'),
+			'details_mod'       => array('name' => 'details', 'label' => 'Доп. детали', 'key' => 'field_ex_additional_modification_details'),
+			'timing_mod'        => array('name' => 'timing', 'label' => 'Время/циклы', 'key' => 'field_ex_additional_modification_timing'),
+			'media_type_mod'    => array('name' => 'media_type', 'label' => 'Тип медиа', 'key' => 'field_ex_additional_modification_media_type'),
+			'media_file_mod'    => array('name' => 'media_file', 'label' => 'Медиафайл', 'key' => 'field_ex_additional_modification_media_file'),
+			'duration_mod'      => array('name' => 'duration', 'label' => 'Длительность (сек)', 'key' => 'field_ex_additional_modification_duration'),
+			'gallery_mod'       => array('name' => 'gallery', 'label' => 'Галерея изображений', 'key' => 'field_ex_additional_modification_gallery'),
+			'content_mod'       => array('name' => 'content', 'label' => 'Описание упражнения', 'key' => 'field_ex_additional_modification_content'),
+		);
+
+		$variant_fields = array();
+		foreach ($field_map as $source_name => $target) {
+			if (!isset($source_fields[$source_name])) {
+				continue;
+			}
+
+			$variant_field = $source_fields[$source_name];
+			$variant_field['ID'] = 0;
+			$variant_field['key'] = $target['key'];
+			$variant_field['name'] = $target['name'];
+			$variant_field['_name'] = $target['name'];
+			$variant_field['label'] = $target['label'];
+			$variant_field['conditional_logic'] = 0;
+			$variant_field['parent'] = 0;
+			$variant_field['parent_repeater'] = 'field_ex_additional_modifications';
+			if ($target['name'] === 'media_file') {
+				$variant_field['conditional_logic'] = array(
+					array(
+						array(
+							'field'    => 'field_ex_additional_modification_media_type',
+							'operator' => '!=',
+							'value'    => 'none',
+						),
+					),
+				);
+			}
+
+			if ($target['name'] === 'modification_name') {
+				$variant_field['instructions'] = 'Например: Для спины';
+				$variant_field['placeholder'] = 'Для спины';
+			}
+
+			if (!empty($variant_field['sub_fields']) && is_array($variant_field['sub_fields'])) {
+				foreach ($variant_field['sub_fields'] as $child_index => $child_field) {
+					$child_field['ID'] = 0;
+					$child_field['key'] = $target['key'] . '_' . sanitize_key((string) ($child_field['name'] ?? $child_index));
+					$child_field['parent'] = 0;
+					$child_field['parent_repeater'] = $target['key'];
+					$variant_field['sub_fields'][$child_index] = $child_field;
+				}
+			}
+
+			$variant_fields[] = $variant_field;
+		}
+
+		if ($variant_fields === array()) {
+			return $field;
+		}
+
+		$additional_modifications = array(
+			'ID'                => 0,
+			'key'               => 'field_ex_additional_modifications',
+			'label'             => 'Дополнительные модификации',
+			'name'              => 'additional_modifications',
+			'_name'             => 'additional_modifications',
+			'prefix'            => 'acf',
+			'type'              => 'repeater',
+			'instructions'      => 'Добавьте второй и последующие варианты выполнения упражнения. Первый вариант заполняется в полях выше.',
+			'required'          => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field'    => 'field_ex_has_modifications',
+						'operator' => '==',
+						'value'    => '1',
+					),
+				),
+			),
+			'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+			'layout'            => 'block',
+			'min'               => 0,
+			'max'               => 0,
+			'collapsed'         => 'field_ex_additional_modification_name',
+			'button_label'      => 'Добавить модификацию',
+			'rows_per_page'     => 20,
+			'parent'            => $field['ID'] ?? 0,
+			'parent_repeater'   => 'field_exercise_items',
+			'sub_fields'        => $variant_fields,
+		);
+
+		if (function_exists('acf_get_valid_field')) {
+			$additional_modifications = acf_get_valid_field($additional_modifications);
+		}
+
+		$first_modification_labels = array(
+			'modification_name' => 'Название первой модификации',
+			'matter_mod'        => 'Содержание (Первая модификация)',
+			'details_mod'       => 'Доп. детали (Первая модификация)',
+			'timing_mod'        => 'Время/циклы (Первая модификация)',
+			'media_type_mod'    => 'Тип медиа (Первая модификация)',
+			'media_file_mod'    => 'Медиафайл (Первая модификация)',
+			'duration_mod'      => 'Длительность (сек, Первая модификация)',
+			'gallery_mod'       => 'Галерея изображений (Первая модификация)',
+			'content_mod'       => 'Описание упражнения (Первая модификация)',
+		);
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			$name = (string) ($sub_field['name'] ?? '');
+			if (isset($first_modification_labels[$name])) {
+				$field['sub_fields'][$index]['label'] = $first_modification_labels[$name];
+			}
+		}
+
+		$field['sub_fields'][] = $additional_modifications;
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_additional_modifications_field', 23);
+
 if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 	function yoga_delay_acf_wysiwyg_editors(array $field): array {
 		if (!is_admin()) {
