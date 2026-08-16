@@ -3,7 +3,7 @@
  * Plugin Name: Yoga Subscribers
  * Description: Подписчики и журнал добровольных согласий на рассылку.
  * Version: 1.0.0
- * Author: Yoga
+ * Author: AxeCode.Tech
  */
 defined('ABSPATH') || exit;
 

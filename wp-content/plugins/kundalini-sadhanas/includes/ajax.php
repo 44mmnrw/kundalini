@@ -2,16 +2,30 @@
 /**
  * AJAX handlers for Sadhana cycles.
  *
- * @package Yoga
+ * @package Yoga_Sadhanas
  */
 
 if (!defined('ABSPATH')) {
 	exit;
 }
 
+function kundalini_sadhanas_ajax_error(string $message, string $code, int $status = 400): void {
+	if (function_exists('yoga_ajax_error')) {
+		yoga_ajax_error($message, $code, $status);
+	}
+	wp_send_json_error(array('message' => $message, 'code' => $code), $status);
+}
+
+function kundalini_sadhanas_ajax_success(string $message, array $data): void {
+	if (function_exists('yoga_ajax_success')) {
+		yoga_ajax_success($message, $data);
+	}
+	wp_send_json_success(array_merge(array('message' => $message), $data));
+}
+
 function yoga_sadhana_ajax_user_id(): int {
 	if (!is_user_logged_in()) {
-		yoga_ajax_error(__('Необходима авторизация.', 'yoga'), 'unauthorized', 401);
+		kundalini_sadhanas_ajax_error(__('Необходима авторизация.', 'yoga'), 'unauthorized', 401);
 	}
 	check_ajax_referer('yoga_ajax_nonce', 'nonce');
 	return (int) get_current_user_id();
@@ -19,7 +33,7 @@ function yoga_sadhana_ajax_user_id(): int {
 
 function yoga_sadhana_ajax_payload(array|WP_Error $result, string $message): void {
 	if (is_wp_error($result)) {
-		yoga_ajax_error($result->get_error_message(), $result->get_error_code(), 400);
+		kundalini_sadhanas_ajax_error($result->get_error_message(), $result->get_error_code(), 400);
 	}
 	$user_id = (int) get_current_user_id();
 	$data = array(
@@ -32,7 +46,7 @@ function yoga_sadhana_ajax_payload(array|WP_Error $result, string $message): voi
 	if (($result['status'] ?? '') === 'active' && function_exists('yoga_get_practice_sadhana_counter_html')) {
 		$data['progress_html'] = yoga_get_practice_sadhana_counter_html($result);
 	}
-	yoga_ajax_success($message, $data);
+	kundalini_sadhanas_ajax_success($message, $data);
 }
 
 function yoga_ajax_sadhana_start(): void {

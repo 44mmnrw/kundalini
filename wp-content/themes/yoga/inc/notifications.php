@@ -75,7 +75,7 @@ function yoga_notification_preference(int $user_id, string $key, bool $default =
 }
 
 function yoga_get_notification_preference_defaults(): array {
-	return array(
+	return apply_filters('yoga_notification_preference_defaults', array(
 		'subscription_expiring_site' => true,
 		'subscription_expiring_email' => true,
 		'payment_card_expiring_site' => true,
@@ -95,7 +95,7 @@ function yoga_get_notification_preference_defaults(): array {
 		'new_practices_email' => true,
 		'new_articles_email' => false,
 		'promotions_email' => true,
-	);
+	));
 }
 
 function yoga_get_user_notification_preferences(int $user_id): array {

@@ -328,7 +328,8 @@
 							<div class="notification-settings">
 								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
 								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
-								<?php $notification_settings = array(
+								<?php $notification_preference_defaults = yoga_get_notification_preference_defaults();
+								$notification_settings = array(
 									array('Системные', 'Технические уведомления о вашем аккаунте и оплате. Часть из них отключить нельзя.', array(
 										array('Подписка скоро заканчивается', 'За 3 дня до окончания', 1, 1, 'subscription_expiring_site', 'subscription_expiring_email'),
 										array('Срок действия карты истекает или истёк', '', 1, 0, 'payment_card_expiring_site', 'payment_card_expiring_email'),
@@ -355,8 +356,10 @@
 											<?php
 											$site_key = (string) ($row[4] ?? '');
 											$email_key = (string) ($row[5] ?? '');
-											$site_enabled = $site_key !== '' ? yoga_notification_preference((int) $user_id, $site_key, (bool) $row[2]) : (bool) $row[2];
-											$email_enabled = $email_key !== '' ? yoga_notification_preference((int) $user_id, $email_key, (bool) $row[3]) : (bool) $row[3];
+											$site_default = $site_key !== '' ? (bool) ($notification_preference_defaults[$site_key] ?? $row[2]) : (bool) $row[2];
+											$email_default = $email_key !== '' ? (bool) ($notification_preference_defaults[$email_key] ?? $row[3]) : (bool) $row[3];
+											$site_enabled = $site_key !== '' ? yoga_notification_preference((int) $user_id, $site_key, $site_default) : $site_default;
+											$email_enabled = $email_key !== '' ? yoga_notification_preference((int) $user_id, $email_key, $email_default) : $email_default;
 											?>
 											<div class="notification-settings__row">
 												<div><strong><?php echo esc_html($row[0]); ?></strong><?php if ($row[1] !== ''): ?><span><?php echo esc_html($row[1]); ?></span><?php endif; ?></div>

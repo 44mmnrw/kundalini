@@ -322,6 +322,15 @@ if (!function_exists('yoga_register_copy_protection_settings_fields')) {
 			'title' => 'Защита контента',
 			'fields' => array(
 				array(
+					'key' => 'field_copy_protection_disable_context_menu_blocking',
+					'label' => 'Отключить блокировку правой кнопки мыши',
+					'name' => 'copy_protection_disable_context_menu_blocking',
+					'type' => 'true_false',
+					'instructions' => 'Если включено, контекстное меню браузера будет открываться по щелчку правой кнопкой мыши. Остальная защита контента продолжит работать.',
+					'ui' => 1,
+					'default_value' => 0,
+				),
+				array(
 					'key' => 'field_copy_protection_block_devtools_shortcuts',
 					'label' => 'Блокировать F12 и горячие клавиши DevTools',
 					'name' => 'copy_protection_block_devtools_shortcuts',
@@ -515,6 +524,216 @@ if (!function_exists('yoga_add_practice_exercise_modification_name_field')) {
 }
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_modification_name_field', 20);
+
+if (!function_exists('yoga_add_practice_exercise_execution_name_field')) {
+	/**
+	 * Adds an editable label for the main exercise tab when modifications are enabled.
+	 */
+	function yoga_add_practice_exercise_execution_name_field(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			$field['sub_fields'] = array();
+		}
+
+		foreach ($field['sub_fields'] as $sub_field) {
+			if (
+				(isset($sub_field['key']) && $sub_field['key'] === 'field_ex_execution_name')
+				|| (isset($sub_field['name']) && $sub_field['name'] === 'execution_name')
+			) {
+				return $field;
+			}
+		}
+
+		$execution_name_field = array(
+			'ID'                => 0,
+			'key'               => 'field_ex_execution_name',
+			'label'             => 'Название первой вкладки',
+			'name'              => 'execution_name',
+			'_name'             => 'execution_name',
+			'prefix'            => 'acf',
+			'type'              => 'text',
+			'instructions'      => 'Например: Выполнение или Для начинающих',
+			'required'          => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field'    => 'field_ex_has_modifications',
+						'operator' => '==',
+						'value'    => '1',
+					),
+				),
+			),
+			'wrapper'           => array(
+				'width' => '',
+				'class' => '',
+				'id'    => '',
+			),
+			'default_value'     => '',
+			'placeholder'       => 'Выполнение',
+			'parent'            => $field['ID'] ?? 0,
+			'parent_repeater'   => 'field_exercise_items',
+		);
+
+		if (function_exists('acf_get_valid_field')) {
+			$execution_name_field = acf_get_valid_field($execution_name_field);
+		}
+
+		$insert_at = 0;
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			if (isset($sub_field['key']) && $sub_field['key'] === 'field_ex_has_modifications') {
+				$insert_at = $index + 1;
+				break;
+			}
+		}
+
+		array_splice($field['sub_fields'], $insert_at, 0, array($execution_name_field));
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_execution_name_field', 21);
+
+if (!function_exists('yoga_add_practice_exercise_modification_detail_fields')) {
+	/**
+	 * Adds separate content and additional-details fields for an exercise modification.
+	 */
+	function yoga_add_practice_exercise_modification_detail_fields(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			$field['sub_fields'] = array();
+		}
+
+		$existing_names = array();
+		foreach ($field['sub_fields'] as $sub_field) {
+			if (!empty($sub_field['name'])) {
+				$existing_names[] = (string) $sub_field['name'];
+			}
+		}
+
+		$conditional_logic = array(
+			array(
+				array(
+					'field'    => 'field_ex_has_modifications',
+					'operator' => '==',
+					'value'    => '1',
+				),
+			),
+		);
+
+		$fields_to_add = array();
+		if (!in_array('matter_mod', $existing_names, true)) {
+			$fields_to_add[] = array(
+				'ID'                => 0,
+				'key'               => 'field_ex_matter_mod',
+				'label'             => 'Содержание (Модификация)',
+				'name'              => 'matter_mod',
+				'_name'             => 'matter_mod',
+				'prefix'            => 'acf',
+				'type'              => 'repeater',
+				'instructions'      => 'Если не заполнено, используется содержание основной версии упражнения.',
+				'required'          => 0,
+				'conditional_logic' => $conditional_logic,
+				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+				'layout'            => 'table',
+				'min'               => 0,
+				'max'               => 0,
+				'collapsed'         => '',
+				'button_label'      => 'Добавить',
+				'rows_per_page'     => 20,
+				'parent'            => $field['ID'] ?? 0,
+				'parent_repeater'   => 'field_exercise_items',
+				'sub_fields'        => array(
+					array(
+						'ID'              => 0,
+						'key'             => 'field_ex_matter_mod_title',
+						'label'           => 'Заголовок',
+						'name'            => 'title',
+						'_name'           => 'title',
+						'prefix'          => 'acf',
+						'type'            => 'text',
+						'instructions'    => '',
+						'required'        => 0,
+						'conditional_logic' => 0,
+						'wrapper'         => array('width' => '', 'class' => '', 'id' => ''),
+						'default_value'   => '',
+						'maxlength'       => '',
+						'placeholder'     => '',
+						'prepend'         => '',
+						'append'          => '',
+						'parent'          => 0,
+						'parent_repeater' => 'field_ex_matter_mod',
+					),
+					array(
+						'ID'              => 0,
+						'key'             => 'field_ex_matter_mod_description',
+						'label'           => 'Описание',
+						'name'            => 'description',
+						'_name'           => 'description',
+						'prefix'          => 'acf',
+						'type'            => 'text',
+						'instructions'    => '',
+						'required'        => 0,
+						'conditional_logic' => 0,
+						'wrapper'         => array('width' => '', 'class' => '', 'id' => ''),
+						'default_value'   => '',
+						'maxlength'       => '',
+						'placeholder'     => '',
+						'prepend'         => '',
+						'append'          => '',
+						'parent'          => 0,
+						'parent_repeater' => 'field_ex_matter_mod',
+					),
+				),
+			);
+		}
+
+		if (!in_array('details_mod', $existing_names, true)) {
+			$fields_to_add[] = array(
+				'ID'                => 0,
+				'key'               => 'field_ex_details_mod',
+				'label'             => 'Доп. детали (Модификация)',
+				'name'              => 'details_mod',
+				'_name'             => 'details_mod',
+				'prefix'            => 'acf',
+				'type'              => 'textarea',
+				'instructions'      => 'Если не заполнено, используются дополнительные детали основной версии упражнения.',
+				'required'          => 0,
+				'conditional_logic' => $conditional_logic,
+				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+				'default_value'     => '',
+				'new_lines'         => '',
+				'maxlength'         => '',
+				'placeholder'       => '',
+				'rows'              => '',
+				'parent'            => $field['ID'] ?? 0,
+				'parent_repeater'   => 'field_exercise_items',
+			);
+		}
+
+		if ($fields_to_add === array()) {
+			return $field;
+		}
+
+		if (function_exists('acf_get_valid_field')) {
+			foreach ($fields_to_add as $index => $field_to_add) {
+				$fields_to_add[$index] = acf_get_valid_field($field_to_add);
+			}
+		}
+
+		$insert_at = count($field['sub_fields']);
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			if (isset($sub_field['name']) && $sub_field['name'] === 'details') {
+				$insert_at = $index + 1;
+				break;
+			}
+		}
+
+		array_splice($field['sub_fields'], $insert_at, 0, $fields_to_add);
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_modification_detail_fields', 22);
 
 if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 	function yoga_delay_acf_wysiwyg_editors(array $field): array {

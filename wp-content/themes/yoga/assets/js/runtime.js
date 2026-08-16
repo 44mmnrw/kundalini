@@ -13,6 +13,7 @@
 
 	var selectors = config.selectors;
 	var offlineMessage = config.offlineMessage || 'Контент доступен только на сайте. Сохранённая копия страницы недоступна.';
+	var blockContextMenu = config.blockContextMenu === true || config.blockContextMenu === '1' || config.blockContextMenu === 1;
 	var blockDevtools = config.blockDevtools === true || config.blockDevtools === '1' || config.blockDevtools === 1;
 	var isOfflinePage = window.location.protocol === 'file:';
 
@@ -160,9 +161,11 @@
 
 	initOfflineGuard();
 
-	document.addEventListener('contextmenu', function (event) {
-		blockIfProtected(event);
-	}, true);
+	if (blockContextMenu) {
+		document.addEventListener('contextmenu', function (event) {
+			blockIfProtected(event);
+		}, true);
+	}
 
 	document.addEventListener('copy', function (event) {
 		blockIfProtected(event);

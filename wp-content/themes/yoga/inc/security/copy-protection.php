@@ -99,6 +99,16 @@ if (!function_exists('yoga_copy_protection_block_devtools_shortcuts')) {
 	}
 }
 
+if (!function_exists('yoga_copy_protection_block_context_menu')) {
+	function yoga_copy_protection_block_context_menu(): bool {
+		if (!function_exists('get_field')) {
+			return true;
+		}
+
+		return !(bool) get_field('copy_protection_disable_context_menu_blocking', 'option');
+	}
+}
+
 if (!function_exists('yoga_copy_protection_inline_head_guard')) {
 
 
@@ -182,7 +192,8 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 				'enabled'        => true,
 				'selectors'      => array_values($selectors),
 				'offlineMessage' => yoga_copy_protection_offline_message(),
-				'blockDevtools'  => yoga_copy_protection_block_devtools_shortcuts(),
+				'blockContextMenu' => yoga_copy_protection_block_context_menu(),
+				'blockDevtools'    => yoga_copy_protection_block_devtools_shortcuts(),
 			)
 		);
 	}
