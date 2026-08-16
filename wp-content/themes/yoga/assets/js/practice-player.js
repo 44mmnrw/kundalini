@@ -581,7 +581,7 @@ function createAudioFullscreenContainer() {
 function openAudioFullscreen(exercise, playerElement) {
     const exerciseId = exercise.dataset.exerciseId;
     const activeVersion = exercise.querySelector('.exercise-item.active').dataset.version;
-    const title = exercise.querySelector('.exercise-item.active .exercise-heading')?.textContent || 'Аудио практика';
+    const title = exercise.querySelector('h3')?.textContent || 'Аудио практика';
     const player = window.activePlayers[`${exerciseId}_${activeVersion}`];
 
     if (!player) return;
@@ -694,7 +694,7 @@ function updateAudioFullscreen(exercise, playerElement) {
 
     const exerciseId = exercise.dataset.exerciseId;
     const activeVersion = exercise.querySelector('.exercise-item.active').dataset.version;
-    const title = exercise.querySelector('.exercise-item.active .exercise-heading')?.textContent || 'Аудио практика';
+    const title = exercise.querySelector('h3')?.textContent || 'Аудио практика';
 
 
     const container = document.getElementById('audio-fullscreen-container');
