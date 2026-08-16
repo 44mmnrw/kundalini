@@ -9,7 +9,7 @@ if (!isset($additional_modification) || !is_array($additional_modification)) {
 	return;
 }
 
-$variant_matter = !empty($additional_modification['matter']) && is_array($additional_modification['matter'])
+$variant_matter = empty($uses_unified_modification_schema) && !empty($additional_modification['matter']) && is_array($additional_modification['matter'])
 	? $additional_modification['matter']
 	: array();
 $variant_details = trim((string) ($additional_modification['details'] ?? ''));
