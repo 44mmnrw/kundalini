@@ -124,6 +124,7 @@
 	$subtitle = $exercise['subtitle'] ?? '';
 	$matter = $exercise['matter'] ?? '';
 	$details = $exercise['details'] ?? '';
+	$focus = trim((string) ($exercise['focus'] ?? ''));
 	$matter_mod = !empty($exercise['matter_mod']) ? $exercise['matter_mod'] : $matter;
 	$details_mod = trim((string) ($exercise['details_mod'] ?? ''));
 	$details_mod = $details_mod !== '' ? $details_mod : $details;
@@ -246,6 +247,16 @@
 				?></div>
                 <?php endif; ?>
 			</div>
+
+			<?php if ($focus): ?>
+			<div class="exercise-focus">
+				<?php
+					echo function_exists('yoga_practice_format_rich_text')
+						? yoga_practice_format_rich_text($focus)
+						: wp_kses_post(wpautop($focus));
+				?>
+			</div>
+			<?php endif; ?>
 		</div>
 
         <div class="exercise-item__media">
@@ -418,6 +429,16 @@
 				?></div>
                 <?php endif; ?>
 			</div>
+
+			<?php if ($focus): ?>
+			<div class="exercise-focus">
+				<?php
+					echo function_exists('yoga_practice_format_rich_text')
+						? yoga_practice_format_rich_text($focus)
+						: wp_kses_post(wpautop($focus));
+				?>
+			</div>
+			<?php endif; ?>
 		</div>
 
         <div class="exercise-item__media">
