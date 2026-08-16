@@ -82,6 +82,16 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			?></div>
 			<?php endif; ?>
 		</div>
+
+		<?php if ($focus): ?>
+		<div class="exercise-focus">
+			<?php
+				echo function_exists('yoga_practice_format_rich_text')
+					? yoga_practice_format_rich_text($focus)
+					: wp_kses_post(wpautop($focus));
+			?>
+		</div>
+		<?php endif; ?>
 	</div>
 
 	<div class="exercise-item__media">

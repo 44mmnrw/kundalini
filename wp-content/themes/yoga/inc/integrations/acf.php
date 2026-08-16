@@ -796,6 +796,9 @@ if (!function_exists('yoga_add_practice_exercise_additional_modifications_field'
 					),
 				);
 			}
+			if ($target['name'] === 'timing') {
+				$variant_field['default_value'] = array();
+			}
 
 			if ($target['name'] === 'modification_name') {
 				$variant_field['instructions'] = 'Например: Для спины';
@@ -879,6 +882,64 @@ if (!function_exists('yoga_add_practice_exercise_additional_modifications_field'
 }
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_additional_modifications_field', 23);
+
+if (!function_exists('yoga_add_practice_exercise_focus_field')) {
+	/**
+	 * Adds the focus text shown in the pink exercise callout.
+	 */
+	function yoga_add_practice_exercise_focus_field(array $field): array {
+		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			$field['sub_fields'] = array();
+		}
+
+		foreach ($field['sub_fields'] as $sub_field) {
+			if (
+				(isset($sub_field['key']) && $sub_field['key'] === 'field_ex_focus')
+				|| (isset($sub_field['name']) && $sub_field['name'] === 'focus')
+			) {
+				return $field;
+			}
+		}
+
+		$focus_field = array(
+			'ID'              => 0,
+			'key'             => 'field_ex_focus',
+			'label'           => 'Фокус',
+			'name'            => 'focus',
+			'_name'           => 'focus',
+			'prefix'          => 'acf',
+			'type'            => 'textarea',
+			'instructions'    => 'Текст появится в отдельном розовом блоке внутри упражнения.',
+			'required'        => 0,
+			'wrapper'         => array('width' => '', 'class' => '', 'id' => ''),
+			'default_value'   => '',
+			'new_lines'       => '',
+			'maxlength'       => '',
+			'placeholder'     => '',
+			'rows'            => 3,
+			'parent'          => $field['ID'] ?? 0,
+			'parent_repeater' => 'field_exercise_items',
+		);
+
+		if (function_exists('acf_get_valid_field')) {
+			$focus_field = acf_get_valid_field($focus_field);
+		}
+
+		$insert_at = count($field['sub_fields']);
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			if (isset($sub_field['name']) && $sub_field['name'] === 'details') {
+				$insert_at = $index + 1;
+				break;
+			}
+		}
+
+		array_splice($field['sub_fields'], $insert_at, 0, array($focus_field));
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_focus_field', 24);
 
 if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 	function yoga_delay_acf_wysiwyg_editors(array $field): array {
