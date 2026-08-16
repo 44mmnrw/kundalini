@@ -158,3 +158,59 @@ if (!function_exists('yoga_practice_set_html_attribute')) {
 		return preg_replace('/\s*\/?>$/', ' ' . $attribute . '="' . $escaped_value . '">', $tag, 1);
 	}
 }
+
+if (!function_exists('yoga_practice_add_focus_toolbar_format')) {
+	/**
+	 * Exposes the TinyMCE styles dropdown in the full ACF WYSIWYG toolbar.
+	 */
+	function yoga_practice_add_focus_toolbar_format(array $toolbars): array {
+		foreach ($toolbars as $toolbar_name => $rows) {
+			if (strtolower((string) $toolbar_name) !== 'full' || !isset($rows[1]) || !is_array($rows[1])) {
+				continue;
+			}
+
+			if (!in_array('styleselect', $rows[1], true)) {
+				array_unshift($toolbars[$toolbar_name][1], 'styleselect');
+			}
+		}
+
+		return $toolbars;
+	}
+}
+add_filter('acf/fields/wysiwyg/toolbars', 'yoga_practice_add_focus_toolbar_format');
+
+if (!function_exists('yoga_practice_register_focus_tinymce_format')) {
+	/**
+	 * Registers a movable pink focus block inside exercise descriptions.
+	 */
+	function yoga_practice_register_focus_tinymce_format(array $settings): array {
+		$settings['style_formats_merge'] = true;
+		$settings['style_formats'] = wp_json_encode(
+			array(
+				array(
+					'title'   => 'Фокус (розовый блок)',
+					'block'   => 'div',
+					'classes' => 'exercise-focus',
+					'wrapper' => true,
+				),
+				array(
+					'title'   => 'Фиолетовый заголовок',
+					'block'   => 'h5',
+					'classes' => 'exercise-violet-heading',
+				),
+				array(
+					'title'   => 'Чёрный заголовок',
+					'block'   => 'h6',
+					'classes' => 'exercise-black-heading',
+				),
+			),
+			JSON_UNESCAPED_UNICODE
+		);
+
+		$focus_editor_css = '.exercise-focus{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;margin:15px 0 0;padding:10px 25px;border-radius:7px;background:#f8bdf6;color:#1f1f1f;font-family:Mulish,sans-serif;font-size:18px;font-weight:600;line-height:1.4}.exercise-focus p{width:100%;margin:0;font:inherit;color:inherit}.exercise-violet-heading{color:#9153e1;font-family:Mulish,sans-serif;font-size:20px;font-style:normal;font-weight:700;line-height:1.1}.exercise-black-heading{color:#1f1f1f;font-family:Mulish,sans-serif;font-size:16px;font-style:normal;font-weight:700;line-height:1.1}';
+		$settings['content_style'] = trim((string) ($settings['content_style'] ?? '') . ' ' . $focus_editor_css);
+
+		return $settings;
+	}
+}
+add_filter('tiny_mce_before_init', 'yoga_practice_register_focus_tinymce_format');

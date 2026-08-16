@@ -9,9 +9,10 @@ if (!isset($additional_modification) || !is_array($additional_modification)) {
 	return;
 }
 
-$variant_matter = !empty($additional_modification['matter']) ? $additional_modification['matter'] : $matter;
+$variant_matter = !empty($additional_modification['matter']) && is_array($additional_modification['matter'])
+	? $additional_modification['matter']
+	: array();
 $variant_details = trim((string) ($additional_modification['details'] ?? ''));
-$variant_details = $variant_details !== '' ? $variant_details : $details;
 $variant_timing = !empty($additional_modification['timing']) && is_array($additional_modification['timing'])
 	? $additional_modification['timing']
 	: array();
@@ -82,16 +83,6 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			?></div>
 			<?php endif; ?>
 		</div>
-
-		<?php if ($focus): ?>
-		<div class="exercise-focus">
-			<?php
-				echo function_exists('yoga_practice_format_rich_text')
-					? yoga_practice_format_rich_text($focus)
-					: wp_kses_post(wpautop($focus));
-			?>
-		</div>
-		<?php endif; ?>
 	</div>
 
 	<div class="exercise-item__media">
