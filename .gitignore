@@ -37,6 +37,10 @@
 !/wp-content/plugins/yoga-subscribers/
 !/wp-content/plugins/yoga-subscribers/**
 
+# Custom plugin: Kundalini Sadhanas
+!/wp-content/plugins/kundalini-sadhanas/
+!/wp-content/plugins/kundalini-sadhanas/**
+
 # Custom plugin: VK ID authentication
 !/wp-content/plugins/vkid-login/
 !/wp-content/plugins/vkid-login/**

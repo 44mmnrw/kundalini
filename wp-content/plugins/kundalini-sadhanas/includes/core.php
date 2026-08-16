@@ -2,7 +2,7 @@
 /**
  * Persistent Sadhana cycles stored in the dedicated database table.
  *
- * @package Yoga
+ * @package Yoga_Sadhanas
  */
 
 if (!defined('ABSPATH')) {
@@ -131,9 +131,6 @@ function yoga_sadhana_register_storage(): void {
 	}
 }
 add_action('init', 'yoga_sadhana_register_storage', 1);
-add_action('switch_theme', static function (): void {
-	wp_clear_scheduled_hook(YOGA_SADHANA_CRON_HOOK);
-});
 
 function yoga_sadhana_user_timezone(int $user_id): DateTimeZone {
 	$timezone = trim((string) get_user_meta($user_id, 'timezone', true));
@@ -257,18 +254,26 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 		$key_suffix = 'completed';
 	}
 	$dedupe_key = 'sadhana:' . absint($row['id'] ?? 0) . ':' . $key_suffix;
-	$defaults = yoga_get_notification_preference_defaults();
-	$site_key = $type . '_site';
-	$email_key = $type . '_email';
-	if (yoga_notification_preference($user_id, $site_key, (bool) ($defaults[$site_key] ?? true))) {
+	$notification_context = array(
+		'practice_title' => $practice_title,
+		'milestone' => $milestone,
+		'target_days' => absint($row['target_days'] ?? 0),
+		'completed_days' => absint($row['completed_days'] ?? 0),
+		'url' => $url,
+	);
+
+	if (kundalini_sadhanas_channel_enabled($user_id, $event, 'site') && function_exists('yoga_add_user_notification')) {
 		yoga_add_user_notification($user_id, $type, $title, $message, $url, array('dedupe_key' => $dedupe_key, 'post_id' => $practice_id));
 	}
-	if (!yoga_notification_preference($user_id, $email_key, (bool) ($defaults[$email_key] ?? true))) {
+	do_action('kundalini_sadhanas_notification', $user_id, $event, $title, $message, $notification_context, $row);
+
+	if (!kundalini_sadhanas_channel_enabled($user_id, $event, 'email')) {
 		return;
 	}
 	$user = get_user_by('id', $user_id);
 	if ($user instanceof WP_User && is_email($user->user_email)) {
-		wp_mail((string) $user->user_email, $title, $message . "\n\n" . __('Открыть практику:', 'yoga') . "\n" . $url);
+		$email = kundalini_sadhanas_render_email($event, $notification_context);
+		wp_mail((string) $user->user_email, $email['subject'], $email['body']);
 	}
 }
 

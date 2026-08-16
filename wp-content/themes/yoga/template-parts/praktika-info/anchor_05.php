@@ -116,12 +116,17 @@
 <?php foreach ($step['exercise_items'] as $ex_idx => $exercise): ?>
 <?php
 	$has_modifications = $exercise['has_modifications'] ?? false;
+	$execution_name = trim((string) ($exercise['execution_name'] ?? ''));
+	$execution_label = $execution_name !== '' ? $execution_name : 'Выполнение';
 	$modification_name = trim((string) ($exercise['modification_name'] ?? ''));
 	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация';
 	$title = $exercise['title'] ?? '';
 	$subtitle = $exercise['subtitle'] ?? '';
 	$matter = $exercise['matter'] ?? '';
 	$details = $exercise['details'] ?? '';
+	$matter_mod = !empty($exercise['matter_mod']) ? $exercise['matter_mod'] : $matter;
+	$details_mod = trim((string) ($exercise['details_mod'] ?? ''));
+	$details_mod = $details_mod !== '' ? $details_mod : $details;
 	$timing = $exercise['timing'] ?? [];
 	$timing_mod = $exercise['timing_mod'] ?? [];
 	$media_type = $exercise['media_type'] ?? 'none';
@@ -169,7 +174,7 @@
             <?php if ($has_modifications): ?>
             <div class="exercise-switches">
                 <div class="exercise-switches__item active" data-target="main">
-                    <b>Выполнение</b>
+                    <b><?php echo esc_html($execution_label); ?></b>
 				</div>
                 <div class="exercise-switches__item" data-target="mod">
                     <b><?php echo esc_html($modification_label); ?></b>
@@ -340,7 +345,7 @@
 
             <div class="exercise-switches">
                 <div class="exercise-switches__item" data-target="main">
-                    <b>Выполнение</b>
+                    <b><?php echo esc_html($execution_label); ?></b>
 				</div>
                 <div class="exercise-switches__item active" data-target="mod">
                     <b><?php echo esc_html($modification_label); ?></b>
@@ -348,8 +353,8 @@
 			</div>
 
             <div class="exercise-item__info-details">
-                <?php if (!empty($matter)): ?>
-                <?php foreach ($matter as $item): ?>
+                <?php if (!empty($matter_mod)): ?>
+                <?php foreach ($matter_mod as $item): ?>
                 <div>
                     <?php if (!empty($item['title'])): ?>
                     <b><?php echo esc_html($item['title']); ?>:</b>
@@ -377,11 +382,11 @@
 				</div>
 				<?php endif; ?>
 
-                <?php if ($details): ?>
+                <?php if ($details_mod): ?>
                 <div class="exercise-detail-rich"><b>Доп. детали:</b> <?php
 					echo function_exists('yoga_practice_format_rich_text')
-						? yoga_practice_format_rich_text($details)
-						: wp_kses_post(wpautop((string) $details));
+						? yoga_practice_format_rich_text($details_mod)
+						: wp_kses_post(wpautop((string) $details_mod));
 				?></div>
                 <?php endif; ?>
 			</div>
