@@ -115,11 +115,12 @@
 
 <?php foreach ($step['exercise_items'] as $ex_idx => $exercise): ?>
 <?php
-	$has_modifications = $exercise['has_modifications'] ?? false;
-	$execution_name = trim((string) ($exercise['execution_name'] ?? ''));
-	$execution_label = $execution_name !== '' ? $execution_name : 'Выполнение';
+	$uses_unified_modification_schema = ($exercise['execution_name'] ?? '') === '__unified__'
+		|| !empty($exercise['modifications']);
+	$legacy_has_modifications = !$uses_unified_modification_schema && !empty($exercise['has_modifications']);
+	$execution_label = 'Основная модификация';
 	$modification_name = trim((string) ($exercise['modification_name'] ?? ''));
-	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация';
+	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация 1';
 	$title = $exercise['title'] ?? '';
 	$subtitle = $exercise['subtitle'] ?? '';
 	$matter = $exercise['matter'] ?? '';
@@ -142,9 +143,54 @@
 	$show_timer_mod = !empty($timing_mod);
 	$content =  $exercise['content'] ?? [];
 	$content_mod =  $exercise['content_mod'] ?? [];
-	$additional_modification_rows = !empty($exercise['additional_modifications']) && is_array($exercise['additional_modifications'])
+	$legacy_additional_modification_rows = !empty($exercise['additional_modifications']) && is_array($exercise['additional_modifications'])
 		? $exercise['additional_modifications']
 		: array();
+	$modification_row_has_content = static function ($row): bool {
+		if (!is_array($row)) {
+			return false;
+		}
+
+		foreach ($row as $key => $value) {
+			if ($key === 'media_type' && in_array($value, array('', 'none', null), true)) {
+				continue;
+			}
+			if (is_array($value) && $value === array()) {
+				continue;
+			}
+			if (!in_array($value, array('', false, null), true)) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+	$unified_modification_rows = !empty($exercise['modifications']) && is_array($exercise['modifications'])
+		? array_values(array_filter($exercise['modifications'], $modification_row_has_content))
+		: array();
+	$additional_modification_rows = $uses_unified_modification_schema
+		? array()
+		: array_values(array_filter($legacy_additional_modification_rows, $modification_row_has_content));
+
+	if ($unified_modification_rows !== array()) {
+		$first_modification = array_shift($unified_modification_rows);
+		$modification_name = trim((string) ($first_modification['modification_name'] ?? ''));
+		$modification_label = $modification_name !== '' ? $modification_name : 'Модификация 1';
+		$matter_mod = !empty($first_modification['matter']) && is_array($first_modification['matter']) ? $first_modification['matter'] : array();
+		$details_mod = trim((string) ($first_modification['details'] ?? ''));
+		$timing_mod = !empty($first_modification['timing']) && is_array($first_modification['timing']) ? $first_modification['timing'] : array();
+		$media_type_mod = (string) ($first_modification['media_type'] ?? 'none');
+		$media_file_mod = $first_modification['media_file'] ?? array();
+		$duration_mod = $first_modification['duration'] ?? 180;
+		$gallery_mod = yoga_normalize_practice_exercise_gallery($first_modification['gallery'] ?? array());
+		$content_mod = $first_modification['content'] ?? '';
+		$additional_modification_rows = $unified_modification_rows;
+	}
+
+	$has_modifications = $unified_modification_rows !== array()
+		|| isset($first_modification)
+		|| $legacy_has_modifications
+		|| $additional_modification_rows !== array();
 	$modification_tabs = array();
 	if ($has_modifications) {
 		$modification_tabs[] = array(
