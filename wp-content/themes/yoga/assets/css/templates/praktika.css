@@ -1231,7 +1231,8 @@ display: block !important;
 
 .exercise-focus {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
   width: 100%;
   margin-top: 0.9375rem;
@@ -1249,6 +1250,9 @@ display: block !important;
   margin: 0;
   font: inherit;
   color: inherit;
+}
+.exercise-focus p + p {
+  margin-top: 0.625rem;
 }
 
 .praktika-exercise .exercise-violet-heading {
