@@ -64,10 +64,21 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 24px;
-	padding: 28px 32px;
+	gap: 16px;
+	height: 52px;
+	box-sizing: border-box;
+	padding: 6px 16px;
 	background: var(--yoga-editor-black);
 	color: var(--yoga-editor-white);
+}
+
+.yoga-practice-editor__hero > div {
+	min-width: 0;
+}
+
+.yoga-practice-editor__hero .yoga-practice-editor__eyebrow,
+.yoga-practice-editor__hero p {
+	display: none;
 }
 
 .yoga-practice-editor__eyebrow,
@@ -88,9 +99,12 @@
 }
 
 .yoga-practice-editor__hero h2 {
+	overflow: hidden;
 	color: var(--yoga-editor-white);
-	font-size: 27px;
-	line-height: 1.15;
+	font-size: 16px;
+	line-height: 1.25;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .yoga-practice-editor__hero p {
@@ -101,15 +115,17 @@
 
 .yoga-practice-editor__classic {
 	display: inline-flex;
+	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	min-height: 40px;
-	padding: 0 18px;
+	min-height: 32px;
+	padding: 0 14px;
 	border: 1px solid #4b4b4b;
 	border-radius: 999px;
 	color: var(--yoga-editor-white);
 	font-weight: 700;
 	text-decoration: none;
+	white-space: nowrap;
 	transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
@@ -1565,9 +1581,7 @@ body.yoga-practice-modal-open {
 
 @media (max-width: 600px) {
 	.yoga-practice-editor__hero {
-		align-items: flex-start;
-		flex-direction: column;
-		padding: 22px;
+		padding: 6px 12px;
 	}
 
 	.yoga-practice-editor__content {
