@@ -1155,6 +1155,14 @@ body.yoga-practice-modal-open {
 	overflow: hidden;
 }
 
+/* TinyMCE appends format menus to body, outside the modal surface. */
+body.yoga-practice-modal-open > .mce-container,
+body.yoga-practice-modal-open > .mce-menu,
+body.yoga-practice-modal-open > .mce-tooltip,
+body.yoga-practice-modal-open > .tox-tinymce-aux {
+	z-index: 100200 !important;
+}
+
 .yoga-practice-editor--portal .yoga-modal-layer-path:not(.yoga-modal-surface) {
 	position: relative !important;
 	z-index: 100102 !important;
