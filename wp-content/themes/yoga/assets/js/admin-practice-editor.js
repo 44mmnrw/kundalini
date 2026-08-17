@@ -102,6 +102,8 @@
 		this.$modalBackdrop = $();
 		this.$modalContext = $();
 		this.$portalPlaceholder = $();
+		this.$portalParent = $();
+		this.portalNextSibling = null;
 		this.portalScrollLeft = 0;
 		this.portalScrollTop = 0;
 		this.portalScrollPositions = [];
@@ -866,6 +868,8 @@
 		if (this.$workspace.hasClass('yoga-practice-editor--portal')) {
 			return;
 		}
+		this.$portalParent = this.$workspace.parent();
+		this.portalNextSibling = this.$workspace.next().get(0) || null;
 		this.portalScrollLeft = window.pageXOffset || document.documentElement.scrollLeft || 0;
 		this.portalScrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
 		this.portalScrollPositions = [];
@@ -891,13 +895,31 @@
 	};
 
 	PracticeEditor.prototype.exitPortal = function () {
-		if (!this.$portalPlaceholder.length) {
+		var isPortal = this.$workspace.hasClass('yoga-practice-editor--portal');
+		if (!isPortal && !this.$portalPlaceholder.length) {
 			return;
 		}
 		this.$workspace.find('[data-yoga-form-added="1"]').removeAttr('form data-yoga-form-added');
 		this.$workspace.removeClass('yoga-practice-editor--portal');
-		this.$portalPlaceholder.replaceWith(this.$workspace);
+
+		var placeholder = this.$portalPlaceholder.get(0);
+		var parent = this.$portalParent.get(0);
+		if (placeholder && document.contains(placeholder)) {
+			this.$portalPlaceholder.replaceWith(this.$workspace);
+		} else if (parent && document.contains(parent)) {
+			if (this.portalNextSibling && this.portalNextSibling.parentNode === parent) {
+				parent.insertBefore(this.$workspace.get(0), this.portalNextSibling);
+			} else {
+				this.$workspace.appendTo(parent);
+			}
+		} else {
+			this.$workspace.appendTo(this.$sourceFields);
+		}
+
+		this.$portalPlaceholder.remove();
 		this.$portalPlaceholder = $();
+		this.$portalParent = $();
+		this.portalNextSibling = null;
 	};
 
 	PracticeEditor.prototype.updateModalLayer = function () {
