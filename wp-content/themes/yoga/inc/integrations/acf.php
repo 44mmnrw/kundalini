@@ -479,6 +479,46 @@ if (!function_exists('yoga_add_practice_exercise_content_format_hint')) {
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercise_content_format_hint', 19);
 
+if (!function_exists('yoga_sync_practice_section_menu_titles')) {
+	/**
+	 * Keep the frontend menu title equal to the visible section heading.
+	 *
+	 * Exercise sections only have section_title and therefore remain untouched.
+	 * Updating the single scalar meta avoids rewriting formatted media/repeater data.
+	 *
+	 * @param int|string $post_id Saved ACF object ID.
+	 */
+	function yoga_sync_practice_section_menu_titles($post_id): void {
+		$post_id = is_numeric($post_id) ? (int) $post_id : 0;
+		if ($post_id <= 0 || get_post_type($post_id) !== 'practice') {
+			return;
+		}
+
+		$layouts = get_post_meta($post_id, 'practice_sections', true);
+		$count = is_array($layouts) ? count($layouts) : (int) $layouts;
+		for ($index = 0; $index < $count; $index++) {
+			$prefix = 'practice_sections_' . $index . '_';
+			$source_key = '';
+			if (metadata_exists('post', $post_id, $prefix . 'main_title')) {
+				$source_key = $prefix . 'main_title';
+			} elseif (metadata_exists('post', $post_id, $prefix . 'title')) {
+				$source_key = $prefix . 'title';
+			}
+			if ($source_key === '' || !metadata_exists('post', $post_id, $prefix . 'section_title')) {
+				continue;
+			}
+
+			update_post_meta(
+				$post_id,
+				$prefix . 'section_title',
+				(string) get_post_meta($post_id, $source_key, true)
+			);
+		}
+	}
+}
+
+add_action('acf/save_post', 'yoga_sync_practice_section_menu_titles', 20);
+
 if (!function_exists('yoga_add_practice_exercise_modification_name_field')) {
 	/**
 	 * Adds a deployable name field to the database-defined exercise repeater.
@@ -1046,7 +1086,9 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 				$restructured[$index]['label'] = $main_labels[$name];
 			}
 		}
-		$restructured[] = $accordion('field_ex_admin_modifications', 'Дополнительные модификации');
+		$modifications_accordion = $accordion('field_ex_admin_modifications', 'Дополнительные модификации', true);
+		$modifications_accordion['wrapper']['class'] .= ' yoga-flat-modifications-accordion';
+		$restructured[] = $modifications_accordion;
 		$restructured[] = $modifications;
 		$restructured[] = $accordion('field_ex_admin_player_settings', 'Общие настройки плеера');
 		$append_named($restructured, array('allow_fullscreen', 'restrict_scrub', 'auto_play', 'signal_v_koncze'));
@@ -1081,6 +1123,20 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 }
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_restructure_practice_exercise_modifications', 24);
+
+if (!function_exists('yoga_enable_practice_exercise_end_signal_by_default')) {
+	/**
+	 * Enables the timer end signal for newly added exercises. An explicitly saved
+	 * false value is preserved, so editors can still disable it per exercise.
+	 */
+	function yoga_enable_practice_exercise_end_signal_by_default(array $field): array {
+		$field['default_value'] = 1;
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_68aebe989eeb1', 'yoga_enable_practice_exercise_end_signal_by_default');
 
 if (!function_exists('yoga_add_practice_exercise_admin_hints')) {
 	/**
@@ -1159,28 +1215,21 @@ add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_exercis
 
 if (!function_exists('yoga_set_practice_steps_admin_column_widths')) {
 	/**
-	 * Keeps the table layout predictable: section title 25%, exercises 75%.
+	 * Uses block rows so the theme-styled practice editor can present each step
+	 * as a card without changing the stored repeater value.
 	 */
 	function yoga_set_practice_steps_admin_column_widths(array $field): array {
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			return $field;
 		}
 
-		$widths = array(
-			'section_title'  => '25',
-			'exercise_items' => '75',
-		);
+		$field['layout'] = 'block';
 
 		foreach ($field['sub_fields'] as $index => $sub_field) {
-			$name = (string) ($sub_field['name'] ?? '');
-			if (!isset($widths[$name])) {
-				continue;
-			}
-
 			$field['sub_fields'][$index]['wrapper'] = is_array($sub_field['wrapper'] ?? null)
 				? $sub_field['wrapper']
 				: array();
-			$field['sub_fields'][$index]['wrapper']['width'] = $widths[$name];
+			$field['sub_fields'][$index]['wrapper']['width'] = '';
 		}
 
 		return $field;
