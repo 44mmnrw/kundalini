@@ -74,6 +74,10 @@
 			}
 			editor.decorate();
 			editor.refreshNavigation(preferredId);
+			if (editor.modalStack.length) {
+				editor.updateModalLayer();
+				editor.positionModalSurfaces();
+			}
 		}, 80);
 	}
 
@@ -98,6 +102,9 @@
 		this.$modalBackdrop = $();
 		this.$modalContext = $();
 		this.$portalPlaceholder = $();
+		this.portalScrollLeft = 0;
+		this.portalScrollTop = 0;
+		this.portalScrollPositions = [];
 		this.modalStack = [];
 	}
 
@@ -131,8 +138,8 @@
 				'</header>' +
 				'<div class="yoga-practice-editor__body">' +
 					'<aside class="yoga-practice-editor__sidebar" aria-label="Разделы практики">' +
-						'<button type="button" class="yoga-practice-editor__nav-button is-active" data-panel="general">' +
-							'<span class="yoga-practice-editor__nav-index">01</span>' +
+						'<button type="button" class="yoga-practice-editor__nav-button yoga-practice-editor__nav-button--general is-active" data-panel="general">' +
+							'<span class="yoga-practice-editor__nav-index yoga-practice-editor__nav-index--settings">' + spriteIcon('lk-sidebar-settings', 'yoga-practice-editor__general-icon') + '</span>' +
 							'<span class="yoga-practice-editor__nav-copy"><strong>' + labels.general + '</strong><small>Параметры практики</small></span>' +
 						'</button>' +
 						'<ol class="yoga-practice-editor__navigation"></ol>' +
@@ -387,7 +394,7 @@
 				'<li class="yoga-practice-editor__nav-item" data-layout-id="' + id + '">' +
 					'<span class="yoga-practice-editor__drag" role="button" tabindex="0" aria-label="' + labels.move + '"><span></span><span></span><span></span></span>' +
 					'<button type="button" class="yoga-practice-editor__nav-button" data-panel="' + id + '">' +
-						'<span class="yoga-practice-editor__nav-index">' + String(index + 2).padStart(2, '0') + '</span>' +
+						'<span class="yoga-practice-editor__nav-index">' + String(index + 1).padStart(2, '0') + '</span>' +
 						'<span class="yoga-practice-editor__nav-copy"><strong></strong><small></small></span>' +
 					'</button>' +
 					'<div class="yoga-practice-editor__nav-actions">' +
@@ -756,7 +763,7 @@
 			'<div class="yoga-practice-modal__toolbar">' +
 				'<button type="button" class="yoga-practice-modal__back"><span aria-hidden="true">' + spriteIcon('site-arrow', 'yoga-practice-editor__inline-arrow yoga-practice-editor__inline-arrow--back') + '</span> Назад</button>' +
 				'<div class="yoga-practice-modal__heading"><span></span><strong></strong></div>' +
-				'<button type="button" class="yoga-practice-modal__close" aria-label="Закрыть">×</button>' +
+				'<button type="button" class="yoga-practice-modal__close" aria-label="Закрыть">' + spriteIcon('icon-close', 'yoga-practice-modal__close-icon') + '</button>' +
 			'</div>'
 		);
 		$toolbar.find('.yoga-practice-modal__heading span').text(kind || labels.section);
@@ -825,19 +832,57 @@
 		}
 
 		this.updateModalLayer();
-		if (!this.modalStack.length) {
+		var restorePageScroll = !this.modalStack.length;
+		if (restorePageScroll) {
 			this.exitPortal();
 		}
 		if (item.focus && document.contains(item.focus)) {
-			$(item.focus).trigger('focus');
+			try {
+				item.focus.focus({ preventScroll: true });
+			} catch (error) {
+				item.focus.focus();
+			}
 		}
+		if (restorePageScroll) {
+			var self = this;
+			this.restorePortalScroll();
+			window.requestAnimationFrame(function () {
+				self.restorePortalScroll();
+			});
+		}
+	};
+
+	PracticeEditor.prototype.restorePortalScroll = function () {
+		window.scrollTo(this.portalScrollLeft, this.portalScrollTop);
+		this.portalScrollPositions.forEach(function (position) {
+			if (position.element && document.contains(position.element)) {
+				position.element.scrollLeft = position.left;
+				position.element.scrollTop = position.top;
+			}
+		});
 	};
 
 	PracticeEditor.prototype.enterPortal = function () {
 		if (this.$workspace.hasClass('yoga-practice-editor--portal')) {
 			return;
 		}
-		this.$portalPlaceholder = $('<span class="yoga-practice-editor__portal-placeholder" hidden></span>');
+		this.portalScrollLeft = window.pageXOffset || document.documentElement.scrollLeft || 0;
+		this.portalScrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+		this.portalScrollPositions = [];
+		var self = this;
+		this.$workspace.parents().each(function () {
+			var style = window.getComputedStyle(this);
+			var scrollableX = (style.overflowX === 'auto' || style.overflowX === 'scroll') && this.scrollWidth > this.clientWidth;
+			var scrollableY = (style.overflowY === 'auto' || style.overflowY === 'scroll') && this.scrollHeight > this.clientHeight;
+			if (scrollableX || scrollableY) {
+				self.portalScrollPositions.push({
+					element: this,
+					left: this.scrollLeft,
+					top: this.scrollTop
+				});
+			}
+		});
+		this.$portalPlaceholder = $('<div class="yoga-practice-editor__portal-placeholder" aria-hidden="true"></div>').height(this.$workspace.outerHeight());
 		this.$workspace.before(this.$portalPlaceholder);
 		this.$workspace.find('input, select, textarea').filter(function () {
 			return !this.hasAttribute('form');
@@ -857,6 +902,19 @@
 
 	PracticeEditor.prototype.updateModalLayer = function () {
 		var hasModal = this.modalStack.length > 0;
+		var workspaceNode = this.$workspace.get(0);
+		this.$workspace.find('.yoga-modal-layer-path').removeClass('yoga-modal-layer-path');
+		if (hasModal && workspaceNode) {
+			var $backdropHost = this.modalStack[0].$surface.parentsUntil(workspaceNode).filter('div, section, main').first();
+			this.$modalBackdrop.appendTo($backdropHost.length ? $backdropHost : this.$workspace);
+			this.modalStack.forEach(function (item) {
+				if (item.$surface && item.$surface.length && document.contains(item.$surface.get(0))) {
+					item.$surface.parentsUntil(workspaceNode).addClass('yoga-modal-layer-path');
+				}
+			});
+		} else {
+			this.$modalBackdrop.appendTo(this.$workspace);
+		}
 		this.$modalContext = this.$fieldGroup.closest('.edit-post-meta-boxes-main');
 		$('body').toggleClass('yoga-practice-modal-open', hasModal);
 		this.$modalContext.toggleClass('yoga-practice-modal-context', hasModal);
@@ -972,7 +1030,6 @@
 	};
 
 	PracticeEditor.prototype.updateRowHeader = function ($row) {
-		var collapsed = $row.hasClass('-collapsed');
 		$row.children('td.acf-fields').children('.yoga-row-card__header').find('.yoga-row-card__toggle')
 			.attr('aria-expanded', 'false')
 			.attr('title', 'Открыть в отдельном окне');
