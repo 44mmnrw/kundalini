@@ -807,7 +807,10 @@
 
 		item.$surface.removeClass('yoga-modal-surface yoga-field-modal-surface').removeAttr('role aria-modal aria-label').css('z-index', '');
 		['--yoga-modal-top', '--yoga-modal-right', '--yoga-modal-bottom', '--yoga-modal-left'].forEach(function (property) {
-			item.$surface.get(0).style.removeProperty(property);
+			var surface = item.$surface.get(0);
+			if (surface) {
+				surface.style.removeProperty(property);
+			}
 		});
 		item.$owner.removeClass('yoga-modal-owner');
 		item.$owner.removeClass('yoga-field-modal-parent');
@@ -848,6 +851,7 @@
 		if (restorePageScroll) {
 			var self = this;
 			this.restorePortalScroll();
+			scheduleRefresh(this.activeId);
 			window.requestAnimationFrame(function () {
 				self.restorePortalScroll();
 			});
@@ -864,12 +868,24 @@
 		});
 	};
 
+	PracticeEditor.prototype.toggleWysiwygEditors = function (enable) {
+		this.$workspace.find('.acf-field-wysiwyg').each(function () {
+			var field = acf.getField($(this));
+			if (!field) {
+				return;
+			}
+			if (enable && typeof field.enableEditor === 'function') {
+				field.enableEditor();
+			} else if (!enable && typeof field.disableEditor === 'function') {
+				field.disableEditor();
+			}
+		});
+	};
+
 	PracticeEditor.prototype.enterPortal = function () {
 		if (this.$workspace.hasClass('yoga-practice-editor--portal')) {
 			return;
 		}
-		this.$portalParent = this.$workspace.parent();
-		this.portalNextSibling = this.$workspace.next().get(0) || null;
 		this.portalScrollLeft = window.pageXOffset || document.documentElement.scrollLeft || 0;
 		this.portalScrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
 		this.portalScrollPositions = [];
@@ -886,19 +902,23 @@
 				});
 			}
 		});
+		this.toggleWysiwygEditors(false);
+		this.$portalParent = this.$workspace.parent();
+		this.portalNextSibling = this.$workspace.next().get(0) || null;
 		this.$portalPlaceholder = $('<div class="yoga-practice-editor__portal-placeholder" aria-hidden="true"></div>').height(this.$workspace.outerHeight());
 		this.$workspace.before(this.$portalPlaceholder);
 		this.$workspace.find('input, select, textarea').filter(function () {
 			return !this.hasAttribute('form');
 		}).attr('data-yoga-form-added', '1').attr('form', this.postFormId);
 		this.$workspace.addClass('yoga-practice-editor--portal').appendTo('body');
+		this.toggleWysiwygEditors(true);
 	};
 
 	PracticeEditor.prototype.exitPortal = function () {
-		var isPortal = this.$workspace.hasClass('yoga-practice-editor--portal');
-		if (!isPortal && !this.$portalPlaceholder.length) {
+		if (!this.$workspace.hasClass('yoga-practice-editor--portal') && !this.$portalPlaceholder.length) {
 			return;
 		}
+		this.toggleWysiwygEditors(false);
 		this.$workspace.find('[data-yoga-form-added="1"]').removeAttr('form data-yoga-form-added');
 		this.$workspace.removeClass('yoga-practice-editor--portal');
 
@@ -920,6 +940,7 @@
 		this.$portalPlaceholder = $();
 		this.$portalParent = $();
 		this.portalNextSibling = null;
+		this.toggleWysiwygEditors(true);
 	};
 
 	PracticeEditor.prototype.updateModalLayer = function () {
