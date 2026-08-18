@@ -1216,6 +1216,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	right: var(--yoga-backdrop-right, 0);
 	bottom: var(--yoga-backdrop-bottom, 0);
 	left: var(--yoga-backdrop-left, 0);
+	z-index: 100100;
 	display: none;
 	background: rgba(22, 18, 27, 0.68);
 	backdrop-filter: blur(5px);
