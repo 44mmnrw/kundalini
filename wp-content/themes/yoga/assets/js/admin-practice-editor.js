@@ -447,7 +447,7 @@
 						'<span class="yoga-practice-editor__nav-copy"><strong></strong><small></small></span>' +
 					'</button>' +
 					'<div class="yoga-practice-editor__nav-actions">' +
-						'<button type="button" data-yoga-action="duplicate" aria-label="' + labels.duplicate + '">' + spriteIcon('icon-copy') + '</button>' +
+						'<button type="button" data-yoga-action="duplicate" aria-label="' + labels.duplicate + '">' + spriteIcon('icon-copy', 'yoga-practice-editor__copy-icon') + '</button>' +
 						'<button type="button" data-yoga-action="remove" aria-label="' + labels.remove + '">' + spriteIcon('icon-close') + '</button>' +
 					'</div>' +
 				'</li>'
