@@ -567,6 +567,9 @@
 
 		var $branches = $('<div class="yoga-practice-visual-map__branches"></div>');
 		var $steps = directRows(directField($layout, 'steps'));
+		$branches
+			.addClass('has-' + Math.max(1, Math.min($steps.length, 3)) + '-columns')
+			.toggleClass('is-empty', !$steps.length);
 		$steps.each(function (stepIndex) {
 			var $step = $(this);
 			var stepId = self.rowVisualId($step);
