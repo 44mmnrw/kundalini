@@ -559,7 +559,7 @@
 .yoga-practice-visual-map__node {
 	position: relative;
 	display: grid;
-	grid-template-columns: 38px minmax(0, 1fr) 20px;
+	grid-template-columns: 38px minmax(0, 1fr) 34px;
 	align-items: center;
 	gap: 11px;
 	box-sizing: border-box;
