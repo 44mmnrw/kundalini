@@ -153,7 +153,7 @@
 							'<span class="yoga-practice-editor__panel-kicker">Редактирование</span>' +
 							'<h3></h3>' +
 							'<p>Поля откроются в отдельном окне без вложенных вкладок.</p>' +
-							'<button type="button" class="yoga-practice-editor__open-panel">Открыть редактор</button>' +
+							'<button type="button" class="yoga-practice-editor__open-panel"><span>Открыть редактор</span><span class="yoga-practice-editor__open-panel-icon" aria-hidden="true">' + spriteIcon('icon-edit') + '</span></button>' +
 						'</div>' +
 						'<div class="yoga-practice-visual-map" aria-live="polite"></div>' +
 						'<section class="yoga-practice-editor__panel yoga-practice-editor__panel--general is-active" data-panel="general"></section>' +
@@ -499,7 +499,7 @@
 			'<button type="button" class="yoga-practice-visual-map__node">' +
 				'<span class="yoga-practice-visual-map__number"></span>' +
 				'<span class="yoga-practice-visual-map__copy"><strong></strong><small></small></span>' +
-				'<span class="yoga-practice-visual-map__arrow" aria-hidden="true">' + spriteIcon('site-arrow') + '</span>' +
+				'<span class="yoga-practice-visual-map__edit" aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-practice-visual-map__edit-icon') + '</span>' +
 			'</button>'
 		);
 		$node.find('strong').text(title);
@@ -1131,7 +1131,7 @@
 						'<span class="yoga-row-card__eyebrow"></span>' +
 						'<strong></strong>' +
 						'<small></small>' +
-						'<span class="yoga-row-card__chevron" aria-hidden="true">' + spriteIcon('chevron-right') + '</span>' +
+						'<span class="yoga-row-card__edit" aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-row-card__edit-icon') + '</span>' +
 					'</button>' +
 				'</div>'
 			);
@@ -1155,6 +1155,8 @@
 				event.stopImmediatePropagation();
 				self.openRowModal($row);
 			});
+		$header.find('.yoga-row-card__edit')
+			.html(spriteIcon('icon-edit', 'yoga-row-card__edit-icon'));
 
 		var $removeButton = $header.children('.yoga-row-card__remove');
 		if (type === 'modification') {
@@ -1203,7 +1205,7 @@
 			$accordion.children('.acf-accordion-content').hide();
 		}
 		if (!$title.children('.yoga-accordion-card__edit').length) {
-			$title.append('<button type="button" class="yoga-accordion-card__edit" aria-haspopup="dialog" aria-label="Редактировать"><span aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-accordion-card__edit-icon') + '</span><i aria-hidden="true">' + spriteIcon('site-arrow', 'yoga-practice-editor__inline-arrow') + '</i></button>');
+			$title.append('<button type="button" class="yoga-accordion-card__edit" aria-haspopup="dialog" aria-label="Редактировать"><span aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-accordion-card__edit-icon') + '</span></button>');
 		}
 		if (isMainModification) {
 			var mainLabel = labels.mainModification || 'Основная модификация';
