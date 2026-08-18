@@ -42,6 +42,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 		$style_path = $theme_dir . '/assets/css/admin-practice-editor.css';
 		$script_path = $theme_dir . '/assets/js/admin-practice-editor.js';
 		$font_path = $theme_dir . '/assets/css/mulish.css';
+		$sprite_path = $theme_dir . '/assets/svg/sprite.svg';
 
 		wp_enqueue_style(
 			'yoga-admin-practice-editor-font',
@@ -78,7 +79,11 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 			'yogaPracticeEditor',
 			array(
 				'classicUrl' => $classic_url,
-				'spriteUrl'  => $theme_uri . '/assets/svg/sprite.svg',
+				'spriteUrl'  => add_query_arg(
+					'ver',
+					file_exists($sprite_path) ? (string) filemtime($sprite_path) : '1.0.0',
+					$theme_uri . '/assets/svg/sprite.svg'
+				),
 				'labels' => array(
 					'editorTitle' => 'Редактор практики',
 					'editorDescription' => 'Выберите раздел слева и заполните его содержимое.',

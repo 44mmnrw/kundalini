@@ -1203,7 +1203,7 @@
 			$accordion.children('.acf-accordion-content').hide();
 		}
 		if (!$title.children('.yoga-accordion-card__edit').length) {
-			$title.append('<button type="button" class="yoga-accordion-card__edit" aria-haspopup="dialog"><span>Редактировать</span><i aria-hidden="true">' + spriteIcon('site-arrow', 'yoga-practice-editor__inline-arrow') + '</i></button>');
+			$title.append('<button type="button" class="yoga-accordion-card__edit" aria-haspopup="dialog" aria-label="Редактировать"><span aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-accordion-card__edit-icon') + '</span><i aria-hidden="true">' + spriteIcon('site-arrow', 'yoga-practice-editor__inline-arrow') + '</i></button>');
 		}
 		if (isMainModification) {
 			var mainLabel = labels.mainModification || 'Основная модификация';
