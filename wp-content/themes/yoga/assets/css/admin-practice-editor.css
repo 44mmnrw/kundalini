@@ -892,6 +892,12 @@
 	display: none;
 }
 
+/* The main modification name is hidden in structural views, but it is a real
+ * editable value inside the main modification modal. */
+.yoga-modern-practice-editor .acf-field-ex-admin-main-modification.yoga-modal-surface .acf-field[data-name="main_modification_name"] {
+	display: block;
+}
+
 .yoga-modern-practice-editor .acf-field.yoga-legacy-exercise-field,
 .yoga-modern-practice-editor .acf-field[data-key="field_ex_modification_name"],
 .yoga-modern-practice-editor .acf-field[data-name="matter_mod"],
@@ -1533,6 +1539,33 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 .yoga-modern-practice-editor .yoga-row-card--modification .yoga-row-card__header {
 	min-height: 72px;
 	background: var(--yoga-editor-white) !important;
+}
+
+.yoga-modern-practice-editor .acf-field-ex-admin-main-modification.yoga-accordion-card:not(.yoga-modal-surface) > .acf-accordion-title > label {
+	display: none;
+}
+
+.yoga-modification-card__summary {
+	display: grid;
+	min-width: 0;
+}
+
+.yoga-modification-card__summary small {
+	color: var(--yoga-editor-violet);
+	font-size: 9px;
+	font-weight: 900;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.yoga-modification-card__summary strong {
+	margin-top: 3px;
+	overflow: hidden;
+	color: var(--yoga-editor-black);
+	font-size: 14px;
+	font-weight: 900;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .yoga-modern-practice-editor .acf-gallery,

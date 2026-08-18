@@ -100,6 +100,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 					'step' => 'Шаг',
 					'exercise' => 'Упражнение',
 					'modification' => 'Модификация',
+					'mainModification' => 'Основная модификация',
 					'additionalModification' => 'Дополнительная модификация',
 				),
 				'layoutLabels' => array(
