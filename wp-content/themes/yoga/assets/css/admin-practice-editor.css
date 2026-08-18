@@ -359,6 +359,15 @@
 	transform-origin: center;
 }
 
+.yoga-practice-editor__copy-icon {
+	display: block;
+	flex: 0 0 13px;
+	width: 13px;
+	height: 16px;
+	margin: auto;
+	color: currentColor;
+}
+
 .yoga-practice-editor__nav-placeholder {
 	height: 62px;
 	margin: 5px 0;
