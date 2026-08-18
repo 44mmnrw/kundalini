@@ -1018,10 +1018,9 @@
 		var workspaceNode = this.$workspace.get(0);
 		this.$workspace.find('.yoga-modal-layer-path').removeClass('yoga-modal-layer-path');
 		if (hasModal && workspaceNode) {
-			// Keep the backdrop outside ACF repeaters. ACF may rebuild their DOM after
-			// appending a row, which used to move the backdrop into a stale stacking
-			// context and cover every remaining modal on Back/Close.
-			this.$modalBackdrop.appendTo('body');
+			// Keep the backdrop in the stable workspace root: outside ACF repeaters,
+			// but in the same stacking context as every modal surface.
+			this.$modalBackdrop.prependTo(this.$workspace);
 			this.modalStack.forEach(function (item, index) {
 				if (item.$surface && item.$surface.length && document.contains(item.$surface.get(0))) {
 					item.$surface
