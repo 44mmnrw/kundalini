@@ -841,10 +841,12 @@
 			$toolbar: $toolbar,
 			focus: document.activeElement
 		});
+		$surface.scrollTop(0);
 		this.positionModalSurfaces();
 		this.updateModalLayer();
 		acf.doAction('show', $surface, 'yoga_practice_modal');
 		window.setTimeout(function () {
+			$surface.scrollTop(0);
 			$toolbar.find('.yoga-practice-modal__back').trigger('focus');
 		}, 0);
 	};
@@ -1177,6 +1179,9 @@
 	};
 
 	PracticeEditor.prototype.updateRowHeader = function ($row) {
+		if ($row.hasClass('yoga-row-card--modification')) {
+			$row.children('td.acf-fields').children('.acf-field.-collapsed-target').removeClass('-collapsed-target');
+		}
 		$row.children('td.acf-fields').children('.yoga-row-card__header').find('.yoga-row-card__toggle')
 			.attr('aria-expanded', 'false')
 			.attr('title', 'Открыть в отдельном окне');
@@ -1191,6 +1196,7 @@
 		if (!$title.length) {
 			return;
 		}
+		var isMainModification = $accordion.hasClass('acf-field-ex-admin-main-modification');
 		$accordion.addClass('yoga-accordion-card');
 		if (!$accordion.hasClass('yoga-modal-surface')) {
 			$accordion.removeClass('-open');
@@ -1198,6 +1204,17 @@
 		}
 		if (!$title.children('.yoga-accordion-card__edit').length) {
 			$title.append('<button type="button" class="yoga-accordion-card__edit" aria-haspopup="dialog"><span>Редактировать</span><i aria-hidden="true">' + spriteIcon('site-arrow', 'yoga-practice-editor__inline-arrow') + '</i></button>');
+		}
+		if (isMainModification) {
+			var mainLabel = labels.mainModification || 'Основная модификация';
+			var mainTitle = inputValue($accordion.find('.acf-field[data-name="main_modification_name"]').first()) || mainLabel;
+			var $summary = $title.children('.yoga-modification-card__summary');
+			if (!$summary.length) {
+				$summary = $('<span class="yoga-modification-card__summary"><small></small><strong></strong></span>').prependTo($title);
+			}
+			$summary.children('small').text(mainLabel);
+			$summary.children('strong').text(mainTitle);
+			$title.children('label').attr('aria-hidden', 'true');
 		}
 		$title.off('click.yogaModal').on('click.yogaModal', function (event) {
 			event.preventDefault();
