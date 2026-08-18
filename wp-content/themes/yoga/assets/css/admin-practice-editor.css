@@ -423,6 +423,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	gap: 12px;
 	min-height: 46px;
 	padding: 0 22px;
 	border: 0;
@@ -433,10 +434,20 @@
 	cursor: pointer;
 }
 
-.yoga-practice-editor__open-panel::after {
-	content: "\2192";
-	margin-left: 12px;
-	font-size: 18px;
+.yoga-practice-editor__open-panel-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.16);
+}
+
+.yoga-practice-editor__open-panel-icon .yoga-practice-editor__action-icon {
+	display: block;
+	width: 15px;
+	height: 14px;
 }
 
 .yoga-practice-editor__panel-heading .yoga-practice-editor__panel-kicker {
@@ -615,14 +626,22 @@
 	font-size: 9px;
 }
 
-.yoga-practice-visual-map__arrow {
-	color: var(--yoga-editor-violet);
+.yoga-practice-visual-map__edit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: var(--yoga-editor-violet-soft);
+	color: var(--yoga-editor-violet-dark);
 }
 
-.yoga-practice-visual-map__arrow .yoga-practice-editor__action-icon {
+.yoga-practice-visual-map__edit-icon {
 	display: block;
-	width: 18px;
-	height: 18px;
+	width: 15px;
+	height: 14px;
 }
 
 .yoga-practice-visual-map__attention {
@@ -1027,7 +1046,7 @@
 .yoga-row-card__remove {
 	position: absolute;
 	top: 50%;
-	right: 48px;
+	right: 8px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -1082,24 +1101,30 @@
 	font-size: 10px;
 }
 
-.yoga-row-card__chevron {
+.yoga-row-card__edit {
 	position: absolute;
 	top: 50%;
-	right: 20px;
-	width: 9px;
-	height: 16px;
+	right: 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: var(--yoga-editor-violet-soft);
+	color: var(--yoga-editor-violet-dark);
 	transform: translateY(-50%);
-	transition: transform 0.2s ease;
 }
 
-.yoga-row-card.-collapsed .yoga-row-card__chevron {
-	transform: translateY(-50%);
+.yoga-row-card--modification .yoga-row-card__edit {
+	right: 48px;
 }
 
-.yoga-row-card__chevron .yoga-practice-editor__action-icon {
+.yoga-row-card__edit-icon {
 	display: block;
-	width: 9px;
-	height: 16px;
+	width: 15px;
+	height: 14px;
 }
 
 .yoga-modern-practice-editor .yoga-row-card > td.acf-row-handle .acf-icon[data-event="collapse-row"] {
@@ -1463,10 +1488,14 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 .yoga-accordion-card__edit {
 	display: inline-flex;
 	align-items: center;
+	flex: 0 0 auto;
 	gap: 10px;
-	min-width: 70px;
-	min-height: 40px;
-	padding: 0 13px;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	min-height: 36px;
+	padding: 0;
 	border: 0;
 	border-radius: 999px;
 	background: var(--yoga-editor-violet-soft);
@@ -1487,11 +1516,6 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	width: 15px;
 	height: 14px;
 	color: currentColor;
-}
-
-.yoga-accordion-card__edit i {
-	display: block;
-	font-style: normal;
 }
 
 .yoga-modern-practice-editor .yoga-accordion-card:not(.yoga-modal-surface) > .acf-accordion-content {
