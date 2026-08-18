@@ -73,11 +73,12 @@
 				return;
 			}
 			editor.decorate();
-			editor.refreshNavigation(preferredId);
 			if (editor.modalStack.length) {
 				editor.updateModalLayer();
 				editor.positionModalSurfaces();
+				return;
 			}
+			editor.refreshNavigation(preferredId);
 		}, 80);
 	}
 
@@ -846,8 +847,11 @@
 	};
 
 	PracticeEditor.prototype.closeTopModal = function () {
+		this.pruneModalStack();
 		var item = this.modalStack.pop();
 		if (!item) {
+			this.updateModalLayer();
+			this.exitPortal();
 			return;
 		}
 
@@ -883,6 +887,7 @@
 		}
 
 		this.updateModalLayer();
+		this.positionModalSurfaces();
 		var restorePageScroll = !this.modalStack.length;
 		if (restorePageScroll) {
 			this.exitPortal();
@@ -902,6 +907,24 @@
 				self.restorePortalScroll();
 			});
 		}
+	};
+
+	PracticeEditor.prototype.pruneModalStack = function () {
+		this.modalStack = this.modalStack.filter(function (item) {
+			var surface = item.$surface && item.$surface.get(0);
+			var isLive = surface && document.contains(surface) && item.$surface.hasClass('yoga-modal-surface');
+
+			if (!isLive) {
+				if (item.$toolbar) {
+					item.$toolbar.remove();
+				}
+				if (item.$owner) {
+					item.$owner.removeClass('yoga-modal-owner');
+				}
+			}
+
+			return isLive;
+		});
 	};
 
 	PracticeEditor.prototype.restorePortalScroll = function () {
@@ -990,15 +1013,19 @@
 	};
 
 	PracticeEditor.prototype.updateModalLayer = function () {
+		this.pruneModalStack();
 		var hasModal = this.modalStack.length > 0;
 		var workspaceNode = this.$workspace.get(0);
 		this.$workspace.find('.yoga-modal-layer-path').removeClass('yoga-modal-layer-path');
 		if (hasModal && workspaceNode) {
 			var $backdropHost = this.modalStack[0].$surface.parentsUntil(workspaceNode).filter('div, section, main').first();
 			this.$modalBackdrop.appendTo($backdropHost.length ? $backdropHost : this.$workspace);
-			this.modalStack.forEach(function (item) {
+			this.modalStack.forEach(function (item, index) {
 				if (item.$surface && item.$surface.length && document.contains(item.$surface.get(0))) {
-					item.$surface.parentsUntil(workspaceNode).addClass('yoga-modal-layer-path');
+					item.$surface
+						.addClass('yoga-modal-layer-path')
+						.css('z-index', 100102 + index * 2)
+						.parentsUntil(workspaceNode).addClass('yoga-modal-layer-path');
 				}
 			});
 		} else {
