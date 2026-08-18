@@ -394,6 +394,7 @@
 }
 
 .lk-sadhana-card {
+  position: relative;
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -430,17 +431,20 @@
 }
 
 .lk-sadhana-card__link {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
   display: block;
-  width: 1.875rem;
-  height: 1.875rem;
-  flex: 0 0 1.875rem;
-  border-radius: 50%;
+  border-radius: 1.875rem;
 }
 
 .lk-sadhana-card__link svg {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.875rem;
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 1.875rem;
+  height: 1.875rem;
 }
 
 .lk-sadhana-card__copy {
@@ -495,6 +499,8 @@
 
 .lk-sadhana-card__cancel,
 .lk-sadhana-card__restart {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   width: 100%;
   min-height: 2.375rem;
