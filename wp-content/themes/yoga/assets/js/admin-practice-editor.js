@@ -748,7 +748,7 @@
 		var $layout = $row.closest('.layout');
 		$layout.addClass('yoga-direct-row-modal-parent');
 		if ($row.hasClass('yoga-row-card--step')) {
-			this.openRowModal($row);
+			this.openRowModal($row, true);
 			return;
 		}
 		var $step = $row.parents('tr.yoga-row-card--step').first();
@@ -759,7 +759,7 @@
 			}
 			$step.addClass('yoga-direct-row-modal-path');
 		}
-		this.openRowModal($row);
+		this.openRowModal($row, true);
 	};
 
 	PracticeEditor.prototype.openSelectedPanel = function () {
@@ -782,7 +782,7 @@
 		};
 	};
 
-	PracticeEditor.prototype.openRowModal = function ($row) {
+	PracticeEditor.prototype.openRowModal = function ($row, ownsDirectPath) {
 		var $repeaterField = $row.closest('.acf-field-repeater');
 		var repeater = acf.getField($repeaterField);
 		if (repeater && $row.hasClass('-collapsed') && typeof repeater.expand === 'function') {
@@ -790,6 +790,9 @@
 		}
 		var heading = this.modalTitleForRow($row);
 		this.openModal($row.children('td.acf-fields'), heading.title, heading.kind, $row);
+		if (ownsDirectPath && this.modalStack.length) {
+			this.modalStack[this.modalStack.length - 1].ownsDirectPath = true;
+		}
 	};
 
 	PracticeEditor.prototype.openAccordionModal = function ($accordion) {
@@ -849,63 +852,70 @@
 	PracticeEditor.prototype.closeTopModal = function () {
 		this.pruneModalStack();
 		var item = this.modalStack.pop();
+		var self = this;
 		if (!item) {
 			this.updateModalLayer();
 			this.exitPortal();
 			return;
 		}
 
-		item.$surface.removeClass('yoga-modal-surface yoga-field-modal-surface').removeAttr('role aria-modal aria-label').css('z-index', '');
-		['--yoga-modal-top', '--yoga-modal-right', '--yoga-modal-bottom', '--yoga-modal-left'].forEach(function (property) {
-			var surface = item.$surface.get(0);
-			if (surface) {
-				surface.style.removeProperty(property);
-			}
-		});
-		item.$owner.removeClass('yoga-modal-owner');
-		item.$owner.removeClass('yoga-field-modal-parent');
-		item.$toolbar.remove();
-
-		if (item.$owner.is('tr.acf-row')) {
-			var repeater = acf.getField(item.$owner.closest('.acf-field-repeater'));
-			if (repeater && typeof repeater.collapse === 'function') {
-				repeater.collapse(item.$owner);
-			}
-			this.updateRowHeader(item.$owner);
-			this.$workspace.find('tr.yoga-direct-row-modal-path').each(function () {
-				var $pathRow = $(this);
-				var pathRepeater = acf.getField($pathRow.closest('.acf-field-repeater'));
-				if (pathRepeater && typeof pathRepeater.collapse === 'function') {
-					pathRepeater.collapse($pathRow);
+		try {
+			item.$surface.removeClass('yoga-modal-surface yoga-field-modal-surface').removeAttr('role aria-modal aria-label').css('z-index', '');
+			['--yoga-modal-top', '--yoga-modal-right', '--yoga-modal-bottom', '--yoga-modal-left'].forEach(function (property) {
+				var surface = item.$surface.get(0);
+				if (surface) {
+					surface.style.removeProperty(property);
 				}
-				$pathRow.removeClass('yoga-direct-row-modal-path');
 			});
-			this.$workspace.find('.yoga-direct-row-modal-parent').removeClass('yoga-direct-row-modal-parent');
-		} else if (item.$owner.hasClass('acf-accordion')) {
-			item.$owner.removeClass('-open');
-			item.$owner.children('.acf-accordion-content').hide();
-		}
+			item.$owner.removeClass('yoga-modal-owner yoga-field-modal-parent');
+			item.$toolbar.remove();
 
-		this.updateModalLayer();
-		this.positionModalSurfaces();
-		var restorePageScroll = !this.modalStack.length;
-		if (restorePageScroll) {
-			this.exitPortal();
-		}
-		if (item.focus && document.contains(item.focus)) {
-			try {
-				item.focus.focus({ preventScroll: true });
-			} catch (error) {
-				item.focus.focus();
+			if (item.$owner.is('tr.acf-row')) {
+				var repeater = acf.getField(item.$owner.closest('.acf-field-repeater'));
+				if (repeater && typeof repeater.collapse === 'function') {
+					repeater.collapse(item.$owner);
+				}
+				this.updateRowHeader(item.$owner);
+				if (item.ownsDirectPath) {
+					this.$workspace.find('tr.yoga-direct-row-modal-path').each(function () {
+						var $pathRow = $(this);
+						var pathRepeater = acf.getField($pathRow.closest('.acf-field-repeater'));
+						if (pathRepeater && typeof pathRepeater.collapse === 'function') {
+							pathRepeater.collapse($pathRow);
+						}
+						$pathRow.removeClass('yoga-direct-row-modal-path');
+					});
+					this.$workspace.find('.yoga-direct-row-modal-parent').removeClass('yoga-direct-row-modal-parent');
+				}
+			} else if (item.$owner.hasClass('acf-accordion')) {
+				item.$owner.removeClass('-open');
+				item.$owner.children('.acf-accordion-content').hide();
 			}
-		}
-		if (restorePageScroll) {
-			var self = this;
-			this.restorePortalScroll();
-			scheduleRefresh(this.activeId);
-			window.requestAnimationFrame(function () {
-				self.restorePortalScroll();
-			});
+		} catch (error) {
+			window.console.error('Practice editor modal cleanup failed.', error);
+		} finally {
+			// Never leave the backdrop active after its surface has been removed.
+			// Newly appended ACF rows may throw while their repeater is collapsing.
+			this.updateModalLayer();
+			this.positionModalSurfaces();
+			var restorePageScroll = !this.modalStack.length;
+			if (restorePageScroll) {
+				this.exitPortal();
+			}
+			if (item.focus && document.contains(item.focus)) {
+				try {
+					item.focus.focus({ preventScroll: true });
+				} catch (focusError) {
+					item.focus.focus();
+				}
+			}
+			if (restorePageScroll) {
+				this.restorePortalScroll();
+				scheduleRefresh(this.activeId);
+				window.requestAnimationFrame(function () {
+					self.restorePortalScroll();
+				});
+			}
 		}
 	};
 
