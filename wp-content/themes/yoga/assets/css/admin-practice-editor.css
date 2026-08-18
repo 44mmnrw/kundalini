@@ -990,6 +990,7 @@
 }
 
 .yoga-row-card__header {
+	position: relative;
 	display: block;
 	background: var(--yoga-editor-white);
 }
@@ -1011,6 +1012,42 @@
 	color: var(--yoga-editor-black);
 	text-align: left;
 	cursor: pointer;
+}
+
+.yoga-modern-practice-editor .yoga-row-card--modification .yoga-row-card__toggle {
+	padding-right: 94px;
+}
+
+.yoga-row-card__remove {
+	position: absolute;
+	top: 50%;
+	right: 48px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: #fff0f0;
+	color: var(--yoga-editor-danger);
+	cursor: pointer;
+	transform: translateY(-50%);
+}
+
+.yoga-row-card__remove:hover,
+.yoga-row-card__remove:focus-visible {
+	background: var(--yoga-editor-danger);
+	color: var(--yoga-editor-white);
+}
+
+.yoga-row-card__remove-icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	color: currentColor;
 }
 
 .yoga-row-card__eyebrow,

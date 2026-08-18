@@ -93,6 +93,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 					'duplicate' => 'Дублировать',
 					'remove' => 'Удалить',
 					'confirmRemoveSection' => 'Удалить эту секцию? Действие применится после сохранения практики.',
+					'confirmRemoveModification' => 'Удалить эту дополнительную модификацию? Действие применится после сохранения практики.',
 					'expand' => 'Раскрыть',
 					'collapse' => 'Свернуть',
 					'section' => 'Секция',

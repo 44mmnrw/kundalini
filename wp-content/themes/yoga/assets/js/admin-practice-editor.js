@@ -353,6 +353,52 @@
 		}
 	};
 
+	PracticeEditor.prototype.removeModification = function ($row, $trigger) {
+		if (!$row || !$row.length) {
+			return;
+		}
+
+		var self = this;
+		var removeRow = function () {
+			var $repeaterField = $row.closest('.acf-field-repeater');
+			var repeater = acf.getField($repeaterField);
+			if (repeater && typeof repeater.remove === 'function') {
+				repeater.remove($row);
+			} else {
+				var $nativeRemove = $row.children('td.acf-row-handle.remove').find('[data-event="remove-row"]').first();
+				if (!$nativeRemove.length) {
+					return;
+				}
+				$nativeRemove.trigger($.Event('click', { shiftKey: true }));
+			}
+
+			window.setTimeout(function () {
+				scheduleRefresh(self.activeId);
+			}, 150);
+		};
+
+		if (typeof acf.newTooltip === 'function' && $trigger && $trigger.length) {
+			$row.addClass('-hover');
+			acf.newTooltip({
+				confirmRemove: true,
+				target: $trigger,
+				context: this,
+				confirm: function () {
+					$row.removeClass('-hover');
+					removeRow();
+				},
+				cancel: function () {
+					$row.removeClass('-hover');
+				}
+			});
+			return;
+		}
+
+		if (window.confirm(labels.confirmRemoveModification)) {
+			removeRow();
+		}
+	};
+
 	PracticeEditor.prototype.layoutSummary = function ($layout) {
 		var type = String($layout.attr('data-layout') || '');
 		var typeLabel = layoutLabels[type] || labels.section;
@@ -1069,6 +1115,26 @@
 				event.stopImmediatePropagation();
 				self.openRowModal($row);
 			});
+
+		var $removeButton = $header.children('.yoga-row-card__remove');
+		if (type === 'modification') {
+			if (!$removeButton.length) {
+				$removeButton = $('<button type="button" class="yoga-row-card__remove">' + spriteIcon('checkout-trash', 'yoga-row-card__remove-icon') + '</button>').appendTo($header);
+			}
+			$removeButton
+				.attr({
+					'aria-label': labels.remove + ': ' + title,
+					title: labels.remove
+				})
+				.off('click.yogaRemoveModification')
+				.on('click.yogaRemoveModification', function (event) {
+					event.preventDefault();
+					event.stopImmediatePropagation();
+					self.removeModification($row, $removeButton);
+				});
+		} else {
+			$removeButton.remove();
+		}
 		this.updateRowHeader($row);
 	};
 
