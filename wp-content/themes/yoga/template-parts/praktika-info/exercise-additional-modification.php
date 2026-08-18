@@ -18,6 +18,8 @@ $variant_timing = !empty($additional_modification['timing']) && is_array($additi
 	: array();
 $variant_media_type = (string) ($additional_modification['media_type'] ?? 'none');
 $variant_media_file = $additional_modification['media_file'] ?? array();
+$variant_video_source = (string) ($additional_modification['video_source'] ?? 'file');
+$variant_kinescope_url = (string) ($additional_modification['kinescope_url'] ?? '');
 $variant_gallery = yoga_normalize_practice_exercise_gallery($additional_modification['gallery'] ?? array());
 $variant_content = $additional_modification['content'] ?? '';
 $variant_show_timer = $variant_timing !== array();
@@ -142,15 +144,17 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 
 	<div class="player">
 		<div class="player__plug">
-			<?php if (!empty($variant_media_file) && $variant_media_type !== 'none'): ?>
-			<div class="exercise-player" data-version="<?php echo esc_attr($additional_modification_version); ?>" data-media-type="<?php echo esc_attr($variant_media_type); ?>" data-media-src="<?php echo esc_url($variant_media_file['url'] ?? ''); ?>" data-allow-fullscreen="<?php echo $allow_fullscreen ? 'true' : 'false'; ?>" data-restrict-scrub="<?php echo $restrict_scrub ? 'true' : 'false'; ?>" data-auto-play="<?php echo $auto_play ? 'true' : 'false'; ?>">
-				<?php if ($variant_media_type === 'audio'): ?>
-				<audio controls><source src="<?php echo esc_url($variant_media_file['url'] ?? ''); ?>" type="audio/mp3"></audio>
-				<?php elseif ($variant_media_type === 'video'): ?>
-				<video controls playsinline><source src="<?php echo esc_url($variant_media_file['url'] ?? ''); ?>" type="video/mp4">Ваш браузер не поддерживает видео тег.</video>
-				<?php endif; ?>
-			</div>
-			<?php endif; ?>
+			<?php yoga_render_practice_media_player(array(
+				'media_type'       => $variant_media_type,
+				'media_file'       => $variant_media_file,
+				'video_source'     => $variant_video_source,
+				'kinescope_url'    => $variant_kinescope_url,
+				'version'          => $additional_modification_version,
+				'player_id'        => 'kinescope-player-' . $index . '-' . $ex_idx . '-' . $additional_modification_version,
+				'allow_fullscreen' => $allow_fullscreen,
+				'restrict_scrub'   => $restrict_scrub,
+				'auto_play'        => $auto_play,
+			)); ?>
 		</div>
 	</div>
 

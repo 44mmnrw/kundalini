@@ -4,6 +4,128 @@
  * @package Yoga
  */
 
+function getKinescopePlayerFactory(timeout = 10000) {
+    const existingFactory = window.Kinescope && window.Kinescope.IframePlayer;
+    if (existingFactory && typeof existingFactory.create === 'function') {
+        return Promise.resolve(existingFactory);
+    }
+    if (window.kinescopeIframeApiPromise) {
+        return window.kinescopeIframeApiPromise;
+    }
+
+    const startedAt = Date.now();
+
+    window.kinescopeIframeApiPromise = new Promise((resolve, reject) => {
+        const checkFactory = () => {
+            const factory = window.Kinescope && window.Kinescope.IframePlayer;
+            if (factory && typeof factory.create === 'function') {
+                resolve(factory);
+                return;
+            }
+
+            if (Date.now() - startedAt >= timeout) {
+                reject(new Error('Kinescope IFrame API is not available'));
+                return;
+            }
+
+            setTimeout(checkFactory, 100);
+        };
+
+        let script = document.getElementById('kinescope-iframe-api');
+        if (!script) {
+            script = document.createElement('script');
+            script.id = 'kinescope-iframe-api';
+            script.src = 'https://player.kinescope.io/latest/iframe.player.js';
+            script.async = true;
+            script.addEventListener('error', () => reject(new Error('Failed to load Kinescope IFrame API')));
+            document.head.appendChild(script);
+        }
+
+        checkFactory();
+    });
+
+    return window.kinescopeIframeApiPromise;
+}
+
+function createKinescopePlayerAdapter(playerElement, callbacks = {}) {
+    const target = playerElement.querySelector('.kinescope-player-container');
+    const videoUrl = playerElement.dataset.mediaSrc || '';
+    let apiPlayer = null;
+    let playing = false;
+
+    const adapter = {
+        isKinescope: true,
+        get playing() {
+            return playing;
+        },
+        play() {
+            playing = true;
+            return readyPromise.then(player => player ? player.play() : undefined);
+        },
+        pause() {
+            playing = false;
+            return readyPromise.then(player => player ? player.pause() : undefined);
+        },
+        stop() {
+            playing = false;
+            return readyPromise.then(player => player ? player.stop() : undefined);
+        },
+        seekTo(time) {
+            return readyPromise.then(player => player ? player.seekTo(time) : undefined);
+        }
+    };
+
+    const readyPromise = getKinescopePlayerFactory()
+        .then(factory => factory.create(target.id, {
+            url: videoUrl,
+            size: { width: '100%', height: '100%' },
+            behavior: {
+                autoPlay: false,
+                playsInline: true
+            }
+        }))
+        .then(player => {
+            apiPlayer = player;
+
+            player.on(player.Events.Play, () => {
+                playing = true;
+                if (typeof callbacks.onPlay === 'function') callbacks.onPlay();
+            });
+            player.on(player.Events.Pause, () => {
+                playing = false;
+                if (typeof callbacks.onPause === 'function') callbacks.onPause();
+            });
+            player.on(player.Events.Ended, () => {
+                playing = false;
+                if (typeof callbacks.onEnded === 'function') callbacks.onEnded();
+            });
+
+            if (playerElement.dataset.restrictScrub === 'true') {
+                player.on(player.Events.Seeked, async () => {
+                    const currentTime = await player.getCurrentTime();
+                    if (currentTime > 60) await player.seekTo(60);
+                });
+            }
+
+            player.on(player.Events.Error, event => {
+                console.warn('Kinescope player error', event && event.data ? event.data : event);
+                playing = false;
+                if (typeof callbacks.onError === 'function') callbacks.onError();
+            });
+
+            return apiPlayer;
+        })
+        .catch(error => {
+            playing = false;
+            playerElement.classList.add('exercise-player--error');
+            console.warn('Kinescope player initialization failed', error);
+            if (typeof callbacks.onError === 'function') callbacks.onError();
+            return null;
+        });
+
+    return adapter;
+}
+
 function initializePracticeSystem() {
 
     if (window.practiceSystemInitialized) {
@@ -170,8 +292,33 @@ function initializePracticeSystem() {
             }
 
             if (playerElement) {
+                const isKinescope = playerElement.dataset.mediaProvider === 'kinescope';
                 const mediaElement = playerElement.querySelector('audio, video');
-                if (mediaElement) {
+                if (isKinescope) {
+                    player = createKinescopePlayerAdapter(playerElement, {
+                        onPlay: () => {
+                            if (Date.now() < suppressAutoPlayUntil) {
+                                player.pause();
+                                return;
+                            }
+                            if (!isPlaying) {
+                                primeEndSignal();
+                                startTimer();
+                            }
+                        },
+                        onPause: () => {
+                            if (isPlaying) pauseTimer();
+                        },
+                        onEnded: () => {
+                            stopTimer();
+                            goToNextExercise(exercise);
+                        },
+                        onError: () => {
+                            if (isPlaying) pauseTimer();
+                        }
+                    });
+                    window.activePlayers[`${exerciseId}_${versionType}`] = player;
+                } else if (mediaElement) {
                     const isVideo = mediaElement.tagName === 'VIDEO';
                     const playerOptions = isVideo
                         ? {
@@ -421,6 +568,11 @@ function initializePracticeSystem() {
             }
 
             function resetMediaToStart() {
+                if (player && player.isKinescope) {
+                    player.stop();
+                    return;
+                }
+
                 const media = player?.media || playerElement?.querySelector('audio, video');
                 if (!media) return;
 

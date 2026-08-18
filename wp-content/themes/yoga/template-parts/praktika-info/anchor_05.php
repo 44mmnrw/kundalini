@@ -102,6 +102,61 @@
 		}
 	}
 
+	if (!function_exists('yoga_normalize_kinescope_video_url')) {
+		function yoga_normalize_kinescope_video_url($url): string {
+			$url = esc_url_raw(trim((string) $url), array('https'));
+			if ($url === '') {
+				return '';
+			}
+
+			$host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+			if ($host !== 'kinescope.io' && !str_ends_with($host, '.kinescope.io')) {
+				return '';
+			}
+
+			return $url;
+		}
+	}
+
+	if (!function_exists('yoga_render_practice_media_player')) {
+		function yoga_render_practice_media_player(array $args): void {
+			$media_type = (string) ($args['media_type'] ?? 'none');
+			$media_file = is_array($args['media_file'] ?? null) ? $args['media_file'] : array();
+			$video_source = (string) ($args['video_source'] ?? 'file');
+			$kinescope_url = yoga_normalize_kinescope_video_url($args['kinescope_url'] ?? '');
+			$version = (string) ($args['version'] ?? 'main');
+			$player_id = sanitize_html_class((string) ($args['player_id'] ?? 'practice-player'));
+			$media_url = trim((string) ($media_file['url'] ?? ''));
+
+			$is_kinescope = $media_type === 'video'
+				&& $kinescope_url !== ''
+				&& ($video_source === 'kinescope' || $media_url === '');
+			$uses_file = $media_type === 'audio' || ($media_type === 'video' && $video_source !== 'kinescope');
+			$has_file = $uses_file && $media_url !== '';
+			if (!$is_kinescope && !$has_file) {
+				return;
+			}
+			?>
+			<div class="exercise-player"
+				data-version="<?php echo esc_attr($version); ?>"
+				data-media-type="<?php echo esc_attr($media_type); ?>"
+				data-media-provider="<?php echo $is_kinescope ? 'kinescope' : 'file'; ?>"
+				data-media-src="<?php echo esc_url($is_kinescope ? $kinescope_url : $media_url); ?>"
+				data-allow-fullscreen="<?php echo !empty($args['allow_fullscreen']) ? 'true' : 'false'; ?>"
+				data-restrict-scrub="<?php echo !empty($args['restrict_scrub']) ? 'true' : 'false'; ?>"
+				data-auto-play="<?php echo !empty($args['auto_play']) ? 'true' : 'false'; ?>">
+				<?php if ($is_kinescope): ?>
+				<div id="<?php echo esc_attr($player_id); ?>" class="kinescope-player-container"></div>
+				<?php elseif ($media_type === 'audio'): ?>
+				<audio controls><source src="<?php echo esc_url($media_url); ?>" type="audio/mp3"></audio>
+				<?php elseif ($media_type === 'video'): ?>
+				<video controls playsinline><source src="<?php echo esc_url($media_url); ?>" type="video/mp4">Ваш браузер не поддерживает видео тег.</video>
+				<?php endif; ?>
+			</div>
+			<?php
+		}
+	}
+
 	$practice_timer_end_signal_url = yoga_get_practice_timer_end_signal_url();
 ?>
 
@@ -132,8 +187,12 @@
 	$timing_mod = $exercise['timing_mod'] ?? [];
 	$media_type = $exercise['media_type'] ?? 'none';
 	$media_file = $exercise['media_file'] ?? [];
+	$video_source = $exercise['video_source'] ?? 'file';
+	$kinescope_url = $exercise['kinescope_url'] ?? '';
 	$media_type_mod = $exercise['media_type_mod'] ?? 'none';
 	$media_file_mod = $exercise['media_file_mod'] ?? [];
+	$video_source_mod = $exercise['video_source_mod'] ?? 'file';
+	$kinescope_url_mod = $exercise['kinescope_url_mod'] ?? '';
 	$duration = $exercise['duration'] ?? 180;
 	$duration_mod = $exercise['duration_mod'] ?? 180;
 	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array());
@@ -156,6 +215,9 @@
 			if ($key === 'media_type' && in_array($value, array('', 'none', null), true)) {
 				continue;
 			}
+			if ($key === 'video_source' && in_array($value, array('', 'file', null), true)) {
+				continue;
+			}
 			if (is_array($value) && $value === array()) {
 				continue;
 			}
@@ -172,6 +234,7 @@
 	$additional_modification_rows = $uses_unified_modification_schema
 		? array()
 		: array_values(array_filter($legacy_additional_modification_rows, $modification_row_has_content));
+	$first_modification = null;
 
 	if ($unified_modification_rows !== array()) {
 		$first_modification = array_shift($unified_modification_rows);
@@ -182,6 +245,8 @@
 		$timing_mod = !empty($first_modification['timing']) && is_array($first_modification['timing']) ? $first_modification['timing'] : array();
 		$media_type_mod = (string) ($first_modification['media_type'] ?? 'none');
 		$media_file_mod = $first_modification['media_file'] ?? array();
+		$video_source_mod = (string) ($first_modification['video_source'] ?? 'file');
+		$kinescope_url_mod = (string) ($first_modification['kinescope_url'] ?? '');
 		$duration_mod = $first_modification['duration'] ?? 180;
 		$gallery_mod = yoga_normalize_practice_exercise_gallery($first_modification['gallery'] ?? array());
 		$content_mod = $first_modification['content'] ?? '';
@@ -189,7 +254,7 @@
 	}
 
 	$has_modifications = $unified_modification_rows !== array()
-		|| isset($first_modification)
+		|| $first_modification !== null
 		|| $legacy_has_modifications
 		|| $additional_modification_rows !== array();
 	$modification_tabs = array();
@@ -367,27 +432,17 @@
 
         <div class="player">
             <div class="player__plug">
-                <?php if ($media_file && $media_type !== 'none'): ?>
-                <div class="exercise-player"
-                data-version="main"
-                data-media-type="<?php echo esc_attr($media_type); ?>"
-                data-media-src="<?php echo esc_url($media_file['url'] ?? ''); ?>"
-                data-allow-fullscreen="<?php echo $allow_fullscreen ? 'true' : 'false'; ?>"
-                data-restrict-scrub="<?php echo $restrict_scrub ? 'true' : 'false'; ?>"
-                data-auto-play="<?php echo $auto_play ? 'true' : 'false'; ?>">
-
-                    <?php if ($media_type === 'audio'): ?>
-                    <audio controls>
-                        <source src="<?php echo esc_url($media_file['url'] ?? ''); ?>" type="audio/mp3">
-					</audio>
-                    <?php elseif ($media_type === 'video'): ?>
-                    <video controls playsinline>
-                        <source src="<?php echo esc_url($media_file['url'] ?? ''); ?>" type="video/mp4">
-                        Ваш браузер не поддерживает видео тег.
-					</video>
-                    <?php endif; ?>
-				</div>
-                <?php endif; ?>
+				<?php yoga_render_practice_media_player(array(
+					'media_type'      => $media_type,
+					'media_file'      => $media_file,
+					'video_source'    => $video_source,
+					'kinescope_url'   => $kinescope_url,
+					'version'         => 'main',
+					'player_id'       => 'kinescope-player-' . $index . '-' . $ex_idx . '-main',
+					'allow_fullscreen'=> $allow_fullscreen,
+					'restrict_scrub'  => $restrict_scrub,
+					'auto_play'       => $auto_play,
+				)); ?>
 			</div>
 		</div>
 
@@ -541,27 +596,17 @@
 
         <div class="player">
 				<div class="player__plug">
-					<?php if ($media_file_mod && $media_type_mod !== 'none'): ?>
-					<div class="exercise-player"
-					data-version="mod"
-					data-media-type="<?php echo esc_attr($media_type_mod); ?>"
-					data-media-src="<?php echo esc_url($media_file_mod['url'] ?? ''); ?>"
-					data-allow-fullscreen="<?php echo $allow_fullscreen ? 'true' : 'false'; ?>"
-					data-restrict-scrub="<?php echo $restrict_scrub ? 'true' : 'false'; ?>"
-					data-auto-play="<?php echo $auto_play ? 'true' : 'false'; ?>">
-
-						<?php if ($media_type_mod === 'audio'): ?>
-						<audio controls>
-							<source src="<?php echo esc_url($media_file_mod['url'] ?? ''); ?>" type="audio/mp3">
-						</audio>
-						<?php elseif ($media_type_mod === 'video'): ?>
-						<video controls playsinline>
-							<source src="<?php echo esc_url($media_file_mod['url'] ?? ''); ?>" type="video/mp4">
-							Ваш браузер не поддерживает видео тег.
-						</video>
-						<?php endif; ?>
-					</div>
-					<?php endif; ?>
+					<?php yoga_render_practice_media_player(array(
+						'media_type'       => $media_type_mod,
+						'media_file'       => $media_file_mod,
+						'video_source'     => $video_source_mod,
+						'kinescope_url'    => $kinescope_url_mod,
+						'version'          => 'mod',
+						'player_id'        => 'kinescope-player-' . $index . '-' . $ex_idx . '-mod',
+						'allow_fullscreen' => $allow_fullscreen,
+						'restrict_scrub'   => $restrict_scrub,
+						'auto_play'        => $auto_play,
+					)); ?>
 				</div>
 			</div>
 

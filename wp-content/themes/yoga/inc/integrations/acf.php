@@ -1000,6 +1000,113 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 			$modification_fields[$index] = $modification_field;
 		}
 
+		$video_source_field = static function (string $key, string $parent_repeater, string $media_type_key): array {
+			return array(
+				'ID'                => 0,
+				'key'               => $key,
+				'label'             => 'Источник видео',
+				'name'              => 'video_source',
+				'_name'             => 'video_source',
+				'prefix'            => 'acf',
+				'type'              => 'select',
+				'instructions'      => 'Выберите загрузку MP4 в WordPress или видео из Kinescope.',
+				'required'          => 0,
+				'conditional_logic' => array(
+					array(
+						array('field' => $media_type_key, 'operator' => '==', 'value' => 'video'),
+					),
+				),
+				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+				'choices'           => array(
+					'file'      => 'Файл MP4',
+					'kinescope' => 'Kinescope',
+				),
+				'default_value'     => 'file',
+				'allow_null'        => 0,
+				'multiple'          => 0,
+				'ui'                => 1,
+				'ajax'              => 0,
+				'placeholder'       => '',
+				'return_format'     => 'value',
+				'parent'            => 0,
+				'parent_repeater'   => $parent_repeater,
+			);
+		};
+
+		$kinescope_url_field = static function (string $key, string $parent_repeater, string $media_type_key): array {
+			return array(
+				'ID'                => 0,
+				'key'               => $key,
+				'label'             => 'Ссылка Kinescope',
+				'name'              => 'kinescope_url',
+				'_name'             => 'kinescope_url',
+				'prefix'            => 'acf',
+				'type'              => 'url',
+				'instructions'      => 'Вставьте ссылку на видео Kinescope, например https://kinescope.io/abc123. Если MP4 не выбран, эта ссылка используется автоматически.',
+				'required'          => 0,
+				'conditional_logic' => array(
+					array(
+						array('field' => $media_type_key, 'operator' => '==', 'value' => 'video'),
+					),
+				),
+				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+				'default_value'     => '',
+				'placeholder'       => 'https://kinescope.io/...',
+				'parent'            => 0,
+				'parent_repeater'   => $parent_repeater,
+			);
+		};
+
+		$modification_video_source = $video_source_field(
+			'field_ex_modifications_video_source',
+			'field_ex_modifications',
+			'field_ex_modifications_media_type'
+		);
+		$modification_kinescope_url = $kinescope_url_field(
+			'field_ex_modifications_kinescope_url',
+			'field_ex_modifications',
+			'field_ex_modifications_media_type'
+		);
+
+		$media_file_index = null;
+		foreach ($modification_fields as $index => $modification_field) {
+			if (($modification_field['name'] ?? '') === 'media_file') {
+				$media_file_index = $index;
+				break;
+			}
+		}
+		if ($media_file_index !== null) {
+			$modification_fields[$media_file_index]['conditional_logic'] = array(
+				array(
+					array('field' => 'field_ex_modifications_media_type', 'operator' => '==', 'value' => 'audio'),
+				),
+				array(
+					array('field' => 'field_ex_modifications_media_type', 'operator' => '==', 'value' => 'video'),
+					array('field' => 'field_ex_modifications_video_source', 'operator' => '==', 'value' => 'file'),
+				),
+			);
+			array_splice($modification_fields, $media_file_index, 0, array($modification_video_source, $modification_kinescope_url));
+		} else {
+			$modification_fields[] = $modification_video_source;
+			$modification_fields[] = $modification_kinescope_url;
+		}
+
+		$main_video_source = $video_source_field('field_ex_video_source', 'field_exercise_items', 'field_ex_media_type');
+		$main_kinescope_url = $kinescope_url_field('field_ex_kinescope_url', 'field_exercise_items', 'field_ex_media_type');
+		$main_video_source['parent'] = $field['ID'] ?? 0;
+		$main_kinescope_url['parent'] = $field['ID'] ?? 0;
+		if (isset($by_name['media_file'])) {
+			$by_name['media_file']['conditional_logic'] = array(
+				array(
+					array('field' => 'field_ex_media_type', 'operator' => '==', 'value' => 'audio'),
+				),
+				array(
+					array('field' => 'field_ex_media_type', 'operator' => '==', 'value' => 'video'),
+					array('field' => 'field_ex_video_source', 'operator' => '==', 'value' => 'file'),
+				),
+			);
+		}
+
 		$accordion = static function (string $key, string $label, bool $open = false): array {
 			return array(
 				'ID'           => 0,
@@ -1071,7 +1178,10 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$append_named($restructured, array('title', 'subtitle'));
 		$restructured[] = $accordion('field_ex_admin_main_modification', 'Основная модификация', true);
 		$restructured[] = $main_modification_name;
-		$append_named($restructured, array('details', 'timing', 'media_type', 'media_file', 'duration', 'gallery', 'content'));
+		$append_named($restructured, array('details', 'timing', 'media_type'));
+		$restructured[] = $main_video_source;
+		$restructured[] = $main_kinescope_url;
+		$append_named($restructured, array('media_file', 'duration', 'gallery', 'content'));
 		$main_labels = array(
 			'timing'     => 'Время/циклы',
 			'media_type' => 'Тип медиа',
@@ -1123,6 +1233,25 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 }
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_restructure_practice_exercise_modifications', 24);
+
+if (!function_exists('yoga_validate_kinescope_video_url')) {
+	function yoga_validate_kinescope_video_url($valid, $value) {
+		if ($valid !== true || trim((string) $value) === '') {
+			return $valid;
+		}
+
+		$scheme = strtolower((string) wp_parse_url((string) $value, PHP_URL_SCHEME));
+		$host = strtolower((string) wp_parse_url((string) $value, PHP_URL_HOST));
+		if ($scheme !== 'https' || ($host !== 'kinescope.io' && !str_ends_with($host, '.kinescope.io'))) {
+			return 'Укажите корректную HTTPS-ссылку на видео Kinescope.';
+		}
+
+		return $valid;
+	}
+}
+
+add_filter('acf/validate_value/key=field_ex_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
+add_filter('acf/validate_value/key=field_ex_modifications_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
 
 if (!function_exists('yoga_enable_practice_exercise_end_signal_by_default')) {
 	/**
