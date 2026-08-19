@@ -279,7 +279,7 @@ if (!function_exists('yoga_protected_media_user_can_access')) {
 				$can_view_layout = !function_exists('yoga_can_view_practice_section_layout')
 					|| yoga_can_view_practice_section_layout($layout, $practice_id);
 				$can_view_section = !function_exists('yoga_can_view_practice_section')
-					|| yoga_can_view_practice_section($section, get_current_user_id());
+					|| yoga_can_view_practice_section($section, get_current_user_id(), $practice_id);
 
 				if ($can_view_layout && $can_view_section) {
 					return true;

@@ -1321,9 +1321,17 @@ jQuery(document).ready(function($) {
 		}
 
 		yogaSadhanaModalTrigger = this;
-		$modal.find('input[name="sadhana_days"][value="40"]').prop('checked', true);
-		$modal.find('.yoga-sadhana-option__input').val('7');
-		setCustomSadhanaState(false, false);
+		var $form = $modal.find('.yoga-sadhana-modal__form');
+		var defaultDays = String($form.attr('data-default-days') || '40');
+		var minimumDays = parseInt($form.attr('data-minimum-days'), 10) || 7;
+		var $defaultOption = $form.find('input[name="sadhana_days"][value="' + defaultDays + '"]');
+		if (!$defaultOption.length) {
+			$defaultOption = $form.find('input[name="sadhana_days"]').first();
+			defaultDays = String($defaultOption.val() || 'custom');
+		}
+		$defaultOption.prop('checked', true);
+		$form.find('.yoga-sadhana-option__input').val(minimumDays);
+		setCustomSadhanaState(defaultDays === 'custom', false);
 		$('.modal, .modal-login').removeClass('active').attr('aria-hidden', 'true');
 		$modal.addClass('active').attr('aria-hidden', 'false');
 		$('.overlay').addClass('active');
