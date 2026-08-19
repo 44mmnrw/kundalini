@@ -1325,24 +1325,37 @@ display: block !important;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 1.25rem;  height: 1.25rem;  z-index: 4;
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  overflow: visible;
+  z-index: 4;
 }
 .exercise-slider .slick-prev {
-  left: 1.25rem;
+  left: 1.0625rem;
 }
 .exercise-slider .slick-next {
-  right: 1.25rem;
+  right: 1.0625rem;
 }
-.exercise-slider .slick-prev svg,
-.exercise-slider .slick-next svg {
+.exercise-slider .slick-prev::before,
+.exercise-slider .slick-next::before {
+  content: none;
+}
+.exercise-slider .slick-prev::after,
+.exercise-slider .slick-next::after {
+  content: "";
+  position: absolute;
+  inset: -0.375rem;
+}
+.exercise-slider__arrow-icon {
   display: block;
-  width: 100%;
-  height: 100%;
-  color: var(--color-black);
+  width: 2rem;
+  height: 2rem;
   pointer-events: none;
-}
-.exercise-slider .slick-prev svg {
-  transform: rotate(180deg);
 }
 .exercise-slider .slick-prev:focus-visible,
 .exercise-slider .slick-next:focus-visible {

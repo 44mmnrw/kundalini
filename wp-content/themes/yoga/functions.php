@@ -963,7 +963,13 @@
 		wp_enqueue_script( 'library-filters-script', $theme_uri . '/assets/js/library-filters.js', array('jquery'), $library_filters_script_ver, true );
 		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox', 'library-filters-script'), $main_script_ver, true );
 		wp_localize_script( 'main-script', 'yoga_theme_assets', array(
-			'sprite_url' => get_template_directory_uri() . '/assets/svg/sprite.svg',
+			'sprite_url' => add_query_arg(
+				'ver',
+				file_exists($theme_dir . '/assets/svg/sprite.svg')
+					? (string) filemtime($theme_dir . '/assets/svg/sprite.svg')
+					: wp_get_theme()->get('Version'),
+				$theme_uri . '/assets/svg/sprite.svg'
+			),
 		) );
 
 
