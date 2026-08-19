@@ -606,7 +606,7 @@ input::-moz-placeholder {
 .slick-prev {
   opacity: 1 !important;
 }
-.slick-prev svg {
+.arrows-slick__arrow.slick-prev svg {
   transform: translate(-50%, -50%) rotate(180deg);
 }
 
