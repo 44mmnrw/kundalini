@@ -447,7 +447,14 @@ if (!function_exists('yoga_can_view_practice_section')) {
 
 
 
-	function yoga_can_view_practice_section(array $section, ?int $user_id = null): bool {
+	function yoga_can_view_practice_section(array $section, ?int $user_id = null, ?int $practice_id = null): bool {
+		if (
+			function_exists('yoga_practice_is_fully_open_for_guests')
+			&& yoga_practice_is_fully_open_for_guests($practice_id)
+		) {
+			return true;
+		}
+
 		$allowed_tariff_ids = yoga_get_practice_section_allowed_tariff_ids($section);
 		if ($allowed_tariff_ids === array()) {
 			return true;
@@ -649,8 +656,8 @@ if (!function_exists('yoga_filter_practice_sections_for_viewer')) {
 			return array();
 		}
 
-		return array_values(array_filter($sections, static function ($section): bool {
-			return is_array($section) && yoga_can_view_practice_section($section);
+		return array_values(array_filter($sections, static function ($section) use ($practice_id): bool {
+			return is_array($section) && yoga_can_view_practice_section($section, null, $practice_id);
 		}));
 	}
 }

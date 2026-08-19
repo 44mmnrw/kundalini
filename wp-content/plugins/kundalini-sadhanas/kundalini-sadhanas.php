@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Yoga Sadhanas
  * Description: Управление садханами, прогрессом, уведомлениями и письмами.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: AxeCode.Tech
  * Text Domain: kundalini-sadhanas
  */
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-define('KUNDALINI_SADHANAS_VERSION', '1.0.0');
+define('KUNDALINI_SADHANAS_VERSION', '1.0.1');
 define('KUNDALINI_SADHANAS_FILE', __FILE__);
 define('KUNDALINI_SADHANAS_PATH', plugin_dir_path(__FILE__));
 

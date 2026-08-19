@@ -98,6 +98,25 @@ function kundalini_sadhanas_render_settings_page(): void {
 		</p></div>
 		<form method="post" action="options.php">
 			<?php settings_fields('kundalini_sadhanas'); ?>
+			<h2><?php esc_html_e('Основные настройки', 'kundalini-sadhanas'); ?></h2>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><label for="kundalini-sadhanas-minimum-days"><?php esc_html_e('Минимальная длительность садханы', 'kundalini-sadhanas'); ?></label></th>
+					<td>
+						<input
+							class="small-text"
+							id="kundalini-sadhanas-minimum-days"
+							name="kundalini_sadhanas_settings[minimum_target_days]"
+							type="number"
+							min="1"
+							max="1000"
+							step="1"
+							value="<?php echo esc_attr((string) $settings['minimum_target_days']); ?>"
+						> <?php esc_html_e('дней', 'kundalini-sadhanas'); ?>
+						<p class="description"><?php esc_html_e('Пользователь не сможет начать новую садхану на меньшее количество дней. Допустимое значение: от 1 до 1000.', 'kundalini-sadhanas'); ?></p>
+					</td>
+				</tr>
+			</table>
 			<?php foreach (kundalini_sadhanas_notification_events() as $event => $definition) : ?>
 				<h2><?php echo esc_html($definition['label']); ?></h2>
 				<table class="form-table" role="presentation">

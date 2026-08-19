@@ -316,8 +316,14 @@ function yoga_sadhana_normalize(array $row): array {
 
 function yoga_sadhana_start(int $user_id, int $practice_id, int $target_days): array|WP_Error {
 	global $wpdb;
-	if ($target_days < 7 || $target_days > 1000) {
-		return new WP_Error('invalid_duration', __('Выберите срок от 7 до 1000 дней.', 'yoga'));
+	$minimum_days = function_exists('kundalini_sadhanas_minimum_target_days')
+		? kundalini_sadhanas_minimum_target_days()
+		: 7;
+	if ($target_days < $minimum_days || $target_days > 1000) {
+		return new WP_Error(
+			'invalid_duration',
+			sprintf(__('Выберите срок от %1$d до %2$d дней.', 'kundalini-sadhanas'), $minimum_days, 1000)
+		);
 	}
 	if (!yoga_sadhana_valid_practice($user_id, $practice_id)) {
 		return new WP_Error('invalid_practice', __('Практика недоступна.', 'yoga'));

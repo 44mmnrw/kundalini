@@ -34,7 +34,9 @@ function kundalini_sadhanas_notification_events(): array {
 }
 
 function kundalini_sadhanas_default_settings(): array {
-	$settings = array();
+	$settings = array(
+		'minimum_target_days' => 7,
+	);
 	foreach (kundalini_sadhanas_notification_events() as $event => $definition) {
 		foreach (array('site_enabled', 'email_enabled', 'subject', 'body') as $field) {
 			$settings[$event . '_' . $field] = $definition[$field];
@@ -54,9 +56,15 @@ function kundalini_sadhanas_get_setting(string $key) {
 	return $settings[$key] ?? null;
 }
 
+function kundalini_sadhanas_minimum_target_days(): int {
+	return max(1, min(1000, absint(kundalini_sadhanas_get_setting('minimum_target_days'))));
+}
+
 function kundalini_sadhanas_sanitize_settings($input): array {
 	$input = is_array($input) ? $input : array();
-	$result = array();
+	$result = array(
+		'minimum_target_days' => max(1, min(1000, absint($input['minimum_target_days'] ?? 7))),
+	);
 	foreach (kundalini_sadhanas_notification_events() as $event => $definition) {
 		$result[$event . '_site_enabled'] = !empty($input[$event . '_site_enabled']);
 		$result[$event . '_email_enabled'] = !empty($input[$event . '_email_enabled']);
@@ -98,4 +106,3 @@ function kundalini_sadhanas_render_email(string $event, array $context): array {
 		'body' => wp_strip_all_tags($body),
 	);
 }
-

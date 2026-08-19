@@ -88,7 +88,7 @@ if (!empty($section_praktika_extra_class)) {
 											continue;
 										}
 
-										if (function_exists('yoga_can_view_practice_section') && !yoga_can_view_practice_section($section, get_current_user_id())) {
+										if (function_exists('yoga_can_view_practice_section') && !yoga_can_view_practice_section($section, get_current_user_id(), $practice_id)) {
 											if (
 												!function_exists('yoga_should_hide_practice_section_paywall')
 												|| !yoga_should_hide_practice_section_paywall($section, get_current_user_id())
@@ -166,7 +166,7 @@ if (!empty($section_praktika_extra_class)) {
 												$menu_layout_locked = function_exists('yoga_can_view_practice_section_layout')
 													&& !yoga_can_view_practice_section_layout($menu_layout, $practice_id);
 												$menu_tariff_locked = function_exists('yoga_can_view_practice_section')
-													&& !yoga_can_view_practice_section($section, get_current_user_id());
+													&& !yoga_can_view_practice_section($section, get_current_user_id(), $practice_id);
 												$menu_locked = $menu_layout_locked || $menu_tariff_locked;
 												if (
 													$menu_locked
