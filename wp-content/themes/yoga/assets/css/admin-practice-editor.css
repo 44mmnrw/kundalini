@@ -792,6 +792,55 @@
 	background: #d9c5f1;
 }
 
+.yoga-practice-visual-map__add-exercise {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	box-sizing: border-box;
+	min-height: 42px;
+	padding: 9px 15px;
+	border: 1px dashed #b98ce9;
+	border-radius: 14px;
+	background: #faf6ff;
+	color: var(--yoga-editor-violet-dark);
+	font-size: 12px;
+	font-weight: var(--yoga-editor-weight-bold);
+	cursor: pointer;
+}
+
+.yoga-practice-visual-map__add-exercise:hover,
+.yoga-practice-visual-map__add-exercise:focus-visible {
+	border-style: solid;
+	background: var(--yoga-editor-violet);
+	color: var(--yoga-editor-white);
+}
+
+.yoga-practice-visual-map__add-exercise > span {
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.yoga-practice-visual-map__empty-technique {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 18px;
+	max-width: 520px;
+	padding: 18px;
+	border: 1px dashed #d9c5f1;
+	border-radius: 18px;
+	background: var(--yoga-editor-white);
+}
+
+.yoga-practice-visual-map__empty-technique p {
+	margin: 0;
+	color: var(--yoga-editor-muted);
+	font-size: 12px;
+}
+
 .yoga-practice-visual-map.is-section > .yoga-practice-visual-map__node.is-root,
 .yoga-practice-visual-map.is-technique > .yoga-practice-visual-map__node.is-root {
 	max-width: 420px;

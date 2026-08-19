@@ -96,6 +96,7 @@
 		this.$workspace = $();
 		this.$navigation = $();
 		this.$generalPanel = $();
+		this.$titleField = $();
 		this.$sectionPanel = $();
 		this.$panelTitle = $();
 		this.$openPanel = $();
@@ -128,6 +129,27 @@
 		);
 		var $guestField = $('.acf-field[data-key="field_practice_open_for_guests"]').first();
 		var $guestPostbox = $guestField.closest('.acf-postbox');
+		var currentTitle = '';
+		if (window.wp && wp.data && wp.data.select('core/editor')) {
+			currentTitle = String(wp.data.select('core/editor').getEditedPostAttribute('title') || '');
+		} else {
+			currentTitle = String($('#title').val() || '');
+		}
+		this.$titleField = $(
+			'<div class="acf-field acf-field-text yoga-practice-title-field" data-name="practice_post_title">' +
+				'<div class="acf-label"><label for="yoga-practice-post-title">Название практики <span class="acf-required">*</span></label></div>' +
+				'<div class="acf-input"><div class="acf-input-wrap"><input id="yoga-practice-post-title" type="text" class="widefat" autocomplete="off" placeholder="Введите название практики"></div></div>' +
+			'</div>'
+		);
+		this.$titleField.find('input').val(currentTitle).on('input change', function () {
+			var value = String($(this).val() || '');
+			if (window.wp && wp.data && wp.data.dispatch('core/editor')) {
+				wp.data.dispatch('core/editor').editPost({ title: value });
+			} else {
+				$('#title').val(value).trigger('input');
+			}
+			self.renderVisualMap();
+		});
 
 		this.$workspace = $(
 			'<div class="yoga-practice-editor">' +
@@ -172,7 +194,7 @@
 		this.$modalBackdrop = $('<div class="yoga-practice-modal-backdrop" aria-hidden="true"></div>').appendTo(this.$workspace);
 		this.$modalContext = this.$fieldGroup.closest('.edit-post-meta-boxes-main');
 
-		this.$generalPanel.append($generalFields);
+		this.$generalPanel.append(this.$titleField).append($generalFields);
 		if ($guestField.length) {
 			this.$generalPanel.append($guestField);
 			$guestPostbox.addClass('yoga-practice-editor__source-postbox');
@@ -207,6 +229,12 @@
 				return;
 			}
 			self.openSelectedPanel();
+		});
+
+		this.$workspace.on('click', '[data-yoga-action="add-exercise"]', function (event) {
+			event.preventDefault();
+			event.stopPropagation();
+			self.addExercise($(this).attr('data-step-id') || '');
 		});
 
 		this.$workspace.on('click', '.yoga-practice-editor__add-section', function (event) {
@@ -535,7 +563,13 @@
 			$head.find('h4').text('Схема практики');
 			$head.find('p').text('Все разделы в порядке отображения. Нажмите на карточку, чтобы перейти к редактированию.');
 			var $flow = $('<div class="yoga-practice-visual-map__flow"></div>');
-			$flow.append(this.visualNode(labels.general, 'Уровень · время · файл · доступ', { number: '01', panelId: 'general' }).addClass('is-root'));
+			var practiceTitle = $.trim(String(this.$titleField.find('input').val() || ''));
+			$flow.append(this.visualNode(labels.general, 'Название · уровень · время · файл · доступ', {
+				number: '01',
+				panelId: 'general',
+				attention: practiceTitle === '',
+				attentionText: 'Не заполнено: название практики'
+			}).addClass('is-root'));
 			this.layouts().each(function (index) {
 				var $layout = $(this);
 				var summary = self.layoutSummary($layout);
@@ -593,9 +627,21 @@
 					rowId: self.rowVisualId($exercise)
 				}).addClass('is-exercise'));
 			});
+			$exerciseList.append(
+				$('<button type="button" class="yoga-practice-visual-map__add-exercise" data-yoga-action="add-exercise"><span aria-hidden="true">+</span> Добавить упражнение</button>')
+					.attr('data-step-id', stepId)
+			);
 			$branch.append($exerciseList);
 			$branches.append($branch);
 		});
+		if (!$steps.length) {
+			$branches.append(
+				'<div class="yoga-practice-visual-map__empty-technique">' +
+					'<p>В разделе пока нет упражнений.</p>' +
+					'<button type="button" class="yoga-practice-visual-map__add-exercise" data-yoga-action="add-exercise"><span aria-hidden="true">+</span> Добавить упражнение</button>' +
+				'</div>'
+			);
+		}
 		$map.append($branches);
 	};
 
@@ -765,6 +811,41 @@
 		this.openRowModal($row, true);
 	};
 
+	PracticeEditor.prototype.addExercise = function (stepId) {
+		var $layout = this.layoutById(this.activeId);
+		if (!$layout.length || String($layout.attr('data-layout') || '') !== 'anchor_05') {
+			return;
+		}
+
+		var $stepsField = directField($layout, 'steps');
+		var $step = stepId
+			? directRows($stepsField).filter('[data-yoga-row-id="' + stepId + '"]').first()
+			: $();
+
+		if (!$step.length) {
+			var stepsRepeater = acf.getField($stepsField);
+			if (!stepsRepeater || typeof stepsRepeater.add !== 'function') {
+				return;
+			}
+			$step = stepsRepeater.add();
+		}
+
+		var $exerciseField = $step.children('td.acf-fields').children('.acf-field[data-name="exercise_items"]').first();
+		var exercisesRepeater = acf.getField($exerciseField);
+		if (!exercisesRepeater || typeof exercisesRepeater.add !== 'function') {
+			return;
+		}
+
+		var $exercise = exercisesRepeater.add();
+		if (!$exercise || !$exercise.length) {
+			return;
+		}
+
+		this.decorate();
+		this.renderVisualMap();
+		this.openVisualMapRow(this.rowVisualId($exercise));
+	};
+
 	PracticeEditor.prototype.openSelectedPanel = function () {
 		if (this.activeId === 'general') {
 			this.openModal(this.$generalPanel, labels.general, 'Настройки', null);
@@ -849,6 +930,7 @@
 		this.updateModalLayer();
 		acf.doAction('show', $surface, 'yoga_practice_modal');
 		window.setTimeout(function () {
+			self.useVisualWysiwygEditors($surface);
 			$surface.scrollTop(0);
 			$toolbar.find('.yoga-practice-modal__back').trigger('focus');
 		}, 0);
@@ -962,6 +1044,16 @@
 				field.enableEditor();
 			} else if (!enable && typeof field.disableEditor === 'function') {
 				field.disableEditor();
+			}
+		});
+	};
+
+	PracticeEditor.prototype.useVisualWysiwygEditors = function ($surface) {
+		$surface.find('.acf-field-wysiwyg').addBack('.acf-field-wysiwyg').each(function () {
+			var $wrap = $(this).find('.wp-editor-wrap').first();
+			var $visualTab = $wrap.find('.wp-switch-editor.switch-tmce').first();
+			if ($wrap.length && $visualTab.length && !$wrap.hasClass('tmce-active')) {
+				$visualTab.trigger('click');
 			}
 		});
 	};

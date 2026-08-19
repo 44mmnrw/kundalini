@@ -457,6 +457,164 @@ if (!function_exists('yoga_register_practice_guest_access_fields')) {
 
 add_action('acf/init', 'yoga_register_practice_guest_access_fields', 15);
 
+if (!function_exists('yoga_build_practice_philosophy_content')) {
+	/**
+	 * Combines the legacy philosophy fields into one editable HTML block.
+	 */
+	function yoga_build_practice_philosophy_content($before_list, $habits, $conclusion): string {
+		$html = '';
+		$before_list = trim((string) $before_list);
+		$conclusion = trim((string) $conclusion);
+		$habit_items = preg_split('/\r\n|\r|\n/', (string) $habits);
+
+		if ($before_list !== '') {
+			$html .= wpautop(wp_kses_post($before_list));
+		}
+
+		$list_html = '';
+		foreach ((array) $habit_items as $habit) {
+			$habit = trim((string) $habit);
+			if ($habit !== '') {
+				$list_html .= '<li>' . esc_html($habit) . '</li>';
+			}
+		}
+		if ($list_html !== '') {
+			$html .= '<ul>' . $list_html . '</ul>';
+		}
+
+		if ($conclusion !== '') {
+			$html .= wpautop(wp_kses_post($conclusion));
+		}
+
+		return $html;
+	}
+}
+
+if (!function_exists('yoga_unify_practice_philosophy_fields')) {
+	/**
+	 * Replaces the three legacy Anchor 03 fields with one WYSIWYG field.
+	 */
+	function yoga_unify_practice_philosophy_fields(array $field): array {
+		if (empty($field['layouts']) || !is_array($field['layouts'])) {
+			return $field;
+		}
+
+		$default_content = yoga_build_practice_philosophy_content(
+			'Что ослабляет тело? Наши собственные привычки:',
+			"Желание обладать\nОграничение и контроль\nГнев и напряжение\nСильная привязанность",
+			'Эти состояния создают энергетические блоки, нарушающие нормальный поток жизненной силы, и открывают дверь для болезней - как физических, так и психических. Однако у нас есть выбор, Мы - творцы своего здоровья. Мы сами создаём своё тело, каждой мыслью, поступком и даже каждым приёмом пищи. Поэтому крайне важно очищать организм и регулировать поток энергии.'
+		);
+
+		foreach ($field['layouts'] as $layout_index => $layout) {
+			if ((string) ($layout['name'] ?? '') !== 'anchor_03' || empty($layout['sub_fields'])) {
+				continue;
+			}
+
+			$sub_fields = array();
+			$content_added = false;
+			foreach ($layout['sub_fields'] as $sub_field) {
+				$key = (string) ($sub_field['key'] ?? '');
+				if ($key === 'field_anchor_03_question' && !$content_added) {
+					$content_field = array(
+						'ID'                => 0,
+						'key'               => 'field_anchor_03_content',
+						'label'             => 'Текст философии',
+						'name'              => 'philosophy_content',
+						'_name'             => 'philosophy_content',
+						'prefix'            => 'acf',
+						'type'              => 'wysiwyg',
+						'instructions'      => 'Вступление, список и заключение редактируются в одном поле.',
+						'required'          => 0,
+						'conditional_logic' => 0,
+						'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+						'default_value'     => $default_content,
+						'tabs'              => 'all',
+						'toolbar'           => 'full',
+						'media_upload'      => 1,
+						'delay'             => 0,
+						'parent'            => $field['ID'] ?? 0,
+						'parent_layout'     => $layout['key'] ?? 'layout_anchor_03',
+					);
+					if (function_exists('acf_get_valid_field')) {
+						$content_field = acf_get_valid_field($content_field);
+					}
+					$sub_fields[] = $content_field;
+					$content_added = true;
+					continue;
+				}
+
+				if (in_array($key, array('field_anchor_03_habits_text', 'field_anchor_03_conclusion'), true)) {
+					continue;
+				}
+
+				$sub_fields[] = $sub_field;
+			}
+
+			$field['layouts'][$layout_index]['sub_fields'] = $sub_fields;
+		}
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_practice_sections', 'yoga_unify_practice_philosophy_fields', 30);
+
+if (!function_exists('yoga_migrate_practice_philosophy_content')) {
+	/**
+	 * Migrates customized legacy values once, while keeping the old meta intact.
+	 */
+	function yoga_migrate_practice_philosophy_content(): void {
+		if (get_option('yoga_practice_philosophy_content_migrated_v1')) {
+			return;
+		}
+
+		$practice_ids = get_posts(
+			array(
+				'post_type'              => 'practice',
+				'post_status'            => 'any',
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		foreach ($practice_ids as $practice_id) {
+			$layouts = get_post_meta($practice_id, 'practice_sections', true);
+			if (!is_array($layouts)) {
+				continue;
+			}
+
+			foreach ($layouts as $index => $layout_name) {
+				if ($layout_name !== 'anchor_03') {
+					continue;
+				}
+
+				$prefix = 'practice_sections_' . (int) $index . '_';
+				$content_key = $prefix . 'philosophy_content';
+				if (trim((string) get_post_meta($practice_id, $content_key, true)) !== '') {
+					continue;
+				}
+
+				$content = yoga_build_practice_philosophy_content(
+					get_post_meta($practice_id, $prefix . 'before_list_text', true),
+					get_post_meta($practice_id, $prefix . 'habits_text', true),
+					get_post_meta($practice_id, $prefix . 'conclusion_text', true)
+				);
+				if ($content !== '') {
+					update_post_meta($practice_id, $content_key, $content);
+					update_post_meta($practice_id, '_' . $content_key, 'field_anchor_03_content');
+				}
+			}
+		}
+
+		update_option('yoga_practice_philosophy_content_migrated_v1', 1, false);
+	}
+}
+
+add_action('admin_init', 'yoga_migrate_practice_philosophy_content', 30);
+
 if (!function_exists('yoga_add_practice_exercise_content_format_hint')) {
 	/**
 	 * Explains how to insert the movable focus callout in exercise descriptions.
@@ -1606,9 +1764,7 @@ if (!function_exists('yoga_delay_acf_wysiwyg_editors')) {
 
 		$field['delay'] = 1;
 
-		$post_id = isset($_GET['post']) ? (int) $_GET['post'] : 0;
-		$post_type = $post_id > 0 ? get_post_type($post_id) : '';
-		if ($post_type === 'practice') {
+		if (function_exists('yoga_is_modern_practice_editor') && yoga_is_modern_practice_editor()) {
 			$field['toolbar'] = 'full';
 			$field['media_upload'] = 1;
 			$field['tabs'] = 'all';
