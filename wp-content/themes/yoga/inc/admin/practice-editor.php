@@ -123,6 +123,14 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 
 add_action('admin_enqueue_scripts', 'yoga_enqueue_practice_editor_assets', 30);
 
+if (!function_exists('yoga_practice_default_visual_editor')) {
+	function yoga_practice_default_visual_editor(string $editor): string {
+		return yoga_is_modern_practice_editor() ? 'tinymce' : $editor;
+	}
+}
+
+add_filter('wp_default_editor', 'yoga_practice_default_visual_editor', 20);
+
 if (!function_exists('yoga_add_practice_editor_body_class')) {
 	function yoga_add_practice_editor_body_class(string $classes): string {
 		if (yoga_is_modern_practice_editor()) {

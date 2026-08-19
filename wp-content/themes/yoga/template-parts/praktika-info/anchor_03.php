@@ -33,17 +33,23 @@
 	<svg class="praktika-quote__after" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#praktika-quote-after'); ?>"></use></svg>
 </div>
 
-<p><?php echo esc_html($section['before_list_text']); ?></p>
+<?php
+$philosophy_html = (string) ($section['philosophy_content'] ?? '');
+if ($philosophy_html === '' && function_exists('yoga_build_practice_philosophy_content')) {
+	$philosophy_html = yoga_build_practice_philosophy_content(
+		$section['before_list_text'] ?? '',
+		$section['habits_text'] ?? '',
+		$section['conclusion_text'] ?? ''
+	);
+}
 
-<ul>
-    <?php
-		$habits = explode("\n", $section['habits_text']);
-		foreach ($habits as $habit) :
-        $habit = trim($habit);
-	if (!empty($habit)) : ?>
-	<li><?php echo esc_html($habit); ?></li>
-	<?php endif;
-	endforeach; ?>
-</ul>
-
-<p><?php echo esc_html($section['conclusion_text']); ?></p>
+if ($philosophy_html !== '') :
+	$philosophy_html = wp_kses_post($philosophy_html);
+	$philosophy_html = function_exists('yoga_practice_content_images_lightbox')
+		? yoga_practice_content_images_lightbox($philosophy_html)
+		: $philosophy_html;
+	?>
+	<div class="praktika-text praktika-philosophy-text">
+		<?php echo $philosophy_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	</div>
+<?php endif; ?>
