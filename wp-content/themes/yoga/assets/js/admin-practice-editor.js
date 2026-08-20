@@ -528,6 +528,7 @@
 
 	PracticeEditor.prototype.visualNode = function (title, meta, options) {
 		options = options || {};
+		var metaText = meta || 'Открыть настройки';
 		var $node = $(
 			'<button type="button" class="yoga-practice-visual-map__node">' +
 				'<span class="yoga-practice-visual-map__number"></span>' +
@@ -536,7 +537,7 @@
 			'</button>'
 		);
 		$node.find('.yoga-practice-visual-map__title').text(title);
-		$node.find('small').text(meta || 'Открыть настройки');
+		$node.find('small').text(metaText);
 		$node.find('.yoga-practice-visual-map__number').text(options.number || '•');
 		if (options.panelId) {
 			$node.attr('data-panel-id', options.panelId);
@@ -549,6 +550,9 @@
 		}
 		if (options.attention) {
 			var attentionText = options.attentionText || 'Не заполнено';
+			if ($.trim(String(metaText)) === $.trim(String(attentionText))) {
+				$node.find('small').remove();
+			}
 			$node.addClass('needs-attention').attr('title', attentionText);
 			$('<span class="yoga-practice-visual-map__attention"></span>')
 				.text(attentionText)
