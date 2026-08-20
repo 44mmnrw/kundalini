@@ -165,7 +165,7 @@
 					'<aside class="yoga-practice-editor__sidebar" aria-label="Разделы практики">' +
 						'<button type="button" class="yoga-practice-editor__nav-button yoga-practice-editor__nav-button--general is-active" data-panel="general">' +
 							'<span class="yoga-practice-editor__nav-index yoga-practice-editor__nav-index--settings">' + spriteIcon('lk-sidebar-settings', 'yoga-practice-editor__general-icon') + '</span>' +
-							'<span class="yoga-practice-editor__nav-copy"><strong>' + labels.general + '</strong><small>Параметры практики</small></span>' +
+							'<span class="yoga-practice-editor__nav-copy"><span class="yoga-practice-editor__nav-title">' + labels.general + '</span><small>Параметры практики</small></span>' +
 						'</button>' +
 						'<ol class="yoga-practice-editor__navigation"></ol>' +
 						'<button type="button" class="yoga-practice-editor__add-section"><span aria-hidden="true">+</span>' + labels.addSection + '</button>' +
@@ -472,7 +472,7 @@
 					'<span class="yoga-practice-editor__drag" role="button" tabindex="0" aria-label="' + labels.move + '"><span></span><span></span><span></span></span>' +
 					'<button type="button" class="yoga-practice-editor__nav-button" data-panel="' + id + '">' +
 						'<span class="yoga-practice-editor__nav-index">' + String(index + 1).padStart(2, '0') + '</span>' +
-						'<span class="yoga-practice-editor__nav-copy"><strong></strong><small></small></span>' +
+						'<span class="yoga-practice-editor__nav-copy"><span class="yoga-practice-editor__nav-title"></span><small></small></span>' +
 					'</button>' +
 					'<div class="yoga-practice-editor__nav-actions">' +
 						'<button type="button" data-yoga-action="duplicate" aria-label="' + labels.duplicate + '">' + spriteIcon('icon-copy', 'yoga-practice-editor__copy-icon') + '</button>' +
@@ -481,7 +481,7 @@
 				'</li>'
 			);
 
-			$item.find('.yoga-practice-editor__nav-copy strong').text(summary.title);
+			$item.find('.yoga-practice-editor__nav-title').text(summary.title);
 			$item.find('.yoga-practice-editor__nav-copy small').text(
 				summary.meta + (summary.attention ? ' · Не заполнено: заголовок раздела' : '')
 			);
@@ -531,11 +531,11 @@
 		var $node = $(
 			'<button type="button" class="yoga-practice-visual-map__node">' +
 				'<span class="yoga-practice-visual-map__number"></span>' +
-				'<span class="yoga-practice-visual-map__copy"><strong></strong><small></small></span>' +
+				'<span class="yoga-practice-visual-map__copy"><span class="yoga-practice-visual-map__title"></span><small></small></span>' +
 				'<span class="yoga-practice-visual-map__edit" aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-practice-visual-map__edit-icon') + '</span>' +
 			'</button>'
 		);
-		$node.find('strong').text(title);
+		$node.find('.yoga-practice-visual-map__title').text(title);
 		$node.find('small').text(meta || 'Открыть настройки');
 		$node.find('.yoga-practice-visual-map__number').text(options.number || '•');
 		if (options.panelId) {
@@ -867,7 +867,7 @@
 	PracticeEditor.prototype.modalTitleForRow = function ($row) {
 		var $header = $row.children('td.acf-fields').children('.yoga-row-card__header');
 		return {
-			title: $header.find('strong').first().text(),
+			title: $header.find('.yoga-row-card__title').first().text(),
 			kind: $header.find('.yoga-row-card__eyebrow').first().text()
 		};
 	};
@@ -904,12 +904,12 @@
 		var $toolbar = $(
 			'<div class="yoga-practice-modal__toolbar">' +
 				'<button type="button" class="yoga-practice-modal__back"><span aria-hidden="true">' + spriteIcon('site-arrow', 'yoga-practice-editor__inline-arrow yoga-practice-editor__inline-arrow--back') + '</span> Назад</button>' +
-				'<div class="yoga-practice-modal__heading"><span></span><strong></strong></div>' +
+				'<div class="yoga-practice-modal__heading"><span class="yoga-practice-modal__kind"></span><span class="yoga-practice-modal__title"></span></div>' +
 				'<button type="button" class="yoga-practice-modal__close" aria-label="Закрыть">' + spriteIcon('icon-close', 'yoga-practice-modal__close-icon') + '</button>' +
 			'</div>'
 		);
-		$toolbar.find('.yoga-practice-modal__heading span').text(kind || labels.section);
-		$toolbar.find('.yoga-practice-modal__heading strong').text(title || labels.section);
+		$toolbar.find('.yoga-practice-modal__kind').text(kind || labels.section);
+		$toolbar.find('.yoga-practice-modal__title').text(title || labels.section);
 		var self = this;
 		$toolbar.find('.yoga-practice-modal__back, .yoga-practice-modal__close').on('click.yogaModal', function (event) {
 			event.preventDefault();
@@ -1230,7 +1230,7 @@
 				'<div class="yoga-row-card__header">' +
 					'<button type="button" class="yoga-row-card__toggle">' +
 						'<span class="yoga-row-card__eyebrow"></span>' +
-						'<strong></strong>' +
+						'<span class="yoga-row-card__title"></span>' +
 						'<small></small>' +
 						'<span class="yoga-row-card__edit" aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-row-card__edit-icon') + '</span>' +
 					'</button>' +
@@ -1241,7 +1241,7 @@
 
 		$row.addClass('yoga-row-card yoga-row-card--' + type).toggleClass('needs-attention', emptyTitle);
 		$header.find('.yoga-row-card__eyebrow').text(type === 'step' ? labels.step + ' ' + index : (type === 'exercise' ? labels.exercise + ' ' + index : (labels.additionalModification || 'Дополнительная модификация') + ' ' + index));
-		$header.find('strong').text(title);
+		$header.find('.yoga-row-card__title').text(title);
 		var missingTitleLabels = {
 			step: 'Не заполнено: название шага',
 			modification: 'Не заполнено: название модификации'
@@ -1316,10 +1316,10 @@
 			}
 			var $summary = $title.children('.yoga-modification-card__summary');
 			if (!$summary.length) {
-				$summary = $('<span class="yoga-modification-card__summary"><small></small><strong></strong></span>').prependTo($title);
+				$summary = $('<span class="yoga-modification-card__summary"><small></small><span class="yoga-modification-card__title"></span></span>').prependTo($title);
 			}
 			$summary.children('small').text(mainLabel);
-			$summary.children('strong').text(mainTitle);
+			$summary.children('.yoga-modification-card__title').text(mainTitle);
 			$title.children('label').attr('aria-hidden', 'true');
 		}
 		$title.off('click.yogaModal').on('click.yogaModal', function (event) {
