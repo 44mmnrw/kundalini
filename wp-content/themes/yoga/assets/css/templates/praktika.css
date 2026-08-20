@@ -1595,6 +1595,28 @@ display: block !important;
   display: block;
   border: 0;
 }
+.player__plug .exercise-player[data-media-provider=youtube] > .plyr,
+.player__plug .exercise-player[data-media-provider=youtube] .plyr__video-wrapper,
+.player__plug .exercise-player[data-media-provider=youtube] .plyr__video-embed {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+}
+.player__plug .exercise-player[data-media-provider=youtube] .plyr__video-wrapper,
+.player__plug .exercise-player[data-media-provider=youtube] .plyr__video-embed {
+  position: relative;
+  padding: 0 !important;
+}
+.player__plug .exercise-player[data-media-provider=youtube] iframe {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100% !important;
+  max-width: none;
+  height: 100% !important;
+  border: 0;
+}
 .player__plug .exercise-player--error::after {
   content: "Не удалось загрузить видео";
   position: absolute;

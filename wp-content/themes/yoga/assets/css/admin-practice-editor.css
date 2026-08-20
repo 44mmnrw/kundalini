@@ -227,16 +227,6 @@
 	box-shadow: 0 8px 20px rgba(53, 22, 92, 0.12);
 }
 
-.yoga-practice-editor__nav-button--general::after {
-	content: "";
-	position: absolute;
-	right: 10px;
-	bottom: -11px;
-	left: 10px;
-	height: 1px;
-	background: rgba(255, 255, 255, 0.24);
-}
-
 .yoga-practice-editor__nav-button--general.is-active {
 	border-color: var(--yoga-editor-white);
 }
@@ -308,7 +298,7 @@
 	min-width: 0;
 }
 
-.yoga-practice-editor__nav-copy strong,
+.yoga-practice-editor__nav-title,
 .yoga-practice-editor__nav-copy small {
 	display: block;
 	overflow: hidden;
@@ -316,7 +306,7 @@
 	white-space: nowrap;
 }
 
-.yoga-practice-editor__nav-copy strong {
+.yoga-practice-editor__nav-title {
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-bold);
 }
@@ -697,7 +687,7 @@
 	min-width: 0;
 }
 
-.yoga-practice-visual-map__copy strong,
+.yoga-practice-visual-map__title,
 .yoga-practice-visual-map__copy small {
 	display: block;
 	overflow: hidden;
@@ -705,7 +695,7 @@
 	white-space: nowrap;
 }
 
-.yoga-practice-visual-map__copy strong {
+.yoga-practice-visual-map__title {
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-bold);
 }
@@ -1254,7 +1244,7 @@
 }
 
 .yoga-row-card__eyebrow,
-.yoga-row-card__toggle strong,
+.yoga-row-card__title,
 .yoga-row-card__toggle small {
 	grid-column: 1;
 }
@@ -1267,7 +1257,7 @@
 	text-transform: uppercase;
 }
 
-.yoga-row-card__toggle strong {
+.yoga-row-card__title {
 	margin-top: 3px;
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-bold);
@@ -1533,15 +1523,15 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	text-align: center;
 }
 
-.yoga-practice-modal__heading span,
-.yoga-practice-modal__heading strong {
+.yoga-practice-modal__kind,
+.yoga-practice-modal__title {
 	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.yoga-practice-modal__heading span {
+.yoga-practice-modal__kind {
 	color: var(--yoga-editor-violet);
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-bold);
@@ -1549,7 +1539,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	text-transform: uppercase;
 }
 
-.yoga-practice-modal__heading strong {
+.yoga-practice-modal__title {
 	margin-top: 3px;
 	font-size: 20px;
 	font-weight: var(--yoga-editor-weight-bold);
@@ -1775,7 +1765,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	text-transform: uppercase;
 }
 
-.yoga-modification-card__summary strong {
+.yoga-modification-card__title {
 	margin-top: 3px;
 	overflow: hidden;
 	color: var(--yoga-editor-black);
@@ -1818,19 +1808,6 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 .yoga-modern-practice-editor .acf-fc-popup li a:focus {
 	background: var(--yoga-editor-violet-soft);
 	color: var(--yoga-editor-violet-dark);
-}
-
-/* Stable typography hierarchy: controls 500, copy 400, headings/strong 700. */
-.yoga-modern-practice-editor .yoga-practice-editor button {
-	font-weight: var(--yoga-editor-weight-medium);
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor h2,
-.yoga-modern-practice-editor .yoga-practice-editor h3,
-.yoga-modern-practice-editor .yoga-practice-editor h4,
-.yoga-modern-practice-editor .yoga-practice-editor strong,
-.yoga-modern-practice-editor .yoga-practice-editor .acf-field > .acf-label label {
-	font-weight: var(--yoga-editor-weight-bold);
 }
 
 @media (max-width: 1200px) {
