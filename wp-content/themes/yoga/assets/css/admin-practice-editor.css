@@ -381,7 +381,8 @@
 	transition: border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), opacity var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
-.yoga-practice-editor__nav-actions button:last-child:hover {
+.yoga-practice-editor__nav-actions button:hover,
+.yoga-practice-editor__nav-actions button:focus-visible {
 	border-color: #ffd4d4;
 	background: #843fa7;
 }
@@ -543,7 +544,7 @@
 
 .yoga-practice-editor__open-panel:hover,
 .yoga-practice-editor__open-panel:focus-visible {
-	background: var(--yoga-editor-violet-hover);
+	background: #a66bea;
 	color: var(--yoga-editor-white);
 }
 
