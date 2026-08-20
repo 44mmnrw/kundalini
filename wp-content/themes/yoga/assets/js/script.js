@@ -263,7 +263,7 @@ jQuery(document).ready(function($) {
 		var $btn = $(this);
 		var $lib = $btn.closest('.section-library, .section-kriyi');
 		var $screen = $('#library-filters-screen');
-		if ($lib.length && $(window).width() < yogaViewportBp.lg && $screen.length) {
+		if ($lib.length && $screen.length) {
 			$btn.toggleClass('active');
 			if ($btn.hasClass('active')) {
 				openLibraryFiltersScreen();
@@ -2981,6 +2981,7 @@ jQuery(document).ready(function($) {
                 $targets = $targets.add($mobileRow);
             }
             $targets.toggleClass('active', on).find('.checkbox').toggleClass('active', on);
+			$mobileRow.attr('aria-checked', on ? 'true' : 'false');
         });
 
 		$('.section-kriyi .filter input[type="checkbox"]').each(function () {
@@ -3356,13 +3357,19 @@ jQuery(document).ready(function($) {
 			if ($(e.target).closest('button, a').length) return;
 			activateLibraryFilterRow(this);
 		});
+
+		$(document).on('keydown', '.library-filters-screen__row', function (e) {
+			if (e.key !== 'Enter' && e.key !== ' ') return;
+			e.preventDefault();
+			activateLibraryFilterRow(this);
+		});
 	})(jQuery);
 
 	$(document).on('change', 'input.library-filter-input', function() {
 		YogaLibraryFiltersCore.set(this, this.checked);
 		syncLibraryFilterCheckboxLabels();
 		setCurrentLibraryFilter(this);
-		if ($(window).width() < yogaViewportBp.lg && $(this).closest('.library-filters-screen.active').length) {
+		if ($(this).closest('.library-filters-screen.active').length) {
 			return;
 		}
 		loadLibraryPractices();
@@ -3374,6 +3381,13 @@ jQuery(document).ready(function($) {
 
 	$(document).on('click', '.library-filters-screen__backdrop', function() {
 		closeLibraryFiltersScreen();
+	});
+
+	$(document).on('click', '.library-filters-screen__block-toggle', function() {
+		var $toggle = $(this);
+		var $block = $toggle.closest('.library-filters-screen__block');
+		var isCollapsed = $block.toggleClass('is-collapsed').hasClass('is-collapsed');
+		$toggle.attr('aria-expanded', isCollapsed ? 'false' : 'true');
 	});
 
 	$(document).on('click', '.js-library-filters-apply', function() {
