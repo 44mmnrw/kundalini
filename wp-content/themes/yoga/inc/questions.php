@@ -12,6 +12,17 @@ function get_user_questions(int $user_id): array {
 	$args = array(
         'post_type' => 'question',
         'author' => $user_id,
+		'meta_query' => array(
+			'relation' => 'OR',
+			array(
+				'key' => 'question_source',
+				'value' => 'lk',
+			),
+			array(
+				'key' => 'question_source',
+				'compare' => 'NOT EXISTS',
+			),
+		),
         'post_status' => array('publish', 'pending', 'draft', 'private'),
         'posts_per_page' => -1,
         'orderby' => 'date',
@@ -49,6 +60,11 @@ function yoga_get_question_author_name(int $user_id): string {
 	return $name !== '' ? $name : (string) $user->user_login;
 }
 
+function yoga_get_practice_questions_notification_email(): string {
+	$email = sanitize_email((string) get_option('yoga_practice_questions_notification_email', ''));
+	return is_email($email) ? $email : sanitize_email((string) get_option('admin_email'));
+}
+
 
 function register_question_post_type() {
 
@@ -61,9 +77,9 @@ function register_question_post_type() {
         'menu_icon' => 'dashicons-format-chat',
         'supports' => array(),
         'labels' => array(
-	'name' => 'Вопросы FAQ',
+	'name' => 'Вопросы',
 	'singular_name' => 'Вопрос',
-	'menu_name' => 'Вопросы FAQ',
+	'menu_name' => 'Вопросы',
 	'add_new' => 'Добавить вопрос',
 	'add_new_item' => 'Добавить новый вопрос',
 	'edit_item' => 'Редактировать вопрос',

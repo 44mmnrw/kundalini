@@ -48,6 +48,36 @@ function yoga_migrate_question_record_statuses(): void {
 }
 add_action('admin_init', 'yoga_migrate_question_record_statuses');
 
+function yoga_migrate_question_sources(): void {
+	if ((int) get_option('yoga_question_source_schema_version', 0) >= 1) {
+		return;
+	}
+
+	$questions = get_posts(array(
+		'post_type' => 'question',
+		'post_status' => 'any',
+		'posts_per_page' => -1,
+		'orderby' => 'none',
+	));
+
+	foreach ($questions as $question) {
+		$source = sanitize_key((string) get_post_meta($question->ID, 'question_source', true));
+		if ($source === 'practice_form') {
+			update_post_meta($question->ID, 'question_source', 'practice');
+			continue;
+		}
+		if ($source !== '') {
+			continue;
+		}
+
+		$contact_email = sanitize_email((string) get_post_meta($question->ID, 'contact_email', true));
+		update_post_meta($question->ID, 'question_source', $contact_email !== '' ? 'faq' : 'lk');
+	}
+
+	update_option('yoga_question_source_schema_version', 1, false);
+}
+add_action('init', 'yoga_migrate_question_sources', 20);
+
 function yoga_question_admin_post_states(array $post_states, WP_Post $post): array {
 	if ($post->post_type !== 'question') {
 		return $post_states;
@@ -155,6 +185,142 @@ function yoga_add_unanswered_questions_menu_count(): void {
 	unset($menu_item);
 }
 add_action('admin_menu', 'yoga_add_unanswered_questions_menu_count', 999);
+
+function yoga_question_source_labels(): array {
+	return array(
+		'lk' => 'Вопросы в ЛК',
+		'contacts' => 'Вопросы из контактов',
+		'faq' => 'Вопросы FAQ',
+		'practice' => 'Вопросы по крийям',
+	);
+}
+
+function yoga_register_question_admin_submenus(): void {
+	$parent = 'edit.php?post_type=question';
+	foreach (yoga_question_source_labels() as $source => $label) {
+		add_submenu_page(
+			$parent,
+			$label,
+			$label,
+			'edit_posts',
+			$parent . '&question_source=' . $source
+		);
+	}
+
+	add_submenu_page(
+		$parent,
+		'Уведомления по крийям',
+		'Настройки уведомлений',
+		'manage_options',
+		'yoga-question-notifications',
+		'yoga_render_question_notifications_settings'
+	);
+
+	global $submenu;
+	if (isset($submenu[$parent][5][0])) {
+		$submenu[$parent][5][0] = 'Все вопросы';
+	}
+}
+add_action('admin_menu', 'yoga_register_question_admin_submenus', 20);
+
+function yoga_highlight_question_source_submenu($submenu_file, $parent_file): string {
+	if ($parent_file !== 'edit.php?post_type=question') {
+		return (string) $submenu_file;
+	}
+
+	$source = isset($_GET['question_source']) ? sanitize_key(wp_unslash((string) $_GET['question_source'])) : '';
+	if (!array_key_exists($source, yoga_question_source_labels())) {
+		return (string) $submenu_file;
+	}
+
+	return 'edit.php?post_type=question&question_source=' . $source;
+}
+add_filter('submenu_file', 'yoga_highlight_question_source_submenu', 10, 2);
+
+function yoga_filter_questions_by_source(WP_Query $query): void {
+	if (!is_admin() || !$query->is_main_query() || $query->get('post_type') !== 'question') {
+		return;
+	}
+
+	$source = isset($_GET['question_source']) ? sanitize_key(wp_unslash((string) $_GET['question_source'])) : '';
+	if (!array_key_exists($source, yoga_question_source_labels())) {
+		return;
+	}
+
+	$query->set('meta_key', 'question_source');
+	$query->set('meta_value', $source);
+}
+add_action('pre_get_posts', 'yoga_filter_questions_by_source');
+
+function yoga_question_admin_columns(array $columns): array {
+	$columns['question_source'] = 'Источник';
+	return $columns;
+}
+add_filter('manage_question_posts_columns', 'yoga_question_admin_columns');
+
+function yoga_question_admin_column(string $column, int $post_id): void {
+	if ($column !== 'question_source') {
+		return;
+	}
+
+	$source = sanitize_key((string) get_post_meta($post_id, 'question_source', true));
+	$labels = yoga_question_source_labels();
+	echo esc_html($labels[$source] ?? 'Не указан');
+}
+add_action('manage_question_posts_custom_column', 'yoga_question_admin_column', 10, 2);
+
+function yoga_sanitize_practice_questions_notification_email($value): string {
+	$email = sanitize_email((string) $value);
+	if ($email === '') {
+		return '';
+	}
+	if (!is_email($email)) {
+		add_settings_error(
+			'yoga_practice_questions_notification_email',
+			'invalid_email',
+			'Укажите корректный адрес электронной почты.'
+		);
+		return sanitize_email((string) get_option('yoga_practice_questions_notification_email', ''));
+	}
+	return $email;
+}
+
+function yoga_register_question_notification_settings(): void {
+	register_setting(
+		'yoga_question_notifications',
+		'yoga_practice_questions_notification_email',
+		array(
+			'type' => 'string',
+			'sanitize_callback' => 'yoga_sanitize_practice_questions_notification_email',
+			'default' => '',
+		)
+	);
+}
+add_action('admin_init', 'yoga_register_question_notification_settings');
+
+function yoga_render_question_notifications_settings(): void {
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+	?>
+	<div class="wrap">
+		<h1><?php esc_html_e('Уведомления по крийям', 'yoga'); ?></h1>
+		<form action="options.php" method="post">
+			<?php settings_fields('yoga_question_notifications'); ?>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><label for="yoga-practice-questions-email"><?php esc_html_e('Адрес получателя', 'yoga'); ?></label></th>
+					<td>
+						<input class="regular-text" id="yoga-practice-questions-email" name="yoga_practice_questions_notification_email" type="email" value="<?php echo esc_attr((string) get_option('yoga_practice_questions_notification_email', '')); ?>" placeholder="<?php echo esc_attr((string) get_option('admin_email')); ?>">
+						<p class="description"><?php esc_html_e('Сюда будут приходить уведомления о новых вопросах со страниц практик. Если поле пустое, используется основной email сайта.', 'yoga'); ?></p>
+					</td>
+				</tr>
+			</table>
+			<?php submit_button(); ?>
+		</form>
+	</div>
+	<?php
+}
 
 function render_question_request_meta_box(WP_Post $post): void {
 	$email = sanitize_email((string) get_post_meta($post->ID, 'contact_email', true));

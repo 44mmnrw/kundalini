@@ -17,6 +17,7 @@
 	require_once get_template_directory() . '/inc/render/sadhanas.php';
 	require_once get_template_directory() . '/inc/ajax/questions.php';
 	require_once get_template_directory() . '/inc/admin/questions.php';
+	require_once get_template_directory() . '/inc/admin/menu.php';
 	require_once get_template_directory() . '/inc/practices/search.php';
 	require_once get_template_directory() . '/inc/ajax/practice-search.php';
 	require_once get_template_directory() . '/inc/comments.php';
@@ -1105,6 +1106,12 @@ function yoga_subscribe_handler() {
 		$email = isset($_POST['contacts_email']) ? sanitize_email($_POST['contacts_email']) : '';
 		$phone = isset($_POST['contacts_phone']) ? sanitize_text_field($_POST['contacts_phone']) : '';
 		$message = isset($_POST['contacts_message']) ? sanitize_textarea_field($_POST['contacts_message']) : '';
+		$source = isset($_POST['question_source']) ? sanitize_key(wp_unslash((string) $_POST['question_source'])) : 'contacts';
+		$source = in_array($source, array('contacts', 'practice'), true) ? $source : 'contacts';
+		$practice_id = $source === 'practice' && isset($_POST['practice_id']) ? absint($_POST['practice_id']) : 0;
+		if ($source === 'practice' && get_post_type($practice_id) !== 'practice') {
+			$practice_id = 0;
+		}
 		if (is_user_logged_in()) {
 			$current_user = wp_get_current_user();
 			$profile_name = trim((string) $current_user->display_name);
@@ -1127,19 +1134,26 @@ function yoga_subscribe_handler() {
 
 
 
-		$to = 'sshell72@yandex.ru';
-		$subject = 'Новое сообщение с формы контактов';
+		$to = $source === 'practice'
+			? yoga_get_practice_questions_notification_email()
+			: 'sshell72@yandex.ru';
+		$subject = $source === 'practice'
+			? 'Новый вопрос по крийе' . ($practice_id > 0 ? ': ' . get_the_title($practice_id) : '')
+			: 'Новое сообщение с формы контактов';
 		$body = "
         Имя: $name
         Email: $email
         Телефон: $phone
         Сообщение: $message
 		";
+		if ($source === 'practice' && $practice_id > 0) {
+			$body .= "\nПрактика: " . get_the_title($practice_id) . "\nСсылка: " . get_permalink($practice_id);
+		}
 
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
 
-		$saved = save_contact_message($name, $email, $phone, $message);
+		$saved = save_contact_message($name, $email, $phone, $message, $source, $practice_id);
 		$sent = wp_mail($to, $subject, nl2br($body), $headers);
 
 		if (!$saved) {
@@ -1155,18 +1169,29 @@ function yoga_subscribe_handler() {
 	}
 
 
-	function save_contact_message(string $name, string $email, string $phone, string $message): bool {
+	function save_contact_message(string $name, string $email, string $phone, string $message, string $source = 'contacts', int $practice_id = 0): bool {
+		if ($source === 'practice' && get_post_type($practice_id) !== 'practice') {
+			$practice_id = 0;
+		}
+		$practice_title = $practice_id > 0 ? trim((string) get_the_title($practice_id)) : '';
+		$meta_input = array(
+			'contact_email' => $email,
+			'contact_phone' => $phone,
+			'contact_date' => current_time('mysql'),
+			'question_source' => $source,
+		);
+		if ($source === 'practice' && $practice_id > 0) {
+			$meta_input['practice_id'] = $practice_id;
+		}
+
 		$post_data = array(
-		'post_title' => 'Вопрос от ' . $name,
+		'post_title' => $source === 'practice' && $practice_title !== ''
+			? 'Вопрос по практике «' . $practice_title . '» от ' . $name
+			: 'Вопрос от ' . $name,
 		'post_content' => $message,
 		'post_type' => 'question',
 		'post_status' => 'publish',
-        'meta_input' => array(
-		'contact_email' => $email,
-		'contact_phone' => $phone,
-		'contact_date' => current_time('mysql'),
-		'question_source' => 'practice_form'
-        )
+		'meta_input' => $meta_input,
 		);
 
 		$post_id = wp_insert_post($post_data, true);
