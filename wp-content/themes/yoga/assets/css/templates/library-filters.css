@@ -261,9 +261,11 @@
     transform: translate(-50%, -50%) rotate(45deg);
   }
 
-  .library-filters-screen__text {
+  .library-filters-screen .library-filters-screen__text {
     min-width: 0;
     flex: 1 1 auto;
+    padding-right: 0;
+    padding-left: 0;
     color: #1f1f1f;
     font-family: var(--font-family-base);
     font-size: 1rem;
@@ -658,9 +660,11 @@
     transform: translate(-50%, -50%) rotate(45deg);
   }
 
-  .library-filters-screen__text {
+  .library-filters-screen .library-filters-screen__text {
     min-width: 0;
     flex: 1 1 auto;
+    padding-right: 0;
+    padding-left: 0;
     color: #1f1f1f;
     font-family: var(--font-family-base);
     font-size: 1rem;
