@@ -2965,9 +2965,48 @@ jQuery(document).ready(function($) {
 
     function updateLibraryFilterCount() {
 		var selectedCount = YogaLibraryFiltersCore.selectedCount();
+		var hasSelection = selectedCount > 0;
 		$('.section-library .filter-btn__count, .section-kriyi .filter-btn__count')
 			.text(selectedCount)
-			.toggleClass('active', selectedCount > 0);
+			.toggleClass('active', hasSelection);
+		$('.library-filters-screen')
+			.toggleClass('has-selection', hasSelection)
+			.find('.js-library-filters-apply')
+			.prop('disabled', !hasSelection)
+			.attr('aria-disabled', hasSelection ? 'false' : 'true');
+	}
+
+	function updateLibraryFiltersFoundCount(count) {
+		var normalizedCount = Math.max(0, parseInt(count, 10) || 0);
+		$('.library-filters-screen__found-count').text(normalizedCount);
+	}
+
+	function requestLibraryFiltersFoundCount() {
+		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.ajax_url) {
+			return;
+		}
+
+		YogaLibraryFiltersCore.debounce('filter-count', function () {
+			var isPracticePage = $('.section-kriyi').length > 0;
+			YogaLibraryFiltersCore.request('filter-count', {
+				url: yoga_ajax.ajax_url,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					action: 'filter_practices_kriyi',
+					nonce: yoga_ajax.nonce,
+					filters: YogaLibraryFiltersCore.selectedByTaxonomy(),
+					search: isPracticePage ? $('.section-kriyi input[name="s"]').val() : $('.section-library input[name="s"]').val(),
+					term_id: isPracticePage ? getActivePracticeTermId() : getActiveLibraryTermId(),
+					count_only: 1
+				},
+				success: function (response) {
+					if (response && response.success && response.data) {
+						updateLibraryFiltersFoundCount(response.data.count);
+					}
+				}
+			});
+		}, 180);
 	}
 
     function syncLibraryFilterCheckboxLabels() {
@@ -3081,6 +3120,7 @@ jQuery(document).ready(function($) {
         $('.overlay').addClass('active');
         $('.body').addClass('body-fixed');
         syncLibraryFilterCheckboxLabels();
+		requestLibraryFiltersFoundCount();
     }
 
     function loadLibraryPractices(page) {
@@ -3107,6 +3147,7 @@ jQuery(document).ready(function($) {
 			data: data,
 			success: function(response) {
 				if (response && response.success && response.data) {
+					updateLibraryFiltersFoundCount(response.data.count);
 					var $results = $('.section-library .library').addClass('library--practice-results kriyi__items');
 					if (page === 1) {
 						$results.html(response.data.html);
@@ -3370,6 +3411,7 @@ jQuery(document).ready(function($) {
 		syncLibraryFilterCheckboxLabels();
 		setCurrentLibraryFilter(this);
 		if ($(this).closest('.library-filters-screen.active').length) {
+			requestLibraryFiltersFoundCount();
 			return;
 		}
 		loadLibraryPractices();
@@ -3403,6 +3445,7 @@ jQuery(document).ready(function($) {
 		YogaLibraryFiltersCore.clear();
 		$('.section-library .filter-item__list .checkbox-item, .library-filters-screen__row').removeClass('is-current');
 		syncLibraryFilterCheckboxLabels();
+		requestLibraryFiltersFoundCount();
 		if (!$(this).closest('.library-filters-screen.active').length && !$('.section-kriyi').length) {
 			loadLibraryPractices();
 		}
