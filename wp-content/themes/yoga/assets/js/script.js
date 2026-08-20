@@ -2981,7 +2981,16 @@ jQuery(document).ready(function($) {
 		$('.library-filters-screen__found-count').text(normalizedCount);
 	}
 
+	var libraryFiltersCountRequestId = 0;
+
 	function requestLibraryFiltersFoundCount() {
+		var requestId = ++libraryFiltersCountRequestId;
+		var $screens = $('.library-filters-screen').removeClass('has-found-count');
+		if (YogaLibraryFiltersCore.selectedCount() === 0) {
+			YogaLibraryFiltersCore.debounce('filter-count', function () {}, 0);
+			return;
+		}
+
 		if (typeof yoga_ajax === 'undefined' || !yoga_ajax.ajax_url) {
 			return;
 		}
@@ -3001,8 +3010,9 @@ jQuery(document).ready(function($) {
 					count_only: 1
 				},
 				success: function (response) {
-					if (response && response.success && response.data) {
+					if (requestId === libraryFiltersCountRequestId && response && response.success && response.data) {
 						updateLibraryFiltersFoundCount(response.data.count);
+						$screens.addClass('has-found-count');
 					}
 				}
 			});

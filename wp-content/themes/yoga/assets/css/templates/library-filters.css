@@ -325,6 +325,7 @@
 
   .library-filters-screen.has-selection .library-filters-screen__found {
     display: block;
+    visibility: hidden;
     width: 100%;
     margin: 0;
     color: #646464;
@@ -333,6 +334,10 @@
     font-weight: 600;
     line-height: 1.1;
     text-align: center;
+  }
+
+  .library-filters-screen.has-selection.has-found-count .library-filters-screen__found {
+    visibility: visible;
   }
 
   .library-filters-screen__apply {
@@ -705,6 +710,7 @@
 
   .library-filters-screen.has-selection .library-filters-screen__found {
     display: block;
+    visibility: hidden;
     width: 100%;
     margin: 0;
     color: #646464;
@@ -713,6 +719,10 @@
     font-weight: 600;
     line-height: 1.1;
     text-align: center;
+  }
+
+  .library-filters-screen.has-selection.has-found-count .library-filters-screen__found {
+    visibility: visible;
   }
 
   .library-filters-screen__apply,
