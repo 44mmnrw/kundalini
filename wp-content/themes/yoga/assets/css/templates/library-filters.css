@@ -656,7 +656,7 @@
     box-shadow: 0 -0.625rem 1.5625rem rgba(85, 85, 85, 0.1);
   }
 
-  .library-filters-screen__found {
+  .library-filters-screen.has-selection .library-filters-screen__found {
     display: block;
     width: 100%;
     margin: 0;
