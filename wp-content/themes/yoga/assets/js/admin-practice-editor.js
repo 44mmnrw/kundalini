@@ -445,8 +445,7 @@
 			});
 			meta = $steps.length + ' шагов · ' + exerciseCount + ' упражнений';
 		} else if (type === 'anchor_06') {
-			var commentsCount = directRows(directField($layout, 'comments')).length;
-			meta = commentsCount + ' комментариев';
+			meta = 'Заголовок раздела';
 		}
 
 		return {
@@ -768,6 +767,7 @@
 	};
 
 	PracticeEditor.prototype.markServiceFields = function ($layout) {
+		var layoutType = String($layout.attr('data-layout') || '');
 		var serviceNames = [
 			'anchor_id',
 			'title_class',
@@ -793,9 +793,11 @@
 		];
 		$layout.find('.acf-field').each(function () {
 			var $field = $(this);
-			var isServiceField = serviceNames.indexOf(String($field.attr('data-name') || '')) !== -1
+			var fieldName = String($field.attr('data-name') || '');
+			var isUserCommentsField = layoutType === 'anchor_06' && fieldName === 'comments';
+			var isServiceField = serviceNames.indexOf(fieldName) !== -1
 				|| serviceKeys.indexOf(String($field.attr('data-key') || '')) !== -1;
-			$field.toggleClass('yoga-service-field', isServiceField);
+			$field.toggleClass('yoga-service-field', isServiceField || isUserCommentsField);
 		});
 	};
 
