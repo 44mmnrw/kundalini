@@ -502,8 +502,13 @@
 			id = 'general';
 		}
 		this.activeId = id;
+		this.$workspace.find('.yoga-practice-editor__nav-item').removeClass('is-active');
 		this.$workspace.find('.yoga-practice-editor__nav-button').removeClass('is-active').attr('aria-current', 'false');
-		this.$workspace.find('.yoga-practice-editor__nav-button[data-panel="' + id + '"]').addClass('is-active').attr('aria-current', 'page');
+		this.$workspace.find('.yoga-practice-editor__nav-button[data-panel="' + id + '"]')
+			.addClass('is-active')
+			.attr('aria-current', 'page')
+			.closest('.yoga-practice-editor__nav-item')
+			.addClass('is-active');
 		this.$generalPanel.toggleClass('is-active', id === 'general');
 		this.$sectionPanel.toggleClass('is-active', id !== 'general');
 

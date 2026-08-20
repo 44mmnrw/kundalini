@@ -232,6 +232,9 @@ if (!defined('ABSPATH')) {
 
 		$query = new WP_Query($args);
 		$count = $query->found_posts;
+		if (!empty($_POST['count_only'])) {
+			wp_send_json_success(array('count' => (int) $count));
+		}
 
 
 		ob_start();

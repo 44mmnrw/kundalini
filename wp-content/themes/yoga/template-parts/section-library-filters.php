@@ -142,12 +142,15 @@ foreach ($goal_root_terms as $goal_root_term) {
 		</div>
 
 		<div class="library-filters-screen__actions">
+			<p class="library-filters-screen__found">
+				<?php esc_html_e('Найдено', 'yoga'); ?> <span class="library-filters-screen__found-count" aria-live="polite">0</span>
+			</p>
 			<button type="button" class="library-filters-screen__apply js-library-filters-apply">
 				<?php esc_html_e('Показать', 'yoga'); ?>
 			</button>
 			<button type="button" class="library-filters-screen__reset js-library-filters-reset">
 				<span class="library-filters-screen__reset-icon" aria-hidden="true"></span>
-				<?php esc_html_e('Очистить', 'yoga'); ?>
+				<?php esc_html_e('Сбросить все', 'yoga'); ?>
 			</button>
 		</div>
 	</aside>
