@@ -168,7 +168,10 @@
 							'<span class="yoga-practice-editor__nav-copy"><span class="yoga-practice-editor__nav-title">' + labels.general + '</span><small>Параметры практики</small></span>' +
 						'</button>' +
 						'<ol class="yoga-practice-editor__navigation"></ol>' +
-						'<button type="button" class="yoga-practice-editor__add-section"><span aria-hidden="true">+</span>' + labels.addSection + '</button>' +
+						'<div class="yoga-practice-editor__add-section-wrap">' +
+							'<div class="yoga-practice-editor__section-menu" id="yoga-practice-section-menu" role="menu" hidden></div>' +
+							'<button type="button" class="yoga-practice-editor__add-section" aria-haspopup="menu" aria-controls="yoga-practice-section-menu" aria-expanded="false"><span aria-hidden="true">+</span>' + labels.addSection + '</button>' +
+						'</div>' +
 					'</aside>' +
 					'<main class="yoga-practice-editor__content">' +
 						'<div class="yoga-practice-editor__panel-heading">' +
@@ -191,6 +194,14 @@
 		this.$panelTitle = this.$workspace.find('.yoga-practice-editor__panel-heading h3');
 		this.$openPanel = this.$workspace.find('.yoga-practice-editor__open-panel');
 		this.$visualMap = this.$workspace.find('.yoga-practice-visual-map');
+		this.$addSectionButton = this.$workspace.find('.yoga-practice-editor__add-section');
+		this.$addSectionMenu = this.$workspace.find('.yoga-practice-editor__section-menu');
+		Object.keys(layoutLabels).forEach(function (type) {
+			$('<button type="button" role="menuitem"></button>')
+				.attr('data-layout', type)
+				.text(layoutLabels[type])
+				.appendTo(self.$addSectionMenu);
+		});
 		this.$modalBackdrop = $('<div class="yoga-practice-modal-backdrop" aria-hidden="true"></div>').appendTo(this.$workspace);
 		this.$modalContext = this.$fieldGroup.closest('.edit-post-meta-boxes-main');
 
@@ -238,33 +249,26 @@
 		});
 
 		this.$workspace.on('click', '.yoga-practice-editor__add-section', function (event) {
-			var $trigger = $(this);
-			var $openPopup = $('.acf-fc-popup:visible').last();
-			if ($openPopup.length) {
-				event.preventDefault();
-				event.stopPropagation();
-				var popupInstance = typeof acf.getInstance === 'function' ? acf.getInstance($openPopup) : null;
-				if (popupInstance && typeof popupInstance.remove === 'function') {
-					popupInstance.remove();
-				} else {
-					$openPopup.remove();
-				}
+			event.preventDefault();
+			event.stopPropagation();
+			var willOpen = self.$addSectionMenu.prop('hidden');
+			self.$addSectionMenu.prop('hidden', !willOpen);
+			self.$addSectionButton.attr('aria-expanded', willOpen ? 'true' : 'false');
+		});
+
+		this.$addSectionMenu.on('click', '[data-layout]', function (event) {
+			event.preventDefault();
+			event.stopPropagation();
+			var type = String($(this).attr('data-layout') || '');
+			self.$addSectionMenu.prop('hidden', true);
+			self.$addSectionButton.attr('aria-expanded', 'false');
+			if (!type || !self.sectionsField || typeof self.sectionsField.add !== 'function') {
 				return;
 			}
-			if (self.sectionsField && typeof self.sectionsField.onClickAdd === 'function') {
-				self.sectionsField.onClickAdd(event, $trigger);
-				window.setTimeout(function () {
-					var $popup = $('.acf-fc-popup:visible').last();
-					$popup.find('[data-layout]').each(function () {
-						var type = String($(this).attr('data-layout') || '');
-						if (layoutLabels[type]) {
-							$(this).text(layoutLabels[type]);
-						}
-					});
-				}, 0);
-				return;
+			var $layout = self.sectionsField.add({ layout: type });
+			if ($layout && $layout.length) {
+				scheduleRefresh(layoutId($layout));
 			}
-			self.$sectionsField.find('> .acf-input > .acf-flexible-content > .acf-actions [data-name="add-layout"]').first().trigger('click');
 		});
 
 		this.$workspace.on('click', '[data-yoga-action="duplicate"]', function (event) {
@@ -297,7 +301,20 @@
 			self.closeTopModal();
 		});
 
+		$(document).on('click.yogaPracticeSectionMenu', function (event) {
+			if (!$(event.target).closest('.yoga-practice-editor__add-section-wrap').length) {
+				self.$addSectionMenu.prop('hidden', true);
+				self.$addSectionButton.attr('aria-expanded', 'false');
+			}
+		});
+
 		$(document).on('keydown.yogaPracticeEditor', function (event) {
+			if (event.key === 'Escape' && !self.$addSectionMenu.prop('hidden')) {
+				event.preventDefault();
+				self.$addSectionMenu.prop('hidden', true);
+				self.$addSectionButton.attr('aria-expanded', 'false').trigger('focus');
+				return;
+			}
 			if (!self.modalStack.length) {
 				return;
 			}

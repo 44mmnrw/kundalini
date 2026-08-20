@@ -424,6 +424,61 @@
 	line-height: 1.45;
 }
 
+.yoga-practice-editor__add-section-wrap {
+	position: relative;
+	margin-top: 18px;
+}
+
+.yoga-practice-editor__section-menu {
+	position: absolute;
+	right: 0;
+	bottom: calc(100% + 8px);
+	left: 0;
+	z-index: 20;
+	display: grid;
+	box-sizing: border-box;
+	gap: 2px;
+	padding: 8px;
+	border: 1px solid var(--yoga-editor-border);
+	border-radius: 18px;
+	background: var(--yoga-editor-white);
+	box-shadow: var(--yoga-editor-shadow);
+}
+
+.yoga-practice-editor__section-menu[hidden] {
+	display: none;
+}
+
+.yoga-practice-editor__section-menu::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	border: 7px solid transparent;
+	border-top-color: var(--yoga-editor-white);
+	transform: translateX(-50%);
+}
+
+.yoga-practice-editor__section-menu button {
+	width: 100%;
+	padding: 10px 13px;
+	border: 0;
+	border-radius: 11px;
+	background: transparent;
+	color: var(--yoga-editor-black);
+	font-size: 14px;
+	font-weight: var(--yoga-editor-weight-regular);
+	text-align: left;
+	cursor: pointer;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-practice-editor__section-menu button:hover,
+.yoga-practice-editor__section-menu button:focus-visible {
+	background: var(--yoga-editor-violet-soft);
+	color: var(--yoga-editor-violet-dark);
+}
+
 .yoga-practice-editor__add-section {
 	display: flex;
 	align-items: center;
@@ -431,7 +486,6 @@
 	gap: 8px;
 	width: 100%;
 	min-height: 44px;
-	margin-top: 18px;
 	padding: 0 14px;
 	border: 0;
 	border-radius: 999px;
@@ -1858,39 +1912,6 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	overflow: hidden;
 }
 
-.yoga-modern-practice-editor .acf-fc-popup {
-	box-sizing: border-box;
-	min-width: 230px;
-	padding: 8px;
-	border: 1px solid var(--yoga-editor-border);
-	border-radius: 18px;
-	background: var(--yoga-editor-white);
-	box-shadow: var(--yoga-editor-shadow);
-}
-
-.yoga-modern-practice-editor .acf-fc-popup::before {
-	border-bottom-color: var(--yoga-editor-white);
-}
-
-.yoga-modern-practice-editor .acf-fc-popup li a {
-	padding: 10px 13px;
-	border-radius: 11px;
-	color: var(--yoga-editor-black);
-	font-family: "Mulish", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-	font-size: 14px;
-	font-weight: var(--yoga-editor-weight-medium);
-}
-
-.yoga-modern-practice-editor .acf-fc-popup li a:hover,
-.yoga-modern-practice-editor .acf-fc-popup li a:focus {
-	background: var(--yoga-editor-violet-soft);
-	color: var(--yoga-editor-violet-dark);
-}
-
-.yoga-modern-practice-editor .acf-fc-popup li a {
-	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
-}
-
 @media (max-width: 1200px) {
 	.yoga-practice-editor__body {
 		grid-template-columns: 230px minmax(0, 1fr);
@@ -1942,7 +1963,16 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 
 	.yoga-practice-editor__add-section {
 		width: auto;
-		margin: 8px 0 0;
+	}
+
+	.yoga-practice-editor__add-section-wrap {
+		width: fit-content;
+		margin-top: 8px;
+	}
+
+	.yoga-practice-editor__section-menu {
+		right: auto;
+		width: min(230px, calc(100vw - 28px));
 	}
 }
 
