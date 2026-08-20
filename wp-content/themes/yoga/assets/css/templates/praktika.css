@@ -1582,6 +1582,7 @@ display: block !important;
   background: #000;
 }
 .player__plug .exercise-player[data-media-type=video] > video,
+.player__plug .exercise-player[data-media-provider=youtube] .youtube-player-container,
 .player__plug .exercise-player[data-media-provider=kinescope] .kinescope-player-container,
 .player__plug .exercise-player[data-media-provider=kinescope] iframe,
 .player__plug .exercise-player[data-media-type=video] .plyr,
