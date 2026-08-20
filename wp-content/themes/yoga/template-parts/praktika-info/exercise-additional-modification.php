@@ -20,6 +20,7 @@ $variant_media_type = (string) ($additional_modification['media_type'] ?? 'none'
 $variant_media_file = $additional_modification['media_file'] ?? array();
 $variant_video_source = (string) ($additional_modification['video_source'] ?? 'file');
 $variant_kinescope_url = (string) ($additional_modification['kinescope_url'] ?? '');
+$variant_youtube_url = (string) ($additional_modification['youtube_url'] ?? '');
 $variant_gallery = yoga_normalize_practice_exercise_gallery($additional_modification['gallery'] ?? array());
 $variant_content = $additional_modification['content'] ?? '';
 $variant_show_timer = $variant_timing !== array();
@@ -149,6 +150,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 				'media_file'       => $variant_media_file,
 				'video_source'     => $variant_video_source,
 				'kinescope_url'    => $variant_kinescope_url,
+				'youtube_url'      => $variant_youtube_url,
 				'version'          => $additional_modification_version,
 				'player_id'        => 'kinescope-player-' . $index . '-' . $ex_idx . '-' . $additional_modification_version,
 				'allow_fullscreen' => $allow_fullscreen,

@@ -1216,7 +1216,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 				'_name'             => 'video_source',
 				'prefix'            => 'acf',
 				'type'              => 'select',
-				'instructions'      => 'Выберите загрузку MP4 в WordPress или видео из Kinescope.',
+				'instructions'      => 'Выберите один источник видео. Ниже появится только нужное поле.',
 				'required'          => 0,
 				'conditional_logic' => array(
 					array(
@@ -1225,8 +1225,9 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 				),
 				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
 				'choices'           => array(
-					'file'      => 'Файл MP4',
+					'file'      => 'Медиафайл',
 					'kinescope' => 'Kinescope',
+					'youtube'   => 'YouTube',
 				),
 				'default_value'     => 'file',
 				'allow_null'        => 0,
@@ -1240,7 +1241,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 			);
 		};
 
-		$kinescope_url_field = static function (string $key, string $parent_repeater, string $media_type_key): array {
+		$kinescope_url_field = static function (string $key, string $parent_repeater, string $media_type_key, string $video_source_key): array {
 			return array(
 				'ID'                => 0,
 				'key'               => $key,
@@ -1249,16 +1250,42 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 				'_name'             => 'kinescope_url',
 				'prefix'            => 'acf',
 				'type'              => 'url',
-				'instructions'      => 'Вставьте ссылку на видео Kinescope, например https://kinescope.io/abc123. Если MP4 не выбран, эта ссылка используется автоматически.',
+				'instructions'      => 'Вставьте HTTPS-ссылку на видео Kinescope, например https://kinescope.io/abc123.',
 				'required'          => 0,
 				'conditional_logic' => array(
 					array(
 						array('field' => $media_type_key, 'operator' => '==', 'value' => 'video'),
+						array('field' => $video_source_key, 'operator' => '==', 'value' => 'kinescope'),
 					),
 				),
 				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
 				'default_value'     => '',
 				'placeholder'       => 'https://kinescope.io/...',
+				'parent'            => 0,
+				'parent_repeater'   => $parent_repeater,
+			);
+		};
+
+		$youtube_url_field = static function (string $key, string $parent_repeater, string $media_type_key, string $video_source_key): array {
+			return array(
+				'ID'                => 0,
+				'key'               => $key,
+				'label'             => 'Ссылка YouTube',
+				'name'              => 'youtube_url',
+				'_name'             => 'youtube_url',
+				'prefix'            => 'acf',
+				'type'              => 'url',
+				'instructions'      => 'Вставьте ссылку на видео YouTube: youtube.com/watch, youtu.be, Shorts или embed.',
+				'required'          => 0,
+				'conditional_logic' => array(
+					array(
+						array('field' => $media_type_key, 'operator' => '==', 'value' => 'video'),
+						array('field' => $video_source_key, 'operator' => '==', 'value' => 'youtube'),
+					),
+				),
+				'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
+				'default_value'     => '',
+				'placeholder'       => 'https://www.youtube.com/watch?v=...',
 				'parent'            => 0,
 				'parent_repeater'   => $parent_repeater,
 			);
@@ -1272,7 +1299,14 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$modification_kinescope_url = $kinescope_url_field(
 			'field_ex_modifications_kinescope_url',
 			'field_ex_modifications',
-			'field_ex_modifications_media_type'
+			'field_ex_modifications_media_type',
+			'field_ex_modifications_video_source'
+		);
+		$modification_youtube_url = $youtube_url_field(
+			'field_ex_modifications_youtube_url',
+			'field_ex_modifications',
+			'field_ex_modifications_media_type',
+			'field_ex_modifications_video_source'
 		);
 
 		$media_file_index = null;
@@ -1292,16 +1326,19 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 					array('field' => 'field_ex_modifications_video_source', 'operator' => '==', 'value' => 'file'),
 				),
 			);
-			array_splice($modification_fields, $media_file_index, 0, array($modification_video_source, $modification_kinescope_url));
+			array_splice($modification_fields, $media_file_index, 0, array($modification_video_source, $modification_kinescope_url, $modification_youtube_url));
 		} else {
 			$modification_fields[] = $modification_video_source;
 			$modification_fields[] = $modification_kinescope_url;
+			$modification_fields[] = $modification_youtube_url;
 		}
 
 		$main_video_source = $video_source_field('field_ex_video_source', 'field_exercise_items', 'field_ex_media_type');
-		$main_kinescope_url = $kinescope_url_field('field_ex_kinescope_url', 'field_exercise_items', 'field_ex_media_type');
+		$main_kinescope_url = $kinescope_url_field('field_ex_kinescope_url', 'field_exercise_items', 'field_ex_media_type', 'field_ex_video_source');
+		$main_youtube_url = $youtube_url_field('field_ex_youtube_url', 'field_exercise_items', 'field_ex_media_type', 'field_ex_video_source');
 		$main_video_source['parent'] = $field['ID'] ?? 0;
 		$main_kinescope_url['parent'] = $field['ID'] ?? 0;
+		$main_youtube_url['parent'] = $field['ID'] ?? 0;
 		if (isset($by_name['media_file'])) {
 			$by_name['media_file']['conditional_logic'] = array(
 				array(
@@ -1388,6 +1425,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$append_named($restructured, array('details', 'timing', 'media_type'));
 		$restructured[] = $main_video_source;
 		$restructured[] = $main_kinescope_url;
+		$restructured[] = $main_youtube_url;
 		$append_named($restructured, array('media_file', 'duration', 'gallery', 'content'));
 		$main_labels = array(
 			'timing'     => 'Время/циклы',
@@ -1459,6 +1497,49 @@ if (!function_exists('yoga_validate_kinescope_video_url')) {
 
 add_filter('acf/validate_value/key=field_ex_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
 add_filter('acf/validate_value/key=field_ex_modifications_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
+
+if (!function_exists('yoga_get_youtube_video_id')) {
+	function yoga_get_youtube_video_id($url): string {
+		$url = trim((string) $url);
+		if ($url === '' || strtolower((string) wp_parse_url($url, PHP_URL_SCHEME)) !== 'https') {
+			return '';
+		}
+
+		$host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+		$host = preg_replace('/^(?:www\.|m\.)/', '', $host);
+		$path = trim((string) wp_parse_url($url, PHP_URL_PATH), '/');
+		$video_id = '';
+
+		if ($host === 'youtu.be') {
+			$video_id = explode('/', $path)[0] ?? '';
+		} elseif (in_array($host, array('youtube.com', 'youtube-nocookie.com'), true)) {
+			$query = array();
+			parse_str((string) wp_parse_url($url, PHP_URL_QUERY), $query);
+			if (!empty($query['v'])) {
+				$video_id = (string) $query['v'];
+			} elseif (preg_match('~^(?:embed|shorts|live|v)/([^/]+)~', $path, $matches)) {
+				$video_id = (string) $matches[1];
+			}
+		}
+
+		return preg_match('/^[A-Za-z0-9_-]{11}$/', $video_id) ? $video_id : '';
+	}
+}
+
+if (!function_exists('yoga_validate_youtube_video_url')) {
+	function yoga_validate_youtube_video_url($valid, $value) {
+		if ($valid !== true || trim((string) $value) === '') {
+			return $valid;
+		}
+
+		return yoga_get_youtube_video_id($value) !== ''
+			? $valid
+			: 'Укажите корректную HTTPS-ссылку на видео YouTube.';
+	}
+}
+
+add_filter('acf/validate_value/key=field_ex_youtube_url', 'yoga_validate_youtube_video_url', 10, 2);
+add_filter('acf/validate_value/key=field_ex_modifications_youtube_url', 'yoga_validate_youtube_video_url', 10, 2);
 
 if (!function_exists('yoga_enable_practice_exercise_end_signal_by_default')) {
 	/**

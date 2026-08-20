@@ -124,29 +124,39 @@
 			$media_file = is_array($args['media_file'] ?? null) ? $args['media_file'] : array();
 			$video_source = (string) ($args['video_source'] ?? 'file');
 			$kinescope_url = yoga_normalize_kinescope_video_url($args['kinescope_url'] ?? '');
+			$youtube_id = function_exists('yoga_get_youtube_video_id')
+				? yoga_get_youtube_video_id($args['youtube_url'] ?? '')
+				: '';
 			$version = (string) ($args['version'] ?? 'main');
 			$player_id = sanitize_html_class((string) ($args['player_id'] ?? 'practice-player'));
 			$media_url = trim((string) ($media_file['url'] ?? ''));
 
 			$is_kinescope = $media_type === 'video'
 				&& $kinescope_url !== ''
-				&& ($video_source === 'kinescope' || $media_url === '');
-			$uses_file = $media_type === 'audio' || ($media_type === 'video' && $video_source !== 'kinescope');
+				&& $video_source === 'kinescope';
+			$is_youtube = $media_type === 'video'
+				&& $youtube_id !== ''
+				&& $video_source === 'youtube';
+			$uses_file = $media_type === 'audio' || ($media_type === 'video' && $video_source === 'file');
 			$has_file = $uses_file && $media_url !== '';
-			if (!$is_kinescope && !$has_file) {
+			if (!$is_kinescope && !$is_youtube && !$has_file) {
 				return;
 			}
+			$media_provider = $is_kinescope ? 'kinescope' : ($is_youtube ? 'youtube' : 'file');
+			$media_src = $is_kinescope ? $kinescope_url : ($is_youtube ? $youtube_id : $media_url);
 			?>
 			<div class="exercise-player"
 				data-version="<?php echo esc_attr($version); ?>"
 				data-media-type="<?php echo esc_attr($media_type); ?>"
-				data-media-provider="<?php echo $is_kinescope ? 'kinescope' : 'file'; ?>"
-				data-media-src="<?php echo esc_url($is_kinescope ? $kinescope_url : $media_url); ?>"
+				data-media-provider="<?php echo esc_attr($media_provider); ?>"
+				data-media-src="<?php echo esc_attr($media_src); ?>"
 				data-allow-fullscreen="<?php echo !empty($args['allow_fullscreen']) ? 'true' : 'false'; ?>"
 				data-restrict-scrub="<?php echo !empty($args['restrict_scrub']) ? 'true' : 'false'; ?>"
 				data-auto-play="<?php echo !empty($args['auto_play']) ? 'true' : 'false'; ?>">
 				<?php if ($is_kinescope): ?>
 				<div id="<?php echo esc_attr($player_id); ?>" class="kinescope-player-container"></div>
+				<?php elseif ($is_youtube): ?>
+				<div id="<?php echo esc_attr($player_id); ?>" class="youtube-player-container" data-plyr-provider="youtube" data-plyr-embed-id="<?php echo esc_attr($youtube_id); ?>"></div>
 				<?php elseif ($media_type === 'audio'): ?>
 				<audio controls><source src="<?php echo esc_url($media_url); ?>" type="audio/mp3"></audio>
 				<?php elseif ($media_type === 'video'): ?>
@@ -191,10 +201,12 @@
 	$media_file = $exercise['media_file'] ?? [];
 	$video_source = $exercise['video_source'] ?? 'file';
 	$kinescope_url = $exercise['kinescope_url'] ?? '';
+	$youtube_url = $exercise['youtube_url'] ?? '';
 	$media_type_mod = $exercise['media_type_mod'] ?? 'none';
 	$media_file_mod = $exercise['media_file_mod'] ?? [];
 	$video_source_mod = $exercise['video_source_mod'] ?? 'file';
 	$kinescope_url_mod = $exercise['kinescope_url_mod'] ?? '';
+	$youtube_url_mod = $exercise['youtube_url_mod'] ?? '';
 	$duration = $exercise['duration'] ?? 180;
 	$duration_mod = $exercise['duration_mod'] ?? 180;
 	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array());
@@ -249,6 +261,7 @@
 		$media_file_mod = $first_modification['media_file'] ?? array();
 		$video_source_mod = (string) ($first_modification['video_source'] ?? 'file');
 		$kinescope_url_mod = (string) ($first_modification['kinescope_url'] ?? '');
+		$youtube_url_mod = (string) ($first_modification['youtube_url'] ?? '');
 		$duration_mod = $first_modification['duration'] ?? 180;
 		$gallery_mod = yoga_normalize_practice_exercise_gallery($first_modification['gallery'] ?? array());
 		$content_mod = $first_modification['content'] ?? '';
@@ -439,6 +452,7 @@
 					'media_file'      => $media_file,
 					'video_source'    => $video_source,
 					'kinescope_url'   => $kinescope_url,
+					'youtube_url'     => $youtube_url,
 					'version'         => 'main',
 					'player_id'       => 'kinescope-player-' . $index . '-' . $ex_idx . '-main',
 					'allow_fullscreen'=> $allow_fullscreen,
@@ -603,6 +617,7 @@
 						'media_file'       => $media_file_mod,
 						'video_source'     => $video_source_mod,
 						'kinescope_url'    => $kinescope_url_mod,
+						'youtube_url'      => $youtube_url_mod,
 						'version'          => 'mod',
 						'player_id'        => 'kinescope-player-' . $index . '-' . $ex_idx . '-mod',
 						'allow_fullscreen' => $allow_fullscreen,

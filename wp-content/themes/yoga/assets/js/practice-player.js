@@ -293,7 +293,7 @@ function initializePracticeSystem() {
 
             if (playerElement) {
                 const isKinescope = playerElement.dataset.mediaProvider === 'kinescope';
-                const mediaElement = playerElement.querySelector('audio, video');
+                const mediaElement = playerElement.querySelector('audio, video, [data-plyr-provider="youtube"]');
                 if (isKinescope) {
                     player = createKinescopePlayerAdapter(playerElement, {
                         onPlay: () => {
@@ -319,7 +319,7 @@ function initializePracticeSystem() {
                     });
                     window.activePlayers[`${exerciseId}_${versionType}`] = player;
                 } else if (mediaElement) {
-                    const isVideo = mediaElement.tagName === 'VIDEO';
+                    const isVideo = mediaElement.tagName === 'VIDEO' || mediaElement.dataset.plyrProvider === 'youtube';
                     const playerOptions = isVideo
                         ? {
                             controls: ['play-large'],
@@ -573,7 +573,7 @@ function initializePracticeSystem() {
                     return;
                 }
 
-                const media = player?.media || playerElement?.querySelector('audio, video');
+                const media = player?.media || playerElement?.querySelector('audio, video, [data-plyr-provider="youtube"]');
                 if (!media) return;
 
                 const forceSeekToStart = () => {

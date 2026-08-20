@@ -594,10 +594,11 @@
 		}
 		var summary = this.layoutSummary($layout);
 		var type = String($layout.attr('data-layout') || '');
+		var sectionNumber = String(this.layouts().index($layout) + 1).padStart(2, '0');
 		$map.addClass(type === 'anchor_05' ? 'is-technique' : 'is-section');
 		$head.find('h4').text('Схема раздела');
 		$head.find('p').text(type === 'anchor_05' ? 'Выберите шаг или упражнение — откроется нужный уровень редактора.' : 'Карточка показывает место раздела в структуре практики.');
-		$map.append(this.visualNode(summary.title, summary.meta, { number: '§', panelId: this.activeId, attention: summary.attention }).addClass('is-root'));
+		$map.append(this.visualNode(summary.title, summary.meta, { number: sectionNumber, panelId: this.activeId, attention: summary.attention }).addClass('is-root'));
 
 		if (type !== 'anchor_05') {
 			this.renderSectionFields($map, $layout);
