@@ -239,6 +239,18 @@
 
 		this.$workspace.on('click', '.yoga-practice-editor__add-section', function (event) {
 			var $trigger = $(this);
+			var $openPopup = $('.acf-fc-popup:visible').last();
+			if ($openPopup.length) {
+				event.preventDefault();
+				event.stopPropagation();
+				var popupInstance = typeof acf.getInstance === 'function' ? acf.getInstance($openPopup) : null;
+				if (popupInstance && typeof popupInstance.remove === 'function') {
+					popupInstance.remove();
+				} else {
+					$openPopup.remove();
+				}
+				return;
+			}
 			if (self.sectionsField && typeof self.sectionsField.onClickAdd === 'function') {
 				self.sectionsField.onClickAdd(event, $trigger);
 				window.setTimeout(function () {
@@ -249,26 +261,6 @@
 							$(this).text(layoutLabels[type]);
 						}
 					});
-
-					if ($popup.length && $trigger.length) {
-						var triggerRect = $trigger[0].getBoundingClientRect();
-						var popupWidth = $popup.outerWidth();
-						var popupHeight = $popup.outerHeight();
-						var viewportGap = 8;
-						var popupLeft = triggerRect.left + ((triggerRect.width - popupWidth) / 2);
-						popupLeft = Math.max(viewportGap, Math.min(popupLeft, window.innerWidth - popupWidth - viewportGap));
-						var popupTop = Math.max(viewportGap, triggerRect.top - popupHeight - viewportGap);
-						$popup
-							.addClass('yoga-fc-popup--above')
-							.css({
-								position: 'fixed',
-								top: popupTop,
-								right: 'auto',
-								bottom: 'auto',
-								left: popupLeft,
-								transform: 'none'
-							});
-					}
 				}, 0);
 				return;
 			}
