@@ -1358,17 +1358,17 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$main_modification_name = array(
 			'ID'                => 0,
 			'key'               => 'field_ex_main_modification_name',
-			'label'             => 'Название модификации',
+			'label'             => 'Название выполнения',
 			'name'              => 'main_modification_name',
 			'_name'             => 'main_modification_name',
 			'prefix'            => 'acf',
 			'type'              => 'text',
-			'instructions'      => 'Название первой вкладки упражнения на странице. Например: «Основная модификация», «Выполнение» или «Классический вариант».',
+			'instructions'      => 'Название первой вкладки упражнения на странице. Например: «Выполнение» или «Классический вариант».',
 			'required'          => 0,
 			'conditional_logic' => 0,
 			'wrapper'           => array('width' => '', 'class' => '', 'id' => ''),
-			'default_value'     => 'Основная модификация',
-			'placeholder'       => 'Основная модификация',
+			'default_value'     => 'Выполнение',
+			'placeholder'       => 'Выполнение',
 			'parent'            => $field['ID'] ?? 0,
 			'parent_repeater'   => 'field_exercise_items',
 		);
@@ -1383,7 +1383,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 
 		$restructured = array($accordion('field_ex_admin_common', 'Общие данные упражнения', true));
 		$append_named($restructured, array('title', 'subtitle'));
-		$restructured[] = $accordion('field_ex_admin_main_modification', 'Основная модификация', true);
+		$restructured[] = $accordion('field_ex_admin_main_modification', 'Выполнение', true);
 		$restructured[] = $main_modification_name;
 		$append_named($restructured, array('details', 'timing', 'media_type'));
 		$restructured[] = $main_video_source;
@@ -1584,7 +1584,7 @@ if (!function_exists('yoga_migrate_practice_exercise_modifications')) {
 			return;
 		}
 
-		$schema_version = 5;
+		$schema_version = 6;
 		$previous_schema_version = (int) get_option('yoga_exercise_modifications_schema_version', 0);
 		if ($previous_schema_version >= $schema_version) {
 			return;
@@ -1697,7 +1697,11 @@ if (!function_exists('yoga_migrate_practice_exercise_modifications')) {
 				$legacy_main_name = trim((string) ($node['field_ex_execution_name'] ?? ''));
 				$node['field_ex_main_modification_name'] = $legacy_main_name !== '' && $legacy_main_name !== '__unified__'
 					? $legacy_main_name
-					: 'Основная модификация';
+					: 'Выполнение';
+				$changed = true;
+			}
+			if ($is_exercise && ($node['field_ex_main_modification_name'] ?? '') === 'Основная модификация') {
+				$node['field_ex_main_modification_name'] = 'Выполнение';
 				$changed = true;
 			}
 			if ($is_exercise && ($node['field_ex_execution_name'] ?? '') !== '__unified__') {

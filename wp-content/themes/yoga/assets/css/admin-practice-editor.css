@@ -1846,67 +1846,6 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	}
 }
 
-/* Typography follows the editor design: body 16px regular, headings 20px bold. */
-.yoga-modern-practice-editor .yoga-practice-editor {
-	font-size: 16px;
-	font-weight: var(--yoga-editor-weight-regular);
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor p,
-.yoga-modern-practice-editor .yoga-practice-editor small,
-.yoga-modern-practice-editor .yoga-practice-editor input,
-.yoga-modern-practice-editor .yoga-practice-editor textarea,
-.yoga-modern-practice-editor .yoga-practice-editor select,
-.yoga-modern-practice-editor .yoga-practice-editor button,
-.yoga-modern-practice-editor .yoga-practice-editor .acf-input,
-.yoga-modern-practice-editor .yoga-practice-editor .acf-input-wrap {
-	font-size: 16px;
-	font-weight: var(--yoga-editor-weight-regular);
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor h2,
-.yoga-modern-practice-editor .yoga-practice-editor h3,
-.yoga-modern-practice-editor .yoga-practice-editor h4,
-.yoga-modern-practice-editor .yoga-practice-editor .acf-label > label,
-.yoga-modern-practice-editor .yoga-practice-editor__nav-copy strong,
-.yoga-modern-practice-editor .yoga-practice-visual-map__copy strong,
-.yoga-modern-practice-editor .yoga-row-card__toggle strong,
-.yoga-modern-practice-editor .yoga-modification-card__summary strong {
-	font-size: 20px;
-	font-weight: var(--yoga-editor-weight-bold);
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor__nav-copy small,
-.yoga-modern-practice-editor .yoga-practice-visual-map__copy small,
-.yoga-modern-practice-editor .yoga-row-card__toggle small,
-.yoga-modern-practice-editor .yoga-practice-visual-map__head p,
-.yoga-modern-practice-editor .yoga-practice-editor__panel-heading > p {
-	font-size: 16px;
-	font-weight: var(--yoga-editor-weight-regular);
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor__nav-button {
-	min-height: 82px;
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor__nav-index {
-	width: 48px;
-	height: 48px;
-	font-size: 16px;
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor__nav-button,
-.yoga-modern-practice-editor .yoga-practice-editor__sidebar > .yoga-practice-editor__nav-button {
-	grid-template-columns: 48px minmax(0, 1fr) auto;
-}
-
-.yoga-modern-practice-editor .yoga-practice-editor__panel-kicker,
-.yoga-modern-practice-editor .yoga-row-card__eyebrow,
-.yoga-modern-practice-editor .yoga-modification-card__summary small {
-	font-size: 16px;
-	font-weight: var(--yoga-editor-weight-bold);
-}
-
 @media (max-width: 600px) {
 	.yoga-practice-editor__hero {
 		padding: 6px 12px;
