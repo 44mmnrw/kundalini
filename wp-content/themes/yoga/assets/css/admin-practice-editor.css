@@ -1876,6 +1876,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	border-radius: 11px;
 	color: var(--yoga-editor-black);
 	font-family: "Mulish", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-medium);
 }
 
