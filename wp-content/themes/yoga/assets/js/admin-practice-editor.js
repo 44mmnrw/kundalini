@@ -238,15 +238,37 @@
 		});
 
 		this.$workspace.on('click', '.yoga-practice-editor__add-section', function (event) {
+			var $trigger = $(this);
 			if (self.sectionsField && typeof self.sectionsField.onClickAdd === 'function') {
-				self.sectionsField.onClickAdd(event, $(this));
+				self.sectionsField.onClickAdd(event, $trigger);
 				window.setTimeout(function () {
-					$('.acf-fc-popup:visible [data-layout]').each(function () {
+					var $popup = $('.acf-fc-popup:visible').last();
+					$popup.find('[data-layout]').each(function () {
 						var type = String($(this).attr('data-layout') || '');
 						if (layoutLabels[type]) {
 							$(this).text(layoutLabels[type]);
 						}
 					});
+
+					if ($popup.length && $trigger.length) {
+						var triggerRect = $trigger[0].getBoundingClientRect();
+						var popupWidth = $popup.outerWidth();
+						var popupHeight = $popup.outerHeight();
+						var viewportGap = 8;
+						var popupLeft = triggerRect.left + ((triggerRect.width - popupWidth) / 2);
+						popupLeft = Math.max(viewportGap, Math.min(popupLeft, window.innerWidth - popupWidth - viewportGap));
+						var popupTop = Math.max(viewportGap, triggerRect.top - popupHeight - viewportGap);
+						$popup
+							.addClass('yoga-fc-popup--above')
+							.css({
+								position: 'fixed',
+								top: popupTop,
+								right: 'auto',
+								bottom: 'auto',
+								left: popupLeft,
+								transform: 'none'
+							});
+					}
 				}, 0);
 				return;
 			}

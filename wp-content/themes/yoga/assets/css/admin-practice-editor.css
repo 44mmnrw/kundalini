@@ -1871,6 +1871,22 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	border-bottom-color: var(--yoga-editor-white);
 }
 
+.yoga-modern-practice-editor .acf-fc-popup.yoga-fc-popup--above::before {
+	display: none;
+}
+
+.yoga-modern-practice-editor .acf-fc-popup.yoga-fc-popup--above::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border: 7px solid transparent;
+	border-top-color: var(--yoga-editor-white);
+	transform: translateX(-50%);
+}
+
 .yoga-modern-practice-editor .acf-fc-popup li a {
 	padding: 10px 13px;
 	border-radius: 11px;
