@@ -26,6 +26,55 @@ if (!function_exists('yoga_register_acf_options_page')) {
 
 add_action('acf/init', 'yoga_register_acf_options_page');
 
+if (!function_exists('yoga_migrate_retired_acf_visual_fields')) {
+	/**
+	 * Removes retired editor fields whose visuals are now rendered by the theme.
+	 *
+	 * Field values and media attachments are intentionally preserved so the
+	 * migration remains recoverable from the ACF trash.
+	 */
+	function yoga_migrate_retired_acf_visual_fields() {
+		$schema_version = 1;
+		if ((int) get_option('yoga_acf_visual_fields_schema_version', 0) >= $schema_version) {
+			return;
+		}
+
+		global $wpdb;
+
+		$field_keys = array(
+			'field_whyme_item_bg',
+			'field_reviews_decor',
+			'field_questions_quote_decor',
+			'field_questions_faq_image',
+			'field_subscription_decor',
+			'field_subscription_btn_icon',
+			'field_contacts_btn_icon',
+			'field_faq_form_btn_icon',
+			'field_tariff_bg_image',
+		);
+
+		$placeholders = implode(',', array_fill(0, count($field_keys), '%s'));
+		$field_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT ID
+				 FROM {$wpdb->posts}
+				 WHERE post_type = 'acf-field'
+				   AND post_status <> 'trash'
+				   AND post_name IN ($placeholders)",
+				$field_keys
+			)
+		);
+
+		foreach ($field_ids as $field_id) {
+			wp_trash_post((int) $field_id);
+		}
+
+		update_option('yoga_acf_visual_fields_schema_version', $schema_version, false);
+	}
+}
+
+add_action('init', 'yoga_migrate_retired_acf_visual_fields', 5);
+
 if (!function_exists('yoga_register_tariff_frontend_access_fields')) {
 	function yoga_register_tariff_frontend_access_fields() {
 		if (!function_exists('acf_add_local_field_group')) {

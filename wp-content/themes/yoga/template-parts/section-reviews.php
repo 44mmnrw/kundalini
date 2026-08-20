@@ -5,7 +5,6 @@
  * @package Yoga
  */
 $reviews_title = get_field('reviews_title', get_the_ID()) ?: 'отзывы';
-$reviews_decor = get_field('reviews_decor', get_the_ID());
 $reviews_items = get_field('reviews_items', get_the_ID());
 $review_people = get_field('review_people', get_the_ID());
 $reviews_source_id = (int) get_option('page_on_front');
@@ -133,11 +132,7 @@ $videos_hidden = !empty($args['videos_hidden']);
                     </div>
                     <?php endif; ?>
 
-                    <?php if ($reviews_decor) : ?>
-                        <img src="<?php echo esc_url($reviews_decor); ?>" alt="" class="review-decor wow fadeInUp delay-600ms">
-                    <?php else : ?>
-                        <svg class="review-decor wow fadeInUp delay-600ms" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#review-decor'); ?>"></use></svg>
-                    <?php endif; ?>
+                    <svg class="review-decor wow fadeInUp delay-600ms" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#review-decor'); ?>"></use></svg>
                 </div>
             </div>
         </div>
