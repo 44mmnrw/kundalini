@@ -1308,8 +1308,11 @@
 			$title.append('<button type="button" class="yoga-accordion-card__edit" aria-haspopup="dialog" aria-label="Редактировать"><span aria-hidden="true">' + spriteIcon('icon-edit', 'yoga-accordion-card__edit-icon') + '</span></button>');
 		}
 		if (isMainModification) {
-			var mainLabel = labels.mainModification || 'Основная модификация';
+			var mainLabel = labels.mainModification || 'Выполнение';
 			var mainTitle = inputValue($accordion.find('.acf-field[data-name="main_modification_name"]').first()) || mainLabel;
+			if (mainTitle === 'Основная модификация') {
+				mainTitle = mainLabel;
+			}
 			var $summary = $title.children('.yoga-modification-card__summary');
 			if (!$summary.length) {
 				$summary = $('<span class="yoga-modification-card__summary"><small></small><strong></strong></span>').prependTo($title);

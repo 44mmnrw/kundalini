@@ -174,7 +174,9 @@
 		|| !empty($exercise['modifications']);
 	$legacy_has_modifications = !$uses_unified_modification_schema && !empty($exercise['has_modifications']);
 	$main_modification_name = trim((string) ($exercise['main_modification_name'] ?? ''));
-	$execution_label = $main_modification_name !== '' ? $main_modification_name : 'Основная модификация';
+	$execution_label = $main_modification_name !== '' && $main_modification_name !== 'Основная модификация'
+		? $main_modification_name
+		: 'Выполнение';
 	$modification_name = trim((string) ($exercise['modification_name'] ?? ''));
 	$modification_label = $modification_name !== '' ? $modification_name : 'Модификация 1';
 	$title = $exercise['title'] ?? '';
