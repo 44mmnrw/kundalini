@@ -9,6 +9,11 @@
 	--yoga-editor-muted: #646464;
 	--yoga-editor-white: #fff;
 	--yoga-editor-danger: #b32d2e;
+	--yoga-editor-black-hover: #292929;
+	--yoga-editor-violet-hover: #884dd7;
+	--yoga-editor-soft-hover: #eee3fa;
+	--yoga-editor-hover-duration: 0.22s;
+	--yoga-editor-hover-easing: ease;
 	--yoga-editor-shadow: 0 12px 32px rgba(31, 31, 31, 0.07);
 	--yoga-editor-weight-regular: 400;
 	--yoga-editor-weight-medium: 500;
@@ -149,14 +154,14 @@
 	font-weight: var(--yoga-editor-weight-medium);
 	text-decoration: none;
 	white-space: nowrap;
-	transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+	transition: border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-editor__classic:hover,
 .yoga-practice-editor__classic:focus {
-	border-color: var(--yoga-editor-green);
-	background: var(--yoga-editor-green);
-	color: var(--yoga-editor-black);
+	border-color: rgba(232, 255, 87, 0.75);
+	background: var(--yoga-editor-black-hover);
+	color: var(--yoga-editor-white);
 }
 
 .yoga-practice-editor__body {
@@ -183,6 +188,7 @@
 	align-items: center;
 	margin: 4px 0;
 	border-radius: 18px;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-editor__nav-item:hover,
@@ -204,7 +210,7 @@
 	color: var(--yoga-editor-white);
 	text-align: left;
 	cursor: pointer;
-	transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+	transition: color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), box-shadow var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-editor__nav-item[data-layout-id] .yoga-practice-editor__nav-button {
@@ -349,7 +355,7 @@
 	gap: 3px;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 0.2s ease;
+	transition: opacity var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-editor__nav-item:hover .yoga-practice-editor__nav-actions,
@@ -372,11 +378,12 @@
 	color: var(--yoga-editor-white);
 	line-height: 0;
 	cursor: pointer;
+	transition: border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), opacity var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-editor__nav-actions button:last-child:hover {
 	border-color: #ffd4d4;
-	background: #8f2424;
+	background: #843fa7;
 }
 
 .yoga-practice-editor__nav-actions button:disabled {
@@ -433,7 +440,7 @@
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-medium);
 	cursor: pointer;
-	transition: transform 0.2s ease, background 0.2s ease;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-editor__add-section span {
@@ -442,8 +449,7 @@
 }
 
 .yoga-practice-editor__add-section:hover {
-	background: #343434;
-	transform: translateY(-1px);
+	background: var(--yoga-editor-black-hover);
 }
 
 .yoga-practice-editor__content {
@@ -478,6 +484,13 @@
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-medium);
 	cursor: pointer;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), box-shadow var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-practice-editor__open-panel:hover,
+.yoga-practice-editor__open-panel:focus-visible {
+	background: var(--yoga-editor-violet-hover);
+	color: var(--yoga-editor-white);
 }
 
 .yoga-practice-editor__open-panel-icon {
@@ -653,6 +666,7 @@
 	text-align: left;
 	cursor: pointer;
 	box-shadow: 0 6px 18px rgba(31, 31, 31, 0.035);
+	transition: border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), box-shadow var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-visual-map button.yoga-practice-visual-map__node:hover,
@@ -842,13 +856,14 @@
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-medium);
 	cursor: pointer;
+	transition: border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-practice-visual-map__add-exercise:hover,
 .yoga-practice-visual-map__add-exercise:focus-visible {
-	border-style: solid;
-	background: var(--yoga-editor-violet);
-	color: var(--yoga-editor-white);
+	border-color: var(--yoga-editor-violet);
+	background: var(--yoga-editor-soft-hover);
+	color: var(--yoga-editor-violet-dark);
 }
 
 .yoga-practice-visual-map__add-exercise > span {
@@ -978,6 +993,25 @@
 	box-shadow: none;
 }
 
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-video-source-field {
+	box-sizing: border-box;
+	clear: both;
+	float: none !important;
+	width: 100% !important;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-video-source-field > .acf-input,
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-video-source-field select,
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-video-source-field .select2-container {
+	width: 100% !important;
+	max-width: none;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-video-source-field--url {
+	padding-top: 0;
+	border-top: 0 !important;
+}
+
 .yoga-modern-practice-editor .yoga-practice-editor input:focus,
 .yoga-modern-practice-editor .yoga-practice-editor textarea:focus,
 .yoga-modern-practice-editor .yoga-practice-editor select:focus,
@@ -1023,11 +1057,12 @@
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-medium);
 	line-height: 40px;
+	transition: border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), box-shadow var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-modern-practice-editor .yoga-practice-editor .acf-button:hover,
 .yoga-modern-practice-editor .yoga-practice-editor .button-primary:hover {
-	background: var(--yoga-editor-violet-dark);
+	background: var(--yoga-editor-violet-hover);
 	color: var(--yoga-editor-white);
 }
 
@@ -1205,6 +1240,12 @@
 	color: var(--yoga-editor-black);
 	text-align: left;
 	cursor: pointer;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-row-card__toggle:hover,
+.yoga-row-card__toggle:focus-visible {
+	background: #fcfaff;
 }
 
 .yoga-modern-practice-editor .yoga-row-card--modification .yoga-row-card__toggle {
@@ -1228,12 +1269,13 @@
 	color: var(--yoga-editor-danger);
 	cursor: pointer;
 	transform: translateY(-50%);
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 .yoga-row-card__remove:hover,
 .yoga-row-card__remove:focus-visible {
-	background: var(--yoga-editor-danger);
-	color: var(--yoga-editor-white);
+	background: #ffe2e2;
+	color: var(--yoga-editor-danger);
 }
 
 .yoga-row-card__remove-icon {
@@ -1284,6 +1326,12 @@
 	background: var(--yoga-editor-violet-soft);
 	color: var(--yoga-editor-violet-dark);
 	transform: translateY(-50%);
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-row-card__edit:hover,
+.yoga-row-card__edit:focus-visible {
+	background: var(--yoga-editor-soft-hover);
 }
 
 .yoga-row-card--modification .yoga-row-card__edit {
@@ -1509,6 +1557,21 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	line-height: 0;
 }
 
+.yoga-practice-modal__back,
+.yoga-practice-modal__close {
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), border-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-practice-modal__back:hover,
+.yoga-practice-modal__back:focus-visible {
+	background: var(--yoga-editor-soft-hover);
+}
+
+.yoga-practice-modal__close:hover,
+.yoga-practice-modal__close:focus-visible {
+	background: var(--yoga-editor-black-hover);
+}
+
 .yoga-practice-modal__close-icon {
 	display: block;
 	flex: 0 0 16px;
@@ -1648,6 +1711,12 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	padding: 12px 14px 12px 20px;
 	border-radius: 20px;
 	cursor: pointer;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-modern-practice-editor .yoga-accordion-card:not(.yoga-modal-surface) > .acf-accordion-title:hover,
+.yoga-modern-practice-editor .yoga-accordion-card:not(.yoga-modal-surface) > .acf-accordion-title:focus-within {
+	background: #fcfaff;
 }
 
 .yoga-modern-practice-editor .yoga-accordion-card:not(.yoga-modal-surface) > .acf-accordion-title .acf-accordion-icon {
@@ -1672,6 +1741,12 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	font-size: 14px;
 	font-weight: var(--yoga-editor-weight-medium);
 	cursor: pointer;
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+}
+
+.yoga-accordion-card__edit:hover,
+.yoga-accordion-card__edit:focus-visible {
+	background: var(--yoga-editor-soft-hover);
 }
 
 .yoga-accordion-card__edit > span {
@@ -1808,6 +1883,10 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 .yoga-modern-practice-editor .acf-fc-popup li a:focus {
 	background: var(--yoga-editor-violet-soft);
 	color: var(--yoga-editor-violet-dark);
+}
+
+.yoga-modern-practice-editor .acf-fc-popup li a {
+	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
 @media (max-width: 1200px) {

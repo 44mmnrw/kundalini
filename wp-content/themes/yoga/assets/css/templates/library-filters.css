@@ -336,10 +336,15 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  .library-filters-screen__apply:hover,
-  .library-filters-screen__apply:focus-visible {
+  .library-filters-screen.has-selection .library-filters-screen__apply,
+  .library-filters-screen.has-selection .library-filters-screen__apply:hover,
+  .library-filters-screen.has-selection .library-filters-screen__apply:focus-visible {
     background: var(--color-violet);
     color: #fff;
+  }
+
+  .library-filters-screen__apply:disabled {
+    cursor: default;
   }
 
   .library-filters-screen__reset {
