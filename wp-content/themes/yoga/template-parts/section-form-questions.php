@@ -52,6 +52,7 @@ $yoga_arrow_sprite_href = esc_url(add_query_arg(
                 <div class="contacts-form-layout__panel form-questions__main">
                     <form action="#" class="form-questions__main-form contacts-form contacts-form-layout__form" method="post">
                         <?php wp_nonce_field('contacts_nonce', 'contacts_nonce_field'); ?>
+                        <input type="hidden" name="question_source" value="contacts">
 
                         <div class="contacts-form-layout__row contacts-form-layout__row--inputs">
                             <input type="text" name="contacts_name" class="input" required value="<?php echo esc_attr($contacts_prefill_name); ?>"<?php echo $contacts_prefill_name !== '' ? ' readonly aria-readonly="true"' : ''; ?>

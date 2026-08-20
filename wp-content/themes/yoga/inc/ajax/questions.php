@@ -45,7 +45,10 @@ function handle_question_submission() {
         'post_content' => $question_text,
         'post_status' => 'publish',
         'post_type' => 'question',
-        'post_author' => $user_id
+		'post_author' => $user_id,
+		'meta_input' => array(
+			'question_source' => 'lk',
+		)
 	);
 
 	$question_id = wp_insert_post($question_data);
@@ -177,7 +180,8 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 			'post_status' => 'publish',
             'meta_input' => array(
 			'contact_email' => $email,
-			'contact_date' => current_time('mysql')
+			'contact_date' => current_time('mysql'),
+			'question_source' => 'faq'
             )
 		), true);
 
@@ -198,4 +202,3 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 
 		exit;
 	}
-

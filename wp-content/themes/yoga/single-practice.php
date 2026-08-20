@@ -89,6 +89,8 @@ $section_praktika_extra_class = $show_practice_questions_form ? '' : 'section-pr
 					</div>
 					<form action="#" class="form-questions__main-form contacts-form">
 						<?php wp_nonce_field('contacts_nonce', 'contacts_nonce_field'); ?>
+						<input type="hidden" name="question_source" value="practice">
+						<input type="hidden" name="practice_id" value="<?php echo esc_attr((string) get_the_ID()); ?>">
 						<input name="contacts_name" type="text" class="input" required value="<?php echo esc_attr($practice_prefill_name); ?>"<?php echo $practice_prefill_name !== '' ? ' readonly aria-readonly="true"' : ''; ?> placeholder="Имя">
 						<input name="contacts_email" type="email" class="input" required value="<?php echo esc_attr($practice_prefill_email); ?>"<?php echo $practice_prefill_email !== '' ? ' readonly aria-readonly="true"' : ''; ?> placeholder="Эл. почта">
 						<div class="form-questions-textarea">
