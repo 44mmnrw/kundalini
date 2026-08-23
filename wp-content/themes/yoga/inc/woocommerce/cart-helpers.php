@@ -267,8 +267,6 @@ if (!function_exists('yoga_get_tariffs_periods')) {
 			$periods = array();
 		}
 
-		$has_day = false;
-
 		foreach ($periods as $index => $period) {
 			if (!is_array($period)) {
 				continue;
@@ -285,20 +283,6 @@ if (!function_exists('yoga_get_tariffs_periods')) {
 				$periods[$index]['period_slug'] = $slug;
 			}
 
-			if ($slug === 'day') {
-				$has_day = true;
-			}
-		}
-
-		if (!$has_day) {
-			array_unshift(
-				$periods,
-				array(
-					'period_name'   => __('День', 'yoga'),
-					'period_slug'   => 'day',
-					'period_active' => false,
-				)
-			);
 		}
 
 		return $periods;
