@@ -159,7 +159,7 @@
 						'<h2>' + labels.editorTitle + '</h2>' +
 						'<p>' + labels.editorDescription + '</p>' +
 					'</div>' +
-					'<a class="yoga-practice-editor__classic" href="' + config.classicUrl + '">' + labels.classicView + '</a>' +
+					'<a class="yoga-practice-editor__classic adminify-active" href="' + config.classicUrl + '">' + labels.classicView + '</a>' +
 				'</header>' +
 				'<div class="yoga-practice-editor__body">' +
 					'<aside class="yoga-practice-editor__sidebar" aria-label="Разделы практики">' +

@@ -1179,9 +1179,9 @@
 	overflow: hidden;
 }
 
-.yoga-modern-practice-editor .yoga-practice-editor__layout-card > .acf-fc-layout-handle,
-.yoga-modern-practice-editor .yoga-practice-editor__layout-card > .acf-fc-layout-controls {
-	display: none;
+.yoga-modern-practice-editor .acf-field[data-key="field_practice_sections"] > .acf-input > .acf-flexible-content > .values > .layout > .acf-fc-layout-handle,
+.yoga-modern-practice-editor .acf-field[data-key="field_practice_sections"] > .acf-input > .acf-flexible-content > .values > .layout > .acf-fc-layout-controls {
+	display: none !important;
 }
 
 .yoga-practice-editor__layout--inactive {
