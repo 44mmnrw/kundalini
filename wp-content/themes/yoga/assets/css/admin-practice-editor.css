@@ -1303,6 +1303,7 @@
 	background: #fcfaff;
 }
 
+.yoga-modern-practice-editor .yoga-row-card--exercise .yoga-row-card__toggle,
 .yoga-modern-practice-editor .yoga-row-card--modification .yoga-row-card__toggle {
 	padding-right: 94px;
 }
@@ -1389,6 +1390,7 @@
 	background: var(--yoga-editor-soft-hover);
 }
 
+.yoga-row-card--exercise .yoga-row-card__edit,
 .yoga-row-card--modification .yoga-row-card__edit {
 	right: 48px;
 }

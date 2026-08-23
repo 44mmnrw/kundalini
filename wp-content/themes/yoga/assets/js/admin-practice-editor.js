@@ -413,7 +413,7 @@
 		}
 	};
 
-	PracticeEditor.prototype.removeModification = function ($row, $trigger) {
+	PracticeEditor.prototype.removeRepeaterRow = function ($row, $trigger, confirmationMessage) {
 		if (!$row || !$row.length) {
 			return;
 		}
@@ -454,7 +454,7 @@
 			return;
 		}
 
-		if (window.confirm(labels.confirmRemoveModification)) {
+		if (window.confirm(confirmationMessage)) {
 			removeRow();
 		}
 	};
@@ -1297,7 +1297,8 @@
 			.html(spriteIcon('icon-edit', 'yoga-row-card__edit-icon'));
 
 		var $removeButton = $header.children('.yoga-row-card__remove');
-		if (type === 'modification') {
+		var isRemovable = type === 'exercise' || type === 'modification';
+		if (isRemovable) {
 			if (!$removeButton.length) {
 				$removeButton = $('<button type="button" class="yoga-row-card__remove">' + spriteIcon('checkout-trash', 'yoga-row-card__remove-icon') + '</button>').appendTo($header);
 			}
@@ -1306,11 +1307,15 @@
 					'aria-label': labels.remove + ': ' + title,
 					title: labels.remove
 				})
-				.off('click.yogaRemoveModification')
-				.on('click.yogaRemoveModification', function (event) {
+				.off('click.yogaRemoveRow')
+				.on('click.yogaRemoveRow', function (event) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
-					self.removeModification($row, $removeButton);
+					self.removeRepeaterRow(
+						$row,
+						$removeButton,
+						type === 'exercise' ? labels.confirmRemoveExercise : labels.confirmRemoveModification
+					);
 				});
 		} else {
 			$removeButton.remove();
