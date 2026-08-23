@@ -188,11 +188,13 @@
 	align-items: center;
 	margin: 4px 0;
 	border-radius: 18px;
-	transition: background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
+	background: transparent;
+	color: var(--yoga-editor-white);
+	transition: color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), box-shadow var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
-.yoga-practice-editor__nav-item:hover,
-.yoga-practice-editor__nav-item:focus-within {
+.yoga-practice-editor__nav-item:not(.is-active):hover,
+.yoga-practice-editor__nav-item:not(.is-active):focus-within {
 	background: rgba(255, 255, 255, 0.1);
 }
 
@@ -235,24 +237,28 @@
 
 .yoga-practice-editor__nav-button--general.is-active {
 	border-color: var(--yoga-editor-white);
+	background: var(--yoga-editor-white);
+	color: var(--yoga-editor-black);
+	box-shadow: 0 8px 20px rgba(53, 22, 92, 0.18);
 }
 
 .yoga-practice-editor__nav-item .yoga-practice-editor__nav-button {
-	grid-column: 2;
-}
-
-.yoga-practice-editor__nav-item.is-active {
-	background: transparent;
-	border-radius: 0;
-}
-
-.yoga-practice-editor__nav-item.is-active .yoga-practice-editor__nav-button {
 	grid-column: 1 / -1;
 	grid-row: 1;
 	padding-left: 26px;
+	background: transparent;
+	color: inherit;
+	box-shadow: none;
+	transition: none;
 }
 
-.yoga-practice-editor__nav-item.is-active .yoga-practice-editor__drag {
+.yoga-practice-editor__nav-item.is-active {
+	background: var(--yoga-editor-white);
+	color: var(--yoga-editor-black);
+	box-shadow: 0 8px 20px rgba(53, 22, 92, 0.18);
+}
+
+.yoga-practice-editor__nav-item .yoga-practice-editor__drag {
 	grid-column: 1;
 	grid-row: 1;
 	z-index: 2;
@@ -260,16 +266,6 @@
 
 .yoga-practice-editor__nav-item.is-active .yoga-practice-editor__drag span {
 	background: var(--yoga-editor-black);
-}
-
-.yoga-practice-editor__nav-button:hover {
-	color: var(--yoga-editor-white);
-}
-
-.yoga-practice-editor__nav-button.is-active {
-	background: var(--yoga-editor-white);
-	color: var(--yoga-editor-black);
-	box-shadow: 0 8px 20px rgba(53, 22, 92, 0.18);
 }
 
 .yoga-practice-editor__nav-index {
@@ -284,7 +280,7 @@
 	font-weight: var(--yoga-editor-weight-bold);
 }
 
-.yoga-practice-editor__nav-button.is-active .yoga-practice-editor__nav-index {
+.yoga-practice-editor__nav-item.is-active .yoga-practice-editor__nav-index {
 	background: var(--yoga-editor-green);
 }
 
@@ -383,8 +379,8 @@
 
 .yoga-practice-editor__nav-actions button:hover,
 .yoga-practice-editor__nav-actions button:focus-visible {
-	border-color: #ffd4d4;
-	background: #843fa7;
+	border-color: #cdb2ee;
+	background: var(--yoga-editor-violet);
 }
 
 .yoga-practice-editor__nav-actions button:disabled {
