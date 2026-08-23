@@ -248,6 +248,15 @@
 			self.addExercise($(this).attr('data-step-id') || '');
 		});
 
+		this.$workspace.on('click', '[data-yoga-action="remove-exercise"]', function (event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			var $trigger = $(this);
+			var rowId = $trigger.attr('data-row-id') || '';
+			var $row = self.$workspace.find('tr.acf-row[data-yoga-row-id="' + rowId + '"]').first();
+			self.removeRepeaterRow($row, $trigger, labels.confirmRemoveExercise);
+		});
+
 		this.$workspace.on('click', '.yoga-practice-editor__add-section', function (event) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -662,10 +671,21 @@
 				var $exercise = $(this);
 				var exerciseTitle = rowFieldValue($exercise, 'title') || labels.exercise + ' ' + (exerciseIndex + 1);
 				var modificationCount = directRows(nestedFieldInRow($exercise, 'modifications')).length;
-				$exerciseList.append(self.visualNode(exerciseTitle, 'Основная + ' + modificationCount + ' дополнительных', {
+				var exerciseRowId = self.rowVisualId($exercise);
+				var $exerciseItem = $('<div class="yoga-practice-visual-map__exercise-item"></div>');
+				$exerciseItem.append(self.visualNode(exerciseTitle, 'Основная + ' + modificationCount + ' дополнительных', {
 					number: String(exerciseIndex + 1),
-					rowId: self.rowVisualId($exercise)
+					rowId: exerciseRowId
 				}).addClass('is-exercise'));
+				$exerciseItem.append(
+					$('<button type="button" class="yoga-practice-visual-map__remove-exercise" data-yoga-action="remove-exercise">' + spriteIcon('checkout-trash', 'yoga-practice-visual-map__remove-icon') + '</button>')
+						.attr({
+							'data-row-id': exerciseRowId,
+							'aria-label': labels.remove + ': ' + exerciseTitle,
+							title: labels.remove
+						})
+				);
+				$exerciseList.append($exerciseItem);
 			});
 			$exerciseList.append(
 				$('<button type="button" class="yoga-practice-visual-map__add-exercise" data-yoga-action="add-exercise"><span aria-hidden="true">+</span> Добавить упражнение</button>')
