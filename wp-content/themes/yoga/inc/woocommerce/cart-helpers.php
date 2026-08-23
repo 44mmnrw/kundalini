@@ -125,6 +125,9 @@ if (!function_exists('yoga_normalize_tariff_period_slug')) {
 		$aliases = array(
 			'день'     => 'day',
 			'day'      => 'day',
+			'1day'     => 'day',
+			'1-day'    => 'day',
+			'1 day'    => 'day',
 			'month'    => 'month',
 			'месяц'    => 'month',
 			'3months'  => '3months',
