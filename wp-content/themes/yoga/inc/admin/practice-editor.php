@@ -31,6 +31,48 @@ if (!function_exists('yoga_is_modern_practice_editor')) {
 	}
 }
 
+if (!function_exists('yoga_practice_editor_taxonomy_terms')) {
+	function yoga_practice_editor_taxonomy_terms(string $taxonomy): array {
+		$terms = get_terms(array(
+			'taxonomy'   => $taxonomy,
+			'hide_empty' => false,
+			'orderby'    => 'term_id',
+			'order'      => 'ASC',
+		));
+		if (is_wp_error($terms) || !$terms) {
+			return array();
+		}
+
+		$result = array();
+		foreach ($terms as $term) {
+			$value = (string) $term->name;
+			if ($taxonomy === 'practice-difficulty') {
+				$search = function_exists('mb_strtolower')
+					? mb_strtolower($term->slug . ' ' . $term->name, 'UTF-8')
+					: strtolower($term->slug . ' ' . $term->name);
+
+				if (preg_match('/(?:легк|начин|begin|easy|novice|tip[-_ ]?1|type[-_ ]?1)/u', $search)) {
+					$value = 'beginner';
+				} elseif (preg_match('/(?:сред|intermediate|medium|middle|tip[-_ ]?2|type[-_ ]?2)/u', $search)) {
+					$value = 'intermediate';
+				} elseif (preg_match('/(?:слож|продвин|advanced|hard|expert|pro|tip[-_ ]?3|type[-_ ]?3)/u', $search)) {
+					$value = 'advanced';
+				}
+			}
+
+			$result[] = array(
+				'id'    => (int) $term->term_id,
+				'parent' => (int) $term->parent,
+				'name'  => (string) $term->name,
+				'slug'  => (string) $term->slug,
+				'value' => $value,
+			);
+		}
+
+		return $result;
+	}
+}
+
 if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 	function yoga_enqueue_practice_editor_assets(): void {
 		if (!yoga_is_modern_practice_editor()) {
@@ -73,12 +115,45 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 				array('post_type' => 'practice', 'yoga_editor' => 'classic'),
 				admin_url('post-new.php')
 			);
+		$hidden_sidebar_taxonomies = array();
+		foreach (array('practice-duration', 'practice-difficulty', 'practice-type', 'practice-goal') as $taxonomy_name) {
+			$taxonomy = get_taxonomy($taxonomy_name);
+			if (!$taxonomy) {
+				continue;
+			}
+
+			$hidden_sidebar_taxonomies[] = array(
+				'slug'  => $taxonomy_name,
+				'label' => (string) $taxonomy->labels->menu_name,
+			);
+		}
 
 		wp_localize_script(
 			'yoga-admin-practice-editor',
 			'yogaPracticeEditor',
 			array(
 				'classicUrl' => $classic_url,
+				'hiddenSidebarTaxonomies' => $hidden_sidebar_taxonomies,
+				'taxonomySync' => array(
+					'difficulty' => array(
+						'restBase' => 'practice-difficulty',
+						'terms'    => yoga_practice_editor_taxonomy_terms('practice-difficulty'),
+					),
+					'duration' => array(
+						'restBase' => 'practice-duration',
+						'terms'    => yoga_practice_editor_taxonomy_terms('practice-duration'),
+					),
+					'types' => array(
+						'restBase' => 'practice-type',
+						'label'    => (string) get_taxonomy('practice-type')->labels->menu_name,
+						'terms'    => yoga_practice_editor_taxonomy_terms('practice-type'),
+					),
+					'goals' => array(
+						'restBase' => 'practice-goal',
+						'label'    => (string) get_taxonomy('practice-goal')->labels->menu_name,
+						'terms'    => yoga_practice_editor_taxonomy_terms('practice-goal'),
+					),
+				),
 				'spriteUrl'  => add_query_arg(
 					'ver',
 					file_exists($sprite_path) ? (string) filemtime($sprite_path) : '1.0.0',
@@ -98,6 +173,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 					'duplicate' => 'Дублировать',
 					'remove' => 'Удалить',
 					'confirmRemoveSection' => 'Удалить эту секцию? Действие применится после сохранения практики.',
+					'confirmRemoveStep' => 'Удалить этот шаг вместе со всеми его упражнениями? Действие применится после сохранения практики.',
 					'confirmRemoveExercise' => 'Удалить это упражнение? Действие применится после сохранения практики.',
 					'confirmRemoveModification' => 'Удалить эту дополнительную модификацию? Действие применится после сохранения практики.',
 					'expand' => 'Раскрыть',

@@ -432,8 +432,9 @@
 
 .yoga-practice-editor__section-menu {
 	position: absolute;
+	top: calc(100% + 8px);
 	right: 0;
-	bottom: calc(100% + 8px);
+	bottom: auto;
 	left: 0;
 	z-index: 20;
 	display: grid;
@@ -453,11 +454,24 @@
 .yoga-practice-editor__section-menu::after {
 	content: "";
 	position: absolute;
-	top: 100%;
+	top: auto;
+	bottom: 100%;
 	left: 50%;
 	border: 7px solid transparent;
-	border-top-color: var(--yoga-editor-white);
+	border-bottom-color: var(--yoga-editor-white);
 	transform: translateX(-50%);
+}
+
+.yoga-practice-editor__section-menu.is-opening-up {
+	top: auto;
+	bottom: calc(100% + 8px);
+}
+
+.yoga-practice-editor__section-menu.is-opening-up::after {
+	top: 100%;
+	bottom: auto;
+	border-top-color: var(--yoga-editor-white);
+	border-bottom-color: transparent;
 }
 
 .yoga-practice-editor__section-menu button {
@@ -868,6 +882,14 @@
 	background: var(--yoga-editor-violet-soft);
 }
 
+.yoga-practice-visual-map__step-item {
+	position: relative;
+}
+
+.yoga-practice-visual-map__step-item > .yoga-practice-visual-map__node.is-step {
+	grid-template-columns: 38px minmax(0, 1fr) 34px 34px;
+}
+
 .yoga-practice-visual-map__exercises {
 	position: relative;
 	display: grid;
@@ -898,7 +920,8 @@
 	grid-template-columns: 38px minmax(0, 1fr) 34px 34px;
 }
 
-.yoga-practice-visual-map__remove-exercise {
+.yoga-practice-visual-map__remove-exercise,
+.yoga-practice-visual-map__remove-step {
 	position: absolute;
 	top: 50%;
 	right: 13px;
@@ -919,7 +942,9 @@
 }
 
 .yoga-practice-visual-map__remove-exercise:hover,
-.yoga-practice-visual-map__remove-exercise:focus-visible {
+.yoga-practice-visual-map__remove-exercise:focus-visible,
+.yoga-practice-visual-map__remove-step:hover,
+.yoga-practice-visual-map__remove-step:focus-visible {
 	background: #ffe2e2;
 	color: var(--yoga-editor-danger);
 }
@@ -1090,6 +1115,38 @@
 	border-color: #d9d9de;
 	border-radius: 12px;
 	box-shadow: none;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-practice-taxonomy-source {
+	display: none !important;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor .yoga-practice-taxonomy-select {
+	width: 100%;
+	max-width: none;
+}
+
+.yoga-modern-practice-editor .yoga-practice-taxonomy-checklist {
+	display: grid;
+	gap: 10px;
+}
+
+.yoga-modern-practice-editor .yoga-practice-taxonomy-option {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	padding-left: calc(var(--yoga-taxonomy-depth, 0) * 20px);
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.yoga-modern-practice-editor .yoga-practice-taxonomy-option input {
+	margin: 0;
+}
+
+.yoga-modern-practice-editor .interface-complementary-area .yoga-practice-hidden-sidebar-panel {
+	display: none !important;
 }
 
 .yoga-modern-practice-editor .yoga-practice-editor .yoga-video-source-field {
@@ -1347,6 +1404,7 @@
 	background: #fcfaff;
 }
 
+.yoga-modern-practice-editor .yoga-row-card--step .yoga-row-card__toggle,
 .yoga-modern-practice-editor .yoga-row-card--exercise .yoga-row-card__toggle,
 .yoga-modern-practice-editor .yoga-row-card--modification .yoga-row-card__toggle {
 	padding-right: 94px;
