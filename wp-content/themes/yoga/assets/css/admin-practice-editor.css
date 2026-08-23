@@ -806,9 +806,12 @@
 .yoga-practice-visual-map__branches {
 	position: relative;
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: minmax(0, 1fr);
 	gap: 18px;
-	margin-top: 18px;
+	box-sizing: border-box;
+	max-width: 438px;
+	margin: 18px 0 0 33px;
+	padding-left: 18px;
 }
 
 .yoga-practice-visual-map.is-technique > .yoga-practice-visual-map__node.is-root::after {
@@ -824,38 +827,39 @@
 .yoga-practice-visual-map.is-technique .yoga-practice-visual-map__branches::before {
 	content: "";
 	position: absolute;
-	top: 0;
-	left: 33px;
-	height: 1px;
+	top: -18px;
+	left: 0;
+	width: 1px;
+	height: 56px;
 	background: #c9a8ef;
 }
 
-.yoga-practice-visual-map.is-technique .yoga-practice-visual-map__branches.has-1-columns::before,
 .yoga-practice-visual-map.is-technique .yoga-practice-visual-map__branches.is-empty::before {
 	display: none;
-}
-
-.yoga-practice-visual-map.is-technique .yoga-practice-visual-map__branches.has-2-columns::before {
-	width: calc(33.333333% + 6px);
-}
-
-.yoga-practice-visual-map.is-technique .yoga-practice-visual-map__branches.has-3-columns::before {
-	width: calc(66.666667% + 12px);
 }
 
 .yoga-practice-visual-map__branch {
 	position: relative;
 	min-width: 0;
-	padding-top: 20px;
 }
 
 .yoga-practice-visual-map__branch::before {
 	content: "";
 	position: absolute;
-	top: 0;
-	left: 33px;
+	top: 38px;
+	left: -18px;
+	width: 18px;
+	height: 1px;
+	background: #c9a8ef;
+}
+
+.yoga-practice-visual-map__branch:not(:last-child)::after {
+	content: "";
+	position: absolute;
+	top: 38px;
+	bottom: -56px;
+	left: -18px;
 	width: 1px;
-	height: 20px;
 	background: #c9a8ef;
 }
 
@@ -1588,7 +1592,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 	overflow-x: hidden !important;
 	overflow-y: auto !important;
 	border: 1px solid rgba(255, 255, 255, 0.5) !important;
-	border-radius: 28px !important;
+	border-radius: 0 !important;
 	background: var(--yoga-editor-grey) !important;
 	box-shadow: 0 30px 90px rgba(20, 12, 31, 0.32) !important;
 }
@@ -1964,8 +1968,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 		padding: 22px;
 	}
 
-	.yoga-practice-visual-map__flow,
-	.yoga-practice-visual-map__branches {
+	.yoga-practice-visual-map__flow {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
@@ -2045,8 +2048,7 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 		border-radius: 20px;
 	}
 
-	.yoga-practice-visual-map__flow,
-	.yoga-practice-visual-map__branches {
+	.yoga-practice-visual-map__flow {
 		grid-template-columns: 1fr;
 	}
 
