@@ -79,6 +79,7 @@
 				return;
 			}
 			editor.refreshNavigation(preferredId);
+			editor.positionSectionMenu();
 		}, 80);
 	}
 
@@ -110,6 +111,12 @@
 		this.portalScrollTop = 0;
 		this.portalScrollPositions = [];
 		this.modalStack = [];
+		this.taxonomySyncing = false;
+		this.taxonomySignature = '';
+		this.taxonomyUnsubscribe = null;
+		this.taxonomyPanelObserver = null;
+		this.$durationTaxonomyInput = $();
+		this.$taxonomyFields = {};
 	}
 
 	PracticeEditor.prototype.layouts = function () {
@@ -118,6 +125,350 @@
 		}
 
 		return this.$sectionsField.find('> .acf-input > .acf-flexible-content > .values > .layout');
+	};
+
+	PracticeEditor.prototype.setSectionMenuOpen = function (isOpen) {
+		var self = this;
+		this.$addSectionMenu.prop('hidden', !isOpen);
+		this.$addSectionButton.attr('aria-expanded', isOpen ? 'true' : 'false');
+
+		if (!isOpen) {
+			this.$addSectionMenu.removeClass('is-opening-up is-opening-down');
+			return;
+		}
+
+		this.positionSectionMenu();
+		window.requestAnimationFrame(function () {
+			self.positionSectionMenu();
+		});
+	};
+
+	PracticeEditor.prototype.positionSectionMenu = function () {
+		var button = this.$addSectionButton.get(0);
+		var menu = this.$addSectionMenu.get(0);
+		if (!button || !menu || this.$addSectionMenu.prop('hidden')) {
+			return;
+		}
+
+		var buttonRect = button.getBoundingClientRect();
+		var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+		var menuHeight = menu.scrollHeight;
+		var gap = 8;
+		var spaceAbove = Math.max(0, buttonRect.top - gap);
+		var spaceBelow = Math.max(0, viewportHeight - buttonRect.bottom - gap);
+		var opensUp = spaceBelow < menuHeight && spaceAbove > spaceBelow;
+
+		this.$addSectionMenu
+			.toggleClass('is-opening-up', opensUp)
+			.toggleClass('is-opening-down', !opensUp);
+	};
+
+	PracticeEditor.prototype.getEditedTaxonomyTermIds = function (settings) {
+		if (!settings || !settings.restBase || !window.wp || !wp.data) {
+			return [];
+		}
+
+		var store = wp.data.select('core/editor');
+		if (!store) {
+			return [];
+		}
+
+		var termIds = store.getEditedPostAttribute(settings.restBase);
+		if (!Array.isArray(termIds)) {
+			termIds = store.getCurrentPostAttribute(settings.restBase);
+		}
+
+		return Array.isArray(termIds)
+			? termIds.map(function (termId) { return parseInt(termId, 10); }).filter(function (termId) { return termId > 0; })
+			: [];
+	};
+
+	PracticeEditor.prototype.findTaxonomyTerm = function (settings, property, value) {
+		var normalizedValue = String(value || '').toLowerCase();
+		var terms = settings && Array.isArray(settings.terms) ? settings.terms : [];
+
+		for (var index = 0; index < terms.length; index++) {
+			if (String(terms[index][property] || '').toLowerCase() === normalizedValue) {
+				return terms[index];
+			}
+		}
+
+		return null;
+	};
+
+	PracticeEditor.prototype.setEditedTaxonomyTerms = function (settings, termIds) {
+		if (!settings || !settings.restBase || !window.wp || !wp.data || !wp.data.dispatch('core/editor')) {
+			return;
+		}
+
+		var currentIds = this.getEditedTaxonomyTermIds(settings).slice().sort(function (a, b) { return a - b; });
+		var nextIds = termIds.slice().sort(function (a, b) { return a - b; });
+		if (currentIds.join(',') === nextIds.join(',')) {
+			return;
+		}
+
+		var edits = {};
+		edits[settings.restBase] = nextIds;
+		wp.data.dispatch('core/editor').editPost(edits);
+	};
+
+	PracticeEditor.prototype.syncTaxonomyFromGeneralField = function (type) {
+		if (this.taxonomySyncing) {
+			return;
+		}
+
+		var syncConfig = config.taxonomySync || {};
+		var settings = syncConfig[type] || null;
+		if (type === 'types' || type === 'goals') {
+			var termIds = (this.$taxonomyFields[type] || $()).find('input[type="checkbox"]:checked').map(function () {
+				return parseInt(this.value, 10);
+			}).get().filter(function (termId) {
+				return termId > 0;
+			});
+			this.setEditedTaxonomyTerms(settings, termIds);
+			return;
+		}
+
+		var value = type === 'difficulty'
+			? this.$generalPanel.find('.acf-field[data-key="field_practice_level"] select').first().val()
+			: this.$durationTaxonomyInput.val();
+		var term = this.findTaxonomyTerm(settings, type === 'difficulty' ? 'value' : 'name', value);
+
+		this.setEditedTaxonomyTerms(settings, term ? [parseInt(term.id, 10)] : []);
+	};
+
+	PracticeEditor.prototype.syncGeneralFieldFromTaxonomy = function (type, termIds) {
+		var syncConfig = config.taxonomySync || {};
+		var settings = syncConfig[type] || null;
+		var term = termIds.length ? this.findTaxonomyTerm(settings, 'id', termIds[0]) : null;
+		var value = term ? String(type === 'difficulty' ? term.value : term.name) : '';
+
+		this.taxonomySyncing = true;
+		if (type === 'difficulty') {
+			var $difficultyInput = this.$generalPanel.find('.acf-field[data-key="field_practice_level"] select').first();
+			if ($difficultyInput.length && String($difficultyInput.val() || '') !== value) {
+				$difficultyInput.val(value).trigger('change');
+			}
+		} else if (type === 'duration') {
+			var $durationSource = this.$generalPanel.find('.acf-field[data-key="field_practice_time"] input:not([type="hidden"])').first();
+			if (this.$durationTaxonomyInput.length && String(this.$durationTaxonomyInput.val() || '') !== value) {
+				this.$durationTaxonomyInput.val(value);
+			}
+			if ($durationSource.length && String($durationSource.val() || '') !== value) {
+				$durationSource.val(value).trigger('change');
+			}
+		} else {
+			(this.$taxonomyFields[type] || $()).find('input[type="checkbox"]').each(function () {
+				this.checked = termIds.indexOf(parseInt(this.value, 10)) !== -1;
+			});
+		}
+		this.taxonomySyncing = false;
+	};
+
+	PracticeEditor.prototype.taxonomyStateSignature = function () {
+		var syncConfig = config.taxonomySync || {};
+		return ['difficulty', 'duration', 'types', 'goals'].map(function (type) {
+			var settings = syncConfig[type] || null;
+			return settings && settings.restBase ? this.getEditedTaxonomyTermIds(settings).join(',') : '';
+		}, this).join('|');
+	};
+
+	PracticeEditor.prototype.createTaxonomyChecklist = function (type, settings) {
+		var self = this;
+		var terms = settings && Array.isArray(settings.terms) ? settings.terms : [];
+		if (!terms.length) {
+			return;
+		}
+
+		var $field = $('<div class="acf-field yoga-practice-taxonomy-field"><div class="acf-label"><label></label></div><div class="acf-input"><div class="yoga-practice-taxonomy-checklist"></div></div></div>');
+		$field.find('.acf-label label').text(String(settings.label || ''));
+		var $list = $field.find('.yoga-practice-taxonomy-checklist');
+		var children = {};
+		terms.forEach(function (term) {
+			var parent = parseInt(term.parent, 10) || 0;
+			children[parent] = children[parent] || [];
+			children[parent].push(term);
+		});
+
+		function appendTerms(parentId, depth) {
+			(children[parentId] || []).forEach(function (term) {
+				var inputId = 'yoga-practice-' + type + '-' + term.id;
+				var $label = $('<label class="yoga-practice-taxonomy-option"><input type="checkbox"><span></span></label>');
+				$label.css('--yoga-taxonomy-depth', depth);
+				$label.find('input').attr({ id: inputId, value: term.id });
+				$label.find('span').text(term.name);
+				$list.append($label);
+				appendTerms(parseInt(term.id, 10), depth + 1);
+			});
+		}
+		appendTerms(0, 0);
+
+		$list.on('change.yogaTaxonomySync', 'input[type="checkbox"]', function () {
+			self.syncTaxonomyFromGeneralField(type);
+		});
+		this.$taxonomyFields[type] = $field;
+		this.$generalPanel.append($field);
+	};
+
+	PracticeEditor.prototype.syncGeneralFieldsFromTaxonomySidebar = function () {
+		var self = this;
+		var syncConfig = config.taxonomySync || {};
+		var panelTypes = {
+			'продолжительность': 'duration',
+			'сложность': 'difficulty'
+		};
+
+		$('.interface-complementary-area .components-panel__body').each(function () {
+			var $panel = $(this);
+			var heading = $.trim(String($panel.children('.components-panel__body-title').text() || '')).toLowerCase();
+			var type = panelTypes[heading] || '';
+			if (!type) {
+				return;
+			}
+
+			var settings = syncConfig[type] || null;
+			var termIds = [];
+			$panel.find('input[type="checkbox"]:checked').each(function () {
+				var inputId = String(this.id || '');
+				var label = inputId ? $.trim(String($('label[for="' + inputId + '"]').text() || '')) : '';
+				var term = self.findTaxonomyTerm(settings, 'name', label);
+				if (term) {
+					termIds.push(parseInt(term.id, 10));
+				}
+			});
+			self.syncGeneralFieldFromTaxonomy(type, termIds);
+		});
+	};
+
+	PracticeEditor.prototype.initializeTaxonomySync = function () {
+		var self = this;
+		var syncConfig = config.taxonomySync || {};
+		var durationSettings = syncConfig.duration || {};
+		var durationTerms = Array.isArray(durationSettings.terms) ? durationSettings.terms : [];
+		var $durationField = this.$generalPanel.find('.acf-field[data-key="field_practice_time"]').first();
+		var $durationSource = $durationField.find('input:not([type="hidden"])').first();
+
+		if ($durationField.length && $durationSource.length && durationTerms.length) {
+			var currentDuration = String($durationSource.val() || '');
+			this.$durationTaxonomyInput = $('<select class="yoga-practice-taxonomy-select" aria-label="Продолжительность практики"><option value="">Не выбрано</option></select>');
+			durationTerms.forEach(function (term) {
+				$('<option></option>').attr('value', term.name).text(term.name).appendTo(self.$durationTaxonomyInput);
+			});
+			if (currentDuration && !this.findTaxonomyTerm(durationSettings, 'name', currentDuration)) {
+				$('<option></option>').attr('value', currentDuration).text(currentDuration + ' (старое значение)').appendTo(this.$durationTaxonomyInput);
+			}
+			this.$durationTaxonomyInput.val(currentDuration);
+			$durationSource.addClass('yoga-practice-taxonomy-source');
+			$durationSource.after(this.$durationTaxonomyInput);
+		}
+
+		this.createTaxonomyChecklist('types', syncConfig.types || {});
+		this.createTaxonomyChecklist('goals', syncConfig.goals || {});
+
+		this.$generalPanel
+			.find('.acf-field[data-key="field_practice_level"] select')
+			.off('change.yogaTaxonomySync')
+			.on('change.yogaTaxonomySync', function () {
+				self.syncTaxonomyFromGeneralField('difficulty');
+			});
+		this.$durationTaxonomyInput
+			.off('change.yogaTaxonomySync')
+			.on('change.yogaTaxonomySync', function () {
+				var value = String($(this).val() || '');
+				$durationSource.val(value).trigger('change');
+				self.syncTaxonomyFromGeneralField('duration');
+			});
+		$(document)
+			.off('change.yogaPracticeTaxonomySidebar')
+			.on('change.yogaPracticeTaxonomySidebar', '.interface-complementary-area input[type="checkbox"]', function () {
+				window.setTimeout(function () {
+					self.syncGeneralFieldsFromTaxonomySidebar();
+				}, 0);
+			});
+
+		if (!window.wp || !wp.data || !wp.data.select('core/editor')) {
+			return;
+		}
+
+		['difficulty', 'duration', 'types', 'goals'].forEach(function (type) {
+			var settings = syncConfig[type] || null;
+			var termIds = self.getEditedTaxonomyTermIds(settings);
+			if (termIds.length) {
+				self.syncGeneralFieldFromTaxonomy(type, termIds);
+			} else if (type === 'difficulty' || type === 'duration') {
+				self.syncTaxonomyFromGeneralField(type);
+			}
+		});
+
+		this.taxonomySignature = this.taxonomyStateSignature();
+		this.taxonomyUnsubscribe = wp.data.subscribe(function () {
+			var nextSignature = self.taxonomyStateSignature();
+			if (nextSignature === self.taxonomySignature) {
+				return;
+			}
+			self.taxonomySignature = nextSignature;
+			['difficulty', 'duration', 'types', 'goals'].forEach(function (type) {
+				var settings = syncConfig[type] || null;
+				self.syncGeneralFieldFromTaxonomy(type, self.getEditedTaxonomyTermIds(settings));
+			});
+		});
+	};
+
+	PracticeEditor.prototype.hideDuplicatedTaxonomyPanels = function () {
+		var taxonomies = Array.isArray(config.hiddenSidebarTaxonomies)
+			? config.hiddenSidebarTaxonomies
+			: [];
+
+		if (!taxonomies.length) {
+			return;
+		}
+
+		function normalized(value) {
+			return $.trim(String(value || '')).replace(/\s+/g, ' ').toLowerCase();
+		}
+
+		var labelsToHide = taxonomies.map(function (taxonomy) {
+			return normalized(taxonomy && taxonomy.label);
+		}).filter(Boolean);
+
+		function hidePanels() {
+			if (window.wp && wp.data) {
+				try {
+					var editorStore = wp.data.dispatch('core/editor');
+					if (editorStore && typeof editorStore.removeEditorPanel === 'function') {
+						taxonomies.forEach(function (taxonomy) {
+							if (taxonomy && taxonomy.slug) {
+								editorStore.removeEditorPanel('taxonomy-panel-' + taxonomy.slug);
+							}
+						});
+					}
+				} catch (error) {
+					// Keep the DOM fallback for older WordPress editor versions.
+				}
+			}
+
+			$('.interface-complementary-area .components-panel__body').each(function () {
+				var $panel = $(this);
+				var title = normalized($panel.children('.components-panel__body-title').text());
+				if (labelsToHide.indexOf(title) !== -1) {
+					$panel.addClass('yoga-practice-hidden-sidebar-panel').attr('aria-hidden', 'true');
+				}
+			});
+		}
+
+		hidePanels();
+		window.setTimeout(hidePanels, 250);
+		window.setTimeout(hidePanels, 1000);
+
+		if (!this.taxonomyPanelObserver && window.MutationObserver) {
+			this.taxonomyPanelObserver = new MutationObserver(function () {
+				hidePanels();
+			});
+			this.taxonomyPanelObserver.observe(document.body, {
+				childList: true,
+				subtree: true
+			});
+		}
 	};
 
 	PracticeEditor.prototype.build = function () {
@@ -257,20 +608,26 @@
 			self.removeRepeaterRow($row, $trigger, labels.confirmRemoveExercise);
 		});
 
+		this.$workspace.on('click', '[data-yoga-action="remove-step"]', function (event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			var $trigger = $(this);
+			var rowId = $trigger.attr('data-row-id') || '';
+			var $row = self.$workspace.find('tr.acf-row[data-yoga-row-id="' + rowId + '"]').first();
+			self.removeRepeaterRow($row, $trigger, labels.confirmRemoveStep);
+		});
+
 		this.$workspace.on('click', '.yoga-practice-editor__add-section', function (event) {
 			event.preventDefault();
 			event.stopPropagation();
 			var willOpen = self.$addSectionMenu.prop('hidden');
-			self.$addSectionMenu.prop('hidden', !willOpen);
-			self.$addSectionButton.attr('aria-expanded', willOpen ? 'true' : 'false');
+			self.setSectionMenuOpen(willOpen);
 		});
 
 		this.$addSectionMenu.on('click', '[data-layout]', function (event) {
 			event.preventDefault();
 			event.stopPropagation();
 			var type = String($(this).attr('data-layout') || '');
-			self.$addSectionMenu.prop('hidden', true);
-			self.$addSectionButton.attr('aria-expanded', 'false');
 			if (!type || !self.sectionsField || typeof self.sectionsField.add !== 'function') {
 				return;
 			}
@@ -312,16 +669,15 @@
 
 		$(document).on('click.yogaPracticeSectionMenu', function (event) {
 			if (!$(event.target).closest('.yoga-practice-editor__add-section-wrap').length) {
-				self.$addSectionMenu.prop('hidden', true);
-				self.$addSectionButton.attr('aria-expanded', 'false');
+				self.setSectionMenuOpen(false);
 			}
 		});
 
 		$(document).on('keydown.yogaPracticeEditor', function (event) {
 			if (event.key === 'Escape' && !self.$addSectionMenu.prop('hidden')) {
 				event.preventDefault();
-				self.$addSectionMenu.prop('hidden', true);
-				self.$addSectionButton.attr('aria-expanded', 'false').trigger('focus');
+				self.setSectionMenuOpen(false);
+				self.$addSectionButton.trigger('focus');
 				return;
 			}
 			if (!self.modalStack.length) {
@@ -337,13 +693,36 @@
 			}
 		});
 
-		$(window).on('resize.yogaPracticeEditor', function () {
+		$(window).on('resize.yogaPracticeEditor scroll.yogaPracticeEditor', function () {
 			self.positionModalSurfaces();
+			self.positionSectionMenu();
+		});
+		this.$workspace.closest('.interface-interface-skeleton__content').on('scroll.yogaPracticeSectionMenu', function () {
+			self.positionSectionMenu();
 		});
 
 		this.initializeNavigationSorting();
 		this.decorate();
 		this.refreshNavigation('general');
+
+		// Optional Gutenberg integrations must never prevent the ACF editor from rendering.
+		try {
+			this.initializeTaxonomySync();
+		} catch (error) {
+			if (window.console && typeof window.console.error === 'function') {
+				window.console.error('Practice taxonomy synchronization failed.', error);
+			}
+		}
+
+		window.setTimeout(function () {
+			try {
+				self.hideDuplicatedTaxonomyPanels();
+			} catch (error) {
+				if (window.console && typeof window.console.error === 'function') {
+					window.console.error('Practice sidebar cleanup failed.', error);
+				}
+			}
+		}, 0);
 	};
 
 	PracticeEditor.prototype.initializeNavigationSorting = function () {
@@ -660,12 +1039,22 @@
 			var $exerciseField = $step.children('td.acf-fields').children('.acf-field[data-name="exercise_items"]').first();
 			var $exercises = directRows($exerciseField);
 			var $branch = $('<section class="yoga-practice-visual-map__branch"></section>');
-			$branch.append(self.visualNode(stepTitle, $exercises.length + ' упражнений', {
+			var $stepItem = $('<div class="yoga-practice-visual-map__step-item"></div>');
+			$stepItem.append(self.visualNode(stepTitle, $exercises.length + ' упражнений', {
 				number: String(stepIndex + 1),
 				rowId: stepId,
 				attention: rowFieldValue($step, 'section_title') === '',
 				attentionText: 'Не заполнено: название шага'
 			}).addClass('is-step'));
+			$stepItem.append(
+				$('<button type="button" class="yoga-practice-visual-map__remove-step" data-yoga-action="remove-step">' + spriteIcon('checkout-trash', 'yoga-practice-visual-map__remove-icon') + '</button>')
+					.attr({
+						'data-row-id': stepId,
+						'aria-label': labels.remove + ': ' + stepTitle,
+						title: labels.remove
+					})
+			);
+			$branch.append($stepItem);
 			var $exerciseList = $('<div class="yoga-practice-visual-map__exercises"></div>');
 			$exercises.each(function (exerciseIndex) {
 				var $exercise = $(this);
@@ -1317,7 +1706,7 @@
 			.html(spriteIcon('icon-edit', 'yoga-row-card__edit-icon'));
 
 		var $removeButton = $header.children('.yoga-row-card__remove');
-		var isRemovable = type === 'exercise' || type === 'modification';
+		var isRemovable = type === 'step' || type === 'exercise' || type === 'modification';
 		if (isRemovable) {
 			if (!$removeButton.length) {
 				$removeButton = $('<button type="button" class="yoga-row-card__remove">' + spriteIcon('checkout-trash', 'yoga-row-card__remove-icon') + '</button>').appendTo($header);
@@ -1331,10 +1720,13 @@
 				.on('click.yogaRemoveRow', function (event) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
+					var confirmationMessage = type === 'step'
+						? labels.confirmRemoveStep
+						: (type === 'exercise' ? labels.confirmRemoveExercise : labels.confirmRemoveModification);
 					self.removeRepeaterRow(
 						$row,
 						$removeButton,
-						type === 'exercise' ? labels.confirmRemoveExercise : labels.confirmRemoveModification
+						confirmationMessage
 					);
 				});
 		} else {
