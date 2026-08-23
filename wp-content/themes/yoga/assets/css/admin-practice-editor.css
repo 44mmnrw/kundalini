@@ -50,6 +50,10 @@
 	display: none;
 }
 
+.yoga-modern-practice-editor .edit-post-meta-boxes-main__presenter {
+	display: none !important;
+}
+
 .yoga-modern-practice-editor .yoga-practice-editor__host-postbox {
 	border: 0;
 	background: transparent;
