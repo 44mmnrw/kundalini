@@ -109,6 +109,14 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 		);
 
 		$post_id = isset($_GET['post']) ? absint($_GET['post']) : 0;
+		$selected_taxonomy_terms = static function (string $taxonomy) use ($post_id): array {
+			if ($post_id <= 0) {
+				return array();
+			}
+
+			$term_ids = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'ids'));
+			return is_wp_error($term_ids) ? array() : array_values(array_map('absint', $term_ids));
+		};
 		$classic_url = $post_id > 0
 			? add_query_arg('yoga_editor', 'classic', get_edit_post_link($post_id, 'raw'))
 			: add_query_arg(
@@ -133,6 +141,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 			'yogaPracticeEditor',
 			array(
 				'classicUrl' => $classic_url,
+				'taxonomyNonce' => wp_create_nonce('yoga_save_practice_taxonomies'),
 				'hiddenSidebarTaxonomies' => $hidden_sidebar_taxonomies,
 				'taxonomySync' => array(
 					'difficulty' => array(
@@ -147,11 +156,13 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 						'restBase' => 'practice-type',
 						'label'    => (string) get_taxonomy('practice-type')->labels->menu_name,
 						'terms'    => yoga_practice_editor_taxonomy_terms('practice-type'),
+						'selectedIds' => $selected_taxonomy_terms('practice-type'),
 					),
 					'goals' => array(
 						'restBase' => 'practice-goal',
 						'label'    => (string) get_taxonomy('practice-goal')->labels->menu_name,
 						'terms'    => yoga_practice_editor_taxonomy_terms('practice-goal'),
+						'selectedIds' => $selected_taxonomy_terms('practice-goal'),
 					),
 				),
 				'spriteUrl'  => add_query_arg(
@@ -219,3 +230,41 @@ if (!function_exists('yoga_add_practice_editor_body_class')) {
 }
 
 add_filter('admin_body_class', 'yoga_add_practice_editor_body_class');
+
+if (!function_exists('yoga_save_practice_editor_taxonomies')) {
+	/**
+	 * Persist the custom taxonomy checklists even when the Gutenberg data store
+	 * is unavailable on the legacy meta-box screen.
+	 */
+	function yoga_save_practice_editor_taxonomies(int $post_id): void {
+		if (
+			wp_is_post_revision($post_id)
+			|| wp_is_post_autosave($post_id)
+			|| !isset($_POST['_yoga_practice_taxonomy_nonce'])
+			|| !wp_verify_nonce(
+				sanitize_text_field(wp_unslash($_POST['_yoga_practice_taxonomy_nonce'])),
+				'yoga_save_practice_taxonomies'
+			)
+			|| !current_user_can('edit_post', $post_id)
+		) {
+			return;
+		}
+
+		$submitted = isset($_POST['yoga_practice_taxonomies']) && is_array($_POST['yoga_practice_taxonomies'])
+			? wp_unslash($_POST['yoga_practice_taxonomies'])
+			: array();
+		$taxonomies = array(
+			'types' => 'practice-type',
+			'goals' => 'practice-goal',
+		);
+
+		foreach ($taxonomies as $input_name => $taxonomy) {
+			$term_ids = isset($submitted[$input_name]) && is_array($submitted[$input_name])
+				? array_values(array_unique(array_filter(array_map('absint', $submitted[$input_name]))))
+				: array();
+			wp_set_object_terms($post_id, $term_ids, $taxonomy, false);
+		}
+	}
+}
+
+add_action('save_post_practice', 'yoga_save_practice_editor_taxonomies', 30);

@@ -1091,6 +1091,10 @@
 	grid-column: 1 / -1;
 }
 
+.yoga-practice-editor__panel--general > .acf-field[data-key="field_practice_short_description"] {
+	grid-column: 1 / -1;
+}
+
 .yoga-modern-practice-editor .yoga-practice-editor .acf-field > .acf-label label {
 	color: var(--yoga-editor-black);
 	font-size: 14px;

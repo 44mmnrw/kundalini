@@ -295,7 +295,11 @@
 				var inputId = 'yoga-practice-' + type + '-' + term.id;
 				var $label = $('<label class="yoga-practice-taxonomy-option"><input type="checkbox"><span></span></label>');
 				$label.css('--yoga-taxonomy-depth', depth);
-				$label.find('input').attr({ id: inputId, value: term.id });
+				$label.find('input').attr({
+					id: inputId,
+					name: 'yoga_practice_taxonomies[' + type + '][]',
+					value: term.id
+				});
 				$label.find('span').text(term.name);
 				$list.append($label);
 				appendTerms(parseInt(term.id, 10), depth + 1);
@@ -364,6 +368,18 @@
 
 		this.createTaxonomyChecklist('types', syncConfig.types || {});
 		this.createTaxonomyChecklist('goals', syncConfig.goals || {});
+		if (!this.$generalPanel.find('input[name="_yoga_practice_taxonomy_nonce"]').length) {
+			$('<input type="hidden" name="_yoga_practice_taxonomy_nonce">')
+				.val(String(config.taxonomyNonce || ''))
+				.appendTo(this.$generalPanel);
+		}
+		['types', 'goals'].forEach(function (type) {
+			var settings = syncConfig[type] || {};
+			var selectedIds = Array.isArray(settings.selectedIds)
+				? settings.selectedIds.map(function (termId) { return parseInt(termId, 10); }).filter(function (termId) { return termId > 0; })
+				: [];
+			self.syncGeneralFieldFromTaxonomy(type, selectedIds);
+		});
 
 		this.$generalPanel
 			.find('.acf-field[data-key="field_practice_level"] select')
@@ -478,6 +494,8 @@
 			'.acf-field[data-key="field_practice_time"], ' +
 			'.acf-field[data-key="field_practice_download"]'
 		);
+		var $shortDescriptionField = $('.acf-field[data-key="field_practice_short_description"]').first();
+		var $shortDescriptionPostbox = $shortDescriptionField.closest('.acf-postbox');
 		var $guestField = $('.acf-field[data-key="field_practice_open_for_guests"]').first();
 		var $guestPostbox = $guestField.closest('.acf-postbox');
 		var currentTitle = '';
@@ -556,7 +574,12 @@
 		this.$modalBackdrop = $('<div class="yoga-practice-modal-backdrop" aria-hidden="true"></div>').appendTo(this.$workspace);
 		this.$modalContext = this.$fieldGroup.closest('.edit-post-meta-boxes-main');
 
-		this.$generalPanel.append(this.$titleField).append($generalFields);
+		this.$generalPanel.append(this.$titleField);
+		if ($shortDescriptionField.length) {
+			this.$generalPanel.append($shortDescriptionField);
+			$shortDescriptionPostbox.addClass('yoga-practice-editor__source-postbox');
+		}
+		this.$generalPanel.append($generalFields);
 		if ($guestField.length) {
 			this.$generalPanel.append($guestField);
 			$guestPostbox.addClass('yoga-practice-editor__source-postbox');
