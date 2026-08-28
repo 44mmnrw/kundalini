@@ -38,8 +38,25 @@
 	}
 
 	function inputValue($field) {
-		var $input = $field.find('input:not([type="hidden"]), textarea, select').first();
+		var $input = $field.find('input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, select').first();
 		return $input.length ? $.trim(String($input.val() || '')) : '';
+	}
+
+	function wysiwygValue($field) {
+		var $textarea = $field.find('textarea.wp-editor-area, textarea').first();
+		if (!$textarea.length) {
+			return '';
+		}
+
+		var editorId = String($textarea.attr('id') || '');
+		if (editorId && window.tinymce && typeof window.tinymce.get === 'function') {
+			var tinyEditor = window.tinymce.get(editorId);
+			if (tinyEditor && typeof tinyEditor.getContent === 'function' && !tinyEditor.isHidden()) {
+				return $.trim(String(tinyEditor.getContent() || ''));
+			}
+		}
+
+		return $.trim(String($textarea.val() || ''));
 	}
 
 	function storedFieldValue($field) {
@@ -1231,15 +1248,18 @@
 		} else if ($field.hasClass('acf-field-true-false')) {
 			value = $field.find('input[type="checkbox"]').first().prop('checked') ? 'Включено' : 'Выключено';
 			count = 1;
+		} else if ($field.hasClass('acf-field-wysiwyg')) {
+			value = wysiwygValue($field);
 		} else if ($field.find('select').length) {
 			value = $.trim($field.find('select option:selected').map(function () { return $(this).text(); }).get().join(', '));
 		} else {
 			value = inputValue($field);
-			if (value && /<[^>]+>/.test(value)) {
-				var temporary = document.createElement('div');
-				temporary.innerHTML = value;
-				value = temporary.textContent || '';
-			}
+		}
+
+		if (value && /<[^>]+>/.test(value)) {
+			var temporary = document.createElement('div');
+			temporary.innerHTML = value;
+			value = temporary.textContent || '';
 		}
 
 		value = $.trim(String(value || '').replace(/\s+/g, ' '));

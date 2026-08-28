@@ -774,6 +774,20 @@ if (!function_exists('yoga_is_acf_field_group_editor')) {
 }
 
 if (!function_exists('yoga_add_practice_execution_video_layout')) {
+	function yoga_get_practice_execution_video_tariffs_field(): array {
+		return array(
+			'key'           => 'field_anchor_07_allowed_tariffs',
+			'label'         => 'Доступно для тарифов',
+			'name'          => 'section_allowed_tariffs',
+			'type'          => 'relationship',
+			'instructions'  => 'Оставьте пустым, чтобы не вводить отдельное ограничение для этой секции.',
+			'post_type'     => array('product'),
+			'filters'       => array('search', 'post_type', 'taxonomy'),
+			'elements'      => array('featured_image'),
+			'return_format' => 'object',
+		);
+	}
+
 	/**
 	 * Adds the execution-video layout and presents it as Anchor 06 while keeping
 	 * the stored layout names compatible with existing comments.
@@ -904,17 +918,7 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 				'media_upload' => 1,
 				'delay'        => 0,
 			),
-			array(
-				'key'           => 'field_anchor_07_allowed_tariffs',
-				'label'         => 'Доступно для тарифов',
-				'name'          => 'section_allowed_tariffs',
-				'type'          => 'relationship',
-				'instructions'  => 'Оставьте пустым, чтобы не вводить отдельное ограничение для этой секции.',
-				'post_type'     => array('product'),
-				'filters'       => array('search', 'post_type', 'taxonomy'),
-				'elements'      => array('featured_image'),
-				'return_format' => 'object',
-			),
+			yoga_get_practice_execution_video_tariffs_field(),
 		);
 
 		foreach ($sub_fields as &$sub_field) {
@@ -946,6 +950,24 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 }
 
 add_filter('acf/load_field/key=field_practice_sections', 'yoga_add_practice_execution_video_layout', 40);
+
+if (!function_exists('yoga_register_practice_execution_video_ajax_fields')) {
+	/**
+	 * Makes the relationship field discoverable in ACF's separate AJAX request.
+	 */
+	function yoga_register_practice_execution_video_ajax_fields(): void {
+		if (!function_exists('acf_add_local_field')) {
+			return;
+		}
+
+		$field = yoga_get_practice_execution_video_tariffs_field();
+		$field['parent'] = 'field_practice_sections';
+		$field['parent_layout'] = 'layout_anchor_07';
+		acf_add_local_field($field);
+	}
+}
+
+add_action('acf/init', 'yoga_register_practice_execution_video_ajax_fields', 16);
 
 if (!function_exists('yoga_validate_single_practice_execution_video_layout')) {
 	function yoga_validate_single_practice_execution_video_layout($valid, $value) {
