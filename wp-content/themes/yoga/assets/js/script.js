@@ -122,20 +122,26 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.reviews-slider').slick({
-		infinite: true,
-		dots: false,
-		arrows: true,
-		slidesToShow: 1,
-		slidesToScroll: 1,
+	$('.reviews-slider').each(function () {
+		var $slider = $(this);
+		if ($slider.children('.review').length <= 1 || $slider.hasClass('slick-initialized')) {
+			return;
+		}
 
-		prevArrow: ".section-reviews .slick-prev",
-		nextArrow: ".section-reviews .slick-next",
+		$slider.slick({
+			infinite: true,
+			dots: false,
+			arrows: true,
+			slidesToShow: 1,
+			slidesToScroll: 1,
+			prevArrow: $slider.closest('.section-reviews').find('.slick-prev'),
+			nextArrow: $slider.closest('.section-reviews').find('.slick-next'),
+		});
 	});
 
 
 	jQuery(function($){
-		let menuItems = document.querySelectorAll(".review-people__item");
+		let menuItems = document.querySelectorAll(".section-reviews .review-people__item");
 
 		for (let i = 0; i < menuItems.length; i++) {
 			menuItems[i].style.zIndex = i*-1;
@@ -145,39 +151,56 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.videos-slider').slick({
-		infinite: true,
-		dots: true,
-		arrows: true,
-		slidesToShow: 5,
-		slidesToScroll: 5,
+	$('.videos-slider').each(function () {
+		var $slider = $(this);
+		var count = parseInt($slider.attr('data-video-count'), 10) || $slider.children('.videos-item').length;
+		if (count <= 1 || $slider.hasClass('slick-initialized')) {
+			return;
+		}
 
-		prevArrow: ".section-videos .slick-prev",
-		nextArrow: ".section-videos .slick-next",
-		responsive: [
-			{
-				breakpoint: yogaViewportBp.xl,
-				settings: {
-					slidesToShow: 4,
-					slidesToScroll: 4,
+		var $section = $slider.closest('.section-videos');
+		$slider.slick({
+			infinite: count > 5,
+			dots: count > 5,
+			arrows: count > 1,
+			slidesToShow: 5,
+			slidesToScroll: Math.min(5, count),
+			prevArrow: $section.find('.slick-prev'),
+			nextArrow: $section.find('.slick-next'),
+			responsive: [
+				{
+					breakpoint: yogaViewportBp.xl,
+					settings: {
+						infinite: count > 4,
+						dots: count > 4,
+						arrows: count > 1,
+						slidesToShow: 4,
+						slidesToScroll: Math.min(4, count),
+					}
+				},
+				{
+					breakpoint: yogaViewportBp.lg,
+					settings: {
+						infinite: count > 3,
+						dots: count > 3,
+						arrows: count > 1,
+						slidesToShow: 3,
+						slidesToScroll: Math.min(3, count),
+					}
+				},
+				{
+					breakpoint: yogaViewportBp.md,
+					settings: {
+						infinite: count > 1,
+						dots: count > 1,
+						arrows: false,
+						slidesToShow: 1,
+						slidesToScroll: 1,
+						variableWidth: true,
+					}
 				}
-			},
-			{
-				breakpoint: yogaViewportBp.lg,
-				settings: {
-					slidesToShow: 3,
-					slidesToScroll: 3,
-				}
-			},
-			{
-				breakpoint: yogaViewportBp.md,
-				settings: {
-					slidesToShow: 1,
-					slidesToScroll: 1,
-					variableWidth: true,
-				}
-			}
-		]
+			]
+		});
 	});
 
 
@@ -2111,11 +2134,19 @@ jQuery(document).ready(function($) {
 		};
 
 
-		jQuery('.review-modal-name').text(reviewData.name);
-		jQuery('.review-modal-age').text(reviewData.age);
-		jQuery('.review-modal-job').text(reviewData.job);
-		jQuery('.review-modal__main-image img').attr('src', reviewData.image);
-		jQuery('.review-modal__text').html('<p>' + reviewData.text + '</p>');
+		var $reviewModal = jQuery('.modal_review');
+		var $reviewImage = $reviewModal.find('.review-modal__main-image');
+
+		$reviewModal.find('.review-modal-name').text(reviewData.name || '');
+		$reviewModal.find('.review-modal-age').text(reviewData.age || '');
+		$reviewModal.find('.review-modal-job').text(reviewData.job || '');
+		$reviewModal.find('.review-modal__text').empty().append(jQuery('<p>').text(reviewData.text || ''));
+
+		if (reviewData.image) {
+			$reviewImage.removeAttr('hidden').find('img').attr('src', reviewData.image);
+		} else {
+			$reviewImage.attr('hidden', 'hidden').find('img').attr('src', '');
+		}
 
 
 		jQuery('.modal_review').addClass('active');

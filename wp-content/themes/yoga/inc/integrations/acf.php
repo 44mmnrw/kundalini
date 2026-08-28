@@ -219,8 +219,16 @@ if (!function_exists('yoga_register_homepage_section_toggles')) {
             'title' => 'Главная: отображение секций',
             'fields' => array(
                 array(
+                    'key' => 'field_show_reviews_section',
+                    'label' => 'Показывать обычные отзывы',
+                    'name' => 'show_reviews_section',
+                    'type' => 'true_false',
+                    'ui' => 1,
+                    'default_value' => 0,
+                ),
+                array(
                     'key' => 'field_show_videos_section',
-                    'label' => 'Показывать секцию Видео',
+                    'label' => 'Показывать видеоотзывы',
                     'name' => 'show_videos_section',
                     'type' => 'true_false',
                     'ui' => 1,
@@ -228,7 +236,7 @@ if (!function_exists('yoga_register_homepage_section_toggles')) {
                 ),
                 array(
                     'key' => 'field_show_review_people_photos',
-                    'label' => 'Показывать фото людей в отзывах',
+                    'label' => 'Показывать фото людей в обычных отзывах',
                     'name' => 'show_review_people_photos',
                     'type' => 'true_false',
                     'ui' => 1,
@@ -736,11 +744,43 @@ if (!function_exists('yoga_migrate_practice_philosophy_content')) {
 
 add_action('admin_init', 'yoga_migrate_practice_philosophy_content', 30);
 
+if (!function_exists('yoga_is_acf_field_group_editor')) {
+	/**
+	 * Prevent runtime-only field transformations from being persisted by ACF's schema editor.
+	 */
+	function yoga_is_acf_field_group_editor(): bool {
+		if (!is_admin()) {
+			return false;
+		}
+
+		if (function_exists('acf_is_screen') && acf_is_screen('acf-field-group')) {
+			return true;
+		}
+
+		$post_type = isset($_REQUEST['post_type'])
+			? sanitize_key(wp_unslash((string) $_REQUEST['post_type']))
+			: '';
+		if ($post_type === 'acf-field-group') {
+			return true;
+		}
+
+		$post_id = isset($_REQUEST['post_ID'])
+			? absint($_REQUEST['post_ID'])
+			: (isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0);
+
+		return $post_id > 0 && get_post_type($post_id) === 'acf-field-group';
+	}
+}
+
 if (!function_exists('yoga_add_practice_exercise_content_format_hint')) {
 	/**
 	 * Explains how to insert the movable focus callout in exercise descriptions.
 	 */
 	function yoga_add_practice_exercise_content_format_hint(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			return $field;
 		}
@@ -803,6 +843,10 @@ if (!function_exists('yoga_add_practice_exercise_modification_name_field')) {
 	 * Adds a deployable name field to the database-defined exercise repeater.
 	 */
 	function yoga_add_practice_exercise_modification_name_field(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			$field['sub_fields'] = array();
 		}
@@ -871,6 +915,10 @@ if (!function_exists('yoga_add_practice_exercise_execution_name_field')) {
 	 * Adds an editable label for the main exercise tab when modifications are enabled.
 	 */
 	function yoga_add_practice_exercise_execution_name_field(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			$field['sub_fields'] = array();
 		}
@@ -939,6 +987,10 @@ if (!function_exists('yoga_add_practice_exercise_modification_detail_fields')) {
 	 * Adds separate content and additional-details fields for an exercise modification.
 	 */
 	function yoga_add_practice_exercise_modification_detail_fields(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			$field['sub_fields'] = array();
 		}
@@ -1081,14 +1133,39 @@ if (!function_exists('yoga_add_practice_exercise_additional_modifications_field'
 	 * Adds a repeater for any exercise modifications after the legacy first one.
 	 */
 	function yoga_add_practice_exercise_additional_modifications_field(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			return $field;
 		}
 
-		foreach ($field['sub_fields'] as $sub_field) {
-			if (($sub_field['name'] ?? '') === 'additional_modifications') {
+		$required_modification_fields = array(
+			'modification_name', 'matter', 'details', 'timing', 'media_type',
+			'media_file', 'duration', 'gallery', 'content',
+		);
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			if (($sub_field['name'] ?? '') !== 'additional_modifications') {
+				continue;
+			}
+
+			$existing_names = array();
+			foreach (($sub_field['sub_fields'] ?? array()) as $existing_sub_field) {
+				$existing_name = (string) ($existing_sub_field['name'] ?? '');
+				if ($existing_name !== '') {
+					$existing_names[] = $existing_name;
+				}
+			}
+
+			if (array_diff($required_modification_fields, $existing_names) === array()) {
 				return $field;
 			}
+
+			// A partially persisted runtime field must not shadow the canonical schema.
+			unset($field['sub_fields'][$index]);
+			$field['sub_fields'] = array_values($field['sub_fields']);
+			break;
 		}
 
 		$source_fields = array();
@@ -1230,6 +1307,10 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 	 * and one repeater containing every optional modification.
 	 */
 	function yoga_restructure_practice_exercise_modifications(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			return $field;
 		}
@@ -1246,18 +1327,28 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$modification_fields = !empty($legacy_repeater['sub_fields']) && is_array($legacy_repeater['sub_fields'])
 			? $legacy_repeater['sub_fields']
 			: array();
+		$make_canonical_field_visible = static function (array $canonical_field): array {
+			$canonical_field['wrapper'] = is_array($canonical_field['wrapper'] ?? null)
+				? $canonical_field['wrapper']
+				: array();
+			$classes = preg_split('/\s+/', trim((string) ($canonical_field['wrapper']['class'] ?? '')), -1, PREG_SPLIT_NO_EMPTY);
+			$classes = array_values(array_diff(
+				is_array($classes) ? $classes : array(),
+				array('acf-hidden', 'yoga-legacy-exercise-field')
+			));
+			$canonical_field['wrapper']['class'] = implode(' ', $classes);
+
+			return $canonical_field;
+		};
 
 		foreach ($modification_fields as $index => $modification_field) {
+			$modification_field = $make_canonical_field_visible($modification_field);
 			$name = (string) ($modification_field['name'] ?? $index);
 			$modification_field['ID'] = 0;
 			$modification_field['key'] = 'field_ex_modifications_' . sanitize_key($name);
 			$modification_field['parent'] = 0;
 			$modification_field['parent_repeater'] = 'field_ex_modifications';
 			$modification_field['conditional_logic'] = 0;
-			if ($name === 'matter') {
-				$modification_field['wrapper'] = is_array($modification_field['wrapper'] ?? null) ? $modification_field['wrapper'] : array();
-				$modification_field['wrapper']['class'] = trim((string) ($modification_field['wrapper']['class'] ?? '') . ' acf-hidden yoga-legacy-exercise-field');
-			}
 
 			if ($name === 'modification_name') {
 				$modification_field['label'] = 'Название модификации';
@@ -1482,10 +1573,10 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 			'parent_repeater'   => 'field_exercise_items',
 		);
 
-		$append_named = static function (array &$target, array $names) use ($by_name): void {
+		$append_named = static function (array &$target, array $names) use ($by_name, $make_canonical_field_visible): void {
 			foreach ($names as $name) {
 				if (isset($by_name[$name])) {
-					$target[] = $by_name[$name];
+					$target[] = $make_canonical_field_visible($by_name[$name]);
 				}
 			}
 		};
@@ -1494,7 +1585,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$append_named($restructured, array('title', 'subtitle'));
 		$restructured[] = $accordion('field_ex_admin_main_modification', 'Выполнение', true);
 		$restructured[] = $main_modification_name;
-		$append_named($restructured, array('details', 'timing', 'media_type'));
+		$append_named($restructured, array('matter', 'details', 'timing', 'media_type'));
 		$restructured[] = $main_video_source;
 		$restructured[] = $main_kinescope_url;
 		$restructured[] = $main_youtube_url;
@@ -1522,7 +1613,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 
 		// Keep old fields registered but invisible so existing values can be migrated safely.
 		$legacy_names = array(
-			'has_modifications', 'execution_name', 'modification_name', 'matter', 'matter_mod', 'details_mod',
+			'has_modifications', 'execution_name', 'modification_name', 'matter_mod', 'details_mod',
 			'timing_mod', 'media_type_mod', 'media_file_mod', 'duration_mod', 'gallery_mod',
 			'content_mod', 'additional_modifications',
 		);
@@ -1632,6 +1723,10 @@ if (!function_exists('yoga_add_practice_exercise_admin_hints')) {
 	 * Explains in plain language where every exercise field appears on the frontend.
 	 */
 	function yoga_add_practice_exercise_admin_hints(array $field): array {
+		if (yoga_is_acf_field_group_editor()) {
+			return $field;
+		}
+
 		if (empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
 			return $field;
 		}

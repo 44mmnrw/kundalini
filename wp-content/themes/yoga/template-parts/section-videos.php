@@ -4,32 +4,31 @@
  *
  * @package Yoga
  */
-$videos_items = get_field('videos_items', get_the_ID());
+$videos_items = isset($args['items']) && is_array($args['items']) ? $args['items'] : array();
 $videos_button_text = yoga_get_purchase_cta_text();
+$reviews_hidden = !empty($args['reviews_hidden']);
+$video_count = count($videos_items);
+$section_classes = array('section-videos');
+if ($reviews_hidden) {
+    $section_classes[] = 'section-videos_without-reviews';
+}
+if ($video_count === 1) {
+    $section_classes[] = 'section-videos_single';
+}
 ?>
 
-<section class="section-videos" id="section-videos">
+<section class="<?php echo esc_attr(implode(' ', $section_classes)); ?>" id="section-videos">
     <div class="container">
         <div class="row">
             <div class="videos">
-                <?php if ($videos_items) : ?>
-                <div class="videos-slider wow fadeIn delay-200ms">
+                <div class="videos-slider wow fadeIn delay-200ms" data-video-count="<?php echo esc_attr($video_count); ?>">
                     <?php foreach ($videos_items as $video) :
-                        $video_bg = $video['video_bg_image'] ?? '';
-                        $video_url = $video['video_url'] ?? '';
-                        $video_type = $video['video_type'] ?? 'mp4';
-                        $video_person = $video['video_person_image'] ?? '';
+                        $video_bg = $video['_bg_url'] ?? '';
+                        $video_fancybox_url = $video['_fancybox_url'] ?? '';
+                        $video_person = $video['_person_url'] ?? '';
                         $video_animation = $video['video_animation'] ?? 'wow fadeIn';
-
-
-                        $video_fancybox_url = $video_url;
-                        if ($video_type === 'youtube') {
-                            $video_fancybox_url = 'https://www.youtube.com/watch?v=' . basename(parse_url($video_url, PHP_URL_PATH));
-                        } elseif ($video_type === 'vimeo') {
-                            $video_fancybox_url = 'https://vimeo.com/' . basename(parse_url($video_url, PHP_URL_PATH));
-                        }
                     ?>
-                    <a data-fancybox="videos"  href="<?php echo $video_fancybox_url; ?>" class="videos-item" aria-label="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
+                    <a data-fancybox="videos" href="<?php echo esc_url($video_fancybox_url); ?>" class="videos-item <?php echo esc_attr($video_animation); ?>" aria-label="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
                         <?php if ($video_bg) : ?>
                             <img src="<?php echo esc_url($video_bg); ?>" alt="" class="videos-item__bg">
                         <?php endif; ?>
@@ -49,27 +48,6 @@ $videos_button_text = yoga_get_purchase_cta_text();
                     </a>
                     <?php endforeach; ?>
                 </div>
-                <?php else : ?>
-                <div class="videos-slider wow fadeIn delay-200ms">
-
-                    <?php for ($i = 1; $i <= 5; $i++) : ?>
-                    <a data-fancybox="videos" href="<?php echo esc_url(get_template_directory_uri() . '/assets/videos/test-video.mp4'); ?>" class="videos-item" aria-label="<?php esc_attr_e('Воспроизвести видео', 'yoga'); ?>">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/video-item_0' . min($i, 4) . '-min.png'); ?>" alt="" class="videos-item__bg">
-                        <div class="videos-item__btn">
-                            <svg class="videos-item__play-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#video-play'); ?>"></use></svg>
-                        </div>
-                        <div class="videos-person">
-                            <div class="videos-person-img">
-								<svg class="videos-person-placeholder" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-meditation'); ?>"></use></svg>
-                                <?php if ($i >= 3 && $i <= 5) : ?>
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/videos-person-img_0' . ($i - 2) . '.png'); ?>" alt="">
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </a>
-                    <?php endfor; ?>
-                </div>
-                <?php endif; ?>
 
                 <div class="arrows-slick wow fadeIn delay-200ms">
                     <button type="button" class="arrows-slick__arrow slick-prev" aria-label="Предыдущие видео">
