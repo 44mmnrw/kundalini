@@ -14,9 +14,17 @@ if (!$popular_items) {
 }
 
 $popular_items = is_array($popular_items) ? $popular_items : array();
+$testimonials_hidden = !empty($args['testimonials_hidden']);
+$follows_reviews = !empty($args['follows_reviews']);
+$section_classes = array('section-popular-practices');
+if ($testimonials_hidden) {
+    $section_classes[] = 'section-popular-practices_without-testimonials';
+} elseif ($follows_reviews) {
+    $section_classes[] = 'section-popular-practices_after-reviews';
+}
 ?>
 
-<section class="section-popular-practices" id="section-popular-practices">
+<section class="<?php echo esc_attr(implode(' ', $section_classes)); ?>" id="section-popular-practices">
     <div class="container">
         <div class="row">
             <div class="popular-practices">

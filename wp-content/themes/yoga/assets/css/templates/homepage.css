@@ -1228,6 +1228,11 @@
   margin-left: 0;
 }
 
+.section-reviews_single .reviews__head > .arrows-slick__arrow {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .reviews__main {
   width: 100%;
   position: relative;
@@ -1598,6 +1603,12 @@
   display: block;
   position: relative;
   margin-left: 0.5rem;  margin-right: 0.5rem;  margin-bottom: 3.125rem;}
+.videos-item {
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 1.875rem;
+  background: linear-gradient(135deg, rgba(203, 255, 0, 0.3), rgba(145, 83, 225, 0.35));
+}
 .videos-item:hover .videos-item__btn {
   background: var(--color-violet);
 }
@@ -1668,8 +1679,36 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 25.25rem;  object-fit: cover;
+  height: 100%;  object-fit: cover;
   border-radius: 1.875rem;}
+
+.videos .arrows-slick__arrow.slick-disabled {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.section-videos_single .videos {
+  width: 100%;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.section-videos_single .videos-slider {
+  width: min(17.8125rem, 100%);
+  min-width: 0;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.section-videos_single .videos-item {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.section-videos_single .arrows-slick,
+.section-videos_single .videos-slider .slick-dots {
+  display: none;
+}
 
 .videos__try {
   display: flex;
@@ -1691,7 +1730,7 @@
   .videos-item {
     margin-bottom: 2.5rem;  }
   .videos-item__bg {
-    height: 23.5rem;  }
+    height: 100%;  }
 }
 @media (max-width: 1279px) {
   .videos {
@@ -1707,11 +1746,11 @@
   .videos-item {
     margin-left: 0.625rem;    margin-right: 0.625rem;  }
   .videos-item__bg {
-    height: 24.5rem;  }
+    height: 100%;  }
 }
 @media (max-width: 1023px) {
   .videos-item__bg {
-    height: 25.25rem;  }
+    height: 100%;  }
 }
 @media (max-width: 767px) {
   .section-videos {
@@ -1881,16 +1920,52 @@
   }
 }
 
-.section-reviews_videos-hidden .review {
+.section-reviews_without-videos .review {
   margin-bottom: 0;
 }
 
-.section-reviews_videos-hidden + .section-popular-practices {
+.section-popular-practices_after-reviews,
+.section-popular-practices_without-testimonials {
   padding-top: 5rem;
 }
 
-.section-reviews_videos-hidden + .section-popular-practices h2 {
+.section-popular-practices_after-reviews h2,
+.section-popular-practices_without-testimonials h2 {
   margin-top: 0;
+}
+
+.section-videos_without-reviews {
+  padding-top: 4rem;
+}
+
+@media (max-width: 1023px) {
+  .section-reviews_photos-hidden .review-main {
+    width: 100%;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 575px) {
+  .section-reviews_photos-hidden .review-main {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-reviews_photos-hidden .review-main__name,
+  .section-reviews_photos-hidden .review-main__age,
+  .section-reviews_photos-hidden .review-main__job {
+    width: auto;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .section-videos_without-reviews,
+  .section-popular-practices_after-reviews,
+  .section-popular-practices_without-testimonials {
+    padding-top: 2.5rem;
+  }
 }
 
 

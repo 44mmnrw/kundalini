@@ -5,18 +5,23 @@
  * @package Yoga
  */
 $reviews_title = get_field('reviews_title', get_the_ID()) ?: 'отзывы';
-$reviews_items = get_field('reviews_items', get_the_ID());
-$review_people = get_field('review_people', get_the_ID());
-$reviews_source_id = (int) get_option('page_on_front');
-if ($reviews_source_id <= 0) {
-    $reviews_source_id = (int) get_the_ID();
-}
-$raw_show_review_people_photos = get_field('show_review_people_photos', $reviews_source_id);
-$show_review_people_photos = ($raw_show_review_people_photos === null || $raw_show_review_people_photos === '') ? true : (bool) $raw_show_review_people_photos;
+$reviews_items = isset($args['items']) && is_array($args['items']) ? $args['items'] : array();
+$review_people = isset($args['people']) && is_array($args['people']) ? $args['people'] : array();
+$show_review_people_photos = !empty($args['show_photos']);
 $videos_hidden = !empty($args['videos_hidden']);
+$section_classes = array('section-reviews');
+if (!$show_review_people_photos) {
+    $section_classes[] = 'section-reviews_photos-hidden';
+}
+if ($videos_hidden) {
+    $section_classes[] = 'section-reviews_without-videos';
+}
+if (count($reviews_items) <= 1) {
+    $section_classes[] = 'section-reviews_single';
+}
 ?>
 
-<section class="section-reviews<?php echo $videos_hidden ? ' section-reviews_videos-hidden' : ''; ?>" id="section-reviews">
+<section class="<?php echo esc_attr(implode(' ', $section_classes)); ?>" id="section-reviews">
     <div class="container">
         <div class="row">
             <div class="reviews">
@@ -37,7 +42,6 @@ $videos_hidden = !empty($args['videos_hidden']);
                 </div>
 
                 <div class="reviews__main">
-                    <?php if ($reviews_items) : ?>
                     <div class="reviews-slider">
                         <?php foreach ($reviews_items as $review) :
                             $review_image = $review['review_image'] ?? '';
@@ -47,11 +51,17 @@ $videos_hidden = !empty($args['videos_hidden']);
                             $review_excerpt = $review['review_excerpt'] ?? '';
                             $review_full_text = $review['review_full_text'] ?? '';
                             $review_animation = $review['review_animation'] ?? 'wow fadeIn';
+                            if (is_array($review_image)) {
+                                $review_image = $review_image['url'] ?? '';
+                            } elseif (is_numeric($review_image)) {
+                                $review_image = wp_get_attachment_image_url((int) $review_image, 'medium');
+                            }
+                            $review_image = is_string($review_image) ? $review_image : '';
                         ?>
                         <div class="review">
                             <div class="review-main <?php echo esc_attr($review_animation); ?> delay-200ms">
 								<div class="review-main__quote" aria-hidden="true"><svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#faq-quote-mark'); ?>"></use></svg></div>
-                                <?php if ($review_image) : ?>
+                                <?php if ($show_review_people_photos && $review_image) : ?>
                                     <div class="review-main__image">
                                         <img src="<?php echo esc_url($review_image); ?>" alt="<?php echo esc_attr($review_name); ?>">
                                     </div>
@@ -76,7 +86,7 @@ $videos_hidden = !empty($args['videos_hidden']);
                                 <?php endif; ?>
 
                                 <?php if ($review_full_text) : ?>
-                                    <span class="review-expand modal-call modal-call_review" data-review-name="<?php echo esc_attr($review_name); ?>" data-review-age="<?php echo esc_attr($review_age); ?>" data-review-job="<?php echo esc_attr($review_job); ?>" data-review-image="<?php echo esc_url($review_image); ?>" data-review-text="<?php echo esc_attr(wp_strip_all_tags($review_full_text)); ?>">
+                                    <span class="review-expand modal-call modal-call_review" data-review-name="<?php echo esc_attr($review_name); ?>" data-review-age="<?php echo esc_attr($review_age); ?>" data-review-job="<?php echo esc_attr($review_job); ?>" data-review-image="<?php echo $show_review_people_photos ? esc_url($review_image) : ''; ?>" data-review-text="<?php echo esc_attr(wp_strip_all_tags($review_full_text)); ?>">
                                         Развернуть
                                     </span>
                                 <?php endif; ?>
@@ -84,6 +94,16 @@ $videos_hidden = !empty($args['videos_hidden']);
                                 <?php if ($show_review_people_photos && $review_people) : ?>
                                     <div class="review-people">
                                         <?php foreach ($review_people as $person) : ?>
+                                            <?php
+                                            if (is_array($person)) {
+                                                $person = $person['url'] ?? '';
+                                            } elseif (is_numeric($person)) {
+                                                $person = wp_get_attachment_image_url((int) $person, 'thumbnail');
+                                            }
+                                            if (!$person) {
+                                                continue;
+                                            }
+                                            ?>
                                             <div class="review-people__item">
                                                 <img src="<?php echo esc_url($person); ?>" alt="">
                                             </div>
@@ -94,43 +114,6 @@ $videos_hidden = !empty($args['videos_hidden']);
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <?php else : ?>
-                    <div class="reviews-slider">
-
-                        <div class="review">
-                            <div class="review-main wow fadeIn delay-200ms">
-								<div class="review-main__quote" aria-hidden="true"><svg><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#faq-quote-mark'); ?>"></use></svg></div>
-                                <div class="review-main__image">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/review-img-min.png'); ?>" alt="">
-                                </div>
-                                <span class="review-main__name">Анна К.</span>
-                                <span class="review-main__age">27лет</span>
-                                <div class="review-main__job">Архитектор</div>
-                            </div>
-                            <div class="review-info wow fadeIn delay-200ms">
-                                <p>«Никаких эмоциональных качелей, тяги на поесть у меня не было. Единственное что в начале я могла встать в 5 утра и сделать практику, а после начала практики по Киртан Крий свалилась на вечернее время. Я прям ощущала как в мозгу после КК начиналось такое кружение, как перезагрузка...»</p>
-                                <span class="review-expand modal-call modal-call_review">Развернуть</span>
-                                <?php if ($show_review_people_photos && $review_people) : ?>
-                                    <div class="review-people">
-                                        <?php foreach ($review_people as $person) : ?>
-                                            <div class="review-people__item">
-                                                <img src="<?php echo esc_url($person); ?>" alt="">
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php elseif ($show_review_people_photos) : ?>
-                                    <div class="review-people">
-                                        <?php for ($i = 1; $i <= 8; $i++) : ?>
-                                            <div class="review-people__item">
-                                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/review-people-item_0' . $i . '.png'); ?>" alt="">
-                                            </div>
-                                        <?php endfor; ?>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
 
                     <svg class="review-decor wow fadeInUp delay-600ms" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#review-decor'); ?>"></use></svg>
                 </div>
