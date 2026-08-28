@@ -19,7 +19,8 @@ if (!function_exists('yoga_get_practice_section_layout_choices')) {
 			'anchor_03' => 'Anchor 03 — Философия практики',
 			'anchor_04' => 'Anchor 04 — Рекомендации',
 			'anchor_05' => 'Anchor 05 — Техника выполнения',
-			'anchor_06' => 'Anchor 06 — Комментарии',
+			'anchor_07' => 'Anchor 06 — Видео выполнения',
+			'anchor_06' => 'Anchor 07 — Комментарии',
 		);
 	}
 }
@@ -67,8 +68,19 @@ if (!function_exists('yoga_get_practice_section_display_title')) {
 
 if (!function_exists('yoga_get_practice_section_anchor_id')) {
 	function yoga_get_practice_section_anchor_id(array $section, int $index): string {
-		if (!empty($section['anchor_id'])) {
-			$base = sanitize_html_class((string) $section['anchor_id']);
+		$layout = (string) ($section['acf_fc_layout'] ?? '');
+		$stored_anchor_id = sanitize_html_class((string) ($section['anchor_id'] ?? ''));
+
+		// The layout names remain unchanged for database compatibility, while the
+		// public sequence is video = Anchor 06 and comments = Anchor 07.
+		if ($layout === 'anchor_07' && ($stored_anchor_id === '' || in_array($stored_anchor_id, array('anchor_06', 'anchor_07'), true))) {
+			$stored_anchor_id = 'anchor_06';
+		} elseif ($layout === 'anchor_06' && ($stored_anchor_id === '' || in_array($stored_anchor_id, array('anchor_06', 'anchor_07'), true))) {
+			$stored_anchor_id = 'anchor_07';
+		}
+
+		if ($stored_anchor_id !== '') {
+			$base = $stored_anchor_id;
 			if ($base === '') {
 				$base = 'anchor';
 			}

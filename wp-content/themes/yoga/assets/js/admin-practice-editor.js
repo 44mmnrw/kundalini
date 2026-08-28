@@ -42,6 +42,57 @@
 		return $input.length ? $.trim(String($input.val() || '')) : '';
 	}
 
+	function storedFieldValue($field) {
+		var value = inputValue($field);
+		if (value !== '') {
+			return value;
+		}
+
+		var $hidden = $field.find('input[type="hidden"]').filter(function () {
+			return $.trim(String($(this).val() || '')) !== '';
+		}).first();
+		return $hidden.length ? $.trim(String($hidden.val() || '')) : '';
+	}
+
+	function isValidHttpsUrl(value, hostValidator) {
+		try {
+			var url = new window.URL(String(value || ''));
+			return url.protocol === 'https:' && hostValidator(url.hostname.toLowerCase(), url);
+		} catch (error) {
+			return false;
+		}
+	}
+
+	function anchor07HasValidVideo($layout) {
+		var source = inputValue(directField($layout, 'video_source')) || 'file';
+		if (source === 'file') {
+			return storedFieldValue(directField($layout, 'media_file')) !== '';
+		}
+		if (source === 'kinescope') {
+			return isValidHttpsUrl(inputValue(directField($layout, 'kinescope_url')), function (host) {
+				return host === 'kinescope.io' || host.slice(-13) === '.kinescope.io';
+			});
+		}
+		if (source === 'youtube') {
+			return isValidHttpsUrl(inputValue(directField($layout, 'youtube_url')), function (host, url) {
+				host = host.replace(/^(?:www\.|m\.)/, '');
+				var path = url.pathname.replace(/^\/+|\/+$/g, '');
+				var videoId = '';
+				if (host === 'youtu.be') {
+					videoId = path.split('/')[0] || '';
+				} else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
+					videoId = url.searchParams.get('v') || '';
+					if (!videoId) {
+						var match = path.match(/^(?:embed|shorts|live|v)\/([^/]+)/);
+						videoId = match ? match[1] : '';
+					}
+				}
+				return /^[A-Za-z0-9_-]{11}$/.test(videoId);
+			});
+		}
+		return false;
+	}
+
 	function rowFieldValue($row, name) {
 		var $field = $row.children('td.acf-fields').children('.acf-field[data-name="' + name + '"]').first();
 		return inputValue($field);
@@ -654,8 +705,19 @@
 			if (!type || !self.sectionsField || typeof self.sectionsField.add !== 'function') {
 				return;
 			}
+			if (type === 'anchor_07' && self.layouts().filter('[data-layout="anchor_07"]').length) {
+				self.setSectionMenuOpen(false);
+				return;
+			}
 			var $layout = self.sectionsField.add({ layout: type });
 			if ($layout && $layout.length) {
+				if (type === 'anchor_07') {
+					var $technique = self.layouts().filter('[data-layout="anchor_05"]').last();
+					if ($technique.length) {
+						$layout.insertAfter($technique);
+						self.commitOrder();
+					}
+				}
 				scheduleRefresh(layoutId($layout));
 			}
 		});
@@ -806,6 +868,9 @@
 		if (!$layout.length || !this.sectionsField || typeof this.sectionsField.duplicateLayout !== 'function') {
 			return;
 		}
+		if (String($layout.attr('data-layout') || '') === 'anchor_07') {
+			return;
+		}
 		var $duplicate = this.sectionsField.duplicateLayout($layout);
 		window.setTimeout(function () {
 			self.decorate();
@@ -876,6 +941,8 @@
 		var sectionTitle = inputValue(directField($layout, 'section_title'));
 		var title = sectionTitle || inputValue(directField($layout, 'main_title')) || inputValue(directField($layout, 'title')) || typeLabel;
 		var meta = typeLabel;
+		var attention = sectionTitle === '';
+		var attentionText = attention ? 'Не заполнено: заголовок раздела' : '';
 
 		if (type === 'anchor_05') {
 			var $stepsField = directField($layout, 'steps');
@@ -888,13 +955,37 @@
 			meta = $steps.length + ' шагов · ' + exerciseCount + ' упражнений';
 		} else if (type === 'anchor_06') {
 			meta = 'Заголовок раздела';
+		} else if (type === 'anchor_07') {
+			var source = inputValue(directField($layout, 'video_source')) || 'file';
+			var sourceLabels = { file: 'Медиафайл', kinescope: 'Kinescope', youtube: 'YouTube' };
+			var hasVideo = anchor07HasValidVideo($layout);
+			meta = sourceLabels[source] || 'Источник видео';
+			if (!hasVideo) {
+				attention = true;
+				attentionText = 'Не заполнено или некорректно: видео';
+			}
 		}
 
 		return {
 			title: title,
 			meta: meta,
-			attention: sectionTitle === ''
+			attention: attention,
+			attentionText: attentionText
 		};
+	};
+
+	PracticeEditor.prototype.updateAnchor07Actions = function () {
+		var self = this;
+		var hasAnchor07 = this.layouts().filter('[data-layout="anchor_07"]').length > 0;
+		this.$addSectionMenu.find('[data-layout="anchor_07"]')
+			.prop('disabled', hasAnchor07)
+			.attr('aria-disabled', hasAnchor07 ? 'true' : 'false')
+			.attr('title', hasAnchor07 ? 'В практике уже есть секция «Видео выполнения»' : '');
+		this.$navigation.children('[data-layout-id]').each(function () {
+			var $item = $(this);
+			var $layout = self.layoutById($item.attr('data-layout-id'));
+			$item.find('[data-yoga-action="duplicate"]').toggle(String($layout.attr('data-layout') || '') !== 'anchor_07');
+		});
 	};
 
 	PracticeEditor.prototype.refreshNavigation = function (preferredId) {
@@ -924,7 +1015,7 @@
 
 			$item.find('.yoga-practice-editor__nav-title').text(summary.title);
 			$item.find('.yoga-practice-editor__nav-copy small').text(
-				summary.meta + (summary.attention ? ' · Не заполнено: заголовок раздела' : '')
+				summary.meta + (summary.attention ? ' · ' + (summary.attentionText || 'Нужно проверить') : '')
 			);
 			$item.toggleClass('needs-attention', summary.attention);
 			self.$navigation.append($item);
@@ -933,6 +1024,8 @@
 		if (!$layouts.length) {
 			this.$navigation.append('<li class="yoga-practice-editor__empty">' + labels.emptySections + '</li>');
 		}
+
+		this.updateAnchor07Actions();
 
 		this.select(this.activeId);
 	};
@@ -1026,7 +1119,8 @@
 				$flow.append(self.visualNode(summary.title, summary.meta, {
 					number: String(index + 2).padStart(2, '0'),
 					panelId: layoutId($layout),
-					attention: summary.attention
+					attention: summary.attention,
+					attentionText: summary.attentionText
 				}));
 			});
 			$map.append($flow);
@@ -1043,7 +1137,7 @@
 		$map.addClass(type === 'anchor_05' ? 'is-technique' : 'is-section');
 		$head.find('h4').text('Схема раздела');
 		$head.find('p').text(type === 'anchor_05' ? 'Выберите шаг или упражнение — откроется нужный уровень редактора.' : 'Карточка показывает место раздела в структуре практики.');
-		$map.append(this.visualNode(summary.title, summary.meta, { number: sectionNumber, panelId: this.activeId, attention: summary.attention }).addClass('is-root'));
+		$map.append(this.visualNode(summary.title, summary.meta, { number: sectionNumber, panelId: this.activeId, attention: summary.attention, attentionText: summary.attentionText }).addClass('is-root'));
 
 		if (type !== 'anchor_05') {
 			this.renderSectionFields($map, $layout);
@@ -1162,8 +1256,27 @@
 
 	PracticeEditor.prototype.renderSectionFields = function ($map, $layout) {
 		var self = this;
+		var layoutType = String($layout.attr('data-layout') || '');
+		var anchor07Source = layoutType === 'anchor_07'
+			? (inputValue(directField($layout, 'video_source')) || 'file')
+			: '';
+		var anchor07SourceField = {
+			file: 'media_file',
+			kinescope: 'kinescope_url',
+			youtube: 'youtube_url'
+		}[anchor07Source] || 'media_file';
 		var $fields = $layout.children('.acf-fields').children('.acf-field').filter(function () {
-			return !$(this).hasClass('acf-field-tab') && !$(this).hasClass('acf-field-message') && !$(this).hasClass('yoga-synced-menu-title-field') && !$(this).hasClass('yoga-service-field');
+			var $field = $(this);
+			if ($field.hasClass('acf-field-tab') || $field.hasClass('acf-field-message') || $field.hasClass('yoga-synced-menu-title-field') || $field.hasClass('yoga-service-field')) {
+				return false;
+			}
+
+			if (layoutType !== 'anchor_07') {
+				return true;
+			}
+
+			var name = String($field.attr('data-name') || '');
+			return !['media_file', 'kinescope_url', 'youtube_url'].includes(name) || name === anchor07SourceField;
 		});
 		var $structure = $('<div class="yoga-practice-visual-map__section-fields"></div>');
 		$fields.each(function (index) {

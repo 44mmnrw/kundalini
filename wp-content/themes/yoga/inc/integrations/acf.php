@@ -427,7 +427,8 @@ if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 				'anchor_03' => 'Anchor 03 — Философия практики',
 				'anchor_04' => 'Anchor 04 — Рекомендации',
 				'anchor_05' => 'Anchor 05 — Техника выполнения',
-				'anchor_06' => 'Anchor 06 — Комментарии',
+				'anchor_07' => 'Anchor 06 — Видео выполнения',
+				'anchor_06' => 'Anchor 07 — Комментарии',
 			);
 
 		acf_add_local_field_group(
@@ -440,7 +441,7 @@ if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 						'label'         => 'Секции, видимые гостям',
 						'name'          => 'guest_practice_sections',
 						'type'          => 'checkbox',
-						'instructions'  => 'Для гостей и пользователей без активного тарифа. Отметьте якоря (Anchor 01–06), которые они увидят. Если ничего не выбрано — показываются все секции. Отдельную практику можно открыть полностью в её карточке: «Доступ для гостей». С оплаченным тарифом — всегда все секции.',
+						'instructions'  => 'Для гостей и пользователей без активного тарифа. Отметьте якоря (Anchor 01–07), которые они увидят. Если ничего не выбрано — показываются все секции. Отдельную практику можно открыть полностью в её карточке: «Доступ для гостей». С оплаченным тарифом — всегда все секции.',
 						'choices'       => $choices,
 						'layout'        => 'vertical',
 						'return_format' => 'value',
@@ -771,6 +772,172 @@ if (!function_exists('yoga_is_acf_field_group_editor')) {
 		return $post_id > 0 && get_post_type($post_id) === 'acf-field-group';
 	}
 }
+
+if (!function_exists('yoga_add_practice_execution_video_layout')) {
+	/**
+	 * Adds the execution-video layout and presents it as Anchor 06 while keeping
+	 * the stored layout names compatible with existing comments.
+	 */
+	function yoga_add_practice_execution_video_layout(array $field): array {
+		if (yoga_is_acf_field_group_editor() || empty($field['layouts']) || !is_array($field['layouts'])) {
+			return $field;
+		}
+
+		$has_execution_video = false;
+		foreach ($field['layouts'] as &$layout) {
+			$layout_name = (string) ($layout['name'] ?? '');
+			if ($layout_name === 'anchor_07') {
+				$has_execution_video = true;
+			}
+
+			if ($layout_name !== 'anchor_06') {
+				continue;
+			}
+
+			$layout['label'] = 'Anchor 07 — Комментарии';
+			foreach (($layout['sub_fields'] ?? array()) as $sub_field_index => $sub_field) {
+				if ((string) ($sub_field['name'] ?? '') === 'anchor_id') {
+					$layout['sub_fields'][$sub_field_index]['default_value'] = 'anchor_07';
+				}
+			}
+		}
+		unset($layout);
+
+		if ($has_execution_video) {
+			return $field;
+		}
+
+		$layout_key = 'layout_anchor_07';
+		$parent = $field['ID'] ?? 0;
+		$conditional = static function (string $value): array {
+			return array(
+				array(
+					array(
+						'field'    => 'field_anchor_07_video_source',
+						'operator' => '==',
+						'value'    => $value,
+					),
+				),
+			);
+		};
+
+		$sub_fields = array(
+			array(
+				'key'           => 'field_anchor_07_id',
+				'label'         => 'ID якоря',
+				'name'          => 'anchor_id',
+				'type'          => 'text',
+				'default_value' => 'anchor_06',
+			),
+			array(
+				'key'           => 'field_anchor_07_section_title',
+				'label'         => 'Заголовок секции',
+				'name'          => 'section_title',
+				'type'          => 'text',
+				'default_value' => 'Видео выполнения',
+			),
+			array(
+				'key'           => 'field_anchor_07_video_source',
+				'label'         => 'Источник видео',
+				'name'          => 'video_source',
+				'type'          => 'select',
+				'instructions'  => 'Выберите один источник видео. Ниже появится только нужное поле.',
+				'choices'       => array(
+					'file'      => 'Медиафайл',
+					'kinescope' => 'Kinescope',
+					'youtube'   => 'YouTube',
+				),
+				'default_value' => 'file',
+				'ui'            => 1,
+				'return_format' => 'value',
+			),
+			array(
+				'key'               => 'field_anchor_07_media_file',
+				'label'             => 'Видеофайл',
+				'name'              => 'media_file',
+				'type'              => 'file',
+				'return_format'     => 'array',
+				'library'           => 'all',
+				'mime_types'        => 'mp4',
+				'conditional_logic' => $conditional('file'),
+			),
+			array(
+				'key'               => 'field_anchor_07_kinescope_url',
+				'label'             => 'Ссылка Kinescope',
+				'name'              => 'kinescope_url',
+				'type'              => 'url',
+				'placeholder'       => 'https://kinescope.io/...',
+				'conditional_logic' => $conditional('kinescope'),
+			),
+			array(
+				'key'               => 'field_anchor_07_youtube_url',
+				'label'             => 'Ссылка YouTube',
+				'name'              => 'youtube_url',
+				'type'              => 'url',
+				'placeholder'       => 'https://www.youtube.com/watch?v=...',
+				'conditional_logic' => $conditional('youtube'),
+			),
+			array(
+				'key'           => 'field_anchor_07_allowed_tariffs',
+				'label'         => 'Доступно для тарифов',
+				'name'          => 'section_allowed_tariffs',
+				'type'          => 'relationship',
+				'instructions'  => 'Оставьте пустым, чтобы не вводить отдельное ограничение для этой секции.',
+				'post_type'     => array('product'),
+				'filters'       => array('search', 'post_type', 'taxonomy'),
+				'elements'      => array('featured_image'),
+				'return_format' => 'object',
+			),
+		);
+
+		foreach ($sub_fields as &$sub_field) {
+			$sub_field['parent'] = $parent;
+			$sub_field['parent_layout'] = $layout_key;
+			if (function_exists('acf_get_valid_field')) {
+				$sub_field = acf_get_valid_field($sub_field);
+			}
+		}
+		unset($sub_field);
+
+		$layout = array(
+			'key'        => $layout_key,
+			'name'       => 'anchor_07',
+			'label'      => 'Anchor 06 — Видео выполнения',
+			'display'    => 'block',
+			'sub_fields' => $sub_fields,
+			'min'        => 0,
+			'max'        => 1,
+		);
+		if (function_exists('acf_get_valid_layout')) {
+			$layout = acf_get_valid_layout($layout);
+		}
+
+		$field['layouts'][] = $layout;
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_practice_sections', 'yoga_add_practice_execution_video_layout', 40);
+
+if (!function_exists('yoga_validate_single_practice_execution_video_layout')) {
+	function yoga_validate_single_practice_execution_video_layout($valid, $value) {
+		if ($valid !== true || !is_array($value)) {
+			return $valid;
+		}
+
+		$count = 0;
+		foreach ($value as $row) {
+			if (is_array($row) && (string) ($row['acf_fc_layout'] ?? '') === 'anchor_07') {
+				$count++;
+			}
+		}
+
+		return $count <= 1 ? $valid : 'В практике может быть только одна секция «Видео выполнения».';
+	}
+}
+
+add_filter('acf/validate_value/key=field_practice_sections', 'yoga_validate_single_practice_execution_video_layout', 10, 2);
 
 if (!function_exists('yoga_add_practice_exercise_content_format_hint')) {
 	/**
@@ -1660,6 +1827,7 @@ if (!function_exists('yoga_validate_kinescope_video_url')) {
 
 add_filter('acf/validate_value/key=field_ex_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
 add_filter('acf/validate_value/key=field_ex_modifications_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
+add_filter('acf/validate_value/key=field_anchor_07_kinescope_url', 'yoga_validate_kinescope_video_url', 10, 2);
 
 if (!function_exists('yoga_get_youtube_video_id')) {
 	function yoga_get_youtube_video_id($url): string {
@@ -1703,6 +1871,7 @@ if (!function_exists('yoga_validate_youtube_video_url')) {
 
 add_filter('acf/validate_value/key=field_ex_youtube_url', 'yoga_validate_youtube_video_url', 10, 2);
 add_filter('acf/validate_value/key=field_ex_modifications_youtube_url', 'yoga_validate_youtube_video_url', 10, 2);
+add_filter('acf/validate_value/key=field_anchor_07_youtube_url', 'yoga_validate_youtube_video_url', 10, 2);
 
 if (!function_exists('yoga_enable_practice_exercise_end_signal_by_default')) {
 	/**

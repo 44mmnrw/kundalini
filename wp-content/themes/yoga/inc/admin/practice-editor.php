@@ -202,6 +202,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 					'anchor_03' => 'Философия практики',
 					'anchor_04' => 'Рекомендации',
 					'anchor_05' => 'Техника выполнения',
+					'anchor_07' => 'Видео выполнения',
 					'anchor_06' => 'Комментарии',
 				),
 			)
