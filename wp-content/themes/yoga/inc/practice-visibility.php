@@ -19,7 +19,7 @@ if (!function_exists('yoga_get_practice_section_layout_choices')) {
 			'anchor_03' => 'Anchor 03 — Философия практики',
 			'anchor_04' => 'Anchor 04 — Рекомендации',
 			'anchor_05' => 'Anchor 05 — Техника выполнения',
-			'anchor_07' => 'Anchor 06 — Видео выполнения',
+			'anchor_07' => 'Anchor 06 — Видео выполнение',
 			'anchor_06' => 'Anchor 07 — Комментарии',
 		);
 	}

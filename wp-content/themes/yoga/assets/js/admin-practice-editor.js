@@ -980,7 +980,7 @@
 		this.$addSectionMenu.find('[data-layout="anchor_07"]')
 			.prop('disabled', hasAnchor07)
 			.attr('aria-disabled', hasAnchor07 ? 'true' : 'false')
-			.attr('title', hasAnchor07 ? 'В практике уже есть секция «Видео выполнения»' : '');
+			.attr('title', hasAnchor07 ? 'В практике уже есть секция «Видео выполнение»' : '');
 		this.$navigation.children('[data-layout-id]').each(function () {
 			var $item = $(this);
 			var $layout = self.layoutById($item.attr('data-layout-id'));
