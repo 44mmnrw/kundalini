@@ -961,8 +961,16 @@ if (!function_exists('yoga_register_practice_execution_video_ajax_fields')) {
 		}
 
 		$field = yoga_get_practice_execution_video_tariffs_field();
-		$field['parent'] = 'field_practice_sections';
-		$field['parent_layout'] = 'layout_anchor_07';
+		/*
+		 * The relationship AJAX endpoint resolves the field by its key, so the
+		 * field must exist in ACF's local store. It must not, however, be
+		 * registered as a direct child of field_practice_sections. Once ACF sees
+		 * any local child for a parent, it stops loading that parent's children
+		 * from the database; all persisted layouts then lose their sub-fields on
+		 * the frontend. A synthetic parent keeps key lookup available without
+		 * shadowing the database-backed flexible-content hierarchy.
+		 */
+		$field['parent'] = 'group_yoga_practice_execution_video_ajax';
 		acf_add_local_field($field);
 	}
 }
