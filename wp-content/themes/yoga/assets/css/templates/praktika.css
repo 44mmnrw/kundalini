@@ -1569,6 +1569,37 @@ display: block !important;
   width: 100%;
   margin-top: 1.25rem;  margin-bottom: 2.5rem;}
 
+.practice-execution-video {
+  width: 100%;
+  margin-top: 3.75rem;
+}
+.practice-execution-video__card {
+  width: 100%;
+  padding: 1.875rem;
+  border-radius: 1.875rem;
+  background: var(--color-grey);
+}
+.practice-execution-video__card h3 {
+  margin-top: 0;
+  margin-bottom: 1.125rem;
+  font-size: 1.75rem;
+  line-height: 1.1em;
+}
+.practice-execution-video__card h4 {
+  margin-top: 0;
+  margin-bottom: 0.8125rem;
+  color: var(--color-violet);
+}
+.practice-execution-video__card .player {
+  margin-bottom: 1.5rem;
+}
+.practice-execution-video__description > :first-child {
+  margin-top: 0;
+}
+.practice-execution-video__description > :last-child {
+  margin-bottom: 0;
+}
+
 .player__plug img {
   display: block;
   width: 100%;
@@ -2656,6 +2687,15 @@ display: block !important;
     height: 14.875rem;  }
   .player {
     margin-top: 0.625rem;  }
+  .practice-execution-video {
+    margin-top: 3.625rem;  }
+  .practice-execution-video__card {
+    padding: 1.5625rem 0.9375rem;
+    border-radius: 1.25rem;  }
+  .practice-execution-video__card h3 {
+    font-size: 1.375rem;  }
+  .practice-execution-video__card h4 {
+    font-size: 1.125rem;  }
   .exercise-switches {
     gap: 0.9375rem;
   }

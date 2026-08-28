@@ -427,7 +427,7 @@ if (!function_exists('yoga_register_guest_practice_sections_fields')) {
 				'anchor_03' => 'Anchor 03 — Философия практики',
 				'anchor_04' => 'Anchor 04 — Рекомендации',
 				'anchor_05' => 'Anchor 05 — Техника выполнения',
-				'anchor_07' => 'Anchor 06 — Видео выполнения',
+				'anchor_07' => 'Anchor 06 — Видео выполнение',
 				'anchor_06' => 'Anchor 07 — Комментарии',
 			);
 
@@ -831,14 +831,30 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 			),
 			array(
 				'key'           => 'field_anchor_07_section_title',
-				'label'         => 'Заголовок секции',
+				'label'         => 'Заголовок',
 				'name'          => 'section_title',
 				'type'          => 'text',
-				'default_value' => 'Видео выполнения',
+				'default_value' => 'Видео выполнение',
+			),
+			array(
+				'key'          => 'field_anchor_07_subtitle',
+				'label'        => 'Подзаголовок',
+				'name'         => 'subtitle',
+				'type'         => 'text',
+				'instructions' => 'Фиолетовый подзаголовок под основным заголовком.',
+			),
+			array(
+				'key'          => 'field_anchor_07_details',
+				'label'        => 'Детали',
+				'name'         => 'details',
+				'type'         => 'textarea',
+				'instructions' => 'Каждый пункт пишите с новой строки в виде «Название: описание» — часть до двоеточия будет жирной.',
+				'rows'         => 4,
+				'new_lines'    => '',
 			),
 			array(
 				'key'           => 'field_anchor_07_video_source',
-				'label'         => 'Источник видео',
+				'label'         => 'Источник',
 				'name'          => 'video_source',
 				'type'          => 'select',
 				'instructions'  => 'Выберите один источник видео. Ниже появится только нужное поле.',
@@ -853,7 +869,7 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 			),
 			array(
 				'key'               => 'field_anchor_07_media_file',
-				'label'             => 'Видеофайл',
+				'label'             => 'Видео',
 				'name'              => 'media_file',
 				'type'              => 'file',
 				'return_format'     => 'array',
@@ -863,7 +879,7 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 			),
 			array(
 				'key'               => 'field_anchor_07_kinescope_url',
-				'label'             => 'Ссылка Kinescope',
+				'label'             => 'Видео',
 				'name'              => 'kinescope_url',
 				'type'              => 'url',
 				'placeholder'       => 'https://kinescope.io/...',
@@ -871,11 +887,22 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 			),
 			array(
 				'key'               => 'field_anchor_07_youtube_url',
-				'label'             => 'Ссылка YouTube',
+				'label'             => 'Видео',
 				'name'              => 'youtube_url',
 				'type'              => 'url',
 				'placeholder'       => 'https://www.youtube.com/watch?v=...',
 				'conditional_logic' => $conditional('youtube'),
+			),
+			array(
+				'key'          => 'field_anchor_07_description',
+				'label'        => 'Описание',
+				'name'         => 'description',
+				'type'         => 'wysiwyg',
+				'instructions' => 'Основной текст под видео.',
+				'tabs'         => 'all',
+				'toolbar'      => 'full',
+				'media_upload' => 1,
+				'delay'        => 0,
 			),
 			array(
 				'key'           => 'field_anchor_07_allowed_tariffs',
@@ -902,7 +929,7 @@ if (!function_exists('yoga_add_practice_execution_video_layout')) {
 		$layout = array(
 			'key'        => $layout_key,
 			'name'       => 'anchor_07',
-			'label'      => 'Anchor 06 — Видео выполнения',
+			'label'      => 'Anchor 06 — Видео выполнение',
 			'display'    => 'block',
 			'sub_fields' => $sub_fields,
 			'min'        => 0,
@@ -933,7 +960,7 @@ if (!function_exists('yoga_validate_single_practice_execution_video_layout')) {
 			}
 		}
 
-		return $count <= 1 ? $valid : 'В практике может быть только одна секция «Видео выполнения».';
+		return $count <= 1 ? $valid : 'В практике может быть только одна секция «Видео выполнение».';
 	}
 }
 

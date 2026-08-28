@@ -157,7 +157,7 @@ function initializeStandalonePracticeVideoPlayers() {
         } catch (error) {
             delete playerElement.dataset.playerInitialized;
             playerElement.classList.add('exercise-player--error');
-            console.warn('Practice: ошибка инициализации видео выполнения', error);
+			console.warn('Practice: ошибка инициализации секции «Видео выполнение»', error);
         }
     });
 }
