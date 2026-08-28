@@ -126,6 +126,42 @@ function createKinescopePlayerAdapter(playerElement, callbacks = {}) {
     return adapter;
 }
 
+function initializeStandalonePracticeVideoPlayers() {
+    window.standalonePracticePlayers = window.standalonePracticePlayers || {};
+
+    document.querySelectorAll('.practice-execution-video .exercise-player').forEach((playerElement, index) => {
+        if (playerElement.dataset.playerInitialized === 'true') {
+            return;
+        }
+
+        playerElement.dataset.playerInitialized = 'true';
+        try {
+            let player = null;
+            if (playerElement.dataset.mediaProvider === 'kinescope') {
+                player = createKinescopePlayerAdapter(playerElement);
+            } else {
+                const mediaElement = playerElement.querySelector('video, [data-plyr-provider="youtube"]');
+                if (mediaElement) {
+                    player = new Plyr(mediaElement, {
+                        controls: ['play-large'],
+                        clickToPlay: true,
+                        hideControls: false,
+                        autoplay: false
+                    });
+                }
+            }
+
+            if (player) {
+                window.standalonePracticePlayers[index] = player;
+            }
+        } catch (error) {
+            delete playerElement.dataset.playerInitialized;
+            playerElement.classList.add('exercise-player--error');
+            console.warn('Practice: ошибка инициализации видео выполнения', error);
+        }
+    });
+}
+
 function initializePracticeSystem() {
 
     if (window.practiceSystemInitialized) {
@@ -653,6 +689,8 @@ function initializePracticeSystem() {
             }
         });
     });
+
+    initializeStandalonePracticeVideoPlayers();
 
 
 }

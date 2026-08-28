@@ -12,6 +12,18 @@ $sections = get_field('practice_sections');
 if (!is_array($sections)) {
 	$sections = array();
 }
+$sections = array_values(array_filter($sections, static function ($section): bool {
+	if (!is_array($section)) {
+		return false;
+	}
+
+	if ((string) ($section['acf_fc_layout'] ?? '') !== 'anchor_07') {
+		return true;
+	}
+
+	return function_exists('yoga_practice_video_section_has_valid_media')
+		&& yoga_practice_video_section_has_valid_media($section);
+}));
 $practice_id = (int) get_the_ID();
 $sadhana_user_id = (int) get_current_user_id();
 $active_sadhana = $sadhana_user_id > 0 && function_exists('yoga_sadhana_get_active')
@@ -132,6 +144,11 @@ if (!empty($section_praktika_extra_class)) {
 											case 'anchor_06':
 
 											include(locate_template('template-parts/praktika-info/anchor_06.php'));
+											break;
+
+											case 'anchor_07':
+
+											include(locate_template('template-parts/praktika-info/anchor_07.php'));
 											break;
 
 
