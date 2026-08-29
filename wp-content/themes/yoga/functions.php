@@ -776,6 +776,7 @@
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
 		$library_filters_script_ver = file_exists($theme_dir . '/assets/js/library-filters.js') ? filemtime($theme_dir . '/assets/js/library-filters.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
+		$plyr_custom_style_ver = file_exists($theme_dir . '/assets/css/plyr-custom.css') ? filemtime($theme_dir . '/assets/css/plyr-custom.css') : '1.0.0';
 
 
 		if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -977,7 +978,7 @@
 
 		wp_enqueue_style('plyr-css', get_template_directory_uri() . '/assets/css/plyr.css');
 
-		wp_enqueue_style('plyr-audio-custom', get_template_directory_uri() . '/assets/css/plyr-custom.css');
+		wp_enqueue_style('plyr-audio-custom', get_template_directory_uri() . '/assets/css/plyr-custom.css', array('plyr-css'), $plyr_custom_style_ver);
 
 
 		wp_enqueue_script('plyr-js', get_template_directory_uri() . '/assets/js/plyr.min.js', array(), '3.7.8', true);

@@ -162,6 +162,313 @@ function initializeStandalonePracticeVideoPlayers() {
     });
 }
 
+function decoratePracticeAudioPlayer(playerElement, player) {
+    if (!playerElement || !player || playerElement.dataset.audioPlayerDecorated === 'true') {
+        return;
+    }
+
+    const plyrElement = playerElement.querySelector('.plyr');
+    const controls = plyrElement?.querySelector('.plyr__controls');
+    const playButton = controls?.querySelector('[data-plyr="play"]');
+    if (!plyrElement || !controls || !playButton) {
+        return;
+    }
+
+    playerElement.dataset.audioPlayerDecorated = 'true';
+    playerElement.classList.add('practice-audio-player');
+
+    const exerciseItem = playerElement.closest('.exercise-item');
+    const title = exerciseItem?.querySelector('.exercise-item__info h3')?.textContent?.trim() || 'Аудиопрактика';
+    const subtitle = exerciseItem?.querySelector('.exercise-item__info h4')?.textContent?.trim() || 'Кундалини Online';
+    const galleryImage = exerciseItem?.querySelector('.exercise-slider__item img')?.currentSrc
+        || exerciseItem?.querySelector('.exercise-slider__item img')?.src
+        || '';
+
+    const identity = document.createElement('div');
+    identity.className = 'practice-audio-player__identity';
+
+    const artwork = document.createElement('div');
+    artwork.className = 'practice-audio-player__artwork';
+    artwork.setAttribute('aria-hidden', 'true');
+    if (galleryImage) {
+        artwork.classList.add('practice-audio-player__artwork--photo');
+        artwork.style.backgroundImage = `url("${galleryImage.replace(/"/g, '%22')}")`;
+    }
+
+    const copy = document.createElement('div');
+    copy.className = 'practice-audio-player__copy';
+
+    const titleElement = document.createElement('strong');
+    titleElement.className = 'practice-audio-player__title';
+    titleElement.textContent = title;
+
+    const subtitleElement = document.createElement('span');
+    subtitleElement.className = 'practice-audio-player__subtitle';
+    subtitleElement.textContent = subtitle;
+
+    copy.append(titleElement, subtitleElement);
+    identity.append(artwork, copy);
+    playerElement.insertBefore(identity, plyrElement);
+
+    const makeSeekButton = (seconds, label, className) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `practice-audio-player__seek ${className}`;
+        button.setAttribute('aria-label', label);
+        button.title = label;
+
+        const arrow = document.createElement('span');
+        arrow.className = 'practice-audio-player__seek-arrow';
+        arrow.setAttribute('aria-hidden', 'true');
+
+        button.append(arrow);
+        button.addEventListener('click', () => {
+            const duration = Number.isFinite(player.duration) ? player.duration : Infinity;
+            player.currentTime = Math.max(0, Math.min(duration, player.currentTime + seconds));
+        });
+        return button;
+    };
+
+    const rewindButton = makeSeekButton(-15, 'Назад на 15 секунд', 'practice-audio-player__seek--rewind');
+    const forwardButton = makeSeekButton(30, 'Вперёд на 30 секунд', 'practice-audio-player__seek--forward');
+    controls.insertBefore(rewindButton, playButton);
+    playButton.insertAdjacentElement('afterend', forwardButton);
+
+    const speeds = [0.75, 1, 1.25, 1.5, 2];
+    const speedButton = document.createElement('button');
+    speedButton.type = 'button';
+    speedButton.className = 'practice-audio-player__speed';
+    speedButton.setAttribute('aria-label', 'Скорость воспроизведения: 1×');
+    speedButton.title = 'Скорость воспроизведения';
+    speedButton.textContent = '1×';
+    speedButton.addEventListener('click', () => {
+        const currentIndex = speeds.findIndex(speed => Math.abs(speed - player.speed) < 0.01);
+        const nextSpeed = speeds[(currentIndex + 1) % speeds.length];
+        player.speed = nextSpeed;
+        speedButton.textContent = `${nextSpeed}×`;
+        speedButton.setAttribute('aria-label', `Скорость воспроизведения: ${nextSpeed}×`);
+    });
+    forwardButton.insertAdjacentElement('afterend', speedButton);
+
+    const loopButton = document.createElement('button');
+    loopButton.type = 'button';
+    loopButton.className = 'practice-audio-player__loop';
+    loopButton.setAttribute('aria-label', 'Включить повтор аудио');
+    loopButton.setAttribute('aria-pressed', 'false');
+    loopButton.title = 'Повтор аудио';
+
+    const loopIcon = document.createElement('span');
+    loopIcon.className = 'practice-audio-player__loop-icon';
+    loopIcon.setAttribute('aria-hidden', 'true');
+    loopButton.append(loopIcon);
+
+    loopButton.addEventListener('click', () => {
+        const loopEnabled = !player.loop;
+        player.loop = loopEnabled;
+        loopButton.classList.toggle('is-active', loopEnabled);
+        loopButton.setAttribute('aria-pressed', loopEnabled ? 'true' : 'false');
+        loopButton.setAttribute('aria-label', loopEnabled ? 'Выключить повтор аудио' : 'Включить повтор аудио');
+    });
+    speedButton.insertAdjacentElement('afterend', loopButton);
+
+    const progressElement = controls.querySelector('.plyr__progress');
+    const audioElement = player.media || playerElement.querySelector('audio');
+    let waveformProgress = 0;
+    let drawWaveform = () => {};
+    let animationFrame = 0;
+
+    const updateWaveProgress = () => {
+        if (!progressElement) {
+            return;
+        }
+
+        const duration = Number(player.duration);
+        const currentTime = Number(player.currentTime);
+        waveformProgress = Number.isFinite(duration) && duration > 0 && Number.isFinite(currentTime)
+            ? Math.min(1, Math.max(0, currentTime / duration))
+            : 0;
+
+        progressElement.style.setProperty('--audio-progress', `${waveformProgress * 100}%`);
+        drawWaveform(waveformProgress);
+    };
+
+    const stopWaveAnimation = () => {
+        if (animationFrame) {
+            window.cancelAnimationFrame(animationFrame);
+            animationFrame = 0;
+        }
+    };
+
+    const animateWaveProgress = () => {
+        updateWaveProgress();
+        if (player.playing) {
+            animationFrame = window.requestAnimationFrame(animateWaveProgress);
+        } else {
+            animationFrame = 0;
+        }
+    };
+
+    if (progressElement && audioElement) {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'practice-audio-player__waveform';
+        canvas.setAttribute('aria-hidden', 'true');
+        progressElement.prepend(canvas);
+
+        const sourceElement = audioElement.querySelector('source');
+        const audioSource = audioElement.currentSrc || sourceElement?.src || audioElement.src || '';
+
+        const renderPeaks = peaks => {
+            const context = canvas.getContext('2d');
+            if (!context || !peaks.length) {
+                return;
+            }
+
+            const bounds = progressElement.getBoundingClientRect();
+            const cssWidth = Math.max(1, Math.floor(bounds.width));
+            const cssHeight = Math.max(18, Math.floor(bounds.height));
+            const pixelRatio = Math.min(2, window.devicePixelRatio || 1);
+            canvas.width = Math.floor(cssWidth * pixelRatio);
+            canvas.height = Math.floor(cssHeight * pixelRatio);
+            canvas.style.width = `${cssWidth}px`;
+            canvas.style.height = `${cssHeight}px`;
+            context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            context.clearRect(0, 0, cssWidth, cssHeight);
+
+            const barWidth = 1;
+            const barGap = 2;
+            const barStep = barWidth + barGap;
+            const barCount = Math.max(1, Math.floor(cssWidth / barStep));
+            const center = cssHeight / 2;
+
+            const paintBars = color => {
+                context.fillStyle = color;
+                for (let index = 0; index < barCount; index += 1) {
+                    const peakStart = Math.floor((index / barCount) * peaks.length);
+                    const peakEnd = Math.max(peakStart + 1, Math.floor(((index + 1) / barCount) * peaks.length));
+                    let peak = 0;
+                    for (let peakIndex = peakStart; peakIndex < peakEnd; peakIndex += 1) {
+                        peak = Math.max(peak, peaks[peakIndex] || 0);
+                    }
+                    const height = Math.max(2, peak * (cssHeight - 5));
+                    context.fillRect(index * barStep, center - (height / 2), barWidth, height);
+                }
+            };
+
+            paintBars('rgba(255, 255, 255, 0.24)');
+            context.save();
+            context.beginPath();
+            context.rect(0, 0, cssWidth * waveformProgress, cssHeight);
+            context.clip();
+            paintBars('rgba(255, 255, 255, 0.92)');
+            context.restore();
+        };
+
+        const loadWaveform = async () => {
+            const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+            if (!audioSource || !AudioContextConstructor) {
+                return;
+            }
+
+            window.practiceAudioWaveformCache = window.practiceAudioWaveformCache || new Map();
+            let peaksPromise = window.practiceAudioWaveformCache.get(audioSource);
+
+            if (!peaksPromise) {
+                peaksPromise = (async () => {
+                    const response = await fetch(audioSource, { credentials: 'same-origin' });
+                    if (!response.ok) {
+                        throw new Error(`Audio waveform request failed with status ${response.status}`);
+                    }
+
+                    const audioContext = new AudioContextConstructor();
+                    try {
+                        const audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+                        const peakCount = 1200;
+                        const peaks = new Float32Array(peakCount);
+                        const channelCount = Math.max(1, audioBuffer.numberOfChannels);
+
+                        for (let channelIndex = 0; channelIndex < channelCount; channelIndex += 1) {
+                            const channel = audioBuffer.getChannelData(channelIndex);
+                            const bucketSize = channel.length / peakCount;
+                            for (let peakIndex = 0; peakIndex < peakCount; peakIndex += 1) {
+                                const start = Math.floor(peakIndex * bucketSize);
+                                const end = Math.min(channel.length, Math.floor((peakIndex + 1) * bucketSize));
+                                const sampleStep = Math.max(1, Math.floor((end - start) / 96));
+                                let peak = peaks[peakIndex];
+                                for (let sampleIndex = start; sampleIndex < end; sampleIndex += sampleStep) {
+                                    peak = Math.max(peak, Math.abs(channel[sampleIndex]));
+                                }
+                                peaks[peakIndex] = peak;
+                            }
+                        }
+
+                        let maximum = 0;
+                        for (const peak of peaks) {
+                            maximum = Math.max(maximum, peak);
+                        }
+                        if (maximum > 0) {
+                            for (let index = 0; index < peaks.length; index += 1) {
+                                peaks[index] = Math.max(0.08, peaks[index] / maximum);
+                            }
+                        }
+                        return peaks;
+                    } finally {
+                        audioContext.close().catch(() => {});
+                    }
+                })();
+                window.practiceAudioWaveformCache.set(audioSource, peaksPromise);
+            }
+
+            try {
+                const peaks = await peaksPromise;
+                drawWaveform = () => renderPeaks(peaks);
+                progressElement.classList.add('plyr__progress--wave-ready');
+                drawWaveform(waveformProgress);
+
+                if (typeof ResizeObserver !== 'undefined') {
+                    const resizeObserver = new ResizeObserver(() => drawWaveform(waveformProgress));
+                    resizeObserver.observe(progressElement);
+                }
+            } catch (error) {
+                window.practiceAudioWaveformCache.delete(audioSource);
+                console.warn('Practice audio waveform could not be generated', error);
+            }
+        };
+
+        if (typeof IntersectionObserver !== 'undefined') {
+            const waveformObserver = new IntersectionObserver(entries => {
+                if (!entries.some(entry => entry.isIntersecting)) {
+                    return;
+                }
+                waveformObserver.disconnect();
+                loadWaveform();
+            }, { rootMargin: '400px 0px' });
+            waveformObserver.observe(playerElement);
+        } else {
+            loadWaveform();
+        }
+    }
+
+    player.on('play', () => {
+        playerElement.classList.add('practice-audio-player--playing');
+        stopWaveAnimation();
+        animationFrame = window.requestAnimationFrame(animateWaveProgress);
+    });
+    player.on('pause', () => {
+        playerElement.classList.remove('practice-audio-player--playing');
+        stopWaveAnimation();
+        updateWaveProgress();
+    });
+    player.on('ended', () => {
+        playerElement.classList.remove('practice-audio-player--playing');
+        stopWaveAnimation();
+        updateWaveProgress();
+    });
+    player.on('timeupdate', updateWaveProgress);
+    player.on('durationchange', updateWaveProgress);
+    player.on('seeked', updateWaveProgress);
+    updateWaveProgress();
+}
+
 function initializePracticeSystem() {
 
     if (window.practiceSystemInitialized) {
@@ -188,16 +495,12 @@ function initializePracticeSystem() {
 
     const plyrAudioOptions = {
         controls: [
-            'play-large',
             'play',
-            'progress',
             'current-time',
+            'progress',
             'duration',
             'mute',
-            'volume',
-            'settings',
-            'pip',
-            'fullscreen'
+            'volume'
         ],
         hideControls: false,
         autoplay: false,
@@ -364,6 +667,11 @@ function initializePracticeSystem() {
                         }
                         : plyrAudioOptions;
                     player = new Plyr(mediaElement, playerOptions);
+
+                    if (!isVideo) {
+                        decoratePracticeAudioPlayer(playerElement, player);
+                        player.on('ready', () => decoratePracticeAudioPlayer(playerElement, player));
+                    }
 
 
                     window.activePlayers[`${exerciseId}_${versionType}`] = player;
@@ -685,6 +993,10 @@ function initializePracticeSystem() {
 
             updateTimerDisplay();
             } catch (err) {
+                const failedPlayerElement = version.querySelector('.exercise-player[data-media-type="audio"]');
+                if (failedPlayerElement) {
+                    failedPlayerElement.classList.add('practice-audio-player--fallback');
+                }
                 console.warn('Practice: ошибка инициализации версии', exercise.dataset.exerciseId, version.dataset.version, err);
             }
         });
@@ -1035,6 +1347,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             clearInterval(plyrCheckInterval);
             if (typeof Plyr === 'undefined') {
+                document.querySelectorAll('.exercise-player[data-media-type="audio"]').forEach(function(playerElement) {
+                    playerElement.classList.add('practice-audio-player--fallback');
+                });
                 console.error('Plyr failed to load after 10 seconds');
             }
         }, 10000);
