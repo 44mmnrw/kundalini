@@ -242,10 +242,6 @@
     border-radius: 5px;
 }
 
-.practice-audio-player__artwork--photo {
-    background-size: cover;
-}
-
 .practice-audio-player__copy {
     display: flex;
     min-width: 0;
@@ -375,7 +371,6 @@
     display: block;
     width: 28px;
     height: 28px;
-    transform: translateX(-2px);
     background: currentColor;
     -webkit-mask-position: center;
     mask-position: center;
@@ -429,7 +424,8 @@
 
 .practice-audio-player__loop.is-active {
     color: #111;
-    background: rgba(255, 255, 255, 0.88);
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
 .practice-audio-player__loop-icon {
@@ -437,6 +433,11 @@
     width: 26px;
     height: 26px;
     background: url('../svg/loop.svg') center / contain no-repeat;
+    transition: filter 0.18s ease;
+}
+
+.practice-audio-player__loop.is-active .practice-audio-player__loop-icon {
+    filter: invert(1);
 }
 
 .exercise-player.practice-audio-player .plyr__progress__container {

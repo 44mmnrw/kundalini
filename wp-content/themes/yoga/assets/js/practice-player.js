@@ -180,20 +180,12 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     const exerciseItem = playerElement.closest('.exercise-item');
     const title = exerciseItem?.querySelector('.exercise-item__info h3')?.textContent?.trim() || 'Аудиопрактика';
     const subtitle = exerciseItem?.querySelector('.exercise-item__info h4')?.textContent?.trim() || 'Кундалини Online';
-    const galleryImage = exerciseItem?.querySelector('.exercise-slider__item img')?.currentSrc
-        || exerciseItem?.querySelector('.exercise-slider__item img')?.src
-        || '';
-
     const identity = document.createElement('div');
     identity.className = 'practice-audio-player__identity';
 
     const artwork = document.createElement('div');
     artwork.className = 'practice-audio-player__artwork';
     artwork.setAttribute('aria-hidden', 'true');
-    if (galleryImage) {
-        artwork.classList.add('practice-audio-player__artwork--photo');
-        artwork.style.backgroundImage = `url("${galleryImage.replace(/"/g, '%22')}")`;
-    }
 
     const copy = document.createElement('div');
     copy.className = 'practice-audio-player__copy';
