@@ -32,6 +32,7 @@ function wp_date($format) { return $format === 'Y' ? '2026' : '14 июля 2026,
 function wp_mail($to, $subject, $message, $headers = array(), $attachments = array(), $embeds = array()) { $GLOBALS['km_last_mail'] = compact('to', 'subject', 'message', 'headers', 'attachments', 'embeds'); return true; }
 function wp_parse_args($args, $defaults = array()) { return array_merge($defaults, is_array($args) ? $args : array()); }
 function sanitize_key($key) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($key)); }
+function absint($value) { return abs((int) $value); }
 function sanitize_text_field($value) { return trim(strip_tags($value)); }
 function wp_kses_post($value) { return $value; }
 function wp_strip_all_tags($value) { return strip_tags($value); }
@@ -57,6 +58,9 @@ function km_assert($condition, $message) {
 
 $registry = new Yoga_Mail_Registry();
 $renderer = new Yoga_Mail_Renderer($registry);
+km_assert($registry->get('generic')['designed'] === false, 'generic template is marked as basic');
+km_assert($registry->get('sadhana-completed')['designed'] === true, 'dedicated Figma template is marked as ready');
+km_assert($registry->get('wp-comment-notification')['designed'] === false, 'unimplemented WordPress template is marked as basic');
 $GLOBALS['km_options'][Yoga_Mail_Registry::LEGACY_SETTINGS_OPTION] = array('footer_text' => 'Legacy footer');
 $GLOBALS['km_options'][Yoga_Mail_Registry::LEGACY_TEMPLATES_OPTION] = array('generic' => array('subject' => 'Legacy subject'));
 km_assert($registry->settings()['footer_text'] === 'Legacy footer', 'legacy settings remain readable after rename');
@@ -340,13 +344,20 @@ km_assert(strpos($sadhana_core_source, "yoga_sadhana_notify(\$result, 'started')
 km_assert(strpos($sadhana_core_source, "empty(\$result['already_active'])") !== false, 'already active sadhanas do not trigger duplicate started emails');
 km_assert(strpos($sadhana_core_source, "'library_url' => yoga_sadhana_library_url()") !== false, 'sadhana adapter supplies the practice library URL');
 km_assert(strpos($sadhana_core_source, 'function yoga_sadhana_day_label') !== false, 'sadhana adapter inflects the milestone day label');
-km_assert(strpos($sadhana_core_source, 'min(100, max(0, (int) floor(') !== false, 'sadhana progress percentage is clamped');
-km_assert(strpos($sadhana_core_source, "'progress_component' => yoga_sadhana_progress_email_component") !== false, 'sadhana adapter supplies a trusted progress component');
 km_assert(strpos($sadhana_core_source, "array(7, 21, 40, 90, 120)") !== false, 'sadhana progress email triggers at configured milestones');
 km_assert(strpos($sadhana_core_source, "yoga_sadhana_notify(\$result, 'interrupted', \$interrupted_at);") !== false, 'interrupted email receives the day count captured before reset');
 km_assert(strpos($sadhana_core_source, "'started_date' => yoga_sadhana_email_date") !== false, 'completed email receives a localized start date');
 km_assert(strpos($sadhana_core_source, "'target_day_label' => yoga_sadhana_day_label") !== false, 'completed email receives the correctly inflected duration');
+km_assert(strpos($sadhana_settings_source, "'_subject'") === false && strpos($sadhana_settings_source, "'_body'") === false, 'sadhana plugin no longer stores email templates');
+km_assert(strpos($sadhana_core_source, 'kundalini_sadhanas_render_email') === false, 'sadhana adapter delegates rendering to Yoga Mail');
+km_assert(strpos($sadhana_core_source, "'subject' => \$email['subject']") === false, 'sadhana adapter does not override Yoga Mail subjects');
+$sadhana_admin_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/kundalini-sadhanas/includes/admin.php');
+km_assert(strpos($sadhana_admin_source, '_subject]') === false && strpos($sadhana_admin_source, '_body]') === false, 'sadhana admin no longer edits email templates');
 km_assert(strpos($lk_source, "'sadhana_started_email'") !== false, 'users can control the sadhana-started email preference');
+$yoga_mail_admin_source = file_get_contents(YOGA_MAIL_PATH . 'includes/class-yoga-mail-admin.php');
+km_assert(strpos($yoga_mail_admin_source, "'ready' => __('Готовые'") !== false, 'admin template list has a ready filter');
+km_assert(strpos($yoga_mail_admin_source, "'basic' => __('Требуют вёрстки'") !== false, 'admin template list has a needs-layout filter');
+km_assert(strpos($yoga_mail_admin_source, "__('Готов', 'yoga-mail') : __('Базовый'") !== false, 'admin template list displays coverage badges');
 
 $support_autoreply = $renderer->render('support-autoreply', array(
 	'request_number' => '4821',
@@ -556,6 +567,21 @@ km_assert(is_wp_error($invalid_url) && $invalid_url->get_error_code() === 'yoga_
 $GLOBALS['km_options'][Yoga_Mail_Registry::TEMPLATES_OPTION] = array();
 $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('fallback_enabled' => true);
 $mailer = new Yoga_Mail_Mailer($registry, $renderer);
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('custom_enabled' => false, 'fallback_enabled' => false);
+km_assert($mailer->send('sadhana-progress', array(
+	'to' => 'anna@example.com',
+	'data' => array(
+		'user_name' => 'Анна',
+		'practice_title' => 'Утренняя крийя',
+		'milestone' => 40,
+		'milestone_day_label' => 'дней',
+		'target_days' => 90,
+		'target_day_label' => 'дней',
+		'action_url' => 'https://example.com/practice/morning/',
+	),
+)) === true, 'Yoga Mail builds the trusted sadhana progress component');
+km_assert(strpos($GLOBALS['km_last_mail']['message'], 'День 40') !== false && strpos($GLOBALS['km_last_mail']['message'], 'Цель — 90 дней') !== false, 'sadhana progress component moved to Yoga Mail');
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('fallback_enabled' => true);
 $filtered = $mailer->filter_wp_mail(array(
 	'to' => 'anna@example.com',
 	'subject' => 'Fallback',

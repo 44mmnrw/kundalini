@@ -105,9 +105,23 @@ final class Yoga_Mail_Admin {
 			WC()->mailer();
 		}
 		$templates = $this->registry->all();
-		$selected = sanitize_key((string) ($_GET['template'] ?? ($_POST['template_id'] ?? 'generic')));
+		$template_status = sanitize_key((string) ($_GET['template_status'] ?? ($_POST['template_status'] ?? 'ready')));
+		if (!in_array($template_status, array('all', 'ready', 'basic'), true)) {
+			$template_status = 'ready';
+		}
+		$status_counts = array('all' => count($templates), 'ready' => 0, 'basic' => 0);
+		foreach ($templates as $item) {
+			$status_counts[!empty($item['designed']) ? 'ready' : 'basic']++;
+		}
+		$visible_templates = array_filter($templates, static function (array $item) use ($template_status): bool {
+			if ($template_status === 'all') {
+				return true;
+			}
+			return !empty($item['designed']) === ($template_status === 'ready');
+		});
+		$selected = sanitize_key((string) ($_GET['template'] ?? ($_POST['template_id'] ?? '')));
 		if (!isset($templates[$selected])) {
-			$selected = 'generic';
+			$selected = (string) array_key_first($visible_templates ?: $templates);
 		}
 		$definition = $templates[$selected];
 		$values = $this->registry->values($selected);
@@ -119,13 +133,34 @@ final class Yoga_Mail_Admin {
 			<h1><?php esc_html_e('Шаблоны писем Yoga Mail', 'yoga-mail'); ?></h1>
 			<?php if ($this->notice !== '') : ?><div class="notice notice-<?php echo esc_attr($this->notice_type); ?> is-dismissible"><p><?php echo esc_html($this->notice); ?></p></div><?php endif; ?>
 			<p><?php esc_html_e('Layout защищён кодом. Здесь редактируются только контент, тема, CTA и параметры включения.', 'yoga-mail'); ?></p>
+			<p><strong><?php echo esc_html(sprintf(__('Готово %1$d из %2$d шаблонов.', 'yoga-mail'), $status_counts['ready'], $status_counts['all'])); ?></strong> <?php esc_html_e('Базовые письма используют общий брендированный layout и требуют отдельной вёрстки.', 'yoga-mail'); ?></p>
+			<ul class="subsubsub" style="float:none;margin:12px 0 16px;">
+				<?php foreach (array('all' => __('Все', 'yoga-mail'), 'ready' => __('Готовые', 'yoga-mail'), 'basic' => __('Требуют вёрстки', 'yoga-mail')) as $status_key => $status_label) : ?>
+					<li><a href="<?php echo esc_url(add_query_arg(array('page' => 'yoga-mail', 'template_status' => $status_key), admin_url('admin.php'))); ?>" class="<?php echo $template_status === $status_key ? 'current' : ''; ?>"><?php echo esc_html($status_label); ?> <span class="count">(<?php echo esc_html((string) $status_counts[$status_key]); ?>)</span></a><?php echo $status_key !== 'basic' ? ' | ' : ''; ?></li>
+				<?php endforeach; ?>
+			</ul>
+			<table class="wp-list-table widefat fixed striped" style="max-width:1100px;margin:0 0 20px;">
+				<thead><tr><th><?php esc_html_e('Письмо', 'yoga-mail'); ?></th><th style="width:180px;"><?php esc_html_e('Группа', 'yoga-mail'); ?></th><th style="width:170px;"><?php esc_html_e('Статус', 'yoga-mail'); ?></th><th style="width:110px;"></th></tr></thead>
+				<tbody>
+				<?php foreach ($visible_templates as $id => $item) : $is_ready = !empty($item['designed']); ?>
+					<tr<?php echo $id === $selected ? ' class="active"' : ''; ?>>
+						<td><strong><?php echo esc_html($item['label']); ?></strong><br><code><?php echo esc_html($id); ?></code></td>
+						<td><?php echo esc_html($item['group']); ?></td>
+						<td><span style="display:inline-block;padding:4px 9px;border-radius:12px;background:<?php echo $is_ready ? '#dff3e4' : '#f0f0f1'; ?>;color:<?php echo $is_ready ? '#176b2c' : '#50575e'; ?>;font-weight:600;"><?php echo esc_html($is_ready ? __('Готов', 'yoga-mail') : __('Базовый', 'yoga-mail')); ?></span></td>
+						<td><a class="button button-small" href="<?php echo esc_url(add_query_arg(array('page' => 'yoga-mail', 'template_status' => $template_status, 'template' => $id), admin_url('admin.php'))); ?>"><?php esc_html_e('Открыть', 'yoga-mail'); ?></a></td>
+					</tr>
+				<?php endforeach; ?>
+				<?php if (!$visible_templates) : ?><tr><td colspan="4"><?php esc_html_e('В этой категории пока нет писем.', 'yoga-mail'); ?></td></tr><?php endif; ?>
+				</tbody>
+			</table>
 			<form method="get" style="margin:16px 0;">
 				<input type="hidden" name="page" value="yoga-mail">
+				<input type="hidden" name="template_status" value="<?php echo esc_attr($template_status); ?>">
 				<label for="yoga-template"><strong><?php esc_html_e('Шаблон:', 'yoga-mail'); ?></strong></label>
 				<select id="yoga-template" name="template" onchange="this.form.submit()">
-					<?php $last_group = ''; foreach ($templates as $id => $item) : ?>
+					<?php $last_group = ''; foreach ($visible_templates as $id => $item) : ?>
 						<?php if ($last_group !== $item['group']) : if ($last_group !== '') echo '</optgroup>'; $last_group = $item['group']; ?><optgroup label="<?php echo esc_attr($last_group); ?>"><?php endif; ?>
-						<option value="<?php echo esc_attr($id); ?>" <?php selected($selected, $id); ?>><?php echo esc_html($item['label']); ?></option>
+						<option value="<?php echo esc_attr($id); ?>" <?php selected($selected, $id); ?>><?php echo esc_html(($item['designed'] ? '✓ ' : '○ ') . $item['label']); ?></option>
 					<?php endforeach; if ($last_group !== '') echo '</optgroup>'; ?>
 				</select>
 				<noscript><?php submit_button(__('Открыть', 'yoga-mail'), 'secondary', '', false); ?></noscript>
@@ -134,6 +169,7 @@ final class Yoga_Mail_Admin {
 			<form method="post">
 				<?php wp_nonce_field('yoga_mail_save'); ?>
 				<input type="hidden" name="template_id" value="<?php echo esc_attr($selected); ?>">
+				<input type="hidden" name="template_status" value="<?php echo esc_attr($template_status); ?>">
 				<h2><?php esc_html_e('Поэтапное включение', 'yoga-mail'); ?></h2>
 				<table class="form-table" role="presentation"><tbody>
 				<?php foreach (array('custom_enabled' => 'Кастомные письма', 'wordpress_enabled' => 'Системные письма WordPress', 'woocommerce_enabled' => 'WooCommerce', 'fallback_enabled' => 'Глобальный fallback') as $key => $label) : ?>
