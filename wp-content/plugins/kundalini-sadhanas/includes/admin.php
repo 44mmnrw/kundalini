@@ -135,7 +135,7 @@ function kundalini_sadhanas_render_settings_page(): void {
 						<th scope="row"><label for="<?php echo esc_attr($event); ?>-body"><?php esc_html_e('Текст письма', 'kundalini-sadhanas'); ?></label></th>
 						<td>
 							<textarea class="large-text code" rows="7" id="<?php echo esc_attr($event); ?>-body" name="kundalini_sadhanas_settings[<?php echo esc_attr($event); ?>_body]"><?php echo esc_textarea((string) $settings[$event . '_body']); ?></textarea>
-							<p class="description"><?php esc_html_e('Переменные: {practice_title}, {milestone}, {target_days}, {completed_days}, {url}.', 'kundalini-sadhanas'); ?></p>
+							<p class="description"><?php esc_html_e('Переменные: {user_name}, {practice_title}, {milestone}, {target_days}, {completed_days}, {url}, {library_url}.', 'kundalini-sadhanas'); ?></p>
 						</td>
 					</tr>
 				</table>

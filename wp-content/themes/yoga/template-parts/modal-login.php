@@ -203,7 +203,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 </div>
                 <form class="email-confirmation-modal__form" action="#" method="post">
                     <label for="email-confirmation-code">Код подтверждения:</label>
-                    <input id="email-confirmation-code" class="email-confirmation-modal__code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-describedby="email-confirmation-message">
+                    <input id="email-confirmation-code" class="email-confirmation-modal__code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-describedby="email-confirmation-message">
                     <button type="button" class="email-confirmation-modal__resend">Отправить код повторно</button>
                     <p id="email-confirmation-message" class="email-confirmation-modal__message" role="status" aria-live="polite"></p>
                     <div class="email-confirmation-modal__buttons">

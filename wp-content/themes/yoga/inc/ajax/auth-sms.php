@@ -123,13 +123,13 @@ if (!function_exists('handle_yoga_email_register')) {
 
         wp_set_auth_cookie($user_id);
         wp_set_current_user($user_id);
-        $mail_result = function_exists('yoga_send_email_verification_code')
-            ? yoga_send_email_verification_code($user_id, true)
+        $mail_result = function_exists('yoga_send_registration_email_verification_link')
+            ? yoga_send_registration_email_verification_link($user_id)
             : new WP_Error('verification_unavailable', 'Подтверждение эл. почты временно недоступно.');
         yoga_ajax_success(
             is_wp_error($mail_result)
-                ? 'Регистрация выполнена. Код не отправлен — запросите его в личном кабинете.'
-                : 'Регистрация выполнена. Код подтверждения отправлен на эл. почту.',
+                ? 'Регистрация выполнена. Ссылка не отправлена — запросите подтверждение в личном кабинете.'
+                : 'Регистрация выполнена. Ссылка для подтверждения отправлена на эл. почту.',
             array(
                 'verification_sent' => !is_wp_error($mail_result),
                 'verification_nonce' => wp_create_nonce('yoga_email_verification'),

@@ -69,7 +69,15 @@ final class Yoga_Mail_WordPress {
 	}
 
 	public function email_changed(array $email, array $user, array $userdata): array {
-		return $this->enabled() ? $this->brand_email_array('wp-email-changed', $email, array('user_name' => (string) ($user['user_login'] ?? ''), 'user_email' => (string) ($userdata['user_email'] ?? ''))) : $email;
+		$new_email = (string) ($userdata['user_email'] ?? '');
+		return $this->enabled() ? $this->brand_email_array('wp-email-changed', $email, array(
+			'user_name' => (string) ($user['display_name'] ?? $user['user_login'] ?? ''),
+			'user_email' => $new_email,
+			'old_email' => (string) ($user['user_email'] ?? ''),
+			'new_email' => $new_email,
+			'action_url' => 'mailto:support@platform.kundalini-class.ru',
+			'event_datetime' => wp_date('j F Y, H:i'),
+		)) : $email;
 	}
 
 	public function admin_email_changed(array $email, string $old_email, string $new_email): array {

@@ -112,9 +112,9 @@
 									<?php if (!$email_verified) : ?>
 										<a href="#" class="lk-email-confirmation__link">Подтвердить эл. почту</a>
 										<div class="lk-email-verification" hidden>
-											<p>Введите 6-значный код из письма</p>
+											<p>Введите 4-значный код из письма</p>
 											<div class="lk-email-verification__controls">
-												<input type="text" class="input lk-email-verification__code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+												<input type="text" class="input lk-email-verification__code" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="0000">
 												<button type="button" class="btn lk-email-verification__verify"><span>Подтвердить</span></button>
 											</div>
 											<button type="button" class="lk-email-verification__resend">Отправить код повторно</button>
@@ -336,6 +336,7 @@
 										array('Подписка закончилась', '', 1, 1, 'subscription_ended_site', 'subscription_ended_email'),
 									)),
 									array('Садхана', 'Всё, что касается садхан', array(
+					array('Что такое садхана?', 'После старта новой садханы', null, 1, '', 'sadhana_started_email'),
 					array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1, 'sadhana_progress_site', 'sadhana_progress_email'),
 					array('Садхана прервана', '', 0, 0, 'sadhana_interrupted_site', 'sadhana_interrupted_email'),
 					array('Садхана завершена', '', 1, 1, 'sadhana_completed_site', 'sadhana_completed_email'),

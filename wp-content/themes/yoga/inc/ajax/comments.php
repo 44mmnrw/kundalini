@@ -115,19 +115,89 @@ function handle_custom_comment() {
 add_action('wp_ajax_submit_comment_reply', 'handle_comment_reply');
 add_action('wp_ajax_nopriv_submit_comment_reply', 'handle_comment_reply');
 
-add_action('yoga_send_comment_reply_email', static function (string $email, string $subject, string $message): void {
-	if (is_email($email)) {
+function yoga_send_comment_reply_email($comment_id_or_email, string $legacy_subject = '', string $legacy_message = ''): void {
+	$comment_id = absint($comment_id_or_email);
+	$reply = $comment_id > 0 ? get_comment($comment_id) : null;
+
+	// Keep already queued events from the previous three-argument callback working.
+	if (!$reply instanceof WP_Comment) {
+		$email = sanitize_email((string) $comment_id_or_email);
+		if (!is_email($email)) {
+			return;
+		}
 		if (function_exists('yoga_mail_send')) {
-			yoga_mail_send('comment-reply', array(
+			yoga_mail_send('generic', array(
 				'to' => $email,
-				'subject' => $subject,
-				'content' => nl2br(esc_html($message)),
+				'subject' => $legacy_subject,
+				'content' => nl2br(esc_html($legacy_message)),
 			));
 		} else {
-			wp_mail($email, $subject, $message);
+			wp_mail($email, $legacy_subject, $legacy_message);
+		}
+		return;
+	}
+
+	$parent = (int) $reply->comment_parent > 0 ? get_comment((int) $reply->comment_parent) : null;
+	$recipient_user_id = $parent instanceof WP_Comment ? (int) $parent->user_id : 0;
+	$recipient = $recipient_user_id > 0 ? get_userdata($recipient_user_id) : null;
+	if (!$recipient instanceof WP_User
+		|| (int) $reply->user_id === $recipient_user_id
+		|| !is_email($recipient->user_email)
+		|| !yoga_notification_preference($recipient_user_id, 'comment_reply_email', true)) {
+		return;
+	}
+
+	$reply_author = trim((string) $reply->comment_author);
+	if ((int) $reply->user_id > 0) {
+		$public_name = yoga_get_user_public_name((int) $reply->user_id);
+		if ($public_name !== '') {
+			$reply_author = $public_name;
 		}
 	}
-}, 10, 3);
+	if ($reply_author === '') {
+		$reply_author = __('Пользователь', 'yoga');
+	}
+
+	$practice_title = wp_specialchars_decode((string) get_the_title((int) $reply->comment_post_ID), ENT_QUOTES);
+	$reply_datetime = mysql2date('j F Y в H:i', (string) $reply->comment_date, true);
+	$reply_url = get_comment_link($reply);
+	if (!is_string($reply_url) || $reply_url === '') {
+		$reply_url = get_permalink((int) $reply->comment_post_ID) . '#comment-' . $comment_id;
+	}
+	$avatar_url = get_avatar_url($reply, array('size' => 80, 'default' => 'mystery'));
+	$reply_avatar = $avatar_url === false || $avatar_url === '' ? '' : sprintf(
+		'<img src="%s" width="40" height="40" alt="%s" style="display:block;width:40px;height:40px;border:0;border-radius:20px;outline:none;text-decoration:none;">',
+		esc_url($avatar_url),
+		esc_attr($reply_author)
+	);
+	$reply_content = nl2br(esc_html(wp_strip_all_tags((string) $reply->comment_content)));
+
+	if (function_exists('yoga_mail_send')) {
+		yoga_mail_send('comment-reply', array(
+			'to' => (string) $recipient->user_email,
+			'data' => array(
+				'reply_author' => $reply_author,
+				'practice_title' => $practice_title,
+				'reply_datetime' => $reply_datetime,
+				'reply_avatar' => $reply_avatar,
+				'reply_content' => $reply_content,
+				'action_url' => $reply_url,
+			),
+		));
+		return;
+	}
+
+	$message = sprintf(
+		"%1$s ответил(а) на ваш комментарий к практике «%2$s» %3$s по МСК.\n\n%4$s\n\nСмотреть ответ: %5$s",
+		$reply_author,
+		$practice_title,
+		$reply_datetime,
+		wp_strip_all_tags((string) $reply->comment_content),
+		$reply_url
+	);
+	wp_mail((string) $recipient->user_email, __('Вам ответили в комментариях', 'yoga'), $message);
+}
+add_action('yoga_send_comment_reply_email', 'yoga_send_comment_reply_email', 10, 3);
 
 function handle_comment_reply() {
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
@@ -207,11 +277,7 @@ function handle_comment_reply() {
 			if (yoga_notification_preference($recipient_user_id, 'comment_reply_email', true)) {
 				$recipient = get_userdata($recipient_user_id);
 				if ($recipient instanceof WP_User && is_email($recipient->user_email)) {
-					wp_schedule_single_event(time() + 5, 'yoga_send_comment_reply_email', array(
-						(string) $recipient->user_email,
-						(string) __('Ответ на ваш комментарий', 'yoga'),
-						(string) ($reply_message . "\n\n" . $reply_url),
-					));
+					wp_schedule_single_event(time() + 5, 'yoga_send_comment_reply_email', array((int) $comment_id));
 				}
 			}
 		}
