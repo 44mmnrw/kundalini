@@ -120,7 +120,19 @@ final class YTR_Notifications {
 		}
 
 		$email_message = $message . "\n\n" . __('Обновить карту:', 'yoga-tariff-renewal') . "\n" . $account_url;
-		if (wp_mail((string) $user->user_email, $title, $email_message)) {
+		$sent = function_exists('yoga_mail_send')
+			? yoga_mail_send('payment-card-expiring', array(
+				'to' => (string) $user->user_email,
+				'subject' => $title,
+				'content' => nl2br(esc_html($email_message)),
+				'data' => array(
+					'user_name' => $user->display_name ?: $user->user_login,
+					'user_email' => $user->user_email,
+					'action_url' => $account_url,
+				),
+			))
+			: wp_mail((string) $user->user_email, $title, $email_message);
+		if ($sent) {
 			update_user_meta($user_id, self::META_CARD_EXPIRING_EMAIL, $token);
 		}
 	}
@@ -167,7 +179,19 @@ final class YTR_Notifications {
 		}
 
 		$email_message = $message . "\n\n" . __('Личный кабинет:', 'yoga-tariff-renewal') . "\n" . $account_url;
-		if (wp_mail((string) $user->user_email, $title, $email_message)) {
+		$sent = function_exists('yoga_mail_send')
+			? yoga_mail_send('subscription-expiring', array(
+				'to' => (string) $user->user_email,
+				'subject' => $title,
+				'content' => nl2br(esc_html($email_message)),
+				'data' => array(
+					'user_name' => $user->display_name ?: $user->user_login,
+					'user_email' => $user->user_email,
+					'action_url' => $account_url,
+				),
+			))
+			: wp_mail((string) $user->user_email, $title, $email_message);
+		if ($sent) {
 			update_user_meta($user_id, self::META_EXPIRING_EMAIL_END, $access_end);
 		}
 	}
@@ -196,7 +220,19 @@ final class YTR_Notifications {
 		);
 
 		$message = self::build_failure_message($order, $reason);
-		$sent    = wp_mail($email, $subject, $message);
+		$sent = function_exists('yoga_mail_send')
+			? yoga_mail_send('renewal-failed', array(
+				'to' => $email,
+				'subject' => $subject,
+				'content' => nl2br(esc_html($message)),
+				'data' => array(
+					'user_email' => $email,
+					'action_url' => self::get_account_url(),
+					'order_number' => (string) $order->get_order_number(),
+					'order_url' => (string) $order->get_view_order_url(),
+				),
+			))
+			: wp_mail($email, $subject, $message);
 
 		if ($sent) {
 			$order->update_meta_data(self::META_FAILURE_EMAIL_SENT_AT, (string) time());

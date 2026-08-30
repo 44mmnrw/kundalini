@@ -651,6 +651,41 @@
 		if ($guestField.length) {
 			this.$generalPanel.append($guestField);
 			$guestPostbox.addClass('yoga-practice-editor__source-postbox');
+
+			var $guestCheckbox = $guestField.find('input[type="checkbox"]').first();
+			if ($guestCheckbox.length && this.$postForm.length) {
+				var $guestAccessInput = this.$postForm.find('input[name="yoga_practice_open_for_guests"]').first();
+				var $guestAccessNonce = this.$postForm.find('input[name="_yoga_practice_guest_access_nonce"]').first();
+
+				if (!$guestAccessInput.length) {
+					$guestAccessInput = $('<input type="hidden" name="yoga_practice_open_for_guests">');
+				}
+				if (!$guestAccessNonce.length) {
+					$guestAccessNonce = $('<input type="hidden" name="_yoga_practice_guest_access_nonce">');
+				}
+				$guestAccessInput
+					.attr('form', this.postFormId)
+					.appendTo(document.body);
+				$guestAccessNonce
+					.attr('form', this.postFormId)
+					.appendTo(document.body)
+					.val(String(config.guestAccessNonce || ''))
+					.attr('value', String(config.guestAccessNonce || ''));
+
+				var syncGuestAccess = function () {
+					var isEnabled = $('.acf-field[data-key="field_practice_open_for_guests"] input[type="checkbox"]').first().prop('checked');
+					var value = isEnabled ? '1' : '0';
+					$guestAccessInput.val(value).attr('value', value);
+				};
+
+				$(document)
+					.off('change.yogaGuestAccess', '.acf-field[data-key="field_practice_open_for_guests"] input[type="checkbox"]')
+					.on('change.yogaGuestAccess', '.acf-field[data-key="field_practice_open_for_guests"] input[type="checkbox"]', syncGuestAccess);
+				$(document)
+					.off('submit.yogaGuestAccess', '#' + this.postFormId)
+					.on('submit.yogaGuestAccess', '#' + this.postFormId, syncGuestAccess);
+				syncGuestAccess();
+			}
 		}
 		this.$sectionPanel.append(this.$sectionsField);
 		this.$sourceFields.append(this.$workspace);

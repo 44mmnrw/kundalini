@@ -424,11 +424,23 @@
 
 .practice-audio-player__loop.is-active {
     color: #111;
+    background: transparent;
+    box-shadow: none;
+}
+
+.practice-audio-player__loop.is-active::before {
+    content: '';
+    position: absolute;
+    width: 28px;
+    height: 26px;
     background: #fff;
+    border-radius: 5px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
 .practice-audio-player__loop-icon {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 26px;
     height: 26px;

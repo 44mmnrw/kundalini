@@ -117,7 +117,15 @@ add_action('wp_ajax_nopriv_submit_comment_reply', 'handle_comment_reply');
 
 add_action('yoga_send_comment_reply_email', static function (string $email, string $subject, string $message): void {
 	if (is_email($email)) {
-		wp_mail($email, $subject, $message);
+		if (function_exists('yoga_mail_send')) {
+			yoga_mail_send('comment-reply', array(
+				'to' => $email,
+				'subject' => $subject,
+				'content' => nl2br(esc_html($message)),
+			));
+		} else {
+			wp_mail($email, $subject, $message);
+		}
 	}
 }, 10, 3);
 

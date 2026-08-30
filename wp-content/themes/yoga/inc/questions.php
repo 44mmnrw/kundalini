@@ -46,7 +46,15 @@ function yoga_send_new_question_admin_email(int $question_id): void {
 	$message .= $question->post_content . "\n\n";
 	$message .= __('Ссылка для ответа:', 'yoga') . ' ' . admin_url("post.php?post={$question_id}&action=edit");
 
-	wp_mail((string) get_option('admin_email'), $subject, $message);
+	if (function_exists('yoga_mail_send')) {
+		yoga_mail_send('admin-new-question', array(
+			'to' => (string) get_option('admin_email'),
+			'subject' => $subject,
+			'content' => nl2br(esc_html($message)),
+		));
+	} else {
+		wp_mail((string) get_option('admin_email'), $subject, $message);
+	}
 }
 add_action('yoga_send_new_question_admin_email', 'yoga_send_new_question_admin_email');
 

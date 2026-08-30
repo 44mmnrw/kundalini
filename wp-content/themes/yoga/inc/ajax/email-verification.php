@@ -148,7 +148,18 @@ function yoga_send_email_verification_code($user_id, $force = false) {
 	);
 	$subject = strtr((string) get_option('yoga_email_verification_subject', yoga_email_verification_default_subject()), $replacements);
 	$message = strtr((string) get_option('yoga_email_verification_message', yoga_email_verification_default_message()), $replacements);
-	$sent = wp_mail($user->user_email, $subject, $message, array('Content-Type: text/plain; charset=UTF-8'));
+	$sent = function_exists('yoga_mail_send')
+		? yoga_mail_send('email-verification', array(
+			'to' => $user->user_email,
+			'subject' => $subject,
+			'content' => nl2br(esc_html($message)),
+			'data' => array(
+				'user_name' => $user_name,
+				'user_email' => $user->user_email,
+				'code' => $code,
+			),
+		))
+		: wp_mail($user->user_email, $subject, $message, array('Content-Type: text/plain; charset=UTF-8'));
 	if (!$sent) {
 		yoga_clear_email_verification_code($user->ID);
 		delete_user_meta($user->ID, 'yoga_email_code_sent_at');

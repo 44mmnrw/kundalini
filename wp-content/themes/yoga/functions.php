@@ -1033,7 +1033,15 @@ function yoga_subscribe_handler() {
 			$subject = 'Новый подписчик на сайте ' . get_bloginfo('name');
 			$message = "Новый email подписчика: $email\n";
 			$message .= "Время: " . current_time('mysql') . "\n";
-			wp_mail($admin_email, $subject, $message);
+			if (function_exists('yoga_mail_send')) {
+				yoga_mail_send('admin-new-subscriber', array(
+					'to' => $admin_email,
+					'subject' => $subject,
+					'content' => nl2br(esc_html($message)),
+				));
+			} else {
+				wp_mail($admin_email, $subject, $message);
+			}
 		}
 
 		wp_send_json_success('Подписка успешно оформлена');
@@ -1156,7 +1164,14 @@ function yoga_subscribe_handler() {
 
 
 		$saved = save_contact_message($name, $email, $phone, $message, $source, $practice_id);
-		$sent = wp_mail($to, $subject, nl2br($body), $headers);
+		$sent = function_exists('yoga_mail_send')
+			? yoga_mail_send('admin-contact-message', array(
+				'to' => $to,
+				'subject' => $subject,
+				'content' => nl2br(esc_html($body)),
+				'headers' => $headers,
+			))
+			: wp_mail($to, $subject, nl2br(esc_html($body)), $headers);
 
 		if (!$saved) {
 			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
@@ -1251,11 +1266,17 @@ function yoga_subscribe_handler() {
 		$saved = save_subscription_email($email);
 
 		if ($saved) {
-			wp_mail(
-            get_option('admin_email'),
-            'Новая подписка на сайте',
-            'Новый email для подписки: ' . $email
-			);
+			$subscription_subject = 'Новая подписка на сайте';
+			$subscription_message = 'Новый email для подписки: ' . $email;
+			if (function_exists('yoga_mail_send')) {
+				yoga_mail_send('admin-new-subscriber', array(
+					'to' => get_option('admin_email'),
+					'subject' => $subscription_subject,
+					'content' => esc_html($subscription_message),
+				));
+			} else {
+				wp_mail(get_option('admin_email'), $subscription_subject, $subscription_message);
+			}
 
 			wp_send_json_success(array('message' => 'Подписка оформлена успешно!'));
 			} else {

@@ -500,7 +500,13 @@ function save_question_answer(int $post_id): void {
 		} elseif (!$email_notifications_enabled) {
 			$delivery_status = 'email_disabled';
 		} else {
-			$sent = wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
+			$sent = function_exists('yoga_mail_send')
+				? yoga_mail_send('question-answer', array(
+					'to' => $recipient_email,
+					'subject' => $subject,
+					'content' => $body,
+				))
+				: wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
 			$delivery_status = $sent ? 'sent' : 'failed';
 		}
 
@@ -570,7 +576,13 @@ function save_question_answer(int $post_id): void {
 		$body .= '<p><strong>' . esc_html__('Ответ:', 'yoga') . '</strong></p>' . wpautop(wp_kses_post($answer));
 		$body .= '<p>' . esc_html__('С уважением, администрация сайта.', 'yoga') . '</p>';
 
-		$sent = wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
+		$sent = function_exists('yoga_mail_send')
+			? yoga_mail_send('question-answer', array(
+				'to' => $recipient_email,
+				'subject' => $subject,
+				'content' => $body,
+			))
+			: wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
 		update_post_meta($post_id, '_answer_delivery_status', $sent ? 'sent' : 'failed');
 		if ($sent) {
 			update_post_meta($post_id, '_answer_sent_at', current_time('mysql'));
@@ -595,7 +607,15 @@ function save_question_answer(int $post_id): void {
 			$message .= "Ответ: {$answer}\n\n";
 			$message .= "С уважением, администрация сайта";
 
-			wp_mail($user->user_email, $subject, $message);
+			if (function_exists('yoga_mail_send')) {
+				yoga_mail_send('question-answer', array(
+					'to' => $user->user_email,
+					'subject' => $subject,
+					'content' => nl2br(esc_html($message)),
+				));
+			} else {
+				wp_mail($user->user_email, $subject, $message);
+			}
 		}
 	}
 }
