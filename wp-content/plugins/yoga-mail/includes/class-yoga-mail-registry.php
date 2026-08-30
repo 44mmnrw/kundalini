@@ -166,7 +166,19 @@ final class Yoga_Mail_Registry {
 					'footer_note' => 'Ссылка действует 60 мин. Если вы не запрашивали сброс — проигнорируйте письмо, пароль останется прежним.',
 				),
 			),
-			'wp-password-changed' => array('label' => 'WordPress: пароль изменён', 'group' => 'WordPress', 'defaults' => $existing),
+			'wp-password-changed' => array(
+				'label' => 'WordPress: пароль изменён',
+				'group' => 'WordPress',
+				'defaults' => array(
+					'subject' => 'Пароль изменен',
+					'preheader' => 'Пароль от вашего аккаунта успешно изменён',
+					'heading' => 'Пароль изменен',
+					'body' => '<p style="margin:0;line-height:1.5;font-weight:400;text-align:center;">Вы успешно сменили пароль от аккаунта.<br>Теперь для входа используйте новый пароль.</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:30px 0 0;border-collapse:separate;background-color:#f6f6f9;border-radius:15px;"><tr><td width="50%" valign="middle" bgcolor="#f6f6f9" style="padding:20px;background-color:#f6f6f9;border-radius:15px 0 0 15px;"><p style="margin:0;line-height:1;font-weight:400;color:#606060;text-align:left;">Дата и время</p></td><td width="50%" align="right" valign="middle" bgcolor="#f6f6f9" style="padding:20px;background-color:#f6f6f9;border-radius:0 15px 15px 0;"><p style="margin:0;line-height:1;font-weight:700;color:#1f1f1f;text-align:right;white-space:nowrap;">{{event_datetime}}</p></td></tr></table><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:15px 0 0;border-collapse:separate;background-color:#fceeee;border:1px solid #e15355;border-radius:15px;"><tr><td bgcolor="#fceeee" style="padding:20px;background-color:#fceeee;border-radius:15px;"><p style="margin:0;line-height:1.5;font-weight:400;color:#e15355;text-align:left;">Это были не вы? Немедленно восстановите доступ и свяжитесь с поддержкой.</p></td></tr></table>',
+					'cta_label' => 'Это были не вы?',
+					'cta_url' => '{{action_url}}',
+					'footer_note' => '',
+				),
+			),
 			'wp-email-changed' => array('label' => 'WordPress: email изменён', 'group' => 'WordPress', 'defaults' => $existing),
 			'wp-admin-email-changed' => array('label' => 'WordPress: email администратора изменён', 'group' => 'WordPress', 'defaults' => $existing),
 			'wp-comment-notification' => array('label' => 'WordPress: новый комментарий', 'group' => 'WordPress', 'defaults' => $existing),
@@ -215,6 +227,7 @@ final class Yoga_Mail_Registry {
 			'ttl_minutes' => array('type' => 'text', 'example' => '10'),
 			'phone' => array('type' => 'text', 'example' => '+7 900 000-00-00'),
 			'customer_name' => array('type' => 'text', 'example' => 'Анна'),
+			'event_datetime' => array('type' => 'text', 'example' => '14 июля 2026, 21:30'),
 		);
 	}
 

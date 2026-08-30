@@ -61,7 +61,11 @@ final class Yoga_Mail_WordPress {
 	}
 
 	public function password_changed(array $email, array $user, array $userdata): array {
-		return $this->enabled() ? $this->brand_email_array('wp-password-changed', $email, array('user_name' => (string) ($user['user_login'] ?? ''))) : $email;
+		return $this->enabled() ? $this->brand_email_array('wp-password-changed', $email, array(
+			'user_name' => (string) ($user['display_name'] ?? $user['user_login'] ?? ''),
+			'action_url' => wp_lostpassword_url(),
+			'event_datetime' => wp_date('j F Y, H:i'),
+		)) : $email;
 	}
 
 	public function email_changed(array $email, array $user, array $userdata): array {
