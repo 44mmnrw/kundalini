@@ -355,9 +355,9 @@ $sadhana_admin_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/kundalini-
 km_assert(strpos($sadhana_admin_source, '_subject]') === false && strpos($sadhana_admin_source, '_body]') === false, 'sadhana admin no longer edits email templates');
 km_assert(strpos($lk_source, "'sadhana_started_email'") !== false, 'users can control the sadhana-started email preference');
 $yoga_mail_admin_source = file_get_contents(YOGA_MAIL_PATH . 'includes/class-yoga-mail-admin.php');
-km_assert(strpos($yoga_mail_admin_source, "'ready' => __('Готовые'") !== false, 'admin template list has a ready filter');
-km_assert(strpos($yoga_mail_admin_source, "'basic' => __('Требуют вёрстки'") !== false, 'admin template list has a needs-layout filter');
-km_assert(strpos($yoga_mail_admin_source, "__('Готов', 'yoga-mail') : __('Базовый'") !== false, 'admin template list displays coverage badges');
+km_assert(strpos($yoga_mail_admin_source, "\$grouped_templates[\$item['group']]") !== false, 'admin dropdown groups each template category once');
+km_assert(strpos($yoga_mail_admin_source, "\$item['designed'] ? '✓ ' : '○ '") !== false, 'admin dropdown displays template coverage markers');
+km_assert(strpos($yoga_mail_admin_source, 'wp-list-table widefat fixed striped') === false, 'admin does not duplicate the dropdown with a separate template table');
 
 $support_autoreply = $renderer->render('support-autoreply', array(
 	'request_number' => '4821',
