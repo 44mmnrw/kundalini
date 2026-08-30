@@ -358,6 +358,9 @@ $yoga_mail_admin_source = file_get_contents(YOGA_MAIL_PATH . 'includes/class-yog
 km_assert(strpos($yoga_mail_admin_source, "\$grouped_templates[\$item['group']]") !== false, 'admin dropdown groups each template category once');
 km_assert(strpos($yoga_mail_admin_source, "\$item['designed'] ? '✓ ' : '○ '") !== false, 'admin dropdown displays template coverage markers');
 km_assert(strpos($yoga_mail_admin_source, 'wp-list-table widefat fixed striped') === false, 'admin does not duplicate the dropdown with a separate template table');
+km_assert(strpos($yoga_mail_admin_source, 'class="yoga-mail-fields"') !== false, 'admin editor uses a compact field grid');
+km_assert(strpos($yoga_mail_admin_source, '<details class="yoga-mail-summary">') !== false, 'global mail settings are grouped in a collapsible section');
+km_assert(strpos($yoga_mail_admin_source, 'class="yoga-mail-actions__test"') !== false, 'test sending is grouped with template actions');
 
 $support_autoreply = $renderer->render('support-autoreply', array(
 	'request_number' => '4821',
