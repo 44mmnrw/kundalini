@@ -117,6 +117,20 @@ function kundalini_sadhanas_render_settings_page(): void {
 						<p class="description"><?php esc_html_e('Пользователь не сможет начать новую садхану на меньшее количество дней. Допустимое значение: от 1 до 1000.', 'kundalini-sadhanas'); ?></p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><label for="kundalini-sadhanas-progress-milestones"><?php esc_html_e('Рубежи прогресса', 'kundalini-sadhanas'); ?></label></th>
+					<td>
+						<input
+							class="regular-text"
+							id="kundalini-sadhanas-progress-milestones"
+							name="kundalini_sadhanas_settings[progress_milestones]"
+							type="text"
+							value="<?php echo esc_attr(implode(', ', kundalini_sadhanas_progress_milestones())); ?>"
+							placeholder="7, 21, 40, 90, 120"
+						>
+						<p class="description"><?php esc_html_e('Дни, в которые отправляется поздравление о прохождении рубежа. Укажите числа от 1 до 1000 через запятую. Повторы будут удалены, значения отсортированы. Оставьте поле пустым, чтобы отключить события рубежей.', 'kundalini-sadhanas'); ?></p>
+					</td>
+				</tr>
 			</table>
 			<?php foreach (kundalini_sadhanas_notification_events() as $event => $definition) : ?>
 				<h2><?php echo esc_html($definition['label']); ?></h2>

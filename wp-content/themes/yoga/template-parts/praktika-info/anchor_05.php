@@ -148,8 +148,6 @@
 	$gallery_mod = yoga_normalize_practice_exercise_gallery($exercise['gallery_mod'] ?? array());
 	$gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-main';
 	$gallery_mod_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-mod';
-	$show_timer = !empty($timing);
-	$show_timer_mod = !empty($timing_mod);
 	$content =  $exercise['content'] ?? [];
 	$content_mod =  $exercise['content_mod'] ?? [];
 	$legacy_additional_modification_rows = !empty($exercise['additional_modifications']) && is_array($exercise['additional_modifications'])
@@ -202,6 +200,9 @@
 		$content_mod = $first_modification['content'] ?? '';
 		$additional_modification_rows = $unified_modification_rows;
 	}
+
+	$show_timer = !empty($timing);
+	$show_timer_mod = !empty($timing_mod);
 
 	$has_modifications = $unified_modification_rows !== array()
 		|| $first_modification !== null
