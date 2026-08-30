@@ -142,6 +142,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 			array(
 				'classicUrl' => $classic_url,
 				'taxonomyNonce' => wp_create_nonce('yoga_save_practice_taxonomies'),
+				'guestAccessNonce' => wp_create_nonce('yoga_save_practice_guest_access'),
 				'hiddenSidebarTaxonomies' => $hidden_sidebar_taxonomies,
 				'taxonomySync' => array(
 					'difficulty' => array(
@@ -269,3 +270,37 @@ if (!function_exists('yoga_save_practice_editor_taxonomies')) {
 }
 
 add_action('save_post_practice', 'yoga_save_practice_editor_taxonomies', 30);
+
+if (!function_exists('yoga_save_practice_guest_access')) {
+	/**
+	 * Persist the guest-access toggle independently of the visual ACF field.
+	 * The custom editor moves that field between DOM containers, which can make
+	 * repeated Gutenberg meta-box saves omit its value.
+	 */
+	function yoga_save_practice_guest_access(int $post_id): void {
+		if (
+			wp_is_post_revision($post_id)
+			|| wp_is_post_autosave($post_id)
+			|| !isset($_POST['_yoga_practice_guest_access_nonce'])
+			|| !wp_verify_nonce(
+				sanitize_text_field(wp_unslash($_POST['_yoga_practice_guest_access_nonce'])),
+				'yoga_save_practice_guest_access'
+			)
+			|| !current_user_can('edit_post', $post_id)
+			|| !isset($_POST['yoga_practice_open_for_guests'])
+		) {
+			return;
+		}
+
+		$enabled = sanitize_key(wp_unslash($_POST['yoga_practice_open_for_guests'])) === '1';
+		update_post_meta($post_id, 'practice_open_for_guests', $enabled ? '1' : '0');
+
+		if (get_post_meta($post_id, '_practice_open_for_guests', true) === '') {
+			update_post_meta($post_id, '_practice_open_for_guests', 'field_practice_open_for_guests');
+		}
+
+		clean_post_cache($post_id);
+	}
+}
+
+add_action('save_post_practice', 'yoga_save_practice_guest_access', 40);

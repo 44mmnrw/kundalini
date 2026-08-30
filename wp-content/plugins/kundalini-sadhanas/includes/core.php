@@ -273,7 +273,19 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 	$user = get_user_by('id', $user_id);
 	if ($user instanceof WP_User && is_email($user->user_email)) {
 		$email = kundalini_sadhanas_render_email($event, $notification_context);
-		wp_mail((string) $user->user_email, $email['subject'], $email['body']);
+		if (function_exists('yoga_mail_send')) {
+			yoga_mail_send('sadhana-' . sanitize_key($event), array(
+				'to' => (string) $user->user_email,
+				'subject' => $email['subject'],
+				'content' => nl2br(esc_html($email['body'])),
+				'data' => array_merge($notification_context, array(
+					'user_name' => $user->display_name ?: $user->user_login,
+					'user_email' => $user->user_email,
+				)),
+			));
+		} else {
+			wp_mail((string) $user->user_email, $email['subject'], $email['body']);
+		}
 	}
 }
 

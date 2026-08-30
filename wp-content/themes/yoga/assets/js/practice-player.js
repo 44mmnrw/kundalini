@@ -230,15 +230,30 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     const speedButton = document.createElement('button');
     speedButton.type = 'button';
     speedButton.className = 'practice-audio-player__speed';
-    speedButton.setAttribute('aria-label', 'Скорость воспроизведения: 1×');
     speedButton.title = 'Скорость воспроизведения';
-    speedButton.textContent = '1×';
+
+    const formatSpeed = value => {
+        const numericSpeed = Number(value);
+        const safeSpeed = Number.isFinite(numericSpeed) && numericSpeed > 0 ? numericSpeed : 1;
+        return `${parseFloat(safeSpeed.toFixed(2))}×`;
+    };
+
+    const updateSpeedButton = value => {
+        const label = formatSpeed(value ?? player.speed);
+        speedButton.textContent = label;
+        speedButton.setAttribute('aria-label', `Скорость воспроизведения: ${label}`);
+    };
+
+    updateSpeedButton(player.speed);
+    player.on('ratechange', () => updateSpeedButton(player.speed));
+    player.on('ready', () => updateSpeedButton(player.speed));
+    setTimeout(() => updateSpeedButton(player.speed), 0);
+
     speedButton.addEventListener('click', () => {
         const currentIndex = speeds.findIndex(speed => Math.abs(speed - player.speed) < 0.01);
         const nextSpeed = speeds[(currentIndex + 1) % speeds.length];
         player.speed = nextSpeed;
-        speedButton.textContent = `${nextSpeed}×`;
-        speedButton.setAttribute('aria-label', `Скорость воспроизведения: ${nextSpeed}×`);
+        updateSpeedButton(nextSpeed);
     });
     forwardButton.insertAdjacentElement('afterend', speedButton);
 

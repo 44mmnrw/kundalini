@@ -41,6 +41,10 @@
 !/wp-content/plugins/kundalini-sadhanas/
 !/wp-content/plugins/kundalini-sadhanas/**
 
+# Custom plugin: branded WordPress and WooCommerce emails
+!/wp-content/plugins/yoga-mail/
+!/wp-content/plugins/yoga-mail/**
+
 # Custom plugin: VK ID authentication
 !/wp-content/plugins/vkid-login/
 !/wp-content/plugins/vkid-login/**

@@ -191,7 +191,14 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 		}
 
 
-		$email_sent = wp_mail($to, $subject, $body, $headers);
+		$email_sent = function_exists('yoga_mail_send')
+			? yoga_mail_send('admin-new-question', array(
+				'to' => $to,
+				'subject' => $subject,
+				'content' => $body,
+				'headers' => $headers,
+			))
+			: wp_mail($to, $subject, $body, $headers);
 		$question_success_url = home_url('/question-sent/');
 
 		wp_send_json_success(array(

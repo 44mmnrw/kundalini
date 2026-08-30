@@ -1,0 +1,228 @@
+<?php
+
+if (!defined('ABSPATH')) {
+	exit;
+}
+
+final class Yoga_Mail_WooCommerce {
+	private $registry;
+	private $renderer;
+	private $mailer;
+	private $configured = false;
+	private $active_email;
+
+	public function __construct(Yoga_Mail_Registry $registry, Yoga_Mail_Renderer $renderer, Yoga_Mail_Mailer $mailer) {
+		$this->registry = $registry;
+		$this->renderer = $renderer;
+		$this->mailer = $mailer;
+	}
+
+	public function init(): void {
+		$this->disable_block_editor();
+		add_action('woocommerce_email', array($this, 'configure'), 999);
+		add_filter('woocommerce_email_styles', array($this, 'email_styles'), 999, 2);
+		add_filter('woocommerce_mail_content', array($this, 'mark_mail_content'), 999);
+		add_filter('woocommerce_email_subject_low_stock', array($this, 'low_stock_subject'), 20, 2);
+		add_filter('woocommerce_email_content_low_stock', array($this, 'low_stock_content'), 20, 2);
+		add_filter('woocommerce_email_subject_no_stock', array($this, 'no_stock_subject'), 20, 2);
+		add_filter('woocommerce_email_content_no_stock', array($this, 'no_stock_content'), 20, 2);
+		add_filter('woocommerce_email_subject_backorder', array($this, 'backorder_subject'), 20, 2);
+		add_filter('woocommerce_email_content_backorder', array($this, 'backorder_content'), 20, 2);
+	}
+
+	public function configure($emails): void {
+		if ($this->configured || !is_object($emails) || !method_exists($emails, 'get_emails')) {
+			return;
+		}
+		$this->configured = true;
+		if ($this->registry->flag('woocommerce_enabled')) {
+			remove_action('woocommerce_email_header', array($emails, 'email_header'));
+			remove_action('woocommerce_email_footer', array($emails, 'email_footer'));
+			add_action('woocommerce_email_header', array($this, 'email_header'), 10, 2);
+			add_action('woocommerce_email_footer', array($this, 'email_footer'), 10, 1);
+		}
+
+		foreach ((array) $emails->get_emails() as $email) {
+			if (!is_object($email) || empty($email->id)) {
+				continue;
+			}
+			$id = sanitize_key((string) $email->id);
+			$template_id = 'woocommerce-' . $id;
+			$this->registry->register($template_id, array(
+				'label' => 'WooCommerce: ' . (method_exists($email, 'get_title') ? $email->get_title() : $id),
+				'group' => 'WooCommerce',
+				'defaults' => array(
+					'subject' => '{{subject}}', 'preheader' => '{{subject}}', 'heading' => '{{heading}}',
+					'body' => '{{content}}', 'cta_label' => '', 'cta_url' => '', 'footer_note' => '',
+				),
+				'tags' => array(
+					'heading' => array('type' => 'text', 'example' => 'Информация о заказе'),
+					'customer_name' => array('type' => 'text', 'example' => 'Анна'),
+				),
+			));
+			if ($this->registry->flag('woocommerce_enabled')) {
+				$email->email_type = 'multipart';
+			}
+			$this->add_email_filters($id);
+		}
+	}
+
+	public function email_header($heading, $email = null): void {
+		$this->active_email = $email;
+		$template_id = $this->template_id($email);
+		$settings = $this->registry->settings();
+		$preheader = '';
+		if (is_object($email) && method_exists($email, 'get_preheader')) {
+			$preheader = (string) $email->get_preheader();
+		}
+		include YOGA_MAIL_PATH . 'templates/woocommerce/email-header.php';
+	}
+
+	public function email_footer($email = null): void {
+		$email = $email ?: $this->active_email;
+		$template_id = $this->template_id($email);
+		$settings = $this->registry->settings();
+		$data = $this->email_data($email, array('subject' => '', 'heading' => '', 'content' => ''));
+		$cta_label = $this->renderer->render_field($template_id, 'cta_label', $data, 'text');
+		$cta_url = $this->renderer->render_field($template_id, 'cta_url', $data, 'url');
+		$footer_note = $this->renderer->render_field($template_id, 'footer_note', $data, 'text');
+		$cta_label = is_wp_error($cta_label) ? '' : (string) $cta_label;
+		$cta_url = is_wp_error($cta_url) ? '' : (string) $cta_url;
+		$footer_note = is_wp_error($footer_note) ? '' : (string) $footer_note;
+		include YOGA_MAIL_PATH . 'templates/woocommerce/email-footer.php';
+		$this->active_email = null;
+	}
+
+	public function email_styles(string $css, $email): string {
+		if (!$this->registry->flag('woocommerce_enabled')) {
+			return $css;
+		}
+		return $css . "\n#template_container{width:560px;max-width:560px;border:0;background:#ffffff;}"
+			. "#template_body td,#body_content td{font-family:Mulish,Arial,Helvetica,sans-serif;color:#1f1f1f;}"
+			. "a{color:#9153e1;}";
+	}
+
+	public function mark_mail_content(string $content): string {
+		if (!$this->registry->flag('woocommerce_enabled') || strpos($content, '<!-- yoga-mail:') !== false) {
+			return $content;
+		}
+		$template_id = $this->template_id($this->find_sending_email());
+		return '<!-- yoga-mail:' . esc_html($template_id) . ' -->' . $content;
+	}
+
+	public function low_stock_subject(string $subject, $product): string {
+		return $this->stock_subject('woocommerce-low-stock', $subject, $product);
+	}
+
+	public function low_stock_content(string $message, $product): string {
+		return $this->stock_content('woocommerce-low-stock', __('Мало товара на складе', 'yoga-mail'), $message, $product);
+	}
+
+	public function no_stock_subject(string $subject, $product): string {
+		return $this->stock_subject('woocommerce-no-stock', $subject, $product);
+	}
+
+	public function no_stock_content(string $message, $product): string {
+		return $this->stock_content('woocommerce-no-stock', __('Товар закончился', 'yoga-mail'), $message, $product);
+	}
+
+	public function backorder_subject(string $subject, $args): string {
+		return $this->stock_subject('woocommerce-backorder', $subject, $args);
+	}
+
+	public function backorder_content(string $message, $args): string {
+		return $this->stock_content('woocommerce-backorder', __('Оформлен предзаказ', 'yoga-mail'), $message, $args);
+	}
+
+	private function add_email_filters(string $id): void {
+		$template_id = 'woocommerce-' . $id;
+		add_filter('woocommerce_email_subject_' . $id, function ($subject, $object, $email) use ($template_id) {
+			return $this->field_or_original($template_id, 'subject', $subject, $email, array('subject' => $subject));
+		}, 999, 3);
+		add_filter('woocommerce_email_heading_' . $id, function ($heading, $object, $email) use ($template_id) {
+			return $this->field_or_original($template_id, 'heading', $heading, $email, array('heading' => $heading, 'subject' => $heading));
+		}, 999, 3);
+		add_filter('woocommerce_email_preheader' . $id, function ($preheader, $object, $email) use ($template_id) {
+			return $this->field_or_original($template_id, 'preheader', $preheader, $email, array('subject' => method_exists($email, 'get_subject') ? $email->get_subject() : $preheader));
+		}, 999, 3);
+		add_filter('woocommerce_email_additional_content_' . $id, function ($content, $object, $email) use ($template_id) {
+			$result = $this->renderer->render_field($template_id, 'body', $this->email_data($email, array('subject' => method_exists($email, 'get_subject') ? $email->get_subject() : '', 'content' => $content)), 'html');
+			return is_wp_error($result) ? $content : $this->renderer->inline_content_styles((string) $result);
+		}, 999, 3);
+	}
+
+	private function field_or_original(string $template_id, string $field, string $original, $email, array $extra): string {
+		if (!$this->registry->flag('woocommerce_enabled')) {
+			return $original;
+		}
+		$result = $this->renderer->render_field($template_id, $field, $this->email_data($email, $extra), 'text');
+		return is_wp_error($result) ? $original : (string) $result;
+	}
+
+	private function stock_subject(string $template_id, string $subject, $object): string {
+		if (!$this->registry->flag('woocommerce_enabled')) {
+			return $subject;
+		}
+		$result = $this->renderer->render_field($template_id, 'subject', array('subject' => $subject, 'content' => ''), 'text');
+		return is_wp_error($result) ? $subject : (string) $result;
+	}
+
+	private function stock_content(string $template_id, string $subject, string $message, $object): string {
+		if (!$this->registry->flag('woocommerce_enabled')) {
+			return $message;
+		}
+		$rendered = $this->renderer->render($template_id, array('subject' => $subject, 'content' => nl2br(esc_html($message))), false);
+		if (is_wp_error($rendered)) {
+			return $message;
+		}
+		$this->mailer->remember_prepared($rendered['html'], $rendered['text'], $template_id);
+		return $rendered['html'];
+	}
+
+	private function template_id($email): string {
+		$id = is_object($email) && !empty($email->id) ? sanitize_key((string) $email->id) : 'generic';
+		return 'woocommerce-' . $id;
+	}
+
+	private function email_data($email, array $extra): array {
+		$data = $extra;
+		$data['content'] = isset($data['content']) ? $data['content'] : '';
+		$data['subject'] = isset($data['subject']) ? $data['subject'] : '';
+		$data['heading'] = isset($data['heading']) ? $data['heading'] : $data['subject'];
+		$data['action_url'] = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/');
+		$data['order_url'] = $data['action_url'];
+		$data['order_number'] = '';
+		$data['customer_name'] = '';
+		if (is_object($email) && isset($email->object) && is_a($email->object, 'WC_Order')) {
+			$order = $email->object;
+			$data['order_number'] = (string) $order->get_order_number();
+			$data['order_url'] = (string) $order->get_view_order_url();
+			$data['action_url'] = $data['order_url'];
+			$data['customer_name'] = trim((string) $order->get_formatted_billing_full_name());
+		}
+		return $data;
+	}
+
+	private function find_sending_email() {
+		if (!function_exists('WC') || !WC() || !WC()->mailer()) {
+			return null;
+		}
+		foreach ((array) WC()->mailer()->get_emails() as $email) {
+			if (is_object($email) && !empty($email->sending)) {
+				return $email;
+			}
+		}
+		return null;
+	}
+
+	private function disable_block_editor(): void {
+		$current = (string) get_option('woocommerce_feature_block_email_editor_enabled', 'no');
+		if (get_option('yoga_mail_previous_wc_block_editor', null) === null) {
+			$legacy = get_option('kundalini_mail_previous_wc_block_editor', null);
+			add_option('yoga_mail_previous_wc_block_editor', is_string($legacy) ? $legacy : $current, '', false);
+		}
+		if ($current !== 'no') {
+			update_option('woocommerce_feature_block_email_editor_enabled', 'no', false);
+		}
+	}
+}
