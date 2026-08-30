@@ -5280,7 +5280,7 @@ jQuery(function() {
     });
 
     $(document).on('input', '.lk-email-verification__code', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        this.value = this.value.replace(/\D/g, '').slice(0, 4);
     });
 
     $(document).on('click', '.lk-email-verification__resend', function() {
@@ -5308,8 +5308,8 @@ jQuery(function() {
         var $button = $(this);
         var $box = $button.closest('.lk-email-verification');
         var code = $box.find('.lk-email-verification__code').val();
-        if (!/^\d{6}$/.test(code)) {
-            verificationMessage($box, 'Введите 6 цифр из письма.', true);
+        if (!/^\d{4}$/.test(code)) {
+			verificationMessage($box, 'Введите 4 цифры из письма.', true);
             return;
         }
         $button.prop('disabled', true);
@@ -5360,7 +5360,7 @@ jQuery(function() {
     }
 
     $(document).on('input', '.email-confirmation-modal__code', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        this.value = this.value.replace(/\D/g, '').slice(0, 4);
     });
 
     function closeEmailConfirmationModal() {
@@ -5404,8 +5404,8 @@ jQuery(function() {
         e.preventDefault();
         var code = $('.email-confirmation-modal__code').val();
         var $button = $('.email-confirmation-modal__confirm');
-        if (!/^\d{6}$/.test(code)) {
-            modalEmailMessage('Введите 6 цифр из письма.', true);
+        if (!/^\d{4}$/.test(code)) {
+			modalEmailMessage('Введите 4 цифры из письма.', true);
             return;
         }
         $button.prop('disabled', true);

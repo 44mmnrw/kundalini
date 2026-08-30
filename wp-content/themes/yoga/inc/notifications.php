@@ -120,6 +120,7 @@ function yoga_add_user_notification(int $user_id, string $type, string $title, s
 		'subscription_expiring' => 'subscription_expiring_site',
 		'payment_card_expiring' => 'payment_card_expiring_site',
 		'subscription_ended' => 'subscription_ended_site',
+		'sadhana_started' => 'sadhana_started_site',
 		'sadhana_progress' => 'sadhana_progress_site',
 		'sadhana_interrupted' => 'sadhana_interrupted_site',
 		'sadhana_completed' => 'sadhana_completed_site',

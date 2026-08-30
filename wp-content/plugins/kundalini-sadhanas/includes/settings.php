@@ -9,6 +9,13 @@ if (!defined('ABSPATH')) {
 
 function kundalini_sadhanas_notification_events(): array {
 	return array(
+		'started' => array(
+			'label' => __('После старта садханы', 'kundalini-sadhanas'),
+			'site_enabled' => false,
+			'email_enabled' => true,
+			'subject' => __('Что такое садхана?', 'kundalini-sadhanas'),
+			'body' => __("Сат Нам, {user_name}!\n\nСадхана началась. Мы расскажем, как спокойная ежедневная практика помогает менять состояние.\n\nВ библиотеку практик:\n{library_url}", 'kundalini-sadhanas'),
+		),
 		'progress' => array(
 			'label' => __('Поздравление с прогрессом', 'kundalini-sadhanas'),
 			'site_enabled' => true,

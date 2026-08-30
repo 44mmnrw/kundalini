@@ -199,6 +199,9 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 				'headers' => $headers,
 			))
 			: wp_mail($to, $subject, $body, $headers);
+		if (function_exists('yoga_send_support_autoreply')) {
+			yoga_send_support_autoreply($email, (int) $post_id);
+		}
 		$question_success_url = home_url('/question-sent/');
 
 		wp_send_json_success(array(

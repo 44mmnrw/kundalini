@@ -1102,6 +1102,31 @@ function yoga_subscribe_handler() {
 
 
 
+	function yoga_send_support_autoreply(string $recipient_email, int $request_id): bool {
+		$recipient_email = sanitize_email($recipient_email);
+		if (!is_email($recipient_email) || $request_id <= 0) {
+			return false;
+		}
+
+		$received_datetime = wp_date('j F Y, H:i');
+		if (function_exists('yoga_mail_send')) {
+			return yoga_mail_send('support-autoreply', array(
+				'to' => $recipient_email,
+				'data' => array(
+					'request_number' => (string) $request_id,
+					'received_datetime' => $received_datetime,
+				),
+			));
+		}
+
+		$message = sprintf(
+			"Спасибо, что написали. Ваше обращение №%1$d зарегистрировано — мы ответим в рабочее время, обычно в течение одного дня.\n\nПолучено: %2$s по МСК\nМы работаем: с 11:00 до 22:00 по МСК\n\nЕсли нужно что-то добавить, напишите нам на support@platform.kundalini-class.ru.",
+			$request_id,
+			$received_datetime
+		);
+		return wp_mail($recipient_email, __('Мы получили ваше письмо', 'yoga'), $message);
+	}
+
 	add_action('wp_ajax_process_contact_form', 'process_contact_form');
 	add_action('wp_ajax_nopriv_process_contact_form', 'process_contact_form');
 
@@ -1163,7 +1188,7 @@ function yoga_subscribe_handler() {
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
 
-		$saved = save_contact_message($name, $email, $phone, $message, $source, $practice_id);
+		$request_id = save_contact_message($name, $email, $phone, $message, $source, $practice_id);
 		$sent = function_exists('yoga_mail_send')
 			? yoga_mail_send('admin-contact-message', array(
 				'to' => $to,
@@ -1173,9 +1198,10 @@ function yoga_subscribe_handler() {
 			))
 			: wp_mail($to, $subject, nl2br(esc_html($body)), $headers);
 
-		if (!$saved) {
+		if ($request_id <= 0) {
 			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
 		}
+		yoga_send_support_autoreply($email, $request_id);
 
 		if (!$sent) {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
@@ -1186,7 +1212,7 @@ function yoga_subscribe_handler() {
 	}
 
 
-	function save_contact_message(string $name, string $email, string $phone, string $message, string $source = 'contacts', int $practice_id = 0): bool {
+	function save_contact_message(string $name, string $email, string $phone, string $message, string $source = 'contacts', int $practice_id = 0): int {
 		if ($source === 'practice' && get_post_type($practice_id) !== 'practice') {
 			$practice_id = 0;
 		}
@@ -1212,7 +1238,7 @@ function yoga_subscribe_handler() {
 		);
 
 		$post_id = wp_insert_post($post_data, true);
-		return !is_wp_error($post_id) && (int) $post_id > 0;
+		return is_wp_error($post_id) ? 0 : (int) $post_id;
 	}
 
 

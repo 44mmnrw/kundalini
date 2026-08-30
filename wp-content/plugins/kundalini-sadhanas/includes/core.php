@@ -228,6 +228,62 @@ function yoga_sadhana_notification_url(array $row): string {
 	return function_exists('yoga_get_lk_section_url') ? yoga_get_lk_section_url('sadhanas') : home_url('/');
 }
 
+function yoga_sadhana_library_url(): string {
+	if (function_exists('yoga_lk_sidebar_secondary_nav_urls')) {
+		$urls = yoga_lk_sidebar_secondary_nav_urls();
+		if (!empty($urls['library']) && is_string($urls['library'])) {
+			return $urls['library'];
+		}
+	}
+	$archive_url = get_post_type_archive_link('practice');
+	return is_string($archive_url) && $archive_url !== '' ? $archive_url : home_url('/');
+}
+
+function yoga_sadhana_day_label(int $days): string {
+	$days = abs($days);
+	$last_two = $days % 100;
+	if ($last_two >= 11 && $last_two <= 14) {
+		return 'дней';
+	}
+	$last = $days % 10;
+	if ($last === 1) {
+		return 'день';
+	}
+	if ($last >= 2 && $last <= 4) {
+		return 'дня';
+	}
+	return 'дней';
+}
+
+function yoga_sadhana_progress_email_component(int $completed_days, int $target_days): string {
+	$completed_days = max(0, $completed_days);
+	$target_days = max(1, $target_days);
+	$progress = min(100, max(0, (int) floor(($completed_days / $target_days) * 100)));
+	$remaining = 100 - $progress;
+
+	return sprintf(
+		'<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;margin:15px 0 0;border-collapse:collapse;"><tr><td align="left" style="padding:0;font-size:14px;line-height:1;color:#606060;text-align:left;">День %1$d</td><td align="right" style="padding:0;font-size:14px;line-height:1;color:#606060;text-align:right;">Цель — %2$d %3$s</td></tr><tr><td colspan="2" style="padding:10px 0 0;"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;border-collapse:separate;"><tr><td height="10" bgcolor="#f8bdf6" style="height:10px;padding:0;background-color:#f8bdf6;border-radius:5px;font-size:1px;line-height:1px;"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;border-collapse:collapse;"><tr><td width="%4$d%%" height="10" bgcolor="#9153e1" style="width:%4$d%%;height:10px;background-color:#9153e1;border-radius:5px;font-size:1px;line-height:1px;">&nbsp;</td><td width="%5$d%%" height="10" style="width:%5$d%%;height:10px;font-size:1px;line-height:1px;">&nbsp;</td></tr></table></td></tr></table></td></tr></table>',
+		$completed_days,
+		$target_days,
+		yoga_sadhana_day_label($target_days),
+		$progress,
+		$remaining
+	);
+}
+
+function yoga_sadhana_email_date(string $date, int $user_id): string {
+	if ($date === '') {
+		return '';
+	}
+	try {
+		$timezone = yoga_sadhana_user_timezone($user_id);
+		$value = new DateTimeImmutable($date, $timezone);
+		return wp_date('j F Y', $value->getTimestamp(), $timezone);
+	} catch (Exception $exception) {
+		return $date;
+	}
+}
+
 function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): void {
 	$user_id = absint($row['user_id'] ?? 0);
 	if ($user_id <= 0) {
@@ -237,10 +293,15 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 	$practice_title = get_the_title($practice_id) ?: __('Практика', 'yoga');
 	$url = yoga_sadhana_notification_url($row);
 	$revision = absint($row['reset_count'] ?? 0);
-	if ($event === 'progress') {
+	if ($event === 'started') {
+		$type = 'sadhana_started';
+		$title = __('Садхана началась', 'yoga');
+		$message = sprintf(__('Вы начали садхану «%s». Рассказываем, как устроена ежедневная практика.', 'yoga'), $practice_title);
+		$key_suffix = 'started';
+	} elseif ($event === 'progress') {
 		$type = 'sadhana_progress';
-		$title = sprintf(__('Садхана: %d дней', 'yoga'), $milestone);
-		$message = sprintf(__('Вы практикуете «%1$s» уже %2$d дней подряд. Продолжайте!', 'yoga'), $practice_title, $milestone);
+		$title = sprintf(__('Садхана: %1$d %2$s', 'yoga'), $milestone, yoga_sadhana_day_label($milestone));
+		$message = sprintf(__('Вы практикуете «%1$s» уже %2$d %3$s подряд. Продолжайте!', 'yoga'), $practice_title, $milestone, yoga_sadhana_day_label($milestone));
 		$key_suffix = 'progress:' . $revision . ':' . $milestone;
 	} elseif ($event === 'interrupted') {
 		$type = 'sadhana_interrupted';
@@ -250,7 +311,7 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 	} else {
 		$type = 'sadhana_completed';
 		$title = __('Садхана завершена', 'yoga');
-		$message = sprintf(__('Вы завершили садхану «%1$s» продолжительностью %2$d дней.', 'yoga'), $practice_title, absint($row['target_days'] ?? 0));
+		$message = sprintf(__('Вы завершили садхану «%1$s» продолжительностью %2$d %3$s.', 'yoga'), $practice_title, absint($row['target_days'] ?? 0), yoga_sadhana_day_label(absint($row['target_days'] ?? 0)));
 		$key_suffix = 'completed';
 	}
 	$dedupe_key = 'sadhana:' . absint($row['id'] ?? 0) . ':' . $key_suffix;
@@ -260,6 +321,12 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 		'target_days' => absint($row['target_days'] ?? 0),
 		'completed_days' => absint($row['completed_days'] ?? 0),
 		'url' => $url,
+		'action_url' => $url,
+		'library_url' => yoga_sadhana_library_url(),
+		'milestone_day_label' => yoga_sadhana_day_label($milestone),
+		'target_day_label' => yoga_sadhana_day_label(absint($row['target_days'] ?? 0)),
+		'started_date' => yoga_sadhana_email_date((string) ($row['started_on'] ?? ''), $user_id),
+		'progress_component' => yoga_sadhana_progress_email_component($milestone, absint($row['target_days'] ?? 0)),
 	);
 
 	if (kundalini_sadhanas_channel_enabled($user_id, $event, 'site') && function_exists('yoga_add_user_notification')) {
@@ -272,6 +339,7 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 	}
 	$user = get_user_by('id', $user_id);
 	if ($user instanceof WP_User && is_email($user->user_email)) {
+		$notification_context['user_name'] = $user->display_name ?: $user->user_login;
 		$email = kundalini_sadhanas_render_email($event, $notification_context);
 		if (function_exists('yoga_mail_send')) {
 			yoga_mail_send('sadhana-' . sanitize_key($event), array(
@@ -296,7 +364,8 @@ function yoga_sadhana_normalize(array $row): array {
 	$sadhana_id = absint($row['id']);
 	$user_id = absint($row['user_id']);
 	$did_reset = false;
-	$result = yoga_sadhana_with_lock('cycle:' . $sadhana_id, static function () use ($sadhana_id, $user_id, &$did_reset) {
+	$interrupted_at = 0;
+	$result = yoga_sadhana_with_lock('cycle:' . $sadhana_id, static function () use ($sadhana_id, $user_id, &$did_reset, &$interrupted_at) {
 		global $wpdb;
 		$current = yoga_sadhana_get($sadhana_id, $user_id);
 		if (!$current || $current['status'] !== 'active' || $current['completed_days'] <= 0 || empty($current['last_marked_on'])) {
@@ -307,6 +376,7 @@ function yoga_sadhana_normalize(array $row): array {
 		if ((string) $current['last_marked_on'] >= $yesterday) {
 			return $current;
 		}
+		$interrupted_at = absint($current['completed_days']);
 		$wpdb->update(yoga_sadhana_table(), array(
 			'completed_days' => 0,
 			'last_marked_on' => null,
@@ -321,7 +391,7 @@ function yoga_sadhana_normalize(array $row): array {
 		return $row;
 	}
 	if ($did_reset) {
-		yoga_sadhana_notify($result, 'interrupted');
+		yoga_sadhana_notify($result, 'interrupted', $interrupted_at);
 	}
 	return $result;
 }
@@ -340,7 +410,7 @@ function yoga_sadhana_start(int $user_id, int $practice_id, int $target_days): a
 	if (!yoga_sadhana_valid_practice($user_id, $practice_id)) {
 		return new WP_Error('invalid_practice', __('Практика недоступна.', 'yoga'));
 	}
-	return yoga_sadhana_with_lock('active:' . $user_id . ':' . $practice_id, static function () use ($user_id, $practice_id, $target_days, $wpdb) {
+	$result = yoga_sadhana_with_lock('active:' . $user_id . ':' . $practice_id, static function () use ($user_id, $practice_id, $target_days, $wpdb) {
 		$existing_id = yoga_sadhana_find_active_id($user_id, $practice_id);
 		if ($existing_id > 0) {
 			$existing = yoga_sadhana_get($existing_id, $user_id);
@@ -365,6 +435,10 @@ function yoga_sadhana_start(int $user_id, int $practice_id, int $target_days): a
 		}
 		return yoga_sadhana_get((int) $wpdb->insert_id, $user_id) ?: new WP_Error('create_failed', __('Не удалось начать садхану.', 'yoga'));
 	});
+	if (!is_wp_error($result) && empty($result['already_active'])) {
+		yoga_sadhana_notify($result, 'started');
+	}
+	return $result;
 }
 
 function yoga_sadhana_mark_day(int $user_id, int $sadhana_id): array|WP_Error {

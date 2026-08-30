@@ -5,6 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 final class Yoga_Mail_WooCommerce {
+	private const PAYMENT_RECEIPT_SENT_META = '_yoga_mail_payment_receipt_sent_at';
+	private const PAYMENT_RECEIPT_LOCK_PREFIX = 'yoga_mail_payment_receipt_lock_';
+
 	private $registry;
 	private $renderer;
 	private $mailer;
@@ -19,6 +22,10 @@ final class Yoga_Mail_WooCommerce {
 
 	public function init(): void {
 		$this->disable_block_editor();
+		add_action('woocommerce_order_status_processing', array($this, 'send_payment_success_receipt'), 1, 1);
+		add_action('woocommerce_order_status_completed', array($this, 'send_payment_success_receipt'), 1, 1);
+		add_filter('woocommerce_email_enabled_customer_processing_order', array($this, 'maybe_disable_standard_payment_email'), 999, 3);
+		add_filter('woocommerce_email_enabled_customer_completed_order', array($this, 'maybe_disable_standard_payment_email'), 999, 3);
 		add_action('woocommerce_email', array($this, 'configure'), 999);
 		add_filter('woocommerce_email_styles', array($this, 'email_styles'), 999, 2);
 		add_filter('woocommerce_mail_content', array($this, 'mark_mail_content'), 999);
@@ -28,6 +35,71 @@ final class Yoga_Mail_WooCommerce {
 		add_filter('woocommerce_email_content_no_stock', array($this, 'no_stock_content'), 20, 2);
 		add_filter('woocommerce_email_subject_backorder', array($this, 'backorder_subject'), 20, 2);
 		add_filter('woocommerce_email_content_backorder', array($this, 'backorder_content'), 20, 2);
+	}
+
+	public function send_payment_success_receipt($order_id): void {
+		if (!$this->registry->flag('woocommerce_enabled') || !function_exists('wc_get_order')) {
+			return;
+		}
+
+		$order = wc_get_order($order_id);
+		if (!$order || !is_a($order, 'WC_Order') || !$order->is_paid()) {
+			return;
+		}
+		if ((string) $order->get_meta('_ytr_renewal') === 'yes') {
+			if (class_exists('YTR_Notifications') && method_exists('YTR_Notifications', 'send_renewal_success')) {
+				YTR_Notifications::send_renewal_success($order);
+			}
+			return;
+		}
+		if ((string) $order->get_meta(self::PAYMENT_RECEIPT_SENT_META) !== '') {
+			return;
+		}
+
+		$email = (string) $order->get_billing_email();
+		if ($email === '' || !is_email($email) || !$this->acquire_payment_receipt_lock((int) $order->get_id())) {
+			return;
+		}
+
+		try {
+			$order = wc_get_order($order->get_id());
+			if (!$order || (string) $order->get_meta(self::PAYMENT_RECEIPT_SENT_META) !== '') {
+				return;
+			}
+
+			$paid_at = $order->get_date_paid() ?: $order->get_date_created();
+			$sent = $this->mailer->send('payment-success-receipt', array(
+				'to' => $email,
+				'data' => array(
+					'receipt_number' => (string) $order->get_order_number(),
+					'payment_date' => $paid_at ? wp_date('j F Y', $paid_at->getTimestamp()) : wp_date('j F Y'),
+					'receipt_items' => $this->receipt_items_html($order),
+					'total_amount' => $this->format_money((float) $order->get_total(), (string) $order->get_currency()),
+					'payment_method' => $this->payment_method_label($order),
+					'action_url' => (string) $order->get_view_order_url(),
+				),
+			));
+			if ($sent) {
+				$order->update_meta_data(self::PAYMENT_RECEIPT_SENT_META, (string) time());
+				$order->add_order_note(__('Yoga Mail: покупателю отправлено письмо об успешной оплате с чеком.', 'yoga-mail'));
+				$order->save();
+			}
+		} finally {
+			delete_option(self::PAYMENT_RECEIPT_LOCK_PREFIX . (int) $order_id);
+		}
+	}
+
+	public function maybe_disable_standard_payment_email($enabled, $order, $email = null) {
+		if (!$this->registry->flag('woocommerce_enabled') || !is_object($order) || !method_exists($order, 'get_meta')) {
+			return $enabled;
+		}
+		if ((string) $order->get_meta('_ytr_renewal') === 'yes') {
+			$meta_key = class_exists('YTR_Notifications')
+				? YTR_Notifications::META_RENEWAL_SUCCESS_EMAIL_SENT_AT
+				: '_ytr_renewal_success_email_sent_at';
+			return (string) $order->get_meta($meta_key) !== '' ? false : $enabled;
+		}
+		return (string) $order->get_meta(self::PAYMENT_RECEIPT_SENT_META) !== '' ? false : $enabled;
 	}
 
 	public function configure($emails): void {
@@ -201,6 +273,54 @@ final class Yoga_Mail_WooCommerce {
 			$data['customer_name'] = trim((string) $order->get_formatted_billing_full_name());
 		}
 		return $data;
+	}
+
+	private function acquire_payment_receipt_lock(int $order_id): bool {
+		$key = self::PAYMENT_RECEIPT_LOCK_PREFIX . $order_id;
+		$locked_at = (int) get_option($key, 0);
+		if ($locked_at > 0 && $locked_at < time() - 10 * MINUTE_IN_SECONDS) {
+			delete_option($key);
+		}
+		return add_option($key, (string) time(), '', false);
+	}
+
+	private function receipt_items_html($order): string {
+		$rows = '';
+		foreach ($order->get_items('line_item') as $item) {
+			$name = (string) $item->get_name();
+			$quantity = max(1, (int) $item->get_quantity());
+			if ($quantity > 1) {
+				$name .= ' × ' . $quantity;
+			}
+			$amount = (float) $item->get_total() + (float) $item->get_total_tax();
+			$rows .= '<tr><td valign="middle" style="padding:15px 10px 15px 0;font-size:14px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">'
+				. esc_html($name)
+				. '</td><td valign="middle" align="right" style="padding:15px 0 15px 10px;font-size:14px;line-height:1.5;font-weight:400;color:#606060;text-align:right;white-space:nowrap;">'
+				. esc_html($this->format_money($amount, (string) $order->get_currency()))
+				. '</td></tr>';
+		}
+		return $rows;
+	}
+
+	private function payment_method_label($order): string {
+		$label = trim(wp_strip_all_tags((string) $order->get_payment_method_title()));
+		$user_id = (int) $order->get_customer_id();
+		if ($user_id > 0 && class_exists('YTR_Saved_Cards')) {
+			$cards = YTR_Saved_Cards::get_cards($user_id);
+			$card = is_array($cards) && isset($cards[0]) && is_array($cards[0]) ? $cards[0] : array();
+			$last4 = preg_replace('/\D+/', '', (string) ($card['last4'] ?? ''));
+			if (strlen($last4) >= 4) {
+				return 'Карта •• ' . substr($last4, -4);
+			}
+		}
+		return $label !== '' ? $label : __('Карта', 'yoga-mail');
+	}
+
+	private function format_money(float $amount, string $currency): string {
+		if (function_exists('wc_price')) {
+			return trim(html_entity_decode(wp_strip_all_tags(wc_price($amount, array('currency' => $currency))), ENT_QUOTES, 'UTF-8'));
+		}
+		return number_format_i18n($amount, 0) . ($currency !== '' ? ' ' . $currency : '');
 	}
 
 	private function find_sending_email() {

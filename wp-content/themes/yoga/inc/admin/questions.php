@@ -444,6 +444,41 @@ add_action('admin_head-post-new.php', 'yoga_question_admin_styles');
 
 
 
+function yoga_send_question_answer_email(string $recipient_email, string $answer): bool {
+	$recipient_email = sanitize_email($recipient_email);
+	if (!is_email($recipient_email)) {
+		return false;
+	}
+
+	$answer_text = trim(wp_strip_all_tags($answer));
+	if ($answer_text === '') {
+		return false;
+	}
+
+	$subject = __('Ответ от администратора', 'yoga');
+	$answer_datetime = wp_date('j F Y в H:i');
+	$action_url = function_exists('yoga_get_lk_questions_url') ? yoga_get_lk_questions_url() : home_url('/');
+	if (function_exists('yoga_mail_send')) {
+		return yoga_mail_send('question-answer', array(
+			'to' => $recipient_email,
+			'data' => array(
+				'answer_datetime' => $answer_datetime,
+				'admin_answer' => nl2br(esc_html($answer_text)),
+				'action_url' => $action_url,
+			),
+		));
+	}
+
+	$message = sprintf(
+		"Администратор ответил на ваш вопрос в личных сообщениях %1$s по МСК.\n\n%2$s\n\nОткрыть переписку: %3$s",
+		$answer_datetime,
+		$answer_text,
+		$action_url
+	);
+	return wp_mail($recipient_email, $subject, $message);
+}
+
+
 function save_question_answer(int $post_id): void {
 	if (!isset($_POST['answer_nonce']) || !wp_verify_nonce($_POST['answer_nonce'], 'save_question_answer')) {
 		return;
@@ -485,13 +520,6 @@ function save_question_answer(int $post_id): void {
 			$recipient_email = $question_author ? sanitize_email((string) $question_author->user_email) : '';
 		}
 
-		$question = get_post($post_id);
-		$subject = sprintf(__('Ответ на ваш вопрос — %s', 'yoga'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
-		$question_text = $question ? wp_strip_all_tags((string) $question->post_content) : '';
-		$body = '<p>' . esc_html__('Здравствуйте!', 'yoga') . '</p>';
-		$body .= '<p><strong>' . esc_html__('Ваш вопрос:', 'yoga') . '</strong><br>' . nl2br(esc_html($question_text)) . '</p>';
-		$body .= '<p><strong>' . esc_html__('Ответ:', 'yoga') . '</strong></p>' . wpautop($answer);
-		$body .= '<p>' . esc_html__('С уважением, администрация сайта.', 'yoga') . '</p>';
 		$notification_user_id = yoga_get_question_notification_user_id($post_id);
 		$email_notifications_enabled = $notification_user_id <= 0 || yoga_notification_preference($notification_user_id, 'question_answer_email', false);
 		$sent = false;
@@ -500,13 +528,7 @@ function save_question_answer(int $post_id): void {
 		} elseif (!$email_notifications_enabled) {
 			$delivery_status = 'email_disabled';
 		} else {
-			$sent = function_exists('yoga_mail_send')
-				? yoga_mail_send('question-answer', array(
-					'to' => $recipient_email,
-					'subject' => $subject,
-					'content' => $body,
-				))
-				: wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
+			$sent = yoga_send_question_answer_email($recipient_email, $answer);
 			$delivery_status = $sent ? 'sent' : 'failed';
 		}
 
@@ -568,21 +590,7 @@ function save_question_answer(int $post_id): void {
 			return;
 		}
 
-		$question = get_post($post_id);
-		$subject = sprintf(__('Ответ на ваш вопрос — %s', 'yoga'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
-		$question_text = $question ? wp_strip_all_tags((string) $question->post_content) : '';
-		$body = '<p>' . esc_html__('Здравствуйте!', 'yoga') . '</p>';
-		$body .= '<p><strong>' . esc_html__('Ваш вопрос:', 'yoga') . '</strong><br>' . nl2br(esc_html($question_text)) . '</p>';
-		$body .= '<p><strong>' . esc_html__('Ответ:', 'yoga') . '</strong></p>' . wpautop(wp_kses_post($answer));
-		$body .= '<p>' . esc_html__('С уважением, администрация сайта.', 'yoga') . '</p>';
-
-		$sent = function_exists('yoga_mail_send')
-			? yoga_mail_send('question-answer', array(
-				'to' => $recipient_email,
-				'subject' => $subject,
-				'content' => $body,
-			))
-			: wp_mail($recipient_email, $subject, $body, array('Content-Type: text/html; charset=UTF-8'));
+		$sent = yoga_send_question_answer_email($recipient_email, $answer);
 		update_post_meta($post_id, '_answer_delivery_status', $sent ? 'sent' : 'failed');
 		if ($sent) {
 			update_post_meta($post_id, '_answer_sent_at', current_time('mysql'));
@@ -607,15 +615,7 @@ function save_question_answer(int $post_id): void {
 			$message .= "Ответ: {$answer}\n\n";
 			$message .= "С уважением, администрация сайта";
 
-			if (function_exists('yoga_mail_send')) {
-				yoga_mail_send('question-answer', array(
-					'to' => $user->user_email,
-					'subject' => $subject,
-					'content' => nl2br(esc_html($message)),
-				));
-			} else {
-				wp_mail($user->user_email, $subject, $message);
-			}
+			yoga_send_question_answer_email((string) $user->user_email, $answer);
 		}
 	}
 }
