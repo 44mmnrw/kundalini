@@ -14,7 +14,7 @@ $font = "font-family:'Mulish',Arial,Helvetica,sans-serif;";
 	</table>
 <?php endif; ?>
 <?php if ($footer_note !== '') : ?>
-	<p style="margin:15px auto 0;max-width:400px;<?php echo esc_attr($font); ?>font-size:12px;line-height:1;font-weight:400;color:#777777;text-align:center;"><?php echo esc_html($footer_note); ?></p>
+	<p style="margin:15px auto 0;max-width:400px;<?php echo esc_attr($font); ?>font-size:12px;line-height:1;font-weight:400;color:#626262;text-align:center;"><?php echo esc_html($footer_note); ?></p>
 <?php endif; ?>
 </td></tr>
 <tr><td bgcolor="#1f1f1f" style="padding:0;background-color:#1f1f1f;border-radius:36px 36px 0 0;">

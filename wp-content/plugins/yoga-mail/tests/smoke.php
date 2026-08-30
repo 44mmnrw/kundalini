@@ -27,6 +27,8 @@ function add_filter() { return true; }
 function add_action() { return true; }
 function do_action() { return null; }
 function wp_generate_uuid4() { static $id = 0; $id++; return '00000000-0000-4000-8000-' . str_pad((string) $id, 12, '0', STR_PAD_LEFT); }
+function wp_lostpassword_url() { return 'https://example.com/wp-login.php?action=lostpassword'; }
+function wp_date($format) { return $format === 'Y' ? '2026' : '14 июля 2026, 21:30'; }
 function wp_mail($to, $subject, $message, $headers = array(), $attachments = array(), $embeds = array()) { $GLOBALS['km_last_mail'] = compact('to', 'subject', 'message', 'headers', 'attachments', 'embeds'); return true; }
 function wp_parse_args($args, $defaults = array()) { return array_merge($defaults, is_array($args) ? $args : array()); }
 function sanitize_key($key) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($key)); }
@@ -44,6 +46,7 @@ function wpautop($value) { return '<p>' . str_replace("\n\n", '</p><p>', $value)
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-registry.php';
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-renderer.php';
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-mailer.php';
+require YOGA_MAIL_PATH . 'includes/class-yoga-mail-wordpress.php';
 
 function km_assert($condition, $message) {
 	if (!$condition) {
@@ -103,6 +106,31 @@ km_assert(strpos($reset['html'], 'ИНН 632200860531') !== false, 'shared foote
 km_assert(strpos($reset['html'], '/plugins/yoga-mail/assets/images/email/youtube.svg') !== false, 'shared footer uses local Figma icons');
 km_assert(!preg_match('/<img(?![^>]*\salt=)[^>]*>/i', $reset['html']), 'every reset-password image has alt text');
 km_assert(strpos($reset['text'], 'Создать новый пароль: https://example.com/wp-login.php?action=rp&key=test-key&login=marina') !== false, 'plain reset-password CTA includes URL');
+
+$password_changed = $renderer->render('wp-password-changed', array(
+	'action_url' => 'https://example.com/wp-login.php?action=lostpassword',
+	'event_datetime' => '14 июля 2026, 21:30',
+), false);
+km_assert(!is_wp_error($password_changed), 'password-changed template renders');
+km_assert($password_changed['subject'] === 'Пароль изменен', 'password-changed subject matches Figma');
+km_assert(strpos($password_changed['html'], 'Вы успешно сменили пароль от аккаунта.') !== false, 'password-changed confirmation exists');
+km_assert(strpos($password_changed['html'], '14 июля 2026, 21:30') !== false, 'password-changed event datetime exists');
+km_assert(strpos($password_changed['html'], 'background-color:#f6f6f9') !== false, 'password-changed datetime panel exists');
+km_assert(strpos($password_changed['html'], 'border:1px solid #e15355') !== false, 'password-changed security warning exists');
+km_assert(strpos($password_changed['html'], 'Это были не вы?') !== false, 'password-changed recovery CTA exists');
+km_assert(strpos($password_changed['html'], 'href="https://example.com/wp-login.php?action=lostpassword"') !== false, 'password-changed CTA uses recovery URL');
+km_assert(strpos($password_changed['html'], 'support@platform.kundalini-class.ru') !== false, 'password-changed reuses shared footer');
+km_assert(strpos($password_changed['text'], 'Это были не вы?: https://example.com/wp-login.php?action=lostpassword') !== false, 'plain password-changed CTA includes recovery URL');
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('wordpress_enabled' => true);
+$wordpress_adapter = new Yoga_Mail_WordPress($registry, $renderer, new Yoga_Mail_Mailer($registry, $renderer));
+$adapted_password_changed = $wordpress_adapter->password_changed(
+	array('subject' => 'Password changed', 'message' => 'Your password was changed.'),
+	array('user_login' => 'marina', 'display_name' => 'Марина'),
+	array()
+);
+km_assert($adapted_password_changed['subject'] === 'Пароль изменен', 'WordPress adapter replaces password-changed subject');
+km_assert(strpos($adapted_password_changed['message'], '14 июля 2026, 21:30') !== false, 'WordPress adapter injects localized event datetime');
+km_assert(strpos($adapted_password_changed['message'], 'href="https://example.com/wp-login.php?action=lostpassword"') !== false, 'WordPress adapter injects lost-password URL');
 $layout_source = file_get_contents(YOGA_MAIL_PATH . 'templates/layout/html.php');
 $woocommerce_footer_source = file_get_contents(YOGA_MAIL_PATH . 'templates/woocommerce/email-footer.php');
 km_assert(strpos($layout_source, "templates/partials/footer.php") !== false, 'HTML layout reuses shared footer partial');
