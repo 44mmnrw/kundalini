@@ -337,7 +337,17 @@
 									)),
 									array('Садхана', 'Всё, что касается садхан', array(
 					array('Что такое садхана?', 'После старта новой садханы', null, 1, '', 'sadhana_started_email'),
-					array('Поздравление с прогрессом', 'На 7, 21, 40, 90, 120 днях', 1, 1, 'sadhana_progress_site', 'sadhana_progress_email'),
+					array(
+						'Поздравление с прогрессом',
+						(function (): string {
+							$milestones = function_exists('kundalini_sadhanas_progress_milestones') ? kundalini_sadhanas_progress_milestones() : array(7, 21, 40, 90, 120);
+							return $milestones ? 'На ' . implode(', ', $milestones) . ' днях' : 'Рубежи отключены';
+						})(),
+						1,
+						1,
+						'sadhana_progress_site',
+						'sadhana_progress_email',
+					),
 					array('Садхана прервана', '', 0, 0, 'sadhana_interrupted_site', 'sadhana_interrupted_email'),
 					array('Садхана завершена', '', 1, 1, 'sadhana_completed_site', 'sadhana_completed_email'),
 									)),

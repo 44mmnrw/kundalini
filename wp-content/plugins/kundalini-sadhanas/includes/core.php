@@ -460,7 +460,7 @@ function yoga_sadhana_mark_day(int $user_id, int $sadhana_id): array|WP_Error {
 	}
 	if ($result['status'] === 'completed') {
 		yoga_sadhana_notify($result, 'completed');
-	} elseif (in_array($result['completed_days'], array(7, 21, 40, 90, 120), true)) {
+	} elseif (in_array($result['completed_days'], kundalini_sadhanas_progress_milestones(), true)) {
 		yoga_sadhana_notify($result, 'progress', $result['completed_days']);
 	}
 	return $result;

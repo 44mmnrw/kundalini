@@ -128,6 +128,23 @@ final class Yoga_Mail_Renderer {
 				$html
 			);
 		}
+		$html = preg_replace_callback(
+			'/<td\b([^>]*)>/i',
+			static function (array $matches): string {
+				$attributes = isset($matches[1]) ? $matches[1] : '';
+				if (preg_match('/\salign\s*=/i', $attributes)) {
+					return $matches[0];
+				}
+				if (
+					preg_match("/\sstyle=([\"'])(.*?)\\1/i", $attributes, $style_match)
+					&& preg_match('/(?:^|;)\s*text-align\s*:\s*(left|center|right)\b/i', $style_match[2], $align_match)
+				) {
+					return '<td align="' . strtolower($align_match[1]) . '"' . $attributes . '>';
+				}
+				return $matches[0];
+			},
+			$html
+		);
 		return $html;
 	}
 
