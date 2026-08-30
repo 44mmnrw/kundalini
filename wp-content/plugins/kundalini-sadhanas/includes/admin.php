@@ -84,7 +84,8 @@ function kundalini_sadhanas_render_settings_page(): void {
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e('Садханы', 'kundalini-sadhanas'); ?></h1>
-		<p><?php esc_html_e('Управление уведомлениями и шаблонами писем. Пользователь может переопределить каналы в личном кабинете.', 'kundalini-sadhanas'); ?></p>
+		<p><?php esc_html_e('Управление событиями и каналами уведомлений. Пользователь может переопределить каналы в личном кабинете.', 'kundalini-sadhanas'); ?></p>
+		<div class="notice notice-info inline"><p><?php esc_html_e('Темы, содержимое и оформление писем настраиваются централизованно в Yoga Mail.', 'kundalini-sadhanas'); ?> <a href="<?php echo esc_url(admin_url('admin.php?page=yoga-mail')); ?>"><?php esc_html_e('Открыть шаблоны писем', 'kundalini-sadhanas'); ?></a></p></div>
 		<div class="notice notice-info inline"><p>
 			<?php
 			echo esc_html(sprintf(
@@ -125,17 +126,6 @@ function kundalini_sadhanas_render_settings_page(): void {
 						<td>
 							<label><input type="checkbox" name="kundalini_sadhanas_settings[<?php echo esc_attr($event); ?>_site_enabled]" value="1" <?php checked(!empty($settings[$event . '_site_enabled'])); ?>> <?php esc_html_e('Уведомление на сайте', 'kundalini-sadhanas'); ?></label><br>
 							<label><input type="checkbox" name="kundalini_sadhanas_settings[<?php echo esc_attr($event); ?>_email_enabled]" value="1" <?php checked(!empty($settings[$event . '_email_enabled'])); ?>> <?php esc_html_e('Письмо', 'kundalini-sadhanas'); ?></label>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="<?php echo esc_attr($event); ?>-subject"><?php esc_html_e('Тема письма', 'kundalini-sadhanas'); ?></label></th>
-						<td><input class="regular-text" id="<?php echo esc_attr($event); ?>-subject" name="kundalini_sadhanas_settings[<?php echo esc_attr($event); ?>_subject]" value="<?php echo esc_attr((string) $settings[$event . '_subject']); ?>"></td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="<?php echo esc_attr($event); ?>-body"><?php esc_html_e('Текст письма', 'kundalini-sadhanas'); ?></label></th>
-						<td>
-							<textarea class="large-text code" rows="7" id="<?php echo esc_attr($event); ?>-body" name="kundalini_sadhanas_settings[<?php echo esc_attr($event); ?>_body]"><?php echo esc_textarea((string) $settings[$event . '_body']); ?></textarea>
-							<p class="description"><?php esc_html_e('Переменные: {user_name}, {practice_title}, {milestone}, {target_days}, {completed_days}, {url}, {library_url}.', 'kundalini-sadhanas'); ?></p>
 						</td>
 					</tr>
 				</table>

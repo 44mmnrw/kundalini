@@ -255,22 +255,6 @@ function yoga_sadhana_day_label(int $days): string {
 	return 'дней';
 }
 
-function yoga_sadhana_progress_email_component(int $completed_days, int $target_days): string {
-	$completed_days = max(0, $completed_days);
-	$target_days = max(1, $target_days);
-	$progress = min(100, max(0, (int) floor(($completed_days / $target_days) * 100)));
-	$remaining = 100 - $progress;
-
-	return sprintf(
-		'<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;margin:15px 0 0;border-collapse:collapse;"><tr><td align="left" style="padding:0;font-size:14px;line-height:1;color:#606060;text-align:left;">День %1$d</td><td align="right" style="padding:0;font-size:14px;line-height:1;color:#606060;text-align:right;">Цель — %2$d %3$s</td></tr><tr><td colspan="2" style="padding:10px 0 0;"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;border-collapse:separate;"><tr><td height="10" bgcolor="#f8bdf6" style="height:10px;padding:0;background-color:#f8bdf6;border-radius:5px;font-size:1px;line-height:1px;"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;border-collapse:collapse;"><tr><td width="%4$d%%" height="10" bgcolor="#9153e1" style="width:%4$d%%;height:10px;background-color:#9153e1;border-radius:5px;font-size:1px;line-height:1px;">&nbsp;</td><td width="%5$d%%" height="10" style="width:%5$d%%;height:10px;font-size:1px;line-height:1px;">&nbsp;</td></tr></table></td></tr></table></td></tr></table>',
-		$completed_days,
-		$target_days,
-		yoga_sadhana_day_label($target_days),
-		$progress,
-		$remaining
-	);
-}
-
 function yoga_sadhana_email_date(string $date, int $user_id): string {
 	if ($date === '') {
 		return '';
@@ -326,7 +310,6 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 		'milestone_day_label' => yoga_sadhana_day_label($milestone),
 		'target_day_label' => yoga_sadhana_day_label(absint($row['target_days'] ?? 0)),
 		'started_date' => yoga_sadhana_email_date((string) ($row['started_on'] ?? ''), $user_id),
-		'progress_component' => yoga_sadhana_progress_email_component($milestone, absint($row['target_days'] ?? 0)),
 	);
 
 	if (kundalini_sadhanas_channel_enabled($user_id, $event, 'site') && function_exists('yoga_add_user_notification')) {
@@ -340,19 +323,16 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 	$user = get_user_by('id', $user_id);
 	if ($user instanceof WP_User && is_email($user->user_email)) {
 		$notification_context['user_name'] = $user->display_name ?: $user->user_login;
-		$email = kundalini_sadhanas_render_email($event, $notification_context);
 		if (function_exists('yoga_mail_send')) {
 			yoga_mail_send('sadhana-' . sanitize_key($event), array(
 				'to' => (string) $user->user_email,
-				'subject' => $email['subject'],
-				'content' => nl2br(esc_html($email['body'])),
 				'data' => array_merge($notification_context, array(
 					'user_name' => $user->display_name ?: $user->user_login,
 					'user_email' => $user->user_email,
 				)),
 			));
 		} else {
-			wp_mail((string) $user->user_email, $email['subject'], $email['body']);
+			wp_mail((string) $user->user_email, wp_strip_all_tags($title), wp_strip_all_tags($message . "\n\n" . $url));
 		}
 	}
 }

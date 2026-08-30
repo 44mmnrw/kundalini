@@ -31,6 +31,7 @@ final class Yoga_Mail_Mailer {
 		if (isset($args['content'])) {
 			$data['content'] = (string) $args['content'];
 		}
+		$data = $this->prepare_template_data($template_id, $data);
 		$rendered = $this->renderer->render($template_id, $data, !empty($args['preview']));
 		if (is_wp_error($rendered)) {
 			$this->log($template_id, 'render_failed:' . $rendered->get_error_code());
@@ -191,6 +192,26 @@ final class Yoga_Mail_Mailer {
 			return sanitize_key($matches[1]);
 		}
 		return '';
+	}
+
+	private function prepare_template_data(string $template_id, array $data): array {
+		if ($template_id !== 'sadhana-progress' || isset($data['progress_component'])) {
+			return $data;
+		}
+		$completed_days = max(0, absint($data['milestone'] ?? ($data['completed_days'] ?? 0)));
+		$target_days = max(1, absint($data['target_days'] ?? 0));
+		$progress = min(100, max(0, (int) floor(($completed_days / $target_days) * 100)));
+		$remaining = 100 - $progress;
+		$target_day_label = wp_strip_all_tags((string) ($data['target_day_label'] ?? 'дней'));
+		$data['progress_component'] = sprintf(
+			'<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;margin:15px 0 0;border-collapse:collapse;"><tr><td align="left" style="padding:0;font-size:14px;line-height:1;color:#606060;text-align:left;">День %1$d</td><td align="right" style="padding:0;font-size:14px;line-height:1;color:#606060;text-align:right;">Цель — %2$d %3$s</td></tr><tr><td colspan="2" style="padding:10px 0 0;"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;border-collapse:separate;"><tr><td height="10" bgcolor="#f8bdf6" style="height:10px;padding:0;background-color:#f8bdf6;border-radius:5px;font-size:1px;line-height:1px;"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="width:100%%;border-collapse:collapse;"><tr><td width="%4$d%%" height="10" bgcolor="#9153e1" style="width:%4$d%%;height:10px;background-color:#9153e1;border-radius:5px;font-size:1px;line-height:1px;">&nbsp;</td><td width="%5$d%%" height="10" style="width:%5$d%%;height:10px;font-size:1px;line-height:1px;">&nbsp;</td></tr></table></td></tr></table></td></tr></table>',
+			$completed_days,
+			$target_days,
+			esc_html($target_day_label),
+			$progress,
+			$remaining
+		);
+		return $data;
 	}
 
 	private function extract_body(string $html): string {

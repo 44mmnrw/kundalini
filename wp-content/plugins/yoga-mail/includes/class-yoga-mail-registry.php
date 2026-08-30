@@ -538,11 +538,16 @@ final class Yoga_Mail_Registry {
 			'subject' => '{{subject}}', 'preheader' => '', 'heading' => '{{subject}}',
 			'body' => '{{content}}', 'cta_label' => '', 'cta_url' => '', 'footer_note' => '',
 		);
+		$values = wp_parse_args((array) ($definition['defaults'] ?? array()), $defaults);
+		$designed = array_key_exists('designed', $definition)
+			? (bool) $definition['designed']
+			: trim((string) $values['body']) !== '{{content}}';
 		return array(
 			'id'       => $id,
 			'label'    => (string) ($definition['label'] ?? $id),
 			'group'    => (string) ($definition['group'] ?? 'Прочие'),
-			'defaults' => wp_parse_args((array) ($definition['defaults'] ?? array()), $defaults),
+			'designed' => $designed,
+			'defaults' => $values,
 			'tags'     => wp_parse_args((array) ($definition['tags'] ?? array()), $this->common_tags()),
 		);
 	}
