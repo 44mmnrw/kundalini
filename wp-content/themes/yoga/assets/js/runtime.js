@@ -148,7 +148,7 @@
 			blocked = true;
 		}
 
-		if (hasModifier && ['c', 'x'].indexOf(key) !== -1) {
+		if (blockTextSelection && hasModifier && ['c', 'x'].indexOf(key) !== -1) {
 			blocked = isProtectedTarget(getElement(active)) || selectionTouchesProtectedArea() || isInProtectedArea(getElement(event.target));
 		}
 
@@ -172,13 +172,15 @@
 		}, true);
 	}
 
-	document.addEventListener('copy', function (event) {
-		blockIfProtected(event);
-	}, true);
+	if (blockTextSelection) {
+		document.addEventListener('copy', function (event) {
+			blockIfProtected(event);
+		}, true);
 
-	document.addEventListener('cut', function (event) {
-		blockIfProtected(event);
-	}, true);
+		document.addEventListener('cut', function (event) {
+			blockIfProtected(event);
+		}, true);
+	}
 
 	document.addEventListener('dragstart', function (event) {
 		blockIfProtected(event);
@@ -203,7 +205,7 @@
 			return;
 		}
 
-		if (key === 'a' && !blockTextSelection) {
+		if (['a', 'c', 'x'].indexOf(key) !== -1 && !blockTextSelection) {
 			return;
 		}
 
