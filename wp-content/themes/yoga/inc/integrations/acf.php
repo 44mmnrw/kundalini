@@ -380,10 +380,10 @@ if (!function_exists('yoga_register_copy_protection_settings_fields')) {
 			'fields' => array(
 				array(
 					'key' => 'field_copy_protection_disable_text_selection',
-					'label' => 'Отключить выделение текста',
+					'label' => 'Отключить блокировку выделения и копирования',
 					'name' => 'copy_protection_disable_text_selection',
 					'type' => 'true_false',
-					'instructions' => 'Если включено, пользователи не смогут выделять текст на защищённых страницах сайта.',
+					'instructions' => 'Если включено, пользователи смогут выделять и копировать текст на защищённых страницах сайта.',
 					'ui' => 1,
 					'default_value' => 0,
 				),
@@ -398,10 +398,10 @@ if (!function_exists('yoga_register_copy_protection_settings_fields')) {
 				),
 				array(
 					'key' => 'field_copy_protection_block_devtools_shortcuts',
-					'label' => 'Блокировать F12 и горячие клавиши DevTools',
+					'label' => 'Отключить блокировку F12 и горячих клавиш DevTools',
 					'name' => 'copy_protection_block_devtools_shortcuts',
 					'type' => 'true_false',
-					'instructions' => 'Если включено, на фронтенде блокируются F12 и Ctrl/Cmd+Shift+I/J/C/K. По умолчанию выключено, чтобы не мешать разработке.',
+					'instructions' => 'Если включено, на фронтенде не блокируются F12 и Ctrl/Cmd+Shift+I/J/C/K.',
 					'ui' => 1,
 					'default_value' => 0,
 				),

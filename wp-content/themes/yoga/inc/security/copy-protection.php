@@ -203,8 +203,8 @@ if (!function_exists('yoga_copy_protection_enqueue_assets')) {
 				'selectors'      => array_values($selectors),
 				'offlineMessage' => yoga_copy_protection_offline_message(),
 				'blockContextMenu' => yoga_copy_protection_block_context_menu(),
-				'blockDevtools'    => yoga_copy_protection_block_devtools_shortcuts(),
-				'blockTextSelection' => yoga_copy_protection_disable_text_selection(),
+				'blockDevtools'    => !yoga_copy_protection_block_devtools_shortcuts(),
+				'blockTextSelection' => !yoga_copy_protection_disable_text_selection(),
 			)
 		);
 	}
@@ -220,7 +220,7 @@ if (!function_exists('yoga_copy_protection_body_class')) {
 		if (yoga_copy_protection_is_enabled() && yoga_copy_protection_selectors() !== array()) {
 			$classes[] = 'yoga-copy-protected';
 
-			if (yoga_copy_protection_disable_text_selection()) {
+			if (!yoga_copy_protection_disable_text_selection()) {
 				$classes[] = 'yoga-text-selection-disabled';
 			}
 		}
