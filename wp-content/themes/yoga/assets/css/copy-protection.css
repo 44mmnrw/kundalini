@@ -3,11 +3,11 @@
  *
  * @package Yoga
  */
-.yoga-copy-protected .praktika-info,
-.yoga-copy-protected .fancybox-container,
-.yoga-copy-protected .rules,
-.yoga-copy-protected .question__sub,
-.yoga-copy-protected .about-text {
+.yoga-copy-protected.yoga-text-selection-disabled .praktika-info,
+.yoga-copy-protected.yoga-text-selection-disabled .fancybox-container,
+.yoga-copy-protected.yoga-text-selection-disabled .rules,
+.yoga-copy-protected.yoga-text-selection-disabled .question__sub,
+.yoga-copy-protected.yoga-text-selection-disabled .about-text {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -26,8 +26,8 @@
 	pointer-events: auto;
 }
 
-.yoga-copy-protected [data-yoga-copy-allow],
-.yoga-copy-protected [data-yoga-copy-allow] * {
+.yoga-copy-protected.yoga-text-selection-disabled [data-yoga-copy-allow],
+.yoga-copy-protected.yoga-text-selection-disabled [data-yoga-copy-allow] * {
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;

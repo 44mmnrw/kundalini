@@ -15,6 +15,7 @@
 	var offlineMessage = config.offlineMessage || 'Контент доступен только на сайте. Сохранённая копия страницы недоступна.';
 	var blockContextMenu = config.blockContextMenu === true || config.blockContextMenu === '1' || config.blockContextMenu === 1;
 	var blockDevtools = config.blockDevtools === true || config.blockDevtools === '1' || config.blockDevtools === 1;
+	var blockTextSelection = config.blockTextSelection === true || config.blockTextSelection === '1' || config.blockTextSelection === 1;
 	var isOfflinePage = window.location.protocol === 'file:';
 
 	function getElement(node) {
@@ -147,7 +148,11 @@
 			blocked = true;
 		}
 
-		if (hasModifier && ['c', 'a', 'x'].indexOf(key) !== -1) {
+		if (hasModifier && ['c', 'x'].indexOf(key) !== -1) {
+			blocked = isProtectedTarget(getElement(active)) || selectionTouchesProtectedArea() || isInProtectedArea(getElement(event.target));
+		}
+
+		if (blockTextSelection && hasModifier && key === 'a') {
 			blocked = isProtectedTarget(getElement(active)) || selectionTouchesProtectedArea() || isInProtectedArea(getElement(event.target));
 		}
 
@@ -179,9 +184,11 @@
 		blockIfProtected(event);
 	}, true);
 
-	document.addEventListener('selectstart', function (event) {
-		blockIfProtected(event);
-	}, true);
+	if (blockTextSelection) {
+		document.addEventListener('selectstart', function (event) {
+			blockIfProtected(event);
+		}, true);
+	}
 
 	document.addEventListener('keydown', blockSaveShortcuts, true);
 	document.addEventListener('keydown', blockBrowserShortcuts, true);
@@ -193,6 +200,10 @@
 
 		var key = String(event.key || '').toLowerCase();
 		if (['c', 'a', 'x', 'u', 'p'].indexOf(key) === -1) {
+			return;
+		}
+
+		if (key === 'a' && !blockTextSelection) {
 			return;
 		}
 
