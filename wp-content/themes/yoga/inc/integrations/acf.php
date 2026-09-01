@@ -379,6 +379,15 @@ if (!function_exists('yoga_register_copy_protection_settings_fields')) {
 			'title' => 'Защита контента',
 			'fields' => array(
 				array(
+					'key' => 'field_copy_protection_disable_text_selection',
+					'label' => 'Отключить выделение текста',
+					'name' => 'copy_protection_disable_text_selection',
+					'type' => 'true_false',
+					'instructions' => 'Если включено, пользователи не смогут выделять текст на защищённых страницах сайта.',
+					'ui' => 1,
+					'default_value' => 0,
+				),
+				array(
 					'key' => 'field_copy_protection_disable_context_menu_blocking',
 					'label' => 'Отключить блокировку правой кнопки мыши',
 					'name' => 'copy_protection_disable_context_menu_blocking',
