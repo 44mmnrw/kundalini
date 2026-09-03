@@ -13,6 +13,7 @@ final class Yoga_Mail_WooCommerce {
 	private $mailer;
 	private $configured = false;
 	private $active_email;
+	private $payment_receipt_sent_order_ids = array();
 
 	public function __construct(Yoga_Mail_Registry $registry, Yoga_Mail_Renderer $renderer, Yoga_Mail_Mailer $mailer) {
 		$this->registry = $registry;
@@ -24,8 +25,8 @@ final class Yoga_Mail_WooCommerce {
 		$this->disable_block_editor();
 		add_action('woocommerce_order_status_processing', array($this, 'send_payment_success_receipt'), 1, 1);
 		add_action('woocommerce_order_status_completed', array($this, 'send_payment_success_receipt'), 1, 1);
-		add_filter('woocommerce_email_enabled_customer_processing_order', array($this, 'maybe_disable_standard_payment_email'), 999, 3);
-		add_filter('woocommerce_email_enabled_customer_completed_order', array($this, 'maybe_disable_standard_payment_email'), 999, 3);
+		add_filter('woocommerce_email_enabled_customer_processing_order', array($this, 'disable_standard_processing_email'), 999, 3);
+		add_filter('woocommerce_email_enabled_customer_completed_order', array($this, 'maybe_disable_standard_completed_email'), 999, 3);
 		add_action('woocommerce_email', array($this, 'configure'), 999);
 		add_filter('woocommerce_email_styles', array($this, 'email_styles'), 999, 2);
 		add_filter('woocommerce_mail_content', array($this, 'mark_mail_content'), 999);
@@ -48,7 +49,10 @@ final class Yoga_Mail_WooCommerce {
 		}
 		if ((string) $order->get_meta('_ytr_renewal') === 'yes') {
 			if (class_exists('YTR_Notifications') && method_exists('YTR_Notifications', 'send_renewal_success')) {
-				YTR_Notifications::send_renewal_success($order);
+				$sent = YTR_Notifications::send_renewal_success($order);
+				if ($sent || (string) $order->get_meta(YTR_Notifications::META_RENEWAL_SUCCESS_EMAIL_SENT_AT) !== '') {
+					$this->payment_receipt_sent_order_ids[(int) $order->get_id()] = true;
+				}
 			}
 			return;
 		}
@@ -83,16 +87,37 @@ final class Yoga_Mail_WooCommerce {
 				$order->update_meta_data(self::PAYMENT_RECEIPT_SENT_META, (string) time());
 				$order->add_order_note(__('Yoga Mail: покупателю отправлено письмо об успешной оплате с чеком.', 'yoga-mail'));
 				$order->save();
+				$this->payment_receipt_sent_order_ids[(int) $order->get_id()] = true;
 			}
 		} finally {
 			delete_option(self::PAYMENT_RECEIPT_LOCK_PREFIX . (int) $order_id);
 		}
 	}
 
-	public function maybe_disable_standard_payment_email($enabled, $order, $email = null) {
-		if (!$this->registry->flag('woocommerce_enabled') || !is_object($order) || !method_exists($order, 'get_meta')) {
+	public function disable_standard_processing_email($enabled, $order = null, $email = null) {
+		return $this->registry->flag('woocommerce_enabled') ? false : $enabled;
+	}
+
+	public function maybe_disable_standard_completed_email($enabled, $order, $email = null) {
+		if (
+			!$this->registry->flag('woocommerce_enabled')
+			|| !is_object($order)
+			|| !method_exists($order, 'get_meta')
+			|| !method_exists($order, 'get_id')
+		) {
 			return $enabled;
 		}
+
+		$order_id = (int) $order->get_id();
+		if (isset($this->payment_receipt_sent_order_ids[$order_id])) {
+			return false;
+		}
+
+		$fresh_order = function_exists('wc_get_order') ? wc_get_order($order_id) : false;
+		if ($fresh_order && is_a($fresh_order, 'WC_Order')) {
+			$order = $fresh_order;
+		}
+
 		if ((string) $order->get_meta('_ytr_renewal') === 'yes') {
 			$meta_key = class_exists('YTR_Notifications')
 				? YTR_Notifications::META_RENEWAL_SUCCESS_EMAIL_SENT_AT

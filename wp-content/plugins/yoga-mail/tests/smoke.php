@@ -504,10 +504,13 @@ km_assert(strpos($renewal_failed['text'], 'Повторить оплату: http
 $woocommerce_source = file_get_contents(YOGA_MAIL_PATH . 'includes/class-yoga-mail-woocommerce.php');
 km_assert(strpos($woocommerce_source, "woocommerce_order_status_processing', array(\$this, 'send_payment_success_receipt')") !== false, 'payment-success receipt is connected to paid processing orders');
 km_assert(strpos($woocommerce_source, 'PAYMENT_RECEIPT_SENT_META') !== false, 'payment-success receipt has duplicate-send protection');
+km_assert(strpos($woocommerce_source, "woocommerce_email_enabled_customer_processing_order', array(\$this, 'disable_standard_processing_email')") !== false, 'standard processing email is always disabled when Yoga Mail handles WooCommerce');
+km_assert(strpos($woocommerce_source, 'payment_receipt_sent_order_ids') !== false, 'completed-email suppression survives stale WooCommerce order objects');
 km_assert(strpos($woocommerce_source, "YTR_Notifications::send_renewal_success(\$order)") !== false, 'renewal orders use the dedicated success template');
 $renewal_notifications_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/yoga-tariff-renewal/includes/class-ytr-notifications.php');
 km_assert(strpos($renewal_notifications_source, "'next_attempt_date' => self::get_next_attempt_date") !== false, 'renewal failure adapter supplies the next retry date');
-km_assert(strpos($renewal_notifications_source, "YTR_User::is_auto_renew_enabled(\$user_id)") !== false, 'three-day warning skips active auto-renew subscriptions');
+km_assert(strpos($renewal_notifications_source, 'has_active_auto_renewal') !== false, 'three-day warning uses the resilient auto-renew check');
+km_assert(strpos($renewal_notifications_source, 'maybe_backfill_auto_renew') !== false, 'notification cron restores auto-renew meta from an existing recurring card');
 km_assert(strpos($renewal_notifications_source, "'expiration_date' => \$end_date") !== false, 'three-day warning supplies the localized expiration date');
 km_assert(strpos($renewal_notifications_source, 'META_RENEWAL_SUCCESS_EMAIL_SENT_AT') !== false, 'renewal-success email has duplicate-send protection');
 km_assert(strpos($renewal_notifications_source, "'next_charge_date' => self::get_next_charge_date") !== false, 'renewal-success adapter supplies the next charge date');
