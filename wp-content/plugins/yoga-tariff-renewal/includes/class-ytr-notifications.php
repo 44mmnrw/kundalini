@@ -17,6 +17,7 @@ final class YTR_Notifications {
 	private const META_CARD_EXPIRING_SITE     = '_ytr_card_expiring_site';
 	private const META_CARD_EXPIRING_EMAIL    = '_ytr_card_expiring_email';
 	private const EXPIRING_WINDOW             = 3 * DAY_IN_SECONDS;
+	private static $auto_renew_status_cache    = array();
 
 	public static function init(): void {
 		add_action(self::EXPIRING_HOOK, array(__CLASS__, 'send_expiring_notifications'));
@@ -171,7 +172,7 @@ final class YTR_Notifications {
 	}
 
 	private static function maybe_send_expiring_notification(int $user_id): void {
-		if (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id)) {
+		if (self::has_active_auto_renewal($user_id)) {
 			return;
 		}
 
@@ -242,7 +243,7 @@ final class YTR_Notifications {
 	}
 
 	private static function maybe_send_ended_notification(int $user_id): void {
-		if (class_exists('YTR_User') && YTR_User::is_auto_renew_enabled($user_id)) {
+		if (self::has_active_auto_renewal($user_id)) {
 			return;
 		}
 		if (function_exists('get_current_user_tariff') && is_array(get_current_user_tariff($user_id))) {
@@ -308,6 +309,31 @@ final class YTR_Notifications {
 		if ($sent) {
 			update_user_meta($user_id, self::META_ENDED_EMAIL_END, $access_end);
 		}
+	}
+
+	/**
+	 * Проверяет фактическое автопродление и восстанавливает служебные meta,
+	 * если recurring-карта уже сохранена, но cron ещё не видел её в профиле.
+	 */
+	private static function has_active_auto_renewal(int $user_id): bool {
+		if ($user_id <= 0 || !class_exists('YTR_User')) {
+			return false;
+		}
+		if (array_key_exists($user_id, self::$auto_renew_status_cache)) {
+			return self::$auto_renew_status_cache[$user_id];
+		}
+
+		if (class_exists('YTR_LK') && method_exists('YTR_LK', 'maybe_backfill_auto_renew')) {
+			YTR_LK::maybe_backfill_auto_renew($user_id);
+		}
+
+		if (class_exists('YTR_LK') && method_exists('YTR_LK', 'user_has_renewable_payment_setup')) {
+			self::$auto_renew_status_cache[$user_id] = YTR_LK::user_has_renewable_payment_setup($user_id);
+		} else {
+			self::$auto_renew_status_cache[$user_id] = YTR_User::is_auto_renew_enabled($user_id);
+		}
+
+		return self::$auto_renew_status_cache[$user_id];
 	}
 
 	public static function send_renewal_success(WC_Order $order): bool {
