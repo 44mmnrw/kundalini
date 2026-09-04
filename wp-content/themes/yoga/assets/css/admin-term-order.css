@@ -1,0 +1,44 @@
+.column-yoga-term-order {
+	width: 72px;
+	text-align: center;
+}
+
+.yoga-term-order-handle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	color: #646970;
+	cursor: grab;
+}
+
+.yoga-term-order-handle:hover,
+.yoga-term-order-handle:focus {
+	color: #9153e1;
+}
+
+.yoga-term-order-is-sorting .yoga-term-order-handle {
+	cursor: grabbing;
+}
+
+.yoga-term-order-placeholder td {
+	height: 52px;
+	border: 2px dashed #9153e1;
+	background: #f7f2ff;
+}
+
+.yoga-term-order-status {
+	display: none;
+}
+
+#the-list > tr.ui-sortable-helper {
+	background: #fff;
+	box-shadow: 0 4px 18px rgb(0 0 0 / 14%);
+}
+
+@media screen and (max-width: 782px) {
+	.column-yoga-term-order {
+		width: 48px;
+	}
+}
