@@ -440,6 +440,9 @@ km_assert($comment_reply['subject'] === 'Вам ответили в коммен
 km_assert(strpos($comment_reply['html'], '«Крийя для баланса» 14 июля 2026 в 21:32 по МСК.') !== false, 'comment-reply summary contains practice and localized datetime');
 km_assert(strpos($comment_reply['html'], 'src="https://example.com/avatar.jpg"') !== false, 'comment-reply contains an absolute avatar URL');
 km_assert(strpos($comment_reply['html'], 'border-radius:15px 15px 15px 0') !== false, 'comment-reply card matches the speech-bubble shape');
+km_assert(strpos($comment_reply['html'], 'padding:20px 75px 20px 20px') !== false, 'comment-reply card preserves the Figma right whitespace');
+km_assert(strpos($comment_reply['html'], '<td width="15" style="width:15px;padding:0;font-size:1px;line-height:1px;">') !== false, 'comment-reply avatar gap matches Figma');
+km_assert(strpos($comment_reply['html'], 'width:330px;padding:0;text-align:left;') !== false, 'comment-reply text column matches Figma');
 km_assert(strpos($comment_reply['html'], '<script>') === false, 'comment-reply content cannot inject executable HTML');
 km_assert(strpos($comment_reply['html'], 'href="https://example.com/practice/kriya-dlya-balansa/#comment-2037"') !== false, 'comment-reply CTA opens the exact reply');
 km_assert(strpos($comment_reply['html'], 'support@platform.kundalini-class.ru') !== false, 'comment-reply reuses shared footer');
