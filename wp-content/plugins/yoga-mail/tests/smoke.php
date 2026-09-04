@@ -85,15 +85,12 @@ km_assert(strpos($result['html'], '<!-- yoga-mail:generic -->') !== false, 'mark
 km_assert(strpos($result['html'], '<button') === false, 'button element is not used');
 km_assert(strpos($result['html'], '<div') === false, 'layout does not use div elements');
 km_assert(strpos($result['html'], '<style') === false, 'layout does not use style blocks');
-km_assert(strpos($result['html'], 'font-family:Mulish,Arial,Helvetica,sans-serif') !== false, 'Mulish font stack exists');
+km_assert(strpos($result['html'], 'font-family:Mulish,Helvetica,Arial,sans-serif') !== false, 'Mulish font stack exists');
 km_assert(strpos($result['html'], 'href="https://example.com/wp-content/themes/yoga/assets/css/mulish.css"') !== false, 'Mulish webfont stylesheet is linked');
 foreach ($registry->all() as $template_id => $definition) {
-	if (empty($definition['designed'])) {
-		continue;
-	}
 	$font_check = $renderer->render($template_id, array(), true);
 	km_assert(!is_wp_error($font_check), $template_id . ' renders for font verification');
-	km_assert(strpos($font_check['html'], 'font-family:Mulish,Arial,Helvetica,sans-serif') !== false, $template_id . ' uses Mulish');
+	km_assert(strpos($font_check['html'], 'font-family:Mulish,Helvetica,Arial,sans-serif') !== false, $template_id . ' uses Mulish');
 	km_assert(strpos($font_check['html'], '/themes/yoga/assets/css/mulish.css') !== false, $template_id . ' links the Mulish webfont');
 }
 km_assert(strpos($result['html'], 'alt="Kundalini Class"') !== false, 'logo alt exists');
@@ -526,7 +523,7 @@ $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('woocommerce
 $woocommerce_mailer = new Yoga_Mail_Mailer($registry, $renderer);
 $woocommerce_adapter = new Yoga_Mail_WooCommerce($registry, $renderer, $woocommerce_mailer);
 $woocommerce_styles = $woocommerce_adapter->email_styles('body{font-family:Arial,sans-serif;}h1{font-family:Helvetica,sans-serif;}', null);
-km_assert(substr_count($woocommerce_styles, 'font-family:Mulish,Arial,Helvetica,sans-serif;') >= 3, 'WooCommerce styles use Mulish throughout');
+km_assert(substr_count($woocommerce_styles, 'font-family:Mulish,Helvetica,Arial,sans-serif;') >= 3, 'WooCommerce styles use Mulish throughout');
 $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array();
 $renewal_notifications_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/yoga-tariff-renewal/includes/class-ytr-notifications.php');
 km_assert(strpos($renewal_notifications_source, "'next_attempt_date' => self::get_next_attempt_date") !== false, 'renewal failure adapter supplies the next retry date');

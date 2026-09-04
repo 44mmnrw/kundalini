@@ -26,6 +26,9 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     if ($comment_author_name === '') {
         $comment_author_name = 'Пользователь';
     }
+    $comment_role_badge = $comment_user_id > 0
+        ? yoga_get_user_comment_role_badge($comment_user_id)
+        : '';
 
     $comment_avatar_html = $comment_user_id > 0
         ? yoga_get_user_avatar_html($comment_user_id, 60, 'avatar')
@@ -38,9 +41,16 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                 <div class="praktika-comment-img">
                     <?php echo $comment_avatar_html; ?>
                 </div>
-                <b class="praktika-comment-name">
-                    <?php echo esc_html($comment_author_name); ?>
-                </b>
+                <span class="praktika-comment-author">
+                    <b class="praktika-comment-name">
+                        <?php echo esc_html($comment_author_name); ?>
+                    </b>
+                    <?php if ($comment_role_badge !== ''): ?>
+                        <span class="praktika-comment-role-badge" title="<?php esc_attr_e('Подтверждённая роль сотрудника', 'yoga'); ?>">
+                            <?php echo esc_html($comment_role_badge); ?>
+                        </span>
+                    <?php endif; ?>
+                </span>
                 <span class="praktika-comment-time">
                     <?php echo esc_html(yoga_get_comment_time_label($comment)); ?>
                 </span>

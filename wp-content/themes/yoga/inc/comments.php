@@ -37,6 +37,62 @@ if (!function_exists('yoga_get_user_public_name')) {
 	}
 }
 
+if (!function_exists('yoga_get_user_comment_role_badge')) {
+	/**
+	 * Return a verified staff role label for a registered comment author.
+	 *
+	 * Members stores its roles in WordPress' role registry. A role is public here
+	 * only when that role can moderate comments, so customer-facing roles do not
+	 * become verification badges.
+	 */
+	function yoga_get_user_comment_role_badge(int $user_id): string {
+		if ($user_id <= 0) {
+			return '';
+		}
+
+		$user = get_userdata($user_id);
+		if (!$user instanceof WP_User) {
+			return '';
+		}
+
+		$role_slugs = array_values(array_unique(array_filter(array_map('sanitize_key', (array) $user->roles))));
+		$administrator_index = array_search('administrator', $role_slugs, true);
+		if ($administrator_index !== false) {
+			unset($role_slugs[$administrator_index]);
+			array_unshift($role_slugs, 'administrator');
+		}
+
+		$roles = wp_roles();
+		foreach ($role_slugs as $role_slug) {
+			$role_data = isset($roles->roles[$role_slug]) && is_array($roles->roles[$role_slug])
+				? $roles->roles[$role_slug]
+				: array();
+			$capabilities = isset($role_data['capabilities']) && is_array($role_data['capabilities'])
+				? $role_data['capabilities']
+				: array();
+			if (empty($capabilities['moderate_comments'])) {
+				continue;
+			}
+
+			$label = '';
+			if (function_exists('members_get_role')) {
+				$members_role = members_get_role($role_slug);
+				if (is_object($members_role) && method_exists($members_role, 'get')) {
+					$label = trim((string) $members_role->get('label'));
+				}
+			}
+			if ($label === '') {
+				$label = trim((string) ($role_data['name'] ?? ''));
+			}
+			if ($label !== '') {
+				return wp_strip_all_tags(translate_user_role($label));
+			}
+		}
+
+		return '';
+	}
+}
+
 if (!function_exists('yoga_get_user_avatar_id')) {
 	function yoga_get_user_avatar_id(int $user_id): int {
 		if ($user_id <= 0) {

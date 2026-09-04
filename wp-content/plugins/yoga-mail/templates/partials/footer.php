@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-$font = isset($font) ? (string) $font : 'font-family:Mulish,Arial,Helvetica,sans-serif;';
+$font = isset($font) ? (string) $font : 'font-family:Mulish,Helvetica,Arial,sans-serif;';
 $asset_base_url = defined('YOGA_MAIL_URL')
 	? rtrim(YOGA_MAIL_URL, '/') . '/assets/images/email/'
 	: content_url('/plugins/yoga-mail/assets/images/email/');
