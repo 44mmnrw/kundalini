@@ -1830,10 +1830,34 @@ display: block !important;
   border-radius: 50%;
 }
 
+.praktika-comment-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding-left: 0.625rem;
+}
+
 .praktika-comment-name {
   display: inline-block;
-  padding-left: 0.625rem;  font-family: var(--font-family-base);
+  font-family: var(--font-family-base);
   font-weight: 700;
+}
+
+.praktika-comment-role-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 1.375rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6.25rem;
+  background: var(--color-violet);
+  color: var(--color-white);
+  font-family: var(--font-family-base);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .praktika-comment-time {
@@ -2757,10 +2781,16 @@ display: block !important;
   .praktika-comment-img {
     position: absolute;
     left: 0.9375rem;    top: 1.25rem;  }
-  .praktika-comment-name {
-    display: block;
+  .praktika-comment-author {
+    display: flex;
     width: 100%;
-    padding-left: 3.125rem;  }
+    flex-wrap: wrap;
+    padding-left: 3.125rem;
+  }
+  .praktika-comment-name {
+    display: inline-block;
+    width: auto;
+  }
   .praktika-comment-time {
     display: block;
     width: 100%;

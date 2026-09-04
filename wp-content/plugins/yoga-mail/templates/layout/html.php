@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
-$font = 'font-family:Mulish,Arial,Helvetica,sans-serif;';
+$font = 'font-family:Mulish,Helvetica,Arial,sans-serif;';
 $mulish_css_url = esc_url(content_url('/themes/yoga/assets/css/mulish.css'));
 $default_logo_url = defined('YOGA_MAIL_URL') ? YOGA_MAIL_URL . 'assets/images/email/logo.svg' : content_url('/plugins/yoga-mail/assets/images/email/logo.svg');
 $logo_url = esc_url((string) ($settings['logo_url'] ?? $default_logo_url));

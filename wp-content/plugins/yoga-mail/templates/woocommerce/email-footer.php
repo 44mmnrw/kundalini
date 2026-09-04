@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
-$font = 'font-family:Mulish,Arial,Helvetica,sans-serif;';
+$font = 'font-family:Mulish,Helvetica,Arial,sans-serif;';
 ?>
 <?php if ($cta_label !== '' && $cta_url !== '') : ?>
 	<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:30px auto 0;border-collapse:separate;">
