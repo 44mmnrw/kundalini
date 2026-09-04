@@ -37,21 +37,63 @@ if (!function_exists('yoga_get_user_public_name')) {
 	}
 }
 
-if (!function_exists('yoga_get_user_comment_role_badge')) {
+if (!function_exists('yoga_get_comment_role_badge_colors')) {
+	function yoga_get_comment_role_badge_colors(): array {
+		$stored_colors = get_option('yoga_comment_role_badge_colors', array());
+		if (!is_array($stored_colors)) {
+			return array();
+		}
+
+		$colors = array();
+		foreach ($stored_colors as $role_slug => $color) {
+			$role_slug = sanitize_key((string) $role_slug);
+			$color = sanitize_hex_color((string) $color);
+			if ($role_slug !== '' && $color !== null && $color !== '') {
+				$colors[$role_slug] = $color;
+			}
+		}
+		return $colors;
+	}
+}
+
+if (!function_exists('yoga_get_comment_role_badge_color')) {
+	function yoga_get_comment_role_badge_color(string $role_slug): string {
+		$colors = yoga_get_comment_role_badge_colors();
+		$role_slug = sanitize_key($role_slug);
+		return $colors[$role_slug] ?? '#9153e1';
+	}
+}
+
+if (!function_exists('yoga_get_comment_role_badge_text_color')) {
+	function yoga_get_comment_role_badge_text_color(string $background_color): string {
+		$hex = ltrim((string) sanitize_hex_color($background_color), '#');
+		if (strlen($hex) !== 6) {
+			return '#ffffff';
+		}
+
+		$red = hexdec(substr($hex, 0, 2));
+		$green = hexdec(substr($hex, 2, 2));
+		$blue = hexdec(substr($hex, 4, 2));
+		$luminance = (($red * 299) + ($green * 587) + ($blue * 114)) / 1000;
+		return $luminance > 160 ? '#1f1f1f' : '#ffffff';
+	}
+}
+
+if (!function_exists('yoga_get_user_comment_role_badge_data')) {
 	/**
-	 * Return a verified role label for a registered comment author.
+	 * Return verified role badge data for a registered comment author.
 	 *
 	 * Members stores its roles in WordPress' role registry. Staff roles are moved
 	 * to the front so they take priority when a user has several roles.
 	 */
-	function yoga_get_user_comment_role_badge(int $user_id): string {
+	function yoga_get_user_comment_role_badge_data(int $user_id): array {
 		if ($user_id <= 0) {
-			return '';
+			return array();
 		}
 
 		$user = get_userdata($user_id);
 		if (!$user instanceof WP_User) {
-			return '';
+			return array();
 		}
 
 		$role_slugs = array_values(array_unique(array_filter(array_map('sanitize_key', (array) $user->roles))));
@@ -90,11 +132,24 @@ if (!function_exists('yoga_get_user_comment_role_badge')) {
 				$label = trim((string) ($role_data['name'] ?? ''));
 			}
 			if ($label !== '') {
-				return wp_strip_all_tags(translate_user_role($label));
+				$background_color = yoga_get_comment_role_badge_color($role_slug);
+				return array(
+					'role' => $role_slug,
+					'label' => wp_strip_all_tags(translate_user_role($label)),
+					'background_color' => $background_color,
+					'text_color' => yoga_get_comment_role_badge_text_color($background_color),
+				);
 			}
 		}
 
-		return '';
+		return array();
+	}
+}
+
+if (!function_exists('yoga_get_user_comment_role_badge')) {
+	function yoga_get_user_comment_role_badge(int $user_id): string {
+		$badge = yoga_get_user_comment_role_badge_data($user_id);
+		return (string) ($badge['label'] ?? '');
 	}
 }
 
