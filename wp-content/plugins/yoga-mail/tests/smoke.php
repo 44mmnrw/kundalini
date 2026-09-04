@@ -48,6 +48,7 @@ require YOGA_MAIL_PATH . 'includes/class-yoga-mail-registry.php';
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-renderer.php';
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-mailer.php';
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-wordpress.php';
+require YOGA_MAIL_PATH . 'includes/class-yoga-mail-woocommerce.php';
 
 function km_assert($condition, $message) {
 	if (!$condition) {
@@ -84,7 +85,17 @@ km_assert(strpos($result['html'], '<!-- yoga-mail:generic -->') !== false, 'mark
 km_assert(strpos($result['html'], '<button') === false, 'button element is not used');
 km_assert(strpos($result['html'], '<div') === false, 'layout does not use div elements');
 km_assert(strpos($result['html'], '<style') === false, 'layout does not use style blocks');
-km_assert(strpos($result['html'], 'fonts.googleapis.com') !== false, 'Mulish link exists');
+km_assert(strpos($result['html'], 'font-family:Helvetica,sans-serif') !== false, 'Helvetica font exists');
+km_assert(stripos($result['html'], 'Arial') === false && stripos($result['html'], 'Mulish') === false, 'legacy email fonts are absent');
+foreach ($registry->all() as $template_id => $definition) {
+	if (empty($definition['designed'])) {
+		continue;
+	}
+	$font_check = $renderer->render($template_id, array(), true);
+	km_assert(!is_wp_error($font_check), $template_id . ' renders for font verification');
+	km_assert(strpos($font_check['html'], 'font-family:Helvetica,sans-serif') !== false, $template_id . ' uses Helvetica');
+	km_assert(stripos($font_check['html'], 'Arial') === false && stripos($font_check['html'], 'Mulish') === false, $template_id . ' has no legacy fonts');
+}
 km_assert(strpos($result['html'], 'alt="Kundalini Class"') !== false, 'logo alt exists');
 km_assert(strpos($result['html'], 'background-color:#1f1f1f') !== false, 'dark td/footer styles exist');
 km_assert(strpos($result['text'], 'Привет, Анна.') !== false, 'plain text is generated');
@@ -265,6 +276,7 @@ km_assert(strpos($sadhana_started['html'], 'Сат Нам, Марина!') !== f
 km_assert(strpos($sadhana_started['html'], 'Садхана — это личная практика') !== false, 'sadhana-started explanation matches Figma');
 km_assert(strpos($sadhana_started['html'], '40 дней') !== false && strpos($sadhana_started['html'], '90 дней') !== false && strpos($sadhana_started['html'], '120 дней') !== false, 'sadhana-started contains all practice milestones');
 km_assert(substr_count($sadhana_started['html'], '<td align="left" width="19%"') === 3, 'sadhana-started milestone days are explicitly left aligned');
+km_assert(strpos($sadhana_started['html'], 'padding:15px 10px 15px 0;font-size:14px;line-height:1;font-weight:700;color:#9153e1;text-align:left;white-space:nowrap;">90 дней</td>') !== false, 'sadhana-started milestone days share the same left edge');
 km_assert(substr_count($sadhana_started['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 2, 'sadhana-started milestone panel contains white separators');
 km_assert(strpos($sadhana_started['html'], 'Регулярность важнее длительности.') !== false, 'sadhana-started contains the seven-day recommendation');
 km_assert(strpos($sadhana_started['html'], 'href="https://example.com/practice-type/kriyi/"') !== false, 'sadhana-started CTA opens the practice library');
@@ -507,6 +519,13 @@ km_assert(strpos($woocommerce_source, 'PAYMENT_RECEIPT_SENT_META') !== false, 'p
 km_assert(strpos($woocommerce_source, "woocommerce_email_enabled_customer_processing_order', array(\$this, 'disable_standard_processing_email')") !== false, 'standard processing email is always disabled when Yoga Mail handles WooCommerce');
 km_assert(strpos($woocommerce_source, 'payment_receipt_sent_order_ids') !== false, 'completed-email suppression survives stale WooCommerce order objects');
 km_assert(strpos($woocommerce_source, "YTR_Notifications::send_renewal_success(\$order)") !== false, 'renewal orders use the dedicated success template');
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('woocommerce_enabled' => true);
+$woocommerce_mailer = new Yoga_Mail_Mailer($registry, $renderer);
+$woocommerce_adapter = new Yoga_Mail_WooCommerce($registry, $renderer, $woocommerce_mailer);
+$woocommerce_styles = $woocommerce_adapter->email_styles('body{font-family:Arial,sans-serif;}h1{font-family:Mulish,Arial,sans-serif;}', null);
+km_assert(substr_count($woocommerce_styles, 'font-family:Helvetica,sans-serif;') >= 3, 'WooCommerce styles use Helvetica throughout');
+km_assert(stripos($woocommerce_styles, 'Arial') === false && stripos($woocommerce_styles, 'Mulish') === false, 'WooCommerce styles have no legacy fonts');
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array();
 $renewal_notifications_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/yoga-tariff-renewal/includes/class-ytr-notifications.php');
 km_assert(strpos($renewal_notifications_source, "'next_attempt_date' => self::get_next_attempt_date") !== false, 'renewal failure adapter supplies the next retry date');
 km_assert(strpos($renewal_notifications_source, 'has_active_auto_renewal') !== false, 'three-day warning uses the resilient auto-renew check');
