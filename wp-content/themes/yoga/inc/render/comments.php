@@ -46,7 +46,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                         <?php echo esc_html($comment_author_name); ?>
                     </b>
                     <?php if ($comment_role_badge !== ''): ?>
-                        <span class="praktika-comment-role-badge" title="<?php esc_attr_e('Подтверждённая роль сотрудника', 'yoga'); ?>">
+                        <span class="praktika-comment-role-badge" title="<?php esc_attr_e('Подтверждённая роль пользователя', 'yoga'); ?>">
                             <?php echo esc_html($comment_role_badge); ?>
                         </span>
                     <?php endif; ?>

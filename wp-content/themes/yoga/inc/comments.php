@@ -39,11 +39,10 @@ if (!function_exists('yoga_get_user_public_name')) {
 
 if (!function_exists('yoga_get_user_comment_role_badge')) {
 	/**
-	 * Return a verified staff role label for a registered comment author.
+	 * Return a verified role label for a registered comment author.
 	 *
-	 * Members stores its roles in WordPress' role registry. A role is public here
-	 * only when that role can moderate comments, so customer-facing roles do not
-	 * become verification badges.
+	 * Members stores its roles in WordPress' role registry. Staff roles are moved
+	 * to the front so they take priority when a user has several roles.
 	 */
 	function yoga_get_user_comment_role_badge(int $user_id): string {
 		if ($user_id <= 0) {
@@ -56,21 +55,27 @@ if (!function_exists('yoga_get_user_comment_role_badge')) {
 		}
 
 		$role_slugs = array_values(array_unique(array_filter(array_map('sanitize_key', (array) $user->roles))));
-		$administrator_index = array_search('administrator', $role_slugs, true);
-		if ($administrator_index !== false) {
-			unset($role_slugs[$administrator_index]);
-			array_unshift($role_slugs, 'administrator');
-		}
-
 		$roles = wp_roles();
+		$prioritized_role_slugs = array();
+		if (in_array('administrator', $role_slugs, true)) {
+			$prioritized_role_slugs[] = 'administrator';
+		}
+		foreach ($role_slugs as $role_slug) {
+			$role_capabilities = isset($roles->roles[$role_slug]['capabilities'])
+				&& is_array($roles->roles[$role_slug]['capabilities'])
+				? $roles->roles[$role_slug]['capabilities']
+				: array();
+			if ($role_slug !== 'administrator' && !empty($role_capabilities['moderate_comments'])) {
+				$prioritized_role_slugs[] = $role_slug;
+			}
+		}
+		$role_slugs = array_values(array_unique(array_merge($prioritized_role_slugs, $role_slugs)));
+
 		foreach ($role_slugs as $role_slug) {
 			$role_data = isset($roles->roles[$role_slug]) && is_array($roles->roles[$role_slug])
 				? $roles->roles[$role_slug]
 				: array();
-			$capabilities = isset($role_data['capabilities']) && is_array($role_data['capabilities'])
-				? $role_data['capabilities']
-				: array();
-			if (empty($capabilities['moderate_comments'])) {
+			if (empty($role_data)) {
 				continue;
 			}
 
