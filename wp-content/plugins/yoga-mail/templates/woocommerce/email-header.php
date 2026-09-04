@@ -2,7 +2,8 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
-$font = 'font-family:Helvetica,sans-serif;';
+$font = 'font-family:Mulish,Arial,Helvetica,sans-serif;';
+$mulish_css_url = esc_url(content_url('/themes/yoga/assets/css/mulish.css'));
 $default_logo_url = defined('YOGA_MAIL_URL') ? YOGA_MAIL_URL . 'assets/images/email/logo.svg' : content_url('/plugins/yoga-mail/assets/images/email/logo.svg');
 $logo_url = esc_url((string) ($settings['logo_url'] ?? $default_logo_url));
 $logo_alt = esc_attr((string) ($settings['logo_alt'] ?? get_bloginfo('name')));
@@ -12,6 +13,7 @@ $logo_alt = esc_attr((string) ($settings['logo_alt'] ?? get_bloginfo('name')));
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="<?php echo $mulish_css_url; ?>">
 	<title><?php echo esc_html(wp_strip_all_tags((string) $heading)); ?></title>
 </head>
 <body style="margin:0;padding:0;background-color:#f6f6f9;<?php echo esc_attr($font); ?>color:#1f1f1f;">

@@ -196,11 +196,11 @@ final class Yoga_Mail_WooCommerce {
 		}
 		$css = preg_replace(
 			'/font-family\s*:[^;}]+;?/i',
-			'font-family:Helvetica,sans-serif;',
+			'font-family:Mulish,Arial,Helvetica,sans-serif;',
 			$css
 		);
 		return $css . "\n#template_container{width:560px;max-width:560px;border:0;background:#ffffff;}"
-			. "#template_body td,#body_content td{font-family:Helvetica,sans-serif;color:#1f1f1f;}"
+			. "#template_body td,#body_content td{font-family:Mulish,Arial,Helvetica,sans-serif;color:#1f1f1f;}"
 			. "a{color:#9153e1;}";
 	}
 

@@ -110,7 +110,7 @@ final class Yoga_Mail_Renderer {
 			static function (array $matches): string {
 				$style = preg_replace(
 					'/(^|;)\s*font-family\s*:[^;]*/i',
-					'$1font-family:Helvetica,sans-serif',
+					'$1font-family:Mulish,Arial,Helvetica,sans-serif',
 					$matches[2]
 				);
 				return ' style=' . $matches[1] . $style . $matches[1];
@@ -118,10 +118,10 @@ final class Yoga_Mail_Renderer {
 			$html
 		);
 		$styles = array(
-			'p'  => 'margin:0 0 15px;font-family:Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:center;',
-			'ul' => 'margin:0 0 15px;padding-left:24px;font-family:Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:left;',
-			'ol' => 'margin:0 0 15px;padding-left:24px;font-family:Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:left;',
-			'li' => 'margin:0 0 8px;font-family:Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;',
+			'p'  => 'margin:0 0 15px;font-family:Mulish,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:center;',
+			'ul' => 'margin:0 0 15px;padding-left:24px;font-family:Mulish,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:left;',
+			'ol' => 'margin:0 0 15px;padding-left:24px;font-family:Mulish,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:left;',
+			'li' => 'margin:0 0 8px;font-family:Mulish,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;',
 			'a'  => 'color:#9153e1;text-decoration:underline;',
 		);
 		foreach ($styles as $tag => $style) {
