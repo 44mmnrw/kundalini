@@ -21,6 +21,7 @@
 	require_once get_template_directory() . '/inc/practices/search.php';
 	require_once get_template_directory() . '/inc/ajax/practice-search.php';
 	require_once get_template_directory() . '/inc/comments.php';
+	require_once get_template_directory() . '/inc/admin/comment-role-badges.php';
 	require_once get_template_directory() . '/inc/render/comments.php';
 	require_once get_template_directory() . '/inc/render/lk-menu-icons.php';
 	require_once get_template_directory() . '/inc/ajax/comments.php';

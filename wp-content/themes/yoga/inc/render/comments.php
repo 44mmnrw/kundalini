@@ -27,8 +27,8 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
         $comment_author_name = 'Пользователь';
     }
     $comment_role_badge = $comment_user_id > 0
-        ? yoga_get_user_comment_role_badge($comment_user_id)
-        : '';
+        ? yoga_get_user_comment_role_badge_data($comment_user_id)
+        : array();
 
     $comment_avatar_html = $comment_user_id > 0
         ? yoga_get_user_avatar_html($comment_user_id, 60, 'avatar')
@@ -45,9 +45,13 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                     <b class="praktika-comment-name">
                         <?php echo esc_html($comment_author_name); ?>
                     </b>
-                    <?php if ($comment_role_badge !== ''): ?>
-                        <span class="praktika-comment-role-badge" title="<?php esc_attr_e('Подтверждённая роль пользователя', 'yoga'); ?>">
-                            <?php echo esc_html($comment_role_badge); ?>
+                    <?php if (!empty($comment_role_badge['label'])): ?>
+                        <span
+                            class="praktika-comment-role-badge"
+                            title="<?php esc_attr_e('Подтверждённая роль пользователя', 'yoga'); ?>"
+                            style="background-color:<?php echo esc_attr((string) $comment_role_badge['background_color']); ?>;color:<?php echo esc_attr((string) $comment_role_badge['text_color']); ?>;"
+                        >
+                            <?php echo esc_html((string) $comment_role_badge['label']); ?>
                         </span>
                     <?php endif; ?>
                 </span>
