@@ -814,7 +814,8 @@ p.login-rules a:hover {
   width: 100%;
   margin-top: 0;
   min-height: 100px;}
-.yoga-form-login > .login-smartcaptcha {
+.yoga-form-login > .login-smartcaptcha,
+.yoga-form-recovery > .login-smartcaptcha {
   margin-top: 1.25rem;
 }
 
@@ -857,7 +858,8 @@ p.login-rules a:hover {
     margin-top: 0;
   }
 
-  .yoga-form-login > .login-smartcaptcha {
+  .yoga-form-login > .login-smartcaptcha,
+  .yoga-form-recovery > .login-smartcaptcha {
     margin-top: 0;
   }
 }

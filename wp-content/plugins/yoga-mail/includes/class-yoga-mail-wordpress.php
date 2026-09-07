@@ -8,6 +8,7 @@ final class Yoga_Mail_WordPress {
 	private $registry;
 	private $renderer;
 	private $mailer;
+	private $password_change_notified = array();
 
 	public function __construct(Yoga_Mail_Registry $registry, Yoga_Mail_Renderer $renderer, Yoga_Mail_Mailer $mailer) {
 		$this->registry = $registry;
@@ -21,6 +22,8 @@ final class Yoga_Mail_WordPress {
 		add_filter('retrieve_password_message', array($this, 'reset_password_message'), 20, 4);
 		add_filter('password_reset_expiration', array($this, 'reset_password_expiration'), 20, 1);
 		add_filter('password_change_email', array($this, 'password_changed'), 20, 3);
+		add_action('after_password_reset', array($this, 'send_password_changed'), 20, 1);
+		add_action('yoga_user_password_changed', array($this, 'send_password_changed'), 20, 1);
 		add_filter('email_change_email', array($this, 'email_changed'), 20, 3);
 		add_filter('site_admin_email_change_email', array($this, 'admin_email_changed'), 20, 3);
 		add_filter('comment_notification_subject', array($this, 'comment_notification_subject'), 20, 2);
@@ -66,6 +69,31 @@ final class Yoga_Mail_WordPress {
 			'action_url' => wp_lostpassword_url(),
 			'event_datetime' => wp_date('j F Y, H:i'),
 		)) : $email;
+	}
+
+	/** Notify after a completed reset or a password change in the custom account form. */
+	public function send_password_changed(WP_User $user): void {
+		$user_id = (int) $user->ID;
+		if (!$this->enabled() || $user_id <= 0 || !is_email($user->user_email) || isset($this->password_change_notified[$user_id])) {
+			return;
+		}
+
+		// These paths bypass wp_update_user(), which owns the standard change email.
+		$this->password_change_notified[$user_id] = true;
+		$sent = $this->mailer->send('wp-password-changed', array(
+			'to' => (string) $user->user_email,
+			// Controlled by wordpress_enabled, independently of custom module emails.
+			'bypass_flags' => true,
+			'data' => array(
+				'user_name' => $user->display_name ?: $user->user_login,
+				'user_email' => (string) $user->user_email,
+				'action_url' => wp_lostpassword_url(),
+				'event_datetime' => wp_date('j F Y, H:i'),
+			),
+		));
+		if (!$sent) {
+			unset($this->password_change_notified[$user_id]);
+		}
 	}
 
 	public function email_changed(array $email, array $user, array $userdata): array {
