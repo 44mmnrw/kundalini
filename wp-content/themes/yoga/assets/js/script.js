@@ -1542,6 +1542,9 @@ jQuery(document).ready(function($) {
 			if (sadhana.status === 'completed') {
 				$counters.prop('hidden', true);
 				$('.praktika-sadhana-btn').prop('hidden', false);
+				if (window.yogaSadhanaConfetti && typeof window.yogaSadhanaConfetti.start === 'function') {
+					window.yogaSadhanaConfetti.start();
+				}
 			} else {
 				$counters.attr('data-completed-days', sadhana.completed_days).attr('data-marked-today', sadhana.marked_today ? '1' : '0').attr('data-next-day-at', sadhana.next_day_at || '');
 				$counters.each(function () {
