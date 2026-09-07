@@ -41,14 +41,21 @@
 		};
 
 		window.confetti(Object.assign({}, commonOptions, {
-			particleCount: 120,
-			spread: 105,
-			startVelocity: 38,
-			origin: { x: 0.5, y: 0.25 }
+			particleCount: 180,
+			spread: 130,
+			startVelocity: 42,
+			origin: { x: 0.5, y: 0.38 }
 		}));
 
 		var finishAt = window.performance.now() + EFFECT_DURATION;
 		var renderFrame = function (now) {
+			window.confetti(Object.assign({}, commonOptions, {
+				particleCount: 2,
+				angle: 90,
+				spread: 100,
+				startVelocity: 26,
+				origin: { x: 0.5, y: 0.42 }
+			}));
 			window.confetti(Object.assign({}, commonOptions, {
 				particleCount: 2,
 				angle: 62,
