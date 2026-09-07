@@ -17,6 +17,7 @@ class WP_Error {
 }
 
 function is_wp_error($value) { return $value instanceof WP_Error; }
+function __($value) { return $value; }
 function content_url($path = '') { return 'https://example.com/wp-content' . $path; }
 function home_url($path = '') { return 'https://example.com' . $path; }
 function get_bloginfo($key = '') { return $key === 'charset' ? 'UTF-8' : 'Kundalini Class'; }
@@ -349,26 +350,37 @@ km_assert(strpos($sadhana_completed['text'], 'Начать новую садха
 $sadhana_core_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/kundalini-sadhanas/includes/core.php');
 $sadhana_settings_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/kundalini-sadhanas/includes/settings.php');
 $lk_source = file_get_contents(dirname(YOGA_MAIL_PATH, 2) . '/themes/yoga/templates-page/lk.php');
+require_once dirname(YOGA_MAIL_PATH) . '/kundalini-sadhanas/includes/settings.php';
+$GLOBALS['km_options']['kundalini_sadhanas_settings'] = kundalini_sadhanas_default_settings();
+km_assert(kundalini_sadhanas_progress_milestones(40) === array(10, 20, 30), '40-day quarter percentages map to days 10, 20 and 30 before completion');
+km_assert(kundalini_sadhanas_progress_milestones(90) === array(27, 63), '90-day percentages map to days 27 and 63');
+km_assert(kundalini_sadhanas_progress_milestones(120) === array(30, 60, 90), '120-day quarter percentages map to days 30, 60 and 90 before completion');
+km_assert(kundalini_sadhanas_progress_milestones(2) === array(1), 'custom two-day sadhana sends its halfway progress notification on day one');
+km_assert(kundalini_sadhanas_sanitize_progress_percentages('70, 30, 30, 0, 101') === array(30, 70), 'progress percentages are validated, deduplicated and sorted');
 km_assert(strpos($sadhana_settings_source, "'started' => array(") !== false, 'sadhana module registers the started event');
 km_assert(strpos($sadhana_settings_source, "'email_enabled' => true") !== false, 'sadhana started email is enabled by default');
 km_assert(strpos($sadhana_core_source, "yoga_sadhana_notify(\$result, 'started');") !== false, 'new sadhana cycles trigger the started email');
 km_assert(strpos($sadhana_core_source, "empty(\$result['already_active'])") !== false, 'already active sadhanas do not trigger duplicate started emails');
 km_assert(strpos($sadhana_core_source, "'library_url' => yoga_sadhana_library_url()") !== false, 'sadhana adapter supplies the practice library URL');
 km_assert(strpos($sadhana_core_source, 'function yoga_sadhana_day_label') !== false, 'sadhana adapter inflects the milestone day label');
-km_assert(strpos($sadhana_core_source, "kundalini_sadhanas_progress_milestones()") !== false, 'sadhana progress email uses configured milestones');
+km_assert(strpos($sadhana_core_source, "kundalini_sadhanas_progress_milestones(\$result['target_days'])") !== false, 'sadhana progress email uses duration-specific percentage milestones');
 km_assert(strpos($sadhana_core_source, "yoga_sadhana_notify(\$result, 'interrupted', \$interrupted_at);") !== false, 'interrupted email receives the day count captured before reset');
 km_assert(strpos($sadhana_core_source, "'started_date' => yoga_sadhana_email_date") !== false, 'completed email receives a localized start date');
 km_assert(strpos($sadhana_core_source, "'target_day_label' => yoga_sadhana_day_label") !== false, 'completed email receives the correctly inflected duration');
 km_assert(strpos($sadhana_settings_source, "'_subject'") === false && strpos($sadhana_settings_source, "'_body'") === false, 'sadhana plugin no longer stores email templates');
-km_assert(strpos($sadhana_settings_source, "'progress_milestones' => array(7, 21, 40, 90, 120)") !== false, 'sadhana milestone defaults are stored centrally');
-km_assert(strpos($sadhana_settings_source, 'function kundalini_sadhanas_progress_milestones') !== false, 'sadhana module exposes sanitized progress milestones');
-km_assert(strpos($sadhana_settings_source, "sort(\$result['progress_milestones'], SORT_NUMERIC)") !== false, 'sadhana milestone settings are sorted');
+km_assert(strpos($sadhana_settings_source, "'progress_percentages_40' => array(25, 50, 75, 100)") !== false, '40-day sadhanas have their own percentage defaults');
+km_assert(strpos($sadhana_settings_source, "'progress_percentages_90' => array(30, 70)") !== false, '90-day sadhanas have their own percentage defaults');
+km_assert(strpos($sadhana_settings_source, "'progress_percentages_120'") !== false && strpos($sadhana_settings_source, "'progress_percentages_custom'") !== false, '120-day and custom sadhanas have separate percentage settings');
+km_assert(strpos($sadhana_settings_source, 'function kundalini_sadhanas_progress_milestones(int $target_days)') !== false, 'sadhana module converts percentages into duration-specific days');
+km_assert(strpos($sadhana_settings_source, 'ceil(($target_days * $percentage) / 100)') !== false, 'percentage milestones round up to the next whole day');
 km_assert(strpos($sadhana_core_source, 'kundalini_sadhanas_render_email') === false, 'sadhana adapter delegates rendering to Yoga Mail');
 km_assert(strpos($sadhana_core_source, "'subject' => \$email['subject']") === false, 'sadhana adapter does not override Yoga Mail subjects');
 $sadhana_admin_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/kundalini-sadhanas/includes/admin.php');
 km_assert(strpos($sadhana_admin_source, '_subject]') === false && strpos($sadhana_admin_source, '_body]') === false, 'sadhana admin no longer edits email templates');
+km_assert(strpos($sadhana_admin_source, 'Как заполнять: укажите абсолютные проценты') !== false, 'sadhana admin explains that milestones are absolute percentages');
+km_assert(strpos($sadhana_admin_source, 'На 100% отдельное письмо о прогрессе не отправляется') !== false, 'sadhana admin explains completion notification behavior');
 km_assert(strpos($lk_source, "'sadhana_started_email'") !== false, 'users can control the sadhana-started email preference');
-km_assert(strpos($lk_source, 'kundalini_sadhanas_progress_milestones()') !== false, 'notification preferences display configured sadhana milestones');
+km_assert(strpos($lk_source, 'На заданных процентах прохождения садханы') !== false, 'notification preferences explain percentage-based sadhana milestones');
 $yoga_mail_admin_source = file_get_contents(YOGA_MAIL_PATH . 'includes/class-yoga-mail-admin.php');
 km_assert(strpos($yoga_mail_admin_source, "\$grouped_templates[\$item['group']]") !== false, 'admin dropdown groups each template category once');
 km_assert(strpos($yoga_mail_admin_source, "\$item['designed'] ? '✓ ' : '○ '") !== false, 'admin dropdown displays template coverage markers');
