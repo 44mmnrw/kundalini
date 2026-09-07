@@ -64,7 +64,13 @@ add_action('wp_ajax_nopriv_yoga_sadhana_start', 'yoga_ajax_sadhana_start');
 function yoga_ajax_sadhana_mark_day(): void {
 	$user_id = yoga_sadhana_ajax_user_id();
 	$result = yoga_sadhana_mark_day($user_id, absint($_POST['sadhana_id'] ?? 0));
-	yoga_sadhana_ajax_payload($result, !is_wp_error($result) && !empty($result['already_marked']) ? __('Сегодняшний день уже отмечен.', 'yoga') : __('День отмечен.', 'yoga'));
+	$message = !is_wp_error($result) && !empty($result['already_marked'])
+		? __('Сегодняшний день уже отмечен.', 'yoga')
+		: __('День отмечен.', 'yoga');
+	if (!is_wp_error($result) && ($result['status'] ?? '') === 'completed') {
+		$message = __('Садхана завершена!', 'yoga');
+	}
+	yoga_sadhana_ajax_payload($result, $message);
 }
 add_action('wp_ajax_yoga_sadhana_mark_day', 'yoga_ajax_sadhana_mark_day');
 add_action('wp_ajax_nopriv_yoga_sadhana_mark_day', 'yoga_ajax_sadhana_mark_day');

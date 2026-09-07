@@ -378,7 +378,7 @@ km_assert(strpos($sadhana_core_source, "'subject' => \$email['subject']") === fa
 $sadhana_admin_source = file_get_contents(dirname(YOGA_MAIL_PATH) . '/kundalini-sadhanas/includes/admin.php');
 km_assert(strpos($sadhana_admin_source, '_subject]') === false && strpos($sadhana_admin_source, '_body]') === false, 'sadhana admin no longer edits email templates');
 km_assert(strpos($sadhana_admin_source, 'Как заполнять: укажите абсолютные проценты') !== false, 'sadhana admin explains that milestones are absolute percentages');
-km_assert(strpos($sadhana_admin_source, 'На 100% отдельное письмо о прогрессе не отправляется') !== false, 'sadhana admin explains completion notification behavior');
+km_assert(strpos($sadhana_admin_source, '100% указывать не нужно') !== false, 'sadhana admin explains completion notification behavior');
 km_assert(strpos($lk_source, "'sadhana_started_email'") !== false, 'users can control the sadhana-started email preference');
 km_assert(strpos($lk_source, 'На заданных процентах прохождения садханы') !== false, 'notification preferences explain percentage-based sadhana milestones');
 $yoga_mail_admin_source = file_get_contents(YOGA_MAIL_PATH . 'includes/class-yoga-mail-admin.php');

@@ -776,6 +776,8 @@
 		$payment_success_style_ver = file_exists($theme_dir . '/assets/css/templates/payment-success.css') ? filemtime($theme_dir . '/assets/css/templates/payment-success.css') : '1.0.0';
 		$question_success_style_ver = file_exists($theme_dir . '/assets/css/templates/question-success.css') ? filemtime($theme_dir . '/assets/css/templates/question-success.css') : '1.0.0';
 		$main_script_ver = file_exists($theme_dir . '/assets/js/script.js') ? filemtime($theme_dir . '/assets/js/script.js') : '1.0.0';
+		$canvas_confetti_script_ver = file_exists($theme_dir . '/assets/js/canvas-confetti.js') ? filemtime($theme_dir . '/assets/js/canvas-confetti.js') : '1.9.4';
+		$sadhana_confetti_script_ver = file_exists($theme_dir . '/assets/js/sadhana-confetti.js') ? filemtime($theme_dir . '/assets/js/sadhana-confetti.js') : '1.0.0';
 		$library_filters_script_ver = file_exists($theme_dir . '/assets/js/library-filters.js') ? filemtime($theme_dir . '/assets/js/library-filters.js') : '1.0.0';
 		$practice_player_script_ver = file_exists($theme_dir . '/assets/js/practice-player.js') ? filemtime($theme_dir . '/assets/js/practice-player.js') : '1.0.0';
 		$plyr_custom_style_ver = file_exists($theme_dir . '/assets/css/plyr-custom.css') ? filemtime($theme_dir . '/assets/css/plyr-custom.css') : '1.0.0';
@@ -812,6 +814,8 @@
 			$payment_success_style_ver = time();
 			$question_success_style_ver = time();
 			$main_script_ver = time();
+			$canvas_confetti_script_ver = time();
+			$sadhana_confetti_script_ver = time();
 			$practice_player_script_ver = time();
 		}
 
@@ -966,7 +970,13 @@
 		wp_enqueue_script( 'fancybox', $theme_uri . '/assets/libs/fancybox/jquery.fancybox.min.js', array('jquery', 'slick'), null, true );
 
 		wp_enqueue_script( 'library-filters-script', $theme_uri . '/assets/js/library-filters.js', array('jquery'), $library_filters_script_ver, true );
-		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', array('jquery', 'slick', 'fancybox', 'library-filters-script'), $main_script_ver, true );
+		$main_script_dependencies = array('jquery', 'slick', 'fancybox', 'library-filters-script');
+		if ($is_practice_single) {
+			wp_enqueue_script('canvas-confetti', $theme_uri . '/assets/js/canvas-confetti.js', array(), $canvas_confetti_script_ver, true);
+			wp_enqueue_script('sadhana-confetti', $theme_uri . '/assets/js/sadhana-confetti.js', array('canvas-confetti'), $sadhana_confetti_script_ver, true);
+			$main_script_dependencies[] = 'sadhana-confetti';
+		}
+		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', $main_script_dependencies, $main_script_ver, true );
 		wp_localize_script( 'main-script', 'yoga_theme_assets', array(
 			'sprite_url' => add_query_arg(
 				'ver',

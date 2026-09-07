@@ -418,8 +418,9 @@
 
 .yoga-sadhana-modal.active {
   width: 36.875rem;
-  height: 31.375rem;
+  height: auto;
   max-height: calc(100vh - 0.625rem);
+  max-height: calc(100dvh - 0.625rem);
   overflow-y: auto;
 }
 
@@ -739,11 +740,18 @@
 
 @media (max-height: 531px) and (min-width: 576px) {
   .yoga-sadhana-modal.active {
-    max-height: 100vh;
+    max-height: calc(100vh - 0.625rem);
+    max-height: calc(100dvh - 0.625rem);
   }
 
   .yoga-sadhana-modal__form {
-    padding-bottom: 0;
+    gap: 1rem;
+    padding-top: 3.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .yoga-sadhana-modal__form--custom .yoga-sadhana-modal__options {
+    margin-bottom: 0.5rem;
   }
 }
 
