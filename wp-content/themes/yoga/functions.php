@@ -1770,6 +1770,7 @@ function yoga_subscribe_handler() {
 
 					if (wp_check_password($_POST['current_password'], $user->user_pass, $user_id)) {
 						wp_set_password($_POST['new_password'], $user_id);
+						do_action('yoga_user_password_changed', $user);
 					}
 				}
 			}
