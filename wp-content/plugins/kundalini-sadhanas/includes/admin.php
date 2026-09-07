@@ -117,21 +117,58 @@ function kundalini_sadhanas_render_settings_page(): void {
 						<p class="description"><?php esc_html_e('Пользователь не сможет начать новую садхану на меньшее количество дней. Допустимое значение: от 1 до 1000.', 'kundalini-sadhanas'); ?></p>
 					</td>
 				</tr>
-				<tr>
-					<th scope="row"><label for="kundalini-sadhanas-progress-milestones"><?php esc_html_e('Рубежи прогресса', 'kundalini-sadhanas'); ?></label></th>
-					<td>
-						<input
-							class="regular-text"
-							id="kundalini-sadhanas-progress-milestones"
-							name="kundalini_sadhanas_settings[progress_milestones]"
-							type="text"
-							value="<?php echo esc_attr(implode(', ', kundalini_sadhanas_progress_milestones())); ?>"
-							placeholder="7, 21, 40, 90, 120"
-						>
-						<p class="description"><?php esc_html_e('Дни, в которые отправляется поздравление о прохождении рубежа. Укажите числа от 1 до 1000 через запятую. Повторы будут удалены, значения отсортированы. Оставьте поле пустым, чтобы отключить события рубежей.', 'kundalini-sadhanas'); ?></p>
-					</td>
-				</tr>
 			</table>
+			<h2><?php esc_html_e('Рубежи прогресса', 'kundalini-sadhanas'); ?></h2>
+			<p><?php esc_html_e('Для каждой продолжительности задайте проценты прогресса, на которых пользователь получит поздравление.', 'kundalini-sadhanas'); ?></p>
+			<table class="form-table" role="presentation">
+				<?php
+				$progress_profiles = array(
+					'40' => array(
+						__('Садхана на 40 дней', 'kundalini-sadhanas'),
+						'25, 50, 75, 100',
+						__('Например, 25, 50, 75, 100 — четыре четверти: 10-й, 20-й, 30-й и 40-й дни.', 'kundalini-sadhanas'),
+					),
+					'90' => array(
+						__('Садхана на 90 дней', 'kundalini-sadhanas'),
+						'30, 70',
+						__('Например, 30, 70 — два рубежа: 27-й и 63-й дни.', 'kundalini-sadhanas'),
+					),
+					'120' => array(
+						__('Садхана на 120 дней', 'kundalini-sadhanas'),
+						'25, 50, 75, 100',
+						__('Например, 25, 50, 75, 100 — четыре четверти: 30-й, 60-й, 90-й и 120-й дни.', 'kundalini-sadhanas'),
+					),
+					'custom' => array(
+						__('Пользовательская продолжительность', 'kundalini-sadhanas'),
+						'25, 50, 75, 100',
+						__('Эти проценты применяются к любому сроку, кроме 40, 90 и 120 дней. Например, 50 означает рубеж на половине выбранного срока.', 'kundalini-sadhanas'),
+					),
+				);
+				foreach ($progress_profiles as $profile => $definition) :
+					$key = 'progress_percentages_' . $profile;
+					$field_id = 'kundalini-sadhanas-' . str_replace('_', '-', $key);
+					?>
+					<tr>
+						<th scope="row"><label for="<?php echo esc_attr($field_id); ?>"><?php echo esc_html($definition[0]); ?></label></th>
+						<td>
+							<input
+								class="regular-text"
+								id="<?php echo esc_attr($field_id); ?>"
+								name="kundalini_sadhanas_settings[<?php echo esc_attr($key); ?>]"
+								type="text"
+								value="<?php echo esc_attr(implode(', ', $settings[$key])); ?>"
+								placeholder="<?php echo esc_attr($definition[1]); ?>"
+							>
+							<p class="description">
+								<?php echo esc_html($definition[2]); ?>
+							</p>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+			<p class="description">
+				<?php esc_html_e('Как заполнять: укажите абсолютные проценты от 1 до 100 через запятую. День рубежа рассчитывается от выбранной продолжительности и округляется вверх. На 100% отдельное письмо о прогрессе не отправляется: вместо него пользователь получает письмо «Садхана завершена». Повторы удаляются, значения сортируются. Оставьте поле пустым, чтобы отключить письма о промежуточном прогрессе для этой продолжительности.', 'kundalini-sadhanas'); ?>
+			</p>
 			<?php foreach (kundalini_sadhanas_notification_events() as $event => $definition) : ?>
 				<h2><?php echo esc_html($definition['label']); ?></h2>
 				<table class="form-table" role="presentation">
