@@ -40,35 +40,21 @@
 			zIndex: 1002
 		};
 
-		window.confetti(Object.assign({}, commonOptions, {
-			particleCount: 180,
-			spread: 130,
-			startVelocity: 42,
-			origin: { x: 0.5, y: 0.38 }
-		}));
-
 		var finishAt = window.performance.now() + EFFECT_DURATION;
 		var renderFrame = function (now) {
 			window.confetti(Object.assign({}, commonOptions, {
-				particleCount: 2,
-				angle: 90,
-				spread: 100,
-				startVelocity: 26,
-				origin: { x: 0.5, y: 0.42 }
+				particleCount: 4,
+				angle: 52,
+				spread: 58,
+				startVelocity: 38,
+				origin: { x: 0, y: 0.7 }
 			}));
 			window.confetti(Object.assign({}, commonOptions, {
-				particleCount: 2,
-				angle: 62,
-				spread: 52,
-				startVelocity: 30,
-				origin: { x: 0, y: 0.66 }
-			}));
-			window.confetti(Object.assign({}, commonOptions, {
-				particleCount: 2,
-				angle: 118,
-				spread: 52,
-				startVelocity: 30,
-				origin: { x: 1, y: 0.66 }
+				particleCount: 4,
+				angle: 128,
+				spread: 58,
+				startVelocity: 38,
+				origin: { x: 1, y: 0.7 }
 			}));
 
 			if (now < finishAt) {
