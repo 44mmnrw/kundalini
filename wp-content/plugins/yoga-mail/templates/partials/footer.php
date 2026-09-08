@@ -50,11 +50,11 @@ $copyright_year = function_exists('wp_date') ? wp_date('Y') : date('Y');
 				</tr>
 			</table>
 
-			<p style="margin:30px 0 0;<?php echo esc_attr($font); ?>font-size:14px;line-height:1;font-weight:700;color:#ffffff;text-align:center;">Поддержка — <a href="mailto:support@platform.kundalini-class.ru" style="color:#ffffff;text-decoration:none;">support@platform.kundalini-class.ru</a></p>
-			<p style="margin:15px auto 0;max-width:460px;<?php echo esc_attr($font); ?>font-size:14px;line-height:1;font-weight:400;color:#bcbcbc;text-align:center;"><?php echo esc_html($service_text); ?></p>
-			<p style="margin:30px 0 0;<?php echo esc_attr($font); ?>font-size:14px;line-height:1;font-weight:700;color:#ffffff;text-align:center;"><a href="<?php echo esc_url($privacy_url); ?>" style="color:#ffffff;text-decoration:none;">Политика конфиденциальности</a></p>
-			<p style="margin:15px auto 0;max-width:460px;<?php echo esc_attr($font); ?>font-size:14px;line-height:1.5;font-weight:400;color:#bcbcbc;text-align:center;">ИП Ксенофонтова Марина Евгеньевна · ИНН 632200860531<br>· ОГРНИП 319631300101827</p>
-			<p style="margin:15px 0 0;<?php echo esc_attr($font); ?>font-size:14px;line-height:1;font-weight:400;color:#bcbcbc;text-align:center;"><?php echo esc_html($copyright_year); ?> © Кундалини Класс. Все права защищены.</p>
+			<p style="margin:30px 0 0;<?php echo esc_attr($font); ?>font-size:16px;line-height:1;font-weight:700;color:#ffffff;text-align:center;">Поддержка — <a href="mailto:support@platform.kundalini-class.ru" style="color:#ffffff;text-decoration:none;">support@platform.kundalini-class.ru</a></p>
+			<p style="margin:15px auto 0;max-width:460px;<?php echo esc_attr($font); ?>font-size:16px;line-height:1;font-weight:400;color:#bcbcbc;text-align:center;"><?php echo esc_html($service_text); ?></p>
+			<p style="margin:30px 0 0;<?php echo esc_attr($font); ?>font-size:16px;line-height:1;font-weight:700;color:#ffffff;text-align:center;"><a href="<?php echo esc_url($privacy_url); ?>" style="color:#ffffff;text-decoration:none;">Политика конфиденциальности</a></p>
+			<p style="margin:15px auto 0;max-width:460px;<?php echo esc_attr($font); ?>font-size:16px;line-height:1.5;font-weight:400;color:#bcbcbc;text-align:center;">ИП Ксенофонтова Марина Евгеньевна · ИНН 632200860531<br>· ОГРНИП 319631300101827</p>
+			<p style="margin:15px 0 0;<?php echo esc_attr($font); ?>font-size:16px;line-height:1;font-weight:400;color:#bcbcbc;text-align:center;"><?php echo esc_html($copyright_year); ?> © Кундалини Класс. Все права защищены.</p>
 		</td>
 	</tr>
 </table>
