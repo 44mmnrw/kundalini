@@ -8,7 +8,7 @@ $font = 'font-family:Mulish,Helvetica,Arial,sans-serif;';
 	<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:30px auto 0;border-collapse:separate;">
 		<tr>
 			<td align="center" bgcolor="#1f1f1f" style="background-color:#1f1f1f;border-radius:500px;mso-padding-alt:23px 30px;">
-				<a href="<?php echo esc_url($cta_url); ?>" style="display:inline-block;padding:23px 30px;<?php echo esc_attr($font); ?>font-size:14px;line-height:1;font-weight:600;letter-spacing:-0.154px;color:#e8ff57;text-decoration:none;border-radius:500px;background-color:#1f1f1f;"><?php echo esc_html($cta_label); ?></a>
+				<a href="<?php echo esc_url($cta_url); ?>" style="display:inline-block;padding:23px 30px;<?php echo esc_attr($font); ?>font-size:16px;line-height:1;font-weight:600;letter-spacing:-0.154px;color:#e8ff57;text-decoration:none;border-radius:500px;background-color:#1f1f1f;"><?php echo esc_html($cta_label); ?></a>
 			</td>
 		</tr>
 	</table>

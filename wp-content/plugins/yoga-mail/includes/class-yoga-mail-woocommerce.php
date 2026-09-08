@@ -323,9 +323,9 @@ final class Yoga_Mail_WooCommerce {
 				$name .= ' × ' . $quantity;
 			}
 			$amount = (float) $item->get_total() + (float) $item->get_total_tax();
-			$rows .= '<tr><td valign="middle" style="padding:15px 10px 15px 0;font-size:14px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">'
+			$rows .= '<tr><td valign="middle" style="padding:15px 10px 15px 0;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">'
 				. esc_html($name)
-				. '</td><td valign="middle" align="right" style="padding:15px 0 15px 10px;font-size:14px;line-height:1.5;font-weight:400;color:#606060;text-align:right;white-space:nowrap;">'
+				. '</td><td valign="middle" align="right" style="padding:15px 0 15px 10px;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:right;white-space:nowrap;">'
 				. esc_html($this->format_money($amount, (string) $order->get_currency()))
 				. '</td></tr>';
 		}

@@ -113,15 +113,17 @@ final class Yoga_Mail_Renderer {
 					'$1font-family:Mulish,Helvetica,Arial,sans-serif',
 					$matches[2]
 				);
+				// Apply the current body size to previously saved template styles too.
+				$style = preg_replace('/(^|;)\s*font-size\s*:\s*14px(?=\s*(?:!important\s*)?(?:;|$))/i', '${1}font-size:16px', $style);
 				return ' style=' . $matches[1] . $style . $matches[1];
 			},
 			$html
 		);
 		$styles = array(
-			'p'  => 'margin:0 0 15px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:center;',
-			'ul' => 'margin:0 0 15px;padding-left:24px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:left;',
-			'ol' => 'margin:0 0 15px;padding-left:24px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;text-align:left;',
-			'li' => 'margin:0 0 8px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#1f1f1f;',
+			'p'  => 'margin:0 0 15px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#1f1f1f;text-align:center;',
+			'ul' => 'margin:0 0 15px;padding-left:24px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#1f1f1f;text-align:left;',
+			'ol' => 'margin:0 0 15px;padding-left:24px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#1f1f1f;text-align:left;',
+			'li' => 'margin:0 0 8px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#1f1f1f;',
 			'a'  => 'color:#9153e1;text-decoration:underline;',
 		);
 		foreach ($styles as $tag => $style) {

@@ -274,7 +274,7 @@ km_assert(strpos($sadhana_started['html'], 'Сат Нам, Марина!') !== f
 km_assert(strpos($sadhana_started['html'], 'Садхана — это личная практика') !== false, 'sadhana-started explanation matches Figma');
 km_assert(strpos($sadhana_started['html'], '40 дней') !== false && strpos($sadhana_started['html'], '90 дней') !== false && strpos($sadhana_started['html'], '120 дней') !== false, 'sadhana-started contains all practice milestones');
 km_assert(substr_count($sadhana_started['html'], '<td align="left" width="19%"') === 3, 'sadhana-started milestone days are explicitly left aligned');
-km_assert(strpos($sadhana_started['html'], 'padding:15px 10px 15px 0;font-size:14px;line-height:1;font-weight:700;color:#9153e1;text-align:left;white-space:nowrap;">90 дней</td>') !== false, 'sadhana-started milestone days share the same left edge');
+km_assert(strpos($sadhana_started['html'], 'padding:15px 10px 15px 0;font-size:16px;line-height:1;font-weight:700;color:#9153e1;text-align:left;white-space:nowrap;">90 дней</td>') !== false, 'sadhana-started milestone days share the same left edge');
 km_assert(substr_count($sadhana_started['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 2, 'sadhana-started milestone panel contains white separators');
 km_assert(strpos($sadhana_started['html'], 'Регулярность важнее длительности.') !== false, 'sadhana-started contains the seven-day recommendation');
 km_assert(strpos($sadhana_started['html'], 'href="https://example.com/practice-type/kriyi/"') !== false, 'sadhana-started CTA opens the practice library');
