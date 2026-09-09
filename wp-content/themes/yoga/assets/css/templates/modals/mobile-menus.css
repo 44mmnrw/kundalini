@@ -348,7 +348,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 1rem 1.25rem;
+    padding: 1rem 0.9375rem;
     border-radius: 0.4375rem;
     color: #fff;
     font-size: 1rem;
@@ -465,6 +465,8 @@
     right: auto;
     width: 100%;
     margin-top: 0.625rem;
+    padding-left: 0.9375rem;
+    padding-right: 0.9375rem;
     flex-shrink: 0;
     z-index: 1;
     background: transparent;
@@ -1057,7 +1059,7 @@
   .modal-mobile-menu-lk .mobile-menu-back {
     left: 1.25rem;    top: 4.75rem;  }
   .modal-mobile-menu-lk .mobile-menu__slide {
-    padding-left: 0.625rem;    padding-right: 0.625rem;  }
+    padding-left: 0;    padding-right: 0;  }
   .modal-mobile-menu-lk .mobile-menu__slide_sub {
     padding-left: 1.25rem;    padding-right: 1.25rem;  }
   .modal-mobile-menu-lk .modal-close {

@@ -205,7 +205,12 @@ final class Yoga_Mail_WooCommerce {
 	}
 
 	public function mark_mail_content(string $content): string {
-		if (!$this->registry->flag('woocommerce_enabled') || strpos($content, '<!-- yoga-mail:') !== false) {
+		if (!$this->registry->flag('woocommerce_enabled')) {
+			return $content;
+		}
+		// This filter runs after WooCommerce's CSS inliner.
+		$content = $this->renderer->responsive_html($content);
+		if (strpos($content, '<!-- yoga-mail:') !== false) {
 			return $content;
 		}
 		$template_id = $this->template_id($this->find_sending_email());

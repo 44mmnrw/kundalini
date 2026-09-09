@@ -4531,7 +4531,7 @@ jQuery(document).ready(function($) {
 					'<span class="lk-favorites-empty__icon" aria-hidden="true"><svg><use href="' + spriteUrl + '#site-heart"></use></svg></span>' +
 					'<div class="lk-favorites-empty__text"><h3>Здесь пока ничего нет</h3><p>Здесь появятся крийи, когда вы их добавите в избранное</p></div>' +
 				'</div>' +
-				'<a class="lk-favorites-empty__button" href="' + libraryUrl + '"><span>В библиотеку практик</span><i aria-hidden="true"><svg><use href="' + spriteUrl + '#footer-arrow-up-right"></use></svg></i></a>' +
+				'<a class="lk-favorites-empty__button" href="' + libraryUrl + '"><span>В библиотеку практик</span><i aria-hidden="true"><svg viewBox="0 0 41 41" width="41" height="41" focusable="false"><g><path d="M22.9 26.5L27.7 20.5L22.9 14.5M27.7 20.5H13.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></g></svg></i></a>' +
 			'</div>'
 		);
 	}

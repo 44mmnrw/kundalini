@@ -47,7 +47,7 @@ final class Yoga_Mail_Renderer {
 		$template_path = YOGA_MAIL_PATH . 'templates/layout/html.php';
 		ob_start();
 		include $template_path;
-		$html = (string) ob_get_clean();
+		$html = $this->responsive_html((string) ob_get_clean());
 
 		$plain_body = $this->plain_from_html((string) $body);
 		$text_parts = array_filter(array((string) $heading, $plain_body));
@@ -160,6 +160,38 @@ final class Yoga_Mail_Renderer {
 			$html
 		);
 		return $html;
+	}
+
+	/** Keep desktop inline sizes as a fallback; reduce 16px text on small screens. */
+	public function responsive_html(string $html): string {
+		if (stripos($html, '</head>') === false || strpos($html, 'id="yoga-mail-responsive"') !== false) {
+			return $html;
+		}
+		$html = preg_replace_callback(
+			'/<[a-z][a-z0-9]*\b(?:[^>"\']|"[^"]*"|\'[^\']*\')*>/i',
+			static function (array $matches): string {
+				$tag = $matches[0];
+				if (!preg_match('/\sstyle=(["\'])(.*?)\1/is', $tag, $style)) {
+					return $tag;
+				}
+				// Saved styles can override defaults, so use the last font-size declaration.
+				preg_match_all('/(?:^|;)\s*font-size\s*:\s*([^;]+)/i', $style[2], $sizes);
+				if (!$sizes[1] || !preg_match('/^16px\s*(?:!important\s*)?$/i', trim(end($sizes[1])))) {
+					return $tag;
+				}
+				if (preg_match('/\sclass=(["\'])(.*?)\1/is', $tag)) {
+					return preg_replace_callback('/\sclass=(["\'])(.*?)\1/is', static function (array $classes): string {
+						return ' class=' . $classes[1] . $classes[2] . ' yoga-mail-text' . $classes[1];
+					}, $tag, 1);
+				}
+				return preg_replace('/^(<[a-z][a-z0-9]*)\b/i', '$1 class="yoga-mail-text"', $tag, 1);
+			},
+			$html
+		);
+		$css = '<style id="yoga-mail-responsive" type="text/css">'
+			. '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}}'
+			. '</style>';
+		return preg_replace('/<\/head>/i', $css . "\n</head>", $html, 1);
 	}
 
 	public function plain_from_html(string $html): string {
