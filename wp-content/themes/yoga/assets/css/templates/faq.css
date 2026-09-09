@@ -6,6 +6,7 @@
 
 .section-faq {
   padding-top: 1.9375rem;
+  padding-bottom: 6.25rem;
   min-height: calc(80vh + 0.5rem);}
 
 .faq {
@@ -20,7 +21,7 @@
 .faq__questions .questions-answers {
   width: 100%;
   max-width: none;
-  padding-bottom: 6.25rem;}
+  padding-bottom: 0;}
 
 .faq__questions .question {
   width: 100%;
@@ -251,8 +252,7 @@
 
 @media (max-width: 1319px) {
   .section-faq {
-    padding-top: 1.375rem;  }
-  .faq__questions .questions-answers {
+    padding-top: 1.375rem;
     padding-bottom: 5.625rem;  }
   .faq__questions .question__main {
     min-height: 4rem;

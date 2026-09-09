@@ -414,7 +414,7 @@
 									</div>
 									<a class="lk-favorites-empty__button" href="<?php echo esc_url($lk_library_url); ?>">
 										<span>В библиотеку практик</span>
-										<i aria-hidden="true"><svg><use href="<?php echo esc_url($lk_sprite_url); ?>#button-diagonal-arrow"></use></svg></i>
+										<i aria-hidden="true"><svg viewBox="0 0 41 41" width="41" height="41" focusable="false"><g><path d="M22.9 26.5L27.7 20.5L22.9 14.5M27.7 20.5H13.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></g></svg></i>
 									</a>
 								</div>
 								<?php

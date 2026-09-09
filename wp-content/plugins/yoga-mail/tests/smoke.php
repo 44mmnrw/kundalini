@@ -85,7 +85,11 @@ km_assert(strpos($result['html'], 'width="600"') !== false, '600px layout exists
 km_assert(strpos($result['html'], '<!-- yoga-mail:generic -->') !== false, 'marker exists');
 km_assert(strpos($result['html'], '<button') === false, 'button element is not used');
 km_assert(strpos($result['html'], '<div') === false, 'layout does not use div elements');
-km_assert(strpos($result['html'], '<style') === false, 'layout does not use style blocks');
+km_assert(strpos($result['html'], '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}}') !== false, 'small screens use 14px text');
+$responsive_sample = $renderer->responsive_html('<html><head></head><body><p class="saved" style="font-size:16px">Text</p><p style="font-size:16px;font-size:12px">Note</p><h1 style="font-size:22px">Heading</h1><td style="font-size:1px">&nbsp;</td></body></html>');
+km_assert(strpos($responsive_sample, 'class="saved yoga-mail-text" style="font-size:16px"') !== false, 'mobile class preserves existing classes and desktop size');
+km_assert(substr_count($responsive_sample, 'class=') === 1, 'small notes, headings and spacers keep their original sizes');
+km_assert($renderer->responsive_html($responsive_sample) === $responsive_sample, 'responsive formatting is idempotent');
 km_assert(strpos($result['html'], 'font-family:Mulish,Helvetica,Arial,sans-serif') !== false, 'Mulish font stack exists');
 km_assert(strpos($result['html'], 'href="https://example.com/wp-content/themes/yoga/assets/css/mulish.css"') !== false, 'Mulish webfont stylesheet is linked');
 foreach ($registry->all() as $template_id => $definition) {
@@ -198,7 +202,7 @@ km_assert(!is_wp_error($verification_success), 'email-verification success templ
 km_assert($verification_success['subject'] === 'Добро пожаловать в Кундалини Класс', 'email-verification success subject exists');
 km_assert(strpos($verification_success['html'], 'Сат Нам, Марина!') !== false, 'email-verification success greeting is personalized');
 km_assert(strpos($verification_success['html'], 'Всё готово к практике — вот с чего удобнее начать.') !== false, 'email-verification success introduction matches Figma');
-km_assert(substr_count($verification_success['html'], '<td width="30" height="30"') === 4, 'email-verification success renders four numbered steps');
+km_assert(substr_count($verification_success['html'], '<td class="yoga-mail-text" width="30" height="30"') === 4, 'email-verification success renders four numbered steps');
 km_assert(substr_count($verification_success['html'], '<table role="presentation" width="30" height="30"') === 4, 'email-verification success keeps numbered circles fixed at 30 by 30 pixels');
 km_assert(substr_count($verification_success['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 3, 'email-verification success renders table dividers');
 km_assert(strpos($verification_success['html'], 'background-color:#f8f3fd') !== false, 'email-verification success renders the sadhana panel');
@@ -273,7 +277,7 @@ km_assert($sadhana_started['subject'] === 'Что такое садхана?', '
 km_assert(strpos($sadhana_started['html'], 'Сат Нам, Марина!') !== false, 'sadhana-started greeting is personalized');
 km_assert(strpos($sadhana_started['html'], 'Садхана — это личная практика') !== false, 'sadhana-started explanation matches Figma');
 km_assert(strpos($sadhana_started['html'], '40 дней') !== false && strpos($sadhana_started['html'], '90 дней') !== false && strpos($sadhana_started['html'], '120 дней') !== false, 'sadhana-started contains all practice milestones');
-km_assert(substr_count($sadhana_started['html'], '<td align="left" width="19%"') === 3, 'sadhana-started milestone days are explicitly left aligned');
+km_assert(substr_count($sadhana_started['html'], '<td class="yoga-mail-text" align="left" width="19%"') === 3, 'sadhana-started milestone days are explicitly left aligned');
 km_assert(strpos($sadhana_started['html'], 'padding:15px 10px 15px 0;font-size:16px;line-height:1;font-weight:700;color:#9153e1;text-align:left;white-space:nowrap;">90 дней</td>') !== false, 'sadhana-started milestone days share the same left edge');
 km_assert(substr_count($sadhana_started['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 2, 'sadhana-started milestone panel contains white separators');
 km_assert(strpos($sadhana_started['html'], 'Регулярность важнее длительности.') !== false, 'sadhana-started contains the seven-day recommendation');
@@ -590,6 +594,12 @@ include YOGA_MAIL_PATH . 'templates/woocommerce/email-header.php';
 echo '<p>Содержимое заказа</p>';
 include YOGA_MAIL_PATH . 'templates/woocommerce/email-footer.php';
 $woocommerce_html = (string) ob_get_clean();
+km_assert($woocommerce_adapter->mark_mail_content($woocommerce_html) === $woocommerce_html, 'disabled WooCommerce integration leaves HTML unchanged');
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('woocommerce_enabled' => true);
+$woocommerce_html = $woocommerce_adapter->mark_mail_content($woocommerce_html);
+$GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array();
+km_assert(strpos($woocommerce_html, 'id="yoga-mail-responsive"') !== false, 'WooCommerce includes mobile CSS after content filtering');
+km_assert(strpos($woocommerce_html, '<td class="yoga-mail-text" id="body_content"') !== false, 'WooCommerce body receives the mobile text size');
 km_assert(substr_count($woocommerce_html, '<table') === substr_count($woocommerce_html, '</table>'), 'WooCommerce layout tables are balanced');
 km_assert(strpos($woocommerce_html, 'width="560"') !== false, 'WooCommerce uses the shared 560px card');
 km_assert(strpos($woocommerce_html, 'support@platform.kundalini-class.ru') !== false, 'WooCommerce renders the shared footer');

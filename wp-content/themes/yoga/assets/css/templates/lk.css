@@ -79,6 +79,7 @@
 
 .section-lk {
   min-height: calc(100vh - 12.5rem);
+  padding-bottom: 6.25rem;
 }
 .lk-layout {
   display: grid;
@@ -137,7 +138,6 @@
   transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
-  padding-bottom: 6.25rem;
 }
 .lk-slide.active {
   position: relative;
@@ -263,26 +263,33 @@
   text-transform: uppercase;
   gap: 0.625rem;
   box-sizing: border-box;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .lk-favorites-empty__button i {
   display: grid;
+  flex: 0 0 2.5625rem;
   width: 2.5625rem;
   height: 2.5625rem;
   place-items: center;
   border-radius: 50%;
   background: var(--color-green);
   color: var(--color-black);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  /* Swap both colors together so the arrow never blends into its circle. */
 }
 
 .lk-favorites-empty__button i svg {
-  width: 1rem;
-  height: 1rem;
-  transform: rotate(0deg);
-  transform-origin: center;
-  transition: transform 0.2s ease;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Rotate the artwork in one SVG viewport to avoid a raster shift at 0deg. */
+.lk-favorites-empty__button i svg g {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(-45deg);
+  transition: transform 0.4s ease;
 }
 
 .lk-favorites-empty__button:hover,
@@ -297,9 +304,9 @@
   color: var(--color-green);
 }
 
-.lk-favorites-empty__button:hover i svg,
-.lk-favorites-empty__button:focus-visible i svg {
-  transform: rotate(40.78deg);
+.lk-favorites-empty__button:hover i svg g,
+.lk-favorites-empty__button:focus-visible i svg g {
+  transform: rotate(0deg);
 }
 
 @media (max-width: 575px) {
@@ -2194,14 +2201,18 @@
 
 .lk-settings-item__col-action-numbers {
   display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 2.125rem;  padding-left: 0.1875rem;  padding-right: 0.1875rem;  height: 2.125rem;  line-height: 2.125rem;  border-radius: 50%;
   background: #fff;
   margin-right: 0.9375rem;}
 .lk-settings-item__col-action-numbers span {
   text-align: center;
   display: block;
-  min-width: 100%;
-  margin-right: 0.9375rem;}
+  min-width: 0;
+  margin: 0;
+  line-height: 1;
+}
 
 .lk-settings-item__col-action-arrow {
   margin-top: auto;
@@ -2432,7 +2443,7 @@
   .lk-layout {
     width: min(70rem, calc(100% - 2 * var(--container-inline-gutter, 1.25rem)));
   }
-  .lk-slide {
+  .section-lk {
     padding-bottom: 5.625rem;  }
   .lk-kriyi {
     margin-top: 0px;
@@ -2603,7 +2614,7 @@
   }
 }
 @media (max-width: 575px) {
-  .lk-slide {
+  .section-lk {
     padding-bottom: 5rem;  }
   .lk-slide h2 {
     font-size: 1.625rem;    margin-top: 0.75rem;  }
