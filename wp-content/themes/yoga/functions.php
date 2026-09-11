@@ -1114,9 +1114,10 @@ function yoga_subscribe_handler() {
 
 
 
-	function yoga_send_support_autoreply(string $recipient_email, int $request_id): bool {
+	function yoga_send_support_autoreply(string $recipient_email, int $request_id, string $source): bool {
 		$recipient_email = sanitize_email($recipient_email);
-		if (!is_email($recipient_email) || $request_id <= 0) {
+		$source = sanitize_key($source);
+		if (!is_email($recipient_email) || $request_id <= 0 || !in_array($source, array('faq', 'lk'), true)) {
 			return false;
 		}
 
@@ -1213,8 +1214,6 @@ function yoga_subscribe_handler() {
 		if ($request_id <= 0) {
 			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
 		}
-		yoga_send_support_autoreply($email, $request_id);
-
 		if (!$sent) {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
 		}

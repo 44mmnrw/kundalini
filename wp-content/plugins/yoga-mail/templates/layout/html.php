@@ -24,10 +24,10 @@ $logo_alt = esc_attr((string) ($settings['logo_alt'] ?? get_bloginfo('name')));
 		<td align="center" bgcolor="#f6f6f9" style="padding:20px 0 0;background-color:#f6f6f9;">
 			<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:600px;border-collapse:separate;background-color:#f6f6f9;border-radius:20px 20px 0 0;">
 				<tr>
-					<td align="center" style="padding:0 20px;background-color:#f6f6f9;border-radius:20px 20px 0 0;">
-						<table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:560px;border-collapse:separate;background-color:#ffffff;border-radius:30px 30px 0 0;">
+					<td class="yoga-mail-shell" align="center" style="padding:0 20px;background-color:#f6f6f9;border-radius:20px 20px 0 0;">
+						<table class="yoga-mail-card" role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:560px;border-collapse:separate;background-color:#ffffff;border-radius:30px 30px 0 0;">
 							<tr>
-								<td align="center" bgcolor="#ffffff" style="padding:40px 40px 60px;background-color:#ffffff;border-radius:30px 30px 0 0;<?php echo esc_attr($font); ?>color:#1f1f1f;">
+								<td class="yoga-mail-content" align="center" bgcolor="#ffffff" style="padding:40px 40px 60px;background-color:#ffffff;border-radius:30px 30px 0 0;<?php echo esc_attr($font); ?>color:#1f1f1f;">
 									<?php if ($logo_url !== '') : ?>
 										<img src="<?php echo $logo_url; ?>" width="54" height="35" alt="<?php echo $logo_alt; ?>" style="display:block;width:54px;height:35px;margin:0 auto;border:0;outline:none;text-decoration:none;">
 									<?php endif; ?>
