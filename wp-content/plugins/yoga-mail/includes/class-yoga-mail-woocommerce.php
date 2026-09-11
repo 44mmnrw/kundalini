@@ -322,11 +322,7 @@ final class Yoga_Mail_WooCommerce {
 	private function receipt_items_html($order): string {
 		$rows = '';
 		foreach ($order->get_items('line_item') as $item) {
-			$name = (string) $item->get_name();
-			$quantity = max(1, (int) $item->get_quantity());
-			if ($quantity > 1) {
-				$name .= ' × ' . $quantity;
-			}
+			$name = $this->receipt_item_name($item);
 			$amount = (float) $item->get_total() + (float) $item->get_total_tax();
 			$rows .= '<tr><td valign="middle" style="padding:15px 10px 15px 0;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">'
 				. esc_html($name)
@@ -335,6 +331,36 @@ final class Yoga_Mail_WooCommerce {
 				. '</td></tr>';
 		}
 		return $rows;
+	}
+
+	private function receipt_item_name($item): string {
+		$name = trim(wp_strip_all_tags((string) $item->get_name()));
+		$product_id = (int) ($item->get_variation_id() ?: $item->get_product_id());
+		$period = function_exists('yoga_get_product_price_period')
+			? (string) yoga_get_product_price_period($product_id)
+			: '';
+		if ($period === '' && function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id)) {
+			$period = 'month';
+		}
+
+		$period_labels = array(
+			'day' => '1 день',
+			'month' => '1 месяц',
+			'3months' => '3 месяца',
+			'6months' => '6 месяцев',
+			'year' => '1 год',
+			'lifetime' => 'пожизненно',
+		);
+		$period_label = $period_labels[$period] ?? '';
+		if ($period_label !== '' && stripos($name, $period_label) === false) {
+			$name .= ', ' . $period_label;
+		}
+
+		$quantity = max(1, (int) $item->get_quantity());
+		if ($quantity > 1) {
+			$name .= ' × ' . $quantity;
+		}
+		return $name;
 	}
 
 	private function payment_method_label($order): string {

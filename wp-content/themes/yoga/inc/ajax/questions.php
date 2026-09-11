@@ -62,6 +62,10 @@ function handle_question_submission() {
 
 
 	wp_schedule_single_event(time(), 'yoga_send_new_question_admin_email', array((int) $question_id));
+	$user = get_userdata((int) $user_id);
+	if ($user instanceof WP_User && function_exists('yoga_send_support_autoreply')) {
+		yoga_send_support_autoreply((string) $user->user_email, (int) $question_id, 'lk');
+	}
 
 	if ($is_ajax) {
 		ob_start();
@@ -200,7 +204,7 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 			))
 			: wp_mail($to, $subject, $body, $headers);
 		if (function_exists('yoga_send_support_autoreply')) {
-			yoga_send_support_autoreply($email, (int) $post_id);
+			yoga_send_support_autoreply($email, (int) $post_id, 'faq');
 		}
 		$question_success_url = home_url('/question-sent/');
 

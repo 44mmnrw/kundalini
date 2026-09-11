@@ -189,7 +189,7 @@ final class Yoga_Mail_Renderer {
 			$html
 		);
 		$css = '<style id="yoga-mail-responsive" type="text/css">'
-			. '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}}'
+			. '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}.yoga-mail-shell{padding-left:0!important;padding-right:0!important;}.yoga-mail-card{max-width:600px!important;}.yoga-mail-content{padding-left:30px!important;padding-right:30px!important;}.yoga-mail-comment-gap{width:20px!important;min-width:20px!important;}}'
 			. '</style>';
 		return preg_replace('/<\/head>/i', $css . "\n</head>", $html, 1);
 	}

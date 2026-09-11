@@ -44,6 +44,7 @@ function esc_url($value) { return filter_var($value, FILTER_SANITIZE_URL); }
 function esc_url_raw($value) { return filter_var($value, FILTER_SANITIZE_URL); }
 function wp_http_validate_url($value) { return filter_var($value, FILTER_VALIDATE_URL) ? $value : false; }
 function wpautop($value) { return '<p>' . str_replace("\n\n", '</p><p>', $value) . '</p>'; }
+function yoga_get_product_price_period($product_id) { return (int) $product_id === 42 ? 'month' : ''; }
 
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-registry.php';
 require YOGA_MAIL_PATH . 'includes/class-yoga-mail-renderer.php';
@@ -85,7 +86,8 @@ km_assert(strpos($result['html'], 'width="600"') !== false, '600px layout exists
 km_assert(strpos($result['html'], '<!-- yoga-mail:generic -->') !== false, 'marker exists');
 km_assert(strpos($result['html'], '<button') === false, 'button element is not used');
 km_assert(strpos($result['html'], '<div') === false, 'layout does not use div elements');
-km_assert(strpos($result['html'], '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}}') !== false, 'small screens use 14px text');
+km_assert(strpos($result['html'], '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}.yoga-mail-shell{padding-left:0!important;padding-right:0!important;}.yoga-mail-card{max-width:600px!important;}.yoga-mail-content{padding-left:30px!important;padding-right:30px!important;}.yoga-mail-comment-gap{width:20px!important;min-width:20px!important;}}') !== false, 'small screens use a full-width white card with 30px content gutters');
+km_assert(strpos($result['html'], 'class="yoga-mail-shell"') !== false && strpos($result['html'], 'class="yoga-mail-card"') !== false && strpos($result['html'], 'class="yoga-mail-content"') !== false, 'layout exposes the shell, card and content cells for mobile gutters');
 $responsive_sample = $renderer->responsive_html('<html><head></head><body><p class="saved" style="font-size:16px">Text</p><p style="font-size:16px;font-size:12px">Note</p><h1 style="font-size:22px">Heading</h1><td style="font-size:1px">&nbsp;</td></body></html>');
 km_assert(strpos($responsive_sample, 'class="saved yoga-mail-text" style="font-size:16px"') !== false, 'mobile class preserves existing classes and desktop size');
 km_assert(substr_count($responsive_sample, 'class=') === 1, 'small notes, headings and spacers keep their original sizes');
@@ -121,6 +123,7 @@ km_assert(strpos($reset['html'], 'support@platform.kundalini-class.ru') !== fals
 km_assert(strpos($reset['html'], 'Политика конфиденциальности') !== false, 'shared footer privacy link exists');
 km_assert(strpos($reset['html'], 'ИНН 632200860531') !== false, 'shared footer legal details exist');
 km_assert(strpos($reset['html'], '/plugins/yoga-mail/assets/images/email/youtube.svg') !== false, 'shared footer uses local Figma icons');
+km_assert(strpos($reset['html'], 'height="25" style="height:25px;') !== false && strpos($reset['html'], 'font-size:0;line-height:0;mso-line-height-rule:exactly;') !== false, 'shared footer keeps social icons vertically aligned');
 km_assert(!preg_match('/<img(?![^>]*\salt=)[^>]*>/i', $reset['html']), 'every reset-password image has alt text');
 km_assert(strpos($reset['text'], 'Создать новый пароль: https://example.com/wp-login.php?action=rp&key=test-key&login=marina') !== false, 'plain reset-password CTA includes URL');
 
@@ -405,6 +408,7 @@ km_assert(strpos($support_autoreply['html'], 'Ваше обращение зар
 km_assert(strpos($support_autoreply['html'], '№ 4821') !== false, 'support-autoreply contains the request number');
 km_assert(strpos($support_autoreply['html'], '14 июля 2026, 21:40 по МСК') !== false, 'support-autoreply contains the received datetime');
 km_assert(strpos($support_autoreply['html'], 'с 11:00 до 22:00 по МСК') !== false, 'support-autoreply contains support hours');
+km_assert(strpos($support_autoreply['html'], 'padding:15px 10px 15px 0;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Получено') !== false, 'support-autoreply labels share the same left edge');
 km_assert(substr_count($support_autoreply['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 2, 'support-autoreply details contain white separators');
 km_assert(strpos($support_autoreply['html'], 'background-color:#f7f3fd') !== false, 'support-autoreply warning uses the pale violet background');
 km_assert(strpos($support_autoreply['html'], 'mailto:support@platform.kundalini-class.ru') !== false, 'support-autoreply contains the support email link');
@@ -412,12 +416,27 @@ km_assert(strpos($support_autoreply['html'], 'support@platform.kundalini-class.r
 km_assert(substr_count($support_autoreply['html'], '<table') === substr_count($support_autoreply['html'], '</table>'), 'support-autoreply tables are balanced');
 km_assert(strpos($support_autoreply['text'], '№ 4821') !== false && strpos($support_autoreply['text'], '14 июля 2026, 21:40 по МСК') !== false, 'plain support-autoreply contains request details');
 
+$legacy_support_body = str_replace(
+	'padding:15px 10px 15px 0;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Получено',
+	'padding:15px 10px;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Получено',
+	(string) $registry->get('support-autoreply')['defaults']['body']
+);
+$GLOBALS['km_options'][Yoga_Mail_Registry::TEMPLATES_OPTION]['support-autoreply'] = array('body' => $legacy_support_body);
+$saved_support_autoreply = $renderer->render('support-autoreply', array(
+	'request_number' => '4821',
+	'received_datetime' => '14 июля 2026, 21:40',
+), false);
+km_assert(strpos($saved_support_autoreply['html'], 'padding:15px 10px 15px 0;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Получено') !== false, 'saved support-autoreply templates receive the aligned left padding');
+unset($GLOBALS['km_options'][Yoga_Mail_Registry::TEMPLATES_OPTION]['support-autoreply']);
+
 $contact_form_source = file_get_contents(dirname(YOGA_MAIL_PATH, 2) . '/themes/yoga/functions.php');
-km_assert(strpos($contact_form_source, 'function yoga_send_support_autoreply(string $recipient_email, int $request_id): bool') !== false, 'support-autoreply uses a shared sender');
+km_assert(strpos($contact_form_source, 'function yoga_send_support_autoreply(string $recipient_email, int $request_id, string $source): bool') !== false, 'support-autoreply uses a source-aware shared sender');
 km_assert(strpos($contact_form_source, '$request_id = save_contact_message(') !== false, 'contact form keeps the saved request ID');
-km_assert(strpos($contact_form_source, 'yoga_send_support_autoreply($email, $request_id);') !== false, 'contact and practice forms send the support autoreply');
+km_assert(strpos($contact_form_source, "in_array(\$source, array('faq', 'lk'), true)") !== false, 'support-autoreply only allows FAQ and personal-account questions');
+km_assert(strpos($contact_form_source, 'yoga_send_support_autoreply($email, $request_id') === false, 'contact and practice forms do not send the support autoreply');
 $faq_form_source = file_get_contents(dirname(YOGA_MAIL_PATH, 2) . '/themes/yoga/inc/ajax/questions.php');
-km_assert(strpos($faq_form_source, 'yoga_send_support_autoreply($email, (int) $post_id);') !== false, 'FAQ form sends the support autoreply');
+km_assert(strpos($faq_form_source, "yoga_send_support_autoreply(\$email, (int) \$post_id, 'faq');") !== false, 'FAQ form sends the support autoreply');
+km_assert(strpos($faq_form_source, "yoga_send_support_autoreply((string) \$user->user_email, (int) \$question_id, 'lk');") !== false, 'personal-account question form sends the support autoreply');
 
 $question_answer = $renderer->render('question-answer', array(
 	'answer_datetime' => '14 июля 2026 в 21:32',
@@ -456,7 +475,7 @@ km_assert(strpos($comment_reply['html'], '«Крийя для баланса» 1
 km_assert(strpos($comment_reply['html'], 'src="https://example.com/avatar.jpg"') !== false, 'comment-reply contains an absolute avatar URL');
 km_assert(strpos($comment_reply['html'], 'border-radius:15px 15px 15px 0') !== false, 'comment-reply card matches the speech-bubble shape');
 km_assert(strpos($comment_reply['html'], 'padding:20px 75px 20px 20px') !== false, 'comment-reply card preserves the Figma right whitespace');
-km_assert(strpos($comment_reply['html'], '<td width="15" style="width:15px;padding:0;font-size:1px;line-height:1px;">') !== false, 'comment-reply avatar gap matches Figma');
+km_assert(strpos($comment_reply['html'], '<td class="yoga-mail-comment-gap" width="15" style="width:15px;padding:0;font-size:1px;line-height:1px;">') !== false, 'comment-reply avatar gap keeps its desktop size and exposes the mobile override');
 km_assert(strpos($comment_reply['html'], 'width:330px;padding:0;text-align:left;') !== false, 'comment-reply text column matches Figma');
 km_assert(strpos($comment_reply['html'], '<script>') === false, 'comment-reply content cannot inject executable HTML');
 km_assert(strpos($comment_reply['html'], 'href="https://example.com/practice/kriya-dlya-balansa/#comment-2037"') !== false, 'comment-reply CTA opens the exact reply');
@@ -540,6 +559,15 @@ km_assert(strpos($woocommerce_source, "YTR_Notifications::send_renewal_success(\
 $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('woocommerce_enabled' => true);
 $woocommerce_mailer = new Yoga_Mail_Mailer($registry, $renderer);
 $woocommerce_adapter = new Yoga_Mail_WooCommerce($registry, $renderer, $woocommerce_mailer);
+$receipt_item = new class {
+	public function get_name() { return 'Мариновый'; }
+	public function get_variation_id() { return 42; }
+	public function get_product_id() { return 24; }
+	public function get_quantity() { return 1; }
+};
+$receipt_item_name_method = new ReflectionMethod(Yoga_Mail_WooCommerce::class, 'receipt_item_name');
+$receipt_item_name_method->setAccessible(true);
+km_assert($receipt_item_name_method->invoke($woocommerce_adapter, $receipt_item) === 'Мариновый, 1 месяц', 'payment receipt appends the tariff period to the item name');
 $woocommerce_styles = $woocommerce_adapter->email_styles('body{font-family:Arial,sans-serif;}h1{font-family:Helvetica,sans-serif;}', null);
 km_assert(substr_count($woocommerce_styles, 'font-family:Mulish,Helvetica,Arial,sans-serif;') >= 3, 'WooCommerce styles use Mulish throughout');
 $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array();
@@ -601,7 +629,8 @@ $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array('woocommerce
 $woocommerce_html = $woocommerce_adapter->mark_mail_content($woocommerce_html);
 $GLOBALS['km_options'][Yoga_Mail_Registry::SETTINGS_OPTION] = array();
 km_assert(strpos($woocommerce_html, 'id="yoga-mail-responsive"') !== false, 'WooCommerce includes mobile CSS after content filtering');
-km_assert(strpos($woocommerce_html, '<td class="yoga-mail-text" id="body_content"') !== false, 'WooCommerce body receives the mobile text size');
+km_assert(strpos($woocommerce_html, 'class="yoga-mail-shell"') !== false, 'WooCommerce exposes the full-width mobile shell');
+km_assert(strpos($woocommerce_html, 'id="body_content" class="yoga-mail-content yoga-mail-text"') !== false, 'WooCommerce body receives the mobile text size and gutter class');
 km_assert(substr_count($woocommerce_html, '<table') === substr_count($woocommerce_html, '</table>'), 'WooCommerce layout tables are balanced');
 km_assert(strpos($woocommerce_html, 'width="560"') !== false, 'WooCommerce uses the shared 560px card');
 km_assert(strpos($woocommerce_html, 'support@platform.kundalini-class.ru') !== false, 'WooCommerce renders the shared footer');

@@ -216,7 +216,11 @@ function yoga_sadhana_find_active_id(int $user_id, int $practice_id): int {
 function yoga_sadhana_get_active(int $user_id, int $practice_id, bool $normalize = true): ?array {
 	$id = yoga_sadhana_find_active_id($user_id, $practice_id);
 	$row = $id > 0 ? yoga_sadhana_get($id, $user_id) : null;
-	return $row && $normalize ? yoga_sadhana_normalize($row) : $row;
+	if (!$row || !$normalize) {
+		return $row;
+	}
+	$row = yoga_sadhana_normalize($row);
+	return ($row['status'] ?? '') === 'active' ? $row : null;
 }
 
 function yoga_sadhana_notification_url(array $row): string {
@@ -289,8 +293,8 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 		$key_suffix = 'progress:' . $revision . ':' . $milestone;
 	} elseif ($event === 'interrupted') {
 		$type = 'sadhana_interrupted';
-		$title = __('Садхана началась сначала', 'yoga');
-		$message = sprintf(__('В садхане «%s» был пропущен день. Прогресс сброшен до нуля.', 'yoga'), $practice_title);
+		$title = __('Садхана прервалась...', 'yoga');
+		$message = sprintf(__('В садхане «%s» был пропущен день. Садхана отменена, её можно начать заново.', 'yoga'), $practice_title);
 		$key_suffix = 'interrupted:' . $revision;
 	} else {
 		$type = 'sadhana_completed';
@@ -338,39 +342,66 @@ function yoga_sadhana_notify(array $row, string $event, int $milestone = 0): voi
 }
 
 function yoga_sadhana_normalize(array $row): array {
-	if (($row['status'] ?? '') !== 'active' || absint($row['completed_days'] ?? 0) <= 0 || empty($row['last_marked_on'])) {
+	if (($row['status'] ?? '') !== 'active') {
+		return $row;
+	}
+	$is_legacy_reset = absint($row['reset_count'] ?? 0) > 0
+		&& absint($row['completed_days'] ?? 0) === 0
+		&& empty($row['last_marked_on']);
+	if (!$is_legacy_reset && (absint($row['completed_days'] ?? 0) <= 0 || empty($row['last_marked_on']))) {
 		return $row;
 	}
 	$sadhana_id = absint($row['id']);
 	$user_id = absint($row['user_id']);
-	$did_reset = false;
+	$did_interrupt = false;
 	$interrupted_at = 0;
-	$result = yoga_sadhana_with_lock('cycle:' . $sadhana_id, static function () use ($sadhana_id, $user_id, &$did_reset, &$interrupted_at) {
+	$result = yoga_sadhana_with_lock('cycle:' . $sadhana_id, static function () use ($sadhana_id, $user_id, &$did_interrupt, &$interrupted_at) {
 		global $wpdb;
 		$current = yoga_sadhana_get($sadhana_id, $user_id);
-		if (!$current || $current['status'] !== 'active' || $current['completed_days'] <= 0 || empty($current['last_marked_on'])) {
+		if (!$current || $current['status'] !== 'active') {
 			return $current;
 		}
 		$today = yoga_sadhana_today($user_id);
+		$is_legacy_reset = $current['reset_count'] > 0
+			&& $current['completed_days'] === 0
+			&& empty($current['last_marked_on']);
+		if ($is_legacy_reset) {
+			$cancelled_on = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $current['started_on'])
+				? (string) $current['started_on']
+				: $today;
+			$updated = $wpdb->update(yoga_sadhana_table(), array(
+				'status' => 'cancelled',
+				'active_key' => null,
+				'cancelled_on' => $cancelled_on,
+				'updated_at' => current_time('mysql', true),
+			), array('id' => $sadhana_id), array('%s', '%s', '%s', '%s'), array('%d'));
+			return $updated === false ? $current : yoga_sadhana_get($sadhana_id, $user_id);
+		}
+		if ($current['completed_days'] <= 0 || empty($current['last_marked_on'])) {
+			return $current;
+		}
 		$yesterday = (new DateTimeImmutable($today, yoga_sadhana_user_timezone($user_id)))->modify('-1 day')->format('Y-m-d');
 		if ((string) $current['last_marked_on'] >= $yesterday) {
 			return $current;
 		}
 		$interrupted_at = absint($current['completed_days']);
-		$wpdb->update(yoga_sadhana_table(), array(
-			'completed_days' => 0,
-			'last_marked_on' => null,
-			'started_on' => $today,
+		$updated = $wpdb->update(yoga_sadhana_table(), array(
+			'status' => 'cancelled',
+			'active_key' => null,
+			'cancelled_on' => $today,
 			'reset_count' => $current['reset_count'] + 1,
 			'updated_at' => current_time('mysql', true),
-		), array('id' => $sadhana_id), array('%d', '%s', '%s', '%d', '%s'), array('%d'));
-		$did_reset = true;
+		), array('id' => $sadhana_id), array('%s', '%s', '%s', '%d', '%s'), array('%d'));
+		if ($updated === false) {
+			return $current;
+		}
+		$did_interrupt = true;
 		return yoga_sadhana_get($sadhana_id, $user_id);
 	});
 	if (is_wp_error($result) || !is_array($result)) {
 		return $row;
 	}
-	if ($did_reset) {
+	if ($did_interrupt) {
 		yoga_sadhana_notify($result, 'interrupted', $interrupted_at);
 	}
 	return $result;
@@ -507,17 +538,20 @@ function yoga_sadhana_get_user_rows(int $user_id, string $status): array {
 	));
 	$rows = array_map('yoga_sadhana_row_from_db', $records ?: array());
 	if ($status === 'active') {
-		foreach ($rows as $index => $row) {
-			$rows[$index] = yoga_sadhana_normalize($row);
+		$active_rows = array();
+		foreach ($rows as $row) {
+			$normalized = yoga_sadhana_normalize($row);
+			if (($normalized['status'] ?? '') === 'active') {
+				$active_rows[] = $normalized;
+			}
 		}
+		return $active_rows;
 	}
 	return $rows;
 }
 
 function yoga_sadhana_active_count(int $user_id): int {
-	global $wpdb;
-	$table = yoga_sadhana_table();
-	return (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$table} WHERE user_id = %d AND status = 'active'", $user_id));
+	return count(yoga_sadhana_get_user_rows($user_id, 'active'));
 }
 
 function yoga_sadhana_public_data(array $row): array {

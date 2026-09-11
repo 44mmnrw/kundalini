@@ -45,6 +45,12 @@ function yoga_get_user_notifications(int $user_id, int $limit = 50): array {
 	$notifications = array_values(array_filter($notifications, static function ($notification): bool {
 		return is_array($notification) && yoga_notification_has_live_source($notification);
 	}));
+	foreach ($notifications as &$notification) {
+		if (($notification['type'] ?? '') === 'sadhana_interrupted') {
+			$notification['title'] = __('Садхана прервалась...', 'yoga');
+		}
+	}
+	unset($notification);
 	usort($notifications, static function (array $left, array $right): int {
 		return strcmp((string) ($right['created_at'] ?? ''), (string) ($left['created_at'] ?? ''));
 	});

@@ -41,9 +41,9 @@ $copyright_year = function_exists('wp_date') ? wp_date('Y') : date('Y');
 			<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;border-collapse:collapse;">
 				<tr>
 					<?php foreach ($socials as $index => $social) : ?>
-						<td align="center" valign="middle" style="padding:0 <?php echo $index === count($socials) - 1 ? '0' : '10px'; ?> 0 0;">
-							<?php if ($social['url'] !== '') : ?><a href="<?php echo esc_url($social['url']); ?>" target="_blank" style="display:block;text-decoration:none;"><?php endif; ?>
-							<img src="<?php echo esc_url($asset_base_url . $social['icon']); ?>" width="<?php echo (int) $social['width']; ?>" height="<?php echo (int) $social['height']; ?>" alt="<?php echo esc_attr($social['label']); ?>" style="display:block;width:<?php echo (int) $social['width']; ?>px;height:<?php echo (int) $social['height']; ?>px;border:0;outline:none;text-decoration:none;">
+						<td align="center" valign="middle" height="25" style="height:25px;padding:0 <?php echo $index === count($socials) - 1 ? '0' : '10px'; ?> 0 0;font-size:0;line-height:0;mso-line-height-rule:exactly;">
+							<?php if ($social['url'] !== '') : ?><a href="<?php echo esc_url($social['url']); ?>" target="_blank" style="display:block;font-size:0;line-height:0;text-decoration:none;"><?php endif; ?>
+							<img src="<?php echo esc_url($asset_base_url . $social['icon']); ?>" width="<?php echo (int) $social['width']; ?>" height="<?php echo (int) $social['height']; ?>" alt="<?php echo esc_attr($social['label']); ?>" style="display:block;width:<?php echo (int) $social['width']; ?>px;height:<?php echo (int) $social['height']; ?>px;margin:0 auto;border:0;outline:none;text-decoration:none;vertical-align:middle;">
 							<?php if ($social['url'] !== '') : ?></a><?php endif; ?>
 						</td>
 					<?php endforeach; ?>
