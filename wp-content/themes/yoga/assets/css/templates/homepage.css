@@ -1447,6 +1447,14 @@
 @media (max-width: 767px) {
   .section-reviews {
     padding-top: 1.5rem;  }
+  .reviews__head h2 {
+    margin-top: 0;
+  }
+  .reviews__head .arrows-slick__arrow {
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+  }
   .review-info {
     margin-top: 1.3125rem;  }
   .review-info p {
@@ -1472,7 +1480,6 @@
   }
 
   .reviews__head h2 {
-    margin-top: 0;
     line-height: 1.3;
   }
 
@@ -1483,7 +1490,6 @@
     right: auto;
     z-index: 3;
     margin: 0;
-    transform: none;
   }
 
   .reviews__head .slick-prev {
