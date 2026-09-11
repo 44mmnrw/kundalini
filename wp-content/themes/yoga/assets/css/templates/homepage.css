@@ -1062,10 +1062,14 @@
     width: 100%;
     margin-top: 0.9375rem;  }
   .begin-button img,
-  .begin-button__arrow {
+  .begin-button__arrow,
+  .begin-button__meditation {
     margin-left: auto;
     margin-right: auto;
     position: relative;
+  }
+  .begin-button img,
+  .begin-button__arrow {
     transform: rotate(90deg);
   }
 }
