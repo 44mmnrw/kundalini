@@ -324,7 +324,7 @@ final class Yoga_Mail_WooCommerce {
 		foreach ($order->get_items('line_item') as $item) {
 			$name = $this->receipt_item_name($item);
 			$amount = (float) $item->get_total() + (float) $item->get_total_tax();
-			$rows .= '<tr><td valign="middle" style="padding:15px 10px 15px 0;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">'
+			$rows .= '<tr><td valign="middle" align="left" style="padding:15px 10px 15px 0;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">'
 				. esc_html($name)
 				. '</td><td valign="middle" align="right" style="padding:15px 0 15px 10px;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:right;white-space:nowrap;">'
 				. esc_html($this->format_money($amount, (string) $order->get_currency()))
