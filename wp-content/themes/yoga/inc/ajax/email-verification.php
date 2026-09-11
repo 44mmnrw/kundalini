@@ -123,6 +123,11 @@ function yoga_clear_email_verification_link($user_id) {
 	delete_user_meta($user_id, 'yoga_email_link_address');
 }
 
+function yoga_email_verification_get_lk_url() {
+	$lk_url = function_exists('yoga_get_lk_page_url') ? (string) yoga_get_lk_page_url() : '';
+	return $lk_url !== '' ? $lk_url : home_url('/my-account/');
+}
+
 /**
  * Send the welcome message once after the first successful email verification.
  */
@@ -153,10 +158,7 @@ function yoga_send_email_verification_success($user_id) {
 	if ($user_name === '') {
 		$user_name = $user->user_email;
 	}
-	$action_url = function_exists('yoga_get_lk_page_url') ? (string) yoga_get_lk_page_url() : '';
-	if ($action_url === '') {
-		$action_url = home_url('/lk/');
-	}
+	$action_url = yoga_email_verification_get_lk_url();
 
 	$sent = function_exists('yoga_mail_send')
 		? yoga_mail_send('email-verification-success', array(
@@ -261,7 +263,7 @@ function yoga_handle_email_verification_link() {
 		if ($user && $expires < time()) {
 			yoga_clear_email_verification_link($user_id);
 		}
-		wp_safe_redirect(add_query_arg('email_verification', 'invalid', home_url('/lk/')));
+		wp_safe_redirect(add_query_arg('email_verification', 'invalid', yoga_email_verification_get_lk_url()));
 		exit;
 	}
 
@@ -271,7 +273,7 @@ function yoga_handle_email_verification_link() {
 	yoga_clear_email_verification_code($user_id);
 	delete_user_meta($user_id, 'yoga_email_code_sent_at');
 	yoga_send_email_verification_success($user_id);
-	wp_safe_redirect(add_query_arg('email_verified', '1', home_url('/lk/')));
+	wp_safe_redirect(add_query_arg('email_verified', '1', yoga_email_verification_get_lk_url()));
 	exit;
 }
 
