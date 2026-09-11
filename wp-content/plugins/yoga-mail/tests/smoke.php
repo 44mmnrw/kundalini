@@ -513,7 +513,7 @@ km_assert(strpos($renewal_success['text'], 'Посмотреть чек: https:/
 $payment_receipt = $renderer->render('payment-success-receipt', array(
 	'receipt_number' => '10428',
 	'payment_date' => '14 июля 2026',
-	'receipt_items' => '<tr><td style="padding:15px 10px 15px 0;color:#606060;">Аришечный Pro Max, 1 месяц</td><td align="right" style="padding:15px 0 15px 10px;color:#606060;">4 990 ₽</td></tr>',
+	'receipt_items' => '<tr><td align="left" style="padding:15px 10px 15px 0;color:#606060;text-align:left;">Аришечный Pro Max, 1 месяц</td><td align="right" style="padding:15px 0 15px 10px;color:#606060;text-align:right;">4 990 ₽</td></tr>',
 	'total_amount' => '4 990 ₽',
 	'payment_method' => 'Карта •• 4242',
 	'action_url' => 'https://example.com/my-account/view-order/10428/',
@@ -523,6 +523,7 @@ km_assert($payment_receipt['subject'] === 'Оплата прошла успеш�
 km_assert(strpos($payment_receipt['html'], 'Спасибо за то что выбрали практиковать с нами!') !== false, 'payment-success receipt heading matches Figma');
 km_assert(strpos($payment_receipt['html'], 'Чек №10428') !== false, 'payment-success receipt number exists');
 km_assert(strpos($payment_receipt['html'], 'Аришечный Pro Max, 1 месяц') !== false, 'payment-success receipt contains trusted order item component');
+km_assert((bool) preg_match('/<td[^>]*align="left"[^>]*padding:15px 10px 15px 0[^>]*>Аришечный Pro Max, 1 месяц<\/td>/', $payment_receipt['html']), 'payment-success receipt item is aligned with the left table column');
 km_assert(strpos($payment_receipt['html'], 'Итого оплачено') !== false && strpos($payment_receipt['html'], '4 990 ₽') !== false, 'payment-success receipt contains total');
 km_assert(strpos($payment_receipt['html'], 'Карта •• 4242') !== false, 'payment-success receipt contains payment method');
 km_assert(strpos($payment_receipt['html'], 'href="https://example.com/my-account/view-order/10428/"') !== false, 'payment-success receipt CTA opens order');

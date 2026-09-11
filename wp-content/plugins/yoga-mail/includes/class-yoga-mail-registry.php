@@ -273,7 +273,7 @@ final class Yoga_Mail_Registry {
 				'tags' => array(
 					'receipt_number' => array('type' => 'text', 'example' => '10428'),
 					'payment_date' => array('type' => 'text', 'example' => '14 июля 2026'),
-					'receipt_items' => array('type' => 'html', 'example' => '<tr><td style="padding:15px 10px 15px 0;color:#606060;">Аришечный Pro Max, 1 месяц</td><td align="right" style="padding:15px 0 15px 10px;color:#606060;white-space:nowrap;">4 990 ₽</td></tr>'),
+					'receipt_items' => array('type' => 'html', 'example' => '<tr><td align="left" style="padding:15px 10px 15px 0;color:#606060;text-align:left;">Аришечный Pro Max, 1 месяц</td><td align="right" style="padding:15px 0 15px 10px;color:#606060;text-align:right;white-space:nowrap;">4 990 ₽</td></tr>'),
 					'total_amount' => array('type' => 'text', 'example' => '4 990 ₽'),
 					'payment_method' => array('type' => 'text', 'example' => 'Карта •• 4242'),
 					'action_url' => array('type' => 'url', 'example' => home_url('/my-account/view-order/10428/')),
