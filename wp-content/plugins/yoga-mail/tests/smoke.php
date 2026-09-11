@@ -202,9 +202,11 @@ km_assert(!is_wp_error($verification_success), 'email-verification success templ
 km_assert($verification_success['subject'] === 'Добро пожаловать в Кундалини Класс', 'email-verification success subject exists');
 km_assert(strpos($verification_success['html'], 'Сат Нам, Марина!') !== false, 'email-verification success greeting is personalized');
 km_assert(strpos($verification_success['html'], 'Всё готово к практике — вот с чего удобнее начать.') !== false, 'email-verification success introduction matches Figma');
-km_assert(substr_count($verification_success['html'], '<td class="yoga-mail-text" width="30" height="30"') === 4, 'email-verification success renders four numbered steps');
-km_assert(substr_count($verification_success['html'], '<table role="presentation" width="30" height="30"') === 4, 'email-verification success keeps numbered circles fixed at 30 by 30 pixels');
-km_assert(substr_count($verification_success['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 3, 'email-verification success renders table dividers');
+km_assert(substr_count($verification_success['html'], '<td class="yoga-mail-text" width="30" height="30"') === 5, 'email-verification success renders five numbered steps');
+km_assert(substr_count($verification_success['html'], '<table role="presentation" width="30" height="30"') === 5, 'email-verification success keeps numbered circles fixed at 30 by 30 pixels');
+km_assert(substr_count($verification_success['html'], 'height:1px;font-size:1px;line-height:1px;background-color:#ffffff') >= 4, 'email-verification success renders table dividers');
+km_assert(strpos($verification_success['html'], 'Выберите нужную подписку, чтобы иметь доступ ко всем практикам на платформе') !== false, 'email-verification success fourth step describes subscription access');
+km_assert(strpos($verification_success['html'], 'Начните практиковать!') !== false, 'email-verification success fifth step prompts practice');
 km_assert(strpos($verification_success['html'], 'background-color:#f8f3fd') !== false, 'email-verification success renders the sadhana panel');
 km_assert(strpos($verification_success['html'], 'А главное — выберите садхану') !== false, 'email-verification success sadhana copy matches Figma');
 km_assert(strpos($verification_success['html'], 'href="https://example.com/lk/"') !== false, 'email-verification success CTA opens personal account');
