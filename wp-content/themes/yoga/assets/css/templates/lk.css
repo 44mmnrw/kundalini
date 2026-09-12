@@ -1115,6 +1115,7 @@
 .notification-settings { display: flex; flex-direction: column; gap: 1.4375rem; width: 100%; }
 .notification-settings__title { display:grid; grid-template-columns:1.25rem minmax(0,1fr); align-items:baseline; column-gap:.625rem; }
 .notification-settings__title h2 { margin:0; font:700 2rem/1.1 var(--font-family-base); }
+.notification-settings__message { margin:0; color:#b42318; font-size:.875rem; line-height:1.4; }
 .notification-settings__back { display:inline-grid; width:1.25rem; height:1.25rem; padding:0; place-items:center; align-self:baseline; border:0; background:transparent; cursor:pointer; }
 .notification-settings__back svg { width:1.25rem; height:1.25rem; transform:rotate(180deg); }
 .notification-settings__columns { display:grid; grid-template-columns:1fr 5.5625rem 5.5625rem; gap:.625rem; padding-bottom:.75rem; border-bottom:1px solid #e8e8e8; color:#646464; font:600 .8125rem/1 var(--font-family-base); text-transform:uppercase; }

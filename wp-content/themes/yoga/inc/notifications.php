@@ -92,6 +92,7 @@ function yoga_get_notification_preference_defaults(): array {
 		'question_answer_email' => false,
 		'comment_reply_site' => false,
 		'comment_reply_email' => true,
+		'sadhana_started_email' => true,
 		'sadhana_progress_site' => true,
 		'sadhana_progress_email' => true,
 		'sadhana_interrupted_site' => false,

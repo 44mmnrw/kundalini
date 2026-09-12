@@ -33,8 +33,9 @@ final class Yoga_Mail_Renderer {
 		$preheader = $this->merge((string) $values['preheader'], $definition, $data, 'text', $preview);
 		$heading = $this->merge((string) $values['heading'], $definition, $data, 'text', $preview);
 		$body = $this->merge((string) $values['body'], $definition, $data, 'html', $preview);
-		$cta_label = $this->merge((string) $values['cta_label'], $definition, $data, 'text', $preview);
-		$cta_url = $this->merge((string) $values['cta_url'], $definition, $data, 'url', $preview);
+		$omit_cta = $template_id === 'question-answer' && !empty($data['omit_cta']);
+		$cta_label = $omit_cta ? '' : $this->merge((string) $values['cta_label'], $definition, $data, 'text', $preview);
+		$cta_url = $omit_cta ? '' : $this->merge((string) $values['cta_url'], $definition, $data, 'url', $preview);
 		$footer_note = $this->merge((string) $values['footer_note'], $definition, $data, 'text', $preview);
 		foreach (array($subject, $preheader, $heading, $body, $cta_label, $cta_url, $footer_note) as $result) {
 			if (is_wp_error($result)) {

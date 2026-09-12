@@ -7,6 +7,12 @@ function add_filter() {}
 function get_post_meta($post_id, $key, $single = false) {
 	return $GLOBALS['question_answer_test_meta'][$post_id][$key] ?? '';
 }
+function get_post_field($field, $post_id) {
+	return $field === 'post_author' ? ($GLOBALS['question_answer_test_authors'][$post_id] ?? 0) : '';
+}
+function sanitize_key($value) {
+	return preg_replace('/[^a-z0-9_-]/', '', strtolower((string) $value));
+}
 function sanitize_email($email) {
 	return filter_var((string) $email, FILTER_SANITIZE_EMAIL);
 }
@@ -23,13 +29,14 @@ function yoga_notification_preference(int $user_id, string $key, bool $default =
 require dirname(__DIR__) . '/inc/admin/questions.php';
 
 $GLOBALS['question_answer_test_meta'] = array(
-	1 => array('contact_email' => 'guest@example.com'),
-	2 => array('contact_email' => 'guest@example.com'),
-	3 => array(),
-	4 => array(),
+	1 => array('contact_email' => 'guest@example.com', 'question_source' => 'faq'),
+	2 => array('contact_email' => 'guest@example.com', 'question_source' => 'contacts'),
+	3 => array('question_source' => 'lk'),
+	4 => array('question_source' => 'lk'),
 );
 $GLOBALS['question_answer_test_users'] = array(1 => 0, 2 => 42, 3 => 42, 4 => 43);
 $GLOBALS['question_answer_test_preferences'] = array(42 => false, 43 => true);
+$GLOBALS['question_answer_test_authors'] = array(1 => 0, 2 => 42, 3 => 42, 4 => 43);
 
 foreach (array(
 	1 => true,  // Guest form, no account.
@@ -39,6 +46,13 @@ foreach (array(
 ) as $post_id => $expected) {
 	if (yoga_question_answer_email_enabled($post_id) !== $expected) {
 		fwrite(STDERR, "Unexpected email setting for question {$post_id}.\n");
+		exit(1);
+	}
+}
+
+foreach (array(1 => false, 2 => false, 3 => true, 4 => true) as $post_id => $expected) {
+	if (yoga_question_has_account_conversation($post_id) !== $expected) {
+		fwrite(STDERR, "Unexpected conversation link setting for question {$post_id}.\n");
 		exit(1);
 	}
 }

@@ -442,7 +442,13 @@ add_action('admin_head-post-new.php', 'yoga_question_admin_styles');
 
 
 
-function yoga_send_question_answer_email(string $recipient_email, string $answer): bool {
+function yoga_question_has_account_conversation(int $post_id): bool {
+	return $post_id > 0
+		&& (int) get_post_field('post_author', $post_id) > 0
+		&& sanitize_key((string) get_post_meta($post_id, 'question_source', true)) === 'lk';
+}
+
+function yoga_send_question_answer_email(string $recipient_email, string $answer, int $post_id = 0): bool {
 	$recipient_email = sanitize_email($recipient_email);
 	if (!is_email($recipient_email)) {
 		return false;
@@ -456,6 +462,7 @@ function yoga_send_question_answer_email(string $recipient_email, string $answer
 	$subject = __('Ответ от администратора', 'yoga');
 	$answer_datetime = wp_date('j F Y в H:i');
 	$action_url = function_exists('yoga_get_lk_questions_url') ? yoga_get_lk_questions_url() : home_url('/');
+	$show_conversation_link = yoga_question_has_account_conversation($post_id);
 	if (function_exists('yoga_mail_send')) {
 		return yoga_mail_send('question-answer', array(
 			'to' => $recipient_email,
@@ -463,16 +470,19 @@ function yoga_send_question_answer_email(string $recipient_email, string $answer
 				'answer_datetime' => $answer_datetime,
 				'admin_answer' => nl2br(esc_html($answer_text)),
 				'action_url' => $action_url,
+				'omit_cta' => !$show_conversation_link,
 			),
 		));
 	}
 
 	$message = sprintf(
-		"Администратор ответил на ваш вопрос в личных сообщениях %1$s по МСК.\n\n%2$s\n\nОткрыть переписку: %3$s",
+		"Администратор ответил на ваш вопрос в личных сообщениях %1$s по МСК.\n\n%2$s",
 		$answer_datetime,
-		$answer_text,
-		$action_url
+		$answer_text
 	);
+	if ($show_conversation_link) {
+		$message .= "\n\nОткрыть переписку: " . $action_url;
+	}
 	return wp_mail($recipient_email, $subject, $message);
 }
 
@@ -535,7 +545,7 @@ function save_question_answer(int $post_id): void {
 		} elseif (!$email_notifications_enabled) {
 			$delivery_status = 'email_disabled';
 		} else {
-			$sent = yoga_send_question_answer_email($recipient_email, $answer);
+			$sent = yoga_send_question_answer_email($recipient_email, $answer, $post_id);
 			$delivery_status = $sent ? 'sent' : 'failed';
 		}
 
@@ -597,7 +607,7 @@ function save_question_answer(int $post_id): void {
 			return;
 		}
 
-		$sent = yoga_send_question_answer_email($recipient_email, $answer);
+		$sent = yoga_send_question_answer_email($recipient_email, $answer, $post_id);
 		update_post_meta($post_id, '_answer_delivery_status', $sent ? 'sent' : 'failed');
 		if ($sent) {
 			update_post_meta($post_id, '_answer_sent_at', current_time('mysql'));
@@ -622,7 +632,7 @@ function save_question_answer(int $post_id): void {
 			$message .= "Ответ: {$answer}\n\n";
 			$message .= "С уважением, администрация сайта";
 
-			yoga_send_question_answer_email((string) $user->user_email, $answer);
+			yoga_send_question_answer_email((string) $user->user_email, $answer, $post_id);
 		}
 	}
 }
