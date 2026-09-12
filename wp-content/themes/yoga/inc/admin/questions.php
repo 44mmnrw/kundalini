@@ -326,8 +326,6 @@ function render_question_request_meta_box(WP_Post $post): void {
 	$email = sanitize_email((string) get_post_meta($post->ID, 'contact_email', true));
 	$date = get_post_meta($post->ID, 'contact_date', true) ?: $post->post_date;
 	$answers = yoga_get_question_answers($post->ID);
-	$notification_user_id = yoga_get_question_notification_user_id($post->ID);
-	$email_notifications_enabled = $notification_user_id <= 0 || yoga_notification_preference($notification_user_id, 'question_answer_email', false);
 	wp_nonce_field('manage_question_answers', 'question_answers_nonce');
 	?>
 	<div class="yoga-question-admin-card">
@@ -344,7 +342,7 @@ function render_question_request_meta_box(WP_Post $post): void {
 			$status = isset($answer['status']) ? (string) $answer['status'] : '';
 			$sent_at = isset($answer['sent_at']) ? (string) $answer['sent_at'] : '';
 			$created_at = isset($answer['created_at']) ? (string) $answer['created_at'] : '';
-			$display_status = $status === 'failed' && !$email_notifications_enabled ? 'email_disabled' : $status;
+			$display_status = $status;
 			$status_labels = array(
 				'sent' => __('Письмо отправлено', 'yoga'),
 				'email_disabled' => __('Уведомления по эл. почте отключены', 'yoga'),
@@ -478,6 +476,16 @@ function yoga_send_question_answer_email(string $recipient_email, string $answer
 	return wp_mail($recipient_email, $subject, $message);
 }
 
+function yoga_question_answer_email_enabled(int $post_id): bool {
+	$contact_email = sanitize_email((string) get_post_meta($post_id, 'contact_email', true));
+	if (is_email($contact_email)) {
+		return true;
+	}
+
+	$user_id = yoga_get_question_notification_user_id($post_id);
+	return $user_id <= 0 || yoga_notification_preference($user_id, 'question_answer_email', false);
+}
+
 
 function save_question_answer(int $post_id): void {
 	if (!isset($_POST['answer_nonce']) || !wp_verify_nonce($_POST['answer_nonce'], 'save_question_answer')) {
@@ -520,8 +528,7 @@ function save_question_answer(int $post_id): void {
 			$recipient_email = $question_author ? sanitize_email((string) $question_author->user_email) : '';
 		}
 
-		$notification_user_id = yoga_get_question_notification_user_id($post_id);
-		$email_notifications_enabled = $notification_user_id <= 0 || yoga_notification_preference($notification_user_id, 'question_answer_email', false);
+		$email_notifications_enabled = yoga_question_answer_email_enabled($post_id);
 		$sent = false;
 		if ($recipient_email === '') {
 			$delivery_status = 'missing_recipient';
