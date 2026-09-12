@@ -1117,7 +1117,7 @@ function yoga_subscribe_handler() {
 	function yoga_send_support_autoreply(string $recipient_email, int $request_id, string $source): bool {
 		$recipient_email = sanitize_email($recipient_email);
 		$source = sanitize_key($source);
-		if (!is_email($recipient_email) || $request_id <= 0 || !in_array($source, array('faq', 'lk'), true)) {
+		if (!is_email($recipient_email) || $request_id <= 0 || !in_array($source, array('faq', 'lk', 'contacts', 'practice'), true)) {
 			return false;
 		}
 
@@ -1202,6 +1202,10 @@ function yoga_subscribe_handler() {
 
 
 		$request_id = save_contact_message($name, $email, $phone, $message, $source, $practice_id);
+		if ($request_id <= 0) {
+			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
+		}
+
 		$sent = function_exists('yoga_mail_send')
 			? yoga_mail_send('admin-contact-message', array(
 				'to' => $to,
@@ -1211,12 +1215,10 @@ function yoga_subscribe_handler() {
 			))
 			: wp_mail($to, $subject, nl2br(esc_html($body)), $headers);
 
-		if ($request_id <= 0) {
-			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
-		}
 		if (!$sent) {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
 		}
+		yoga_send_support_autoreply($email, $request_id, $source);
 
 
 		wp_send_json_success(array('message' => 'Сообщение отправлено успешно!'));
