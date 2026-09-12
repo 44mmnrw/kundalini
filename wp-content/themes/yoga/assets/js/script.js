@@ -4082,12 +4082,19 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.lk-notifications-page__settings', function() { switchLkSlide('9'); });
 	$(document).on('click', '.notification-toggle[data-preference-key]', function() {
 		var $toggle = $(this);
+		var $message = $toggle.closest('.notification-settings').find('.notification-settings__message');
 		var wasOn = $toggle.hasClass('is-on');
 		var isOn = !wasOn;
 		var key = $toggle.data('preference-key');
 
 		if (!key || typeof yoga_ajax === 'undefined' || $toggle.prop('disabled')) {
 			return;
+		}
+		$message.text('').prop('hidden', true);
+
+		function restoreToggle(message) {
+			$toggle.toggleClass('is-on', wasOn).attr('aria-pressed', wasOn ? 'true' : 'false');
+			$message.text(message || 'Не удалось сохранить настройку. Попробуйте ещё раз.').prop('hidden', false);
 		}
 
 		$toggle
@@ -4103,10 +4110,19 @@ jQuery(document).ready(function($) {
 			enabled: isOn ? 1 : 0
 		}).done(function(response) {
 			if (!response || response.success !== true) {
-				$toggle.toggleClass('is-on', wasOn).attr('aria-pressed', wasOn ? 'true' : 'false');
+				restoreToggle(response && response.data && response.data.message);
+			} else if (response.data && typeof response.data.enabled === 'boolean') {
+				$toggle.toggleClass('is-on', response.data.enabled).attr('aria-pressed', response.data.enabled ? 'true' : 'false');
 			}
-		}).fail(function() {
-			$toggle.toggleClass('is-on', wasOn).attr('aria-pressed', wasOn ? 'true' : 'false');
+		}).fail(function(xhr) {
+			var response = xhr.responseJSON;
+			var error = response && response.data && response.data.message;
+			if (!error && xhr.status === 401) {
+				error = 'Сессия завершилась. Войдите снова.';
+			} else if (!error && xhr.status === 403) {
+				error = 'Срок действия страницы истёк. Обновите её и попробуйте ещё раз.';
+			}
+			restoreToggle(error);
 		}).always(function() {
 			$toggle.removeAttr('aria-busy').prop('disabled', false);
 		});

@@ -327,6 +327,7 @@
 						<div class="lk-slide__content">
 							<div class="notification-settings">
 								<div class="notification-settings__title"><button type="button" class="notification-settings__back" aria-label="<?php esc_attr_e('Назад к уведомлениям', 'yoga'); ?>"><svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg></button><h2><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h2></div>
+								<p class="notification-settings__message" role="status" aria-live="polite" hidden></p>
 								<div class="notification-settings__columns"><span><?php esc_html_e('Тип уведомления', 'yoga'); ?></span><span><?php esc_html_e('На сайте', 'yoga'); ?></span><span><?php esc_html_e('На почту', 'yoga'); ?></span></div>
 								<?php $notification_preference_defaults = yoga_get_notification_preference_defaults();
 								$notification_settings = array(

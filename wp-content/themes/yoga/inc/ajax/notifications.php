@@ -10,23 +10,32 @@ if (!defined('ABSPATH')) {
 
 function yoga_save_notification_preference(): void {
 	if (!is_user_logged_in()) {
-		wp_send_json_error(null, 401);
+		wp_send_json_error(array('message' => __('Сессия завершилась. Войдите снова.', 'yoga')), 401);
 	}
 
-	check_ajax_referer('yoga_ajax_nonce', 'nonce');
+	if (!check_ajax_referer('yoga_ajax_nonce', 'nonce', false)) {
+		wp_send_json_error(array('message' => __('Срок действия страницы истёк. Обновите её и попробуйте ещё раз.', 'yoga')), 403);
+	}
 	$key = sanitize_key((string) ($_POST['key'] ?? ''));
 	if (!array_key_exists($key, yoga_get_notification_preference_defaults())) {
-		wp_send_json_error(null, 400);
+		wp_send_json_error(array('message' => __('Эта настройка недоступна. Обновите страницу.', 'yoga')), 400);
 	}
 
-	$preferences = get_user_meta(get_current_user_id(), 'yoga_notification_preferences', true);
+	$user_id = get_current_user_id();
+	$preferences = get_user_meta($user_id, 'yoga_notification_preferences', true);
 	$preferences = is_array($preferences) ? $preferences : array();
-	$preferences[$key] = !empty($_POST['enabled']);
-	update_user_meta(get_current_user_id(), 'yoga_notification_preferences', $preferences);
+	$enabled = !empty($_POST['enabled']);
+	$preferences[$key] = $enabled;
+	update_user_meta($user_id, 'yoga_notification_preferences', $preferences);
+	$saved = get_user_meta($user_id, 'yoga_notification_preferences', true);
+	if (!is_array($saved) || !array_key_exists($key, $saved) || (bool) $saved[$key] !== $enabled) {
+		wp_send_json_error(array('message' => __('Не удалось сохранить настройку. Попробуйте ещё раз.', 'yoga')), 500);
+	}
 
-	wp_send_json_success();
+	wp_send_json_success(array('enabled' => $enabled));
 }
 add_action('wp_ajax_yoga_save_notification_preference', 'yoga_save_notification_preference');
+add_action('wp_ajax_nopriv_yoga_save_notification_preference', 'yoga_save_notification_preference');
 
 function yoga_mark_question_answer_notifications_read(): void {
 	if (!is_user_logged_in()) {
