@@ -42,6 +42,9 @@ final class Yoga_Mail_Renderer {
 				return $result;
 			}
 		}
+		if ($template_id === 'wp-email-changed') {
+			$body = $this->format_email_change_addresses((string) $body, $data);
+		}
 
 		$body_html = $this->inline_content_styles((string) $body);
 		$settings = $this->registry->settings();
@@ -51,6 +54,9 @@ final class Yoga_Mail_Renderer {
 		$html = $this->responsive_html((string) ob_get_clean());
 
 		$plain_body = $this->plain_from_html((string) $body);
+		if ($template_id === 'wp-email-changed') {
+			$plain_body = str_replace("\u{200B}", '', $plain_body);
+		}
 		$text_parts = array_filter(array((string) $heading, $plain_body));
 		if ((string) $cta_label !== '' && (string) $cta_url !== '') {
 			$text_parts[] = (string) $cta_label . ': ' . (string) $cta_url;
@@ -78,6 +84,48 @@ final class Yoga_Mail_Renderer {
 			'html'        => $html,
 			'text'        => trim(implode("\n\n", $text_parts)),
 		);
+	}
+
+	/** Keep the two account addresses as colored text, even in clients that auto-link emails. */
+	private function format_email_change_addresses(string $body, array $data): string {
+		$addresses = array(
+			'old_email' => '#1f1f1f',
+			'new_email' => '#9153e1',
+		);
+		$valid_addresses = array();
+		foreach ($addresses as $key => $color) {
+			$address = trim((string) ($data[$key] ?? ''));
+			if (is_email($address)) {
+				$valid_addresses[$address] = $color;
+			}
+		}
+		if (!$valid_addresses) {
+			return $body;
+		}
+		uksort($valid_addresses, static function (string $a, string $b): int {
+			return strlen($b) <=> strlen($a);
+		});
+
+		// Saved template content may already wrap an address in a mailto link.
+		$body = preg_replace_callback('/<a\b[^>]*>(.*?)<\/a>/is', static function (array $matches) use ($valid_addresses): string {
+			$label = trim(html_entity_decode(wp_strip_all_tags($matches[1]), ENT_QUOTES, 'UTF-8'));
+			foreach ($valid_addresses as $address => $color) {
+				if (strcasecmp($label, $address) === 0) {
+					return esc_html($address);
+				}
+			}
+			return $matches[0];
+		}, $body);
+
+		return preg_replace_callback('/(?<=>)[^<]+(?=<)/u', static function (array $matches) use ($valid_addresses): string {
+			$text = $matches[0];
+			foreach ($valid_addresses as $address => $color) {
+				$escaped = esc_html($address);
+				$display = str_replace('@', '&#8203;@', $escaped);
+				$text = str_replace($escaped, '<span style="color:' . $color . ';text-decoration:none;">' . $display . '</span>', $text);
+			}
+			return $text;
+		}, $body);
 	}
 
 	/**
