@@ -86,7 +86,7 @@ final class Yoga_Mail_Renderer {
 		);
 	}
 
-	/** Keep the two account addresses as colored text, even in clients that auto-link emails. */
+	/** Split addresses across table cells so mail clients cannot turn them into links. */
 	private function format_email_change_addresses(string $body, array $data): string {
 		$addresses = array(
 			'old_email' => '#1f1f1f',
@@ -106,7 +106,18 @@ final class Yoga_Mail_Renderer {
 			return strlen($b) <=> strlen($a);
 		});
 
-		// Saved template content may already wrap an address in a mailto link.
+		// The default and saved templates place each address in its own paragraph.
+		$body = preg_replace_callback('/<p\b[^>]*>.*?<\/p>/is', static function (array $matches) use ($valid_addresses): string {
+			$label = trim(html_entity_decode(wp_strip_all_tags($matches[0]), ENT_QUOTES, 'UTF-8'));
+			foreach ($valid_addresses as $address => $color) {
+				if (strcasecmp($label, $address) === 0) {
+					return self::email_address_cells($address, $color);
+				}
+			}
+			return $matches[0];
+		}, $body);
+
+		// A customized template may put a mailto link around the address elsewhere.
 		$body = preg_replace_callback('/<a\b[^>]*>(.*?)<\/a>/is', static function (array $matches) use ($valid_addresses): string {
 			$label = trim(html_entity_decode(wp_strip_all_tags($matches[1]), ENT_QUOTES, 'UTF-8'));
 			foreach ($valid_addresses as $address => $color) {
@@ -126,6 +137,24 @@ final class Yoga_Mail_Renderer {
 			}
 			return $text;
 		}, $body);
+	}
+
+	private static function email_address_cells(string $address, string $color): string {
+		list($local, $domain) = explode('@', $address, 2);
+		$fragments = array($local, '@');
+		$domain_parts = explode('.', $domain);
+		foreach ($domain_parts as $index => $part) {
+			if ($index > 0) {
+				$fragments[] = '.';
+			}
+			$fragments[] = $part;
+		}
+		$style = 'padding:0;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1;font-weight:700;color:' . $color . ';white-space:nowrap;text-decoration:none;';
+		$cells = '';
+		foreach ($fragments as $fragment) {
+			$cells .= '<td valign="middle" style="' . $style . '">' . esc_html($fragment) . '</td>';
+		}
+		return '<table class="yoga-mail-address" role="presentation" cellpadding="0" cellspacing="0" border="0" align="right" style="margin:0 0 0 auto;border-collapse:collapse;"><tr>' . $cells . '</tr></table>';
 	}
 
 	/**
