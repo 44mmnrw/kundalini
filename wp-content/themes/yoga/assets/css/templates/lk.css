@@ -1128,7 +1128,8 @@
 .notification-settings__row > div:first-child { display:flex; flex-direction:column; }.notification-settings__row strong { font:700 1.125rem/1.5 var(--font-family-base); }
 .notification-settings__toggles { display:grid; grid-template-columns:5.5625rem 5.5625rem; gap:.625rem; place-items:center; }.notification-settings__toggles i { display:block; width:2.5rem; height:1.5rem; }
 .notification-toggle { width:2.5rem; height:1.5rem; padding:.125rem; border:0; border-radius:6.25rem; background:#dbdbdb; cursor:pointer; appearance:none; }.notification-toggle:after { content:""; display:block; width:1.125rem; height:1.125rem; border-radius:50%; background:#fff; transform:translateX(0); transition:transform .2s ease; }.notification-toggle.is-on { background:var(--color-violet); }.notification-toggle.is-on:after { transform:translateX(1.125rem); }
-.notification-toggle.is-locked.is-on { background:#aeb0b7; opacity:1; cursor:not-allowed; }
+.notification-toggle.is-locked { background:#dbdbdb; opacity:1; cursor:not-allowed; }
+.notification-toggle.is-locked.is-on { background:#aeb0b7; }
 .notification-toggle[aria-disabled="true"] { cursor:default; }
 @media(max-width:575px){.notification-settings__title h2{font-size:1.625rem;line-height:1}.notification-settings__columns{grid-template-columns:1fr 3rem 3rem;font-size:.625rem}.notification-settings__row{grid-template-columns:1fr 6.625rem}.notification-settings__toggles{grid-template-columns:3rem 3rem;gap:.625rem}.notification-settings__row strong{font-size:1rem}}
 

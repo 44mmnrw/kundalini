@@ -357,6 +357,7 @@
 											$site_key = (string) ($row[4] ?? '');
 											$email_key = (string) ($row[5] ?? '');
 											$site_locked = $site_key !== '' && yoga_is_required_site_notification_preference($site_key);
+											$email_locked = $email_key !== '' && yoga_is_locked_notification_preference($email_key);
 											$site_default = $site_key !== '' ? (bool) ($notification_preference_defaults[$site_key] ?? $row[2]) : (bool) $row[2];
 											$email_default = $email_key !== '' ? (bool) ($notification_preference_defaults[$email_key] ?? $row[3]) : (bool) $row[3];
 											$site_enabled = $site_key !== '' ? yoga_notification_preference((int) $user_id, $site_key, $site_default) : $site_default;
@@ -366,7 +367,7 @@
 												<div><strong><?php echo esc_html($row[0]); ?></strong><?php if ($row[1] !== ''): ?><span><?php echo esc_html($row[1]); ?></span><?php endif; ?></div>
 												<div class="notification-settings__toggles">
 													<?php if ($row[2] !== null): ?><button type="button" class="notification-toggle<?php echo $site_enabled ? ' is-on' : ''; ?><?php echo $site_locked ? ' is-locked' : ''; ?>"<?php if ($site_locked): ?> disabled aria-disabled="true" aria-label="<?php esc_attr_e('Уведомления на сайте всегда включены', 'yoga'); ?>" title="<?php esc_attr_e('Уведомления на сайте всегда включены', 'yoga'); ?>"<?php elseif ($site_key !== ''): ?> data-preference-key="<?php echo esc_attr($site_key); ?>"<?php else: ?> disabled aria-disabled="true"<?php endif; ?> aria-pressed="<?php echo $site_enabled ? 'true' : 'false'; ?>"></button><?php else: ?><i></i><?php endif; ?>
-													<button type="button" class="notification-toggle<?php echo $email_enabled ? ' is-on' : ''; ?>"<?php if ($email_key !== ''): ?> data-preference-key="<?php echo esc_attr($email_key); ?>"<?php else: ?> disabled aria-disabled="true"<?php endif; ?> aria-pressed="<?php echo $email_enabled ? 'true' : 'false'; ?>"></button>
+													<button type="button" class="notification-toggle<?php echo $email_enabled ? ' is-on' : ''; ?><?php echo $email_locked ? ' is-locked' : ''; ?>"<?php if ($email_locked): ?> disabled aria-disabled="true" aria-label="<?php esc_attr_e('Изменение уведомлений по почте недоступно', 'yoga'); ?>" title="<?php esc_attr_e('Изменение уведомлений по почте недоступно', 'yoga'); ?>"<?php elseif ($email_key !== ''): ?> data-preference-key="<?php echo esc_attr($email_key); ?>"<?php else: ?> disabled aria-disabled="true"<?php endif; ?> aria-pressed="<?php echo $email_enabled ? 'true' : 'false'; ?>"></button>
 												</div>
 											</div>
 										<?php endforeach; ?>

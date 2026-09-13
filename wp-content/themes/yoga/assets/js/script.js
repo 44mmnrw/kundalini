@@ -5286,13 +5286,13 @@ jQuery(function() {
             nonce: yoga_ajax.email_verification_nonce
         }).done(function(response) {
             window.yogaShowLkSuccessToast(
-                responseMessage(response, 'Письмо со ссылкой для подтверждения отправлено'),
+                responseMessage(response, 'Ссылка для подтверждения отправлена на почту'),
                 !response.success
             );
         }).fail(function(xhr) {
             var data = xhr.responseJSON && xhr.responseJSON.data;
             if (xhr.status === 429 && data && data.code === 'rate_limited') {
-                window.yogaShowLkSuccessToast('Письмо со ссылкой для подтверждения отправлено');
+                window.yogaShowLkSuccessToast('Ссылка для подтверждения отправлена на почту');
                 return;
             }
             window.yogaShowLkSuccessToast(

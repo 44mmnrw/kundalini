@@ -230,5 +230,5 @@ function yoga_send_email_verification_link_ajax() {
 		}
 		wp_send_json_error($data, $result->get_error_code() === 'rate_limited' ? 429 : 422);
 	}
-	wp_send_json_success(array('message' => 'Письмо со ссылкой для подтверждения отправлено', 'retry_after' => $result['retry_after']));
+	wp_send_json_success(array('message' => 'Ссылка для подтверждения отправлена на почту', 'retry_after' => $result['retry_after']));
 }
