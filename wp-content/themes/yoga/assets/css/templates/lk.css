@@ -1521,13 +1521,21 @@
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.25;
-  white-space: nowrap;
+  max-width: calc(100vw - 2rem);
+  white-space: normal;
+  text-align: center;
   box-sizing: border-box;
   transition: 0.4s ease;
 }
 .lk-form-safe__text.active {
   display: inline-flex;
   opacity: 1;
+}
+.lk-form-safe__text.is-error {
+  background: #b42318;
+}
+.lk-form-safe__text.is-error::after {
+  display: none;
 }
 .lk-form-safe__text::after {
   content: "";
@@ -1569,47 +1577,6 @@
 	color: #9153E1;
 }
 
-.lk-email-verification {
-	margin-top: 12px;
-}
-
-.lk-email-verification__controls {
-	display: flex;
-	gap: 10px;
-	align-items: center;
-}
-
-.lk-email-verification__code {
-	max-width: 150px;
-	letter-spacing: .2em;
-}
-
-.lk-email-verification__verify {
-	border: 0;
-}
-
-.lk-email-verification__resend {
-	margin-top: 10px;
-	padding: 0;
-	border: 0;
-	background: transparent;
-	text-decoration: underline;
-	cursor: pointer;
-}
-
-.lk-email-verification__resend:disabled {
-	cursor: default;
-	opacity: .6;
-}
-
-.lk-email-verification__message {
-	margin-top: 8px;
-	color: #42855b;
-}
-
-.lk-email-verification__message.is-error {
-	color: #b42318;
-}
 .lk-timezone-select {
   position: relative;
   width: 100%;

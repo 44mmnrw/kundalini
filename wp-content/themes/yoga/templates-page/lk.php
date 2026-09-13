@@ -111,15 +111,6 @@
 									<p><?php echo $email_verified ? 'эл. почта подтверждена' : 'эл. почта не подтверждена'; ?></p>
 									<?php if (!$email_verified) : ?>
 										<a href="#" class="lk-email-confirmation__link">Подтвердить эл. почту</a>
-										<div class="lk-email-verification" hidden>
-											<p>Введите 4-значный код из письма</p>
-											<div class="lk-email-verification__controls">
-												<input type="text" class="input lk-email-verification__code" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="0000">
-												<button type="button" class="btn lk-email-verification__verify"><span>Подтвердить</span></button>
-											</div>
-											<button type="button" class="lk-email-verification__resend">Отправить код повторно</button>
-											<p class="lk-email-verification__message" role="status" aria-live="polite"></p>
-										</div>
 									<?php endif; ?>
 								</div>
 											</div>

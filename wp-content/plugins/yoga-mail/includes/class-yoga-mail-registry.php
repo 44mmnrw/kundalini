@@ -226,17 +226,20 @@ final class Yoga_Mail_Registry {
 			'wp-comment-notification' => array('label' => 'WordPress: новый комментарий', 'group' => 'WordPress', 'defaults' => $existing),
 			'wp-comment-moderation' => array('label' => 'WordPress: модерация комментария', 'group' => 'WordPress', 'defaults' => $existing),
 			'wp-recovery-mode' => array('label' => 'WordPress: режим восстановления', 'group' => 'WordPress', 'defaults' => $existing),
-			'email-verification' => array(
-				'label' => 'Подтверждение email: код',
+			'email-verification-profile' => array(
+				'label' => 'Подтверждение email: ссылка из профиля',
 				'group' => 'Kundalini',
 				'defaults' => array(
-					'subject' => 'Ваш код подтверждения',
-					'preheader' => 'Код для подтверждения вашей электронной почты',
-					'heading' => 'Ваш код подтверждения',
-					'body' => '<p style="margin:0;line-height:1.5;font-weight:400;text-align:center;">Введите этот код на сайте, чтобы подтвердить свою эл. почту.</p><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:30px auto 0;border-collapse:separate;"><tr><td width="44" height="54" align="center" valign="middle" bgcolor="#f6f6f9" style="width:44px;height:54px;background-color:#f6f6f9;border:1px solid #dedee1;border-radius:12px;font-size:22px;line-height:1;font-weight:700;color:#1f1f1f;text-align:center;">{{code_digit_1}}</td><td width="15" style="width:15px;font-size:1px;line-height:1px;">&nbsp;</td><td width="44" height="54" align="center" valign="middle" bgcolor="#f6f6f9" style="width:44px;height:54px;background-color:#f6f6f9;border:1px solid #dedee1;border-radius:12px;font-size:22px;line-height:1;font-weight:700;color:#1f1f1f;text-align:center;">{{code_digit_2}}</td><td width="15" style="width:15px;font-size:1px;line-height:1px;">&nbsp;</td><td width="44" height="54" align="center" valign="middle" bgcolor="#f6f6f9" style="width:44px;height:54px;background-color:#f6f6f9;border:1px solid #dedee1;border-radius:12px;font-size:22px;line-height:1;font-weight:700;color:#1f1f1f;text-align:center;">{{code_digit_3}}</td><td width="15" style="width:15px;font-size:1px;line-height:1px;">&nbsp;</td><td width="44" height="54" align="center" valign="middle" bgcolor="#f6f6f9" style="width:44px;height:54px;background-color:#f6f6f9;border:1px solid #dedee1;border-radius:12px;font-size:22px;line-height:1;font-weight:700;color:#1f1f1f;text-align:center;">{{code_digit_4}}</td></tr></table>',
-					'cta_label' => '',
-					'cta_url' => '',
-					'footer_note' => 'Код действует {{ttl_minutes}} мин. Никому не сообщайте его — сотрудники Кундалини Класс никогда не спрашивают код.',
+					'subject' => 'Подтвердите эл. почту',
+					'preheader' => 'Перейдите по ссылке, чтобы подтвердить эл. почту',
+					'heading' => 'Подтверждение эл. почты',
+					'body' => '<p style="margin:0;line-height:1;font-weight:700;text-align:center;">Сат Нам, {{user_name}}!</p><p style="margin:15px 0 0;line-height:1.5;font-weight:400;text-align:center;">Перейдите по ссылке ниже, чтобы подтвердить вашу эл. почту.</p>',
+					'cta_label' => 'Подтвердить эл. почту',
+					'cta_url' => '{{action_url}}',
+					'footer_note' => 'Ссылка активна 24 ч. Если вы не запрашивали подтверждение — просто проигнорируйте это письмо.',
+				),
+				'tags' => array(
+					'action_url' => array('type' => 'url', 'example' => home_url('/?yoga_verify_email=1&uid=42&token=preview')),
 				),
 			),
 			'email-verification-registration' => array(

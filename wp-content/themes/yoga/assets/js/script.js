@@ -5223,12 +5223,12 @@ jQuery(document).on('click', function(e) {
     }
 })();
 
-window.yogaShowLkSuccessToast = function(message) {
+window.yogaShowLkSuccessToast = function(message, isError) {
     var $toast = jQuery('.lk-form-safe__text').first();
     if (!$toast.length) return;
 
     window.clearTimeout($toast.data('hideTimer'));
-    $toast.text(message || '').addClass('active');
+    $toast.text(message || '').toggleClass('is-error', !!isError).addClass('active');
     $toast.data('hideTimer', window.setTimeout(function() {
         $toast.removeClass('active');
     }, 3000));
@@ -5257,12 +5257,6 @@ jQuery(function() {
 (function($) {
     'use strict';
 
-    function verificationMessage($box, text, isError) {
-        $box.find('.lk-email-verification__message')
-            .text(text || '')
-            .toggleClass('is-error', !!isError);
-    }
-
     function responseMessage(response, fallback) {
         if (response && response.data) {
             if (typeof response.data === 'string') return response.data;
@@ -5271,181 +5265,62 @@ jQuery(function() {
         return fallback;
     }
 
-    function startEmailResendTimer($button, seconds) {
-        var remaining = parseInt(seconds, 10) || 60;
-        window.clearInterval($button.data('emailTimer'));
-        $button.prop('disabled', true).text('Отправить повторно через ' + remaining + ' сек.');
-        var timer = window.setInterval(function() {
-            remaining--;
-            if (remaining <= 0) {
-                window.clearInterval(timer);
-                $button.prop('disabled', false).text('Отправить код повторно');
-                return;
-            }
-            $button.text('Отправить повторно через ' + remaining + ' сек.');
-        }, 1000);
-        $button.data('emailTimer', timer);
-    }
-
     $(document).on('click', '.lk-email-confirmation__link', function(e) {
         e.preventDefault();
-        $('.email-confirmation-modal__email').text(yoga_ajax.user_email || '');
-        $('.email-confirmation-modal__message').empty().removeClass('is-error');
-        $('.email-confirmation-modal__code').val('');
-        $('.email-confirmation-overlay').addClass('is-open').attr('aria-hidden', 'false');
-        $('body').addClass('email-confirmation-is-open');
-        $('.email-confirmation-modal__code').trigger('focus');
-        $('.email-confirmation-modal__resend').trigger('click');
-    });
-
-    $(document).on('input', '.lk-email-verification__code', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 4);
-    });
-
-    $(document).on('click', '.lk-email-verification__resend', function() {
-        if (typeof yoga_ajax === 'undefined') return;
-        var $button = $(this);
-        var $box = $button.closest('.lk-email-verification');
-        $button.prop('disabled', true);
-        $.post(yoga_ajax.ajax_url, {
-            action: 'yoga_send_email_verification_code',
-            nonce: yoga_ajax.email_verification_nonce
-        }).done(function(response) {
-            verificationMessage($box, responseMessage(response, 'Код отправлен.'), !response.success);
-            if (response.success) startEmailResendTimer($button, response.data.retry_after);
-        }).fail(function(xhr) {
-            var response = xhr.responseJSON;
-            verificationMessage($box, responseMessage(response, 'Не удалось отправить код.'), true);
-            var retryAfter = response && response.data && response.data.retry_after;
-            if (retryAfter) startEmailResendTimer($button, retryAfter);
-            else $button.prop('disabled', false);
-        });
-    });
-
-    $(document).on('click', '.lk-email-verification__verify', function() {
-        if (typeof yoga_ajax === 'undefined') return;
-        var $button = $(this);
-        var $box = $button.closest('.lk-email-verification');
-        var code = $box.find('.lk-email-verification__code').val();
-        if (!/^\d{4}$/.test(code)) {
-			verificationMessage($box, 'Введите 4 цифры из письма.', true);
+        var $link = $(this);
+        if ($link.data('sending')) return;
+        if (typeof yoga_ajax === 'undefined') {
+            window.yogaShowLkSuccessToast('Не удалось отправить ссылку. Обновите страницу и попробуйте ещё раз.', true);
             return;
         }
-        $button.prop('disabled', true);
+
+        var enteredEmail = $.trim($('.lk-form-item_email input[name="email"]').val() || '');
+        if (enteredEmail.toLowerCase() !== (yoga_ajax.user_email || '').toLowerCase()) {
+            window.yogaShowLkSuccessToast('Сначала сохраните новый адрес эл. почты.', true);
+            return;
+        }
+
+        $link.data('sending', true).attr('aria-disabled', 'true');
         $.post(yoga_ajax.ajax_url, {
-            action: 'yoga_verify_email_code',
-            nonce: yoga_ajax.email_verification_nonce,
-            code: code
+            action: 'yoga_send_email_verification_link',
+            nonce: yoga_ajax.email_verification_nonce
         }).done(function(response) {
-            if (response.success) {
-                window.yogaQueueLkSuccessToast('Электронная почта подтверждена');
-                location.reload();
+            window.yogaShowLkSuccessToast(
+                responseMessage(response, 'Письмо со ссылкой для подтверждения отправлено'),
+                !response.success
+            );
+        }).fail(function(xhr) {
+            var data = xhr.responseJSON && xhr.responseJSON.data;
+            if (xhr.status === 429 && data && data.code === 'rate_limited') {
+                window.yogaShowLkSuccessToast('Письмо со ссылкой для подтверждения отправлено');
                 return;
             }
-            verificationMessage($box, responseMessage(response, 'Неверный код.'), true);
-        }).fail(function(xhr) {
-            verificationMessage($box, responseMessage(xhr.responseJSON, 'Не удалось проверить код.'), true);
+            window.yogaShowLkSuccessToast(
+                responseMessage(xhr.responseJSON, 'Не удалось отправить ссылку. Попробуйте ещё раз позже.'),
+                true
+            );
         }).always(function() {
-            $button.prop('disabled', false);
+            $link.removeData('sending').removeAttr('aria-disabled');
         });
     });
-})(jQuery);
 
-(function($) {
-    'use strict';
-
-    function modalEmailMessage(text, error) {
-        $('.email-confirmation-modal__message').text(text || '').toggleClass('is-error', !!error);
-    }
-
-    function modalResponseMessage(response, fallback) {
-        return response && response.data && response.data.message ? response.data.message : fallback;
-    }
-
-    function modalResendTimer($button, seconds) {
-        var remaining = parseInt(seconds, 10) || 60;
-        window.clearInterval($button.data('timer'));
-        $button.prop('disabled', true).text('Отправить повторно через ' + remaining + ' сек.');
-        var timer = window.setInterval(function() {
-            remaining--;
-            if (remaining <= 0) {
-                window.clearInterval(timer);
-                $button.prop('disabled', false).text('Отправить код повторно');
-            } else {
-                $button.text('Отправить повторно через ' + remaining + ' сек.');
-            }
-        }, 1000);
-        $button.data('timer', timer);
-    }
-
-    $(document).on('input', '.email-confirmation-modal__code', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 4);
-    });
-
-    function closeEmailConfirmationModal() {
-        $('.email-confirmation-overlay').removeClass('is-open').attr('aria-hidden', 'true');
-        $('body').removeClass('email-confirmation-is-open');
-        $('.lk-email-confirmation__link').trigger('focus');
-    }
-
-    $(document).on('click', '.email-confirmation-modal__cancel, .email-confirmation-modal__close', function() {
-        closeEmailConfirmationModal();
-    });
-
-    $(document).on('click', '.email-confirmation-overlay', function(e) {
-        if (e.target === this) closeEmailConfirmationModal();
-    });
-
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape' && $('.email-confirmation-overlay').hasClass('is-open')) {
-            closeEmailConfirmationModal();
+    $(function() {
+        var url = new URL(window.location.href);
+        var message = '';
+        var isError = false;
+        if (url.searchParams.get('email_verified') === '1') {
+            message = 'Электронная почта подтверждена.';
+            url.searchParams.delete('email_verified');
+        } else if (url.searchParams.get('email_verification') === 'invalid') {
+            message = 'Ссылка недействительна или срок её действия истёк.';
+            isError = true;
+            url.searchParams.delete('email_verification');
+        }
+        if (message) {
+            window.yogaShowLkSuccessToast(message, isError);
+            window.history.replaceState({}, '', url.toString());
         }
     });
-
-    $(document).on('click', '.email-confirmation-modal__resend', function() {
-        var $button = $(this);
-        $button.prop('disabled', true);
-        $.post(yoga_ajax.ajax_url, {
-            action: 'yoga_send_email_verification_code',
-            nonce: yoga_ajax.email_verification_nonce
-        }).done(function(response) {
-            modalEmailMessage(modalResponseMessage(response, 'Код отправлен.'), !response.success);
-            if (response.success) modalResendTimer($button, response.data.retry_after);
-        }).fail(function(xhr) {
-            modalEmailMessage(modalResponseMessage(xhr.responseJSON, 'Не удалось отправить код.'), true);
-            var retryAfter = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.retry_after;
-            if (retryAfter) modalResendTimer($button, retryAfter);
-            else $button.prop('disabled', false);
-        });
-    });
-
-    $(document).on('submit', '.email-confirmation-modal__form', function(e) {
-        e.preventDefault();
-        var code = $('.email-confirmation-modal__code').val();
-        var $button = $('.email-confirmation-modal__confirm');
-        if (!/^\d{4}$/.test(code)) {
-			modalEmailMessage('Введите 4 цифры из письма.', true);
-            return;
-        }
-        $button.prop('disabled', true);
-        $.post(yoga_ajax.ajax_url, {
-            action: 'yoga_verify_email_code',
-            nonce: yoga_ajax.email_verification_nonce,
-            code: code
-        }).done(function(response) {
-            if (response.success) {
-                window.yogaQueueLkSuccessToast('Электронная почта подтверждена');
-                location.reload();
-            } else {
-                modalEmailMessage(modalResponseMessage(response, 'Неверный код.'), true);
-            }
-        }).fail(function(xhr) {
-            modalEmailMessage(modalResponseMessage(xhr.responseJSON, 'Не удалось проверить код.'), true);
-        }).always(function() {
-            $button.prop('disabled', false);
-        });
-    });
-
     document.querySelectorAll('.about__main_sec .about-img').forEach(function(imageWrap) {
         imageWrap.addEventListener('wow', function() {
             var frame = imageWrap.querySelector('.about-img__frame');

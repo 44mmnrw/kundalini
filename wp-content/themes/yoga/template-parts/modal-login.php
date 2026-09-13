@@ -189,27 +189,3 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
         </div>
     </div>
 </div>
-<div class="email-confirmation-overlay" aria-hidden="true">
-    <div class="email-confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="email-confirmation-title">
-        <button type="button" class="email-confirmation-modal__close" aria-label="Закрыть">
-            <svg aria-hidden="true" focusable="false">
-				<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>"></use>
-            </svg>
-        </button>
-                <h3 id="email-confirmation-title">Подтверждение<br>электронной почты</h3>
-                <div class="email-confirmation-modal__description">
-                    <p>На указанный вами email <strong class="email-confirmation-modal__email"></strong> отправлено письмо с кодом подтверждения.</p>
-                    <p>Введите код ниже, чтобы завершить проверку доступа к электронной почте.</p>
-                </div>
-                <form class="email-confirmation-modal__form" action="#" method="post">
-                    <label for="email-confirmation-code">Код подтверждения:</label>
-                    <input id="email-confirmation-code" class="email-confirmation-modal__code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-describedby="email-confirmation-message">
-                    <button type="button" class="email-confirmation-modal__resend">Отправить код повторно</button>
-                    <p id="email-confirmation-message" class="email-confirmation-modal__message" role="status" aria-live="polite"></p>
-                    <div class="email-confirmation-modal__buttons">
-                        <button type="button" class="email-confirmation-modal__cancel">Отменить</button>
-                        <button type="submit" class="email-confirmation-modal__confirm">Подтвердить</button>
-                    </div>
-                </form>
-    </div>
-</div>

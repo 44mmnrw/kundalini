@@ -1742,7 +1742,11 @@ function yoga_subscribe_handler() {
 				if (function_exists('yoga_clear_email_verification_code')) {
 					yoga_clear_email_verification_code($user_id);
 				}
+				if (function_exists('yoga_clear_email_verification_link')) {
+					yoga_clear_email_verification_link($user_id);
+				}
 				delete_user_meta($user_id, 'yoga_email_code_sent_at');
+				delete_user_meta($user_id, 'yoga_email_link_sent_at');
 			}
 
 			if (isset($_POST['timezone'])) {
