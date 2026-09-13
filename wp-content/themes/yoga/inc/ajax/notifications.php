@@ -20,14 +20,13 @@ function yoga_save_notification_preference(): void {
 	if (!array_key_exists($key, yoga_get_notification_preference_defaults())) {
 		wp_send_json_error(array('message' => __('Эта настройка недоступна. Обновите страницу.', 'yoga')), 400);
 	}
-	if (yoga_is_locked_notification_preference($key)) {
-		wp_send_json_error(array('message' => __('Эту настройку нельзя изменить.', 'yoga')), 400);
-	}
-
 	$user_id = get_current_user_id();
 	$preferences = get_user_meta($user_id, 'yoga_notification_preferences', true);
 	$preferences = is_array($preferences) ? $preferences : array();
 	$enabled = !empty($_POST['enabled']);
+	if (yoga_is_required_site_notification_preference($key) && !$enabled) {
+		wp_send_json_error(array('message' => __('Уведомления на сайте для этого события всегда включены.', 'yoga')), 400);
+	}
 	$preferences[$key] = $enabled;
 	update_user_meta($user_id, 'yoga_notification_preferences', $preferences);
 	$saved = get_user_meta($user_id, 'yoga_notification_preferences', true);

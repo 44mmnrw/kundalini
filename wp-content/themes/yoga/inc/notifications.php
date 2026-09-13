@@ -79,15 +79,6 @@ function yoga_is_required_site_notification_preference(string $key): bool {
 	return in_array($key, array('question_answer_site', 'comment_reply_site'), true);
 }
 
-function yoga_is_locked_notification_preference(string $key): bool {
-	return in_array($key, array(
-		'question_answer_site',
-		'question_answer_email',
-		'comment_reply_site',
-		'comment_reply_email',
-	), true);
-}
-
 function yoga_notification_preference(int $user_id, string $key, bool $default = true): bool {
 	if (yoga_is_required_site_notification_preference($key)) {
 		return true;
@@ -105,7 +96,7 @@ function yoga_get_notification_preference_defaults(): array {
 		'subscription_ended_site' => true,
 		'subscription_ended_email' => true,
 		'question_answer_site' => true,
-		'question_answer_email' => false,
+		'question_answer_email' => true,
 		'comment_reply_site' => true,
 		'comment_reply_email' => true,
 		'sadhana_started_email' => true,
