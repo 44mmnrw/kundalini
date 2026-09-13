@@ -54,6 +54,7 @@
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 	require_once get_template_directory() . '/inc/ajax/email-verification.php';
 	require_once get_template_directory() . '/inc/auth/login-modal.php';
+	require_once get_template_directory() . '/inc/auth/reset-password-page.php';
 	require_once get_template_directory() . '/inc/sprite-icons-page.php';
 
 

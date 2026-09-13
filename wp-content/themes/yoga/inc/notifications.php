@@ -75,7 +75,14 @@ function yoga_get_unread_question_answer_notifications(int $user_id): array {
 	));
 }
 
+function yoga_is_required_site_notification_preference(string $key): bool {
+	return in_array($key, array('question_answer_site', 'comment_reply_site'), true);
+}
+
 function yoga_notification_preference(int $user_id, string $key, bool $default = true): bool {
+	if (yoga_is_required_site_notification_preference($key)) {
+		return true;
+	}
 	$preferences = get_user_meta($user_id, 'yoga_notification_preferences', true);
 	return is_array($preferences) && array_key_exists($key, $preferences) ? (bool) $preferences[$key] : $default;
 }
@@ -90,7 +97,7 @@ function yoga_get_notification_preference_defaults(): array {
 		'subscription_ended_email' => true,
 		'question_answer_site' => true,
 		'question_answer_email' => false,
-		'comment_reply_site' => false,
+		'comment_reply_site' => true,
 		'comment_reply_email' => true,
 		'sadhana_started_email' => true,
 		'sadhana_progress_site' => true,
@@ -110,6 +117,10 @@ function yoga_get_user_notification_preferences(int $user_id): array {
 	$preferences = is_array($preferences) ? $preferences : array();
 	$result = yoga_get_notification_preference_defaults();
 	foreach ($result as $key => $default) {
+		if (yoga_is_required_site_notification_preference($key)) {
+			$result[$key] = true;
+			continue;
+		}
 		if (array_key_exists($key, $preferences)) {
 			$result[$key] = (bool) $preferences[$key];
 		}
