@@ -46,7 +46,7 @@ $GLOBALS['notification_test_logged_in'] = true;
 $GLOBALS['notification_test_nonce_valid'] = true;
 $GLOBALS['notification_test_meta'] = array();
 
-foreach (array('sadhana_started_email' => false, 'new_articles_email' => true) as $key => $enabled) {
+foreach (array('sadhana_started_email' => false, 'new_articles_email' => true, 'question_answer_email' => false, 'comment_reply_email' => false) as $key => $enabled) {
 	$_POST = array('key' => $key, 'enabled' => $enabled ? '1' : '0');
 	try {
 		yoga_save_notification_preference();
@@ -56,32 +56,26 @@ foreach (array('sadhana_started_email' => false, 'new_articles_email' => true) a
 	notification_test_assert(yoga_notification_preference(7, $key, !$enabled) === $enabled, "{$key} persists");
 }
 
-foreach (array('question_answer_site', 'comment_reply_site') as $key) {
+foreach (array('question_answer_site', 'question_answer_email', 'comment_reply_site', 'comment_reply_email') as $key) {
 	notification_test_assert($defaults[$key] === true, "{$key} is enabled by default");
+}
+
+foreach (array('question_answer_site', 'comment_reply_site') as $key) {
 	$GLOBALS['notification_test_meta'][7]['yoga_notification_preferences'][$key] = false;
 	notification_test_assert(yoga_notification_preference(7, $key, false), "old disabled {$key} cannot block notifications");
 	notification_test_assert(yoga_get_user_notification_preferences(7)[$key], "old disabled {$key} is shown as enabled");
+	$_POST = array('key' => $key, 'enabled' => '0');
+	try {
+		yoga_save_notification_preference();
+		notification_test_assert(false, "disabling {$key} must be rejected");
+	} catch (Yoga_Notification_Test_Response $response) {
+		notification_test_assert(!$response->success && $response->http_status === 400, "disabling {$key} is rejected");
+	}
+	notification_test_assert($GLOBALS['notification_test_meta'][7]['yoga_notification_preferences'][$key] === false, "rejected {$key} is not saved");
 }
 
-// All four message switches are read-only, including email preferences already saved by users.
-$GLOBALS['notification_test_meta'][7]['yoga_notification_preferences']['question_answer_email'] = true;
-$GLOBALS['notification_test_meta'][7]['yoga_notification_preferences']['comment_reply_email'] = false;
-foreach (array('question_answer_site', 'question_answer_email', 'comment_reply_site', 'comment_reply_email') as $key) {
-	notification_test_assert(yoga_is_locked_notification_preference($key), "{$key} is locked");
-	$stored = $GLOBALS['notification_test_meta'][7]['yoga_notification_preferences'][$key];
-	foreach (array('0', '1') as $enabled) {
-		$_POST = array('key' => $key, 'enabled' => $enabled);
-		try {
-			yoga_save_notification_preference();
-			notification_test_assert(false, "changing {$key} must be rejected");
-		} catch (Yoga_Notification_Test_Response $response) {
-			notification_test_assert(!$response->success && $response->http_status === 400, "changing {$key} is rejected");
-		}
-		notification_test_assert($GLOBALS['notification_test_meta'][7]['yoga_notification_preferences'][$key] === $stored, "{$key} remains unchanged");
-	}
-}
-notification_test_assert(yoga_notification_preference(7, 'question_answer_email', false), 'locked email preference keeps its saved on state');
-notification_test_assert(!yoga_notification_preference(7, 'comment_reply_email', true), 'locked email preference keeps its saved off state');
+notification_test_assert(!yoga_notification_preference(7, 'question_answer_email', true), 'a saved email opt-out remains effective');
+notification_test_assert(!yoga_notification_preference(7, 'comment_reply_email', true), 'email notifications remain editable');
 
 $GLOBALS['notification_test_nonce_valid'] = false;
 $_POST = array('key' => 'sadhana_started_email', 'enabled' => '1');
