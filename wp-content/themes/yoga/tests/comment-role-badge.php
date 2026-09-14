@@ -116,6 +116,20 @@ function wp_verify_nonce($nonce, $action) {
 	return $nonce === $action . '-nonce';
 }
 
+function esc_html_e($text) {
+	echo htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+function esc_attr($text) {
+	return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+function checked($condition) {
+	if ($condition) {
+		echo 'checked="checked"';
+	}
+}
+
 function add_action() {
 	return true;
 }
@@ -171,12 +185,36 @@ $_POST = array(
 	'members_edit_role_nonce' => 'edit_role-nonce',
 	'yoga_comment_role_badge_color' => '#123456',
 );
-yoga_save_comment_role_badge_color('moderator');
+yoga_save_comment_role_badge_settings('moderator');
 yoga_test_assert(yoga_get_comment_role_badge_color('moderator') === '#123456', 'valid role colors are saved');
 
 $_POST['yoga_comment_role_badge_color'] = 'red;background:url(javascript:alert(1))';
-yoga_save_comment_role_badge_color('moderator');
+yoga_save_comment_role_badge_settings('moderator');
 yoga_test_assert(yoga_get_comment_role_badge_color('moderator') === '#123456', 'invalid CSS cannot replace a saved role color');
+
+$_POST = array(
+	'members_edit_role_nonce' => 'edit_role-nonce',
+	'yoga_comment_role_badge_color' => '#123456',
+	'yoga_comment_role_badge_visibility_present' => '1',
+	'yoga_comment_role_badge_hidden' => '1',
+);
+yoga_save_comment_role_badge_settings('moderator');
+yoga_test_assert(yoga_get_user_comment_role_badge_data(20) === array(), 'a hidden role has no badge');
+yoga_test_assert(yoga_get_user_comment_role_badge_data(40)['role'] === 'subscriber', 'a second visible role can provide the badge');
+yoga_test_assert(yoga_get_user_comment_role_badge_data(30)['role'] === 'administrator', 'a visible higher-priority role remains visible');
+ob_start();
+yoga_render_comment_role_badge_color_meta_box((object) array('name' => 'moderator'));
+$role_settings_html = ob_get_clean();
+yoga_test_assert(strpos($role_settings_html, 'name="yoga_comment_role_badge_hidden" value="1" checked="checked"') !== false, 'the role screen shows the saved visibility setting');
+
+unset($_POST['yoga_comment_role_badge_hidden']);
+yoga_save_comment_role_badge_settings('moderator');
+yoga_test_assert(yoga_get_user_comment_role_badge_data(20)['role'] === 'moderator', 'unchecking restores the badge');
+
+$_POST['yoga_comment_role_badge_hidden'] = '1';
+$_POST['members_edit_role_nonce'] = 'invalid';
+yoga_save_comment_role_badge_settings('moderator');
+yoga_test_assert(yoga_get_hidden_comment_role_badges() === array(), 'invalid nonce cannot hide a badge');
 
 foreach (array('members', 'roles') as $members_page) {
 	$GLOBALS['yoga_test_enqueued_styles'] = array();

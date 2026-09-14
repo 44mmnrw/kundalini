@@ -1,6 +1,6 @@
 <?php
 /**
- * Members integration for comment role badge colors.
+ * Members integration for comment role badge settings.
  *
  * @package Yoga
  */
@@ -15,7 +15,7 @@ function yoga_add_comment_role_badge_color_meta_box(string $screen_id): void {
 
 	add_meta_box(
 		'yoga-comment-role-badge-color',
-		__('Цвет бейджа в комментариях', 'yoga'),
+		__('Бейдж роли в комментариях', 'yoga'),
 		'yoga_render_comment_role_badge_color_meta_box',
 		$screen_id,
 		'side',
@@ -27,6 +27,7 @@ add_action('members_add_role_meta_boxes', 'yoga_add_comment_role_badge_color_met
 function yoga_render_comment_role_badge_color_meta_box($role): void {
 	$role_slug = is_object($role) && isset($role->name) ? sanitize_key((string) $role->name) : '';
 	$color = $role_slug !== '' ? yoga_get_comment_role_badge_color($role_slug) : '#9153e1';
+	$hide_badge = $role_slug !== '' && in_array($role_slug, yoga_get_hidden_comment_role_badges(), true);
 	?>
 	<p>
 		<label for="yoga-comment-role-badge-color-field"><?php esc_html_e('Цвет фона', 'yoga'); ?></label>
@@ -42,10 +43,17 @@ function yoga_render_comment_role_badge_color_meta_box($role): void {
 	<p class="description">
 		<?php esc_html_e('Цвет применяется к роли во всех комментариях. Цвет текста подбирается автоматически.', 'yoga'); ?>
 	</p>
+	<input type="hidden" name="yoga_comment_role_badge_visibility_present" value="1">
+	<p>
+		<label>
+			<input type="checkbox" name="yoga_comment_role_badge_hidden" value="1" <?php checked($hide_badge); ?>>
+			<?php esc_html_e('Не показывать бейдж', 'yoga'); ?>
+		</label>
+	</p>
 	<?php
 }
 
-function yoga_save_comment_role_badge_color(string $role_slug): void {
+function yoga_save_comment_role_badge_settings(string $role_slug): void {
 	if (!current_user_can('edit_roles') && !current_user_can('create_roles')) {
 		return;
 	}
@@ -66,6 +74,14 @@ function yoga_save_comment_role_badge_color(string $role_slug): void {
 	if ($role_slug === '') {
 		return;
 	}
+	if (isset($_POST['yoga_comment_role_badge_visibility_present'])) {
+		$hidden_roles = yoga_get_hidden_comment_role_badges();
+		$hidden_roles = array_values(array_diff($hidden_roles, array($role_slug)));
+		if (isset($_POST['yoga_comment_role_badge_hidden']) && $_POST['yoga_comment_role_badge_hidden'] === '1') {
+			$hidden_roles[] = $role_slug;
+		}
+		update_option('yoga_comment_role_badge_hidden_roles', $hidden_roles, false);
+	}
 
 	$raw_color = isset($_POST['yoga_comment_role_badge_color'])
 		? trim((string) wp_unslash($_POST['yoga_comment_role_badge_color']))
@@ -82,8 +98,8 @@ function yoga_save_comment_role_badge_color(string $role_slug): void {
 	}
 	update_option('yoga_comment_role_badge_colors', $colors, false);
 }
-add_action('members_role_updated', 'yoga_save_comment_role_badge_color');
-add_action('members_role_added', 'yoga_save_comment_role_badge_color');
+add_action('members_role_updated', 'yoga_save_comment_role_badge_settings');
+add_action('members_role_added', 'yoga_save_comment_role_badge_settings');
 
 function yoga_enqueue_comment_role_badge_color_assets(): void {
 	$page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';

@@ -4281,6 +4281,13 @@ jQuery(document).ready(function($) {
 						location.reload();
 						return;
 					}
+					if (response.data && response.data.reload) {
+						if (typeof window.yogaQueueLkSuccessToast === 'function') {
+							window.yogaQueueLkSuccessToast(response.data.message);
+						}
+						location.reload();
+						return;
+					}
 					// Показываем уведомление об успехе
 					if (typeof window.yogaShowLkSuccessToast === 'function') {
 						window.yogaShowLkSuccessToast(response.data);

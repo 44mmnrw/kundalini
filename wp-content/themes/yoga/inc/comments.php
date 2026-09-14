@@ -64,6 +64,27 @@ if (!function_exists('yoga_get_comment_role_badge_color')) {
 	}
 }
 
+if (!function_exists('yoga_get_hidden_comment_role_badges')) {
+	function yoga_get_hidden_comment_role_badges(): array {
+		$stored_roles = get_option('yoga_comment_role_badge_hidden_roles', array());
+		if (!is_array($stored_roles)) {
+			return array();
+		}
+
+		$role_slugs = array();
+		foreach ($stored_roles as $role_slug) {
+			if (!is_string($role_slug)) {
+				continue;
+			}
+			$role_slug = sanitize_key($role_slug);
+			if ($role_slug !== '') {
+				$role_slugs[] = $role_slug;
+			}
+		}
+		return array_values(array_unique($role_slugs));
+	}
+}
+
 if (!function_exists('yoga_get_comment_role_badge_text_color')) {
 	function yoga_get_comment_role_badge_text_color(string $background_color): string {
 		$hex = ltrim((string) sanitize_hex_color($background_color), '#');
@@ -112,8 +133,13 @@ if (!function_exists('yoga_get_user_comment_role_badge_data')) {
 			}
 		}
 		$role_slugs = array_values(array_unique(array_merge($prioritized_role_slugs, $role_slugs)));
+		$hidden_role_slugs = yoga_get_hidden_comment_role_badges();
 
 		foreach ($role_slugs as $role_slug) {
+			if (in_array($role_slug, $hidden_role_slugs, true)) {
+				continue;
+			}
+
 			$role_data = isset($roles->roles[$role_slug]) && is_array($roles->roles[$role_slug])
 				? $roles->roles[$role_slug]
 				: array();
