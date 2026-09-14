@@ -21,6 +21,7 @@
 	require_once get_template_directory() . '/inc/practices/search.php';
 	require_once get_template_directory() . '/inc/ajax/practice-search.php';
 	require_once get_template_directory() . '/inc/comments.php';
+	require_once get_template_directory() . '/inc/avatar-folders.php';
 	require_once get_template_directory() . '/inc/admin/comment-role-badges.php';
 	require_once get_template_directory() . '/inc/render/comments.php';
 	require_once get_template_directory() . '/inc/render/lk-menu-icons.php';
@@ -1691,6 +1692,7 @@ function yoga_subscribe_handler() {
 		$old_email = $old_user ? sanitize_email((string) $old_user->user_email) : '';
 		$new_email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : $old_email;
 		$email_changed = $new_email !== '' && strcasecmp($new_email, $old_email) !== 0;
+		$email_verification_link_sent = false;
 		$response = array();
 
 		try {
@@ -1749,6 +1751,7 @@ function yoga_subscribe_handler() {
 				}
 				delete_user_meta($user_id, 'yoga_email_code_sent_at');
 				delete_user_meta($user_id, 'yoga_email_link_sent_at');
+				$email_verification_link_sent = !is_wp_error(yoga_send_email_verification_link($user_id));
 			}
 
 			if (isset($_POST['timezone'])) {
@@ -1829,6 +1832,7 @@ function yoga_subscribe_handler() {
 							wp_send_json_error('Ошибка при обновлении аватара', 500);
 						}
 
+						yoga_assign_avatar_to_folder((int) $attachment_id);
 						wp_send_json_success([
 							'message'    => 'Аватар успешно обновлен',
 							'avatar_id'  => (int) $attachment_id,
@@ -1843,7 +1847,14 @@ function yoga_subscribe_handler() {
 
 			wp_send_json_success(
 				$email_changed || $password_changed
-					? array('message' => 'Данные успешно сохранены', 'reload' => true)
+					? array(
+						'message' => $email_changed
+							? ($email_verification_link_sent
+								? 'Ссылка для подтверждения отправлена на почту'
+								: 'Эл. почта сохранена, но ссылку для подтверждения отправить не удалось. Отправьте её повторно в профиле.')
+							: 'Данные успешно сохранены',
+						'reload' => true,
+					)
 					: 'Данные успешно сохранены'
 			);
 
@@ -1892,6 +1903,8 @@ function yoga_subscribe_handler() {
 			wp_delete_attachment($attachment_id, true);
 			wp_send_json_error('Не удалось сохранить аватар', 500);
 		}
+
+		yoga_assign_avatar_to_folder((int) $attachment_id);
 
 		if ($old_avatar_id > 0 && $old_avatar_id !== (int) $attachment_id) {
 			wp_delete_attachment($old_avatar_id, true);
