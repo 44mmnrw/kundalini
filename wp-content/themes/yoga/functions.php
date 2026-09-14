@@ -53,6 +53,7 @@
 
 	require_once get_template_directory() . '/inc/ajax/auth-sms.php';
 	require_once get_template_directory() . '/inc/ajax/email-verification.php';
+	require_once get_template_directory() . '/inc/auth/profile-session.php';
 	require_once get_template_directory() . '/inc/auth/login-modal.php';
 	require_once get_template_directory() . '/inc/auth/reset-password-page.php';
 	require_once get_template_directory() . '/inc/sprite-icons-page.php';
@@ -1685,6 +1686,7 @@ function yoga_subscribe_handler() {
 		}
 
 		$user_id = get_current_user_id();
+		$logged_in_cookie = wp_parse_auth_cookie('', 'logged_in');
 		$old_user = get_user_by('id', $user_id);
 		$old_email = $old_user ? sanitize_email((string) $old_user->user_email) : '';
 		$new_email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : $old_email;
@@ -1780,18 +1782,24 @@ function yoga_subscribe_handler() {
 
 
 
+			$password_changed = false;
 			if (!empty($_POST['current_password']) && !empty($_POST['new_password']) && !empty($_POST['repeat_password'])) {
 				if ($_POST['new_password'] === $_POST['repeat_password']) {
 					$user = get_user_by('id', $user_id);
 
 					if (wp_check_password($_POST['current_password'], $user->user_pass, $user_id)) {
 						wp_set_password($_POST['new_password'], $user_id);
+						$password_changed = true;
 						do_action('yoga_user_password_changed', $user);
 					}
 				}
 			}
 
 
+
+			if ($email_changed || $password_changed) {
+				yoga_refresh_profile_auth_session($user_id, $logged_in_cookie);
+			}
 
 			if (
 				isset($_FILES['avatar']['error'])
@@ -1833,7 +1841,11 @@ function yoga_subscribe_handler() {
 				}
 			}
 
-			wp_send_json_success('Данные успешно сохранены');
+			wp_send_json_success(
+				$email_changed || $password_changed
+					? array('message' => 'Данные успешно сохранены', 'reload' => true)
+					: 'Данные успешно сохранены'
+			);
 
 			} catch (Exception $e) {
 			wp_send_json_error('Не удалось обновить профиль. Попробуйте еще раз.', 500);
