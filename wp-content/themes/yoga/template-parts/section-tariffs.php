@@ -18,6 +18,7 @@
 		  $tariffs_animation_class = (is_front_page() || is_page_template('templates-page/homepage.php'))
 			? ' wow fadeIn delay-300ms'
 			: '';
+		  $show_tariffs_title = is_front_page() || is_page_template('templates-page/homepage.php');
 
 
           $tariff_products = wc_get_products(array(
@@ -28,6 +29,10 @@
             'order' => 'ASC'
           ));
         ?>
+
+		<?php if ($show_tariffs_title) : ?>
+		<h2 class="wow flipInX delay-200ms"><?php echo esc_html($tariffs_title); ?></h2>
+		<?php endif; ?>
 
         <?php if ($tariffs_periods) : ?>
 		<div class="switches<?php echo esc_attr($tariffs_animation_class); ?>">
