@@ -373,6 +373,10 @@
 }
 
 @media (max-width: 767px) {
+  html {
+    background-color: var(--color-black);
+  }
+
   .footer {
     flex: 0 0 auto;
     min-height: 0;
