@@ -1792,14 +1792,21 @@ display: block !important;
   color: #fff;
   opacity: 0.4;
   pointer-events: none;
+  transition: background-color 0.4s ease, color 0.4s ease, opacity 0.4s ease;
 }
 .comment-form-main .btn,
 .comment-form-main .btn .comment-form-main__btn-label {
   color: var(--color-white) !important;
 }
-.comment-form-main .btn:hover,
-.comment-form-main .btn:hover .comment-form-main__btn-label {
+.comment-form-main .btn .comment-form-main__btn-label {
+  background: transparent;
+  transition: color 0.4s ease;
+}
+.comment-form-main .btn:hover {
   background: var(--color-green);
+  color: var(--color-violet) !important;
+}
+.comment-form-main .btn:hover .comment-form-main__btn-label {
   color: var(--color-violet) !important;
 }
 .comment-form-main__btn-arrow {
