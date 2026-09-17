@@ -25,9 +25,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                         <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#faq-star-violet'); ?>"></use>
                     </svg>
                 </span>
-                <svg class="main__decor main__decor--arrow" aria-hidden="true" focusable="false">
-                    <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
-                </svg>
+                <span class="main__decor main__decor--bottom-star" aria-hidden="true"></span>
                 <div class="main__info">
                     <h2 class="">
                         <p class="animation-title delay-400ms"><?php the_field('hero_title_line_1'); ?></p>
