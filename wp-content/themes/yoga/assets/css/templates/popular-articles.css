@@ -75,6 +75,7 @@
 }
 
 .popular-articles-slider {
+  position: relative;
   width: 100%;
   min-width: 100%;
   padding-bottom: 2.5rem;
