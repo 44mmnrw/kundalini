@@ -1432,6 +1432,8 @@ display: block !important;
 }
 .exercise-slider__media {
   display: flex;
+  position: relative;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -1440,8 +1442,10 @@ display: block !important;
   overflow: hidden;
   background: var(--color-grey);
 }
-.exercise-slider__item img {
+.exercise-slider__media > img {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   max-width: 100%;
@@ -1746,10 +1750,6 @@ display: block !important;
   pointer-events: auto;
   opacity: 1;
 }
-.comment-form-main form:hover .btn {
-  pointer-events: auto;
-  opacity: 1;
-}
 .comment-form-main textarea {
   width: 100%;
   background: var(--color-grey);
@@ -1916,10 +1916,11 @@ display: block !important;
 .praktika-comment-item__text {
   display: block;
   width: 100%;
-  padding-left: 0.625rem;  padding-right: 0.3125rem;}
+  margin-top: 0.3125rem;
+  padding: 0.3125rem 0.625rem;}
 .praktika-comment-item__text p {
   font-size: 1rem;  line-height: 1.3em;
-  margin-top: 0.625rem;}
+  margin-top: 0px;}
 .praktika-comment-item__text p b {
   font-family: var(--font-family-base); font-weight: 700;
   font-family: var(--font-family-base);
