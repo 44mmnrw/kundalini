@@ -452,6 +452,11 @@ header > .container > .row > .header-content {
   height: 1.375rem;
 }
 
+.header-lk .lk-notifications-popup__item--sadhana_progress .lk-notifications-popup__item-icon {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
 .header-lk .lk-notifications-popup__item-icon svg {
   width: 1.375rem;
   height: 1.5rem;
@@ -868,7 +873,7 @@ header > .container > .row > .header-content {
   }
 
   .header-favorites-link--active svg {
-    color: var(--color-violet);
+    color: var(--color-black);
   }
 
   .header-favorites-link__count {
@@ -1214,7 +1219,10 @@ header > .container > .row > .header-content {
     color: currentColor;
   }
 
-  .header-favorites-link--active,
+  .header-favorites-link--active {
+    color: var(--color-black);
+  }
+
   .header-lk .notification-icon_header--has-notifications {
     color: var(--color-violet);
   }

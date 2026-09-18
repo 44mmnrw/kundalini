@@ -5,6 +5,12 @@
  * @package Yoga
  */
 $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
+$header_sprite_file = get_template_directory() . '/assets/svg/sprite.svg';
+$header_sprite_url = add_query_arg(
+	'ver',
+	file_exists($header_sprite_file) ? (string) filemtime($header_sprite_file) : wp_get_theme()->get('Version'),
+	get_template_directory_uri() . '/assets/svg/sprite.svg'
+);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -188,11 +194,13 @@ $is_lk_shell = function_exists( 'yoga_is_lk_shell' ) && yoga_is_lk_shell();
 													$notification_icon = 'notification-payment-card-icon';
 												} elseif ($notification_type === 'subscription_expiring') {
 													$notification_icon = 'notification-subscription-expiring-icon';
+												} elseif ($notification_type === 'sadhana_progress') {
+													$notification_icon = 'notification-sadhana-achievement-icon';
 												}
 												?>
 												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?><?php echo $notification_is_unread ? ' lk-notifications-popup__item--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
 													<span class="lk-notifications-popup__item-head">
-														<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $notification_icon); ?>"></use></svg></span>
+													<span class="lk-notifications-popup__item-icon"><svg aria-hidden="true"><use href="<?php echo esc_url($header_sprite_url . '#' . $notification_icon); ?>"></use></svg></span>
 														<strong><?php echo esc_html($notification_title); ?></strong>
 													</span>
 													<span class="lk-notifications-popup__item-message"><?php echo esc_html((string) ($notification['message'] ?? '')); ?></span>
