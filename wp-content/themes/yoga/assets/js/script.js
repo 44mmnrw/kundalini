@@ -797,16 +797,12 @@ jQuery(document).ready(function($) {
 			resizeCommentTextarea(this);
 	});
 
-	$('.comment-form-main textarea').keyup(function(){
-		var $this = $(this),
-		vall = $this.val();
-
-		if(vall.length >= 1){
-			$(this).closest('form').addClass("active");
-			}else {
-			$(this).closest('form').removeClass("active");
-		}
-	});
+	$('.comment-form-main textarea')
+		.on('input', function () {
+			var hasText = $.trim($(this).val()).length > 0;
+			$(this).closest('form').toggleClass('active', hasText);
+		})
+		.trigger('input');
 
 	$('.answer-main textarea').keyup(function(){
 		var $this = $(this),
