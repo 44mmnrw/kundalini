@@ -196,6 +196,8 @@ $header_sprite_url = add_query_arg(
 													$notification_icon = 'notification-subscription-expiring-icon';
 												} elseif ($notification_type === 'sadhana_progress') {
 													$notification_icon = 'notification-sadhana-achievement-icon';
+												} elseif (strpos($notification_type, 'sadhana_') === 0) {
+													$notification_icon = 'lk-sidebar-lotus';
 												}
 												?>
 												<a class="lk-notification lk-notifications-popup__item lk-notifications-popup__item--<?php echo esc_attr($notification_type ?: 'default'); ?><?php echo $notification_is_unread ? ' lk-notifications-popup__item--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($notification_type); ?>" href="<?php echo esc_url($notification_url); ?>">
