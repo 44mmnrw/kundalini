@@ -452,9 +452,19 @@ header > .container > .row > .header-content {
   height: 1.375rem;
 }
 
-.header-lk .lk-notifications-popup__item--sadhana_progress .lk-notifications-popup__item-icon {
+.header-lk .lk-notifications-popup__item--sadhana_started .lk-notifications-popup__item-icon,
+.header-lk .lk-notifications-popup__item--sadhana_progress .lk-notifications-popup__item-icon,
+.header-lk .lk-notifications-popup__item--sadhana_interrupted .lk-notifications-popup__item-icon,
+.header-lk .lk-notifications-popup__item--sadhana_completed .lk-notifications-popup__item-icon {
   background: var(--color-black);
   color: var(--color-white);
+}
+
+.header-lk .lk-notifications-popup__item--sadhana_started .lk-notifications-popup__item-icon svg,
+.header-lk .lk-notifications-popup__item--sadhana_interrupted .lk-notifications-popup__item-icon svg,
+.header-lk .lk-notifications-popup__item--sadhana_completed .lk-notifications-popup__item-icon svg {
+  width: 1.3125rem;
+  height: 1.25rem;
 }
 
 .header-lk .lk-notifications-popup__item-icon svg {

@@ -298,6 +298,8 @@
 										}
 										if ($type === 'sadhana_progress') {
 											$icon = 'notification-sadhana-achievement-icon';
+										} elseif (strpos($type, 'sadhana_') === 0) {
+											$icon = 'lk-sidebar-lotus';
 										}
 										?>
 										<a class="lk-notification lk-notification--<?php echo esc_attr($type ?: 'default'); ?><?php echo $is_unread ? ' lk-notification--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($type); ?>" href="<?php echo esc_url($url ?: '#'); ?>">
