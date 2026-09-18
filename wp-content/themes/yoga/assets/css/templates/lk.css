@@ -988,10 +988,7 @@
 .lk-notification--payment_card_expiring .lk-notification__icon svg { width: 1.4375rem; height: 1.0625rem; }
 .lk-notification--subscription_expiring .lk-notification__icon { background: var(--color-green); color: var(--color-black); }
 .lk-notification--subscription_expiring .lk-notification__icon svg { width: 1.625rem; height: 1.375rem; }
-.lk-notification--sadhana_started .lk-notification__icon,
-.lk-notification--sadhana_progress .lk-notification__icon,
-.lk-notification--sadhana_interrupted .lk-notification__icon,
-.lk-notification--sadhana_completed .lk-notification__icon { background: var(--color-black); color: var(--color-white); }
+.lk-notification--sadhana_progress .lk-notification__icon { background: var(--color-black); color: var(--color-white); }
 .lk-notification--sadhana_started .lk-notification__icon svg,
 .lk-notification--sadhana_interrupted .lk-notification__icon svg,
 .lk-notification--sadhana_completed .lk-notification__icon svg { width: 1.3125rem; height: 1.25rem; }
