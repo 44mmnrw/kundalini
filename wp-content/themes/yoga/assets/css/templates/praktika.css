@@ -1418,7 +1418,7 @@ display: block !important;
 }
 
 .exercise-slider_full {
-  width: 100%;
+  width: calc(60% - 0.625rem);
 }
 
 .exercise-slider__item {
