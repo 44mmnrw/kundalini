@@ -296,10 +296,13 @@
 										if ($type === 'subscription_expiring') {
 											$icon = 'notification-subscription-expiring-icon';
 										}
+										if ($type === 'sadhana_progress') {
+											$icon = 'notification-sadhana-achievement-icon';
+										}
 										?>
 										<a class="lk-notification lk-notification--<?php echo esc_attr($type ?: 'default'); ?><?php echo $is_unread ? ' lk-notification--unread' : ''; ?>" data-notification-id="<?php echo esc_attr((string) ($notification['id'] ?? '')); ?>" data-notification-type="<?php echo esc_attr($type); ?>" href="<?php echo esc_url($url ?: '#'); ?>">
 											<span class="lk-notification__head">
-												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#' . $icon); ?>"></use></svg></span>
+												<span class="lk-notification__icon"><svg aria-hidden="true"><use href="<?php echo esc_url($lk_sprite_url . '#' . $icon); ?>"></use></svg></span>
 												<strong><?php echo esc_html($title); ?></strong>
 											</span>
 											<span class="lk-notification__message"><?php echo esc_html($message); ?></span>
