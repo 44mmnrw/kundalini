@@ -1619,14 +1619,12 @@ display: block !important;
 .timer-buttons__presets .btn:only-child {
   grid-column: 1 / -1;
 }
-@media (min-width: 768px) {
-  .timer-buttons__presets .btn:nth-last-child(2):nth-child(3n + 1),
-  .timer-buttons__presets .btn:last-child:nth-child(3n + 2) {
-    grid-column: span 3;
-  }
-  .timer-buttons__presets .btn:last-child:nth-child(3n + 1):not(:only-child) {
-    grid-column: 3 / span 2;
-  }
+.timer-buttons__presets .btn:nth-last-child(2):nth-child(3n + 1),
+.timer-buttons__presets .btn:last-child:nth-child(3n + 2) {
+  grid-column: span 3;
+}
+.timer-buttons__presets .btn:last-child:nth-child(3n + 1):not(:only-child) {
+  grid-column: 3 / span 2;
 }
 
 .player {
@@ -2538,22 +2536,10 @@ display: block !important;
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
-    width: 100%;
-    margin-top: auto;
+    width: calc(100% - 0.3125rem);
+    margin-top: 1.4375rem;
     padding-top: 0;
     box-sizing: border-box;
-  }
-
-  .exercise-timer .timer-buttons__presets {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .exercise-timer .timer-buttons__presets .btn {
-    grid-column: auto;
-  }
-
-  .exercise-timer .timer-buttons__presets .btn:only-child {
-    grid-column: 1 / -1;
   }
 
   .exercise-timer .timer-buttons .btn {
@@ -2570,9 +2556,15 @@ display: block !important;
     justify-content: center;
   }
 
+  .exercise-timer .timer-buttons__presets .btn_min {
+    padding-left: 0.3125rem;
+    padding-right: 0.3125rem;
+  }
+
   .exercise-timer .timer-buttons .btn span {
     font-size: 1rem;
     line-height: 1.2;
+    white-space: nowrap;
   }
 
   .exercise-timer .timer-buttons .btn.btn_big {
@@ -2869,6 +2861,10 @@ display: block !important;
   }
 
   .exercise-switches__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     padding-left: 0.625rem;    padding-right: 0.625rem;
     flex: 1 1 calc(50% - 0.46875rem);
     min-width: 0;
