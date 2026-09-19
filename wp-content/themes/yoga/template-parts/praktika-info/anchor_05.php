@@ -354,6 +354,7 @@
 				</div>
                 <div class="timer-buttons">
 					<?php if (!empty($timing)): ?>
+					<div class="timer-buttons__presets">
 					<?php
 						$timing_count = count($timing);
 						foreach ($timing as $value):
@@ -367,14 +368,17 @@
 						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 					</button>
 					<?php endforeach; ?>
+					</div>
 					<?php endif; ?>
 
+					<div class="timer-buttons__actions">
 					<button type="button" class="btn timer-play-pause">
 						<span>Старт</span>
 					</button>
 					<button type="button" class="btn timer-reset">
 						<span>Сброс</span>
 					</button>
+					</div>
 				</div>
 			</div>
             <?php endif; ?>
@@ -517,6 +521,7 @@
 				</div>
                 <div class="timer-buttons">
 					<?php if (!empty($timing_mod)): ?>
+					<div class="timer-buttons__presets">
 					<?php
 						$timing_count = count($timing_mod);
 						foreach ($timing_mod as $value):
@@ -530,14 +535,17 @@
 						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 					</button>
 					<?php endforeach; ?>
+					</div>
 					<?php endif; ?>
 
+					<div class="timer-buttons__actions">
 					<button type="button" class="btn timer-play-pause">
 						<span>Старт</span>
 					</button>
 					<button type="button" class="btn timer-reset">
 						<span>Сброс</span>
 					</button>
+					</div>
 				</div>
 			</div>
             <?php endif; ?>

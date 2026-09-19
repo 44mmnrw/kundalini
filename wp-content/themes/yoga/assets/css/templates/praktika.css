@@ -1569,14 +1569,26 @@ display: block !important;
 
 .timer-buttons {
   display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
   width: 100%;
-  flex-wrap: wrap;
-  justify-content: space-between;
+}
+.timer-buttons__presets,
+.timer-buttons__actions {
+  display: grid;
+  gap: 0.625rem;
+  width: 100%;
+}
+.timer-buttons__presets {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.timer-buttons__actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .timer-buttons .btn {
-  width: calc(50% - 0.3125rem);  border: 1px solid #fff;
+  width: 100%;  border: 1px solid #fff;
   background: rgba(232, 255, 87, 0);
-  height: 1.875rem;  line-height: 1.875rem;  padding-left: 0.3125rem;  padding-right: 0.3125rem;  margin-top: 0.625rem;}
+  height: 1.875rem;  line-height: 1.875rem;  padding-left: 0.3125rem;  padding-right: 0.3125rem;  margin-top: 0;}
 .timer-buttons .btn span {
   font-size: 1rem;  font-family: var(--font-family-base);
   font-weight: 500;
@@ -1600,8 +1612,22 @@ display: block !important;
 .timer-buttons .btn.btn_big:hover span {
   color: #fff;
 }
-.timer-buttons .btn.btn_min {
-  width: calc((100% - 1.25rem) / 3);}
+.timer-buttons__presets .btn {
+  grid-column: span 2;
+  min-width: 0;
+}
+.timer-buttons__presets .btn:only-child {
+  grid-column: 1 / -1;
+}
+@media (min-width: 768px) {
+  .timer-buttons__presets .btn:nth-last-child(2):nth-child(3n + 1),
+  .timer-buttons__presets .btn:last-child:nth-child(3n + 2) {
+    grid-column: span 3;
+  }
+  .timer-buttons__presets .btn:last-child:nth-child(3n + 1):not(:only-child) {
+    grid-column: 3 / span 2;
+  }
+}
 
 .player {
   display: block;
@@ -2509,13 +2535,25 @@ display: block !important;
 
 
   .exercise-timer .timer-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 0.625rem;
     width: 100%;
     margin-top: auto;
     padding-top: 0;
     box-sizing: border-box;
+  }
+
+  .exercise-timer .timer-buttons__presets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .exercise-timer .timer-buttons__presets .btn {
+    grid-column: auto;
+  }
+
+  .exercise-timer .timer-buttons__presets .btn:only-child {
+    grid-column: 1 / -1;
   }
 
   .exercise-timer .timer-buttons .btn {
