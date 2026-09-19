@@ -910,7 +910,7 @@
 		var self = this;
 		this.$navigation.sortable({
 			items: '> li[data-layout-id]',
-			handle: '.yoga-practice-editor__drag, .yoga-practice-editor__nav-button',
+			handle: '.yoga-practice-editor__drag',
 			cancel: '.yoga-practice-editor__nav-actions button',
 			axis: 'y',
 			placeholder: 'yoga-practice-editor__nav-placeholder',
