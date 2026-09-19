@@ -52,25 +52,33 @@ if (!function_exists('yoga_render_practice_sadhana_counter')) {
 		$user_id = absint($sadhana['user_id'] ?? get_current_user_id());
 		$completed_days = absint($sadhana['completed_days'] ?? 0);
 		$total_days = max(1, absint($sadhana['target_days'] ?? 1));
-		$progress = min(100, ($completed_days / $total_days) * 100);
+		$is_completed = ($sadhana['status'] ?? '') === 'completed';
+		$progress = $is_completed ? 100 : min(100, ($completed_days / $total_days) * 100);
 		$next_day_at = $user_id > 0
 			? (new DateTimeImmutable('tomorrow', yoga_sadhana_user_timezone($user_id)))->getTimestamp() * 1000
 			: 0;
 		$marked_today = $user_id > 0
 			&& !empty($sadhana['last_marked_on'])
 			&& (string) $sadhana['last_marked_on'] >= yoga_sadhana_today($user_id);
+		$description = $is_completed
+			? __('Поздравляем, вы прошли садхану!', 'yoga')
+			: ($marked_today
+				? __('День засчитан, возвращайтесь завтра', 'yoga')
+				: ($completed_days > 0
+					? __('Сегодня ещё не отмечено', 'yoga')
+					: __('Садхана началась. Можно отметить сегодняшний день после практики.', 'yoga')));
 		?>
-		<div class="praktika-sadhana-counter praktika-sadhana-counter--<?php echo esc_attr($location === 'bottom' ? 'bottom' : 'top'); ?>" data-practice-id="<?php echo esc_attr((string) $practice_id); ?>" data-sadhana-id="<?php echo esc_attr((string) absint($sadhana['id'] ?? 0)); ?>" data-completed-days="<?php echo esc_attr((string) $completed_days); ?>" data-total-days="<?php echo esc_attr((string) $total_days); ?>" data-marked-today="<?php echo $marked_today ? '1' : '0'; ?>" data-next-day-at="<?php echo esc_attr((string) $next_day_at); ?>">
+		<div class="praktika-sadhana-counter praktika-sadhana-counter--<?php echo esc_attr($location === 'bottom' ? 'bottom' : 'top'); ?><?php echo $is_completed ? ' is-completed' : ''; ?>" data-practice-id="<?php echo esc_attr((string) $practice_id); ?>" data-sadhana-id="<?php echo esc_attr((string) absint($sadhana['id'] ?? 0)); ?>" data-status="<?php echo $is_completed ? 'completed' : 'active'; ?>" data-completed-days="<?php echo esc_attr((string) $completed_days); ?>" data-total-days="<?php echo esc_attr((string) $total_days); ?>" data-marked-today="<?php echo $marked_today ? '1' : '0'; ?>" data-next-day-at="<?php echo esc_attr((string) $next_day_at); ?>">
 			<div class="praktika-sadhana-counter__content">
 				<div class="praktika-sadhana-counter__head">
 					<div class="praktika-sadhana-counter__title">
 						<svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#sadhana-calendar'); ?>"></use></svg>
 						<strong aria-live="polite"><span class="praktika-sadhana-counter__completed"><?php echo esc_html((string) $completed_days); ?></span> <?php esc_html_e('из', 'yoga'); ?> <span class="praktika-sadhana-counter__total"><?php echo esc_html((string) $total_days); ?></span> <?php esc_html_e('дней', 'yoga'); ?></strong>
 					</div>
-					<p><?php esc_html_e('Садхана началась. Можно отметить сегодняшний день после практики.', 'yoga'); ?></p>
+					<p class="praktika-sadhana-counter__description" aria-live="polite"><?php echo esc_html($description); ?></p>
 				</div>
 				<div class="praktika-sadhana-counter__actions">
-					<button class="praktika-sadhana-counter__mark<?php echo $marked_today ? ' is-marked' : ''; ?>" type="button"<?php echo $marked_today ? ' disabled' : ''; ?> aria-label="<?php echo $marked_today ? esc_attr(sprintf(__('Садхана. День %1$d из %2$d отмечен', 'yoga'), $completed_days, $total_days)) : esc_attr__('Отметить день', 'yoga'); ?>">
+					<button class="praktika-sadhana-counter__mark<?php echo $marked_today && !$is_completed ? ' is-marked' : ''; ?>" type="button"<?php echo $marked_today || $is_completed ? ' disabled' : ''; ?><?php echo $is_completed ? ' hidden' : ''; ?> aria-label="<?php echo $marked_today ? esc_attr(sprintf(__('Садхана. День %1$d из %2$d отмечен', 'yoga'), $completed_days, $total_days)) : esc_attr__('Отметить день', 'yoga'); ?>">
 						<span class="praktika-sadhana-counter__mark-default"><?php esc_html_e('Отметить день', 'yoga'); ?></span>
 						<span class="praktika-sadhana-counter__mark-state" aria-hidden="true">
 							<span class="praktika-sadhana-counter__mark-label"><?php esc_html_e('САДХАНА', 'yoga'); ?></span>
@@ -78,8 +86,10 @@ if (!function_exists('yoga_render_practice_sadhana_counter')) {
 							<svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#tariff-check'); ?>"></use></svg>
 						</span>
 					</button>
-					<button class="praktika-sadhana-counter__reset yoga-sadhana-reset-trigger" type="button" aria-haspopup="dialog" aria-controls="yoga-sadhana-reset-modal"><?php esc_html_e('Сбросить прогресс', 'yoga'); ?></button>
+					<button class="praktika-sadhana-counter__reset yoga-sadhana-reset-trigger" type="button"<?php echo $is_completed ? ' hidden' : ''; ?> aria-haspopup="dialog" aria-controls="yoga-sadhana-reset-modal"><?php esc_html_e('Сбросить прогресс', 'yoga'); ?></button>
+					<button class="praktika-sadhana-counter__restart" type="button"<?php echo $is_completed ? '' : ' hidden'; ?>><?php esc_html_e('Начать новый цикл', 'yoga'); ?></button>
 				</div>
+				<div class="praktika-sadhana-counter__stamp"<?php echo $is_completed ? '' : ' hidden'; ?> aria-hidden="true"><img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/sadhana-completed-stamp.png'); ?>" alt=""></div>
 			</div>
 			<div class="praktika-sadhana-counter__progress" aria-hidden="true"><span style="width: <?php echo esc_attr((string) $progress); ?>%"></span></div>
 		</div>

@@ -281,6 +281,7 @@
 }
 
 .praktika-sadhana-counter__content {
+  position: relative;
   gap: 1.25rem;
 }
 
@@ -342,6 +343,11 @@
   cursor: pointer;
 }
 
+.praktika-sadhana-counter__actions button[hidden],
+.praktika-sadhana-counter__stamp[hidden] {
+  display: none;
+}
+
 .praktika-sadhana-counter__mark {
   width: 10.875rem;
   background: var(--color-violet, #9153e1);
@@ -398,6 +404,32 @@
   width: 12.375rem;
   background: transparent;
   color: var(--color-violet, #9153e1);
+}
+
+.praktika-sadhana-counter__restart {
+  background: var(--color-violet, #9153e1);
+  color: #fff;
+}
+
+.praktika-sadhana-counter__stamp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 7.75rem;
+  height: 7.75rem;
+  overflow: hidden;
+  mix-blend-mode: darken;
+  pointer-events: none;
+}
+
+.praktika-sadhana-counter__stamp img {
+  display: block;
+  position: absolute;
+  top: -17.58%;
+  left: -17.58%;
+  width: 135.16%;
+  height: 135.16%;
+  max-width: none;
 }
 
 .praktika-sadhana-counter__progress {
@@ -2581,6 +2613,15 @@ display: block !important;
 
   .praktika-sadhana-counter__actions button {
     width: 100%;
+  }
+
+  .praktika-sadhana-counter__stamp {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  .praktika-sadhana-counter.is-completed .praktika-sadhana-counter__head {
+    padding-right: 5rem;
   }
 
   .yoga-sadhana-modal.active {
