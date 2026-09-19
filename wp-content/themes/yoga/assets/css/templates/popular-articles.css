@@ -59,16 +59,6 @@
   height: 2.5625rem;
 }
 
-.popular-articles__intro .slick-next {
-  margin-left: 0;
-  border-color: #1f1f1f;
-  background: #1f1f1f;
-}
-
-.popular-articles__intro .slick-next svg {
-  color: #e8ff57;
-}
-
 .popular-articles__media {
   width: 100%;
   margin-top: 1.875rem;
