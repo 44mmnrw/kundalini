@@ -444,11 +444,16 @@ h5, .h5 {
   transition: transform var(--transition-base);
 }
 
-.yoga-arrow-cta:hover .yoga-arrow-cta__arrow,
 .yoga-arrow-cta:focus-visible .yoga-arrow-cta__arrow,
-.yoga-arrow-motion:hover .yoga-arrow-motion__icon,
 .yoga-arrow-motion:focus-visible .yoga-arrow-motion__icon {
   transform: var(--yoga-arrow-offset, translate(0)) rotate(var(--yoga-cta-arrow-end, 0deg));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .yoga-arrow-cta:hover .yoga-arrow-cta__arrow,
+  .yoga-arrow-motion:hover .yoga-arrow-motion__icon {
+    transform: var(--yoga-arrow-offset, translate(0)) rotate(var(--yoga-cta-arrow-end, 0deg));
+  }
 }
 
 .question__main.yoga-arrow-motion {
@@ -461,14 +466,22 @@ h5, .h5 {
   transition: transform var(--transition-base), color var(--transition-base);
 }
 
-.question__main:hover .question-icon,
 .question__main:focus-visible .question-icon {
   background-color: var(--color-black);
 }
 
-.question__main:hover .question-icon svg,
 .question__main:focus-visible .question-icon svg {
   color: var(--color-green);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .question__main:hover .question-icon {
+    background-color: var(--color-black);
+  }
+
+  .question__main:hover .question-icon svg {
+    color: var(--color-green);
+  }
 }
 
 /* Some CTAs include the circle in each SVG, so their two colors crossfade. */
