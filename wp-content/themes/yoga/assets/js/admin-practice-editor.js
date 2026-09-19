@@ -883,6 +883,7 @@
 		this.initializeNavigationSorting();
 		this.decorate();
 		this.refreshNavigation('general');
+		$(document.body).addClass('yoga-practice-editor-ready');
 
 		// Optional Gutenberg integrations must never prevent the ACF editor from rendering.
 		try {
