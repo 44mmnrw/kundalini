@@ -124,6 +124,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 				</div>
 			</div>
 			<div class="timer-buttons">
+				<div class="timer-buttons__presets">
 				<?php $variant_timing_count = count($variant_timing); ?>
 				<?php foreach ($variant_timing as $value): ?>
 				<?php
@@ -135,8 +136,11 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 					<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
 				</button>
 				<?php endforeach; ?>
+				</div>
+				<div class="timer-buttons__actions">
 				<button type="button" class="btn timer-play-pause"><span>Старт</span></button>
 				<button type="button" class="btn timer-reset"><span>Сброс</span></button>
+				</div>
 			</div>
 		</div>
 		<?php endif; ?>
