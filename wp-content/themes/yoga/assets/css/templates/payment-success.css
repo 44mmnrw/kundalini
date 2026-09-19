@@ -123,7 +123,12 @@
 
 .yoga-payment-success__btn:hover,
 .yoga-payment-success__btn:focus-visible {
-	background: var(--color-violet);
+	background: var(--color-green);
+}
+
+.yoga-payment-success__btn:hover span,
+.yoga-payment-success__btn:focus-visible span {
+	color: var(--color-black);
 }
 
 .yoga-payment-success__help {
