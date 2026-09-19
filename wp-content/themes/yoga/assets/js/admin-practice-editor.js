@@ -143,8 +143,10 @@
 			if (!editor) {
 				return;
 			}
-			editor.decorate();
 			if (editor.modalStack.length) {
+				if (editor.activeId !== 'general') {
+					editor.decorate(editor.layoutById(editor.activeId));
+				}
 				editor.updateModalLayer();
 				editor.positionModalSurfaces();
 				return;
@@ -881,7 +883,6 @@
 		});
 
 		this.initializeNavigationSorting();
-		this.decorate();
 		this.refreshNavigation('general');
 		$(document.body).addClass('yoga-practice-editor-ready');
 
@@ -968,7 +969,6 @@
 		}
 		var $duplicate = this.sectionsField.duplicateLayout($layout);
 		window.setTimeout(function () {
-			self.decorate();
 			self.refreshNavigation($duplicate && $duplicate.length ? layoutId($duplicate) : id);
 		}, 100);
 	};
@@ -1179,6 +1179,9 @@
 			id = 'general';
 		}
 		this.activeId = id;
+		if (id !== 'general') {
+			this.decorate($layout);
+		}
 		this.$workspace.find('.yoga-practice-editor__nav-item').removeClass('is-active');
 		this.$workspace.find('.yoga-practice-editor__nav-button').removeClass('is-active').attr('aria-current', 'false');
 		this.$workspace.find('.yoga-practice-editor__nav-button[data-panel="' + id + '"]')
@@ -1575,7 +1578,7 @@
 			return;
 		}
 
-		this.decorate();
+		this.decorate($layout);
 		this.renderVisualMap();
 		this.openVisualMapRow(this.rowVisualId($exercise));
 	};
@@ -2077,9 +2080,9 @@
 		});
 	};
 
-	PracticeEditor.prototype.decorate = function () {
+	PracticeEditor.prototype.decorate = function ($layouts) {
 		var self = this;
-		this.layouts().each(function () {
+		$layouts.each(function () {
 			var $layout = $(this);
 			$layout.addClass('yoga-practice-editor__layout-card');
 			self.markServiceFields($layout);

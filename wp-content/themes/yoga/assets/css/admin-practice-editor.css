@@ -26,7 +26,7 @@
 	display: none;
 }
 
-.yoga-modern-practice-editor:not(.yoga-practice-editor-ready) #poststuff .acf-postbox {
+.yoga-modern-practice-editor:not(.yoga-practice-editor-ready) .acf-postbox {
 	visibility: hidden;
 }
 
