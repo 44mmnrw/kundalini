@@ -21,11 +21,15 @@ if ($video_title === '') {
 $video_subtitle = trim((string) ($section['subtitle'] ?? ''));
 $video_details = trim((string) ($section['details'] ?? ''));
 $video_description = $section['description'] ?? '';
+$video_description_text = html_entity_decode(wp_strip_all_tags((string) $video_description), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+$video_has_description = trim(str_replace("\xC2\xA0", ' ', $video_description_text)) !== ''
+	|| preg_match('/<(?:img|iframe|video|audio|figure|picture|embed|object)\b/i', (string) $video_description) === 1;
+$video_has_extra_content = $video_subtitle !== '' || $video_details !== '' || $video_has_description;
 $player_id = 'practice-execution-video-' . sanitize_html_class((string) ($section_key ?? $anchor_id));
 ?>
 <div class="practice-execution-video">
 	<span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
-	<div class="practice-execution-video__card">
+	<div class="practice-execution-video__card<?php echo $video_has_extra_content ? '' : ' practice-execution-video__card--media-only'; ?>">
 		<div class="practice-execution-video__info">
 			<h3><?php echo esc_html($video_title); ?></h3>
 			<?php if ($video_subtitle !== ''): ?>
@@ -61,7 +65,7 @@ $player_id = 'practice-execution-video-' . sanitize_html_class((string) ($sectio
 				?>
 			</div>
 		</div>
-		<?php if (trim((string) $video_description) !== ''): ?>
+		<?php if ($video_has_description): ?>
 		<div class="exercise-content practice-execution-video__description">
 			<?php
 			echo function_exists('yoga_practice_format_rich_text')
