@@ -167,9 +167,8 @@ header > .container > .row > .header-content {
   height: 12px;
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
-  /* Closed state: point down and keep the rotated tip aligned to the text. */
-  transform: translateY(-16.6667%) rotate(180deg);
-  transform-origin: 50% 83.3333%;
+  transform: rotate(180deg);
+  transform-origin: 50% 7px;
   transition: var(--transition-base, 0.4s ease);
 }
 
@@ -177,8 +176,7 @@ header > .container > .row > .header-content {
   display: block;
   width: 100%;
   height: 100%;
-  color: var(--color-violet);
-  transform: translateY(16.6667%);
+  color: inherit;
 }
 
 .main-menu-active-item:hover::before,
