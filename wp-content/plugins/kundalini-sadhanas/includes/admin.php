@@ -60,6 +60,39 @@ function kundalini_sadhanas_register_settings(): void {
 }
 add_action('admin_init', 'kundalini_sadhanas_register_settings');
 
+function kundalini_sadhanas_enqueue_confetti_preview(string $hook_suffix): void {
+	if ($hook_suffix !== 'toplevel_page_kundalini-sadhanas') {
+		return;
+	}
+
+	$theme_js_dir = get_template_directory() . '/assets/js/';
+	if (!is_file($theme_js_dir . 'canvas-confetti.js') || !is_file($theme_js_dir . 'sadhana-confetti.js')) {
+		return;
+	}
+
+	$theme_js_url = get_template_directory_uri() . '/assets/js/';
+	wp_enqueue_script('canvas-confetti', $theme_js_url . 'canvas-confetti.js', array(), (string) filemtime($theme_js_dir . 'canvas-confetti.js'), true);
+	wp_enqueue_script('sadhana-confetti', $theme_js_url . 'sadhana-confetti.js', array('canvas-confetti'), (string) filemtime($theme_js_dir . 'sadhana-confetti.js'), true);
+	wp_localize_script('sadhana-confetti', 'yogaSadhanaConfettiSettings', kundalini_sadhanas_confetti_config());
+
+	$preview_path = KUNDALINI_SADHANAS_PATH . 'assets/js/confetti-preview.js';
+	wp_enqueue_script(
+		'kundalini-sadhanas-confetti-preview',
+		plugins_url('assets/js/confetti-preview.js', KUNDALINI_SADHANAS_FILE),
+		array('sadhana-confetti'),
+		(string) filemtime($preview_path),
+		true
+	);
+	$style_path = KUNDALINI_SADHANAS_PATH . 'assets/css/admin.css';
+	wp_enqueue_style(
+		'kundalini-sadhanas-admin',
+		plugins_url('assets/css/admin.css', KUNDALINI_SADHANAS_FILE),
+		array(),
+		(string) filemtime($style_path)
+	);
+}
+add_action('admin_enqueue_scripts', 'kundalini_sadhanas_enqueue_confetti_preview');
+
 function kundalini_sadhanas_admin_counts(): array {
 	global $wpdb;
 	$table = yoga_sadhana_table();
@@ -116,6 +149,55 @@ function kundalini_sadhanas_render_settings_page(): void {
 						> <?php esc_html_e('дней', 'kundalini-sadhanas'); ?>
 						<p class="description"><?php esc_html_e('Пользователь не сможет начать новую садхану на меньшее количество дней. Допустимое значение: от 1 до 1000.', 'kundalini-sadhanas'); ?></p>
 					</td>
+				</tr>
+			</table>
+			<h2><?php esc_html_e('Конфетти при завершении садханы', 'kundalini-sadhanas'); ?></h2>
+			<p><?php esc_html_e('Эффект запускается, когда пользователь отмечает последний день садханы.', 'kundalini-sadhanas'); ?></p>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><?php esc_html_e('Показывать конфетти', 'kundalini-sadhanas'); ?></th>
+					<td><label><input id="kundalini-confetti-enabled" type="checkbox" name="kundalini_sadhanas_settings[confetti_enabled]" value="1" <?php checked(!empty($settings['confetti_enabled'])); ?>> <?php esc_html_e('Включено', 'kundalini-sadhanas'); ?></label></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="kundalini-confetti-duration"><?php esc_html_e('Длительность', 'kundalini-sadhanas'); ?></label></th>
+					<td><input class="small-text" id="kundalini-confetti-duration" type="number" name="kundalini_sadhanas_settings[confetti_duration]" min="1" max="15" step="0.1" value="<?php echo esc_attr((string) $settings['confetti_duration']); ?>"> <?php esc_html_e('секунд', 'kundalini-sadhanas'); ?></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="kundalini-confetti-intensity"><?php esc_html_e('Интенсивность', 'kundalini-sadhanas'); ?></label></th>
+					<td>
+						<input class="kundalini-confetti-intensity" id="kundalini-confetti-intensity" type="range" name="kundalini_sadhanas_settings[confetti_intensity]" min="1" max="8" step="1" value="<?php echo esc_attr((string) $settings['confetti_intensity']); ?>" aria-describedby="kundalini-confetti-intensity-help">
+						<output id="kundalini-confetti-intensity-value" for="kundalini-confetti-intensity"><?php echo esc_html((string) $settings['confetti_intensity']); ?></output>
+						<p class="description" id="kundalini-confetti-intensity-help"><?php esc_html_e('От 1 (спокойно) до 8 (насыщенно). Текущее значение по умолчанию — 4.', 'kundalini-sadhanas'); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e('Цвета', 'kundalini-sadhanas'); ?></th>
+					<td><div class="kundalini-confetti-colors">
+						<?php foreach ($settings['confetti_colors'] as $index => $color) : ?>
+							<label><?php echo esc_html(sprintf(__('Цвет %d', 'kundalini-sadhanas'), $index + 1)); ?> <input class="kundalini-confetti-color" type="color" name="kundalini_sadhanas_settings[confetti_colors][]" value="<?php echo esc_attr($color); ?>"></label>
+						<?php endforeach; ?>
+					</div></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="kundalini-confetti-size"><?php esc_html_e('Размер частиц', 'kundalini-sadhanas'); ?></label></th>
+					<td><input class="small-text" id="kundalini-confetti-size" type="number" name="kundalini_sadhanas_settings[confetti_size]" min="0.5" max="2" step="0.01" value="<?php echo esc_attr((string) $settings['confetti_size']); ?>"> <p class="description"><?php esc_html_e('От 0,5 до 2; обычный размер — 1,15.', 'kundalini-sadhanas'); ?></p></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="kundalini-confetti-speed"><?php esc_html_e('Скорость запуска', 'kundalini-sadhanas'); ?></label></th>
+					<td><input class="small-text" id="kundalini-confetti-speed" type="number" name="kundalini_sadhanas_settings[confetti_speed]" min="15" max="70" step="1" value="<?php echo esc_attr((string) $settings['confetti_speed']); ?>"> <p class="description"><?php esc_html_e('От 15 до 70; обычная скорость — 38.', 'kundalini-sadhanas'); ?></p></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="kundalini-confetti-direction"><?php esc_html_e('Направление', 'kundalini-sadhanas'); ?></label></th>
+					<td><select id="kundalini-confetti-direction" name="kundalini_sadhanas_settings[confetti_direction]">
+						<option value="both" <?php selected($settings['confetti_direction'], 'both'); ?>><?php esc_html_e('С двух сторон', 'kundalini-sadhanas'); ?></option>
+						<option value="left" <?php selected($settings['confetti_direction'], 'left'); ?>><?php esc_html_e('Слева', 'kundalini-sadhanas'); ?></option>
+						<option value="right" <?php selected($settings['confetti_direction'], 'right'); ?>><?php esc_html_e('Справа', 'kundalini-sadhanas'); ?></option>
+						<option value="center" <?php selected($settings['confetti_direction'], 'center'); ?>><?php esc_html_e('Из центра снизу', 'kundalini-sadhanas'); ?></option>
+					</select></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e('Предпросмотр', 'kundalini-sadhanas'); ?></th>
+					<td><button class="button button-secondary" id="kundalini-confetti-preview" type="button"><?php esc_html_e('Показать конфетти', 'kundalini-sadhanas'); ?></button> <button class="button" id="kundalini-confetti-stop" type="button"><?php esc_html_e('Остановить', 'kundalini-sadhanas'); ?></button><p class="description"><?php esc_html_e('Показывает текущие значения полей без сохранения, даже при выключенном эффекте. Системная настройка уменьшения анимации соблюдается.', 'kundalini-sadhanas'); ?></p></td>
 				</tr>
 			</table>
 			<h2><?php esc_html_e('Рубежи прогресса', 'kundalini-sadhanas'); ?></h2>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Notification channel settings.
+ * Sadhana, celebration, and notification settings.
  */
 
 if (!defined('ABSPATH')) {
@@ -39,6 +39,13 @@ function kundalini_sadhanas_default_settings(): array {
 		'progress_percentages_90' => array(30, 70),
 		'progress_percentages_120' => array(25, 50, 75, 100),
 		'progress_percentages_custom' => array(25, 50, 75, 100),
+		'confetti_enabled' => true,
+		'confetti_duration' => 5.4,
+		'confetti_intensity' => 4,
+		'confetti_colors' => array('#9153e1', '#f8bdf6', '#e8ff57', '#1f1f1f'),
+		'confetti_size' => 1.15,
+		'confetti_speed' => 38,
+		'confetti_direction' => 'both',
 	);
 	foreach (kundalini_sadhanas_notification_events() as $event => $definition) {
 		foreach (array('site_enabled', 'email_enabled') as $field) {
@@ -52,7 +59,9 @@ function kundalini_sadhanas_get_settings(): array {
 	$stored = get_option('kundalini_sadhanas_settings', array());
 	$defaults = kundalini_sadhanas_default_settings();
 	$stored = is_array($stored) ? array_intersect_key($stored, $defaults) : array();
-	return array_merge($defaults, $stored);
+	$settings = array_merge($defaults, $stored);
+	$settings['confetti_colors'] = kundalini_sadhanas_sanitize_confetti_colors($settings['confetti_colors']);
+	return $settings;
 }
 
 /** @return mixed */
@@ -63,6 +72,45 @@ function kundalini_sadhanas_get_setting(string $key) {
 
 function kundalini_sadhanas_minimum_target_days(): int {
 	return max(1, min(1000, absint(kundalini_sadhanas_get_setting('minimum_target_days'))));
+}
+
+/** @param mixed $value */
+function kundalini_sadhanas_confetti_number($value, float $default, float $minimum, float $maximum): float {
+	if (!is_numeric($value)) {
+		return $default;
+	}
+	return max($minimum, min($maximum, (float) $value));
+}
+
+/** @param mixed $value */
+function kundalini_sadhanas_sanitize_confetti_colors($value): array {
+	$defaults = kundalini_sadhanas_default_settings()['confetti_colors'];
+	if (!is_array($value)) {
+		return $defaults;
+	}
+	$colors = array();
+	foreach ($defaults as $index => $default) {
+		$color = $value[$index] ?? null;
+		$colors[] = is_string($color) && preg_match('/^#[0-9a-f]{6}$/i', $color)
+			? strtolower($color)
+			: $default;
+	}
+	return $colors;
+}
+
+function kundalini_sadhanas_confetti_config(): array {
+	$settings = kundalini_sadhanas_get_settings();
+	return array(
+		'enabled' => !empty($settings['confetti_enabled']),
+		'duration' => (int) round(kundalini_sadhanas_confetti_number($settings['confetti_duration'], 5.4, 1, 15) * 1000),
+		'intensity' => (int) kundalini_sadhanas_confetti_number($settings['confetti_intensity'], 4, 1, 8),
+		'colors' => kundalini_sadhanas_sanitize_confetti_colors($settings['confetti_colors']),
+		'size' => kundalini_sadhanas_confetti_number($settings['confetti_size'], 1.15, 0.5, 2),
+		'speed' => (int) round(kundalini_sadhanas_confetti_number($settings['confetti_speed'], 38, 15, 70)),
+		'direction' => in_array($settings['confetti_direction'], array('both', 'left', 'right', 'center'), true)
+			? $settings['confetti_direction']
+			: 'both',
+	);
 }
 
 /**
@@ -118,6 +166,15 @@ function kundalini_sadhanas_sanitize_settings($input): array {
 		$key = 'progress_percentages_' . $profile;
 		$result[$key] = kundalini_sadhanas_sanitize_progress_percentages($input[$key] ?? $defaults[$key]);
 	}
+	$result['confetti_enabled'] = !empty($input['confetti_enabled']);
+	$result['confetti_duration'] = round(kundalini_sadhanas_confetti_number($input['confetti_duration'] ?? null, 5.4, 1, 15), 1);
+	$result['confetti_intensity'] = (int) kundalini_sadhanas_confetti_number($input['confetti_intensity'] ?? null, 4, 1, 8);
+	$result['confetti_colors'] = kundalini_sadhanas_sanitize_confetti_colors($input['confetti_colors'] ?? null);
+	$result['confetti_size'] = round(kundalini_sadhanas_confetti_number($input['confetti_size'] ?? null, 1.15, 0.5, 2), 2);
+	$result['confetti_speed'] = (int) round(kundalini_sadhanas_confetti_number($input['confetti_speed'] ?? null, 38, 15, 70));
+	$result['confetti_direction'] = in_array($input['confetti_direction'] ?? '', array('both', 'left', 'right', 'center'), true)
+		? $input['confetti_direction']
+		: 'both';
 	foreach (kundalini_sadhanas_notification_events() as $event => $definition) {
 		$result[$event . '_site_enabled'] = !empty($input[$event . '_site_enabled']);
 		$result[$event . '_email_enabled'] = !empty($input[$event . '_email_enabled']);

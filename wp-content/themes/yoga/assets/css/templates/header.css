@@ -461,6 +461,13 @@ header > .container > .row > .header-content {
   color: var(--color-white);
 }
 
+.header-lk .lk-notifications-popup__item--sadhana_started .lk-notifications-popup__item-icon,
+.header-lk .lk-notifications-popup__item--sadhana_interrupted .lk-notifications-popup__item-icon,
+.header-lk .lk-notifications-popup__item--sadhana_completed .lk-notifications-popup__item-icon {
+  background: var(--color-violet);
+  color: var(--color-white);
+}
+
 .header-lk .lk-notifications-popup__item--sadhana_started .lk-notifications-popup__item-icon svg,
 .header-lk .lk-notifications-popup__item--sadhana_interrupted .lk-notifications-popup__item-icon svg,
 .header-lk .lk-notifications-popup__item--sadhana_completed .lk-notifications-popup__item-icon svg {
