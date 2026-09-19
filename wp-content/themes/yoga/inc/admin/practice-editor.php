@@ -12,6 +12,24 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+if (!function_exists('yoga_use_classic_editor_for_practices')) {
+	function yoga_use_classic_editor_for_practices(bool $use_block_editor, string $post_type): bool {
+		return $post_type === 'practice' ? false : $use_block_editor;
+	}
+}
+
+add_filter('use_block_editor_for_post_type', 'yoga_use_classic_editor_for_practices', 100, 2);
+
+if (!function_exists('yoga_hide_native_practice_content_editor')) {
+	function yoga_hide_native_practice_content_editor(WP_Screen $screen): void {
+		if ($screen->base === 'post' && $screen->post_type === 'practice' && yoga_is_modern_practice_editor()) {
+			remove_post_type_support('practice', 'editor');
+		}
+	}
+}
+
+add_action('current_screen', 'yoga_hide_native_practice_content_editor');
+
 if (!function_exists('yoga_is_modern_practice_editor')) {
 	function yoga_is_modern_practice_editor(): bool {
 		if (!is_admin()) {

@@ -21,6 +21,11 @@
 	--yoga-editor-weight-bold: 700;
 }
 
+.yoga-modern-practice-editor #post-body-content,
+.yoga-modern-practice-editor #poststuff .postbox:not(.acf-postbox):not(#submitdiv) {
+	display: none;
+}
+
 .yoga-modern-practice-editor .yoga-practice-editor,
 .yoga-modern-practice-editor .yoga-practice-editor input,
 .yoga-modern-practice-editor .yoga-practice-editor textarea,
