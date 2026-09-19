@@ -115,6 +115,16 @@
   background: transparent;
 }
 
+#ytr-modal-cancel-subscription .delcomm-buttons .btn_white:hover,
+#ytr-modal-cancel-subscription .delcomm-buttons .btn_white:focus-visible {
+  background: var(--color-black);
+}
+
+#ytr-modal-cancel-subscription .delcomm-buttons .btn_white:hover span,
+#ytr-modal-cancel-subscription .delcomm-buttons .btn_white:focus-visible span {
+  color: var(--color-green);
+}
+
 .modal-card {
   width: 100%;
   padding-left: 1.5625rem;  padding-right: 1.5625rem;}
