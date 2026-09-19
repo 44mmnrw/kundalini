@@ -85,10 +85,10 @@ if ($primary_line_label === '') {
 								<p><?php esc_html_e('Выберите тариф и добавьте его в корзину', 'yoga'); ?></p>
 							</div>
 						</div>
-						<a class="yoga-checkout-empty__button" href="<?php echo esc_url($tariffs_url); ?>">
+						<a class="yoga-checkout-empty__button yoga-arrow-cta" href="<?php echo esc_url($tariffs_url); ?>">
 							<span><?php esc_html_e('Выбрать тариф', 'yoga'); ?></span>
-							<span class="yoga-checkout-empty__button-icon" aria-hidden="true">
-								<svg viewBox="0 0 16 16" focusable="false"><path d="M3 13L13 3M6 3H13V10" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+							<span class="yoga-checkout-empty__button-icon yoga-arrow-cta__icon" aria-hidden="true">
+								<svg class="yoga-arrow-cta__arrow" viewBox="0 0 20 20" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
 							</span>
 						</a>
 					</div>
@@ -242,11 +242,8 @@ if ($primary_line_label === '') {
 									<button type="submit" class="btn btn_icon single_add_to_cart_button yoga-checkout-summary__submit" form="yoga-checkout" name="woocommerce_checkout_place_order" id="place_order" value="<?php echo esc_attr($order_button_text); ?>">
 										<span><?php echo esc_html(sprintf(__('оплатить %s', 'yoga'), $display_total)); ?></span>
 										<div class="btn-icon">
-											<svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-												<use href="<?php echo $sprite_href; ?>#slick-arrow"></use>
-											</svg>
-											<svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
-												<use href="<?php echo $sprite_href; ?>#slick-arrow"></use>
+											<svg class="btn-icon-arrow" aria-hidden="true" focusable="false">
+												<use href="<?php echo $sprite_href; ?>#site-arrow"></use>
 											</svg>
 										</div>
 									</button>

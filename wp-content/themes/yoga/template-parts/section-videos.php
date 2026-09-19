@@ -62,14 +62,11 @@ if ($video_count === 1) {
                     </button>
                 </div>
 
-                <div class="videos__try wow fadeIn delay-200ms">
+                <div class="videos__try">
                     <div class="btn btn_icon modal-call_login">
                         <span><?php echo esc_html($videos_button_text); ?></span>
                         <div class="btn-icon">
-                            <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                            <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
-                            </svg>
-                            <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                            <svg class="btn-icon-arrow" aria-hidden="true" focusable="false">
                             <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                         </div>

@@ -263,7 +263,6 @@
   text-transform: uppercase;
   gap: 0.625rem;
   box-sizing: border-box;
-  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .lk-favorites-empty__button i {
@@ -275,38 +274,12 @@
   border-radius: 50%;
   background: var(--color-green);
   color: var(--color-black);
-  /* Swap both colors together so the arrow never blends into its circle. */
 }
 
 .lk-favorites-empty__button i svg {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-/* Rotate the artwork in one SVG viewport to avoid a raster shift at 0deg. */
-.lk-favorites-empty__button i svg g {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  transform: rotate(-45deg);
-  transition: transform 0.4s ease;
-}
-
-.lk-favorites-empty__button:hover,
-.lk-favorites-empty__button:focus-visible {
-  background: var(--color-green);
-  color: var(--color-black);
-}
-
-.lk-favorites-empty__button:hover i,
-.lk-favorites-empty__button:focus-visible i {
-  background: var(--color-black);
-  color: var(--color-green);
-}
-
-.lk-favorites-empty__button:hover i svg g,
-.lk-favorites-empty__button:focus-visible i svg g {
-  transform: rotate(0deg);
 }
 
 @media (max-width: 575px) {
@@ -453,30 +426,6 @@
   display: block;
   width: 1.875rem;
   height: 1.875rem;
-  opacity: 0;
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  transform: rotate(0deg);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.lk-sadhana-card__link svg.is-default {
-  opacity: 1;
-}
-
-.lk-sadhana-card__link:hover svg.is-default,
-.lk-sadhana-card__link:focus-visible svg.is-default {
-  opacity: 0;
-}
-
-.lk-sadhana-card__link:hover svg.is-hover,
-.lk-sadhana-card__link:focus-visible svg.is-hover {
-  opacity: 1;
-}
-
-.lk-sadhana-card__link:hover svg,
-.lk-sadhana-card__link:focus-visible svg {
-  transform: rotate(40.78deg);
 }
 
 .lk-sadhana-card__copy {
@@ -706,14 +655,6 @@
   text-decoration: none;
   text-transform: uppercase;
   box-sizing: border-box;
-  transition: background-color 0.4s ease, color 0.4s ease;
-}
-
-.lk-sadhanas-empty__button:hover,
-.lk-sadhanas-empty__button:focus-visible {
-  background: #e8ff57;
-  color: #1f1f1f;
-  text-decoration: none;
 }
 
 .lk-sadhanas-empty__button-icon {
@@ -730,30 +671,6 @@
   display: block;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  transform: rotate(0deg);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.lk-sadhanas-empty__button-icon svg.is-default {
-  opacity: 1;
-}
-
-.lk-sadhanas-empty__button:hover svg.is-default,
-.lk-sadhanas-empty__button:focus-visible svg.is-default {
-  opacity: 0;
-}
-
-.lk-sadhanas-empty__button:hover svg.is-hover,
-.lk-sadhanas-empty__button:focus-visible svg.is-hover {
-  opacity: 1;
-}
-
-.lk-sadhanas-empty__button:hover .lk-sadhanas-empty__button-icon svg,
-.lk-sadhanas-empty__button:focus-visible .lk-sadhanas-empty__button-icon svg {
-  transform: rotate(40.78deg);
 }
 
 @media (max-width: 1024px) {
@@ -2921,7 +2838,7 @@
   line-height: 1.5;
 }
 
-#lk-slide-settings .lk-settings-tariffs-btn {
+.lk-settings-tariffs-btn {
   display: inline-flex;
   flex: 0 0 20.4375rem;
   align-items: center;
@@ -2939,10 +2856,9 @@
   letter-spacing: 0;
   text-decoration: none;
   text-transform: uppercase;
-  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-#lk-slide-settings .lk-settings-tariffs-btn__icon {
+.lk-settings-tariffs-btn__icon {
   display: inline-flex;
   width: 2.5625rem;
   height: 2.5625rem;
@@ -2951,35 +2867,12 @@
   border-radius: 50%;
   background: #e8ff57;
   color: #1f1f1f;
-  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-#lk-slide-settings .lk-settings-tariffs-btn__arrow {
+.lk-settings-tariffs-btn__arrow {
   display: block;
   width: 1rem;
   height: 1rem;
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  transform: rotate(-40.78deg);
-  transition: transform 0.4s ease;
-}
-
-#lk-slide-settings .lk-settings-tariffs-btn:hover,
-#lk-slide-settings .lk-settings-tariffs-btn:focus-visible {
-  background: #e8ff57;
-  color: #1f1f1f;
-  opacity: 1;
-}
-
-#lk-slide-settings .lk-settings-tariffs-btn:hover .lk-settings-tariffs-btn__icon,
-#lk-slide-settings .lk-settings-tariffs-btn:focus-visible .lk-settings-tariffs-btn__icon {
-  background: #1f1f1f;
-  color: #e8ff57;
-}
-
-#lk-slide-settings .lk-settings-tariffs-btn:hover .lk-settings-tariffs-btn__arrow,
-#lk-slide-settings .lk-settings-tariffs-btn:focus-visible .lk-settings-tariffs-btn__arrow {
-  transform: rotate(0deg);
 }
 
 @media (max-width: 767px) {

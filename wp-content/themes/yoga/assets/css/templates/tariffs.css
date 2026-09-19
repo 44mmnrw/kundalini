@@ -119,14 +119,10 @@
   right: auto;
   top: auto;
   left: auto;
-  transform: rotate(-45deg);
-  transition: 0.4s ease;
+  --btn-icon-position: translateY(0);
   flex-shrink: 0;
   width: 1.875rem;
   height: 1.875rem;}
-.tariff .btn:hover .btn-icon,
-.yoga-checkout-summary__submit.btn:hover .btn-icon {
-  transform: rotate(0deg);}
 .tariff .btn .btn-icon svg,
 .yoga-checkout-summary__submit.btn .btn-icon svg {
   width: 0.914625rem;

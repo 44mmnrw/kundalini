@@ -22,7 +22,6 @@
 .yoga-copy-protected .question__sub img,
 .yoga-copy-protected .about-text img {
 	-webkit-user-drag: none;
-	user-drag: none;
 	pointer-events: auto;
 }
 

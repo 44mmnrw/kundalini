@@ -89,9 +89,9 @@
 
                                     <input type="submit" id="faq-form-submit" style="display: none;">
 
-                                    <label for="faq-form-submit" class="btn" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
-                                        <svg class="faq__form-submit-arrow" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                            <use href="<?php echo $faq_arrow_sprite_href; ?>#site-arrow-green"></use>
+                                    <label for="faq-form-submit" class="btn yoga-arrow-motion" aria-label="<?php esc_attr_e('Отправить вопрос', 'yoga'); ?>">
+                                        <svg class="faq__form-submit-arrow yoga-arrow-motion__icon" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                            <use href="<?php echo $faq_arrow_sprite_href; ?>#site-arrow"></use>
                                         </svg>
                                     </label>
                                 </div>

@@ -410,9 +410,9 @@
 											<p>Здесь появятся крийи, когда вы их добавите в избранное</p>
 										</div>
 									</div>
-									<a class="lk-favorites-empty__button" href="<?php echo esc_url($lk_library_url); ?>">
+									<a class="lk-favorites-empty__button yoga-arrow-cta" href="<?php echo esc_url($lk_library_url); ?>">
 										<span>В библиотеку практик</span>
-										<i aria-hidden="true"><svg viewBox="0 0 41 41" width="41" height="41" focusable="false"><g><path d="M22.9 26.5L27.7 20.5L22.9 14.5M27.7 20.5H13.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></g></svg></i>
+										<i class="yoga-arrow-cta__icon" aria-hidden="true"><svg viewBox="0 0 41 41" width="41" height="41" focusable="false"><g class="yoga-arrow-cta__arrow"><path d="M22.9 26.5L27.7 20.5L22.9 14.5M27.7 20.5H13.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></g></svg></i>
 									</a>
 								</div>
 								<?php
@@ -707,10 +707,10 @@
 												?>
 												<div class="lk-settings-empty-history">
 													<p>Покупок пока не было. Оформите подписку на один из наших тарифов, чтобы покупка добавилась в список.</p>
-													<a href="<?php echo esc_url($tariffs_url); ?>" class="lk-settings-tariffs-btn">
+													<a href="<?php echo esc_url($tariffs_url); ?>" class="lk-settings-tariffs-btn yoga-arrow-cta">
 														<span>Выбрать тариф</span>
-														<span class="lk-settings-tariffs-btn__icon" aria-hidden="true">
-															<svg class="lk-settings-tariffs-btn__arrow" width="16" height="16" viewBox="0 0 16 16" focusable="false">
+														<span class="lk-settings-tariffs-btn__icon yoga-arrow-cta__icon" aria-hidden="true">
+															<svg class="lk-settings-tariffs-btn__arrow yoga-arrow-cta__arrow" width="16" height="16" viewBox="0 0 16 16" focusable="false">
 																		<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
 															</svg>
 														</span>

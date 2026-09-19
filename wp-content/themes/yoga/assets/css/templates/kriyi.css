@@ -30,7 +30,7 @@
   justify-content: space-between;
   align-items: center;
 
-  --library-search-row-height: 4.9375rem;
+  --library-search-row-height: 3.8125rem;
 }
 
 .filter-item.active .filter-item__main span::after {
@@ -104,12 +104,14 @@
 .kriyi-item:hover .kriya-info h3 {
   color: var(--color-violet);
 }
-.kriyi-item:hover .kriya-btn {
-  transform: rotate(45deg);
+.kriyi-item:hover .kriya-btn,
+.kriyi-item:focus-within .kriya-btn {
   background: var(--color-green);
 }
-.kriyi-item:hover .kriya-btn__icon {
+.kriyi-item:hover .kriya-btn__icon,
+.kriyi-item:focus-within .kriya-btn__icon {
   color: var(--color-black);
+  transform: translate(-50%, -50%) rotate(0deg);
 }
 .kriyi-item.hidden {
   display: none;
@@ -235,11 +237,13 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: translate(-50%, -50%) rotate(var(--yoga-cta-arrow-start));
   width: 1.25rem;
   height: 1.25rem;
   color: var(--color-green);
-  transition: color 0.4s ease;
+  transition: color var(--transition-base), transform var(--transition-base);
 }
 
 @media (max-width: 1319px) {

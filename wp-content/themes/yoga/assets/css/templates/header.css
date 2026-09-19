@@ -296,6 +296,7 @@ header > .container > .row > .header-content {
   border-radius: 1.875rem;
   box-shadow: none;
   box-sizing: border-box;
+  cursor: default;
 }
 
 .header-lk .lk-notifications-popup--empty {

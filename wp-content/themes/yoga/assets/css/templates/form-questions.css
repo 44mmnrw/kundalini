@@ -403,25 +403,21 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  transform-origin: center;
-  transition: transform 0.2s ease;
+  --yoga-arrow-offset: translate(-50%, -50%);
 }
 
 .section-form-questions_practice .practice-form-layout__submit.btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-green);
 }
 
 .section-form-questions_practice .practice-form-layout__submit.btn:hover,
 .section-form-questions_practice .practice-form-layout__submit.btn:focus-visible {
   transform: none;
-}
-
-.section-form-questions_practice .practice-form-layout__submit.btn:hover .practice-form-layout__submit-icon,
-.section-form-questions_practice .practice-form-layout__submit.btn:focus-visible .practice-form-layout__submit-icon {
-  transform: translate(-50%, -50%) rotate(0deg);
+  background: var(--color-green);
+  color: var(--color-black);
 }
 
 .section-form-questions_practice .form-questions__badge {
@@ -784,16 +780,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 .section-form-questions_contacts .contacts-form-layout__submit-arrow {
   position: static;
   width: 20px;
   height: 20px;
-  transform: rotate(-45deg);
-  transform-origin: center;
-  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .section-form-questions_contacts .contacts-form-layout__submit.btn:hover,
@@ -801,12 +794,6 @@
   transform: none;
   background: var(--color-green);
   color: var(--color-black);
-}
-
-.section-form-questions_contacts .contacts-form-layout__submit.btn:hover .contacts-form-layout__submit-arrow,
-.section-form-questions_contacts .contacts-form-layout__submit.btn:focus-visible .contacts-form-layout__submit-arrow {
-  transform: rotate(0deg);
-  filter: brightness(0);
 }
 
 .contacts-social {

@@ -796,16 +796,11 @@
 	border-radius: 50%;
 	background: #e8ff57;
 	color: #1f1f1f;
-	transition: transform 0.4s ease;
 }
 
 .yoga-checkout-empty__button-icon svg {
 	width: 0.9375rem;
 	height: 0.9375rem;
-}
-
-.yoga-checkout-empty__button:hover .yoga-checkout-empty__button-icon {
-	transform: rotate(45deg);
 }
 
 .yoga-checkout_auth {

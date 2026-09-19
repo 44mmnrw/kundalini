@@ -115,19 +115,25 @@
 .modal-menu-item:hover::before {
   width: 100%;
 }
-.modal-menu-item:hover .btn-icon {
+.modal-menu-item:hover .btn-icon,
+.modal-menu-item:focus-within .btn-icon {
   background: var(--color-black);
 }
-.modal-menu-item:hover .btn-icon img {
+.modal-menu-item:hover .btn-icon img,
+.modal-menu-item:focus-within .btn-icon img {
   opacity: 1;
 }
-.modal-menu-item:hover .btn-icon img.active {
+.modal-menu-item:hover .btn-icon img.active,
+.modal-menu-item:focus-within .btn-icon img.active {
   opacity: 0;
 }
-.modal-menu-item:hover .btn-icon svg {
+.modal-menu-item:hover .btn-icon svg,
+.modal-menu-item:focus-within .btn-icon svg {
   opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg);
 }
-.modal-menu-item:hover .btn-icon svg.active {
+.modal-menu-item:hover .btn-icon svg.active,
+.modal-menu-item:focus-within .btn-icon svg.active {
   opacity: 0;
 }
 .modal-menu-item:hover .modal-menu-item__text {

@@ -25,11 +25,11 @@ if (!function_exists('yoga_get_sadhana_empty_layout')) {
 					<p><?php echo esc_html($description); ?></p>
 				</div>
 			</div>
-			<a class="lk-sadhanas-empty__button" href="<?php echo esc_url($library_url); ?>">
+			<a class="lk-sadhanas-empty__button yoga-arrow-cta yoga-arrow-art" href="<?php echo esc_url($library_url); ?>">
 				<span>В библиотеку практик</span>
 				<span class="lk-sadhanas-empty__button-icon" aria-hidden="true">
-					<svg class="is-default"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
-					<svg class="is-hover"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
+					<svg class="yoga-arrow-art__icon is-default"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
+					<svg class="yoga-arrow-art__icon is-hover"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
 				</span>
 			</a>
 		</div>
@@ -115,9 +115,9 @@ if (!function_exists('yoga_render_sadhana_card')) {
 		<article class="lk-sadhana-card<?php echo $is_completed ? ' is-completed' : ''; ?>" data-sadhana-id="<?php echo esc_attr((string) absint($sadhana['id'] ?? 0)); ?>" data-practice-id="<?php echo esc_attr((string) $practice_id); ?>">
 			<div class="lk-sadhana-card__head">
 				<span class="lk-sadhana-card__status">Пройдено <?php echo esc_html((string) $progress); ?>%</span>
-				<a class="lk-sadhana-card__link" href="<?php echo esc_url($practice_url); ?>" aria-label="Открыть практику <?php echo esc_attr($title); ?>">
-					<svg class="is-default" aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
-					<svg class="is-hover" aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
+				<a class="lk-sadhana-card__link yoga-arrow-art" href="<?php echo esc_url($practice_url); ?>" aria-label="Открыть практику <?php echo esc_attr($title); ?>">
+					<svg class="yoga-arrow-art__icon is-default" aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
+					<svg class="yoga-arrow-art__icon is-hover" aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
 				</a>
 			</div>
 			<div class="lk-sadhana-card__copy">

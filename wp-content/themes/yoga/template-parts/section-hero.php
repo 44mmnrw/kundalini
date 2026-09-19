@@ -39,10 +39,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                     <a href="<?php echo esc_url($tariffs_url); ?>" class="btn btn_alt btn_icon">
                         <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                         <div class="btn-icon">
-                            <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
-                            </svg>
-                            <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                            <svg class="btn-icon-arrow" aria-hidden="true" focusable="false">
                                 <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                         </div>
@@ -51,10 +48,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                     <div class="btn btn_alt btn_icon modal-call_login">
                         <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                         <div class="btn-icon">
-                            <svg class="btn-icon-arrow btn-icon-arrow_black active" aria-hidden="true" focusable="false">
-                                <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
-                            </svg>
-                            <svg class="btn-icon-arrow btn-icon-arrow_green" aria-hidden="true" focusable="false">
+                            <svg class="btn-icon-arrow" aria-hidden="true" focusable="false">
                                 <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
                             </svg>
                         </div>
@@ -98,11 +92,11 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                             <strong><?php the_field('hero_count'); ?></strong>
                             <p><?php the_field('hero_count_text'); ?></p>
                         </div>
-                        <a class="hundreds-practices__arrow" href="<?php echo esc_url($tariffs_url); ?>" aria-label="Перейти к тарифам">
-                            <svg class="hundreds-practices__arrow-icon hundreds-practices__arrow-icon_default" aria-hidden="true">
+                        <a class="hundreds-practices__arrow yoga-arrow-art" href="<?php echo esc_url($tariffs_url); ?>" aria-label="Перейти к тарифам">
+                            <svg class="hundreds-practices__arrow-icon yoga-arrow-art__icon is-default" aria-hidden="true">
                                 <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#arrow45-green'); ?>"></use>
                             </svg>
-                            <svg class="hundreds-practices__arrow-icon hundreds-practices__arrow-icon_hover" aria-hidden="true">
+                            <svg class="hundreds-practices__arrow-icon yoga-arrow-art__icon is-hover" aria-hidden="true">
                                 <use xlink:href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#arrow45-black'); ?>"></use>
                             </svg>
                         </a>

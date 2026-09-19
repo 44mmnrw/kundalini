@@ -195,19 +195,10 @@
   display: block;
   width: 20px;
   height: 20px;
-  color: var(--color-green);
-  transform: rotate(-45deg);
-  transform-origin: center;
-  transition: transform 0.2s ease, filter 0.2s ease;
 }
 .faq__form .form-questions__main-form .form-questions-textarea .btn:hover,
 .faq__form .form-questions__main-form .form-questions-textarea .btn:focus-visible {
   transform: none;
-}
-.faq__form .form-questions__main-form .form-questions-textarea .btn:hover .faq__form-submit-arrow,
-.faq__form .form-questions__main-form .form-questions-textarea .btn:focus-visible .faq__form-submit-arrow {
-  transform: rotate(0deg);
-  filter: none;
 }
 .faq__form .form-questions::after {
   content: none;
@@ -234,6 +225,11 @@
   padding: 0;
   line-height: 1;
   color: var(--color-green);}
+.faq__form .form-questions__main-form .form-questions-textarea .btn:hover,
+.faq__form .form-questions__main-form .form-questions-textarea .btn:focus-visible {
+  background: var(--color-green);
+  color: var(--color-black);
+}
 
 
 
@@ -483,10 +479,5 @@
   .faq__form .form-questions__main-form .form-questions-textarea .btn:hover,
   .faq__form .form-questions__main-form .form-questions-textarea .btn:focus-visible {
     transform: none;
-  }
-  .faq__form .form-questions__main-form .form-questions-textarea .btn:hover .faq__form-submit-arrow,
-  .faq__form .form-questions__main-form .form-questions-textarea .btn:focus-visible .faq__form-submit-arrow {
-    transform: rotate(0deg);
-    filter: none;
   }
 }
