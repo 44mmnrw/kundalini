@@ -451,6 +451,26 @@ h5, .h5 {
   transform: var(--yoga-arrow-offset, translate(0)) rotate(0deg);
 }
 
+.question__main.yoga-arrow-motion {
+  --yoga-cta-arrow-start: 45deg;
+  --yoga-arrow-offset: translate(-50%, -50%);
+}
+
+.question__main .question-icon svg {
+  transform-origin: 50% 52.5%;
+  transition: transform var(--transition-base), color var(--transition-base);
+}
+
+.question__main:hover .question-icon,
+.question__main:focus-visible .question-icon {
+  background-color: var(--color-black);
+}
+
+.question__main:hover .question-icon svg,
+.question__main:focus-visible .question-icon svg {
+  color: var(--color-green);
+}
+
 /* Some CTAs include the circle in each SVG, so their two colors crossfade. */
 .yoga-arrow-art__icon {
   opacity: 0;

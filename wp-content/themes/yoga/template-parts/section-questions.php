@@ -101,13 +101,13 @@ if ($questions_more_link === '') {
                                 $answer = $item['faq_answer'];
                                 ?>
                                 <div class="question wow fadeIn delay-200ms" data-delay="<?php echo ($index * 100) + 200; ?>ms">
-                                    <div class="question__main">
+                                    <div class="question__main yoga-arrow-motion">
                                         <span class="question__main-text">
                                             <span><?php echo str_pad($counter, 2, '0', STR_PAD_LEFT); ?>.</span>
                                             <?php echo esc_html($question); ?>
                                         </span>
                                         <div class="question-icon">
-                                            <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+                                            <svg class="yoga-arrow-motion__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
                                         </div>
                                     </div>
                                     <div class="question__sub">
@@ -140,13 +140,13 @@ if ($questions_more_link === '') {
                             foreach ($default_questions as $index => $question) :
                                 ?>
                                 <div class="question wow fadeIn delay-200ms" data-delay="<?php echo ($index * 100) + 200; ?>ms">
-                                    <div class="question__main">
+                                    <div class="question__main yoga-arrow-motion">
                                         <span class="question__main-text">
                                             <span><?php echo str_pad($index + 1, 2, '0', STR_PAD_LEFT); ?>.</span>
                                             <?php echo esc_html($question); ?>
                                         </span>
                                         <div class="question-icon">
-                                            <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+                                            <svg class="yoga-arrow-motion__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
                                         </div>
                                     </div>
                                     <div class="question__sub">
