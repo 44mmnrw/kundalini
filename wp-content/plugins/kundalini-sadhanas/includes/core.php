@@ -223,6 +223,17 @@ function yoga_sadhana_get_active(int $user_id, int $practice_id, bool $normalize
 	return ($row['status'] ?? '') === 'active' ? $row : null;
 }
 
+function yoga_sadhana_get_latest_completed(int $user_id, int $practice_id): ?array {
+	global $wpdb;
+	$table = yoga_sadhana_table();
+	$id = (int) $wpdb->get_var($wpdb->prepare(
+		"SELECT id FROM {$table} WHERE user_id = %d AND practice_id = %d AND status = 'completed' ORDER BY completed_on DESC, id DESC LIMIT 1",
+		$user_id,
+		$practice_id
+	));
+	return $id > 0 ? yoga_sadhana_get($id, $user_id) : null;
+}
+
 function yoga_sadhana_notification_url(array $row): string {
 	$practice_id = absint($row['practice_id'] ?? 0);
 	$url = $practice_id > 0 ? get_permalink($practice_id) : '';

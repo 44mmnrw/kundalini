@@ -29,6 +29,10 @@ $sadhana_user_id = (int) get_current_user_id();
 $active_sadhana = $sadhana_user_id > 0 && function_exists('yoga_sadhana_get_active')
 	? yoga_sadhana_get_active($sadhana_user_id, $practice_id)
 	: null;
+$completed_sadhana = !$active_sadhana && $sadhana_user_id > 0 && function_exists('yoga_sadhana_get_latest_completed')
+	? yoga_sadhana_get_latest_completed($sadhana_user_id, $practice_id)
+	: null;
+$display_sadhana = $active_sadhana ?: $completed_sadhana;
 $section_praktika_classes = array('section-praktika');
 if (!empty($section_praktika_extra_class)) {
 	$section_praktika_classes[] = sanitize_html_class((string) $section_praktika_extra_class);
@@ -65,14 +69,14 @@ if (!empty($section_praktika_extra_class)) {
 						</span>
 					</div>
 					<?php if ($sadhana_user_id > 0) : ?>
-						<button class="praktika-sadhana-btn" type="button" aria-haspopup="dialog" aria-controls="yoga-sadhana-modal"<?php echo $active_sadhana ? ' hidden' : ''; ?>>
+						<button class="praktika-sadhana-btn" type="button" aria-haspopup="dialog" aria-controls="yoga-sadhana-modal"<?php echo $display_sadhana ? ' hidden' : ''; ?>>
 							<?php esc_html_e('Взять в садхану', 'yoga'); ?>
 						</button>
 					<?php endif; ?>
 				</div>
 				<?php
-				if ($active_sadhana && function_exists('yoga_render_practice_sadhana_counter')) {
-					yoga_render_practice_sadhana_counter($active_sadhana, $practice_id, 'top');
+				if ($display_sadhana && function_exists('yoga_render_practice_sadhana_counter')) {
+					yoga_render_practice_sadhana_counter($display_sadhana, $practice_id, 'top');
 				}
 				?>
 				<div class="praktika-info">
@@ -166,8 +170,8 @@ if (!empty($section_praktika_extra_class)) {
 							?>
 						</div>
 				<?php
-				if ($active_sadhana && function_exists('yoga_render_practice_sadhana_counter')) {
-					yoga_render_practice_sadhana_counter($active_sadhana, $practice_id, 'bottom');
+				if ($display_sadhana && function_exists('yoga_render_practice_sadhana_counter')) {
+					yoga_render_practice_sadhana_counter($display_sadhana, $practice_id, 'bottom');
 				}
 				?>
 
