@@ -476,7 +476,7 @@
 
 .lk-sadhana-card__link:hover svg,
 .lk-sadhana-card__link:focus-visible svg {
-  transform: rotate(45deg);
+  transform: rotate(40.78deg);
 }
 
 .lk-sadhana-card__copy {
@@ -753,7 +753,7 @@
 
 .lk-sadhanas-empty__button:hover .lk-sadhanas-empty__button-icon svg,
 .lk-sadhanas-empty__button:focus-visible .lk-sadhanas-empty__button-icon svg {
-  transform: rotate(45deg);
+  transform: rotate(40.78deg);
 }
 
 @media (max-width: 1024px) {
@@ -2939,6 +2939,7 @@
   letter-spacing: 0;
   text-decoration: none;
   text-transform: uppercase;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 #lk-slide-settings .lk-settings-tariffs-btn__icon {
@@ -2950,17 +2951,17 @@
   border-radius: 50%;
   background: #e8ff57;
   color: #1f1f1f;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 #lk-slide-settings .lk-settings-tariffs-btn__arrow {
   display: block;
   width: 1rem;
-  transform: rotate(-45deg);
   height: 1rem;
-  transform: rotate(0deg);
-  transform-origin: center;
-  transition: transform 0.2s ease;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(-40.78deg);
+  transition: transform 0.4s ease;
 }
 
 #lk-slide-settings .lk-settings-tariffs-btn:hover,
@@ -2978,7 +2979,7 @@
 
 #lk-slide-settings .lk-settings-tariffs-btn:hover .lk-settings-tariffs-btn__arrow,
 #lk-slide-settings .lk-settings-tariffs-btn:focus-visible .lk-settings-tariffs-btn__arrow {
-  transform: rotate(-4.22deg);
+  transform: rotate(0deg);
 }
 
 @media (max-width: 767px) {

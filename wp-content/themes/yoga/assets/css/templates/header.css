@@ -425,6 +425,11 @@ header > .container > .row > .header-content {
   color: var(--color-black);
 }
 
+.header-lk .lk-notifications-popup__item--unread .lk-notifications-popup__item-icon {
+  background: var(--color-violet);
+  color: var(--color-white);
+}
+
 .header-lk .lk-notifications-popup__item--question_answer .lk-notifications-popup__item-icon {
   background: var(--color-violet);
   color: #f6f6f9;
