@@ -186,7 +186,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 							continue;
 						}
 						?>
-						<div class="library-item <?php echo esc_attr($term_class); ?>">
+						<div class="library-item yoga-arrow-motion <?php echo esc_attr($term_class); ?>">
 							<div class="library-item__bg"></div>
 							<div class="library-item__cat">
 								<?php echo esc_html($term->name); ?>
@@ -198,7 +198,10 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 								<?php endif; ?>
 							</div>
 							<div class="library-item__btn">
-								<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/library-card-corner-icon.svg'); ?>" alt="">
+								<svg viewBox="0 0 41 41" aria-hidden="true" focusable="false">
+									<circle class="library-item__btn-circle" cx="20.5" cy="20.5" r="20.5" />
+									<path class="library-item__btn-arrow yoga-arrow-motion__icon" d="M27.1702 25.2199L26.8152 15.6218L17.3733 13.8612M26.8152 15.6218L13.1848 27.3781" fill="none" stroke-width="1.5" stroke-linecap="square" />
+								</svg>
 							</div>
 							<a href="<?php echo esc_url($term_link); ?>" class="library-item__link" aria-label="<?php echo esc_attr($term->name); ?>"></a>
 						</div>

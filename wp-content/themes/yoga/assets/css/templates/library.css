@@ -581,6 +581,8 @@ input#filt-reset {
 
 .library-item {
   --library-card-background: rgba(145, 83, 225, 0.07);
+  --yoga-cta-arrow-start: 0deg;
+  --yoga-cta-arrow-end: 40.78deg;
   display: flex;
   position: relative;
   flex-direction: column;
@@ -655,15 +657,38 @@ input#filt-reset {
   height: 2.5625rem;
   line-height: 0;
   z-index: 10;
-  transition: 0.4s ease;
+  pointer-events: none;
 }
-.library-item__btn img {
+.library-item__btn svg {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
   position: relative;
   z-index: 11;}
+
+.library-item__btn-circle {
+  fill: var(--color-black);
+  transition: fill var(--transition-base);
+}
+
+.library-item__btn-arrow {
+  stroke: var(--color-green);
+  transition: transform var(--transition-base), stroke var(--transition-base);
+}
+
+.library-item:hover .library-item__btn-circle,
+.library-item:focus-within .library-item__btn-circle {
+  fill: var(--color-green);
+}
+
+.library-item:hover .library-item__btn-arrow,
+.library-item:focus-within .library-item__btn-arrow {
+  stroke: var(--color-black);
+}
+
+.library-item:focus-within .library-item__btn-arrow {
+  transform: rotate(var(--yoga-cta-arrow-end));
+}
 
 .library-item__img {
   display: block;
@@ -722,8 +747,6 @@ input#filt-reset {
     width: calc(25% - 0.9375rem);    margin-right: 0.9375rem;  }
   .library-item__img {
     height: 9.5rem;  }
-  .library-item__btn img {
-    width: 100%;  }
   .library-item__btn {
     width: 2.4375rem;
     height: 2.4375rem;  }
@@ -739,8 +762,6 @@ input#filt-reset {
     font-size: 1rem;  }
   .library-item__img {
     height: 10.1875rem;  }
-  .library-item__btn img {
-    width: 100%;  }
   .library-item__btn {
     width: 2.5625rem;
     height: 2.5625rem;  }
@@ -758,8 +779,6 @@ input#filt-reset {
     max-width: 15.3125rem;  }
   .library-item__img {
     height: 11.6875rem;  }
-  .library-item__btn img {
-    width: 100%;  }
   .library-item__btn {
     width: 2.8125rem;
     height: 2.8125rem;  }
@@ -783,8 +802,6 @@ input#filt-reset {
     padding-left: 0.9375rem;    padding-right: 0.9375rem;    width: calc(50% - 1rem);    margin-right: 1rem;  }
   .library-item__img {
     height: 9.75rem;  }
-  .library-item__btn img {
-    width: 100%;  }
   .library-item__btn {
     width: 2.375rem;
     height: 2.375rem;  }
@@ -833,8 +850,6 @@ input#filt-reset {
   }
   .library-item__img {
     height: 11.625rem;  }
-  .library-item__btn img {
-    width: 100%;  }
   .library-item__btn {
     width: 2.5625rem;
     height: 2.5625rem;  }
