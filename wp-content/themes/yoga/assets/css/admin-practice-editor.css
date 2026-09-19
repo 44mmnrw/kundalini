@@ -228,14 +228,6 @@
 	transition: color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), background-color var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing), box-shadow var(--yoga-editor-hover-duration) var(--yoga-editor-hover-easing);
 }
 
-.yoga-practice-editor__nav-item[data-layout-id] .yoga-practice-editor__nav-button {
-	cursor: grab;
-}
-
-.yoga-practice-editor__nav-item.ui-sortable-helper .yoga-practice-editor__nav-button {
-	cursor: grabbing;
-}
-
 .yoga-practice-editor__sidebar > .yoga-practice-editor__nav-button {
 	grid-template-columns: 34px minmax(0, 1fr);
 }
@@ -345,6 +337,10 @@
 	height: 32px;
 	cursor: grab;
 	opacity: 0.55;
+}
+
+.yoga-practice-editor__nav-item.ui-sortable-helper .yoga-practice-editor__drag {
+	cursor: grabbing;
 }
 
 .yoga-practice-editor__drag span {
