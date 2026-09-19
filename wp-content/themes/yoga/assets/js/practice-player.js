@@ -4,6 +4,30 @@
  * @package Yoga
  */
 
+function hydratePracticeExerciseImages(exerciseItem) {
+    const slides = exerciseItem.querySelectorAll('.exercise-slider__item:not(.slick-cloned) img');
+    Array.from(slides).slice(0, 2).forEach(image => {
+        image.loading = 'eager';
+    });
+
+    exerciseItem.querySelectorAll('img[data-practice-src]').forEach(image => {
+        const srcset = image.getAttribute('data-practice-srcset');
+        const src = image.getAttribute('data-practice-src');
+        if (srcset) {
+            image.setAttribute('srcset', srcset);
+            image.removeAttribute('data-practice-srcset');
+        }
+        image.setAttribute('src', src);
+        image.removeAttribute('data-practice-src');
+    });
+
+    if (window.jQuery && window.jQuery.fn.slick) {
+        requestAnimationFrame(() => {
+            window.jQuery(exerciseItem).find('.exercise-slider.slick-initialized').slick('setPosition');
+        });
+    }
+}
+
 function getKinescopePlayerFactory(timeout = 10000) {
     const existingFactory = window.Kinescope && window.Kinescope.IframePlayer;
     if (existingFactory && typeof existingFactory.create === 'function') {
@@ -537,7 +561,12 @@ function initializePracticeSystem() {
              exercise.querySelectorAll('.exercise-item').forEach(item => {
                 item.classList.remove('active');
             });
-            exercise.querySelector(`.exercise-item[data-version="${targetVersion}"]`).classList.add('active');
+            const targetExercise = exercise.querySelector(`.exercise-item[data-version="${targetVersion}"]`);
+            if (!targetExercise) {
+                return;
+            }
+            targetExercise.classList.add('active');
+            hydratePracticeExerciseImages(targetExercise);
 
 
             if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {

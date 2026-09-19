@@ -48,6 +48,9 @@ if (!function_exists('yoga_practice_format_rich_text')) {
 		}
 
 		$html = wp_kses_post($html);
+		if (!$apply_content_filters && function_exists('wp_filter_content_tags')) {
+			$html = wp_filter_content_tags($html, 'the_content');
+		}
 
 		return function_exists('yoga_practice_content_images_lightbox')
 			? yoga_practice_content_images_lightbox($html)

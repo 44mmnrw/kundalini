@@ -104,7 +104,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			<div class="exercise-slider__item">
 				<a href="<?php echo esc_url($image['url']); ?>" class="exercise-slider__lightbox" data-fancybox="<?php echo esc_attr($variant_gallery_fancybox); ?>"<?php if (!empty($image['alt'])): ?> data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>>
 					<span class="exercise-slider__media">
-						<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+						<?php echo yoga_practice_exercise_gallery_image($image, true); ?>
 					</span>
 				</a>
 			</div>

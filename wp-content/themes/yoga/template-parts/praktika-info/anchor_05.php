@@ -43,6 +43,7 @@
 			foreach ($gallery as $image) {
 				$url = '';
 				$alt = '';
+				$image_id = 0;
 
 				if (is_array($image)) {
 					$image_id = (int) ($image['ID'] ?? $image['id'] ?? 0);
@@ -68,13 +69,70 @@
 					continue;
 				}
 
+				$display_url = $url;
+				$srcset = '';
+				$width = 0;
+				$height = 0;
+				if ($image_id > 0) {
+					$display_image = wp_get_attachment_image_src($image_id, 'large');
+					if (is_array($display_image) && !empty($display_image[0])) {
+						$display_url = (string) $display_image[0];
+						$width = (int) ($display_image[1] ?? 0);
+						$height = (int) ($display_image[2] ?? 0);
+					}
+					$attachment_srcset = wp_get_attachment_image_srcset($image_id, 'large');
+					$srcset = is_string($attachment_srcset) ? $attachment_srcset : '';
+				} elseif (is_array($image) && !empty($image['sizes']['large'])) {
+					$display_url = (string) $image['sizes']['large'];
+					$width = (int) ($image['sizes']['large-width'] ?? 0);
+					$height = (int) ($image['sizes']['large-height'] ?? 0);
+				}
+
 				$images[] = array(
-					'url' => $url,
-					'alt' => $alt,
+					'url'         => $url,
+					'display_url' => $display_url,
+					'srcset'      => $srcset,
+					'width'       => $width,
+					'height'      => $height,
+					'alt'         => $alt,
 				);
 			}
 
 			return $images;
+		}
+	}
+
+	if (!function_exists('yoga_practice_exercise_gallery_image')) {
+		function yoga_practice_exercise_gallery_image(array $image, bool $defer = false): string {
+			$display_url = (string) ($image['display_url'] ?? $image['url'] ?? '');
+			if ($display_url === '') {
+				return '';
+			}
+			$attributes = array(
+				$defer
+					? 'src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="'
+					: 'src="' . esc_url($display_url) . '"',
+				'alt="' . esc_attr((string) ($image['alt'] ?? '')) . '"',
+				'loading="lazy"',
+				'decoding="async"',
+			);
+			$srcset = (string) ($image['srcset'] ?? '');
+			if ($defer) {
+				$attributes[] = 'data-practice-src="' . esc_url($display_url) . '"';
+				if ($srcset !== '') {
+					$attributes[] = 'data-practice-srcset="' . esc_attr($srcset) . '"';
+				}
+			} elseif ($srcset !== '') {
+				$attributes[] = 'srcset="' . esc_attr($srcset) . '"';
+			}
+			if ($srcset !== '') {
+				$attributes[] = 'sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1319px) 456px, 680px"';
+			}
+			if (!empty($image['width']) && !empty($image['height'])) {
+				$attributes[] = 'width="' . (int) $image['width'] . '"';
+				$attributes[] = 'height="' . (int) $image['height'] . '"';
+			}
+			return '<img ' . implode(' ', $attributes) . '>';
 		}
 	}
 
@@ -333,7 +391,7 @@
 						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
 					>
 						<span class="exercise-slider__media">
-							<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+							<?php echo yoga_practice_exercise_gallery_image($image); ?>
 						</span>
 					</a>
 				</div>
@@ -498,7 +556,7 @@
 						<?php if (!empty($image['alt'])): ?>data-caption="<?php echo esc_attr($image['alt']); ?>"<?php endif; ?>
 					>
 						<span class="exercise-slider__media">
-							<img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt'] ?? ''); ?>">
+							<?php echo yoga_practice_exercise_gallery_image($image, true); ?>
 						</span>
 					</a>
 				</div>

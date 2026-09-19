@@ -10,6 +10,7 @@
 	var layoutLabels = config.layoutLabels || {};
 	var editor = null;
 	var refreshTimer = null;
+	var fieldRefreshTimer = null;
 
 	function spriteIcon(symbolId, className) {
 		var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -136,7 +137,9 @@
 
 	function scheduleRefresh(preferredId) {
 		window.clearTimeout(refreshTimer);
+		window.clearTimeout(fieldRefreshTimer);
 		refreshTimer = window.setTimeout(function () {
+			refreshTimer = null;
 			if (!editor) {
 				return;
 			}
@@ -149,6 +152,19 @@
 			editor.refreshNavigation(preferredId);
 			editor.positionSectionMenu();
 		}, 80);
+	}
+
+	function scheduleFieldRefresh(element) {
+		if (refreshTimer) {
+			return;
+		}
+		window.clearTimeout(fieldRefreshTimer);
+		fieldRefreshTimer = window.setTimeout(function () {
+			fieldRefreshTimer = null;
+			if (editor && document.contains(element)) {
+				editor.refreshChangedField($(element));
+			}
+		}, 200);
 	}
 
 	function PracticeEditor($sectionsField) {
@@ -515,23 +531,26 @@
 			return normalized(taxonomy && taxonomy.label);
 		}).filter(Boolean);
 
-		function hidePanels() {
-			if (window.wp && wp.data) {
-				try {
-					var editorStore = wp.data.dispatch('core/editor');
-					if (editorStore && typeof editorStore.removeEditorPanel === 'function') {
-						taxonomies.forEach(function (taxonomy) {
-							if (taxonomy && taxonomy.slug) {
-								editorStore.removeEditorPanel('taxonomy-panel-' + taxonomy.slug);
-							}
-						});
-					}
-				} catch (error) {
-					// Keep the DOM fallback for older WordPress editor versions.
+		if (window.wp && wp.data) {
+			try {
+				var editorStore = wp.data.dispatch('core/editor');
+				if (editorStore && typeof editorStore.removeEditorPanel === 'function') {
+					taxonomies.forEach(function (taxonomy) {
+						if (taxonomy && taxonomy.slug) {
+							editorStore.removeEditorPanel('taxonomy-panel-' + taxonomy.slug);
+						}
+					});
 				}
+			} catch (error) {
+				// Keep the DOM fallback for older WordPress editor versions.
 			}
+		}
 
-			$('.interface-complementary-area .components-panel__body').each(function () {
+		var self = this;
+		var attempts = 0;
+		var updateScheduled = false;
+		function hidePanels($sidebar) {
+			$sidebar.find('.components-panel__body').each(function () {
 				var $panel = $(this);
 				var title = normalized($panel.children('.components-panel__body-title').text());
 				if (labelsToHide.indexOf(title) !== -1) {
@@ -540,19 +559,38 @@
 			});
 		}
 
-		hidePanels();
-		window.setTimeout(hidePanels, 250);
-		window.setTimeout(hidePanels, 1000);
-
-		if (!this.taxonomyPanelObserver && window.MutationObserver) {
-			this.taxonomyPanelObserver = new MutationObserver(function () {
-				hidePanels();
+		function attachObserver() {
+			var $sidebar = $('.interface-complementary-area').first();
+			if (!$sidebar.length) {
+				if (++attempts < 20) {
+					window.setTimeout(attachObserver, 250);
+				}
+				return;
+			}
+			hidePanels($sidebar);
+			if (self.taxonomyPanelObserver || !window.MutationObserver) {
+				return;
+			}
+			self.taxonomyPanelObserver = new MutationObserver(function () {
+				if (updateScheduled) {
+					return;
+				}
+				updateScheduled = true;
+				window.requestAnimationFrame(function () {
+					updateScheduled = false;
+					hidePanels($('.interface-complementary-area').first());
+				});
 			});
-			this.taxonomyPanelObserver.observe(document.body, {
+			var observeRoot = $sidebar.parent().get(0);
+			if (!observeRoot || observeRoot === document.body) {
+				observeRoot = $sidebar.get(0);
+			}
+			self.taxonomyPanelObserver.observe(observeRoot, {
 				childList: true,
 				subtree: true
 			});
 		}
+		attachObserver();
 	};
 
 	PracticeEditor.prototype.build = function () {
@@ -581,11 +619,15 @@
 		this.$titleField.find('input').val(currentTitle).on('input change', function () {
 			var value = String($(this).val() || '');
 			if (window.wp && wp.data && wp.data.dispatch('core/editor')) {
-				wp.data.dispatch('core/editor').editPost({ title: value });
+				var editorState = wp.data.select('core/editor');
+				if (!editorState || String(editorState.getEditedPostAttribute('title') || '') !== value) {
+					wp.data.dispatch('core/editor').editPost({ title: value });
+				}
 			} else {
-				$('#title').val(value).trigger('input');
+				if (String($('#title').val() || '') !== value) {
+					$('#title').val(value).trigger('input');
+				}
 			}
-			self.renderVisualMap();
 		});
 
 		this.$workspace = $(
@@ -1080,6 +1122,54 @@
 		this.updateAnchor07Actions();
 
 		this.select(this.activeId);
+	};
+
+	PracticeEditor.prototype.refreshChangedField = function ($input) {
+		if ($input.is('#yoga-practice-post-title')) {
+			if (!this.modalStack.length && this.activeId === 'general') {
+				this.renderVisualMap();
+			}
+			return;
+		}
+
+		var $field = $input.closest('.acf-field');
+		var $layout = $field.closest('.layout');
+		if (!$layout.length) {
+			return;
+		}
+
+		var name = String($field.attr('data-name') || '');
+		var isDirectField = $field.parent('.acf-fields').parent().is($layout);
+		var layoutType = String($layout.attr('data-layout') || '');
+		var layoutIdentifier = layoutId($layout);
+		var summaryFields = ['section_title', 'main_title', 'title', 'video_source', 'media_file', 'kinescope_url', 'youtube_url'];
+
+		if (isDirectField && (name === 'main_title' || name === 'title')) {
+			this.syncLayoutTitles($layout);
+		}
+		// Closing the modal performs a full refresh after ACF has finished editing.
+		if (this.modalStack.length) {
+			return;
+		}
+		if (isDirectField && summaryFields.indexOf(name) !== -1) {
+			var summary = this.layoutSummary($layout);
+			var $item = this.$navigation.children('[data-layout-id="' + layoutIdentifier + '"]');
+			$item.find('.yoga-practice-editor__nav-title').text(summary.title);
+			$item.find('.yoga-practice-editor__nav-copy small').text(
+				summary.meta + (summary.attention ? ' · ' + (summary.attentionText || labels.needsAttention) : '')
+			);
+			$item.toggleClass('needs-attention', summary.attention);
+			if (this.activeId === layoutIdentifier) {
+				this.$panelTitle.text(summary.title);
+			}
+		}
+
+		if (this.activeId !== layoutIdentifier) {
+			return;
+		}
+		if (isDirectField || (layoutType === 'anchor_05' && (name === 'section_title' || name === 'title'))) {
+			this.renderVisualMap();
+		}
 	};
 
 	PracticeEditor.prototype.select = function (id) {
@@ -1645,6 +1735,9 @@
 				window.requestAnimationFrame(function () {
 					self.restorePortalScroll();
 				});
+			} else {
+				// Refresh the parent card after a nested modal closes.
+				scheduleRefresh(this.activeId);
 			}
 		}
 	};
@@ -1677,8 +1770,15 @@
 		});
 	};
 
-	PracticeEditor.prototype.toggleWysiwygEditors = function (enable) {
-		this.$workspace.find('.acf-field-wysiwyg').each(function () {
+	PracticeEditor.prototype.initializedWysiwygFields = function () {
+		return this.$workspace.find('.acf-field-wysiwyg').filter(function () {
+			var $control = $(this).find('.acf-editor-wrap').first();
+			return $control.length && !$control.hasClass('delay');
+		});
+	};
+
+	PracticeEditor.prototype.toggleWysiwygEditors = function ($fields, enable) {
+		$fields.each(function () {
 			var field = acf.getField($(this));
 			if (!field) {
 				return;
@@ -1721,7 +1821,8 @@
 				});
 			}
 		});
-		this.toggleWysiwygEditors(false);
+		var $editors = this.initializedWysiwygFields();
+		this.toggleWysiwygEditors($editors, false);
 		this.$portalParent = this.$workspace.parent();
 		this.portalNextSibling = this.$workspace.next().get(0) || null;
 		this.$portalPlaceholder = $('<div class="yoga-practice-editor__portal-placeholder" aria-hidden="true"></div>').height(this.$workspace.outerHeight());
@@ -1730,14 +1831,15 @@
 			return !this.hasAttribute('form');
 		}).attr('data-yoga-form-added', '1').attr('form', this.postFormId);
 		this.$workspace.addClass('yoga-practice-editor--portal').appendTo('body');
-		this.toggleWysiwygEditors(true);
+		this.toggleWysiwygEditors($editors, true);
 	};
 
 	PracticeEditor.prototype.exitPortal = function () {
 		if (!this.$workspace.hasClass('yoga-practice-editor--portal') && !this.$portalPlaceholder.length) {
 			return;
 		}
-		this.toggleWysiwygEditors(false);
+		var $editors = this.initializedWysiwygFields();
+		this.toggleWysiwygEditors($editors, false);
 		this.$workspace.find('[data-yoga-form-added="1"]').removeAttr('form data-yoga-form-added');
 		this.$workspace.removeClass('yoga-practice-editor--portal');
 
@@ -1759,7 +1861,7 @@
 		this.$portalPlaceholder = $();
 		this.$portalParent = $();
 		this.portalNextSibling = null;
-		this.toggleWysiwygEditors(true);
+		this.toggleWysiwygEditors($editors, true);
 	};
 
 	PracticeEditor.prototype.updateModalLayer = function () {
@@ -2073,7 +2175,7 @@
 		editor.build();
 
 		$(document).on('input change', '.yoga-practice-editor input, .yoga-practice-editor textarea, .yoga-practice-editor select', function () {
-			scheduleRefresh(editor.activeId);
+			scheduleFieldRefresh(this);
 		});
 	}
 
