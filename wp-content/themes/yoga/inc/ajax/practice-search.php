@@ -85,7 +85,7 @@ if (!defined('ABSPATH')) {
 				? yoga_normalize_practice_level_label($practice_level_raw !== '' ? $practice_level_raw : 'новичок')
 				: ($practice_level_raw !== '' ? $practice_level_raw : 'новичок');
 			?>
-            <div class="library-item<?php echo $library_variant_class ? ' ' . esc_attr($library_variant_class) : ''; ?>">
+            <div class="library-item yoga-arrow-motion<?php echo $library_variant_class ? ' ' . esc_attr($library_variant_class) : ''; ?>">
                 <div class="library-item__bg"></div>
                 <div class="library-item__cat">
                     <?php echo esc_html($practice_level_label); ?>
@@ -100,7 +100,10 @@ if (!defined('ABSPATH')) {
 					<?php endif; ?>
 				</div>
                 <div class="library-item__btn">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/svg/library-card-corner-icon.svg" alt="">
+					<svg viewBox="0 0 41 41" aria-hidden="true" focusable="false">
+						<circle class="library-item__btn-circle" cx="20.5" cy="20.5" r="20.5" />
+						<path class="library-item__btn-arrow yoga-arrow-motion__icon" d="M27.1702 25.2199L26.8152 15.6218L17.3733 13.8612M26.8152 15.6218L13.1848 27.3781" fill="none" stroke-width="1.5" stroke-linecap="square" />
+					</svg>
 				</div>
                 <a href="<?php the_permalink(); ?>" class="library-item__link"></a>
 			</div>

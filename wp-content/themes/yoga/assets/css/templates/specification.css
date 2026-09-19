@@ -448,7 +448,7 @@ h5, .h5 {
 .yoga-arrow-cta:focus-visible .yoga-arrow-cta__arrow,
 .yoga-arrow-motion:hover .yoga-arrow-motion__icon,
 .yoga-arrow-motion:focus-visible .yoga-arrow-motion__icon {
-  transform: var(--yoga-arrow-offset, translate(0)) rotate(0deg);
+  transform: var(--yoga-arrow-offset, translate(0)) rotate(var(--yoga-cta-arrow-end, 0deg));
 }
 
 .question__main.yoga-arrow-motion {
