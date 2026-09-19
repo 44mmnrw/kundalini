@@ -87,7 +87,7 @@ if (!function_exists('yoga_render_practice_sadhana_counter')) {
 						</span>
 					</button>
 					<button class="praktika-sadhana-counter__reset yoga-sadhana-reset-trigger" type="button"<?php echo $is_completed ? ' hidden' : ''; ?> aria-haspopup="dialog" aria-controls="yoga-sadhana-reset-modal"><?php esc_html_e('Сбросить прогресс', 'yoga'); ?></button>
-					<button class="praktika-sadhana-counter__restart" type="button"<?php echo $is_completed ? '' : ' hidden'; ?>><?php esc_html_e('Начать новый цикл', 'yoga'); ?></button>
+					<button class="praktika-sadhana-counter__restart" type="button"<?php echo $is_completed ? '' : ' hidden'; ?> aria-haspopup="dialog" aria-controls="yoga-sadhana-modal"><?php esc_html_e('Начать новый цикл', 'yoga'); ?></button>
 				</div>
 				<div class="praktika-sadhana-counter__stamp"<?php echo $is_completed ? '' : ' hidden'; ?> aria-hidden="true"><img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/sadhana-completed-stamp.png'); ?>" alt=""></div>
 			</div>

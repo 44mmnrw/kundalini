@@ -1334,7 +1334,7 @@ jQuery(document).ready(function($) {
 		}
 	}
 
-	$(document).on('click', '.praktika-sadhana-btn', function () {
+	$(document).on('click', '.praktika-sadhana-btn, .praktika-sadhana-counter__restart', function () {
 		var $modal = $('#yoga-sadhana-modal');
 		if (!$modal.length) {
 			return;
@@ -1571,32 +1571,6 @@ jQuery(document).ready(function($) {
 			$counters.each(function () {
 				updatePracticeSadhanaCounter($(this));
 			});
-		});
-	});
-
-	$(document).on('click', '.praktika-sadhana-counter__restart', function () {
-		var $button = $(this);
-		var $counter = $button.closest('.praktika-sadhana-counter');
-		if (typeof yoga_ajax === 'undefined' || $button.prop('disabled')) {
-			return;
-		}
-		$button.prop('disabled', true).attr('aria-busy', 'true');
-		$.post(yoga_ajax.ajax_url, {
-			action: 'yoga_sadhana_restart',
-			nonce: yoga_ajax.nonce,
-			sadhana_id: $counter.attr('data-sadhana-id')
-		}).done(function (response) {
-			if (!response || response.success !== true || !response.data || !response.data.sadhana) {
-				showSadhanaMessage(response, 'Не удалось начать новый цикл.', 'error');
-				return;
-			}
-			$(document).trigger('yoga:sadhana:start', [response.data.sadhana]);
-			updateSadhanaActiveCounts(response.data.active_count);
-			showSadhanaMessage(response, 'Садхана началась снова.', 'success');
-		}).fail(function (xhr) {
-			showSadhanaMessage(xhr.responseJSON, 'Не удалось начать новый цикл.', 'error');
-		}).always(function () {
-			$button.prop('disabled', false).removeAttr('aria-busy');
 		});
 	});
 
