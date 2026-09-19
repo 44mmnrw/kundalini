@@ -19,6 +19,8 @@
   --color-grey: #f6f6f9;
   --color-white: #ffffff;
   --transition-base: 0.4s ease;
+  --yoga-cta-arrow-start: -40.78deg;
+  --yoga-cta-arrow-art-end: 40.78deg;
 
   --container-inline-gutter: 10px;
   --header-bar-height: 3.1875rem;
@@ -287,29 +289,32 @@ h5, .h5 {
   transition: 0.4s ease;
 }
 
-.btn:hover {
+.btn:hover,
+.btn:focus-visible {
   text-decoration: none;
   transition: 0.4s ease;
   background: var(--color-green);
 }
-.btn:hover span {
+.btn:hover span,
+.btn:focus-visible span {
   color: var(--color-black);
 }
-.btn:hover .btn-icon {
-  transform: translateY(-50%) rotate(0deg);
+.btn:hover .btn-icon,
+.btn:focus-visible .btn-icon {
   background: var(--color-black);
+  color: var(--color-green);
 }
-.btn:hover .btn-icon img {
+.btn:hover .btn-icon img,
+.btn:focus-visible .btn-icon img {
   opacity: 1;
 }
-.btn:hover .btn-icon img.active {
+.btn:hover .btn-icon img.active,
+.btn:focus-visible .btn-icon img.active {
   opacity: 0;
 }
-.btn:hover .btn-icon svg {
-  opacity: 1;
-}
-.btn:hover .btn-icon svg.active {
-  opacity: 0;
+.btn:hover .btn-icon svg,
+.btn:focus-visible .btn-icon svg {
+  transform: translate(-50%, -50%) rotate(0deg);
 }
 
 .btn:focus,
@@ -322,9 +327,10 @@ h5, .h5 {
 .btn-icon {
   position: absolute;
   right: 1.3125rem;  top: 50%;
-  transform: translateY(-50%) rotate(-45deg);
+  transform: var(--btn-icon-position, translateY(-50%));
   width: 2.5625rem;  height: 2.5625rem;  border-radius: 50%;
   background: var(--color-green);
+  color: var(--color-black);
   transition: 0.4s ease;
 }
 .btn-icon img {
@@ -345,11 +351,17 @@ h5, .h5 {
   width: 1.25rem;  height: 1.25rem;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform-box: view-box;
+  /* The site-arrow drawing is centered at 52.5% of its SVG viewport. */
+  transform-origin: 50% 52.5%;
+  transform: translate(-50%, -50%) rotate(var(--yoga-cta-arrow-start));
   opacity: 0;
-  transition: 0.4s ease;
+  transition: opacity var(--transition-base), transform var(--transition-base);
 }
 .btn-icon svg.active {
+  opacity: 1;
+}
+.btn .btn-icon svg {
   opacity: 1;
 }
 .btn-icon .btn-icon-arrow_black {
@@ -371,6 +383,7 @@ h5, .h5 {
 }
 .btn_alt .btn-icon {
   background: var(--color-black);
+  color: var(--color-green);
 }
 .btn_alt .btn-icon img {
   opacity: 1;
@@ -378,33 +391,92 @@ h5, .h5 {
 .btn_alt .btn-icon img.active {
   opacity: 0;
 }
-.btn_alt .btn-icon svg {
+
+.btn_alt:hover,
+.btn_alt:focus-visible {
+  background: var(--color-black);
+}
+.btn_alt:hover span,
+.btn_alt:focus-visible span {
+  color: var(--color-green);
+}
+.btn_alt:hover .btn-icon,
+.btn_alt:focus-visible .btn-icon {
+  background: var(--color-green);
+  color: var(--color-black);
+}
+.btn_alt:hover .btn-icon img,
+.btn_alt:focus-visible .btn-icon img {
+  opacity: 0;
+}
+.btn_alt:hover .btn-icon img.active,
+.btn_alt:focus-visible .btn-icon img.active {
   opacity: 1;
 }
-.btn_alt .btn-icon svg.active {
+
+/* Shared hover and arrow motion for pill CTAs outside the .btn layout. */
+.yoga-arrow-cta {
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+.yoga-arrow-cta:hover,
+.yoga-arrow-cta:focus-visible {
+  background: var(--color-green);
+  color: var(--color-black);
+  text-decoration: none;
+}
+
+.yoga-arrow-cta__icon {
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+.yoga-arrow-cta:hover .yoga-arrow-cta__icon,
+.yoga-arrow-cta:focus-visible .yoga-arrow-cta__icon {
+  background: var(--color-black);
+  color: var(--color-green);
+}
+
+.yoga-arrow-cta__arrow,
+.yoga-arrow-motion__icon {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: var(--yoga-arrow-offset, translate(0)) rotate(var(--yoga-cta-arrow-start));
+  transition: transform var(--transition-base);
+}
+
+.yoga-arrow-cta:hover .yoga-arrow-cta__arrow,
+.yoga-arrow-cta:focus-visible .yoga-arrow-cta__arrow,
+.yoga-arrow-motion:hover .yoga-arrow-motion__icon,
+.yoga-arrow-motion:focus-visible .yoga-arrow-motion__icon {
+  transform: var(--yoga-arrow-offset, translate(0)) rotate(0deg);
+}
+
+/* Some CTAs include the circle in each SVG, so their two colors crossfade. */
+.yoga-arrow-art__icon {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(0deg);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.yoga-arrow-art__icon.is-default {
+  opacity: 1;
+}
+
+.yoga-arrow-art:hover .yoga-arrow-art__icon.is-default,
+.yoga-arrow-art:focus-visible .yoga-arrow-art__icon.is-default {
   opacity: 0;
 }
 
-.btn_alt:hover {
-  background: var(--color-black);
-}
-.btn_alt:hover span {
-  color: var(--color-green);
-}
-.btn_alt:hover .btn-icon {
-  background: var(--color-green);
-}
-.btn_alt:hover .btn-icon img {
-  opacity: 0;
-}
-.btn_alt:hover .btn-icon img.active {
+.yoga-arrow-art:hover .yoga-arrow-art__icon.is-hover,
+.yoga-arrow-art:focus-visible .yoga-arrow-art__icon.is-hover {
   opacity: 1;
 }
-.btn_alt:hover .btn-icon svg {
-  opacity: 0;
-}
-.btn_alt:hover .btn-icon svg.active {
-  opacity: 1;
+
+.yoga-arrow-art:hover .yoga-arrow-art__icon,
+.yoga-arrow-art:focus-visible .yoga-arrow-art__icon {
+  transform: rotate(var(--yoga-cta-arrow-art-end));
 }
 
 .btn_white {

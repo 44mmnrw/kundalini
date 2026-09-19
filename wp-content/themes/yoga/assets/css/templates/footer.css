@@ -146,15 +146,14 @@
   transition: transform var(--transition-base), background var(--transition-base);
 }
 
-.footer-subscribe__submit:hover {
-  transform: rotate(45deg);
+.footer-subscribe__submit:hover,
+.footer-subscribe__submit:focus-visible {
   background: var(--color-white);
 }
 
 .footer-subscribe__submit svg {
   width: 1.25rem;
   height: 1.25rem;
-  transform: rotate(-45deg);
 }
 
 .footer-subscribe__agree {
