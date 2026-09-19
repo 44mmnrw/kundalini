@@ -95,6 +95,8 @@
   width: 36.875rem;
   height: 25.5rem;
   object-fit: cover;
+  -webkit-mask: url("../../svg/about-secondary-mask.svg") center / 100% 100% no-repeat;
+  mask: url("../../svg/about-secondary-mask.svg") center / 100% 100% no-repeat;
 }
 
 .about__main_start .about-img--masked::after {
@@ -298,8 +300,6 @@
   }
   .about__main_sec .about-img {
     width: calc(100% - 1rem);    margin-top: 3.875rem;  }
-  .about__main_sec .about-img img {
-    border-radius: 1.875rem;  }
   .about__last {
     padding-top: 3.875rem;  }
 }
