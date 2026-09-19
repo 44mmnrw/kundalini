@@ -27,7 +27,10 @@ if (!function_exists('yoga_get_sadhana_empty_layout')) {
 			</div>
 			<a class="lk-sadhanas-empty__button" href="<?php echo esc_url($library_url); ?>">
 				<span>В библиотеку практик</span>
-				<svg aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
+				<span class="lk-sadhanas-empty__button-icon" aria-hidden="true">
+					<svg class="is-default"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
+					<svg class="is-hover"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
+				</span>
 			</a>
 		</div>
 		<?php
@@ -113,7 +116,8 @@ if (!function_exists('yoga_render_sadhana_card')) {
 			<div class="lk-sadhana-card__head">
 				<span class="lk-sadhana-card__status">Пройдено <?php echo esc_html((string) $progress); ?>%</span>
 				<a class="lk-sadhana-card__link" href="<?php echo esc_url($practice_url); ?>" aria-label="Открыть практику <?php echo esc_attr($title); ?>">
-					<svg aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
+					<svg class="is-default" aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-black"></use></svg>
+					<svg class="is-hover" aria-hidden="true"><use href="<?php echo esc_url($sprite_url); ?>#arrow45-green"></use></svg>
 				</a>
 			</div>
 			<div class="lk-sadhana-card__copy">
