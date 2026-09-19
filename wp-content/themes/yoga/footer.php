@@ -15,13 +15,33 @@ $footer_site_navigation = function_exists('yoga_get_secondary_site_navigation')
 	? yoga_get_secondary_site_navigation()
 	: array();
 $footer_main_links = array(
-	$footer_site_navigation['faq'] ?? array('label' => 'FAQ', 'url' => home_url('/')),
-	$footer_site_navigation['contacts'] ?? array('label' => 'Контакты', 'url' => home_url('/')),
-	$footer_site_navigation['blog'] ?? array('label' => 'Блог', 'url' => home_url('/blog/')),
-	$footer_site_navigation['about'] ?? array('label' => 'О нас', 'url' => home_url('/')),
-	$footer_site_navigation['tariffs'] ?? array('label' => 'Тарифы и подписка', 'url' => home_url('/')),
 	$footer_site_navigation['library'] ?? array('label' => 'Библиотека практик', 'url' => home_url('/')),
+	$footer_site_navigation['tariffs'] ?? array('label' => 'Тарифы и подписка', 'url' => home_url('/')),
+	$footer_site_navigation['about'] ?? array('label' => 'О нас', 'url' => home_url('/')),
+	$footer_site_navigation['blog'] ?? array('label' => 'Блог', 'url' => home_url('/blog/')),
+	$footer_site_navigation['contacts'] ?? array('label' => 'Контакты', 'url' => home_url('/')),
+	$footer_site_navigation['faq'] ?? array('label' => 'FAQ', 'url' => home_url('/')),
 );
+
+$footer_menu_locations = get_nav_menu_locations();
+$footer_menu_id = (int) ($footer_menu_locations['footer'] ?? 0);
+$footer_menu_items = $footer_menu_id > 0 ? wp_get_nav_menu_items($footer_menu_id) : array();
+if (is_array($footer_menu_items) && $footer_menu_items) {
+	$assigned_footer_links = array();
+	foreach ($footer_menu_items as $menu_item) {
+		if ((int) $menu_item->menu_item_parent !== 0) {
+			continue;
+		}
+		$label = trim(wp_strip_all_tags((string) $menu_item->title));
+		$url = trim((string) $menu_item->url);
+		if ($label !== '' && $url !== '') {
+			$assigned_footer_links[] = array('label' => $label, 'url' => $url);
+		}
+	}
+	if ($assigned_footer_links) {
+		$footer_main_links = $assigned_footer_links;
+	}
+}
 
 $footer_privacy_url = $footer_option('privacy_policy_link');
 $legal_url = static function($type, $fallback = '') {
