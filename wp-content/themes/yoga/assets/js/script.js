@@ -2718,14 +2718,38 @@ jQuery(document).ready(function($) {
 	}
 
 	document.querySelectorAll('.footer-subscribe').forEach(form => {
+		const agree = form.querySelector('.footer-subscribe__checkbox');
+		const button = form.querySelector('button[type="submit"]');
+		const tooltip = form.querySelector('.footer-subscribe__tooltip');
+		form.noValidate = true;
+
+		const hideConsentTooltip = () => {
+			if (tooltip) tooltip.hidden = true;
+			agree?.removeAttribute('aria-invalid');
+			button?.removeAttribute('aria-describedby');
+		};
+		const showConsentTooltip = () => {
+			if (!agree || !button || !tooltip) return;
+			tooltip.hidden = false;
+			agree.setAttribute('aria-invalid', 'true');
+			button.setAttribute('aria-describedby', tooltip.id);
+		};
+
+		agree?.addEventListener('change', hideConsentTooltip);
+		button?.addEventListener('click', function(event) {
+			if (!agree?.checked) {
+				event.preventDefault();
+				showConsentTooltip();
+			}
+		});
+
 		form.addEventListener('submit', function(event) {
 			event.preventDefault();
 			const email = this.querySelector('input[type="email"]');
 			const nonce = this.querySelector('input[name="subscription_nonce_field"]');
-			const agree = this.querySelector('input[type="checkbox"]');
-			const button = this.querySelector('button[type="submit"]');
 			if (!email || !nonce || !agree || !button) return;
-			if (!agree.checked) { showSubscriptionError('Подтвердите согласие на обработку персональных данных.'); return; }
+			if (!agree.checked) { showConsentTooltip(); return; }
+			hideConsentTooltip();
 			if (!isValidSubscriptionEmail(email.value)) { showSubscriptionError('Пожалуйста, введите корректный email (не более 30 символов)'); return; }
 			button.disabled = true;
 			fetch(yoga_ajax.ajax_url, {method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'process_subscription',email:email.value.trim(),nonce:nonce.value,consent:'1',source:'footer',page_url:window.location.href})})

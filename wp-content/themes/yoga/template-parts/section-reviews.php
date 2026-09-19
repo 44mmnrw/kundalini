@@ -78,6 +78,8 @@ if (count($reviews_items) <= 1) {
                                 <?php if ($review_job) : ?>
                                     <div class="review-main__job"><?php echo esc_html($review_job); ?></div>
                                 <?php endif; ?>
+
+                                <svg class="review-decor" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#review-decor'); ?>"></use></svg>
                             </div>
 
                             <div class="review-info <?php echo esc_attr($review_animation); ?> delay-200ms">
@@ -114,8 +116,6 @@ if (count($reviews_items) <= 1) {
                         </div>
                         <?php endforeach; ?>
                     </div>
-
-                    <svg class="review-decor wow fadeInUp delay-600ms" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#review-decor'); ?>"></use></svg>
                 </div>
             </div>
         </div>
