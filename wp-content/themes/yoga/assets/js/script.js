@@ -1576,13 +1576,14 @@ jQuery(document).ready(function($) {
 
 	$(document).on('yoga:sadhana:reset', function () {
 		var $counter = $('.praktika-sadhana-counter');
-		if ($counter.length) {
-			window.location.reload();
-			return;
-		}
-		$counter.attr('data-sadhana-id', '').attr('data-completed-days', '0').attr('data-marked-today', '0').prop('hidden', true);
-		$('.praktika-sadhana-btn').prop('hidden', false);
-		updatePracticeSadhanaCounter($counter);
+		$counter.each(function () {
+			var timer = $(this).data('sadhana-day-reset-timer');
+			if (timer) {
+				window.clearTimeout(timer);
+			}
+		});
+		$counter.remove();
+		$('.praktika-sadhana-btn').prop('hidden', false).show();
 	});
 
 	var yogaSadhanaResetTrigger = null;
@@ -1641,7 +1642,11 @@ jQuery(document).ready(function($) {
 			$('.lk-sadhana-card[data-sadhana-id="' + sadhanaId + '"]').remove();
 			ensureSadhanaPanelState('active');
 			updateSadhanaActiveCounts(response.data.active_count);
-			closeSadhanaResetModal(true);
+			var $startButton = $('.praktika-sadhana-btn:visible').first();
+			closeSadhanaResetModal(!$startButton.length);
+			if ($startButton.length) {
+				$startButton.trigger('focus');
+			}
 			showSadhanaMessage(response, 'Садхана отменена.', 'success');
 		}).fail(function(xhr) {
 			showSadhanaMessage(xhr.responseJSON, 'Не удалось отменить садхану.', 'error');

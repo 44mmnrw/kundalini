@@ -46,6 +46,13 @@ final class Sadhana_Test_DB {
 		if (str_contains($query, 'GET_LOCK') || str_contains($query, 'RELEASE_LOCK')) {
 			return 1;
 		}
+		if (preg_match('/user_id = (\d+) AND practice_id = (\d+) ORDER BY id DESC LIMIT 1/', $query, $matches)) {
+			foreach (array_reverse($this->rows, true) as $id => $row) {
+				if ((int) $row['user_id'] === (int) $matches[1] && (int) $row['practice_id'] === (int) $matches[2]) {
+					return $id;
+				}
+			}
+		}
 		if (preg_match("/user_id = (\d+) AND practice_id = (\d+) AND status = 'active'/", $query, $matches)) {
 			foreach (array_reverse($this->rows, true) as $id => $row) {
 				if ((int) $row['user_id'] === (int) $matches[1] && (int) $row['practice_id'] === (int) $matches[2] && $row['status'] === 'active') {
@@ -160,5 +167,10 @@ $wpdb->rows[4] = sadhana_test_row(4, array(
 sadhana_test_assert(yoga_sadhana_normalize(yoga_sadhana_row_from_db($wpdb->rows[4]))['status'] === 'active', 'a Sadhana marked yesterday remains active');
 sadhana_test_assert(yoga_sadhana_active_count(7) === 2, 'fresh and current Sadhanas remain in the counter while cancelled records are excluded');
 sadhana_test_assert(yoga_sadhana_get_active(7, 12) === null, 'a repaired Sadhana is no longer returned as active');
+
+$wpdb->rows[5] = sadhana_test_row(5, array('practice_id' => 15, 'status' => 'completed', 'completed_days' => 40));
+sadhana_test_assert((yoga_sadhana_get_latest_completed(7, 15)['id'] ?? 0) === 5, 'a completed cycle remains visible before reset');
+$wpdb->rows[6] = sadhana_test_row(6, array('practice_id' => 15, 'status' => 'cancelled'));
+sadhana_test_assert(yoga_sadhana_get_latest_completed(7, 15) === null, 'a later reset returns the practice to its initial state');
 
 echo "All Sadhana checks passed.\n";
