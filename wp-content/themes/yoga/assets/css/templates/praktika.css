@@ -828,6 +828,12 @@
   background: rgba(145, 83, 225, 0.07);
   object-fit: contain;
 }
+.praktika-intro-content {
+  display: contents;
+}
+.praktika-intro-content img {
+  background: transparent;
+}
 .praktika-info .alignleft,
 .praktika-info .alignright {
   width: auto;
@@ -1612,6 +1618,11 @@ display: block !important;
   border-radius: 1.875rem;
   background: var(--color-grey);
 }
+.practice-execution-video__card.practice-execution-video__card--media-only {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
 .practice-execution-video__card h3 {
   margin-top: 0;
   margin-bottom: 1.125rem;
@@ -1625,6 +1636,9 @@ display: block !important;
 }
 .practice-execution-video__card .player {
   margin-bottom: 1.5rem;
+}
+.practice-execution-video__card--media-only .player {
+  margin-bottom: 0;
 }
 .practice-execution-video__description > :first-child {
   margin-top: 0;
