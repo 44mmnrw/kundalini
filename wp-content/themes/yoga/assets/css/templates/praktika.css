@@ -2218,11 +2218,12 @@ display: block !important;
   .praktika-menu h3 {
     display: block;
     font-size: 1.625rem;
-    line-height: 1.1;
+    line-height: 1;
     margin: 0 0 1.5625rem;
     padding-bottom: 0;
   }
   .praktika-menu nav {
+    width: 100%;
     padding: 1.25rem;
     border-radius: 1.25rem;
     box-sizing: border-box;
@@ -2232,34 +2233,48 @@ display: block !important;
     display: flex;
     flex-direction: column;
     gap: 0.8125rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
   .praktika-menu li {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
     margin-top: 0;
-    padding-bottom: 0.4375rem;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.9);
+    padding: 0 0 0.375rem;
+    border: 0;
+    border-bottom: 1px dashed var(--color-white);
     box-sizing: border-box;
   }
-  .praktika-menu li:last-child {
-    padding-bottom: 0;
-    border-bottom: 0 none;
-  }
   .praktika-menu li a {
-    display: block;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 1.25rem;
     padding: 0;
     margin: 0;
     font-size: 1rem;
-    line-height: normal;
+    line-height: 1.25;
     font-family: var(--font-family-base);
     font-weight: 400;
     border-radius: 0;
     background: transparent !important;
+    text-decoration: none;
   }
-  .praktika-menu li a:hover,
+  .praktika-menu li a:hover {
+    background: transparent !important;
+    color: var(--color-violet) !important;
+  }
   .praktika-menu li a.active {
     background: transparent !important;
-    color: var(--color-violet);
-    text-decoration: underline solid;
-    text-underline-offset: 0.125em;
+    color: var(--color-black) !important;
+    text-decoration: none;
+  }
+  .praktika-menu li a:focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 2px;
   }
   .praktika-menu .btn {
     display: none;
