@@ -1545,7 +1545,6 @@ display: block !important;
   inset: 0;
   width: 100%;
   height: 100%;
-  transition: opacity 0.3s ease;
   animation: timer-gradient-turn 60s linear infinite paused;
   transform-origin: center;
 }
@@ -1555,17 +1554,6 @@ display: block !important;
 .exercise-timer.timer-is-reset .timer-main__time-bg img {
   animation: none;
   transform: rotate(0deg);
-}
-.timer-main__time-bg-hover {
-  opacity: 0;
-}
-.exercise-timer:hover .timer-main__time-bg-default,
-.exercise-timer:focus-within .timer-main__time-bg-default {
-  opacity: 0;
-}
-.exercise-timer:hover .timer-main__time-bg-hover,
-.exercise-timer:focus-within .timer-main__time-bg-hover {
-  opacity: 1;
 }
 @keyframes timer-gradient-turn {
   to {

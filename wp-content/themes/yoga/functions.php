@@ -977,6 +977,9 @@
 		if ($is_practice_single) {
 			wp_enqueue_script('canvas-confetti', $theme_uri . '/assets/js/canvas-confetti.js', array(), $canvas_confetti_script_ver, true);
 			wp_enqueue_script('sadhana-confetti', $theme_uri . '/assets/js/sadhana-confetti.js', array('canvas-confetti'), $sadhana_confetti_script_ver, true);
+			if (function_exists('kundalini_sadhanas_confetti_config')) {
+				wp_localize_script('sadhana-confetti', 'yogaSadhanaConfettiSettings', kundalini_sadhanas_confetti_config());
+			}
 			$main_script_dependencies[] = 'sadhana-confetti';
 		}
 		wp_enqueue_script( 'main-script', $theme_uri . '/assets/js/script.js', $main_script_dependencies, $main_script_ver, true );

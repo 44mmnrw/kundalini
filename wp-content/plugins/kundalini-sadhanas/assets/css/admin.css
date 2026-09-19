@@ -1,0 +1,23 @@
+.kundalini-confetti-intensity {
+	width: min(100%, 320px);
+	vertical-align: middle;
+}
+
+#kundalini-confetti-intensity-value {
+	display: inline-block;
+	min-width: 2ch;
+	margin-left: 8px;
+	font-weight: 600;
+}
+
+.kundalini-confetti-colors {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.kundalini-confetti-colors label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
