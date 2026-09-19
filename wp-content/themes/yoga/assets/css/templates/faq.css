@@ -27,8 +27,8 @@
   width: 100%;
 }
 
-.faq__questions .question.active .question-icon {
-  transform: translateY(-50%) rotate(-45deg);
+.faq__questions .question.active .question-icon svg {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .faq__questions .question.active .question__main::after {
@@ -99,9 +99,9 @@
   position: absolute;
   right: 0;
   top: 50%;
-  transform: translateY(-50%) rotate(45deg);
+  transform: translateY(-50%);
   border: 1px solid var(--color-black);
-  transition: 0.4s ease;
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .faq__questions .question-icon svg {
@@ -109,7 +109,6 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
   width: 1.25rem;
   height: 1.25rem;
   color: var(--color-black);

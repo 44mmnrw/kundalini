@@ -2091,8 +2091,8 @@
 .question {
   width: 100%;
 }
-.question.active .question-icon {
-  transform: translateY(-50%) rotate(-45deg);
+.question.active .question-icon svg {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 .question.active .question__main::after {
   width: 100%;
@@ -2156,16 +2156,15 @@
   position: absolute;
   right: 0px;
   top: 50%;
-  transform: translateY(-50%) rotate(45deg);
+  transform: translateY(-50%);
   border: 1px solid var(--color-black);
-  transition: 0.4s ease;
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 .question-icon svg {
   display: inline-block;
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
   width: 1.25rem;
   height: 1.25rem;
   color: var(--color-black);

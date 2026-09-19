@@ -37,13 +37,13 @@
                                     $answer = $item['answer'];
                                     ?>
                                     <div class="question animated fadeIn delay-200ms">
-                                        <div class="question__main">
+                                        <div class="question__main yoga-arrow-motion">
                                             <span class="question__main-text">
                                                 <span><?php echo str_pad($counter, 2, '0', STR_PAD_LEFT); ?>.</span>
                                                 <?php echo esc_html($question); ?>
                                             </span>
                                             <div class="question-icon">
-                                                <svg class="question-icon__arrow" aria-hidden="true" focusable="false"><use href="<?php echo $faq_sprite_href; ?>#site-arrow"></use></svg>
+                                                <svg class="question-icon__arrow yoga-arrow-motion__icon" aria-hidden="true" focusable="false"><use href="<?php echo $faq_sprite_href; ?>#site-arrow"></use></svg>
                                             </div>
                                         </div>
                                         <div class="question__sub">
