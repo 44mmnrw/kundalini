@@ -747,6 +747,17 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
+		$slider.on('beforeChange.practiceImages', function (event, slick, currentSlide, nextSlide) {
+			var $slides = $slider.find('.exercise-slider__item').not('.slick-cloned');
+			var slideCount = $slides.length;
+			if (!slideCount) {
+				return;
+			}
+			[nextSlide, (nextSlide + 1) % slideCount].forEach(function (index) {
+				$slides.eq(index).find('img').first().attr('loading', 'eager');
+			});
+		});
+
 		$slider.slick({
 			infinite: true,
 			dots: true,
