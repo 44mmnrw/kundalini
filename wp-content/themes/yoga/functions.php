@@ -1284,6 +1284,9 @@ function yoga_subscribe_handler() {
 		if (!wp_verify_nonce($_POST['nonce'], 'subscription_nonce')) {
 			wp_send_json_error(array('message' => 'Ошибка безопасности'));
 		}
+		if (sanitize_text_field(wp_unslash((string) ($_POST['consent'] ?? ''))) !== '1') {
+			wp_send_json_error(array('message' => 'Подтвердите согласие на обработку персональных данных и получение рассылок.'), 422);
+		}
 
 		$raw_email = isset($_POST['email']) ? wp_unslash((string) $_POST['email']) : '';
 		$raw_trimmed = trim($raw_email);

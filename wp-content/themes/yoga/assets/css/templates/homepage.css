@@ -1383,6 +1383,11 @@
   position: absolute;
   left: 1.8125rem;  bottom: 4.3125rem;  width: 2.75rem;}
 
+.review-main > .review-decor {
+  position: absolute;
+  pointer-events: none;
+}
+
 @media (max-width: 1319px) {
   .review {
     margin-top: 2.625rem;    margin-bottom: 5.625rem;  }
