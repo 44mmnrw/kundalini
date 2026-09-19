@@ -1825,7 +1825,7 @@
   padding-top: 0;
 }
 .lk-settings__slide_main .lk-settings-part_status {
-  margin-bottom: 1.875rem;
+  margin-bottom: 0;
 }
 .lk-settings__slide_main .lk-settings-item {
   min-height: 3.5625rem;
@@ -1999,7 +1999,7 @@
 }
 
 .lk-settings-part_cancel {
-  margin-top: 1.5rem;
+  margin-top: 0;
 }
 
 .lk-cancel-subscription-btn {
@@ -2089,6 +2089,15 @@
   margin-top: 0.5rem;}
 .lk-settings-part_cards .lk-settings-item {
   padding-top: 0.625rem;  padding-bottom: 0.625rem;}
+
+#lk-slide-settings .lk-settings__slide_payment .lk-settings-part_cards {
+  margin-top: 2.375rem;
+  padding-top: 0;
+}
+
+#lk-slide-settings .lk-settings__slide_payment .lk-settings-item_card:first-child {
+  margin-top: 0;
+}
 
 .lk-settings-item {
   display: flex;
