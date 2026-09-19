@@ -443,6 +443,7 @@
   inset: 0;
   display: block;
   border-radius: 1.875rem;
+  transition: filter 0.4s ease, opacity 0.4s ease;
 }
 
 .lk-sadhana-card__link svg {
@@ -452,6 +453,30 @@
   display: block;
   width: 1.875rem;
   height: 1.875rem;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(0deg);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.lk-sadhana-card__link svg.is-default {
+  opacity: 1;
+}
+
+.lk-sadhana-card__link:hover svg.is-default,
+.lk-sadhana-card__link:focus-visible svg.is-default {
+  opacity: 0;
+}
+
+.lk-sadhana-card__link:hover svg.is-hover,
+.lk-sadhana-card__link:focus-visible svg.is-hover {
+  opacity: 1;
+}
+
+.lk-sadhana-card__link:hover svg,
+.lk-sadhana-card__link:focus-visible svg {
+  transform: rotate(45deg);
 }
 
 .lk-sadhana-card__copy {
@@ -522,6 +547,7 @@
   line-height: 1.1;
   cursor: pointer;
   box-sizing: border-box;
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
 .lk-sadhana-card__cancel {
@@ -534,6 +560,18 @@
   border: 0.0625rem solid #9153e1;
   background: #9153e1;
   color: #fff;
+}
+
+.lk-sadhana-card__cancel:hover,
+.lk-sadhana-card__cancel:focus-visible {
+  background: #9153e1;
+  color: #fff;
+}
+
+.lk-sadhana-card__restart:hover,
+.lk-sadhana-card__restart:focus-visible {
+  background: transparent;
+  color: #9153e1;
 }
 
 .lk-sadhana-card__progress {
@@ -566,6 +604,12 @@
 .lk-sadhana-card.is-completed .lk-sadhana-card__link {
   filter: grayscale(1);
   opacity: 0.68;
+}
+
+.lk-sadhana-card.is-completed .lk-sadhana-card__link:hover,
+.lk-sadhana-card.is-completed .lk-sadhana-card__link:focus-visible {
+  filter: grayscale(0);
+  opacity: 1;
 }
 
 .lk-sadhana-card.is-completed .lk-sadhana-card__media img {
@@ -662,13 +706,54 @@
   text-decoration: none;
   text-transform: uppercase;
   box-sizing: border-box;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-.lk-sadhanas-empty__button svg {
+.lk-sadhanas-empty__button:hover,
+.lk-sadhanas-empty__button:focus-visible {
+  background: #e8ff57;
+  color: #1f1f1f;
+  text-decoration: none;
+}
+
+.lk-sadhanas-empty__button-icon {
+  position: relative;
   display: block;
   width: 1.875rem;
   height: 1.875rem;
   flex: 0 0 1.875rem;
+}
+
+.lk-sadhanas-empty__button-icon svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(0deg);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.lk-sadhanas-empty__button-icon svg.is-default {
+  opacity: 1;
+}
+
+.lk-sadhanas-empty__button:hover svg.is-default,
+.lk-sadhanas-empty__button:focus-visible svg.is-default {
+  opacity: 0;
+}
+
+.lk-sadhanas-empty__button:hover svg.is-hover,
+.lk-sadhanas-empty__button:focus-visible svg.is-hover {
+  opacity: 1;
+}
+
+.lk-sadhanas-empty__button:hover .lk-sadhanas-empty__button-icon svg,
+.lk-sadhanas-empty__button:focus-visible .lk-sadhanas-empty__button-icon svg {
+  transform: rotate(45deg);
 }
 
 @media (max-width: 1024px) {

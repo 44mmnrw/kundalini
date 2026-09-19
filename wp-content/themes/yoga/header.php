@@ -146,9 +146,11 @@ $header_sprite_url = add_query_arg(
 							<?php if (is_user_logged_in()) : ?>
 							<div class="header-lk-logged-desktop">
 								<a class="<?php echo esc_attr($pill_classes); ?>" href="<?php echo esc_url($pill_href); ?>">
-									<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
-										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
-									</svg>
+									<?php if ($tariff_product_name !== '') : ?>
+										<svg class="header-rate-pill__icon" aria-hidden="true" focusable="false">
+											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use>
+										</svg>
+									<?php endif; ?>
 									<span><?php echo esc_html($pill_label); ?></span>
 								</a>
 								<div class="notification-icon notification-icon_header<?php echo $header_unread_notifications_count > 0 ? ' notification-icon_header--has-notifications' : ''; ?>" role="button" tabindex="0" aria-expanded="false" aria-controls="header-notifications-popup">
