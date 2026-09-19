@@ -1403,7 +1403,7 @@
 .lk-form-row_passwords .input-password__btn {
   color: var(--Line_icon, #CCD2E3);
   top: 50%;
-  right: 1.875rem;
+  right: 1.5rem;
   width: 1.75rem;
   height: 1.75rem;
   transform: translateY(-50%);
@@ -1419,13 +1419,14 @@
 }
 
 .lk-form-row_passwords .input-password__btn.input-password__btn_show svg {
-  width: 20.029px;
-  height: 13.656px;
+  width: 18.4px;
+  height: 12.3px;
 }
 
 .lk-form-row_passwords .input-password__btn.input-password__btn_hide svg {
   width: 1.75rem;
   height: 1.75rem;
+  top: calc(50% + 0.125rem);
 }
 
 .input-password {
