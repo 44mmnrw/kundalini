@@ -26,6 +26,10 @@
 	display: none;
 }
 
+.yoga-modern-practice-editor:not(.yoga-practice-editor-ready) #poststuff .acf-postbox {
+	visibility: hidden;
+}
+
 .yoga-modern-practice-editor .yoga-practice-editor,
 .yoga-modern-practice-editor .yoga-practice-editor input,
 .yoga-modern-practice-editor .yoga-practice-editor textarea,
