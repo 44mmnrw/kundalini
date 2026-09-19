@@ -5,7 +5,7 @@
  */
 
 .section-rules {
-  padding-top: 0.3125rem;  padding-bottom: 6.25rem;}
+  padding-top: 2.5rem;  padding-bottom: 6.25rem;}
 
 .rules {
   max-width: 55.9375rem;}
@@ -114,8 +114,11 @@
     font-size: 1.5rem;  }
 }
 @media (max-width: 767px) {
+  .section-rules {
+    padding-top: 1.25rem;
+  }
   .rules {
-    margin-top: -0.625rem;  }
+    margin-top: 0;  }
   .rules h1 { font-size: 1.875rem; }
   .rules h2 { font-size: 1.625rem; }
   .rules h3 {
@@ -127,6 +130,5 @@
 }
 @media (max-width: 575px) {
   .section-rules {
-    padding-top: 0px;
     padding-bottom: 5rem;  }
 }
