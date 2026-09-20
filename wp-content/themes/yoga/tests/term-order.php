@@ -73,6 +73,10 @@ yoga_term_order_test_assert(yoga_get_term_manual_order(3, 'practice-difficulty')
 
 $orderby_sql = yoga_manual_term_order_sql('t.name', array(), array('practice-difficulty'));
 yoga_term_order_test_assert(str_ends_with($orderby_sql, 't.term_id'), 'WordPress can append the query direction without producing duplicate SQL');
+yoga_term_order_test_assert(
+	yoga_manual_term_order_sql('t.name', array(), null) === 't.name',
+	'queries without a taxonomy keep their original SQL ordering'
+);
 
 $terms = array(
 	new WP_Term(1, 'Третий', 'practice-difficulty'),
@@ -87,6 +91,9 @@ yoga_term_order_test_assert(array_map(static fn($term) => $term->term_id, $untou
 
 $unrelated = yoga_sort_terms_by_manual_order($terms, array('category'), array());
 yoga_term_order_test_assert(array_map(static fn($term) => $term->term_id, $unrelated) === array(1, 3, 2), 'unrelated taxonomies are not changed');
+
+$without_taxonomy = yoga_sort_terms_by_manual_order($terms, null, array());
+yoga_term_order_test_assert($without_taxonomy === $terms, 'queries without a taxonomy keep their original terms');
 
 yoga_term_order_test_assert(
 	yoga_merge_visible_term_order(array(1, 2, 3, 4, 5), array(4, 2)) === array(1, 4, 3, 2, 5),

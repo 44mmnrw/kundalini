@@ -76,8 +76,8 @@ if (!function_exists('yoga_manual_term_order_sql')) {
 	/**
 	 * Apply the saved order before LIMIT/OFFSET so admin pagination is stable.
 	 */
-	function yoga_manual_term_order_sql(string $orderby, array $args, array $taxonomies): string {
-		if (!yoga_should_apply_manual_term_order($taxonomies, $args)) {
+	function yoga_manual_term_order_sql(string $orderby, array $args, ?array $taxonomies): string {
+		if ($taxonomies === null || !yoga_should_apply_manual_term_order($taxonomies, $args)) {
 			return $orderby;
 		}
 
@@ -96,9 +96,10 @@ if (!function_exists('yoga_sort_terms_by_manual_order')) {
 	/**
 	 * Keep the final result ordered even when another plugin filters get_terms.
 	 */
-	function yoga_sort_terms_by_manual_order($terms, array $taxonomies, array $args) {
+	function yoga_sort_terms_by_manual_order($terms, ?array $taxonomies, array $args) {
 		if (
-			!yoga_should_apply_manual_term_order($taxonomies, $args)
+			$taxonomies === null
+			|| !yoga_should_apply_manual_term_order($taxonomies, $args)
 			|| !is_array($terms)
 			|| count($terms) < 2
 			|| array_keys($terms) !== range(0, count($terms) - 1)
