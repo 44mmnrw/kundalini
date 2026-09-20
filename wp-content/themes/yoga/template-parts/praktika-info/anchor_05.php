@@ -34,10 +34,11 @@
 
 
 
-		function yoga_normalize_practice_exercise_gallery($gallery): array {
+		function yoga_normalize_practice_exercise_gallery($gallery, $framing = ''): array {
 			if (!is_array($gallery)) {
 				return array();
 			}
+			$framing = yoga_practice_gallery_framing($framing);
 
 			$images = array();
 			foreach ($gallery as $image) {
@@ -95,6 +96,7 @@
 					'width'       => $width,
 					'height'      => $height,
 					'alt'         => $alt,
+					'framing'     => $framing[$image_id] ?? array(),
 				);
 			}
 
@@ -109,6 +111,7 @@
 				return '';
 			}
 			$attributes = array(
+				'class="exercise-slider__image"',
 				$defer
 					? 'src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="'
 					: 'src="' . esc_url($display_url) . '"',
@@ -132,7 +135,19 @@
 				$attributes[] = 'width="' . (int) $image['width'] . '"';
 				$attributes[] = 'height="' . (int) $image['height'] . '"';
 			}
-			return '<img ' . implode(' ', $attributes) . '>';
+			if (!empty($image['framing'])) {
+				$frame = $image['framing'];
+				$attributes[] = 'style="--exercise-image-x:' . (int) $frame['x'] . '%;--exercise-image-y:' . (int) $frame['y'] . '%;--exercise-image-zoom:' . esc_attr(number_format($frame['zoom'] / 100, 2, '.', '')) . ((int) $frame['zoom'] < 100 ? ';--exercise-image-effective-zoom:1' : '') . '"';
+				$attributes[] = 'data-practice-zoom="' . (int) $frame['zoom'] . '"';
+			}
+			$backdrop = '';
+			if (!empty($image['framing']) && (int) $image['framing']['zoom'] < 100) {
+				$backdrop_source = $defer
+					? 'src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-practice-src="' . esc_url($display_url) . '"'
+					: 'src="' . esc_url($display_url) . '"';
+				$backdrop = '<img class="exercise-slider__backdrop" ' . $backdrop_source . ' alt="" aria-hidden="true" loading="lazy" decoding="async">';
+			}
+			return $backdrop . '<img ' . implode(' ', $attributes) . '>';
 		}
 	}
 
@@ -202,8 +217,8 @@
 	$youtube_url_mod = $exercise['youtube_url_mod'] ?? '';
 	$duration = $exercise['duration'] ?? 180;
 	$duration_mod = $exercise['duration_mod'] ?? 180;
-	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array());
-	$gallery_mod = yoga_normalize_practice_exercise_gallery($exercise['gallery_mod'] ?? array());
+	$gallery = yoga_normalize_practice_exercise_gallery($exercise['gallery'] ?? array(), $exercise['gallery_framing'] ?? '');
+	$gallery_mod = yoga_normalize_practice_exercise_gallery($exercise['gallery_mod'] ?? array(), $exercise['gallery_framing_mod'] ?? '');
 	$gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-main';
 	$gallery_mod_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-mod';
 	$content =  $exercise['content'] ?? [];
@@ -254,7 +269,7 @@
 		$kinescope_url_mod = (string) ($first_modification['kinescope_url'] ?? '');
 		$youtube_url_mod = (string) ($first_modification['youtube_url'] ?? '');
 		$duration_mod = $first_modification['duration'] ?? 180;
-		$gallery_mod = yoga_normalize_practice_exercise_gallery($first_modification['gallery'] ?? array());
+		$gallery_mod = yoga_normalize_practice_exercise_gallery($first_modification['gallery'] ?? array(), $first_modification['gallery_framing'] ?? '');
 		$content_mod = $first_modification['content'] ?? '';
 		$additional_modification_rows = $unified_modification_rows;
 	}
