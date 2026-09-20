@@ -33,16 +33,18 @@ function checkFrame(frameWidth, frameHeight, imageWidth, imageHeight, zoom, x, y
 	const height = parseFloat(style.height);
 	const left = parseFloat(style.left);
 	const top = parseFloat(style.top);
-	const epsilon = 0.02;
-	assert.ok(width >= frameWidth - epsilon || height >= frameHeight - epsilon, 'Image must touch a pair of frame edges');
 	return { width, height, left, top };
 }
 
-const top = checkFrame(428, 351, 1600, 1000, 75, 50, 0).top;
-const middle = checkFrame(428, 351, 1600, 1000, 75, 50, 50).top;
-const bottom = checkFrame(428, 351, 1600, 1000, 75, 50, 100).top;
-assert.ok(top < middle && middle < bottom, 'Vertical movement must be continuous between edges');
-checkFrame(428, 351, 1600, 1000, 50, 100, 100);
-checkFrame(733, 351, 800, 1200, 60, 50, 50);
-checkFrame(320, 238, 1600, 1000, 90, 100, 0);
+const defaultFrame = checkFrame(428, 351, 1600, 1000, 100, 50, 50);
+assert.ok(defaultFrame.width >= 428 && defaultFrame.height >= 351, 'Default image must cover the frame');
+
+const top = checkFrame(428, 351, 1600, 1000, 75, 50, 0);
+const middle = checkFrame(428, 351, 1600, 1000, 75, 50, 50);
+const bottom = checkFrame(428, 351, 1600, 1000, 75, 50, 100);
+assert.ok(middle.width < 428 && middle.height < 351, 'Manual reduction must be able to add margins');
+assert.ok(top.top < middle.top && middle.top < bottom.top, 'Reduced image must move smoothly within the frame');
+
+checkFrame(733, 351, 800, 1200, 50, 50, 50);
+checkFrame(320, 238, 1600, 1000, 200, 100, 0);
 console.log('Practice gallery framing layout OK');
