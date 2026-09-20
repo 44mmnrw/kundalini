@@ -5,7 +5,7 @@
  */
 
 function hydratePracticeExerciseImages(exerciseItem) {
-    const slides = exerciseItem.querySelectorAll('.exercise-slider__item:not(.slick-cloned) img');
+    const slides = exerciseItem.querySelectorAll('.exercise-slider__item:not(.slick-cloned) .exercise-slider__image');
     Array.from(slides).slice(0, 2).forEach(image => {
         image.loading = 'eager';
     });
@@ -21,11 +21,65 @@ function hydratePracticeExerciseImages(exerciseItem) {
         image.removeAttribute('data-practice-src');
     });
 
+    requestAnimationFrame(() => {
+        exerciseItem.querySelectorAll('.exercise-slider__image[data-practice-zoom]').forEach(updatePracticeImageFraming);
+    });
+
     if (window.jQuery && window.jQuery.fn.slick) {
         requestAnimationFrame(() => {
             window.jQuery(exerciseItem).find('.exercise-slider.slick-initialized').slick('setPosition');
         });
     }
+}
+
+function updatePracticeImageFraming(image) {
+    const media = image.closest('.exercise-slider__media');
+    if (!media || !image.naturalWidth || !image.naturalHeight || !media.clientWidth || !media.clientHeight) {
+        return;
+    }
+    const width = media.clientWidth;
+    const height = media.clientHeight;
+    const ratio = image.naturalWidth / image.naturalHeight;
+    const coverWidth = Math.max(width, height * ratio);
+    const coverHeight = Math.max(height, width / ratio);
+    const minimum = Math.min(width / coverWidth, height / coverHeight);
+    const requested = Number(image.dataset.practiceZoom) / 100;
+    const zoom = Math.max(requested, minimum);
+    const x = Number.parseFloat(image.style.getPropertyValue('--exercise-image-x')) || 0;
+    const y = Number.parseFloat(image.style.getPropertyValue('--exercise-image-y')) || 0;
+    const renderedWidth = coverWidth * zoom;
+    const renderedHeight = coverHeight * zoom;
+    image.style.setProperty('--exercise-image-effective-zoom', zoom.toFixed(4));
+    image.style.setProperty('--exercise-image-effective-x', x + '%');
+    image.style.setProperty('--exercise-image-effective-y', y + '%');
+    image.style.width = renderedWidth + 'px';
+    image.style.height = renderedHeight + 'px';
+    image.style.left = (width - renderedWidth) * x / 100 + 'px';
+    image.style.top = (height - renderedHeight) * y / 100 + 'px';
+    image.classList.add('is-framed');
+}
+
+function initializePracticeImageFraming() {
+    const images = document.querySelectorAll('.exercise-slider__image[data-practice-zoom]');
+    if (!images.length) {
+        return;
+    }
+    const observer = window.ResizeObserver ? new ResizeObserver(entries => {
+        entries.forEach(entry => {
+            const image = entry.target.querySelector('.exercise-slider__image[data-practice-zoom]');
+            if (image) {
+                updatePracticeImageFraming(image);
+            }
+        });
+    }) : null;
+    images.forEach(image => {
+        image.addEventListener('load', () => updatePracticeImageFraming(image));
+        if (observer) {
+            observer.observe(image.closest('.exercise-slider__media'));
+        }
+        updatePracticeImageFraming(image);
+    });
+    window.addEventListener('resize', () => images.forEach(updatePracticeImageFraming));
 }
 
 function getKinescopePlayerFactory(timeout = 10000) {
@@ -1367,6 +1421,7 @@ document.head.appendChild(disabledStyleSheet);
 
 
 document.addEventListener('DOMContentLoaded', function() {
+	initializePracticeImageFraming();
 
     if (typeof Plyr !== 'undefined') {
         initializePracticeSystem();
