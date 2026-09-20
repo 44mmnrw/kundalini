@@ -159,6 +159,7 @@ if (!function_exists('yoga_enqueue_practice_editor_assets')) {
 			'yogaPracticeEditor',
 			array(
 				'classicUrl' => $classic_url,
+				'isNewPractice' => ($GLOBALS['pagenow'] ?? '') === 'post-new.php',
 				'taxonomyNonce' => wp_create_nonce('yoga_save_practice_taxonomies'),
 				'guestAccessNonce' => wp_create_nonce('yoga_save_practice_guest_access'),
 				'hiddenSidebarTaxonomies' => $hidden_sidebar_taxonomies,

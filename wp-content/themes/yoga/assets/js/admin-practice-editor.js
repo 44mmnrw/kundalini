@@ -807,12 +807,23 @@
 			}
 			var $layout = self.sectionsField.add({ layout: type });
 			if ($layout && $layout.length) {
+				var moved = false;
 				if (type === 'anchor_07') {
 					var $technique = self.layouts().filter('[data-layout="anchor_05"]').last();
 					if ($technique.length) {
 						$layout.insertAfter($technique);
-						self.commitOrder();
+						moved = true;
 					}
+				}
+				if (!moved && type !== 'anchor_06') {
+					var $comments = self.layouts().filter('[data-layout="anchor_06"]').last();
+					if ($comments.length && $layout.prev('.layout').is($comments)) {
+						$layout.insertBefore($comments);
+						moved = true;
+					}
+				}
+				if (moved) {
+					self.commitOrder();
 				}
 				scheduleRefresh(layoutId($layout));
 			}
@@ -2176,6 +2187,10 @@
 		}
 
 		editor = new PracticeEditor($sectionsField);
+		if (config.isNewPractice && editor.sectionsField && typeof editor.sectionsField.add === 'function' &&
+			!editor.layouts().filter('[data-layout="anchor_06"]').length) {
+			editor.sectionsField.add({ layout: 'anchor_06' });
+		}
 		editor.build();
 
 		$(document).on('input change', '.yoga-practice-editor input, .yoga-practice-editor textarea, .yoga-practice-editor select', function () {
