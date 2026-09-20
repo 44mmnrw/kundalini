@@ -69,16 +69,13 @@
 		var width = instance.$preview[0].clientWidth;
 		var height = instance.$preview[0].clientHeight;
 		if (!image.naturalWidth || !image.naturalHeight || !width || !height) {
-			return { minimum: 0.5, zoom: Math.max(1, frame.zoom / 100), x: frame.x, y: frame.y };
+			return { zoom: Math.max(1, frame.zoom / 100), x: frame.x, y: frame.y };
 		}
 		var ratio = image.naturalWidth / image.naturalHeight;
 		var coverWidth = Math.max(width, height * ratio);
 		var coverHeight = Math.max(height, width / ratio);
-		var minimum = Math.min(width / coverWidth, height / coverHeight);
-		var zoom = Math.max(frame.zoom / 100, minimum);
 		return {
-			minimum: minimum,
-			zoom: zoom,
+			zoom: frame.zoom / 100,
 			width: width,
 			height: height,
 			coverWidth: coverWidth,
@@ -92,10 +89,7 @@
 		$image.css({
 			'--exercise-image-x': frame.x + '%',
 			'--exercise-image-y': frame.y + '%',
-			'--exercise-image-zoom': frame.zoom / 100,
-			'--exercise-image-effective-x': geometry.x + '%',
-			'--exercise-image-effective-y': geometry.y + '%',
-			'--exercise-image-effective-zoom': geometry.zoom
+			'--exercise-image-zoom': geometry.zoom
 		});
 		if (geometry.coverWidth) {
 			var renderedWidth = geometry.coverWidth * geometry.zoom;
@@ -113,7 +107,6 @@
 
 	function setPreviewSource(instance, source) {
 		instance.$previewImage.attr('src', source);
-		instance.$previewBackdrop.attr('src', source);
 	}
 
 	function writeFrames(instance) {
@@ -133,9 +126,8 @@
 		instance.$preview.toggleClass('is-phone', instance.screen === 'phone');
 		var geometry = previewGeometry(instance, frame);
 		frameImage(instance.$previewImage, frame, geometry);
-		var minimum = Math.max(50, Math.floor(geometry.minimum * 100));
-		instance.$zoom.attr('min', minimum).val(Math.max(frame.zoom, minimum));
-		instance.$zoomValue.text(Math.round(geometry.zoom * 100) + '%');
+		instance.$zoom.val(frame.zoom);
+		instance.$zoomValue.text(frame.zoom + '%');
 		instance.$x.val(geometry.x);
 		instance.$xValue.text(geometry.x + '%');
 		instance.$y.val(geometry.y);
@@ -235,13 +227,12 @@
 				.appendTo($screens);
 		});
 		var $preview = $('<div class="yoga-gallery-framing__preview"></div>').appendTo($panel);
-		var $previewBackdrop = $('<img class="yoga-gallery-framing__backdrop" alt="" aria-hidden="true" draggable="false">').appendTo($preview);
 		var $previewImage = $('<img alt="Предпросмотр кадра" draggable="false">').appendTo($preview);
 		$previewImage.on('load', function () { updatePreview(instance); });
-		$('<p class="yoga-gallery-framing__hint">Перетащите изображение, чтобы плавно выбрать его положение внутри кадра.</p>').appendTo($panel);
+		$('<p class="yoga-gallery-framing__hint">При 100% изображение заполняет кадр. Уменьшите масштаб ниже 100%, если нужны поля, и перетащите фото в нужное положение.</p>').appendTo($panel);
 		var $controls = $('<div class="yoga-gallery-framing__controls"></div>').appendTo($panel);
 		var $zoomLabel = $('<label>Масштаб <output></output></label>').appendTo($controls);
-		var $zoom = $('<input type="range" min="50" max="300" step="5" value="100">')
+		var $zoom = $('<input type="range" min="50" max="300" step="1" value="100">')
 			.on('input', function () {
 				var frame = normalizedFrame(instance.frames[instance.selectedId]);
 				frame.zoom = Number(this.value);
@@ -311,7 +302,6 @@
 		instance.$root = $root;
 		instance.$panel = $panel;
 		instance.$preview = $preview;
-		instance.$previewBackdrop = $previewBackdrop;
 		instance.$previewImage = $previewImage;
 		instance.$zoom = $zoom;
 		instance.$zoomValue = $zoomLabel.find('output');

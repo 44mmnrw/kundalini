@@ -137,17 +137,11 @@
 			}
 			if (!empty($image['framing'])) {
 				$frame = $image['framing'];
-				$attributes[] = 'style="--exercise-image-x:' . (int) $frame['x'] . '%;--exercise-image-y:' . (int) $frame['y'] . '%;--exercise-image-zoom:' . esc_attr(number_format($frame['zoom'] / 100, 2, '.', '')) . ((int) $frame['zoom'] < 100 ? ';--exercise-image-effective-zoom:1' : '') . '"';
+				$initial_zoom = (int) $frame['zoom'] < 100 ? 1 : $frame['zoom'] / 100;
+				$attributes[] = 'style="--exercise-image-x:' . (int) $frame['x'] . '%;--exercise-image-y:' . (int) $frame['y'] . '%;--exercise-image-zoom:' . esc_attr(number_format($initial_zoom, 2, '.', '')) . '"';
 				$attributes[] = 'data-practice-zoom="' . (int) $frame['zoom'] . '"';
 			}
-			$backdrop = '';
-			if (!empty($image['framing']) && (int) $image['framing']['zoom'] < 100) {
-				$backdrop_source = $defer
-					? 'src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-practice-src="' . esc_url($display_url) . '"'
-					: 'src="' . esc_url($display_url) . '"';
-				$backdrop = '<img class="exercise-slider__backdrop" ' . $backdrop_source . ' alt="" aria-hidden="true" loading="lazy" decoding="async">';
-			}
-			return $backdrop . '<img ' . implode(' ', $attributes) . '>';
+			return '<img ' . implode(' ', $attributes) . '>';
 		}
 	}
 

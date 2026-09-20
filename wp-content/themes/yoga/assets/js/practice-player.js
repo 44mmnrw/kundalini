@@ -42,16 +42,12 @@ function updatePracticeImageFraming(image) {
     const ratio = image.naturalWidth / image.naturalHeight;
     const coverWidth = Math.max(width, height * ratio);
     const coverHeight = Math.max(height, width / ratio);
-    const minimum = Math.min(width / coverWidth, height / coverHeight);
     const requested = Number(image.dataset.practiceZoom) / 100;
-    const zoom = Math.max(requested, minimum);
+    const zoom = Math.max(0.5, requested);
     const x = Number.parseFloat(image.style.getPropertyValue('--exercise-image-x')) || 0;
     const y = Number.parseFloat(image.style.getPropertyValue('--exercise-image-y')) || 0;
     const renderedWidth = coverWidth * zoom;
     const renderedHeight = coverHeight * zoom;
-    image.style.setProperty('--exercise-image-effective-zoom', zoom.toFixed(4));
-    image.style.setProperty('--exercise-image-effective-x', x + '%');
-    image.style.setProperty('--exercise-image-effective-y', y + '%');
     image.style.width = renderedWidth + 'px';
     image.style.height = renderedHeight + 'px';
     image.style.left = (width - renderedWidth) * x / 100 + 'px';
