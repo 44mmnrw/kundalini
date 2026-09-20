@@ -33,6 +33,9 @@ if ($frames !== array(
 if (yoga_practice_gallery_framing(yoga_save_practice_gallery_framing($frames)) !== $frames) {
 	$fail('Saved framing values did not round-trip.');
 }
+if (yoga_save_practice_gallery_framing(addslashes(json_encode($frames))) !== json_encode($frames)) {
+	$fail('WordPress-slashed form data was not saved.');
+}
 
 $field = array('sub_fields' => array(
 	array('name' => 'gallery'),

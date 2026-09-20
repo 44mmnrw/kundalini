@@ -12,7 +12,12 @@ if (!defined('ABSPATH')) {
 if (!function_exists('yoga_practice_gallery_framing')) {
 	function yoga_practice_gallery_framing($value): array {
 		if (is_string($value)) {
-			$value = json_decode($value, true);
+			$decoded = json_decode($value, true);
+			if (!is_array($decoded)) {
+				$unslashed = function_exists('wp_unslash') ? wp_unslash($value) : stripslashes($value);
+				$decoded = json_decode($unslashed, true);
+			}
+			$value = $decoded;
 		}
 		if (!is_array($value)) {
 			return array();
