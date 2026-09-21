@@ -231,7 +231,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 
 		<div class="row">
 			<div class="kriyi">
-				<div class="practice-results-toolbar">
+				<div class="practice-results-toolbar practice-results-toolbar--hidden" aria-hidden="true">
 					<p class="practice-results-toolbar__count">Найдено: <span><?php echo esc_html((string) $practices_count); ?></span></p>
 					<?php /* Сортировка временно скрыта до выбора метрики и финального набора вариантов.
 					<label class="practice-results-toolbar__sort">

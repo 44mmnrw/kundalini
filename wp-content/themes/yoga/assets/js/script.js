@@ -3262,7 +3262,11 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				if (response && response.success && response.data) {
 					updateLibraryFiltersFoundCount(response.data.count);
-					updatePracticeResultsToolbar($('.section-library'), response.data.count, true);
+					updatePracticeResultsToolbar(
+						$('.section-library'),
+						response.data.count,
+						YogaLibraryFiltersCore.selectedCount() > 0
+					);
 					var $results = $('.section-library .library').addClass('library--practice-results kriyi__items');
 					if (page === 1) {
 						$results.html(response.data.html);
@@ -3608,7 +3612,11 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     $('.kriyi__items').html(response.data.html);
-					updatePracticeResultsToolbar($('.section-kriyi'), response.data.count, true);
+					updatePracticeResultsToolbar(
+						$('.section-kriyi'),
+						response.data.count,
+						YogaLibraryFiltersCore.selectedCount() > 0
+					);
 
 
                     if (response.data.count > 10) {
