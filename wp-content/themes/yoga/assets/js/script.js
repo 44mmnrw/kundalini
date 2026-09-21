@@ -3070,6 +3070,20 @@ jQuery(document).ready(function($) {
 		$('.library-filters-screen__found-count').text(normalizedCount);
 	}
 
+	function updatePracticeResultsToolbar($section, count, show) {
+		var normalizedCount = Math.max(0, parseInt(count, 10) || 0);
+		var $toolbar = $section.find('.practice-results-toolbar').first();
+		$toolbar.find('.practice-results-toolbar__count span').text(normalizedCount);
+		$toolbar
+			.toggleClass('practice-results-toolbar--hidden', show === false)
+			.attr('aria-hidden', show === false ? 'true' : 'false');
+	}
+
+	function getPracticeResultsSort($section) {
+		var sort = String($section.find('.practice-results-toolbar__select').first().val() || 'newest');
+		return ['newest', 'oldest', 'title'].indexOf(sort) !== -1 ? sort : 'newest';
+	}
+
 	var libraryFiltersCountRequestId = 0;
 
 	function requestLibraryFiltersFoundCount() {
@@ -3232,6 +3246,7 @@ jQuery(document).ready(function($) {
 			filters: {},
 			search: $('.section-library input[name="s"]').val(),
 			term_id: getActiveLibraryTermId(),
+			sort: getPracticeResultsSort($('.section-library')),
 			library_results: 1,
 			library_page: page
 		};
@@ -3247,6 +3262,7 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				if (response && response.success && response.data) {
 					updateLibraryFiltersFoundCount(response.data.count);
+					updatePracticeResultsToolbar($('.section-library'), response.data.count, true);
 					var $results = $('.section-library .library').addClass('library--practice-results kriyi__items');
 					if (page === 1) {
 						$results.html(response.data.html);
@@ -3570,7 +3586,8 @@ jQuery(document).ready(function($) {
             nonce: yoga_ajax.nonce,
             filters: {},
             search: $('.section-kriyi .input').val(),
-			term_id: getActivePracticeTermId()
+			term_id: getActivePracticeTermId(),
+			sort: getPracticeResultsSort($('.section-kriyi'))
 		};
 
 
@@ -3591,6 +3608,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     $('.kriyi__items').html(response.data.html);
+					updatePracticeResultsToolbar($('.section-kriyi'), response.data.count, true);
 
 
                     if (response.data.count > 10) {
@@ -3783,6 +3801,14 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.library-practice-results__more', function() {
 		var nextPage = Number($(this).attr('data-next-page')) || 2;
 		loadLibraryPractices(nextPage);
+	});
+
+	$(document).on('change', '.practice-results-toolbar__select', function() {
+		if ($(this).closest('.section-kriyi').length) {
+			loadPractices();
+			return;
+		}
+		loadLibraryPractices(1);
 	});
 
     // Кнопка "Показать еще/Свернуть"

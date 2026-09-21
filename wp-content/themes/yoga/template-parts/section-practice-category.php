@@ -231,6 +231,19 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 
 		<div class="row">
 			<div class="kriyi">
+				<div class="practice-results-toolbar">
+					<p class="practice-results-toolbar__count">Найдено: <span><?php echo esc_html((string) $practices_count); ?></span></p>
+					<?php /* Сортировка временно скрыта до выбора метрики и финального набора вариантов.
+					<label class="practice-results-toolbar__sort">
+						<span class="screen-reader-text">Сортировка практик</span>
+						<select class="practice-results-toolbar__select" aria-label="Сортировка практик">
+							<option value="newest">Сначала новые</option>
+							<option value="oldest">Сначала старые</option>
+							<option value="title">По алфавиту</option>
+						</select>
+					</label>
+					*/ ?>
+				</div>
 				<div class="kriyi__items">
 					<?php if ($practices->have_posts()) : ?>
 						<?php

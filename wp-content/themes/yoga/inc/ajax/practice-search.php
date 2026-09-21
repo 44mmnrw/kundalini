@@ -123,77 +123,160 @@ if (!defined('ABSPATH')) {
 	add_action('wp_ajax_search_practices_suggest', 'yoga_search_practices_suggest');
 	add_action('wp_ajax_nopriv_search_practices_suggest', 'yoga_search_practices_suggest');
 
+	if (!function_exists('yoga_normalize_practice_filter_terms')) {
+		/**
+		 * Normalize filter values to valid practice taxonomies and positive term IDs.
+		 *
+		 * @param mixed $raw_filters Raw request filters.
+		 * @return array<string, int[]>
+		 */
+		function yoga_normalize_practice_filter_terms($raw_filters) {
+			$filters = array();
+			if (!is_array($raw_filters)) {
+				return $filters;
+			}
+
+			foreach ($raw_filters as $taxonomy => $terms) {
+				$taxonomy = sanitize_key((string) $taxonomy);
+				if ($taxonomy === '' || !taxonomy_exists($taxonomy) || !is_object_in_taxonomy('practice', $taxonomy)) {
+					continue;
+				}
+
+				$terms = is_array($terms) ? $terms : array($terms);
+				$term_ids = array_values(array_unique(array_filter(array_map('absint', $terms))));
+				if (!empty($term_ids)) {
+					$filters[$taxonomy] = $term_ids;
+				}
+			}
+
+			return $filters;
+		}
+	}
+
+	if (!function_exists('yoga_rank_practice_ids_by_filter_matches')) {
+		/**
+		 * Rank practices by the number of individually selected filter terms they match.
+		 * Practices without any match are omitted. Equal scores retain the incoming order.
+		 *
+		 * @param int[]                $practice_ids Practice IDs in fallback order.
+		 * @param array<string, int[]> $filters      Selected taxonomy terms.
+		 * @return int[]
+		 */
+		function yoga_rank_practice_ids_by_filter_matches(array $practice_ids, array $filters) {
+			$practice_ids = array_values(array_unique(array_filter(array_map('absint', $practice_ids))));
+			if (empty($practice_ids) || empty($filters)) {
+				return $practice_ids;
+			}
+
+			$scores = array_fill_keys($practice_ids, 0);
+			$positions = array_flip($practice_ids);
+
+			foreach ($filters as $taxonomy => $selected_term_ids) {
+				$selected_term_ids = array_values(array_unique(array_filter(array_map('absint', $selected_term_ids))));
+				if (empty($selected_term_ids)) {
+					continue;
+				}
+
+				$practice_terms = array_fill_keys($practice_ids, array());
+				$object_terms = wp_get_object_terms($practice_ids, $taxonomy, array('fields' => 'all_with_object_id'));
+				if (!is_wp_error($object_terms)) {
+					foreach ($object_terms as $object_term) {
+						$object_id = isset($object_term->object_id) ? absint($object_term->object_id) : 0;
+						if ($object_id > 0 && isset($practice_terms[$object_id])) {
+							$practice_terms[$object_id][] = absint($object_term->term_id);
+						}
+					}
+				}
+
+				foreach ($selected_term_ids as $selected_term_id) {
+					$matching_term_ids = array($selected_term_id);
+					if (is_taxonomy_hierarchical($taxonomy)) {
+						$children = get_term_children($selected_term_id, $taxonomy);
+						if (!is_wp_error($children) && !empty($children)) {
+							$matching_term_ids = array_merge($matching_term_ids, array_map('absint', $children));
+						}
+					}
+					$matching_term_ids = array_values(array_unique($matching_term_ids));
+
+					foreach ($practice_ids as $practice_id) {
+						if (!empty(array_intersect($practice_terms[$practice_id], $matching_term_ids))) {
+							$scores[$practice_id]++;
+						}
+					}
+				}
+			}
+
+			$ranked_ids = array_values(array_filter($practice_ids, static function ($practice_id) use ($scores) {
+				return ($scores[$practice_id] ?? 0) > 0;
+			}));
+
+			usort($ranked_ids, static function ($practice_id_a, $practice_id_b) use ($scores, $positions) {
+				$score_comparison = ($scores[$practice_id_b] ?? 0) <=> ($scores[$practice_id_a] ?? 0);
+				return $score_comparison !== 0
+					? $score_comparison
+					: ($positions[$practice_id_a] ?? PHP_INT_MAX) <=> ($positions[$practice_id_b] ?? PHP_INT_MAX);
+			});
+
+			return $ranked_ids;
+		}
+	}
+
+	if (!function_exists('yoga_get_practice_sort_query_args')) {
+		/**
+		 * Convert the public sorting value into a safe WP_Query order.
+		 * Match score remains the primary order; this order breaks ties.
+		 *
+		 * @param mixed $raw_sort Raw request value.
+		 * @return array{orderby: string, order: string}
+		 */
+		function yoga_get_practice_sort_query_args($raw_sort) {
+			$sort = sanitize_key((string) $raw_sort);
+			$sort_options = array(
+				'newest' => array('orderby' => 'date', 'order' => 'DESC'),
+				'oldest' => array('orderby' => 'date', 'order' => 'ASC'),
+				'title'  => array('orderby' => 'title', 'order' => 'ASC'),
+			);
+
+			return $sort_options[$sort] ?? $sort_options['newest'];
+		}
+	}
+
 	function filter_practices_callback_kriyi() {
 
 		check_ajax_referer('yoga_ajax_nonce', 'nonce');
 
 
 		$args = array(
-        'post_type' => 'practice',
-        'posts_per_page' => -1,
-        'post_status' => 'publish'
+			'post_type' => 'practice',
+			'posts_per_page' => -1,
+			'post_status' => 'publish',
 		);
 
-		$raw_filters = array();
-		if (!empty($_POST['filters']) && is_array($_POST['filters'])) {
-			$raw_filters = $_POST['filters'];
-		}
+		$raw_filters = isset($_POST['filters']) ? wp_unslash($_POST['filters']) : array();
+		$filters = yoga_normalize_practice_filter_terms($raw_filters);
 
-		$selected_type_terms = array();
-		if (!empty($raw_filters['practice-type']) && is_array($raw_filters['practice-type'])) {
-			$selected_type_terms = array_values(array_unique(array_map('intval', $raw_filters['practice-type'])));
-			$selected_type_terms = array_filter($selected_type_terms, static function ($term_id) {
-				return $term_id > 0;
-			});
-		}
-
-
-		if (!empty($_POST['term_id']) && empty($selected_type_terms)) {
+		if (!empty($_POST['term_id'])) {
 			$args['tax_query'] = array(
 				array(
 					'taxonomy' => 'practice-type',
 					'field' => 'term_id',
-					'terms' => intval($_POST['term_id'])
-				)
+					'terms' => absint(wp_unslash($_POST['term_id'])),
+				),
 			);
 		}
 
 		$search_term = '';
 		if (!empty($_POST['search'])) {
-			$search_term = sanitize_text_field($_POST['search']);
+			$search_term = sanitize_text_field(wp_unslash($_POST['search']));
 		}
 		$show_all = !empty($_POST['show_all']);
 		$library_results = !empty($_POST['library_results']);
 		$library_page = $library_results ? max(1, (int) ($_POST['library_page'] ?? 1)) : 1;
 
 
-		if (!empty($raw_filters)) {
-			$filters = $raw_filters;
-
-			if (!isset($args['tax_query'])) {
-				$args['tax_query'] = array('relation' => 'AND');
-				} else {
-				$args['tax_query']['relation'] = 'AND';
-			}
-
-			foreach ($filters as $taxonomy => $terms) {
-				if (!empty($terms)) {
-					$args['tax_query'][] = array(
-                    'taxonomy' => $taxonomy,
-                    'field' => 'term_id',
-                    'terms' => array_map('intval', $terms),
-                    'operator' => 'IN'
-					);
-				}
-			}
-		}
-
-		$args['orderby'] = 'date';
-		$args['order'] = 'DESC';
-		if ($library_results) {
-			$args['posts_per_page'] = 10;
-			$args['paged'] = $library_page;
-		}
+		$sort_args = yoga_get_practice_sort_query_args(isset($_POST['sort']) ? wp_unslash($_POST['sort']) : 'newest');
+		$args['orderby'] = $sort_args['orderby'];
+		$args['order'] = $sort_args['order'];
 
 		if ($search_term !== '') {
 			$search_ids = array();
@@ -233,11 +316,28 @@ if (!defined('ABSPATH')) {
 			$args['post__in'] = !empty($search_ids) ? $search_ids : array(0);
 		}
 
-		$query = new WP_Query($args);
-		$count = $query->found_posts;
+		$candidate_args = $args;
+		$candidate_args['fields'] = 'ids';
+		$candidate_args['posts_per_page'] = -1;
+		$candidate_args['no_found_rows'] = true;
+		$candidate_query = new WP_Query($candidate_args);
+		$ranked_ids = yoga_rank_practice_ids_by_filter_matches($candidate_query->posts, $filters);
+		$count = count($ranked_ids);
 		if (!empty($_POST['count_only'])) {
 			wp_send_json_success(array('count' => (int) $count));
 		}
+
+		$result_ids = $library_results
+			? array_slice($ranked_ids, ($library_page - 1) * 10, 10)
+			: $ranked_ids;
+		$query = new WP_Query(array(
+			'post_type' => 'practice',
+			'post_status' => 'publish',
+			'post__in' => !empty($result_ids) ? $result_ids : array(0),
+			'orderby' => 'post__in',
+			'posts_per_page' => -1,
+			'ignore_sticky_posts' => true,
+		));
 
 
 		ob_start();
@@ -293,10 +393,11 @@ if (!defined('ABSPATH')) {
 	</div>
 
 	<?php
-        endwhile;
+	        endwhile;
+			wp_reset_postdata();
 
 
-		if (!$show_all && !$library_results && $count > 10) :
+			if (!$show_all && !$library_results && $count > 10) :
 		for ($i = 0; $i < 2; $i++) :
 	?>
 	<div class="kriyi-item kriyi-item_last hidden">
@@ -327,7 +428,7 @@ if (!defined('ABSPATH')) {
         endif;
 
 		else :
-        echo '<div class="practice-search-empty"><p class="practice-search-empty__count">Найдено: 0</p><p class="practice-search-empty__message">По вашему запросу ничего не найдено, попробуйте другой запрос.</p></div>';
+		echo '<div class="practice-search-empty"><p class="practice-search-empty__message">По вашему запросу ничего не найдено, попробуйте другой запрос.</p></div>';
 		endif;
 
 		$html = ob_get_clean();

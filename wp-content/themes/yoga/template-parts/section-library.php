@@ -145,6 +145,19 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 
 		<div class="row">
 			<div class="library-x-clip">
+				<div class="practice-results-toolbar practice-results-toolbar--hidden" aria-hidden="true">
+					<p class="practice-results-toolbar__count">Найдено: <span>0</span></p>
+					<?php /* Сортировка временно скрыта до выбора метрики и финального набора вариантов.
+					<label class="practice-results-toolbar__sort">
+						<span class="screen-reader-text">Сортировка практик</span>
+						<select class="practice-results-toolbar__select" aria-label="Сортировка практик">
+							<option value="newest">Сначала новые</option>
+							<option value="oldest">Сначала старые</option>
+							<option value="title">По алфавиту</option>
+						</select>
+					</label>
+					*/ ?>
+				</div>
 				<div class="library" id="practice-list">
 				<?php if (!empty($category_terms) && !is_wp_error($category_terms)) : ?>
 					<?php foreach ($category_terms as $term) : ?>
