@@ -75,7 +75,7 @@ foreach ($goal_root_terms as $goal_root_term) {
 <div class="library-filters-screen" id="library-filters-screen" aria-hidden="true">
 	<div class="library-filters-screen__backdrop" aria-hidden="true"></div>
 	<aside class="library-filters-screen__panel" aria-label="<?php esc_attr_e('Фильтры практик', 'yoga'); ?>">
-		<div class="library-filters-screen__header">
+		<div class="library-filters-screen__header library-filters-screen__header--fixed">
 			<h2 class="library-filters-screen__title"><?php esc_html_e('Фильтры', 'yoga'); ?></h2>
 			<button type="button" class="library-filters-screen__close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
 				<span class="library-filters-screen__close-lines" aria-hidden="true"></span>
@@ -83,6 +83,12 @@ foreach ($goal_root_terms as $goal_root_term) {
 		</div>
 
 		<div class="library-filters-screen__scroll">
+			<div class="library-filters-screen__header library-filters-screen__header--scrolling">
+				<h2 class="library-filters-screen__title"><?php esc_html_e('Фильтры', 'yoga'); ?></h2>
+				<button type="button" class="library-filters-screen__close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
+					<span class="library-filters-screen__close-lines" aria-hidden="true"></span>
+				</button>
+			</div>
 			<section class="library-filters-screen__block">
 				<button type="button" class="library-filters-screen__block-toggle" aria-expanded="true">
 					<span class="library-filters-screen__heading"><?php esc_html_e('Сложность', 'yoga'); ?></span>

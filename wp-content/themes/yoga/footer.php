@@ -72,6 +72,9 @@ $footer_socials = array(
 $footer_copyright = $footer_option('copyright_text') ?: 'Все права защищены.';
 $footer_requisites = $footer_option('footer_requisites') ?: "ИП КСЕНОФОНТОВА МАРИНА ЕВГЕНЬЕВНА\nИНН 632200860531\nОГРНИП 319631300101827";
 $footer_requisites_lines = array_values(array_filter(array_map('trim', preg_split('/\R/', $footer_requisites))));
+$footer_subscribe_image_id = function_exists('get_field') ? (int) get_field('footer_subscribe_image', 'option') : 0;
+$footer_subscribe_image_url = $footer_subscribe_image_id > 0 ? wp_get_attachment_image_url($footer_subscribe_image_id, 'medium') : false;
+$footer_subscribe_image_style = $footer_subscribe_image_url ? 'background-image: url("' . $footer_subscribe_image_url . '")' : '';
 $is_blog_footer = is_home()
 	|| is_category()
 	|| is_tag()
@@ -88,7 +91,7 @@ $is_home_footer = is_front_page()
 <?php if ($is_home_footer) : ?>
 <section class="home-footer-subscribe" aria-labelledby="home-footer-subscribe-title">
 	<p class="home-footer-subscribe__eyebrow">Оставайтесь вместе с нами</p>
-	<h2 class="home-footer-subscribe__title" id="home-footer-subscribe-title"><span class="home-footer-subscribe__mark">Подпишитесь,</span> чтобы <span class="home-footer-subscribe__always">всег<span class="home-footer-subscribe__star" aria-hidden="true"></span>да</span><br> быть в курсе <span class="home-footer-subscribe__green">новых материалов</span>,<br> <span class="home-footer-subscribe__offers">акций и <span class="home-footer-subscribe__thumb" aria-hidden="true"></span> спецпредложений!</span></h2>
+	<h2 class="home-footer-subscribe__title" id="home-footer-subscribe-title"><span class="home-footer-subscribe__mark">Подпишитесь,</span> чтобы <span class="home-footer-subscribe__always">всег<span class="home-footer-subscribe__star" aria-hidden="true"></span>да</span><br> быть в курсе <span class="home-footer-subscribe__green">новых материалов</span>,<br> <span class="home-footer-subscribe__offers">акций и <span class="home-footer-subscribe__thumb" aria-hidden="true"<?php if ($footer_subscribe_image_style) : ?> style="<?php echo esc_attr($footer_subscribe_image_style); ?>"<?php endif; ?>></span> спецпредложений!</span></h2>
 	<form class="footer-subscribe home-footer-subscribe__form" action="<?php echo esc_url(home_url('/')); ?>" method="post">
 		<?php wp_nonce_field('subscription_nonce', 'subscription_nonce_field'); ?>
 		<div class="footer-subscribe__field"><input id="home-footer-subscribe-email" name="footer_email" type="email" placeholder="Эл. почта" aria-label="эл. почта"><button class="footer-subscribe__submit yoga-arrow-motion" type="submit" aria-label="Подписаться на новости"><svg class="yoga-arrow-motion__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg></button><span class="footer-subscribe__tooltip" id="home-footer-subscribe-consent-tooltip" role="alert" hidden>Подтвердите согласие на обработку персональных данных и получение рассылок.</span></div>
