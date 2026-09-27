@@ -16,6 +16,7 @@ $variant_details = trim((string) ($additional_modification['details'] ?? ''));
 $variant_timing = !empty($additional_modification['timing']) && is_array($additional_modification['timing'])
 	? $additional_modification['timing']
 	: array();
+$variant_timing_presets = yoga_practice_timer_presets($variant_timing, $additional_modification['timing_precise'] ?? array());
 $variant_media_type = (string) ($additional_modification['media_type'] ?? 'none');
 $variant_media_file = $additional_modification['media_file'] ?? array();
 $variant_video_source = (string) ($additional_modification['video_source'] ?? 'file');
@@ -23,7 +24,7 @@ $variant_kinescope_url = (string) ($additional_modification['kinescope_url'] ?? 
 $variant_youtube_url = (string) ($additional_modification['youtube_url'] ?? '');
 $variant_gallery = yoga_normalize_practice_exercise_gallery($additional_modification['gallery'] ?? array(), $additional_modification['gallery_framing'] ?? '');
 $variant_content = $additional_modification['content'] ?? '';
-$variant_show_timer = $variant_timing !== array();
+$variant_show_timer = $variant_timing_presets !== array();
 $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_idx . '-' . $additional_modification_version;
 ?>
 
@@ -66,14 +67,14 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			<?php endforeach; ?>
 			<?php endif; ?>
 
-			<?php if ($variant_timing !== array()): ?>
+			<?php if ($variant_timing_presets !== array()): ?>
 			<div>
 				<b>Время:</b>
-				<?php foreach ($variant_timing as $timing_idx => $value): ?>
+				<?php foreach ($variant_timing_presets as $timing_idx => $preset): ?>
 				<?php if ($timing_idx > 0): ?>, <?php endif; ?>
 				<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
-				<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
-				<span class="exercise-time-unit">мин.</span>
+				<span class="exercise-time-value"><?php echo esc_html($preset['value']); ?></span>
+				<span class="exercise-time-unit"><?php echo esc_html($preset['unit']); ?></span>
 				<?php endforeach; ?>
 			</div>
 			<?php endif; ?>
@@ -125,15 +126,15 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			</div>
 			<div class="timer-buttons">
 				<div class="timer-buttons__presets">
-				<?php $variant_timing_count = count($variant_timing); ?>
-				<?php foreach ($variant_timing as $value): ?>
+				<?php $variant_timing_count = count($variant_timing_presets); ?>
+				<?php foreach ($variant_timing_presets as $preset): ?>
 				<?php
 					$button_class = $variant_timing_count === 2
 						? 'btn'
 						: ($variant_timing_count === 1 ? 'btn btn_big' : 'btn btn_min');
 				?>
-				<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value * 60); ?>">
-					<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
+				<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr((string) $preset['duration']); ?>">
+					<span><?php echo esc_html($preset['button']); ?></span>
 				</button>
 				<?php endforeach; ?>
 				</div>
