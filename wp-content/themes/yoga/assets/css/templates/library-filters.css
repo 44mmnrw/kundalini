@@ -15,6 +15,12 @@
   display: none;
 }
 
+.library-filters-screen__close-icon {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
 
 @media (min-width: 1025px) {
   .library-filters-screen {
@@ -96,33 +102,6 @@
     border-radius: 50%;
     background: var(--color-green);
     cursor: pointer;
-  }
-
-  .library-filters-screen__close-lines {
-    position: relative;
-    display: block;
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  .library-filters-screen__close-lines::before,
-  .library-filters-screen__close-lines::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1.125rem;
-    height: 0.09375rem;
-    border-radius: 0.0625rem;
-    background: #1f1f1f;
-  }
-
-  .library-filters-screen__close-lines::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-
-  .library-filters-screen__close-lines::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
   }
 
   .library-filters-screen__scroll {
@@ -516,31 +495,9 @@
     background: var(--color-green);
   }
 
-  .library-filters-screen__close-lines {
-    position: relative;
-    display: block;
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  .library-filters-screen__close-lines::before,
-  .library-filters-screen__close-lines::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1.125rem;
-    height: 0.125rem;
-    border-radius: 0.0625rem;
-    background: #1f1f1f;
-  }
-
-  .library-filters-screen__close-lines::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-
-  .library-filters-screen__close-lines::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
+  .library-filters-screen__close-icon {
+    width: 1rem;
+    height: 1rem;
   }
 
   .library-filters-screen__scroll {
@@ -906,33 +863,6 @@
 
   .library-filters-screen__close:active {
     transform: scale(0.97);
-  }
-
-  .library-filters-screen__close-lines {
-    position: relative;
-    display: block;
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  .library-filters-screen__close-lines::before,
-  .library-filters-screen__close-lines::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 1.125rem;
-    height: 0.125rem;
-    background: #1f1f1f;
-    border-radius: 0.0625rem;
-  }
-
-  .library-filters-screen__close-lines::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-
-  .library-filters-screen__close-lines::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
   }
 
   .library-filters-screen__scroll {
