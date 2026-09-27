@@ -104,9 +104,19 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
             <form class="praktika-comment-item__edit hidden" id="edit-form-<?php echo $comment->comment_ID; ?>">
                 <div class="answer-main answer-main_comment-edit">
                     <textarea name="comment_content" class="input textarea-resize" rows="1"><?php echo esc_textarea($comment->comment_content); ?></textarea>
-                    <button type="button" class="btn btn_comment-update">
-                        <?php esc_html_e('Обновить', 'yoga'); ?>
-                    </button>
+                    <div class="praktika-comment-item__edit-actions">
+                        <div class="your-comm your-comm_edit">
+                            <button type="button" class="your-comm__btn your-comm__btn_edit" aria-label="<?php esc_attr_e('Редактировать комментарий', 'yoga'); ?>">
+                                <svg class="your-comm__btn-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($yoga_sprite_href); ?>#comment-edit"></use></svg>
+                            </button>
+                            <button type="button" class="your-comm__btn your-comm__btn_del" aria-label="<?php esc_attr_e('Удалить комментарий', 'yoga'); ?>">
+                                <svg class="your-comm__btn-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($yoga_sprite_href); ?>#comment-delete"></use></svg>
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn_comment-update">
+                            <?php esc_html_e('Обновить', 'yoga'); ?>
+                        </button>
+                    </div>
                 </div>
             </form>
             <?php endif; ?>

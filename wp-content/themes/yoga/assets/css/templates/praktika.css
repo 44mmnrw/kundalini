@@ -2106,6 +2106,12 @@ display: block !important;
   align-self: stretch;
   min-height: 3.125rem;
 }
+.praktika-comment-item__edit-actions {
+  display: contents;
+}
+.praktika-comment-item__edit .your-comm_edit {
+  display: none;
+}
 .praktika-comment-item__edit:not(.hidden) .answer-main_comment-edit .btn_comment-update {
   opacity: 1;
   pointer-events: auto;
@@ -2611,6 +2617,14 @@ display: block !important;
   .praktika-comment-item_own .praktika-comment-item__main-action {
     right: auto;
     left: 1.3125rem;  }
+  .praktika-comment-item_own:has(.praktika-comment-item__edit:not(.hidden)) {
+    padding-right: 0.9375rem;
+    padding-bottom: 1.25rem;
+    padding-left: 0.9375rem;
+  }
+  .praktika-comment-item_own:has(.praktika-comment-item__edit:not(.hidden)) .praktika-comment-item__main-action {
+    display: none;
+  }
   .praktika-comment-item__text {
     padding-left: 0px;
     padding-right: 0px;
@@ -2630,6 +2644,24 @@ display: block !important;
   .praktika-comment-item__edit {
     padding-bottom: 0.625rem;
     position: relative;
+  }
+  .praktika-comment-item_own .praktika-comment-item__edit:not(.hidden) {
+    margin-top: 0.9375rem;
+    padding-bottom: 0;
+  }
+  .praktika-comment-item_own .answer-main_comment-edit {
+    gap: 0.9375rem;
+  }
+  .praktika-comment-item_own .praktika-comment-item__edit-actions {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .praktika-comment-item_own .praktika-comment-item__edit .your-comm_edit {
+    display: inline-flex;
+    gap: 1.25rem;
+    padding: 0;
   }
   .praktika-comment-item__edit .btn_comment-update {
     position: relative;
