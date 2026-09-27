@@ -85,7 +85,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                 <?php wp_nonce_field('yoga_register_nonce', 'yoga_register_nonce'); ?>
                 <input type="hidden" name="action" value="yoga_email_register">
                 <input type="text" name="user_name" class="input" required placeholder="Ваше имя">
-                <input type="email" name="user_email" class="input" required placeholder="Эл. почта">
+                <input type="email" name="user_email" class="input" required placeholder="Электронная почта">
                 <div class="input-password">
                     <input type="password" name="user_pass" class="input" required placeholder="Пароль">
                         <div class="input-password__btn input-password__btn_show active">
