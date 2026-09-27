@@ -305,6 +305,16 @@ if (!function_exists('yoga_register_footer_settings_fields')) {
 			'title' => 'Футер',
 			'fields' => array(
 				array(
+					'key' => 'field_footer_subscribe_image',
+					'label' => 'Изображение в заголовке подписки',
+					'name' => 'footer_subscribe_image',
+					'type' => 'image',
+					'instructions' => 'Небольшая картинка между словами «акций и» и «спецпредложений». Если изображение не выбрано, используется картинка из темы.',
+					'return_format' => 'id',
+					'preview_size' => 'medium',
+					'library' => 'all',
+				),
+				array(
 					'key' => 'field_footer_requisites',
 					'label' => 'Реквизиты',
 					'name' => 'footer_requisites',

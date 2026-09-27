@@ -3229,6 +3229,7 @@ jQuery(document).ready(function($) {
         var $screen = $('.library-filters-screen');
         $screen.removeClass('library-filters-screen--closing');
         $screen.find('.library-filters-screen__panel').off('transitionend.libraryFiltersPanel');
+        $screen.find('.library-filters-screen__scroll').scrollTop(0);
         $screen.addClass('active').attr('aria-hidden', 'false');
         $('.overlay').addClass('active');
         $('.body').addClass('body-fixed');
