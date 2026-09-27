@@ -211,6 +211,12 @@
   font-family: var(--font-family-base); font-weight: 400;
   font-family: var(--font-family-base);
 }
+@media (min-width: 768px) {
+  .kriya-level {
+    box-sizing: border-box;
+    height: 1.875rem;
+  }
+}
 
 .kriya-info {
   grid-column: 1;
