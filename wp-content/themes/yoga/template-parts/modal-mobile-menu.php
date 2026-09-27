@@ -87,7 +87,7 @@
 					<button type="button" class="<?php echo esc_attr($tab_classes); ?>" data-target="<?php echo (int) $index + 1; ?>"<?php echo $pt_available ? '' : ' data-unavailable="1" aria-disabled="true"'; ?>>
 						<span><?php echo esc_html($term->name); ?></span>
 						<?php if (!$pt_available) : ?>
-						<span class="mobile-menu-switch-unavailable"><?php esc_html_e('в разработке', 'yoga'); ?></span>
+						<span class="mobile-menu-switch-unavailable"><?php esc_html_e('скоро', 'yoga'); ?></span>
 						<?php endif; ?>
 					</button>
 					<?php
