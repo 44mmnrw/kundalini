@@ -28,6 +28,49 @@
 			return 'доп.';
 		}
 	}
+	if (!function_exists('yoga_practice_timer_presets')) {
+		/** Normalizes legacy minute choices and precise ACF rows to seconds. */
+		function yoga_practice_timer_presets($legacy, $precise): array {
+			$presets = array();
+			if (is_array($precise)) {
+				foreach ($precise as $row) {
+					if (!is_array($row)) {
+						continue;
+					}
+					$minutes = filter_var($row['minutes'] ?? null, FILTER_VALIDATE_INT);
+					$seconds = filter_var($row['seconds'] ?? null, FILTER_VALIDATE_INT);
+					if ($minutes === false || $seconds === false || $minutes < 0 || $seconds < 0 || $seconds > 59 || ($minutes === 0 && $seconds === 0)) {
+						continue;
+					}
+					$presets[] = array(
+						'duration' => $minutes * 60 + $seconds,
+						'button' => $seconds > 0 ? sprintf('%d:%02d', $minutes, $seconds) : $minutes . ' мин.',
+						'value' => $minutes > 0 ? (string) $minutes : (string) $seconds,
+						'unit' => $minutes > 0 ? ('мин.' . ($seconds > 0 ? ' ' . $seconds . ' сек.' : '')) : 'сек.',
+					);
+				}
+			}
+			if ($presets !== array()) {
+				return $presets;
+			}
+			if (!is_array($legacy)) {
+				return array();
+			}
+			foreach ($legacy as $value) {
+				$minutes = filter_var($value, FILTER_VALIDATE_INT);
+				if ($minutes === false || $minutes <= 0) {
+					continue;
+				}
+				$presets[] = array(
+					'duration' => $minutes * 60,
+					'button' => $minutes . ' мин.',
+					'value' => (string) $minutes,
+					'unit' => 'мин.',
+				);
+			}
+			return $presets;
+		}
+	}
 ?>
 <?php
 	if (!function_exists('yoga_normalize_practice_exercise_gallery')) {
@@ -268,8 +311,10 @@
 		$additional_modification_rows = $unified_modification_rows;
 	}
 
-	$show_timer = !empty($timing);
-	$show_timer_mod = !empty($timing_mod);
+	$timing_presets = yoga_practice_timer_presets($timing, $exercise['timing_precise'] ?? array());
+	$timing_mod_presets = yoga_practice_timer_presets($timing_mod, $first_modification['timing_precise'] ?? array());
+	$show_timer = $timing_presets !== array();
+	$show_timer_mod = $timing_mod_presets !== array();
 
 	$has_modifications = $unified_modification_rows !== array()
 		|| $first_modification !== null
@@ -355,14 +400,14 @@
                 <?php endforeach; ?>
                 <?php endif; ?>
 
-				<?php if (!empty($timing)): ?>
+				<?php if ($timing_presets !== array()): ?>
 				<div>
 					<b>Время:</b>
-					<?php foreach ($timing as $timing_idx => $value): ?>
+					<?php foreach ($timing_presets as $timing_idx => $preset): ?>
 					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
 					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
-					<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
-					<span class="exercise-time-unit">мин.</span>
+					<span class="exercise-time-value"><?php echo esc_html($preset['value']); ?></span>
+					<span class="exercise-time-unit"><?php echo esc_html($preset['unit']); ?></span>
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>
@@ -420,19 +465,19 @@
 					</div>
 				</div>
                 <div class="timer-buttons">
-					<?php if (!empty($timing)): ?>
+					<?php if ($timing_presets !== array()): ?>
 					<div class="timer-buttons__presets">
 					<?php
-						$timing_count = count($timing);
-						foreach ($timing as $value):
+						$timing_count = count($timing_presets);
+						foreach ($timing_presets as $preset):
 						if($timing_count == 2){
 							$button_class = 'btn';
 							}else{
 							$button_class = ($timing_count == 1) ? 'btn btn_big' : 'btn btn_min';
 						}
 					?>
-					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
-						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
+					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr((string) $preset['duration']); ?>">
+						<span><?php echo esc_html($preset['button']); ?></span>
 					</button>
 					<?php endforeach; ?>
 					</div>
@@ -521,14 +566,14 @@
                 <?php endforeach; ?>
                 <?php endif; ?>
 
-				<?php if (!empty($timing_mod)): ?>
+				<?php if ($timing_mod_presets !== array()): ?>
 				<div>
 					<b>Время:</b>
-					<?php foreach ($timing_mod as $timing_idx => $value): ?>
+					<?php foreach ($timing_mod_presets as $timing_idx => $preset): ?>
 					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
 					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
-					<span class="exercise-time-value"><?php echo esc_html((string) intval($value)); ?></span>
-					<span class="exercise-time-unit">мин.</span>
+					<span class="exercise-time-value"><?php echo esc_html($preset['value']); ?></span>
+					<span class="exercise-time-unit"><?php echo esc_html($preset['unit']); ?></span>
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>
@@ -587,19 +632,19 @@
 					</div>
 				</div>
                 <div class="timer-buttons">
-					<?php if (!empty($timing_mod)): ?>
+					<?php if ($timing_mod_presets !== array()): ?>
 					<div class="timer-buttons__presets">
 					<?php
-						$timing_count = count($timing_mod);
-						foreach ($timing_mod as $value):
+						$timing_count = count($timing_mod_presets);
+						foreach ($timing_mod_presets as $preset):
 						if($timing_count == 2){
 							$button_class = 'btn';
 							}else{
 							$button_class = ($timing_count == 1) ? 'btn btn_big' : 'btn btn_min';
 						}
 					?>
-					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr($value*60); ?>">
-						<span><?php echo esc_html((string) intval($value)); ?> мин.</span>
+					<button type="button" class="<?php echo esc_attr($button_class); ?> timer-preset" data-duration="<?php echo esc_attr((string) $preset['duration']); ?>">
+						<span><?php echo esc_html($preset['button']); ?></span>
 					</button>
 					<?php endforeach; ?>
 					</div>

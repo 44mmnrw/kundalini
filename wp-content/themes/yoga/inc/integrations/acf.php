@@ -1885,6 +1885,88 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_restructure_practice_exercise_modifications', 24);
 
+if (!function_exists('yoga_add_practice_precise_timer_fields')) {
+	/** Adds minute-and-second timer presets without changing saved whole-minute choices. */
+	function yoga_add_practice_precise_timer_fields(array $field): array {
+		if (yoga_is_acf_field_group_editor() || empty($field['sub_fields']) || !is_array($field['sub_fields'])) {
+			return $field;
+		}
+
+		$make_field = static function (string $key, string $parent_repeater, int $parent): array {
+			$number_field = static function (string $suffix, string $label, int $max) use ($key): array {
+				return array(
+					'ID' => 0,
+					'key' => $key . '_' . $suffix,
+					'label' => $label,
+					'name' => $suffix,
+					'_name' => $suffix,
+					'type' => 'number',
+					'required' => 1,
+					'min' => 0,
+					'max' => $max,
+					'step' => 1,
+					'parent' => 0,
+					'parent_repeater' => $key,
+				);
+			};
+
+			$precise_field = array(
+				'ID' => 0,
+				'key' => $key,
+				'label' => 'Точное время таймера',
+				'name' => 'timing_precise',
+				'_name' => 'timing_precise',
+				'type' => 'repeater',
+				'instructions' => 'Добавьте варианты с секундами. Если здесь есть время, оно заменит выбранные выше целые минуты. Например: 1 минута и 30 секунд.',
+				'required' => 0,
+				'layout' => 'table',
+				'min' => 0,
+				'max' => 12,
+				'button_label' => 'Добавить время',
+				'parent' => $parent,
+				'parent_repeater' => $parent_repeater,
+				'sub_fields' => array(
+					$number_field('minutes', 'Минуты', 999),
+					$number_field('seconds', 'Секунды', 59),
+				),
+			);
+
+			return function_exists('acf_get_valid_field') ? acf_get_valid_field($precise_field) : $precise_field;
+		};
+
+		foreach ($field['sub_fields'] as $index => $sub_field) {
+			if (($sub_field['name'] ?? '') === 'timing') {
+				$next_field = $field['sub_fields'][$index + 1] ?? array();
+				if (($next_field['name'] ?? '') !== 'timing_precise') {
+					array_splice($field['sub_fields'], $index + 1, 0, array($make_field('field_ex_timing_precise', 'field_exercise_items', (int) ($field['ID'] ?? 0))));
+				}
+				break;
+			}
+		}
+
+		foreach ($field['sub_fields'] as &$sub_field) {
+			if (($sub_field['name'] ?? '') !== 'modifications' || empty($sub_field['sub_fields'])) {
+				continue;
+			}
+			foreach ($sub_field['sub_fields'] as $index => $modification_field) {
+				if (($modification_field['name'] ?? '') === 'timing') {
+					$next_field = $sub_field['sub_fields'][$index + 1] ?? array();
+					if (($next_field['name'] ?? '') !== 'timing_precise') {
+						array_splice($sub_field['sub_fields'], $index + 1, 0, array($make_field('field_ex_modifications_timing_precise', 'field_ex_modifications', 0)));
+					}
+					break;
+				}
+			}
+			break;
+		}
+		unset($sub_field);
+
+		return $field;
+	}
+}
+
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_precise_timer_fields', 25);
+
 if (!function_exists('yoga_validate_kinescope_video_url')) {
 	function yoga_validate_kinescope_video_url($valid, $value) {
 		if ($valid !== true || trim((string) $value) === '') {

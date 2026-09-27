@@ -898,7 +898,9 @@ function initializePracticeSystem() {
                         if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
                             updateFullscreenTimer();
                         }
-                    } else {
+                    }
+
+                    if (remainingTime <= 0) {
                         playEndSignal();
                         stopTimer();
                         if (player) player.pause();
