@@ -28,7 +28,7 @@
 					<h2><?php echo esc_html($parent_term->name); ?></h2>
 
 					<?php if (!$is_available) : ?>
-                    <span class="modal-menu-unavailable">в разработке</span>
+                    <span class="modal-menu-unavailable">скоро</span>
 					<?php endif; ?>
 
 					<nav>
