@@ -1917,7 +1917,7 @@ if (!function_exists('yoga_add_practice_precise_timer_fields')) {
 				'name' => 'timing_precise',
 				'_name' => 'timing_precise',
 				'type' => 'repeater',
-				'instructions' => 'Добавьте варианты с секундами. Если здесь есть время, оно заменит выбранные выше целые минуты. Например: 1 минута и 30 секунд.',
+				'instructions' => 'Добавьте варианты с секундами к выбранным выше целым минутам. Например: 1 минута и 30 секунд. Все варианты появятся вместе в таймере.',
 				'required' => 0,
 				'layout' => 'table',
 				'min' => 0,
@@ -1966,6 +1966,24 @@ if (!function_exists('yoga_add_practice_precise_timer_fields')) {
 }
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_precise_timer_fields', 25);
+
+if (!function_exists('yoga_validate_practice_timer_seconds')) {
+	/** Rejects out-of-range or fractional seconds in precise timer presets. */
+	function yoga_validate_practice_timer_seconds($valid, $value) {
+		if ($value === '' || $value === null) {
+			return $valid;
+		}
+
+		if (!is_scalar($value) || !is_numeric($value) || (float) $value < 0 || (float) $value > 59 || floor((float) $value) !== (float) $value) {
+			return 'Укажите целое число секунд от 0 до 59.';
+		}
+
+		return $valid;
+	}
+}
+
+add_filter('acf/validate_value/key=field_ex_timing_precise_seconds', 'yoga_validate_practice_timer_seconds', 10, 2);
+add_filter('acf/validate_value/key=field_ex_modifications_timing_precise_seconds', 'yoga_validate_practice_timer_seconds', 10, 2);
 
 if (!function_exists('yoga_validate_kinescope_video_url')) {
 	function yoga_validate_kinescope_video_url($valid, $value) {

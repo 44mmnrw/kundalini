@@ -735,7 +735,7 @@ function initializePracticeSystem() {
                             if (isPlaying) pauseTimer();
                         },
                         onEnded: () => {
-                            stopTimer();
+                            finishTimer();
                             goToNextExercise(exercise);
                         },
                         onError: () => {
@@ -795,7 +795,7 @@ function initializePracticeSystem() {
                     });
 
                     player.on('ended', () => {
-                        stopTimer();
+                        finishTimer();
 
                         goToNextExercise(exercise);
                     });
@@ -902,7 +902,7 @@ function initializePracticeSystem() {
 
                     if (remainingTime <= 0) {
                         playEndSignal();
-                        stopTimer();
+                        finishTimer();
                         if (player) player.pause();
 
 
@@ -963,6 +963,16 @@ function initializePracticeSystem() {
                 }
             }
 
+            function finishTimer() {
+                stopTimer();
+                remainingTime = selectedDuration > 0 ? selectedDuration : initialDuration;
+                updateTimerDisplay();
+
+                if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
+                    updateFullscreenTimer();
+                }
+            }
+
             function resetTimer(duration, options = {}) {
                 const { allowWhilePlaying = false } = options;
 
@@ -985,7 +995,7 @@ function initializePracticeSystem() {
                         });
                     });
                 }
-                remainingTime = duration;
+                remainingTime = duration > 0 ? duration : selectedDuration;
                 updateTimerDisplay();
 
                 if (player) {
