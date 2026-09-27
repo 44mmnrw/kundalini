@@ -42,33 +42,33 @@
 					if ($minutes === false || $seconds === false || $minutes < 0 || $seconds < 0 || $seconds > 59 || ($minutes === 0 && $seconds === 0)) {
 						continue;
 					}
-					$presets[] = array(
-						'duration' => $minutes * 60 + $seconds,
+					$duration = $minutes * 60 + $seconds;
+					$presets[$duration] = array(
+						'duration' => $duration,
 						'button' => $seconds > 0 ? sprintf('%d:%02d', $minutes, $seconds) : $minutes . ' мин.',
 						'value' => $minutes > 0 ? (string) $minutes : (string) $seconds,
 						'unit' => $minutes > 0 ? ('мин.' . ($seconds > 0 ? ' ' . $seconds . ' сек.' : '')) : 'сек.',
 					);
 				}
 			}
-			if ($presets !== array()) {
-				return $presets;
-			}
-			if (!is_array($legacy)) {
-				return array();
-			}
-			foreach ($legacy as $value) {
+			foreach (is_array($legacy) ? $legacy : array() as $value) {
 				$minutes = filter_var($value, FILTER_VALIDATE_INT);
 				if ($minutes === false || $minutes <= 0) {
 					continue;
 				}
-				$presets[] = array(
-					'duration' => $minutes * 60,
+				$duration = $minutes * 60;
+				if (isset($presets[$duration])) {
+					continue;
+				}
+				$presets[$duration] = array(
+					'duration' => $duration,
 					'button' => $minutes . ' мин.',
 					'value' => (string) $minutes,
 					'unit' => 'мин.',
 				);
 			}
-			return $presets;
+			ksort($presets, SORT_NUMERIC);
+			return array_values($presets);
 		}
 	}
 ?>
