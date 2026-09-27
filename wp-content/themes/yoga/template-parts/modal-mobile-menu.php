@@ -18,7 +18,14 @@
     <div class="mobile-menu-inner">
 		<?php if (is_user_logged_in()) : ?>
 		<div class="mobile-header-popup__head">
-			<a class="mobile-header-popup__rate" href="<?php echo esc_url($mobile_header_urls['tariffs']); ?>"><?php echo esc_html($mobile_header_tariff_label); ?></a>
+			<a class="mobile-header-popup__rate" href="<?php echo esc_url($mobile_header_urls['tariffs']); ?>">
+				<?php if (is_array($mobile_header_tariff) && !empty($mobile_header_tariff['product_name'])) : ?>
+				<svg class="mobile-header-popup__rate-icon" aria-hidden="true" focusable="false">
+					<use href="<?php echo $sprite_href; ?>#personal-status-crown"></use>
+				</svg>
+				<?php endif; ?>
+				<span><?php echo esc_html($mobile_header_tariff_label); ?></span>
+			</a>
 		</div>
 		<?php endif; ?>
         <div class="mobile-menu">
