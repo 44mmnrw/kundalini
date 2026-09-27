@@ -78,7 +78,7 @@ foreach ($goal_root_terms as $goal_root_term) {
 		<div class="library-filters-screen__header library-filters-screen__header--fixed">
 			<h2 class="library-filters-screen__title"><?php esc_html_e('Фильтры', 'yoga'); ?></h2>
 			<button type="button" class="library-filters-screen__close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-				<span class="library-filters-screen__close-lines" aria-hidden="true"></span>
+				<svg class="library-filters-screen__close-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($sprite_href . '#lk-modal-close'); ?>"></use></svg>
 			</button>
 		</div>
 
@@ -86,7 +86,7 @@ foreach ($goal_root_terms as $goal_root_term) {
 			<div class="library-filters-screen__header library-filters-screen__header--scrolling">
 				<h2 class="library-filters-screen__title"><?php esc_html_e('Фильтры', 'yoga'); ?></h2>
 				<button type="button" class="library-filters-screen__close" aria-label="<?php esc_attr_e('Закрыть', 'yoga'); ?>">
-					<span class="library-filters-screen__close-lines" aria-hidden="true"></span>
+					<svg class="library-filters-screen__close-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($sprite_href . '#lk-modal-close'); ?>"></use></svg>
 				</button>
 			</div>
 			<section class="library-filters-screen__block">
