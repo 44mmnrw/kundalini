@@ -2615,6 +2615,9 @@ display: block !important;
     padding-left: 0px;
     padding-right: 0px;
   }
+  .praktika-comment-item_own .praktika-comment-item__text {
+    margin-bottom: 0.75rem;
+  }
   .your-comm {
     padding-left: 0px;
     padding-top: 0px;
