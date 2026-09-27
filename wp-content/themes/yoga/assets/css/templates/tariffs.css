@@ -219,7 +219,7 @@
   background-image: url(../../svg/tariff-star-2.svg);
   background-size: 2.02303125rem 1.76838125rem;
 }
-.tariff_visual_2 .check-list__icon {
+.tariff_highlighted .check-list__icon {
   color: #9153E1;
 }
 .tariff_visual_3 .tariff__bg::after {
