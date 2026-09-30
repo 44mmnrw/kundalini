@@ -352,6 +352,13 @@ header > .container > .row > .header-content {
   background: var(--color-grey);
   color: var(--color-black);
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-lk .lk-notifications-popup__settings:hover,
+.header-lk .lk-notifications-popup__settings:focus-visible {
+  background: var(--color-violet);
+  color: var(--color-white);
 }
 
 .header-lk .lk-notifications-popup__settings svg { width: 1.3125rem; height: 1.3125rem; }
