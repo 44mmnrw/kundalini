@@ -362,6 +362,15 @@
   padding-top: 0;
 }
 
+#ytr-modal-unsubscribe-success .delcomm__succes::before {
+  height: 4.8125rem;
+  background: url('../../../svg/subscription-success-check.svg') center / contain no-repeat;
+}
+
+#ytr-modal-unsubscribe-success .delcomm__succes::after {
+  display: none;
+}
+
 #ytr-modal-cancel-subscription-success .delcomm__succes::before {
   display: none;
 }

@@ -9,7 +9,7 @@
 	get_header();
 
 	if (!is_user_logged_in()) {
-		echo '<div class="container">';
+		echo '<div class="container lk-login-notice">';
 		echo '<p>Пожалуйста, <a href="' . wp_login_url(get_permalink()) . '">авторизуйтесь</a> для доступа к личному кабинету.</p>';
 		echo '</div>';
 		get_footer();
