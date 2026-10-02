@@ -4,6 +4,10 @@
  * @package Yoga
  */
 
+.lk-login-notice {
+  display: block;
+}
+
 .sidebar {
   display: block;
   grid-area: sidebar;
