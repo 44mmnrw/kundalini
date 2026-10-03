@@ -128,6 +128,10 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
+		$slider.on('click', '.reviews-controls__prev, .reviews-controls__next', function () {
+			$slider.slick($(this).hasClass('reviews-controls__prev') ? 'slickPrev' : 'slickNext');
+		});
+
 		$slider.slick({
 			infinite: true,
 			dots: false,

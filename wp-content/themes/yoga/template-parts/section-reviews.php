@@ -93,25 +93,37 @@ if (count($reviews_items) <= 1) {
                                     </span>
                                 <?php endif; ?>
 
-                                <?php if ($show_review_people_photos && $review_people) : ?>
-                                    <div class="review-people">
-                                        <?php foreach ($review_people as $person) : ?>
-                                            <?php
-                                            if (is_array($person)) {
-                                                $person = $person['url'] ?? '';
-                                            } elseif (is_numeric($person)) {
-                                                $person = wp_get_attachment_image_url((int) $person, 'thumbnail');
-                                            }
-                                            if (!$person) {
-                                                continue;
-                                            }
-                                            ?>
-                                            <div class="review-people__item">
-                                                <img src="<?php echo esc_url($person); ?>" alt="">
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
+                                <div class="review-footer">
+                                    <?php if ($show_review_people_photos && $review_people) : ?>
+                                        <div class="review-people">
+                                            <?php foreach ($review_people as $person) : ?>
+                                                <?php
+                                                if (is_array($person)) {
+                                                    $person = $person['url'] ?? '';
+                                                } elseif (is_numeric($person)) {
+                                                    $person = wp_get_attachment_image_url((int) $person, 'thumbnail');
+                                                }
+                                                if (!$person) {
+                                                    continue;
+                                                }
+                                                ?>
+                                                <div class="review-people__item">
+                                                    <img src="<?php echo esc_url($person); ?>" alt="">
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if (count($reviews_items) > 1) : ?>
+                                        <div class="reviews-controls">
+                                            <button type="button" class="arrows-slick__arrow reviews-controls__prev" aria-label="Предыдущий отзыв">
+                                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+                                            </button>
+                                            <button type="button" class="arrows-slick__arrow reviews-controls__next" aria-label="Следующий отзыв">
+                                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
