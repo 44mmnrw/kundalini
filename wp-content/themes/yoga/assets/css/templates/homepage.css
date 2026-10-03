@@ -1401,6 +1401,7 @@
     min-height: 3.0625rem;
     margin-top: auto;
     padding-top: 1.875rem;
+    padding-right: 7rem;
     box-sizing: content-box;
   }
 
@@ -1411,9 +1412,11 @@
 
   .reviews-controls {
     display: flex;
-    flex: 0 0 auto;
+    position: absolute;
+    top: 23.125rem;
+    right: 0;
+    z-index: 2;
     gap: 0.9375rem;
-    margin-left: auto;
   }
 
   .reviews-controls__prev svg {

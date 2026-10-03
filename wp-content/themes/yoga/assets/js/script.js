@@ -128,8 +128,25 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		$slider.on('click', '.reviews-controls__prev, .reviews-controls__next', function () {
+		var $controls = $slider.siblings('.reviews-controls');
+
+		$controls.on('click', 'button', function () {
 			$slider.slick($(this).hasClass('reviews-controls__prev') ? 'slickPrev' : 'slickNext');
+		});
+
+		$slider.on('init setPosition', function () {
+			if (!$controls.is(':visible')) {
+				return;
+			}
+
+			var mainTop = $slider.parent()[0].getBoundingClientRect().top;
+			var controlsTop = 0;
+			$slider.find('.review:not(.slick-cloned) .review-footer').each(function () {
+				var footer = this.getBoundingClientRect();
+				var paddingTop = parseFloat(window.getComputedStyle(this).paddingTop) || 0;
+				controlsTop = Math.max(controlsTop, footer.top - mainTop + paddingTop + (footer.height - paddingTop - $controls.outerHeight()) / 2);
+			});
+			$controls.css('top', controlsTop);
 		});
 
 		$slider.slick({
