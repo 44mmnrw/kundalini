@@ -1365,6 +1365,47 @@
   width: 100%;
   margin-top: 1.875rem;}
 
+.review-footer {
+  display: contents;
+}
+
+.reviews-controls {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .reviews__head > .arrows-slick__arrow {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .review-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 3.0625rem;
+    margin-top: 1.875rem;
+  }
+
+  .review-footer .review-people {
+    width: auto;
+    margin-top: 0;
+  }
+
+  .reviews-controls {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.9375rem;
+    margin-left: auto;
+  }
+
+  .reviews-controls__prev svg {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+}
+
+
 .review-people__item {
   display: flex;
   position: relative;
@@ -1389,6 +1430,56 @@
 .review-main > .review-decor {
   position: absolute;
   pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  .review-main {
+    flex: 0 0 18.1875rem;
+    min-height: 25.2206rem;
+    align-self: flex-start;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 3.75rem 0.375rem 0 0;
+  }
+
+  .review-main::before {
+    inset: 0.5rem auto auto 0;
+    width: 17.8125rem;
+    height: 21.9375rem;
+  }
+
+  .review-main__quote {
+    top: 0;
+  }
+
+  .review-main__name {
+    width: 14.6875rem;
+    margin-top: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .review-main__age {
+    width: 14.6875rem;
+    margin-top: 0.1875rem;
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  .review-main__job {
+    max-width: 14.6875rem;
+    margin-top: 0.8125rem;
+    padding: 0.25rem 0.5625rem;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .review-main > .review-decor {
+    top: 18.3125rem;
+    bottom: auto;
+    left: 1.8125rem;
+    width: 2.6875rem;
+    height: 6.6875rem;
+  }
 }
 
 @media (max-width: 1319px) {
