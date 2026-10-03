@@ -2059,11 +2059,6 @@
   background: rgba(145, 83, 225, 0.07);
 }
 
-.lk-auto-renew-status_off {
-  background: rgba(31, 31, 31, 0.06);
-  border: 1px solid rgba(31, 31, 31, 0.08);
-}
-
 .lk-auto-renew-status__title {
   margin: 0;
   font-size: 1.125rem;
