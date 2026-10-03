@@ -726,8 +726,8 @@
 
 								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2">
 									<div class="form-back" data-target="1">
-										<svg class="form-back__icon" width="9" height="16" aria-hidden="true" focusable="false">
-											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
+										<svg class="form-back__icon" xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none" aria-hidden="true" focusable="false">
+											<path d="M5.3 2L0.5 8L5.3 14" stroke="#1F1F1F" stroke-linecap="round" stroke-linejoin="round"/>
 										</svg>
 										<span>назад</span>
 									</div>
