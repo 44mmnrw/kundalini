@@ -1374,9 +1374,23 @@
 }
 
 @media (min-width: 1024px) {
+  .reviews__head {
+    display: block;
+  }
+
   .reviews__head > .arrows-slick__arrow {
-    visibility: hidden;
-    pointer-events: none;
+    display: none !important;
+  }
+
+  .review-info {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    min-height: 22.4375rem;
+  }
+
+  .review-expand {
+    align-self: flex-start;
   }
 
   .review-footer {
@@ -1385,7 +1399,9 @@
     justify-content: space-between;
     gap: 0.5rem;
     min-height: 3.0625rem;
-    margin-top: 1.875rem;
+    margin-top: auto;
+    padding-top: 1.875rem;
+    box-sizing: content-box;
   }
 
   .review-footer .review-people {
