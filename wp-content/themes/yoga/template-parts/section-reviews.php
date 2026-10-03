@@ -113,21 +113,21 @@ if (count($reviews_items) <= 1) {
                                             <?php endforeach; ?>
                                         </div>
                                     <?php endif; ?>
-                                    <?php if (count($reviews_items) > 1) : ?>
-                                        <div class="reviews-controls">
-                                            <button type="button" class="arrows-slick__arrow reviews-controls__prev" aria-label="Предыдущий отзыв">
-                                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
-                                            </button>
-                                            <button type="button" class="arrows-slick__arrow reviews-controls__next" aria-label="Следующий отзыв">
-                                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
-                                            </button>
-                                        </div>
-                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
                     </div>
+                    <?php if (count($reviews_items) > 1) : ?>
+                        <div class="reviews-controls">
+                            <button type="button" class="arrows-slick__arrow reviews-controls__prev" aria-label="Предыдущий отзыв">
+                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+                            </button>
+                            <button type="button" class="arrows-slick__arrow reviews-controls__next" aria-label="Следующий отзыв">
+                                <svg aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use></svg>
+                            </button>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
