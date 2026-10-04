@@ -15,9 +15,12 @@
 	$steps = $section['steps'];
 
 	if (!function_exists('yoga_get_timing_label_short')) {
-		function yoga_get_timing_label_short(int $index): string {
+		function yoga_get_timing_label_short(int $index, int $count): string {
 			if ($index === 0) {
 				return 'мин.';
+			}
+			if ($index === 1 && $count === 2) {
+				return 'макс.';
 			}
 			if ($index === 1) {
 				return 'сред.';
@@ -405,7 +408,7 @@
 					<b>Время:</b>
 					<?php foreach ($timing_presets as $timing_idx => $preset): ?>
 					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
-					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
+					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx, count($timing_presets))); ?></span>
 					<span class="exercise-time-value"><?php echo esc_html($preset['value']); ?></span>
 					<span class="exercise-time-unit"><?php echo esc_html($preset['unit']); ?></span>
 					<?php endforeach; ?>
@@ -571,7 +574,7 @@
 					<b>Время:</b>
 					<?php foreach ($timing_mod_presets as $timing_idx => $preset): ?>
 					<?php if ($timing_idx > 0): ?>, <?php endif; ?>
-					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
+					<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx, count($timing_mod_presets))); ?></span>
 					<span class="exercise-time-value"><?php echo esc_html($preset['value']); ?></span>
 					<span class="exercise-time-unit"><?php echo esc_html($preset['unit']); ?></span>
 					<?php endforeach; ?>

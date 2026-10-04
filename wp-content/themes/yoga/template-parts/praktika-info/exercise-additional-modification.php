@@ -72,7 +72,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 				<b>Время:</b>
 				<?php foreach ($variant_timing_presets as $timing_idx => $preset): ?>
 				<?php if ($timing_idx > 0): ?>, <?php endif; ?>
-				<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx)); ?></span>
+				<span class="exercise-time-label"><?php echo esc_html(yoga_get_timing_label_short($timing_idx, count($variant_timing_presets))); ?></span>
 				<span class="exercise-time-value"><?php echo esc_html($preset['value']); ?></span>
 				<span class="exercise-time-unit"><?php echo esc_html($preset['unit']); ?></span>
 				<?php endforeach; ?>
