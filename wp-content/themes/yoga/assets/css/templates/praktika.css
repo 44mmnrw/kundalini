@@ -1950,6 +1950,7 @@ display: block !important;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .praktika-comment-time {
