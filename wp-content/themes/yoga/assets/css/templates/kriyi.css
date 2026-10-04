@@ -163,11 +163,11 @@
   color: var(--color-violet);
 }
 .kriyi-item:hover .kriya-btn,
-.kriyi-item:focus-within .kriya-btn {
+.kriyi-item:has(a:focus-visible) .kriya-btn {
   background: var(--color-green);
 }
 .kriyi-item:hover .kriya-btn__icon,
-.kriyi-item:focus-within .kriya-btn__icon {
+.kriyi-item:has(a:focus-visible) .kriya-btn__icon {
   color: var(--color-black);
   transform: translate(-50%, -50%) rotate(0deg);
 }
