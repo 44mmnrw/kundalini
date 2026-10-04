@@ -823,3 +823,117 @@
     font-size: 1.25rem;
   }
 }
+
+.yoga-sadhana-reset-modal.active {
+  width: 28.5625rem;
+  height: 18.4375rem;
+  max-height: calc(100vh - 0.625rem);
+  overflow-y: auto;
+  background: var(--color-green, #e8ff57);
+}
+
+.yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__close {
+  top: 0.9375rem;
+  right: 0.9375rem;
+  background: #fff;
+}
+
+.yoga-sadhana-reset-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6875rem;
+  width: 22.9375rem;
+  padding-top: 4.0625rem;
+  margin-left: 2.1875rem;
+}
+
+.yoga-sadhana-reset-modal__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9375rem;
+  color: var(--color-black, #1f1f1f);
+}
+
+.yoga-sadhana-reset-modal__copy h2,
+.yoga-sadhana-reset-modal__copy p {
+  width: 100%;
+  margin: 0;
+  font-family: var(--font-family-base, "Mulish", sans-serif);
+  text-align: left;
+  text-transform: none;
+}
+
+.yoga-sadhana-reset-modal__copy h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.yoga-sadhana-reset-modal__copy p {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.yoga-sadhana-reset-modal__actions {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.yoga-sadhana-reset-modal__actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  height: 3.25rem;
+  padding: 1rem 0.9375rem;
+  border: 1px solid var(--color-black, #1f1f1f);
+  border-radius: 9.375rem;
+  font-family: var(--font-family-base, "Mulish", sans-serif);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.yoga-sadhana-reset-modal__cancel {
+  background: transparent;
+  color: var(--color-black, #1f1f1f);
+}
+
+.yoga-sadhana-reset-modal__confirm {
+  background: var(--color-black, #1f1f1f);
+  color: #fff;
+}
+
+@media (max-width: 575px) {
+  .yoga-sadhana-reset-modal.active {
+    width: calc(100vw - 1.25rem);
+    max-width: calc(100vw - 1.25rem);
+    height: auto;
+    min-height: 18.4375rem;
+  }
+
+  .yoga-sadhana-reset-modal .yoga-sadhana-reset-modal__close {
+    top: 0.625rem;
+    right: 0.625rem;
+    display: block !important;
+  }
+
+  .yoga-sadhana-reset-modal__content {
+    width: auto;
+    padding: 4.0625rem 1.25rem 2.125rem;
+    margin-left: 0;
+  }
+
+  .yoga-sadhana-reset-modal__actions {
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .yoga-sadhana-reset-modal__actions button {
+    flex: 0 0 3.25rem;
+    width: 100%;
+  }
+
+}
