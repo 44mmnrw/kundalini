@@ -20,6 +20,15 @@ if (!function_exists('yoga_use_classic_editor_for_practices')) {
 
 add_filter('use_block_editor_for_post_type', 'yoga_use_classic_editor_for_practices', 100, 2);
 
+/** Keep the native media picker and WordPress thumbnail saving available. */
+function yoga_enable_practice_cover(): void {
+    if (post_type_exists('practice')) {
+        add_post_type_support('practice', 'thumbnail');
+    }
+}
+add_action('init', 'yoga_enable_practice_cover', 100);
+
+
 if (!function_exists('yoga_hide_native_practice_content_editor')) {
 	function yoga_hide_native_practice_content_editor(WP_Screen $screen): void {
 		if ($screen->base === 'post' && $screen->post_type === 'practice' && yoga_is_modern_practice_editor()) {

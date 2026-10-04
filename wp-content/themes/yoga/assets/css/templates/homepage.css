@@ -2451,6 +2451,7 @@
   height: 217px;
   align-self: stretch;
   aspect-ratio: auto;
-  object-fit: contain;
-  background: var(--color-white);
+  object-fit: cover;
+  object-position: center;
+  background: transparent;
 }
