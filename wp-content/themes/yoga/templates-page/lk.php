@@ -311,6 +311,8 @@
 											<span class="lk-notification__meta"><?php if ($created_at): ?><time><?php echo esc_html(human_time_diff(strtotime($created_at), current_time('timestamp')) . ' ' . __('назад', 'yoga')); ?></time><?php endif; ?><?php if ($is_unread): ?><i aria-hidden="true"></i><?php endif; ?></span>
 											<?php if ($type === 'payment_card_expiring'): ?>
 												<span class="lk-notification__action"><?php esc_html_e('Обновить карту', 'yoga'); ?></span>
+											<?php elseif ($type === 'subscription_expiring'): ?>
+												<span class="lk-notification__action"><?php esc_html_e('Настройки подписки и способы оплаты', 'yoga'); ?></span>
 											<?php endif; ?>
 										</a>
 									<?php endforeach; ?>

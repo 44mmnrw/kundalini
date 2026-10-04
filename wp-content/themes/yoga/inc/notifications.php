@@ -46,6 +46,9 @@ function yoga_get_user_notifications(int $user_id, int $limit = 50): array {
 		return is_array($notification) && yoga_notification_has_live_source($notification);
 	}));
 	foreach ($notifications as &$notification) {
+		if (($notification['type'] ?? '') === 'subscription_expiring' && function_exists('yoga_get_lk_section_url')) {
+			$notification['url'] = yoga_get_lk_section_url('subscription');
+		}
 		if (($notification['type'] ?? '') === 'sadhana_interrupted') {
 			$notification['title'] = __('Садхана прервалась...', 'yoga');
 		}
