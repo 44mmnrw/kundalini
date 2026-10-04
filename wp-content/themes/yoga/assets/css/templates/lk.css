@@ -1899,7 +1899,7 @@
   background: transparent;
   color: var(--color-violet);
   font-family: var(--font-family-base);
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.1;
   cursor: pointer;
@@ -1946,7 +1946,7 @@
   color: var(--color-black);
   font-family: var(--font-family-base); font-weight: 400;
   font-family: var(--font-family-base);
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: normal;
 }
 .lk-settings-purchase strong {
