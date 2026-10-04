@@ -692,6 +692,14 @@
 			$shortDescriptionPostbox.addClass('yoga-practice-editor__source-postbox');
 		}
 		this.$generalPanel.append($generalFields);
+        var $coverBox = $('#postimagediv');
+        if ($coverBox.length) {
+            var $coverField = $('<div class="acf-field yoga-practice-editor__cover"><div class="acf-label"><label>Обложка практики</label><p class="description">Изображение для карточки в библиотеке и популярных практиках.</p></div><div class="acf-input"></div></div>');
+            $coverBox.removeClass('hide-if-js closed').show();
+            $coverField.find('.acf-input').append($coverBox);
+            this.$generalPanel.append($coverField);
+        }
+
 		if ($guestField.length) {
 			this.$generalPanel.append($guestField);
 			$guestPostbox.addClass('yoga-practice-editor__source-postbox');

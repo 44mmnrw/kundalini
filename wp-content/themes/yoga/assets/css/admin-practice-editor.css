@@ -2134,3 +2134,29 @@ body.yoga-practice-modal-open > .tox-tinymce-aux {
 		padding-left: 16px !important;
 	}
 }
+
+
+.yoga-modern-practice-editor #poststuff .yoga-practice-editor__cover #postimagediv {
+    display: block !important;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor__cover #postimagediv > .postbox-header {
+    display: none;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor__cover #postimagediv > .inside {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.yoga-modern-practice-editor .yoga-practice-editor__cover #postimagediv img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
