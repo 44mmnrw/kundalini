@@ -64,6 +64,48 @@ if (!function_exists('yoga_product_is_tariff')) {
 	}
 }
 
+/** Keep the most recently added tariff, without changing unrelated products. */
+function yoga_limit_cart_to_one_tariff(array $items): array {
+	$tariff_key = null;
+	foreach ($items as $key => $item) {
+		$product_id = (int) ($item['variation_id'] ?? 0) ?: (int) ($item['product_id'] ?? 0);
+		if (!yoga_product_is_tariff($product_id)) {
+			continue;
+		}
+		if ($tariff_key !== null) {
+			unset($items[$tariff_key]);
+		}
+		$tariff_key = $key;
+		$items[$key]['quantity'] = 1;
+	}
+	return $items;
+}
+add_filter('woocommerce_cart_contents_changed', 'yoga_limit_cart_to_one_tariff', 100);
+
+function yoga_normalize_tariff_cart($cart): bool {
+	$items = $cart->get_cart_contents();
+	$normalized = yoga_limit_cart_to_one_tariff($items);
+	if ($items === $normalized) {
+		return false;
+	}
+	$cart->set_cart_contents($normalized);
+	return true;
+}
+add_action('woocommerce_before_calculate_totals', 'yoga_normalize_tariff_cart', 1);
+
+function yoga_restore_single_tariff_cart($cart): void {
+	if (yoga_normalize_tariff_cart($cart)) {
+		// Recalculate old totals and let WooCommerce save the corrected session.
+		$cart->calculate_totals();
+	}
+}
+add_action('woocommerce_cart_loaded_from_session', 'yoga_restore_single_tariff_cart', 20);
+
+function yoga_tariffs_are_sold_individually($sold_individually, $product): bool {
+	return $sold_individually || yoga_product_is_tariff((int) $product->get_id());
+}
+add_filter('woocommerce_is_sold_individually', 'yoga_tariffs_are_sold_individually', 10, 2);
+
 if (!function_exists('yoga_is_theme_checkout_context')) {
 	function yoga_is_theme_checkout_context(): bool {
 		if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
@@ -147,8 +189,6 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 		if ($product_id <= 0 || !yoga_product_is_tariff($product_id)) {
 			return false;
 		}
-
-		WC()->cart->empty_cart(true);
 
 		$variation_id = isset($_POST['variation_id']) ? absint($_POST['variation_id']) : 0;
 		$variations = array();
