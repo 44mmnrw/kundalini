@@ -94,7 +94,7 @@ if (have_posts()) :
         }
 
         $author_id = (int) get_the_author_meta('ID');
-        $author_avatar_id = function_exists('get_field') ? get_field('user_avatar', 'user_' . $author_id) : 0;
+        $author_avatar_id = yoga_get_user_avatar_id($author_id);
         $author_name = get_the_author_meta('display_name', $author_id);
         $author_label = 'Автор';
         $share_links = array();

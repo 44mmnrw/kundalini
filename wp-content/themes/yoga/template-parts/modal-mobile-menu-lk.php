@@ -45,12 +45,14 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои данные', 'yoga'); ?></span>
 						</div>
+						<!-- TODO: История практик — временно скрыто до реализации.
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 							<div class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-history', 'sidebar-menu__item-svg'); ?>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('История практик', 'yoga'); ?></span>
 						</div>
+						-->
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 							<div class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-lotus', 'sidebar-menu__item-svg'); ?>
@@ -66,12 +68,14 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Избранное', 'yoga'); ?></span>
 						</div>
+						<!-- TODO: Рекомендации — временно скрыто до реализации.
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 							<div class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-smile', 'sidebar-menu__item-svg'); ?>
 							</div>
 							<span class="sidebar-menu__label"><?php esc_html_e('Рекомендации', 'yoga'); ?></span>
 						</div>
+						-->
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 							<div class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-question', 'sidebar-menu__item-svg'); ?>
