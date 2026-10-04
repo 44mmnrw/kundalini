@@ -2476,7 +2476,7 @@ add_action('acf/init', 'yoga_register_theme_smartcaptcha_fields');
 
 
 
-/** Library selection for popular cards; old values remain available until a practice is chosen. */
+/** Popular cards use published practices from the library. */
 function yoga_get_popular_practice_selection_field(): array {
     return array(
         'key' => 'field_yoga_popular_practice',
@@ -2506,10 +2506,6 @@ function yoga_configure_popular_practice_fields($field) {
             $sub_field['label'] = 'Цвет плашки';
             $sub_field['wrapper']['width'] = '30';
             $sub_fields[] = $sub_field;
-        } else {
-            $sub_field['_yoga_popular_legacy'] = true;
-            $sub_field['required'] = 0;
-            $sub_fields[] = $sub_field;
         }
     }
     $selection = yoga_get_popular_practice_selection_field();
@@ -2520,11 +2516,6 @@ function yoga_configure_popular_practice_fields($field) {
     return $field;
 }
 add_filter('acf/load_field/name=popular_practices_items', 'yoga_configure_popular_practice_fields', 30);
-
-function yoga_hide_legacy_popular_practice_field($field) {
-    return !empty($field['_yoga_popular_legacy']) ? false : $field;
-}
-add_filter('acf/prepare_field', 'yoga_hide_legacy_popular_practice_field');
 
 function yoga_register_popular_practice_ajax_field(): void {
     if (!function_exists('acf_add_local_field')) {

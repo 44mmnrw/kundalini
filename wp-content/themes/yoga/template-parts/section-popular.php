@@ -34,37 +34,16 @@ if ($testimonials_hidden) {
 
                 <div class="popular-practices-slider wow fadeIn delay-200ms">
                     <?php foreach ($popular_items as $index => $item) :
-                        $item_title = is_array($item) ? ($item['practice_title'] ?? '') : '';
-                        $item_text = is_array($item) ? ($item['practice_description'] ?? '') : '';
-                        $item_image = is_array($item) ? ($item['practice_image'] ?? '') : '';
-                        $item_link = is_array($item) ? ($item['practice_link'] ?? '') : '';
-                        $item_color = is_array($item) ? strtolower((string) ($item['practice_style'] ?? '')) : '';
-
                         $selected_practice = is_array($item) ? ($item['practice'] ?? 0) : 0;
                         $practice_id = is_object($selected_practice) ? (int) ($selected_practice->ID ?? 0) : (int) $selected_practice;
-                        if ($practice_id > 0) {
-                            if (get_post_type($practice_id) !== 'practice' || get_post_status($practice_id) !== 'publish') {
-                                continue;
-                            }
-                            $item_title = get_the_title($practice_id);
-                            $item_text = wp_strip_all_tags((string) (get_field('short_description', $practice_id) ?: get_the_excerpt($practice_id)));
-                            $item_image = yoga_get_practice_card_image_url($practice_id, 'large');
-                            $item_link = get_permalink($practice_id);
+                        if ($practice_id <= 0 || get_post_type($practice_id) !== 'practice' || get_post_status($practice_id) !== 'publish') {
+                            continue;
                         }
-
-                        if (is_array($item_image) && isset($item_image['url'])) {
-                            $item_image = $item_image['url'];
-                        } elseif (is_numeric($item_image)) {
-                            $item_image = wp_get_attachment_image_url((int) $item_image, 'large');
-                        }
-
-                        if (is_array($item_link) && isset($item_link['url'])) {
-                            $item_link = $item_link['url'];
-                        } elseif (is_object($item_link) && isset($item_link->ID)) {
-                            $item_link = get_permalink($item_link->ID);
-                        } elseif (is_numeric($item_link)) {
-                            $item_link = get_permalink((int) $item_link);
-                        }
+                        $item_title = get_the_title($practice_id);
+                        $item_text = wp_strip_all_tags((string) (get_field('short_description', $practice_id) ?: get_the_excerpt($practice_id)));
+                        $item_image = yoga_get_practice_card_image_url($practice_id, 'large');
+                        $item_link = get_permalink($practice_id);
+                        $item_color = strtolower((string) ($item['practice_style'] ?? ''));
 
                         $color_class = '';
                         if ($item_color === 'popular-practice_pink' || $item_color === 'pink' || $item_color === 'розовый') {

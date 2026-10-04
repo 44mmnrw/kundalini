@@ -13,7 +13,7 @@ $field = yoga_configure_popular_practice_fields(['key'=>'field_popular_practices
  ['key'=>'field_practice_link','name'=>'practice_link'],
  ['key'=>'field_practice_animation','name'=>'practice_animation'],
 ]]);
-$visible = array_values(array_map(fn($f)=>$f['name'],array_filter($field['sub_fields'],fn($f)=>yoga_hide_legacy_popular_practice_field($f)!==false)));
+$visible = array_column($field['sub_fields'], 'name');
 if ($visible !== ['practice_style','practice']) throw new RuntimeException('Unexpected fields');
 $again = yoga_configure_popular_practice_fields($field);
 if (count($again['sub_fields']) !== count($field['sub_fields'])) throw new RuntimeException('Duplicate selector');
@@ -46,8 +46,8 @@ $GLOBALS['items']=[
  ['practice_title'=>'Legacy title','practice_description'=>'Legacy description','practice_link'=>'/legacy'],
 ];
 ob_start(); include dirname(__DIR__).'/template-parts/section-popular.php'; $html=ob_get_clean();
-foreach (['Library title 7','Library title 8','Library summary','/image-7.jpg','/practice/7','popular-practice_pink','popular-practice_green','Legacy title'] as $expected) {
+foreach (['Library title 7','Library title 8','Library summary','/image-7.jpg','/practice/7','popular-practice_pink','popular-practice_green'] as $expected) {
  if (strpos($html,$expected)===false) throw new RuntimeException('Missing '.$expected);
 }
-if (strpos($html,'OBSOLETE')!==false || strpos($html,'Library title 99')!==false) throw new RuntimeException('Stale or unpublished practice shown');
-echo "Passed: visible admin fields, repeated schema loading, AJAX selector, current library data, colors, legacy cards, unpublished practice excluded\n";
+if (strpos($html,'OBSOLETE')!==false || strpos($html,'Library title 99')!==false || strpos($html,'Legacy title')!==false || strpos($html,'/legacy')!==false) throw new RuntimeException('Stale or unpublished practice shown');
+echo "Passed: visible admin fields, repeated schema loading, AJAX selector, current library data, colors, legacy cards excluded, unpublished practice excluded\n";
