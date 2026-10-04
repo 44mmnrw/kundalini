@@ -2474,3 +2474,65 @@ if (!function_exists('yoga_register_theme_smartcaptcha_fields')) {
 
 add_action('acf/init', 'yoga_register_theme_smartcaptcha_fields');
 
+
+
+/** Library selection for popular cards; old values remain available until a practice is chosen. */
+function yoga_get_popular_practice_selection_field(): array {
+    return array(
+        'key' => 'field_yoga_popular_practice',
+        'name' => 'practice',
+        'label' => 'Практика из библиотеки',
+        'type' => 'post_object',
+        'post_type' => array('practice'),
+        'post_status' => array('publish'),
+        'taxonomy' => array(),
+        'return_format' => 'id',
+        'multiple' => 0,
+        'allow_null' => 0,
+        'required' => 1,
+        'ui' => 1,
+        'instructions' => 'Заголовок, краткое описание, изображение и ссылка берутся из выбранной практики.',
+        'wrapper' => array('width' => '70'),
+    );
+}
+
+function yoga_configure_popular_practice_fields($field) {
+    $sub_fields = array();
+    foreach ((array) ($field['sub_fields'] ?? array()) as $sub_field) {
+        if (($sub_field['key'] ?? '') === 'field_yoga_popular_practice') {
+            continue;
+        }
+        if (($sub_field['name'] ?? '') === 'practice_style') {
+            $sub_field['label'] = 'Цвет плашки';
+            $sub_field['wrapper']['width'] = '30';
+            $sub_fields[] = $sub_field;
+        } else {
+            $sub_field['_yoga_popular_legacy'] = true;
+            $sub_field['required'] = 0;
+            $sub_fields[] = $sub_field;
+        }
+    }
+    $selection = yoga_get_popular_practice_selection_field();
+    $selection['parent'] = $field['ID'] ?? $field['key'];
+    $sub_fields[] = function_exists('acf_get_valid_field') ? acf_get_valid_field($selection) : $selection;
+    $field['sub_fields'] = $sub_fields;
+    $field['layout'] = 'block';
+    return $field;
+}
+add_filter('acf/load_field/name=popular_practices_items', 'yoga_configure_popular_practice_fields', 30);
+
+function yoga_hide_legacy_popular_practice_field($field) {
+    return !empty($field['_yoga_popular_legacy']) ? false : $field;
+}
+add_filter('acf/prepare_field', 'yoga_hide_legacy_popular_practice_field');
+
+function yoga_register_popular_practice_ajax_field(): void {
+    if (!function_exists('acf_add_local_field')) {
+        return;
+    }
+    $field = yoga_get_popular_practice_selection_field();
+    // A synthetic parent enables AJAX lookup without replacing persisted repeater children.
+    $field['parent'] = 'group_yoga_popular_practice_ajax';
+    acf_add_local_field($field);
+}
+add_action('acf/init', 'yoga_register_popular_practice_ajax_field', 16);

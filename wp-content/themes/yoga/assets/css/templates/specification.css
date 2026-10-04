@@ -124,6 +124,11 @@ footer {
   background: transparent;
   transition: var(--transition-base, 0.4s ease);
 }
+textarea.textarea-resize {
+  resize: none !important;
+  overflow-y: hidden;
+}
+
 .input::placeholder {
   appearance: none;
   opacity: 0.6;
