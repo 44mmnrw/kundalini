@@ -188,7 +188,7 @@ if ($primary_line_label === '') {
 												<use href="<?php echo $sprite_href; ?>#checkout-phone-icon"></use>
 											</svg>
 										</span>
-										<input type="tel" class="yoga-checkout-field__input input_phone" name="billing_phone" value="<?php echo esc_attr($prefill_phone); ?>" autocomplete="tel" required>
+										<input type="tel" class="yoga-checkout-field__input input_phone" name="billing_phone" value="<?php echo esc_attr($prefill_phone); ?>" placeholder="+7 (000) 000-00-00" autocomplete="tel" required>
 									</label>
 									<p class="yoga-checkout-field__hint"><?php esc_html_e('Нужен для сохранения карты и автоплатежей.', 'yoga'); ?></p>
 								</div>
