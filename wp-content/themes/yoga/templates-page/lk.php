@@ -99,8 +99,8 @@
 												<input type="text" class="input" required placeholder="Имя" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>">
 											</div>
 											<div class="lk-form-item">
-												<h5>Фамилия<span>*</span></h5>
-												<input type="text" class="input" required placeholder="Фамилия" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>">
+												<h5>Фамилия</h5>
+												<input type="text" class="input" placeholder="Фамилия" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>">
 											</div>
 										</div>
 										<div class="lk-form-row">

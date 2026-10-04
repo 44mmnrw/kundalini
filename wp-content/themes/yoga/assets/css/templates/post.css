@@ -538,7 +538,7 @@
 
 .post-comments .comment-form textarea {
   min-height: 8rem;
-  resize: vertical;
+  resize: none;
 }
 
 .post-comments .comment-form-main textarea.textarea-resize {

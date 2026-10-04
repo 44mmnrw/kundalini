@@ -1721,8 +1721,8 @@ function yoga_subscribe_handler() {
 				$user_data['first_name'] = sanitize_text_field($_POST['first_name']);
 			}
 
-			if (!empty($_POST['last_name'])) {
-				$user_data['last_name'] = sanitize_text_field($_POST['last_name']);
+			if (isset($_POST['last_name'])) {
+				$user_data['last_name'] = sanitize_text_field(wp_unslash($_POST['last_name']));
 			}
 
 			if ($email_changed) {

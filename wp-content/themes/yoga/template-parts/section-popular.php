@@ -40,6 +40,18 @@ if ($testimonials_hidden) {
                         $item_link = is_array($item) ? ($item['practice_link'] ?? '') : '';
                         $item_color = is_array($item) ? strtolower((string) ($item['practice_style'] ?? '')) : '';
 
+                        $selected_practice = is_array($item) ? ($item['practice'] ?? 0) : 0;
+                        $practice_id = is_object($selected_practice) ? (int) ($selected_practice->ID ?? 0) : (int) $selected_practice;
+                        if ($practice_id > 0) {
+                            if (get_post_type($practice_id) !== 'practice' || get_post_status($practice_id) !== 'publish') {
+                                continue;
+                            }
+                            $item_title = get_the_title($practice_id);
+                            $item_text = wp_strip_all_tags((string) (get_field('short_description', $practice_id) ?: get_the_excerpt($practice_id)));
+                            $item_image = yoga_get_practice_card_image_url($practice_id, 'large');
+                            $item_link = get_permalink($practice_id);
+                        }
+
                         if (is_array($item_image) && isset($item_image['url'])) {
                             $item_image = $item_image['url'];
                         } elseif (is_numeric($item_image)) {
