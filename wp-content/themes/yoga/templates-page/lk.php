@@ -808,12 +808,14 @@
 				</div>
 				<span class="sidebar-menu__label">Мои данные</span>
 			</div>
+			<!-- TODO: История практик — временно скрыто до реализации.
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
 				<div class="sidebar-menu__item-icon">
 					<?php yoga_render_lk_menu_icon('lk-sidebar-history', 'sidebar-menu__item-svg'); ?>
 				</div>
 				<span class="sidebar-menu__label">История практик</span>
 			</div>
+			-->
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
 				<div class="sidebar-menu__item-icon">
 					<?php yoga_render_lk_menu_icon('lk-sidebar-lotus', 'sidebar-menu__item-svg'); ?>
@@ -829,12 +831,14 @@
 				</div>
 				<span class="sidebar-menu__label">Избранное</span>
 			</div>
+			<!-- TODO: Рекомендации — временно скрыто до реализации.
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
 				<div class="sidebar-menu__item-icon">
 					<?php yoga_render_lk_menu_icon('lk-sidebar-smile', 'sidebar-menu__item-svg'); ?>
 				</div>
 				<span class="sidebar-menu__label">Рекомендации</span>
 			</div>
+			-->
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 				<div class="sidebar-menu__item-icon">
 					<?php yoga_render_lk_menu_icon('lk-sidebar-question', 'sidebar-menu__item-svg'); ?>

@@ -185,9 +185,11 @@ if (!function_exists('yoga_get_user_avatar_id')) {
 			return 0;
 		}
 
-		$avatar_id = function_exists('get_field')
-			? (int) get_field('user_avatar', 'user_' . $user_id)
-			: (int) get_user_meta($user_id, 'user_avatar', true);
+        $avatar_id = (int) get_user_meta($user_id, 'user_avatar', true);
+        if (!metadata_exists('user', $user_id, 'user_avatar')) {
+            $legacy = get_user_meta($user_id, 'simple_local_avatar', true);
+            $avatar_id = is_array($legacy) ? (int) ($legacy['media_id'] ?? 0) : 0;
+        }
 
 		return $avatar_id > 0 && get_post_type($avatar_id) === 'attachment' ? $avatar_id : 0;
 	}
