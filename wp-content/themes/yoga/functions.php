@@ -1811,46 +1811,7 @@ function yoga_subscribe_handler() {
 				yoga_refresh_profile_auth_session($user_id, $logged_in_cookie);
 			}
 
-			if (
-				isset($_FILES['avatar']['error'])
-				&& (int) $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE
-			) {
-				require_once(ABSPATH . 'wp-admin/includes/image.php');
-				require_once(ABSPATH . 'wp-admin/includes/file.php');
-				require_once(ABSPATH . 'wp-admin/includes/media.php');
-
-
-
-				$attachment_id = media_handle_upload('avatar', 0);
-				if (is_wp_error($attachment_id)) {
-					wp_send_json_error($attachment_id->get_error_message(), 400);
-				}
-
-				$attachment = get_post($attachment_id);
-				if ($attachment && $attachment->post_type === 'attachment') {
-					$mime_type = get_post_mime_type($attachment_id);
-					if (strpos($mime_type, 'image/') === 0) {
-						$result = function_exists('update_field')
-							? update_field('user_avatar', $attachment_id, 'user_' . $user_id)
-							: update_user_meta($user_id, 'user_avatar', $attachment_id);
-
-						if ($result === false && yoga_get_user_avatar_id($user_id) !== (int) $attachment_id) {
-							wp_delete_attachment($attachment_id, true);
-							wp_send_json_error('Ошибка при обновлении аватара', 500);
-						}
-
-						yoga_assign_avatar_to_folder((int) $attachment_id);
-						wp_send_json_success([
-							'message'    => 'Аватар успешно обновлен',
-							'avatar_id'  => (int) $attachment_id,
-							'avatar_url' => wp_get_attachment_image_url($attachment_id, 'thumbnail'),
-						]);
-						} else {
-						wp_delete_attachment($attachment_id, true);
-						wp_send_json_error("Файл не является изображением: $mime_type");
-					}
-				}
-			}
+			// Avatar uploads are handled exclusively by yoga_upload_avatar_ajax().
 
 			wp_send_json_success(
 				$email_changed || $password_changed

@@ -4362,6 +4362,8 @@ jQuery(document).ready(function($) {
 
 		// Создаем FormData
 		var formData = new FormData(this);
+		// Avatar files are uploaded only by upload_user_avatar, including while it is pending.
+		formData.delete('avatar');
 		formData.append('action', 'update_user_profile');
 		formData.append('nonce', yoga_ajax.nonce);
 
