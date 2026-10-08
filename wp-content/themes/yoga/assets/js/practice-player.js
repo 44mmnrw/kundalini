@@ -567,6 +567,7 @@ function initializePracticeSystem() {
 
     window.activeTimers = {};
     window.activePlayers = {};
+    window.activeEndSignals = {};
     window.isFullscreenMode = false;
     window.currentFullscreenExercise = null;
 
@@ -650,6 +651,8 @@ function initializePracticeSystem() {
             let suppressAutoPlayUntil = 0;
             let endSignalAudio = null;
             let endSignalPrimed = false;
+            let isEndSignalPlaying = false;
+            const endSignalKey = `${exerciseId}_${versionType}`;
             const initialDuration = parseDuration(timerDisplay?.textContent);
             const presetDefaultDuration = (() => {
                 const firstPreset = presetBtns && presetBtns.length ? presetBtns[0] : null;
@@ -671,6 +674,23 @@ function initializePracticeSystem() {
             if (endSignalSrc) {
                 endSignalAudio = new Audio(endSignalSrc);
                 endSignalAudio.preload = 'auto';
+                endSignalAudio.addEventListener('ended', stopEndSignal);
+                endSignalAudio.addEventListener('error', stopEndSignal);
+            }
+
+            function stopEndSignal() {
+                isEndSignalPlaying = false;
+                delete window.activeEndSignals[endSignalKey];
+                if (endSignalAudio) {
+                    endSignalAudio.pause();
+                    try { endSignalAudio.currentTime = 0; } catch (err) {}
+                }
+                if (playPauseBtn) {
+                    playPauseBtn.querySelector('span').textContent = isPlaying ? 'Пауза' : 'Старт';
+                }
+                if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
+                    updateFullscreenControls();
+                }
             }
 
             function primeEndSignal() {
@@ -709,11 +729,19 @@ function initializePracticeSystem() {
                     endSignalAudio.currentTime = 0;
                     endSignalAudio.muted = false;
                     endSignalAudio.volume = 1;
+                    isEndSignalPlaying = true;
+                    window.activeEndSignals[endSignalKey] = stopEndSignal;
+                    if (playPauseBtn) {
+                        playPauseBtn.querySelector('span').textContent = 'Остановить звук';
+                    }
+                    if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
+                        updateFullscreenControls();
+                    }
                     const playPromise = endSignalAudio.play();
                     if (playPromise && typeof playPromise.catch === 'function') {
-                        playPromise.catch(() => {});
+                        playPromise.catch(stopEndSignal);
                     }
-                } catch (err) {}
+                } catch (err) { stopEndSignal(); }
             }
 
             if (playerElement) {
@@ -857,6 +885,7 @@ function initializePracticeSystem() {
             }
 
             function startTimer() {
+                stopEndSignal();
                 if (timerInterval) {
                     clearInterval(timerInterval);
                     timerInterval = null;
@@ -901,9 +930,9 @@ function initializePracticeSystem() {
                     }
 
                     if (remainingTime <= 0) {
-                        playEndSignal();
                         finishTimer();
                         if (player) player.pause();
+                        playEndSignal();
 
 
                         goToNextExercise(exercise);
@@ -918,6 +947,7 @@ function initializePracticeSystem() {
             }
 
             function pauseTimer() {
+                stopEndSignal();
                 isPlaying = false;
                 if (timerElement) {
                     timerElement.classList.remove('timer-is-running');
@@ -986,6 +1016,7 @@ function initializePracticeSystem() {
 
                 suppressAutoPlayUntil = Date.now() + 1500;
 
+                stopEndSignal();
                 stopTimer();
                 if (timerElement) {
                     timerElement.classList.add('timer-is-reset');
@@ -1053,6 +1084,10 @@ function initializePracticeSystem() {
             if (playPauseBtn) {
                 playPauseBtn.addEventListener('click', (event) => {
                     event.preventDefault();
+                    if (isEndSignalPlaying) {
+                        stopEndSignal();
+                        return;
+                    }
                     const shouldPause = isPlaying || (player && player.playing);
                     if (shouldPause) {
                         pauseTimer();
@@ -1125,6 +1160,11 @@ function goToNextExercise(currentExercise) {
 
 
 function stopAllTimersAndPlayers(currentExerciseId = null, currentVersion = null) {
+
+    const currentKey = `${currentExerciseId}_${currentVersion}`;
+    for (const [key, stopSignal] of Object.entries(window.activeEndSignals || {})) {
+        if (key !== currentKey) stopSignal();
+    }
 
     for (const exerciseId in window.activeTimers) {
         if (currentExerciseId !== exerciseId) {
@@ -1242,7 +1282,9 @@ function updateFullscreenControls() {
     const playPauseBtn = document.querySelector('.audio-fullscreen__play-pause');
 
     if (player && playPauseBtn) {
-        playPauseBtn.textContent = player.playing ? 'Пауза' : 'Старт';
+        playPauseBtn.textContent = window.activeEndSignals?.[`${exerciseId}_${version}`]
+            ? 'Остановить звук'
+            : (player.playing ? 'Пауза' : 'Старт');
     }
 }
 
@@ -1256,7 +1298,8 @@ function toggleFullscreenPlayPause() {
     const exercise = document.querySelector(`[data-exercise-id="${exerciseId}"]`);
 
     if (player && exercise) {
-        const playPauseBtn = exercise.querySelector('.timer-play-pause');
+        const activeVersion = exercise.querySelector(`.exercise-item[data-version="${version}"]`);
+        const playPauseBtn = activeVersion?.querySelector('.timer-play-pause');
         if (playPauseBtn) {
             playPauseBtn.click();
         }
