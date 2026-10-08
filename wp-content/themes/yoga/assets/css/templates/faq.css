@@ -149,6 +149,7 @@
   padding-left: 1.5625rem;
   padding-right: 1.5625rem;
   padding-top: 3.125rem;
+  padding-bottom: 2rem;
   background: transparent;
 }
 .faq__form-card-bg {
@@ -156,7 +157,7 @@
   inset: 0;
   box-sizing: border-box;
   width: 100%;
-  height: 100%;
+  height: auto;
   z-index: 0;
   pointer-events: none;
   background-color: var(--color-green);
@@ -165,6 +166,7 @@
 }
 .faq__form .form-questions__main {
   position: relative;
+  flex: 0 0 auto;
   z-index: 1;
 }
 .faq__form .form-questions h4 {
@@ -240,7 +242,8 @@
 
   .faq__form .form-questions {
     flex: 0 0 auto;
-    aspect-ratio: 387 / 483;
+    height: auto;
+    aspect-ratio: auto;
     min-height: 30.1875rem;
   }
 }
