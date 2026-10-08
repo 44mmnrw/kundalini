@@ -70,6 +70,7 @@ $yoga_arrow_sprite_href = esc_url(add_query_arg(
                                 <svg class="contacts-form-layout__submit-arrow yoga-arrow-motion__icon" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><use href="<?php echo $yoga_arrow_sprite_href; ?>#site-arrow"></use></svg>
                             </button>
                         </div>
+                        <?php get_template_part('template-parts/form-personal-data-notice'); ?>
                     </form>
                 </div>
             </div>

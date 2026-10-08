@@ -95,6 +95,7 @@
                                         </svg>
                                     </label>
                                 </div>
+                                <?php get_template_part('template-parts/form-personal-data-notice'); ?>
                             </form>
                         </div>
                     </div>
