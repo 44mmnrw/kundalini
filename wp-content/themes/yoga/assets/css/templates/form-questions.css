@@ -36,6 +36,25 @@
   text-decoration: underline;
 }
 
+.form-questions .form-questions__main-form .form-questions__personal-data-notice {
+  flex: 0 0 auto;
+  width: 100%;
+  margin: 0.875rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--color-black);
+  text-align: left;
+}
+.form-questions__personal-data-notice a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.form-questions__personal-data-notice a:focus-visible {
+  outline: 2px solid var(--color-violet);
+  outline-offset: 3px;
+}
+
 .form-questions__main {
   display: flex;
   flex-direction: column;
