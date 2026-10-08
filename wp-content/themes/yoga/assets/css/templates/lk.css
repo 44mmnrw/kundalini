@@ -2404,6 +2404,9 @@
   }
 }
 
+.lk-settings__slide_payment {
+  padding-top: 2rem;
+}
 .lk-settings__slide_payment .form-back {
   display: inline-flex;
   position: absolute;

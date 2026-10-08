@@ -1047,17 +1047,6 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.lk-settings__slide_main .lk-settings-item_action').click(function () {
-		$('.lk-settings__slide').removeClass("active");
-		$('.lk-settings__slide_payment').addClass("active");
-
-	});
-
-	$('.lk-settings__slide_payment .form-back').click(function () {
-		$('.lk-settings__slide').removeClass("active");
-		$('.lk-settings__slide_main').addClass("active");
-
-	});
 
 
 
@@ -4867,19 +4856,15 @@ jQuery(document).ready(function($) {
 	});
 
 	// Управление настройками подписки — только пункты с data-target (например «Карты»)
-	$('.lk-settings-item_action[data-target]').on('click', function() {
+	$('#lk-slide-settings .lk-settings-item_action[data-target], #lk-slide-settings .form-back[data-target]').on('click', function() {
 		var target = $(this).data('target');
 		if (!target) {
 			return;
 		}
-		$('.lk-settings__slide').removeClass('active');
-		$('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
-	});
-
-	$('.form-back').on('click', function() {
-		var target = $(this).data('target');
-		$('.lk-settings__slide').removeClass('active');
-		$('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
+		var $settings = $(this).closest('#lk-slide-settings');
+		$settings.find('.lk-settings__slide').removeClass('active');
+		var $slide = $settings.find('.lk-settings__slide[data-target="' + target + '"]').addClass('active');
+		$settings.find('.lk-page-title').text($slide.data('page-title'));
 	});
 
 	// Показать/скрыть дополнительные статьи

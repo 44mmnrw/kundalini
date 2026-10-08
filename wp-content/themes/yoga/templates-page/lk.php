@@ -595,7 +595,7 @@
 						</div>
 						<div class="lk-slide__content">
 							<div class="lk-settings">
-								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1">
+								<div class="lk-settings__slide lk-settings__slide_main active" data-target="1" data-page-title="Настройки подписки">
 									<?php
 									$current_subscription = get_user_active_subscription();
 									$subscription_end_label = $current_subscription
@@ -726,14 +726,13 @@
 
 								</div>
 
-								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2">
+								<div class="lk-settings__slide lk-settings__slide_payment" data-target="2" data-page-title="Способы оплаты">
 									<div class="form-back" data-target="1">
 										<svg class="form-back__icon" xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none" aria-hidden="true" focusable="false">
 											<path d="M5.3 2L0.5 8L5.3 14" stroke="#1F1F1F" stroke-linecap="round" stroke-linejoin="round"/>
 										</svg>
 										<span>назад</span>
 									</div>
-									<h2>Способы оплаты</h2>
 									<div class="lk-settings-part lk-settings-part_cards">
 										<?php
 											$saved_cards = get_user_saved_cards();
