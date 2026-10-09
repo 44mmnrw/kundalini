@@ -732,7 +732,7 @@ function initializePracticeSystem() {
                     isEndSignalPlaying = true;
                     window.activeEndSignals[endSignalKey] = stopEndSignal;
                     if (playPauseBtn) {
-                        playPauseBtn.querySelector('span').textContent = 'Остановить звук';
+                        playPauseBtn.querySelector('span').textContent = 'Остановить';
                     }
                     if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
                         updateFullscreenControls();
@@ -1283,7 +1283,7 @@ function updateFullscreenControls() {
 
     if (player && playPauseBtn) {
         playPauseBtn.textContent = window.activeEndSignals?.[`${exerciseId}_${version}`]
-            ? 'Остановить звук'
+            ? 'Остановить'
             : (player.playing ? 'Пауза' : 'Старт');
     }
 }
