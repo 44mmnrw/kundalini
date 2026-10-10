@@ -19,6 +19,7 @@
 !/wp-content/mu-plugins/
 /wp-content/mu-plugins/*
 !/wp-content/mu-plugins/rest-no-store-cache.php
+!/wp-content/mu-plugins/yoga-frontend-session.php
 
 # Allow tracking a targeted hotfix in Yandex Metrika plugin
 !/wp-content/plugins/

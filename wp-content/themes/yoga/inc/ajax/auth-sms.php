@@ -58,11 +58,7 @@ if (!function_exists('handle_yoga_email_login')) {
         if (!$existing) {
             yoga_ajax_error('Пользователь не найден', 'not_found', 404);
         }
-        $user = wp_signon(array(
-            'user_login'    => $log,
-            'user_password' => $pwd,
-            'remember'      => true,
-        ), false);
+        $user = yoga_frontend_signon($existing, $log, $pwd);
         if (is_wp_error($user)) {
             if ($user->get_error_code() === 'incorrect_password') {
                 $forgot_link = sprintf(
@@ -121,7 +117,7 @@ if (!function_exists('handle_yoga_email_register')) {
         update_user_meta($user_id, 'yoga_marketing_consent', !empty($_POST['accept_marketing']) ? 'yes' : 'no');
         update_user_meta($user_id, 'yoga_registration_consents_at', current_time('mysql', true));
 
-        wp_set_auth_cookie($user_id);
+        yoga_set_frontend_auth_cookie($user_id);
         wp_set_current_user($user_id);
         $mail_result = function_exists('yoga_send_registration_email_verification_link')
             ? yoga_send_registration_email_verification_link($user_id)
@@ -207,7 +203,7 @@ if (!function_exists('handle_verify_sms_code')) {
         if ($stored_code && $stored_code == $sms_code) {
             $user = login_or_register_user($phone);
             if ($user && !is_wp_error($user)) {
-                wp_set_auth_cookie($user->ID);
+                yoga_set_frontend_auth_cookie($user->ID);
                 delete_transient('sms_code_' . $phone);
                 yoga_ajax_success('Успешный вход');
             } else {

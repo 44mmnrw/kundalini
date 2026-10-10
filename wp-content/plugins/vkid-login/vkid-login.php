@@ -586,8 +586,8 @@ class VKID_Login_Plugin {
 
     // 6) Авторизуем
     wp_clear_auth_cookie();
+    yoga_set_frontend_auth_cookie($user->ID, true);
     wp_set_current_user($user->ID);
-    wp_set_auth_cookie($user->ID, true);
 
     return new \WP_REST_Response(['ok'=>true], 200);
   }

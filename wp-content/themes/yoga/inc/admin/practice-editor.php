@@ -20,6 +20,12 @@ if (!function_exists('yoga_use_classic_editor_for_practices')) {
 
 add_filter('use_block_editor_for_post_type', 'yoga_use_classic_editor_for_practices', 100, 2);
 
+add_filter('acf/load_field/name=recommendations_text', 'yoga_recommendations_field_instructions');
+function yoga_recommendations_field_instructions(array $field): array {
+	$field['instructions'] = 'Вводите каждую рекомендацию с новой строки. Для отступа между рекомендациями оставьте пустую строку (нажмите Enter дважды).';
+	return $field;
+}
+
 /** Keep the native media picker and WordPress thumbnail saving available. */
 function yoga_enable_practice_cover(): void {
     if (post_type_exists('practice')) {

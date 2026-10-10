@@ -10,13 +10,22 @@
 	<?php echo esc_html($section['title']); ?>
 </h3>
 
-<ul>
+<ul class="praktika-recommendations">
 	<?php
-        $recommendations = explode("\n", $section['recommendations_text']);
-        foreach ($recommendations as $recommendation) :
+	$recommendations = preg_split('/\R/u', (string) ($section['recommendations_text'] ?? ''));
+	$has_recommendation = false;
+	$paragraph_break = false;
+	foreach ($recommendations as $recommendation) :
 		$recommendation = trim($recommendation);
-	if (!empty($recommendation)) : ?>
-	<li><?php echo esc_html($recommendation); ?></li>
-	<?php endif;
-	endforeach; ?>
+		if ($recommendation === '') {
+			$paragraph_break = $has_recommendation;
+			continue;
+		}
+		?>
+		<li<?php if ($paragraph_break) : ?> class="recommendation-spaced"<?php endif; ?>><?php echo esc_html($recommendation); ?></li>
+		<?php
+		$has_recommendation = true;
+		$paragraph_break = false;
+	endforeach;
+	?>
 </ul>
