@@ -247,16 +247,25 @@ if (!function_exists('yoga_get_order_subscription_end_timestamp')) {
 
 		$start = $order->get_date_completed();
 		if (!$start) {
+			$start = $order->get_date_paid();
+		}
+		if (!$start) {
 			$start = $order->get_date_created();
 		}
 		$base_ts = $start ? $start->getTimestamp() : time();
 
 		foreach ($order->get_items() as $item) {
 			$product_id = (int) ($item->get_variation_id() ?: $item->get_product_id());
-			if ($product_id <= 0 || !function_exists('get_field')) {
+			if ($product_id <= 0) {
 				continue;
 			}
-			$period = (string) get_field('price_period', $product_id);
+			// Use the same normalized period (including variations) as the account.
+			$period = function_exists('yoga_get_product_price_period')
+				? yoga_get_product_price_period($product_id)
+				: (function_exists('get_field') ? (string) get_field('price_period', $product_id) : '');
+			if (function_exists('yoga_normalize_tariff_period_slug')) {
+				$period = yoga_normalize_tariff_period_slug($period);
+			}
 			if ($period === '' && function_exists('yoga_product_is_tariff') && yoga_product_is_tariff($product_id)) {
 				$period = 'month';
 			}

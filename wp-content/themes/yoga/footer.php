@@ -279,11 +279,11 @@ if (is_singular() && function_exists('yoga_ajax_comment_supported_post_types') &
 	<div class="lk-unsaved-changes-modal__content">
 		<div class="lk-unsaved-changes-modal__copy">
 			<h3 id="lk-unsaved-changes-title"><?php esc_html_e('Есть несохранённые изменения', 'yoga'); ?></h3>
-			<p id="lk-unsaved-changes-description"><?php esc_html_e('Если закрыть страницу сейчас, изменения не сохранятся', 'yoga'); ?></p>
+			<p id="lk-unsaved-changes-description"><?php esc_html_e('Если уйти сейчас, изменения данных и фото не сохранятся. Чтобы применить их, заполните обязательные поля и нажмите «Сохранить» в разделе «Мои данные».', 'yoga'); ?></p>
 		</div>
 		<div class="lk-unsaved-changes-modal__actions">
-			<button class="lk-unsaved-changes-modal__leave" type="button"><?php esc_html_e('Закрыть', 'yoga'); ?></button>
-			<button class="lk-unsaved-changes-modal__cancel" type="button"><?php esc_html_e('Отмена', 'yoga'); ?></button>
+			<button class="lk-unsaved-changes-modal__leave" type="button"><?php esc_html_e('Уйти без сохранения', 'yoga'); ?></button>
+			<button class="lk-unsaved-changes-modal__cancel" type="button"><?php esc_html_e('Остаться', 'yoga'); ?></button>
 		</div>
 	</div>
 </div>
