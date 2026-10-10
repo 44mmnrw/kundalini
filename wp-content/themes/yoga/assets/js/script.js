@@ -4103,6 +4103,32 @@ jQuery(document).ready(function($) {
 		}
 	}
 
+	var questionAnswersReadPending = false;
+	function markViewedQuestionAnswersRead() {
+		if (questionAnswersReadPending || typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in ||
+			!$('.lk-slide[data-target="5"].active').length ||
+			!$('.sidebar-menu__item[data-target="5"] .sidebar-menu__count').length) {
+			return;
+		}
+		questionAnswersReadPending = true;
+		$.post(yoga_ajax.ajax_url, {
+			action: 'yoga_mark_question_answer_notifications_read',
+			nonce: yoga_ajax.nonce,
+			question_answers_only: 1
+		}).done(function(response) {
+			if (!response || !response.success) {
+				return;
+			}
+			var $answers = $('.lk-notification[data-notification-type="question_answer"]');
+			$answers.removeClass('lk-notification--unread lk-notifications-popup__item--unread');
+			$answers.find('.lk-notification__meta i, .lk-notifications-popup__unread-dot').remove();
+			$answers.filter('.lk-notifications-popup__item').remove();
+			applyNotificationReadCounts(response.data || {});
+		}).always(function() {
+			questionAnswersReadPending = false;
+		});
+	}
+
 	function navigateAfterNotificationRead(href) {
 		if (!href || href === '#') {
 			return;
@@ -4259,6 +4285,9 @@ jQuery(document).ready(function($) {
         $('.sidebar-menu__item[data-target="' + normalizedTarget + '"]').addClass('active');
 		persistLkSlide(normalizedTarget);
 		syncLkSectionUrl(normalizedTarget);
+		if (normalizedTarget === '5') {
+			markViewedQuestionAnswersRead();
+		}
     }
 
     function applyLkDeepLinkHash() {
@@ -4297,6 +4326,7 @@ jQuery(document).ready(function($) {
 			}
 		}
 		$(window).on('hashchange', applyLkDeepLinkHash);
+		markViewedQuestionAnswersRead();
 	} else if (window.history && window.history.replaceState) {
 		var nonLkUrl = new URL(window.location.href);
 		if (nonLkUrl.searchParams.has('lk-section')) {

@@ -351,10 +351,13 @@ function yoga_get_lk_questions_url(): string {
 	return function_exists('yoga_get_lk_section_url') ? yoga_get_lk_section_url('questions') : home_url('/');
 }
 
-function yoga_mark_user_notifications_read(int $user_id, string $notification_id = '', bool $mark_all = false): int {
+function yoga_mark_user_notifications_read(int $user_id, string $notification_id = '', bool $mark_all = false, string $notification_type = ''): int {
 	$notifications = yoga_get_user_notifications($user_id, 100);
 	$changed = false;
 	foreach ($notifications as &$notification) {
+		if ($notification_type !== '' && ($notification['type'] ?? '') !== $notification_type) {
+			continue;
+		}
 		$is_selected = $notification_id !== '' && hash_equals((string) ($notification['id'] ?? ''), $notification_id);
 		if (($mark_all || $is_selected) && empty($notification['read_at'])) {
 			$notification['read_at'] = current_time('mysql');
