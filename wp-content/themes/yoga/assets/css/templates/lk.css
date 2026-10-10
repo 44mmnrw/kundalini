@@ -1755,7 +1755,7 @@
   cursor: pointer;
 }
 .lk-questions-tab.is-active { background: var(--color-violet); border-color: var(--color-violet); color: #fff; }
-.lk-questions-tab__count { position: relative; display: block; flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; }
+.lk-questions-tab__count { position: relative; display: block; flex: 0 0 20px; width: 20px; height: 20px; }
 .lk-questions-tab__count > span {
   position: absolute;
   inset: 0;
@@ -1771,7 +1771,29 @@
   color: #fff;
 }
 .lk-questions-tab.is-active .lk-questions-tab__count > span { color: var(--color-violet); }
-.lk-questions-tab img.lk-questions-tab__badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: auto; height: auto; max-width: none; max-height: none; background: transparent; border-radius: 0; }
+.lk-questions-tab img.lk-questions-tab__badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  transform: none;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  filter: none;
+}
+/* SVG layers use their intrinsic dimensions around the same (10px, 10px) centre. */
+.lk-questions-tab img.lk-questions-tab__badge--violet-fill,
+.lk-questions-tab img.lk-questions-tab__badge--white-fill { top: 1px; left: 1px; z-index: 1; }
+.lk-questions-tab img.lk-questions-tab__badge--white-ring { top: -0.5px; left: -0.5px; }
+.lk-questions-tab__count > span { z-index: 2; }
 .lk-questions-tab img.lk-questions-tab__badge--white-fill,
 .lk-questions-tab img.lk-questions-tab__badge--white-ring,
 .lk-questions-tab.is-active img.lk-questions-tab__badge--violet-fill,
