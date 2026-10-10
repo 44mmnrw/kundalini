@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="password-recovery-back" viewBox="0 0 20 18" fill="none">
+    <path d="M6.96045 16.0542L0.960449 8.5542L6.96045 1.0542M0.960449 8.5542H18.9604" stroke="#1F1F1F" stroke-width="1.5" stroke-linecap="square"/>
+  </symbol>
   <symbol id="site-arrow" viewBox="0 0 20 20" fill="none">
     <path d="M13 18L19 10.5L13 3M19 10.5H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
   </symbol>

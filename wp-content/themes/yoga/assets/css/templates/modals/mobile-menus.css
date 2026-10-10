@@ -652,10 +652,10 @@
   .modal-mobile-menu .mobile-menu-back__icon {
     display: block;
     margin: auto;
-    width: 0.5625rem;
-    height: 1rem;
+    width: 1.25rem;
+    height: 1.125rem;
     color: var(--color-black);
-    transform: rotate(180deg);
+    transform: none;
   }
   .modal-mobile-menu .mobile-menu-switches__item_unavailable {
     opacity: 0.68;
@@ -836,7 +836,7 @@
   .modal-mobile-menu .mobile-menu-inner_library .mobile-menu-back__icon {
     display: block;
     width: 1.25rem;
-    height: 1.25rem;
+    height: 1.125rem;
     margin: 0;
     transform: none;
   }
