@@ -113,7 +113,7 @@ $yoga_sc_sitekey = ($yoga_smart_captcha && function_exists('yoga_smartcaptcha_cl
                         <span>Я подтверждаю, что мне исполнилось 18 лет, также ознакомлен(а) с <a href="<?php echo esc_url($contraindications_url); ?>" target="_blank" rel="noopener">информацией о противопоказаниях и отказом от ответственности</a>.</span>
                     </label>
                     <label class="registration-consent">
-                        <input type="checkbox" name="accept_marketing" value="1" required checked>
+                        <input type="checkbox" name="accept_marketing" value="1" checked>
                         <span>Согласен(а) на получение рекламы и информации. Отказаться можно в любой момент.</span>
                     </label>
                 </div>

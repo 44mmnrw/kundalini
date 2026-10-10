@@ -2013,7 +2013,7 @@ jQuery(document).ready(function($) {
 
 
 	function registrationConsentsAccepted($form) {
-		var $consents = $form.find('.registration-consents input[type="checkbox"]');
+		var $consents = $form.find('.registration-consents input[type="checkbox"][required]');
 		return $consents.length > 0 && $consents.filter(':checked').length === $consents.length;
 	}
 
