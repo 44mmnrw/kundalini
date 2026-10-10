@@ -2475,13 +2475,36 @@ jQuery(document).ready(function($) {
 
 	jQuery(document).ready(function($) {
 		if ($.fn.fancybox) {
-			$('[data-fancybox^="practice-"]').fancybox({
+			var practiceImageOptions = {
 				loop: true,
 				protect: true,
 				buttons: [
 					'zoom',
 					'close'
 				]
+			};
+			$('[data-fancybox^="practice-"]').not('.exercise-slider__lightbox').fancybox(practiceImageOptions);
+
+			// Slick clones slides for infinite scrolling; only originals belong in the lightbox.
+			$(document.body).on('click.fb-start.practiceGallery', '.exercise-slider__lightbox[data-fancybox^="practice-"]', function (event) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				var $link = $(this);
+				var $slide = $link.closest('.exercise-slider__item');
+				var $items = $link.closest('.exercise-slider').find('.exercise-slider__item').not('.slick-cloned').find('.exercise-slider__lightbox');
+				if (!$items.length) {
+					return;
+				}
+
+				var index = $items.index(this);
+				if (index < 0) {
+					var slickIndex = parseInt($slide.attr('data-slick-index'), 10);
+					index = isNaN(slickIndex) ? 0 : ((slickIndex % $items.length) + $items.length) % $items.length;
+				}
+
+				var instance = $.fancybox.open($items, practiceImageOptions, index);
+				instance.$trigger = $link;
 			});
 		}
 
@@ -4038,13 +4061,7 @@ jQuery(document).ready(function($) {
 	}
 
 	function renderHeaderNotificationsRead() {
-		var $popup = $('#header-notifications-popup');
-		if (!$popup.length) {
-			return;
-		}
-		$popup.find('.lk-notifications-popup__item--unread').removeClass('lk-notifications-popup__item--unread');
-		$popup.find('.lk-notifications-popup__unread-dot').remove();
-		$popup.find('.lk-notifications-popup__read-all').remove();
+		renderHeaderNotificationsEmpty();
 	}
 
 	function renderLkNotificationsEmpty() {
@@ -4169,6 +4186,7 @@ jQuery(document).ready(function($) {
 			var $copies = $('.lk-notification[data-notification-id="' + notificationId + '"]');
 			$copies.removeClass('lk-notification--unread lk-notifications-popup__item--unread');
 			$copies.find('.lk-notification__meta i, .lk-notifications-popup__unread-dot').remove();
+			$copies.filter('.lk-notifications-popup__item').remove();
 			applyNotificationReadCounts(response.data || {});
 		}).always(function() {
 			navigateAfterNotificationRead(href);
