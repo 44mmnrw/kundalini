@@ -1700,6 +1700,10 @@ function yoga_subscribe_handler() {
 		$old_email = $old_user ? sanitize_email((string) $old_user->user_email) : '';
 		$new_email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : $old_email;
 		$email_changed = $new_email !== '' && strcasecmp($new_email, $old_email) !== 0;
+		if ($old_user instanceof WP_User && ($email_changed || !empty($_POST['new_password']))
+			&& !yoga_frontend_session_can_change_credentials($old_user)) {
+			wp_send_json_error('Для изменения почты или пароля администратора войдите в административную панель с 2FA.', 403);
+		}
 		$email_verification_link_sent = false;
 		$response = array();
 

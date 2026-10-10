@@ -838,6 +838,9 @@
   position: relative;
   font-size: 1.125rem;  line-height: 1.71em;
   padding-left: 1.6875rem;}
+.praktika-info .praktika-recommendations > .recommendation-spaced {
+  margin-top: 1em;
+}
 .praktika-info ul li::before {
   content: "";
   display: block;
