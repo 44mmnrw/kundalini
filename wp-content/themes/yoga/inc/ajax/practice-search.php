@@ -82,8 +82,8 @@ if (!defined('ABSPATH')) {
 				? yoga_get_practice_level_raw_for_cards((int) get_the_ID())
 				: '';
 			$practice_level_label = function_exists('yoga_normalize_practice_level_label')
-				? yoga_normalize_practice_level_label($practice_level_raw !== '' ? $practice_level_raw : 'новичок')
-				: ($practice_level_raw !== '' ? $practice_level_raw : 'новичок');
+				? yoga_normalize_practice_level_label($practice_level_raw)
+				: $practice_level_raw;
 			?>
             <div class="library-item yoga-arrow-motion<?php echo $library_variant_class ? ' ' . esc_attr($library_variant_class) : ''; ?>">
                 <div class="library-item__bg"></div>
@@ -91,7 +91,7 @@ if (!defined('ABSPATH')) {
                     <?php echo esc_html($practice_level_label); ?>
                     <a href="<?php the_permalink(); ?>" target="_blank"></a>
 				</div>
-                <p class="library-item__text"><?php echo get_the_excerpt(); ?></p>
+                <p class="library-item__text"><?php echo esc_html((string) get_field('short_description')); ?></p>
                 <div class="library-item__img">
                     <?php if ($library_term_image_url) : ?>
 						<img src="<?php echo esc_url($library_term_image_url); ?>" alt="<?php the_title_attribute(); ?>">
@@ -354,8 +354,8 @@ if (!defined('ABSPATH')) {
 		$practice_level_raw_k = function_exists('yoga_get_practice_level_raw_for_cards')
 			? yoga_get_practice_level_raw_for_cards((int) get_the_ID())
 			: '';
-		$practice_level = yoga_normalize_practice_level_label($practice_level_raw_k !== '' ? $practice_level_raw_k : 'новичок');
-		$practice_description = get_field('short_description') ?: get_the_excerpt();
+		$practice_level = yoga_normalize_practice_level_label($practice_level_raw_k);
+		$practice_description = (string) get_field('short_description');
 		$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 		$is_favorite = in_array(get_the_ID(), $user_favorites, true);
 		$hidden_class = (!$show_all && !$library_results && $item_count > 10) ? 'hidden' : '';

@@ -255,9 +255,9 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 								? yoga_get_practice_level_raw_for_cards((int) get_the_ID())
 								: '';
 							$practice_level = function_exists('yoga_normalize_practice_level_label')
-								? yoga_normalize_practice_level_label($practice_level_raw !== '' ? $practice_level_raw : 'новичок')
-								: ($practice_level_raw !== '' ? $practice_level_raw : 'новичок');
-							$practice_description = get_field('short_description') ?: get_the_excerpt();
+								? yoga_normalize_practice_level_label($practice_level_raw)
+								: $practice_level_raw;
+							$practice_description = (string) get_field('short_description');
 							$practice_image = yoga_get_practice_card_image_url((int) get_the_ID(), 'large');
 							$user_id = get_current_user_id();
 							$is_favorite = in_array(get_the_ID(), get_user_meta($user_id, 'favorite_practices', true) ?: array(), true);

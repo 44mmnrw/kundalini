@@ -5,6 +5,7 @@
  * @package Yoga
  */
 $practice_level_raw = trim((string) get_field('practice_level'));
+$practice_time = trim((string) get_field('practice_time'));
 $practice_level_label = function_exists('yoga_normalize_practice_level_label')
 	? yoga_normalize_practice_level_label($practice_level_raw)
 	: $practice_level_raw;
@@ -48,10 +49,12 @@ if (!empty($section_praktika_extra_class)) {
 						<span class="praktika-details__lvl">
 							<?php echo esc_html($practice_level_label); ?>
 						</span>
+						<?php if ($practice_time !== '') : ?>
 						<span class="praktika-details__time">
 							<svg class="praktika-details__time-icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#time-read-icon'); ?>"></use></svg>
-							<?php echo get_field('practice_time') ?: '7 минут'; ?>
+							<?php echo esc_html($practice_time); ?>
 						</span>
+						<?php endif; ?>
 					</div>
                     <?php
 					$user_id = get_current_user_id();
@@ -204,6 +207,9 @@ if (!empty($section_praktika_extra_class)) {
 												$section_title = function_exists('yoga_get_practice_section_display_title')
 													? yoga_get_practice_section_display_title($section, $menu_layout)
 													: ($section['section_title'] ?? '');
+												if (trim((string) $section_title) === '') {
+													continue;
+												}
 											?>
                                             <li<?php echo $menu_locked ? ' class="praktika-menu__item--locked"' : ''; ?>>
                                                 <a class="ref" href="#<?php echo esc_attr($section_id); ?>" data-section-key="<?php echo esc_attr($section_key); ?>">

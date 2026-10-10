@@ -35,7 +35,7 @@
 
 <?php
 $philosophy_html = (string) ($section['philosophy_content'] ?? '');
-if ($philosophy_html === '' && function_exists('yoga_build_practice_philosophy_content')) {
+if (!array_key_exists('philosophy_content', $section) && function_exists('yoga_build_practice_philosophy_content')) {
 	$philosophy_html = yoga_build_practice_philosophy_content(
 		$section['before_list_text'] ?? '',
 		$section['habits_text'] ?? '',

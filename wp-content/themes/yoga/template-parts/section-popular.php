@@ -40,7 +40,7 @@ if ($testimonials_hidden) {
                             continue;
                         }
                         $item_title = get_the_title($practice_id);
-                        $item_text = wp_strip_all_tags((string) (get_field('short_description', $practice_id) ?: get_the_excerpt($practice_id)));
+                        $item_text = wp_strip_all_tags((string) get_field('short_description', $practice_id));
                         $item_image = yoga_get_practice_card_image_url($practice_id, 'large');
                         $item_link = get_permalink($practice_id);
                         $item_color = strtolower((string) ($item['practice_style'] ?? ''));

@@ -60,9 +60,7 @@ if (!function_exists('yoga_get_practice_section_display_title')) {
 			}
 		}
 
-		$choices = yoga_get_practice_section_layout_choices();
-
-		return $choices[$layout] ?? $layout;
+		return '';
 	}
 }
 
