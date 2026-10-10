@@ -487,7 +487,7 @@
 					<?php endif; ?>
 
 					<div class="timer-buttons__actions">
-					<button type="button" class="btn timer-play-pause">
+					<button type="button" class="btn timer-play-pause" disabled>
 						<span>Старт</span>
 					</button>
 					<button type="button" class="btn timer-reset">
@@ -654,7 +654,7 @@
 					<?php endif; ?>
 
 					<div class="timer-buttons__actions">
-					<button type="button" class="btn timer-play-pause">
+					<button type="button" class="btn timer-play-pause" disabled>
 						<span>Старт</span>
 					</button>
 					<button type="button" class="btn timer-reset">

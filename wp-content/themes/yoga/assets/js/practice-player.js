@@ -654,13 +654,16 @@ function initializePracticeSystem() {
             let isEndSignalPlaying = false;
             const endSignalKey = `${exerciseId}_${versionType}`;
             const initialDuration = parseDuration(timerDisplay?.textContent);
-            const presetDefaultDuration = (() => {
-                const firstPreset = presetBtns && presetBtns.length ? presetBtns[0] : null;
-                const fromPreset = parseInt(firstPreset?.dataset?.duration, 10);
-                return Number.isNaN(fromPreset) ? 0 : fromPreset;
-            })();
             const fallbackDuration = initialDuration > 0 ? initialDuration : 180;
-            let selectedDuration = presetDefaultDuration > 0 ? presetDefaultDuration : fallbackDuration;
+            let selectedDuration = timerElement ? 0 : fallbackDuration;
+
+            function updateStartButton() {
+                if (playPauseBtn) {
+                    playPauseBtn.disabled = selectedDuration <= 0;
+                }
+            }
+
+            updateStartButton();
 
             function parseDuration(value) {
                 if (!value || typeof value !== 'string') return 0;
@@ -885,6 +888,9 @@ function initializePracticeSystem() {
             }
 
             function startTimer() {
+                if (timerElement && selectedDuration <= 0) {
+                    return;
+                }
                 stopEndSignal();
                 if (timerInterval) {
                     clearInterval(timerInterval);
@@ -1012,6 +1018,7 @@ function initializePracticeSystem() {
                 if (duration > 0) {
                     selectedDuration = duration;
                 }
+                updateStartButton();
 
 
                 suppressAutoPlayUntil = Date.now() + 1500;
@@ -1084,6 +1091,7 @@ function initializePracticeSystem() {
             if (playPauseBtn) {
                 playPauseBtn.addEventListener('click', (event) => {
                     event.preventDefault();
+                    if (playPauseBtn.disabled) return;
                     if (isEndSignalPlaying) {
                         stopEndSignal();
                         return;
@@ -1118,7 +1126,8 @@ function initializePracticeSystem() {
 
                         if (isPlaying || durationButtonsLocked) return;
 
-                        const duration = parseInt(btn.dataset.duration) || 180;
+                        const duration = parseInt(btn.dataset.duration, 10);
+                        if (!Number.isFinite(duration) || duration <= 0) return;
                         resetTimer(duration);
                     });
                 });
@@ -1280,6 +1289,11 @@ function updateFullscreenControls() {
     const version = window.currentFullscreenVersion;
     const player = window.activePlayers[`${exerciseId}_${version}`];
     const playPauseBtn = document.querySelector('.audio-fullscreen__play-pause');
+    const timerPlayPauseBtn = document.querySelector(`[data-exercise-id="${exerciseId}"] .exercise-item[data-version="${version}"] .timer-play-pause`);
+
+    if (playPauseBtn) {
+        playPauseBtn.disabled = Boolean(timerPlayPauseBtn?.disabled);
+    }
 
     if (player && playPauseBtn) {
         playPauseBtn.textContent = window.activeEndSignals?.[`${exerciseId}_${version}`]
@@ -1426,7 +1440,12 @@ const audioFullscreenStyles = `
         transition: background 0.3s;
     }
 
-    .audio-fullscreen__control:hover {
+    .audio-fullscreen__control:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .audio-fullscreen__control:not(:disabled):hover {
         background: rgba(255, 255, 255, 0.3);
     }
 
