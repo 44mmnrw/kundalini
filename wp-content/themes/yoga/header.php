@@ -43,12 +43,10 @@ $header_sprite_url = add_query_arg(
 		$myaccount_url = $lk_page_url !== ''
 			? $lk_page_url
 			: get_permalink(get_option('woocommerce_myaccount_page_id'));
-		$header_notifications = is_user_logged_in() && function_exists('yoga_get_user_notifications')
-			? yoga_get_user_notifications((int) get_current_user_id(), 5)
-			: array();
 		$header_unread_notifications = is_user_logged_in() && function_exists('yoga_get_unread_user_notifications')
 			? yoga_get_unread_user_notifications((int) get_current_user_id())
 			: array();
+		$header_notifications = array_slice($header_unread_notifications, 0, 5);
 		$header_unread_notifications_count = count($header_unread_notifications);
 		$format_header_notification_time = static function (string $created_at): string {
 			$created_timestamp = strtotime($created_at);
