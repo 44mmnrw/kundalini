@@ -8,7 +8,10 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-function get_user_questions(int $user_id): array {
+function get_user_questions(int $user_id, bool $include_practice = false): array {
+	if ($user_id <= 0) {
+		return array();
+	}
 	$args = array(
         'post_type' => 'question',
         'author' => $user_id,
@@ -16,7 +19,8 @@ function get_user_questions(int $user_id): array {
 			'relation' => 'OR',
 			array(
 				'key' => 'question_source',
-				'value' => 'lk',
+				'value' => $include_practice ? array('lk', 'practice', 'practice_form') : array('lk'),
+				'compare' => 'IN',
 			),
 			array(
 				'key' => 'question_source',

@@ -559,23 +559,11 @@
 
 
 
-					<div class="lk-slide<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
+					<div class="lk-slide lk-slide--questions<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 						<div class="lk-page-header">
 							<h2 class="lk-page-title">Мои вопросы</h2>
 						</div>
 						<div class="lk-slide__content">
-							<div class="lk-questions-form">
-								<form action="<?php echo admin_url('admin-post.php'); ?>" method="post" id="question-form">
-									<?php wp_nonce_field('submit_question', 'question_nonce'); ?>
-									<input type="hidden" name="action" value="submit_question">
-									<textarea name="question_text" placeholder="Задайте ваш вопрос" required class="input"></textarea>
-									<input type="submit" id="lk-questions-submit">
-									<label for="lk-questions-submit" class="btn">
-										Задать вопрос
-									</label>
-								</form>
-							</div>
-
 							<div class="lk-questions">
 								<?php
 									if (is_user_logged_in() && function_exists('yoga_render_user_questions_list')) {
