@@ -1015,9 +1015,7 @@ function initializePracticeSystem() {
 
                 if (isPlaying && !allowWhilePlaying) return;
 
-                if (duration > 0) {
-                    selectedDuration = duration;
-                }
+                selectedDuration = duration > 0 ? duration : 0;
                 updateStartButton();
 
 
@@ -1033,7 +1031,7 @@ function initializePracticeSystem() {
                         });
                     });
                 }
-                remainingTime = duration > 0 ? duration : selectedDuration;
+                remainingTime = selectedDuration;
                 updateTimerDisplay();
 
                 if (player) {
