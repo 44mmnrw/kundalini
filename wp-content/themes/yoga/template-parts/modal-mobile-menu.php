@@ -43,7 +43,7 @@
 			</div>
             <div class="mobile-menu__slide mobile-menu__slide_sub mobile-library-menu">
                 <button class="mobile-menu-back" type="button" aria-label="<?php esc_attr_e('Назад', 'yoga'); ?>">
-					<svg class="mobile-menu-back__icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+					<svg class="mobile-menu-back__icon" viewBox="0 0 20 18" width="20" height="18" aria-hidden="true" focusable="false">
 						<use href="<?php echo $sprite_href; ?>#password-recovery-back" width="100%" height="100%"></use>
 					</svg>
 				</button>
