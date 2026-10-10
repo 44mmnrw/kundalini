@@ -48,9 +48,10 @@ function yoga_mark_question_answer_notifications_read(): void {
 	$user_id = (int) get_current_user_id();
 	$mark_all = !empty($_POST['mark_all']);
 	$notification_id = sanitize_text_field((string) ($_POST['notification_id'] ?? ''));
+	$question_answers_only = !empty($_POST['question_answers_only']);
 
 	wp_send_json_success(array(
-		'unread_count' => yoga_mark_user_notifications_read($user_id, $notification_id, $mark_all),
+		'unread_count' => yoga_mark_user_notifications_read($user_id, $notification_id, $mark_all || $question_answers_only, $question_answers_only ? 'question_answer' : ''),
 		'unread_question_answers_count' => count(yoga_get_unread_question_answer_notifications($user_id)),
 	));
 }
