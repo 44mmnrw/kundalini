@@ -1522,11 +1522,15 @@ display: block !important;
   font-weight: 500;
   color: #fff;
 }
-.timer-buttons .btn:hover {
+.timer-play-pause:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.timer-buttons .btn:not(:disabled):hover {
   border-color: var(--color-green);
   background: var(--color-green);
 }
-.timer-buttons .btn:hover span {
+.timer-buttons .btn:not(:disabled):hover span {
   color: var(--color-black);
 }
 .timer-buttons .btn.btn_big {

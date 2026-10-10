@@ -139,7 +139,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 				<?php endforeach; ?>
 				</div>
 				<div class="timer-buttons__actions">
-				<button type="button" class="btn timer-play-pause"><span>Старт</span></button>
+					<button type="button" class="btn timer-play-pause" disabled><span>Старт</span></button>
 				<button type="button" class="btn timer-reset"><span>Сброс</span></button>
 				</div>
 			</div>
