@@ -1370,6 +1370,49 @@ function yoga_subscribe_handler() {
 		return false;
 	}
 
+	/** Add the account shortcut to both header menus without changing stored menu items. */
+	function yoga_header_sadhanas_menu_items(array $items, $args): array {
+		if (($args->theme_location ?? '') !== 'primary' || !is_user_logged_in()) {
+			return $items;
+		}
+
+		$sadhanas_item = (object) array(
+			'ID' => -1,
+			'db_id' => 0,
+			'menu_item_parent' => 0,
+			'object_id' => 0,
+			'object' => 'custom',
+			'type' => 'custom',
+			'type_label' => __('Произвольная ссылка', 'yoga'),
+			'title' => __('Садханы', 'yoga'),
+			'url' => yoga_get_lk_section_url('sadhanas'),
+			'target' => '',
+			'attr_title' => '',
+			'description' => '',
+			'classes' => array(),
+			'xfn' => '',
+			'current' => false,
+			'current_item_parent' => false,
+			'current_item_ancestor' => false,
+		);
+
+		// Keep the library's children together before inserting the next top-level link.
+		$insert_at = count($items);
+		$found_first = false;
+		foreach (array_values($items) as $index => $item) {
+			if ((int) $item->menu_item_parent === 0) {
+				if ($found_first) {
+					$insert_at = $index;
+					break;
+				}
+				$found_first = true;
+			}
+		}
+		array_splice($items, $insert_at, 0, array($sadhanas_item));
+		return $items;
+	}
+	add_filter('wp_nav_menu_objects', 'yoga_header_sadhanas_menu_items', 10, 2);
+
 	class Custom_Menu_Walker extends Walker_Nav_Menu {
 		private $item_counter = 0;
 
