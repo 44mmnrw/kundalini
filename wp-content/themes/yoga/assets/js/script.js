@@ -4759,6 +4759,41 @@ jQuery(document).ready(function($) {
 		});
 	});
 
+	function selectQuestionTab($wrap, key) {
+		$wrap.find('[data-active-question-tab]').attr('data-active-question-tab', key);
+		$wrap.find('[data-question-tab]').each(function() {
+			var active = $(this).attr('data-question-tab') === key;
+			$(this).toggleClass('is-active', active).attr('aria-selected', String(active)).attr('tabindex', active ? '0' : '-1');
+		});
+		$wrap.find('[data-question-panel]').each(function() {
+			$(this).prop('hidden', $(this).attr('data-question-panel') !== key);
+		});
+	}
+	$(document).on('click', '[data-question-tab]', function() {
+		selectQuestionTab($(this).closest('.lk-questions'), $(this).attr('data-question-tab'));
+	});
+	$(document).on('keydown', '[data-question-tab]', function(event) {
+		if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf(event.key) === -1) return;
+		event.preventDefault();
+		var $tabs = $(this).closest('.lk-questions-tabs').find('[data-question-tab]');
+		var index = event.key === 'Home' ? 0 : event.key === 'End' ? $tabs.length - 1 : ($tabs.index(this) + (event.key === 'ArrowRight' ? 1 : -1) + $tabs.length) % $tabs.length;
+		$tabs.eq(index).trigger('click').trigger('focus');
+	});
+	$(document).on('change', '[data-question-sort]', function() {
+		var oldest = this.value === 'oldest';
+		$(this).closest('.lk-questions').find('[data-question-panel]').each(function() {
+			var $panel = $(this);
+			var items = $panel.find('.lk-questions-item').get().sort(function(a, b) {
+				var comparison = String(a.dataset.questionDate).localeCompare(String(b.dataset.questionDate)) || Number(a.dataset.questionId) - Number(b.dataset.questionId);
+				return oldest ? comparison : -comparison;
+			});
+			items.forEach(function(item, index) {
+				$(item).removeAttr('style').toggleClass('hidden', index >= 4).toggleClass('lk-questions-item_extra', index >= 4).appendTo($panel);
+			});
+			$panel.find('.show-more-questions').removeClass('is-expanded').appendTo($panel).find('span').removeClass('active').first().addClass('active');
+		});
+	});
+
 	// Обработка формы вопроса
 	$('#question-form').on('submit', function(e) {
 		e.preventDefault();
@@ -4823,7 +4858,7 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.lk-questions .show-more-questions', function(e) {
 		e.preventDefault();
 		var $btn = $(this);
-		var $wrap = $btn.closest('.lk-questions');
+		var $wrap = $btn.closest('.lk-questions-panel');
 		var $extraItems = $wrap.find('.lk-questions-item_extra');
 		var isExpanded = $btn.hasClass('is-expanded');
 

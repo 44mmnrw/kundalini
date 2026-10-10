@@ -69,7 +69,7 @@ function handle_question_submission() {
 
 	if ($is_ajax) {
 		ob_start();
-		yoga_render_user_questions_list((int) $user_id);
+		yoga_render_user_questions_list((int) $user_id, 'general');
 		$questions_html = (string) ob_get_clean();
 		wp_send_json_success(array(
 			'message' => __('Вопрос отправлен', 'yoga'),
