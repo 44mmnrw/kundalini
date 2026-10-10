@@ -18,17 +18,21 @@ function display_question_item(WP_Post $question, bool $hidden = false): void {
 ?>
     <div class="lk-questions-item <?php echo $status_class . ' ' . $hidden_class . ' ' . $extra_class; ?>" data-question-date="<?php echo esc_attr($question->post_date); ?>" data-question-id="<?php echo esc_attr((string) $question_id); ?>">
         <div class="lk-question">
-            <div class="lk-question__time">
-                <time><?php echo get_the_date('d.m.Y', $question_id); ?></time>
-                <time><?php echo get_the_time('H:i', $question_id); ?></time>
-		</div>
-            <div class="lk-question__text">
-				<?php $practice_id = (int) get_post_meta($question_id, 'practice_id', true); ?>
-				<?php if ($practice_id > 0 && get_post_type($practice_id) === 'practice'): ?>
-				<p class="lk-question__practice"><a href="<?php echo esc_url(get_permalink($practice_id)); ?>"><?php echo esc_html(get_the_title($practice_id)); ?></a></p>
-				<?php endif; ?>
-                <p><?php echo esc_html($question->post_content); ?></p>
-		</div>
+            <div class="lk-question__body">
+                <div class="lk-question__head">
+                    <?php $practice_id = (int) get_post_meta($question_id, 'practice_id', true); ?>
+                    <?php if ($practice_id > 0 && get_post_type($practice_id) === 'practice'): ?>
+                    <a class="lk-question__practice<?php echo empty($answers) ? '' : ' lk-question__practice--answered'; ?>" href="<?php echo esc_url(get_permalink($practice_id)); ?>"><?php echo esc_html(get_the_title($practice_id)); ?></a>
+                    <?php endif; ?>
+                    <div class="lk-question__time">
+                        <time><?php echo get_the_date('d.m.Y', $question_id); ?></time>
+                        <time><?php echo get_the_time('H:i', $question_id); ?></time>
+                    </div>
+                </div>
+                <div class="lk-question__text">
+                    <p><?php echo esc_html($question->post_content); ?></p>
+                </div>
+            </div>
 		<?php if (empty($answers)): ?>
 		<span class="lk-question__status">
 			<img class="lk-question__status-icon" src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/questions-waiting-clock.svg'); ?>" alt="">
@@ -51,17 +55,19 @@ function display_question_item(WP_Post $question, bool $hidden = false): void {
 		$is_administrator = $answer_author instanceof WP_User
 			&& in_array('administrator', (array) $answer_author->roles, true);
 		$admin_name = $admin_id > 0 ? (string) get_the_author_meta('display_name', $admin_id) : __('Администратор', 'yoga');
-		$answer_label = $is_administrator
-			? __('Ответ Администратора', 'yoga')
-			: sprintf(__('Ответ %s', 'yoga'), $admin_name);
+		$answer_label = $is_administrator || !$answer_author
+			? __('Ответ администратора', 'yoga')
+			: __('Ответ преподавателя', 'yoga');
 		$answer_timestamp = $answer_date !== '' ? strtotime($answer_date) : false;
 	?>
 	<div class="lk-question lk-question_answer">
 		<div class="lk-question__time">
-			<b><?php echo esc_html($answer_label); ?></b>
+			<b title="<?php echo esc_attr($admin_name); ?>"><?php echo esc_html($answer_label); ?></b>
 			<?php if ($answer_timestamp): ?>
+			<span class="lk-question__date">
 				<time datetime="<?php echo esc_attr(wp_date('c', $answer_timestamp)); ?>"><?php echo esc_html(wp_date('d.m.Y', $answer_timestamp)); ?></time>
 				<time><?php echo esc_html(wp_date('H:i', $answer_timestamp)); ?></time>
+			</span>
 			<?php endif; ?>
 		</div>
 		<div class="lk-question__text">

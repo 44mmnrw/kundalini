@@ -2306,25 +2306,25 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		var initialState = '';
+		var initialValues = new Map();
+		var editedFields = new Set();
+		var interactedFields = new Set();
+		var $profileFields = $profileForm.find('input[name], select[name], textarea[name]').filter(function () {
+			var type = String(this.type || '').toLowerCase();
+			return this.name !== 'current_password' && type !== 'submit' && type !== 'button'
+				&& (type !== 'hidden' || this.name === 'remove_avatar');
+		});
 
-		function getProfileState() {
-			return $profileForm.find('input, select, textarea').map(function () {
-				var $field = $(this);
-				var type = String($field.attr('type') || '').toLowerCase();
-				var value;
-
-				if (type === 'file') {
-					var file = this.files && this.files[0];
-					value = file ? [file.name, file.size, file.lastModified].join(':') : '';
-				} else if (type === 'checkbox' || type === 'radio') {
-					value = this.checked ? '1' : '0';
-				} else {
-					value = $field.val();
-				}
-
-				return String($field.attr('name') || '') + '=' + String(value == null ? '' : value);
-			}).get().join('\u001e');
+		function getFieldValue(field) {
+			if (field.type === 'file') {
+				return JSON.stringify(Array.from(field.files || []).map(function (file) {
+					return [file.name, file.size, file.lastModified];
+				}));
+			}
+			if (field.type === 'checkbox' || field.type === 'radio') {
+				return field.checked;
+			}
+			return JSON.stringify($(field).val());
 		}
 
 		function updateDirtyState() {
@@ -2332,15 +2332,38 @@ jQuery(document).ready(function($) {
 		}
 
 		window.yogaLkProfileHasUnsavedChanges = function () {
-			return getProfileState() !== initialState;
+			return $profileFields.get().some(function (field) {
+				var tracksPhoto = field.type === 'file' || field.name === 'remove_avatar';
+				return (tracksPhoto || editedFields.has(field)) && getFieldValue(field) !== initialValues.get(field);
+			});
 		};
 
 		window.yogaMarkLkProfileClean = function () {
-			initialState = getProfileState();
+			editedFields.clear();
+			interactedFields.clear();
+			$profileFields.each(function () { initialValues.set(this, getFieldValue(this)); });
 			window.yogaLkHasUnsavedChanges = false;
 		};
 
-		$profileForm.on('input change keyup', 'input, select, textarea', updateDirtyState);
+		// Accept late browser autofill as the starting value until the user edits a field.
+		$profileForm.on('pointerdown keydown paste cut drop', 'input, select, textarea', function (event) {
+			if (event.originalEvent && initialValues.has(this)) interactedFields.add(this);
+		});
+		$profileForm.on('focusin beforeinput', 'input, select, textarea', function (event) {
+			if (!initialValues.has(this) || editedFields.has(this) || this.type === 'file' || this.name === 'remove_avatar') return;
+			initialValues.set(this, getFieldValue(this));
+			var nativeEvent = event.originalEvent;
+			if (event.type === 'beforeinput' && nativeEvent && (interactedFields.has(this) || (nativeEvent.inputType && nativeEvent.inputType !== 'insertReplacementText'))) {
+				editedFields.add(this);
+			}
+		});
+		$profileForm.on('input change', 'input, select, textarea', function (event) {
+			var nativeEvent = event.originalEvent;
+			var typedInput = event.type === 'input' && nativeEvent && (interactedFields.has(this) || (nativeEvent.inputType && nativeEvent.inputType !== 'insertReplacementText'));
+			var selectedValue = event.type === 'change' && nativeEvent && (this.tagName === 'SELECT' || this.type === 'checkbox' || this.type === 'radio');
+			if (initialValues.has(this) && (typedInput || selectedValue)) editedFields.add(this);
+			updateDirtyState();
+		});
 		window.yogaMarkLkProfileClean();
 	})();
 
