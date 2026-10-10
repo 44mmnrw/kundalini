@@ -1261,6 +1261,9 @@ display: block !important;
 }
 
 .exercise-switches__item {
+  border: 0;
+  color: inherit;
+  font: inherit;
   padding-left: 1.25rem;  padding-right: 1.25rem;  padding-top: 0.75rem;  padding-bottom: 0.6875rem;  margin-right: 0;  background: rgba(232, 255, 87, 0);
   border-radius: 0.4375rem;  cursor: pointer;
   transition: 0.4s ease;
@@ -1275,6 +1278,89 @@ display: block !important;
 .exercise-switches__item.active {
   background: var(--color-green);
 }
+
+.exercise-switches__toggle { display: none; }
+.exercise-switches__options { display: contents; }
+.exercise-item:not(.active) .exercise-switches { visibility: hidden; }
+
+@media (max-width: 767px) {
+  .exercise-switches {
+    position: relative;
+    display: block;
+    padding: 0;
+    background: transparent;
+  }
+  .exercise-switches__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(145, 83, 225, 0.07);
+    border-radius: 0.625rem;
+    background: #f4ecfc;
+    color: var(--color-black);
+    font-family: var(--font-family-base);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.1;
+    text-align: left;
+    cursor: pointer;
+  }
+  .exercise-switches.is-open .exercise-switches__toggle {
+    border-color: var(--color-violet);
+  }
+  .exercise-switches__arrow { flex-shrink: 0; }
+  .exercise-switches__arrow--up,
+  .exercise-switches.is-open .exercise-switches__arrow--down { display: none; }
+  .exercise-switches.is-open .exercise-switches__arrow--up { display: block; }
+  .exercise-switches__options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.3125rem);
+    left: 0;
+    right: 0;
+    z-index: 5;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.0625rem 1.125rem;
+    border: 1px solid var(--color-violet);
+    border-radius: 0.625rem;
+    background: var(--color-grey, #f6f6f9);
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .exercise-switches.is-open .exercise-switches__options { display: flex; }
+  .exercise-switches__item {
+    display: block;
+    padding: 0;
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    margin-right: 0 !important;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-black);
+    text-align: left;
+    font-size: 0.875rem;
+    line-height: 1.1;
+  }
+  .exercise-switches__item.active { display: none; }
+  .exercise-switches__item:hover,
+  .exercise-switches__item:focus-visible { color: var(--color-violet); }
+
+  .exercise-switches__item:last-child {
+    margin-right: 0 !important;
+  }
+
+  .exercise-switches__item b {
+    display: block;
+    font-weight: 600;
+    text-align: left;
+  }
+}
+
 
 .exercise-item__media {
   display: flex;
@@ -2806,29 +2892,6 @@ display: block !important;
     font-size: 1.375rem;  }
   .practice-execution-video__card h4 {
     font-size: 1.125rem;  }
-  .exercise-switches {
-    gap: 0.9375rem;
-  }
-
-  .exercise-switches__item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding-left: 0.625rem;    padding-right: 0.625rem;
-    flex: 1 1 calc(50% - 0.46875rem);
-    min-width: 0;
-    margin-right: 0 !important;
-  }
-
-  .exercise-switches__item:last-child {
-    margin-right: 0 !important;
-  }
-
-  .exercise-switches__item b {
-    display: block;
-    text-align: center;
-  }
   .praktika-comments {
     padding-top: 3.125rem;  }
   .comment-form-main textarea {

@@ -38,16 +38,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 		<h4><?php echo esc_html($subtitle); ?></h4>
 		<?php endif; ?>
 
-		<div class="exercise-switches">
-			<div class="exercise-switches__item" data-target="main">
-				<b><?php echo esc_html($execution_label); ?></b>
-			</div>
-			<?php foreach ($modification_tabs as $modification_tab): ?>
-			<div class="exercise-switches__item<?php echo $modification_tab['version'] === $additional_modification_version ? ' active' : ''; ?>" data-target="<?php echo esc_attr($modification_tab['version']); ?>">
-				<b><?php echo esc_html($modification_tab['label']); ?></b>
-			</div>
-			<?php endforeach; ?>
-		</div>
+		<?php $exercise_switch_version = $additional_modification_version; include get_template_directory() . '/template-parts/praktika-info/exercise-switches.php'; ?>
 
 		<div class="exercise-item__info-details">
 			<?php if (!empty($variant_matter)): ?>

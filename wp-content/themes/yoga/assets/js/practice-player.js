@@ -593,6 +593,42 @@ function initializePracticeSystem() {
     window.practiceSystemInitialized = true;
 
 
+    function closeVariantDropdown(switches, restoreFocus = false) {
+        switches.classList.remove('is-open');
+        const toggle = switches.querySelector('.exercise-switches__toggle');
+        toggle.setAttribute('aria-expanded', 'false');
+        if (restoreFocus) toggle.focus();
+    }
+
+    document.querySelectorAll('.exercise-switches__toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const switches = toggle.closest('.exercise-switches');
+            const opening = !switches.classList.contains('is-open');
+            document.querySelectorAll('.exercise-switches.is-open').forEach(other => closeVariantDropdown(other));
+            switches.classList.toggle('is-open', opening);
+            toggle.setAttribute('aria-expanded', String(opening));
+        });
+        toggle.addEventListener('keydown', event => {
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const switches = toggle.closest('.exercise-switches');
+                switches.classList.add('is-open');
+                toggle.setAttribute('aria-expanded', 'true');
+                switches.querySelector('.exercise-switches__item:not(.active)')?.focus();
+            }
+        });
+    });
+    document.addEventListener('click', event => {
+        document.querySelectorAll('.exercise-switches.is-open').forEach(switches => {
+            if (!switches.contains(event.target)) closeVariantDropdown(switches);
+        });
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('.exercise-switches.is-open').forEach(switches => closeVariantDropdown(switches, true));
+        }
+    });
+
     document.querySelectorAll('.exercise-switches__item').forEach(switchItem => {
         switchItem.addEventListener('click', function() {
             const targetVersion = this.dataset.target;
@@ -618,6 +654,10 @@ function initializePracticeSystem() {
             }
             targetExercise.classList.add('active');
             hydratePracticeExerciseImages(targetExercise);
+            exercise.querySelectorAll('.exercise-switches.is-open').forEach(switches => closeVariantDropdown(switches));
+            if (window.matchMedia('(max-width: 767px)').matches) {
+                targetExercise.querySelector('.exercise-switches__toggle')?.focus();
+            }
 
 
             if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
