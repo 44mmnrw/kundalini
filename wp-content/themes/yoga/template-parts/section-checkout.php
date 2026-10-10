@@ -14,6 +14,16 @@ $sprite_href = esc_url($theme_uri . '/assets/svg/sprite.svg');
 $checkout_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout/');
 $tariffs_url = function_exists('yoga_get_tariffs_page_url') ? yoga_get_tariffs_page_url() : home_url('/product-category/tariffs/');
 $privacy_url = function_exists('yoga_get_privacy_policy_url') ? yoga_get_privacy_policy_url() : home_url('/privacy-policy/');
+$public_offer_url = function_exists('get_field') ? trim((string) get_field('public_offer_link', 'option')) : '';
+if (function_exists('yoga_get_legal_document_url')) {
+	$public_offer_url = yoga_get_legal_document_url('public_offer', $public_offer_url);
+}
+if ($public_offer_url === '') {
+	$public_offer_url = function_exists('wc_get_page_permalink') ? (string) wc_get_page_permalink('terms') : '';
+	if ($public_offer_url === '') {
+		$public_offer_url = home_url('/terms/');
+	}
+}
 $order_button_text = apply_filters('woocommerce_order_button_text', __('Оплатить', 'woocommerce'));
 
 $prefill_first = '';
@@ -252,7 +262,7 @@ if ($primary_line_label === '') {
 										echo wp_kses(
 											sprintf(
 												__('Нажимая кнопку «Оплатить», вы соглашаетесь с <a href="%1$s">условиями оферты</a> и <a href="%2$s">политикой конфиденциальности</a>.', 'yoga'),
-												esc_url($privacy_url),
+												esc_url($public_offer_url),
 												esc_url($privacy_url)
 											),
 											array('a' => array('href' => array()))

@@ -75,11 +75,10 @@
 									</button>
 									<?php if ($user_avatar_id > 0) : ?>
 										<?php echo wp_get_attachment_image($user_avatar_id, 'thumbnail', false, array('class' => 'avatar', 'alt' => '')); ?>
-									<?php else : ?>
+										<?php endif; ?>
 										<svg class="photo-input-custom__icon" viewBox="0 0 687.88 550.44" aria-hidden="true" focusable="false">
 											<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-upload-camera'); ?>"></use>
 										</svg>
-									<?php endif; ?>
 												</div>
 												<div class="photo-input-custom__copy">
 													<b class="photo-input-custom__inner-title">Загрузить фото</b>
@@ -87,7 +86,8 @@
 												</div>
 											</div>
 										</div>
-										<input type="file" id="avatar-upload" name="avatar" accept=".jpg,.png" style="display: none;">
+										<input type="hidden" name="remove_avatar" value="0">
+										<input type="file" id="avatar-upload" name="avatar" accept=".jpg,.jpeg,.png" style="display: none;">
 									</div>
 								</div>
 

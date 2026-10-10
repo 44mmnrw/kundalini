@@ -514,11 +514,6 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.kriyi > .btn').click(function () {
-		$(this).find('span').toggleClass("active");
-		$('.kriyi-item_last').toggleClass("hidden");
-
-	});
 
 
 
@@ -3647,6 +3642,9 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     $('.kriyi__items').html(response.data.html);
+					var $moreButton = $('.section-kriyi .kriyi > .btn');
+					$moreButton.removeClass('active').attr('aria-expanded', 'false');
+					$moreButton.find('span').removeClass('active').first().addClass('active');
 					updatePracticeResultsToolbar(
 						$('.section-kriyi'),
 						response.data.count,
@@ -3855,18 +3853,13 @@ jQuery(document).ready(function($) {
 	});
 
     // Кнопка "Показать еще/Свернуть"
-    $('.section-kriyi .btn').on('click', function() {
-        $(this).toggleClass('active');
-        $('.section-kriyi .kriyi-item.hidden').toggleClass('hidden');
-
-        // Меняем текст кнопки
-        if ($(this).hasClass('active')) {
-            $(this).find('span:first').text('Свернуть');
-            $(this).find('span:last').text('Свернуть');
-			} else {
-            $(this).find('span:first').text('Показать еще');
-            $(this).find('span:last').text('Показать еще');
-		}
+    $(document).on('click', '.kriyi > .btn', function(e) {
+		e.preventDefault();
+		var $button = $(this);
+		var expanded = !$button.hasClass('active');
+		$button.toggleClass('active', expanded).attr('aria-expanded', String(expanded));
+		$button.closest('.kriyi').find('.kriyi__items > .kriyi-item').slice(10).toggleClass('hidden', !expanded);
+		$button.find('span').removeClass('active').eq(expanded ? 1 : 0).addClass('active');
 	});
 
 	function applyPracticeFiltersFromUrl() {
@@ -4378,7 +4371,12 @@ jQuery(document).ready(function($) {
 		console.log('User logged in:', yoga_ajax.user_logged_in);
 
 		var $form = $(this);
+		if ($form.attr('aria-busy') === 'true') return;
 		var $submitBtn = $form.find('.lk-form-safe label[for="lk-safe-btn"]').first();
+		if (!this.checkValidity()) {
+			this.reportValidity();
+			return;
+		}
 		var $submitInput = $form.find('#lk-safe-btn');
 		var $submitText = $submitBtn.children('span').first();
 		var originalText = $submitText.text();
@@ -4400,8 +4398,7 @@ jQuery(document).ready(function($) {
 
 		// Создаем FormData
 		var formData = new FormData(this);
-		// Avatar files are uploaded only by upload_user_avatar, including while it is pending.
-		formData.delete('avatar');
+		// The avatar preview and profile fields are saved by this same request.
 		formData.append('action', 'update_user_profile');
 		formData.append('nonce', yoga_ajax.nonce);
 
@@ -4414,6 +4411,10 @@ jQuery(document).ready(function($) {
 				formData.set('phone', '');
 			}
 		}
+
+		var $editableFields = $form.find('input, select, textarea, button').filter(':enabled');
+		$editableFields.prop('disabled', true);
+		$form.attr('aria-busy', 'true');
 
 		$.ajax({
 			url: yoga_ajax.ajax_url,
@@ -4481,6 +4482,8 @@ jQuery(document).ready(function($) {
 			},
 			complete: function() {
 				// Восстанавливаем кнопку
+				$editableFields.prop('disabled', false);
+				$form.removeAttr('aria-busy');
 				$submitText.text(originalText);
 				$submitInput.prop('disabled', false);
 				$submitBtn.removeAttr('aria-busy');
@@ -4509,14 +4512,25 @@ jQuery(document).ready(function($) {
 		}, 3000);
 	}
 
-	// Загрузка аватара
-	$(document).on('click', '.photo-input-custom__inner-photo', function(e) {
-		e.stopPropagation(); // Останавливаем всплытие
-		e.preventDefault(); // Отменяем действие по умолчанию
+	// Photo changes are previews until the complete profile is saved.
+	function rememberProfilePhoto($photo) {
+		if ($photo.data('saved-avatar-src') === undefined) {
+			$photo.data('saved-avatar-src', $photo.find('img').attr('src') || '');
+		}
+	}
 
-		setTimeout(function() {
-			$('#avatar-upload').click();
-		}, 50); // Небольшая задержка
+	function clearProfilePhotoPreview($photo) {
+		var $image = $photo.find('img');
+		if ($image.length && $image[0].src.startsWith('blob:')) URL.revokeObjectURL($image[0].src);
+		$image.remove();
+		$photo.removeClass('has-avatar');
+	}
+
+	$(document).on('click', '.photo-input-custom__inner-photo', function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		if ($(this).closest('#profile-form').attr('aria-busy') === 'true') return;
+		$('#avatar-upload').trigger('click');
 	});
 
 	$(document).on('keydown', '.photo-input-custom__inner-photo', function(e) {
@@ -4531,111 +4545,34 @@ jQuery(document).ready(function($) {
 		if (!file) return;
 		var $photo = $(this).closest('.photo-input').find('.photo-input-custom__inner-photo');
 		if (!$photo.length) return;
-		var dataUrl = URL.createObjectURL(file);
-		var $img = $photo.find('img');
-		if ($img.length && $img[0].src && $img[0].src.startsWith('blob:')) {
-			URL.revokeObjectURL($img[0].src);
+		rememberProfilePhoto($photo);
+		if (file.size > 10 * 1024 * 1024 || !/\.(jpe?g|png)$/i.test(file.name)) {
+			this.value = '';
+			clearProfilePhotoPreview($photo);
+			var savedPhoto = $photo.data('saved-avatar-src');
+			if (savedPhoto) $photo.addClass('has-avatar').append($('<img>', { src: savedPhoto, alt: '', class: 'avatar' }));
+			$photo.find('.photo-input-delete').prop('hidden', !savedPhoto);
+			$(this).closest('#profile-form').find('[name="remove_avatar"]').val('0').trigger('change');
+			showNotification('Выберите фото JPG или PNG размером не более 10 МБ.', 'error');
+			return;
 		}
-		$photo.find('img').remove();
-		$photo.addClass('has-avatar').append($('<img>', { src: dataUrl, alt: '', class: 'avatar' }));
-		var $deleteButton = $photo.find('.photo-input-delete');
-		$deleteButton.removeAttr('hidden').attr('data-preview-only', '1');
-
-		var uploadData = new FormData();
-		uploadData.append('action', 'upload_user_avatar');
-		uploadData.append('nonce', yoga_ajax.nonce);
-		uploadData.append('avatar', file);
-		$deleteButton.prop('disabled', true).attr('aria-busy', 'true');
-
-		$.ajax({
-			url: yoga_ajax.ajax_url,
-			type: 'POST',
-			data: uploadData,
-			processData: false,
-			contentType: false,
-			dataType: 'json',
-			success: function(response) {
-				if (response && response.success && response.data && response.data.avatar_url) {
-					var avatarUrl = response.data.avatar_url;
-					var $previewImage = $photo.find('img');
-					if ($previewImage.length && $previewImage[0].src && $previewImage[0].src.startsWith('blob:')) {
-						URL.revokeObjectURL($previewImage[0].src);
-					}
-					$previewImage.attr('src', avatarUrl);
-					$('#avatar-upload').val('');
-					$deleteButton.removeAttr('data-preview-only aria-busy').prop('disabled', false);
-
-					var $headerAvatar = $('.login-icon_logged');
-					if ($headerAvatar.length) {
-						$headerAvatar.find('.login-icon__avatar, .login-icon__initial').remove();
-						$headerAvatar.prepend($('<img>', {
-							src: avatarUrl,
-							alt: '',
-							'class': 'login-icon__avatar',
-							decoding: 'async'
-						}));
-					}
-					return;
-				}
-				showNotification((response && response.data) ? response.data : 'Не удалось загрузить аватар', 'error');
-			},
-			error: function(xhr) {
-				var message = xhr.responseJSON && xhr.responseJSON.data ? xhr.responseJSON.data : 'Ошибка загрузки аватара';
-				showNotification(message, 'error');
-			},
-			complete: function(xhr) {
-				if (!xhr.responseJSON || !xhr.responseJSON.success) {
-					$('#avatar-upload').val('');
-					$photo.find('img').remove();
-					$photo.removeClass('has-avatar');
-					$deleteButton.attr('hidden', 'hidden').removeAttr('data-preview-only aria-busy').prop('disabled', false);
-				}
-			}
-		});
+		clearProfilePhotoPreview($photo);
+		$photo.addClass('has-avatar').append($('<img>', { src: URL.createObjectURL(file), alt: '', class: 'avatar' }));
+		$photo.find('.photo-input-delete').prop('hidden', false);
+		$(this).closest('#profile-form').find('[name="remove_avatar"]').val('0').trigger('change');
 	});
 
-	// Удаление аватара
 	$(document).on('click', '.photo-input-delete', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		var $button = $(this);
-		if ($button.attr('data-preview-only') === '1') {
-			var $photo = $button.closest('.photo-input-custom__inner-photo');
-			var $fileInput = $button.closest('.photo-input').find('#avatar-upload');
-			var $preview = $photo.find('img');
-			if ($preview.length && $preview[0].src && $preview[0].src.startsWith('blob:')) {
-				URL.revokeObjectURL($preview[0].src);
-			}
-			$fileInput.val('');
-			$preview.remove();
-			$photo.removeClass('has-avatar');
-			$button.attr('hidden', 'hidden').removeAttr('data-preview-only');
-			return;
-		}
-		if ($button.prop('disabled')) return;
-		$button.prop('disabled', true).attr('aria-busy', 'true');
-
-		$.ajax({
-				url: yoga_ajax.ajax_url,
-				type: 'POST',
-				data: {
-					action: 'delete_avatar',
-					nonce: yoga_ajax.nonce
-				},
-				success: function(response) {
-					if (response.success) {
-						location.reload();
-					} else {
-						showNotification((response && response.data) ? response.data : 'Не удалось удалить аватар', 'error');
-					}
-				},
-				error: function() {
-					showNotification('Ошибка соединения', 'error');
-				},
-				complete: function() {
-					$button.prop('disabled', false).removeAttr('aria-busy');
-				}
-			});
+		var $form = $(this).closest('#profile-form');
+		if ($form.attr('aria-busy') === 'true') return;
+		var $photo = $(this).closest('.photo-input-custom__inner-photo');
+		rememberProfilePhoto($photo);
+		clearProfilePhotoPreview($photo);
+		$('#avatar-upload').val('');
+		$(this).prop('hidden', true);
+		$form.find('[name="remove_avatar"]').val($photo.data('saved-avatar-src') ? '1' : '0').trigger('change');
 	});
 
 	// Показать/скрыть пароль
