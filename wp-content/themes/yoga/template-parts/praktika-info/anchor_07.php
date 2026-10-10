@@ -15,9 +15,6 @@ if (!yoga_practice_video_section_has_valid_media($section)) {
 
 $anchor_id = isset($anchor_id) && $anchor_id !== '' ? (string) $anchor_id : 'anchor_06';
 $video_title = trim((string) ($section_title ?? ($section['section_title'] ?? '')));
-if ($video_title === '') {
-	$video_title = 'Видео выполнение';
-}
 $video_subtitle = trim((string) ($section['subtitle'] ?? ''));
 $video_details = trim((string) ($section['details'] ?? ''));
 $video_description = $section['description'] ?? '';
@@ -31,7 +28,9 @@ $player_id = 'practice-execution-video-' . sanitize_html_class((string) ($sectio
 	<span class="praktika-menu-anchor js-praktika-section-marker" id="<?php echo esc_attr($anchor_id); ?>" data-section-key="<?php echo esc_attr(isset($section_key) ? (string) $section_key : ''); ?>"></span>
 	<div class="practice-execution-video__card<?php echo $video_has_extra_content ? '' : ' practice-execution-video__card--media-only'; ?>">
 		<div class="practice-execution-video__info">
+			<?php if ($video_title !== ''): ?>
 			<h3><?php echo esc_html($video_title); ?></h3>
+			<?php endif; ?>
 			<?php if ($video_subtitle !== ''): ?>
 			<h4><?php echo esc_html($video_subtitle); ?></h4>
 			<?php endif; ?>

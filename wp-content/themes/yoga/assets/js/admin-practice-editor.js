@@ -39,6 +39,10 @@
 	}
 
 	function inputValue($field) {
+		var $choices = $field.find('input[type="radio"], input[type="checkbox"]');
+		if ($choices.length) {
+			return $choices.filter(':checked').map(function () { return String(this.value); }).get().join(', ');
+		}
 		var $input = $field.find('input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, select').first();
 		return $input.length ? $.trim(String($input.val() || '')) : '';
 	}
@@ -1399,7 +1403,7 @@
 		} else if ($field.hasClass('acf-field-wysiwyg')) {
 			value = wysiwygValue($field);
 		} else if ($field.find('select').length) {
-			value = $.trim($field.find('select option:selected').map(function () { return $(this).text(); }).get().join(', '));
+			value = $.trim($field.find('select option:selected').filter(function () { return this.value !== ''; }).map(function () { return $(this).text(); }).get().join(', '));
 		} else {
 			value = inputValue($field);
 		}
