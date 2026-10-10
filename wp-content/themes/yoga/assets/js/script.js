@@ -1907,6 +1907,7 @@ jQuery(document).ready(function($) {
 		$('.modal-login-inner__slide[data-target="' + target + '"]').addClass('active');
 		$('.modal-login').toggleClass('modal-login--recovery', target === '3');
 		$('.modal-login').toggleClass('modal-login--success', target === '4');
+		$('.modal-login, .modal-login-inner').scrollTop(0);
 		$('.yoga-form-login-message').removeClass('is-visible').empty();
 
 		if (target === '3') {
