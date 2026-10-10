@@ -11,17 +11,20 @@ if (!defined('ABSPATH')) {
 function display_question_item(WP_Post $question, bool $hidden = false): void {
 	$question_id = $question->ID;
 	$answers = yoga_get_question_answers($question_id);
+	$source = (string) get_post_meta($question_id, 'question_source', true);
+	$is_general = !in_array($source, array('practice', 'practice_form'), true);
+	$category_class = $is_general ? 'lk-questions-item--general' : 'lk-questions-item--practice';
 
 	$status_class = !empty($answers) ? '' : 'lk-questions-item_new';
 	$hidden_class = $hidden ? 'hidden' : '';
 	$extra_class = $hidden ? 'lk-questions-item_extra' : '';
 ?>
-    <div class="lk-questions-item <?php echo $status_class . ' ' . $hidden_class . ' ' . $extra_class; ?>" data-question-date="<?php echo esc_attr($question->post_date); ?>" data-question-id="<?php echo esc_attr((string) $question_id); ?>">
+    <div class="lk-questions-item <?php echo $category_class . ' ' . $status_class . ' ' . $hidden_class . ' ' . $extra_class; ?>" data-question-date="<?php echo esc_attr($question->post_date); ?>" data-question-id="<?php echo esc_attr((string) $question_id); ?>">
         <div class="lk-question">
             <div class="lk-question__body">
                 <div class="lk-question__head">
                     <?php $practice_id = (int) get_post_meta($question_id, 'practice_id', true); ?>
-                    <?php if ($practice_id > 0 && get_post_type($practice_id) === 'practice'): ?>
+                    <?php if (!$is_general && $practice_id > 0 && get_post_type($practice_id) === 'practice'): ?>
                     <a class="lk-question__practice<?php echo empty($answers) ? '' : ' lk-question__practice--answered'; ?>" href="<?php echo esc_url(get_permalink($practice_id)); ?>"><?php echo esc_html(get_the_title($practice_id)); ?></a>
                     <?php endif; ?>
                     <div class="lk-question__time">
