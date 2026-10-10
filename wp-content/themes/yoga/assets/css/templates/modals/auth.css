@@ -756,7 +756,7 @@ p.login-rules a:hover {
   .modal-login-inner__slide[data-target="1"].active .login-vk-link { position: absolute; right: 0; bottom: 0; left: 0; margin: 0; font-size: 1rem; }
   .modal-login-inner__slide[data-target="1"].active .login-vk-link::before { display: none; }
   .modal-login-inner__slide[data-target="1"].active .login-vk-link > span { text-decoration: underline; text-underline-offset: 0.125rem; }
-  .modal-login:has(.modal-login-inner__slide[data-target="1"].active) .modal-login-inner { overflow: hidden; }
+  .modal-login:has(.modal-login-inner__slide[data-target="1"].active) .modal-login-inner { overflow: visible; }
 
   .modal-login-inner__slide[data-target="2"].active { position: relative; display: flex; flex: 0 0 auto; box-sizing: border-box; width: 100%; min-width: 0; min-height: 100%; margin: 0; padding: 0 0 3.625rem; flex-direction: column; align-items: stretch; justify-content: center; transform: none; }
   .modal-login-inner__slide[data-target="2"].active .login-slide-switches { justify-content: center; }
@@ -804,9 +804,22 @@ p.login-rules a:hover {
 
 @media (max-width: 575px) {
   .modal-login { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.18s ease, visibility 0s linear 0.18s; }
-  .modal-login.active { opacity: 1; visibility: visible; overflow: hidden; pointer-events: auto; transition: opacity 0.18s ease; }
+  .modal-login.active { opacity: 1; visibility: visible; overflow: hidden auto; pointer-events: auto; transition: opacity 0.18s ease; }
+  /* Keep mobile auth forms in one scroll container, including when Safari changes viewport height. */
+  .modal-login .modal-login-inner,
+  .modal-login.active .modal-login-inner {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+  .modal-login-inner__slide:not(.active) { display: none; }
+  .modal-login .modal-login-inner__slide.active {
+    min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px);
+  }
+  .modal-login.active .modal-close { position: fixed; }
   .modal-login-inner__slide[data-target="1"].active .login-vk-link { right: auto; left: 50%; width: max-content; transform: translateX(-50%); }
-  .modal-login:has(.modal-login-inner__slide[data-target="3"].active) .password-recovery-back { position: absolute; top: calc(env(safe-area-inset-top) + 1.25rem); left: 1.25rem; display: flex; z-index: 31; }
+  .modal-login:has(.modal-login-inner__slide[data-target="3"].active) .password-recovery-back { position: fixed; top: calc(env(safe-area-inset-top) + 1.25rem); left: 1.25rem; display: flex; z-index: 31; }
   .modal-login:has(.modal-login-inner__slide[data-target="2"].active) .modal-close { position: absolute; top: 0.625rem; right: 0.625rem; margin: 0; }
   .modal-login-inner__slide[data-target="2"].active { padding: 2.5rem 0 0; justify-content: flex-start; }
   .modal-login-inner__slide[data-target="2"].active .yoga-form-register { gap: 0.625rem; margin-top: 1.25rem; }
