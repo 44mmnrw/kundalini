@@ -1311,10 +1311,20 @@ display: block !important;
   .exercise-switches.is-open .exercise-switches__toggle {
     border-color: var(--color-violet);
   }
-  .exercise-switches__arrow { flex-shrink: 0; }
-  .exercise-switches__arrow--up,
-  .exercise-switches.is-open .exercise-switches__arrow--down { display: none; }
-  .exercise-switches.is-open .exercise-switches__arrow--up { display: block; }
+  .exercise-switches__toggle img.exercise-switches__arrow {
+    display: block;
+    flex-shrink: 0;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    align-self: center;
+    border-radius: 0;
+    background: transparent;
+  }
+  .exercise-switches__toggle img.exercise-switches__arrow--up,
+  .exercise-switches.is-open .exercise-switches__toggle img.exercise-switches__arrow--down { display: none; }
+  .exercise-switches.is-open .exercise-switches__toggle img.exercise-switches__arrow--up { display: block; }
   .exercise-switches__options {
     display: none;
     position: absolute;
