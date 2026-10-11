@@ -1797,7 +1797,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		$restructured[] = $main_video_source;
 		$restructured[] = $main_kinescope_url;
 		$restructured[] = $main_youtube_url;
-		$append_named($restructured, array('media_file', 'duration', 'gallery', 'content'));
+		$append_named($restructured, array('media_file', 'additional_audio', 'duration', 'gallery', 'content'));
 		$main_labels = array(
 			'timing'     => 'Время/циклы',
 			'media_type' => 'Тип медиа',

@@ -495,6 +495,7 @@
 				<?php yoga_render_practice_media_player(array(
 					'media_type'      => $media_type,
 					'media_file'      => $media_file,
+					'additional_audio'=> $exercise['additional_audio'] ?? array(),
 					'video_source'    => $video_source,
 					'kinescope_url'   => $kinescope_url,
 					'youtube_url'     => $youtube_url,
@@ -654,6 +655,7 @@
 					<?php yoga_render_practice_media_player(array(
 						'media_type'       => $media_type_mod,
 						'media_file'       => $media_file_mod,
+						'additional_audio'=> $first_modification['additional_audio'] ?? array(),
 						'video_source'     => $video_source_mod,
 						'kinescope_url'    => $kinescope_url_mod,
 						'youtube_url'      => $youtube_url_mod,

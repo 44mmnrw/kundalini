@@ -236,6 +236,27 @@ function initializeStandalonePracticeVideoPlayers() {
     });
 }
 
+function setupPracticeAudioTrackSelector(playerElement, player, beforeChange) {
+    const selector = playerElement?.previousElementSibling?.querySelector('.practice-audio-tracks__select');
+    const media = playerElement?.querySelector('audio');
+    if (!selector || !media || selector.dataset.initialized === 'true') return;
+    selector.dataset.initialized = 'true';
+    selector.addEventListener('change', () => {
+        const src = selector.value;
+        if (!src || src === playerElement.dataset.mediaSrc) return;
+        beforeChange();
+        const speed = player ? player.speed : media.playbackRate;
+        if (player) player.pause();
+        else media.pause();
+        media.autoplay = false;
+        media.defaultPlaybackRate = speed;
+        playerElement.dataset.mediaSrc = src;
+        media.src = src;
+        media.load();
+        media.playbackRate = speed;
+    });
+}
+
 function decoratePracticeAudioPlayer(playerElement, player) {
     if (!playerElement || !player || playerElement.dataset.audioPlayerDecorated === 'true') {
         return;
@@ -271,6 +292,14 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     const subtitleElement = document.createElement('span');
     subtitleElement.className = 'practice-audio-player__subtitle';
     subtitleElement.textContent = subtitle;
+    const trackSelector = playerElement.previousElementSibling?.querySelector('.practice-audio-tracks__select');
+    if (trackSelector) {
+        const updateTrackTitle = () => {
+            subtitleElement.textContent = trackSelector.selectedOptions[0]?.textContent || subtitle;
+        };
+        trackSelector.addEventListener('change', updateTrackTitle);
+        updateTrackTitle();
+    }
 
     copy.append(titleElement, subtitleElement);
     identity.append(artwork, copy);
@@ -395,8 +424,8 @@ function decoratePracticeAudioPlayer(playerElement, player) {
         canvas.setAttribute('aria-hidden', 'true');
         progressElement.prepend(canvas);
 
-        const sourceElement = audioElement.querySelector('source');
-        const audioSource = audioElement.currentSrc || sourceElement?.src || audioElement.src || '';
+        let waveformRequest = 0;
+        let waveformVisible = false;
 
         const renderPeaks = peaks => {
             const context = canvas.getContext('2d');
@@ -445,6 +474,13 @@ function decoratePracticeAudioPlayer(playerElement, player) {
         };
 
         const loadWaveform = async () => {
+            waveformVisible = true;
+            const request = ++waveformRequest;
+            const sourceElement = audioElement.querySelector('source');
+            const audioSource = playerElement.dataset.mediaSrc || audioElement.currentSrc || sourceElement?.src || audioElement.src || '';
+            drawWaveform = () => {};
+            progressElement.classList.remove('plyr__progress--wave-ready');
+            canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
             const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
             if (!audioSource || !AudioContextConstructor) {
                 return;
@@ -501,19 +537,24 @@ function decoratePracticeAudioPlayer(playerElement, player) {
 
             try {
                 const peaks = await peaksPromise;
+                if (request !== waveformRequest || audioSource !== playerElement.dataset.mediaSrc) return;
                 drawWaveform = () => renderPeaks(peaks);
                 progressElement.classList.add('plyr__progress--wave-ready');
                 drawWaveform(waveformProgress);
 
-                if (typeof ResizeObserver !== 'undefined') {
-                    const resizeObserver = new ResizeObserver(() => drawWaveform(waveformProgress));
-                    resizeObserver.observe(progressElement);
-                }
             } catch (error) {
                 window.practiceAudioWaveformCache.delete(audioSource);
                 console.warn('Practice audio waveform could not be generated', error);
             }
         };
+
+        if (typeof ResizeObserver !== 'undefined') {
+            const resizeObserver = new ResizeObserver(() => drawWaveform(waveformProgress));
+            resizeObserver.observe(progressElement);
+        }
+        audioElement.addEventListener('loadedmetadata', () => {
+            if (waveformVisible) loadWaveform();
+        });
 
         if (typeof IntersectionObserver !== 'undefined') {
             const waveformObserver = new IntersectionObserver(entries => {
@@ -826,6 +867,14 @@ function initializePracticeSystem() {
                     player = new Plyr(mediaElement, playerOptions);
 
                     if (!isVideo) {
+                        setupPracticeAudioTrackSelector(playerElement, player, () => {
+                            pauseTimer();
+                            remainingTime = selectedDuration;
+                            updateTimerDisplay();
+                            if (window.isFullscreenMode && window.currentFullscreenExercise === exerciseId) {
+                                updateFullscreenTimer();
+                            }
+                        });
                         decoratePracticeAudioPlayer(playerElement, player);
                         player.on('ready', () => decoratePracticeAudioPlayer(playerElement, player));
                     }
@@ -1548,6 +1597,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (typeof Plyr === 'undefined') {
                 document.querySelectorAll('.exercise-player[data-media-type="audio"]').forEach(function(playerElement) {
                     playerElement.classList.add('practice-audio-player--fallback');
+                    setupPracticeAudioTrackSelector(playerElement, null, () => {});
                 });
                 console.error('Plyr failed to load after 10 seconds');
             }

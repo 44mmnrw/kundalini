@@ -113,6 +113,10 @@ if (!function_exists('yoga_practice_video_section_has_valid_media')) {
 
 if (!function_exists('yoga_render_practice_media_player')) {
 	function yoga_render_practice_media_player(array $args): void {
+		$audio_tracks = function_exists('yoga_get_exercise_audio_tracks') ? yoga_get_exercise_audio_tracks($args) : array();
+		if ($audio_tracks !== array()) {
+			$args['media_file'] = $audio_tracks[0]['src'];
+		}
 		$media = yoga_get_practice_media_descriptor($args);
 		if ($media === array()) {
 			return;
@@ -121,6 +125,16 @@ if (!function_exists('yoga_render_practice_media_player')) {
 		$version = sanitize_key((string) ($args['version'] ?? 'main'));
 		$player_id = sanitize_html_class((string) ($args['player_id'] ?? 'practice-player'));
 		?>
+		<?php if (count($audio_tracks) > 1): ?>
+		<label class="practice-audio-tracks">
+			<span>Аудиозапись</span>
+			<select class="practice-audio-tracks__select">
+				<?php foreach ($audio_tracks as $track): ?>
+				<option value="<?php echo esc_attr($track['src']); ?>"><?php echo esc_html($track['title']); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</label>
+		<?php endif; ?>
 		<div class="exercise-player"
 			data-version="<?php echo esc_attr($version); ?>"
 			data-media-type="<?php echo esc_attr($media['media_type']); ?>"
@@ -134,7 +148,7 @@ if (!function_exists('yoga_render_practice_media_player')) {
 			<?php elseif ($media['provider'] === 'youtube'): ?>
 			<div id="<?php echo esc_attr($player_id); ?>" class="youtube-player-container" data-plyr-provider="youtube" data-plyr-embed-id="<?php echo esc_attr($media['src']); ?>"></div>
 			<?php elseif ($media['media_type'] === 'audio'): ?>
-			<audio controls><source src="<?php echo esc_url($media['src']); ?>" type="audio/mp3"></audio>
+			<audio controls preload="metadata"><source src="<?php echo esc_url($media['src']); ?>"></audio>
 			<?php else: ?>
 			<video controls playsinline><source src="<?php echo esc_url($media['src']); ?>" type="video/mp4">Ваш браузер не поддерживает видео тег.</video>
 			<?php endif; ?>
