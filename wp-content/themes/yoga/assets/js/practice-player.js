@@ -257,6 +257,60 @@ function setupPracticeAudioTrackSelector(playerElement, player, beforeChange) {
     });
 }
 
+function setupPracticeAudioVolume(controls, player) {
+    const volume = controls.querySelector('.plyr__volume');
+    const button = volume?.querySelector('[data-plyr="mute"]');
+    const slider = volume?.querySelector('input[data-plyr="volume"]');
+    if (!button || !slider || volume.dataset.volumePopupInitialized === 'true') {
+        return;
+    }
+    volume.dataset.volumePopupInitialized = 'true';
+
+    const popup = document.createElement('div');
+    popup.className = 'practice-audio-player__volume-popup';
+    popup.hidden = true;
+    slider.setAttribute('aria-label', 'Громкость');
+    popup.append(slider);
+    volume.append(popup);
+    button.setAttribute('aria-expanded', 'false');
+    button.title = 'Громкость';
+    const updateSpeaker = () => {
+        button.setAttribute('aria-label', 'Громкость');
+        button.removeAttribute('aria-pressed');
+        volume.classList.toggle('is-muted', player.muted || player.volume === 0);
+    };
+    player.on('volumechange', updateSpeaker);
+    player.on('ready', updateSpeaker);
+    updateSpeaker();
+
+    const setOpen = (open, restoreFocus = false) => {
+        popup.hidden = !open;
+        button.setAttribute('aria-expanded', String(open));
+        if (restoreFocus) button.focus();
+    };
+
+    // The speaker opens the existing Plyr slider instead of toggling mute.
+    button.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        setOpen(popup.hidden);
+        if (!popup.hidden) slider.focus();
+    }, true);
+    document.addEventListener('click', event => {
+        if (!volume.contains(event.target)) setOpen(false);
+    });
+    volume.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !popup.hidden) {
+            event.preventDefault();
+            event.stopPropagation();
+            setOpen(false, true);
+        }
+    });
+    volume.addEventListener('focusout', event => {
+        if (!volume.contains(event.relatedTarget)) setOpen(false);
+    });
+}
+
 function decoratePracticeAudioPlayer(playerElement, player) {
     if (!playerElement || !player || playerElement.dataset.audioPlayerDecorated === 'true') {
         return;
@@ -271,6 +325,7 @@ function decoratePracticeAudioPlayer(playerElement, player) {
 
     playerElement.dataset.audioPlayerDecorated = 'true';
     playerElement.classList.add('practice-audio-player');
+    setupPracticeAudioVolume(controls, player);
 
     const exerciseItem = playerElement.closest('.exercise-item');
     const title = exerciseItem?.querySelector('.exercise-item__info h3')?.textContent?.trim() || 'Аудиопрактика';
@@ -409,12 +464,12 @@ function decoratePracticeAudioPlayer(playerElement, player) {
                 }
             };
 
-            paintBars('rgba(255, 255, 255, 0.24)');
+            paintBars('#DCC9F5');
             context.save();
             context.beginPath();
             context.rect(0, 0, cssWidth * waveformProgress, cssHeight);
             context.clip();
-            paintBars('rgba(255, 255, 255, 0.92)');
+            paintBars('#FFFFFF');
             context.restore();
         };
 
