@@ -143,6 +143,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 			<?php yoga_render_practice_media_player(array(
 				'media_type'       => $variant_media_type,
 				'media_file'       => $variant_media_file,
+				'additional_audio'=> $additional_modification['additional_audio'] ?? array(),
 				'video_source'     => $variant_video_source,
 				'kinescope_url'    => $variant_kinescope_url,
 				'youtube_url'      => $variant_youtube_url,

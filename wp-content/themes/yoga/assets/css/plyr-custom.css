@@ -220,6 +220,44 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
 }
 
+.practice-audio-tracks {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0.625rem;
+    font-family: var(--font-family-base);
+    font-size: 0.875rem;
+    color: var(--color-black);
+}
+.practice-audio-tracks__select {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 2.75rem;
+    padding: 0.625rem;
+    border: 1px solid var(--color-violet);
+    border-radius: 0.4375rem;
+    background: var(--color-white);
+    color: var(--color-black);
+    font: inherit;
+    cursor: pointer;
+}
+.practice-audio-tracks__select:focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 2px;
+}
+@media (max-width: 575px) {
+    .practice-audio-tracks {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .practice-audio-tracks__select {
+        width: 100%;
+    }
+}
+
 .practice-audio-player__identity {
     display: flex;
     flex: 0 1 240px;
