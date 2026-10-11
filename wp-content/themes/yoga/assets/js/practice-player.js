@@ -305,61 +305,6 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     identity.append(artwork, copy);
     playerElement.insertBefore(identity, plyrElement);
 
-    const makeSeekButton = (seconds, label, className) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = `practice-audio-player__seek ${className}`;
-        button.setAttribute('aria-label', label);
-        button.title = label;
-
-        const arrow = document.createElement('span');
-        arrow.className = 'practice-audio-player__seek-arrow';
-        arrow.setAttribute('aria-hidden', 'true');
-
-        button.append(arrow);
-        button.addEventListener('click', () => {
-            const duration = Number.isFinite(player.duration) ? player.duration : Infinity;
-            player.currentTime = Math.max(0, Math.min(duration, player.currentTime + seconds));
-        });
-        return button;
-    };
-
-    const rewindButton = makeSeekButton(-15, 'Назад на 15 секунд', 'practice-audio-player__seek--rewind');
-    const forwardButton = makeSeekButton(30, 'Вперёд на 30 секунд', 'practice-audio-player__seek--forward');
-    controls.insertBefore(rewindButton, playButton);
-    playButton.insertAdjacentElement('afterend', forwardButton);
-
-    const speeds = [0.75, 1, 1.25, 1.5, 2];
-    const speedButton = document.createElement('button');
-    speedButton.type = 'button';
-    speedButton.className = 'practice-audio-player__speed';
-    speedButton.title = 'Скорость воспроизведения';
-
-    const formatSpeed = value => {
-        const numericSpeed = Number(value);
-        const safeSpeed = Number.isFinite(numericSpeed) && numericSpeed > 0 ? numericSpeed : 1;
-        return `${parseFloat(safeSpeed.toFixed(2))}×`;
-    };
-
-    const updateSpeedButton = value => {
-        const label = formatSpeed(value ?? player.speed);
-        speedButton.textContent = label;
-        speedButton.setAttribute('aria-label', `Скорость воспроизведения: ${label}`);
-    };
-
-    updateSpeedButton(player.speed);
-    player.on('ratechange', () => updateSpeedButton(player.speed));
-    player.on('ready', () => updateSpeedButton(player.speed));
-    setTimeout(() => updateSpeedButton(player.speed), 0);
-
-    speedButton.addEventListener('click', () => {
-        const currentIndex = speeds.findIndex(speed => Math.abs(speed - player.speed) < 0.01);
-        const nextSpeed = speeds[(currentIndex + 1) % speeds.length];
-        player.speed = nextSpeed;
-        updateSpeedButton(nextSpeed);
-    });
-    forwardButton.insertAdjacentElement('afterend', speedButton);
-
     const loopButton = document.createElement('button');
     loopButton.type = 'button';
     loopButton.className = 'practice-audio-player__loop';
@@ -379,7 +324,7 @@ function decoratePracticeAudioPlayer(playerElement, player) {
         loopButton.setAttribute('aria-pressed', loopEnabled ? 'true' : 'false');
         loopButton.setAttribute('aria-label', loopEnabled ? 'Выключить повтор аудио' : 'Включить повтор аудио');
     });
-    speedButton.insertAdjacentElement('afterend', loopButton);
+    playButton.insertAdjacentElement('afterend', loopButton);
 
     const progressElement = controls.querySelector('.plyr__progress');
     const audioElement = player.media || playerElement.querySelector('audio');
