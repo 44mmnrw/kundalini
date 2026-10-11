@@ -383,6 +383,7 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     });
     playButton.insertAdjacentElement('afterend', loopButton);
 
+    /* Waveform disabled: keep the native Plyr timeline only.
     const progressElement = controls.querySelector('.plyr__progress');
     const audioElement = player.media || playerElement.querySelector('audio');
     let waveformProgress = 0;
@@ -591,6 +592,7 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     player.on('durationchange', updateWaveProgress);
     player.on('seeked', updateWaveProgress);
     updateWaveProgress();
+    */
 }
 
 function initializePracticeSystem() {

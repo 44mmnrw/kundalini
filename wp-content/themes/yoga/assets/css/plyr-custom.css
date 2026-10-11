@@ -438,6 +438,7 @@
     height: 24px;
 }
 
+/* Waveform decoration disabled; only the timeline remains.
 .exercise-player.practice-audio-player .plyr__progress::before {
     content: '';
     position: absolute;
@@ -467,6 +468,8 @@
     opacity: 1;
     filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.22));
 }
+
+*/
 
 .exercise-player.practice-audio-player .plyr__progress input[type='range'] {
     z-index: 2;

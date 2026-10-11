@@ -1,7 +1,9 @@
 <?php
 /** Run with: php wp-content/themes/yoga/tests/exercise-audio.php */
 define('ABSPATH', __DIR__ . '/');
-function add_filter() {}
+function add_filter($hook, $callback, $priority = 10, $accepted_args = 1) {
+	$GLOBALS['audio_test_filters'][$hook][$priority][] = $callback;
+}
 function add_action() {}
 function yoga_is_acf_field_group_editor() { return !empty($GLOBALS['schema_editor']); }
 function acf_get_valid_field($field) { return $field; }
@@ -15,6 +17,7 @@ function wp_strip_all_tags($value) { return strip_tags($value); }
 function wp_get_attachment_url($id) { return 'https://example.test/' . $id . '.mp3'; }
 require dirname(__DIR__) . '/inc/integrations/acf.php';
 require dirname(__DIR__) . '/inc/practice-media.php';
+require dirname(__DIR__) . '/inc/exercise-sources.php';
 require dirname(__DIR__) . '/inc/exercise-audio.php';
 function check_audio($condition, $message) {
 	if (!$condition) { fwrite(STDERR, $message . "\n"); exit(1); }
@@ -36,6 +39,27 @@ check_audio($result['sub_fields'][3]['sub_fields'][2]['conditional_logic'][0][0]
 $GLOBALS['schema_editor'] = true;
 check_audio(yoga_add_exercise_audio_fields($field) === $field, 'Raw schema editor changed.');
 $GLOBALS['schema_editor'] = false;
+// Run the actual editor filter chain, including the legacy-to-current layout conversion.
+$legacy_modification_fields = array();
+foreach (array('modification_name', 'matter', 'details', 'timing', 'media_type', 'media_file', 'duration', 'gallery', 'content') as $name) {
+	$legacy_modification_fields[] = array('key' => 'field_ex_additional_modification_' . $name, 'name' => $name, 'type' => 'text');
+}
+$editor_field = array('ID' => 55, 'key' => 'field_exercise_items', 'sub_fields' => array_merge($main_fields, array(
+	array('name' => 'duration', 'key' => 'field_ex_duration', 'type' => 'number'),
+	array('name' => 'additional_modifications', 'key' => 'field_ex_additional_modifications', 'type' => 'repeater', 'sub_fields' => $legacy_modification_fields),
+)));
+$filters = $GLOBALS['audio_test_filters']['acf/load_field/key=field_exercise_items'];
+ksort($filters);
+foreach ($filters as $callbacks) {
+	foreach ($callbacks as $callback) {
+		$editor_field = $callback($editor_field);
+	}
+}
+$editor_names = array_column($editor_field['sub_fields'], 'name');
+$media_index = array_search('media_file', $editor_names, true);
+check_audio($editor_names[$media_index + 1] === 'additional_audio' && $editor_names[$media_index + 2] === 'duration', 'Full ACF editor chain removed or misplaced the main audio list.');
+$modifications = $editor_field['sub_fields'][array_search('modifications', $editor_names, true)];
+check_audio(in_array('additional_audio', array_column($modifications['sub_fields'], 'name'), true), 'Full ACF editor chain lost modification audio.');
 $rows = array(array('file' => 2, 'title' => '<b>Second</b>'), array('file' => '', 'title' => 'Empty'), null, array('file' => array('url' => 'https://example.test/third.ogg')));
 $args = array('media_type' => 'audio', 'media_file' => array('url' => 'https://example.test/first.mp3'), 'additional_audio' => $rows);
 $tracks = yoga_get_exercise_audio_tracks($args);
