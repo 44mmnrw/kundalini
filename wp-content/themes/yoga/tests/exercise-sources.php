@@ -74,7 +74,8 @@ foreach (array('', '  ', '<p><br></p>', '<p>&nbsp;</p>', array()) as $empty) {
 	check_sources(render_sources($empty) === '', 'Empty source rendered a block.');
 }
 $html = render_sources('<p><a href="https://example.test/book">Book</a>, 2016</p><script>alert(1)</script><p>Another source</p>');
-check_sources(str_contains($html, 'exercise-sources-info.svg') && str_contains($html, 'https://example.test/book') && str_contains($html, 'Another source'), 'Sources markup lost icon, link, or paragraphs.');
+check_sources(str_contains($html, 'sprite.svg#exercise-sources-info') && str_contains($html, 'https://example.test/book') && str_contains($html, 'Another source'), 'Sources markup lost icon, link, or paragraphs.');
+check_sources(!str_contains($html, 'Описание этой крийи составлено'), 'Template added fallback text to ACF content.');
 check_sources(!str_contains($html, '<script'), 'Unsafe markup was rendered.');
 check_sources(!str_contains(render_sources('<a href="javascript:alert(1)">Book</a>'), 'href="javascript:'), 'Unsafe link was rendered.');
 echo "Exercise sources tests passed.\n";

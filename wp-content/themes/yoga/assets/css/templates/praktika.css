@@ -1155,8 +1155,9 @@ p.praktika-section-paywall__text {
 .exercise-sources__icon {
   flex: 0 0 1.375rem;
   padding-top: 0.3125rem;
+  color: var(--color-violet);
 }
-.exercise-sources__icon img {
+.exercise-sources__icon svg {
   display: block;
   width: 1.375rem;
   height: 1.375rem;
@@ -1166,10 +1167,16 @@ p.praktika-section-paywall__text {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.exercise-sources__text > * {
+.praktika-info .exercise-sources__text > * {
   margin: 0;
 }
-.exercise-sources__text > * + * {
+.praktika-info .exercise-sources__text p {
+  font-family: var(--font-family-base);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: normal;
+}
+.praktika-info .exercise-sources__text > * + * {
   margin-top: 0.625rem;
 }
 .exercise-sources__text a {
