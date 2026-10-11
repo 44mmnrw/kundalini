@@ -37,6 +37,7 @@
 
 	require_once get_template_directory() . '/inc/integrations/acf.php';
 	require_once get_template_directory() . '/inc/practice-gallery-framing.php';
+	require_once get_template_directory() . '/inc/exercise-sources.php';
 	require_once get_template_directory() . '/inc/practice-media.php';
 	require_once get_template_directory() . '/inc/practice-tariff-access.php';
 	require_once get_template_directory() . '/inc/practice-visibility.php';

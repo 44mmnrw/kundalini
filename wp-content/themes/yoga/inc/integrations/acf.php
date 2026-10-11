@@ -1790,7 +1790,7 @@ if (!function_exists('yoga_restructure_practice_exercise_modifications')) {
 		};
 
 		$restructured = array($accordion('field_ex_admin_common', 'Общие данные упражнения', true));
-		$append_named($restructured, array('title', 'subtitle'));
+		$append_named($restructured, array('title', 'subtitle', 'sources'));
 		$restructured[] = $accordion('field_ex_admin_main_modification', 'Выполнение', true);
 		$restructured[] = $main_modification_name;
 		$append_named($restructured, array('matter', 'details', 'timing', 'media_type'));

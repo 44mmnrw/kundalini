@@ -687,6 +687,7 @@
 		include get_template_directory() . '/template-parts/praktika-info/exercise-additional-modification.php';
 	?>
 	<?php endforeach; ?>
+	<?php include get_template_directory() . '/template-parts/praktika-info/exercise-sources.php'; ?>
 </div>
 <?php endforeach; ?>
 <?php endif; ?>
