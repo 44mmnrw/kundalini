@@ -1139,9 +1139,12 @@ p.praktika-section-paywall__text {
 
 .exercise-sources {
   display: flex;
+  flex-shrink: 0;
   align-items: flex-start;
   gap: 0.9375rem;
   width: 100%;
+  height: auto;
+  max-height: none;
   margin-top: 1.875rem;
   padding: 1.875rem;
   border-radius: 1.875rem;
@@ -1150,7 +1153,7 @@ p.praktika-section-paywall__text {
   font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 400;
-  line-height: normal;
+  line-height: 1.25;
 }
 .exercise-sources__icon {
   flex: 0 0 1.375rem;
@@ -1165,16 +1168,22 @@ p.praktika-section-paywall__text {
 .exercise-sources__text {
   flex: 1;
   min-width: 0;
+  height: auto;
+  max-height: none;
+  overflow: visible;
   overflow-wrap: anywhere;
 }
 .praktika-info .exercise-sources__text > * {
   margin: 0;
 }
 .praktika-info .exercise-sources__text p {
+  height: auto;
+  max-height: none;
+  overflow: visible;
   font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 400;
-  line-height: normal;
+  line-height: 1.25;
 }
 .praktika-info .exercise-sources__text > * + * {
   margin-top: 0.625rem;
@@ -1185,6 +1194,10 @@ p.praktika-section-paywall__text {
   text-underline-position: from-font;
 }
 @media (max-width: 767px) {
+  .exercise-sources,
+  .praktika-info .exercise-sources__text p {
+    font-size: 0.875rem;
+  }
   .exercise-sources {
     padding: 1.25rem 0.9375rem;
     border-radius: 1.25rem;
