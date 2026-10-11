@@ -246,9 +246,11 @@
 
 .kriya-goals {
   display: flex;
+  grid-column: 1;
+  grid-row: 3;
   flex-wrap: wrap;
   gap: 0.3125rem;
-  margin-top: 1.25rem;
+  margin-top: 0.625rem;
 }
 .kriya-goal {
   display: inline-flex;
@@ -269,7 +271,6 @@
   overflow-wrap: anywhere;
   transition: background-color var(--transition-base), color var(--transition-base);
 }
-.kriya-goal:hover,
 .kriya-goal:focus-visible {
   background: var(--color-violet);
   color: var(--color-white, #fff);
@@ -277,6 +278,15 @@
 .kriya-goal:focus-visible {
   outline: 2px solid var(--color-violet);
   outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .kriya-goal:hover {
+    background: var(--color-violet);
+    color: var(--color-white, #fff);
+  }
+}
+.kriyi-item__inner:has(> .kriya-goals) .kriya-media {
+  grid-row: 1 / 4;
 }
 
 .kriya-media {
@@ -419,6 +429,12 @@
     flex: 1 0 100%;
     margin-top: auto;
     width: 100%;
+  }
+  .kriya-goals {
+    order: 5;
+    flex: 0 0 100%;
+    width: 100%;
+    margin-top: 1.25rem;
   }
   .kriya-btn {
     order: 5;
