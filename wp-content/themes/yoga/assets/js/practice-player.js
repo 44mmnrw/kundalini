@@ -270,6 +270,8 @@ function setupPracticeAudioVolume(controls, player) {
     popup.className = 'practice-audio-player__volume-popup';
     popup.hidden = true;
     slider.setAttribute('aria-label', 'Громкость');
+    slider.setAttribute('aria-orientation', 'vertical');
+    slider.setAttribute('orient', 'vertical');
     popup.append(slider);
     volume.append(popup);
     button.setAttribute('aria-expanded', 'false');

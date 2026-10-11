@@ -557,8 +557,8 @@
     z-index: 5;
     right: 0;
     bottom: calc(100% + 8px);
-    width: 144px;
-    padding: 10px 12px;
+    width: 40px;
+    padding: 12px;
     background: var(--color-violet, #9153e1);
     border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 8px;
@@ -571,21 +571,39 @@
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range'] {
     display: block;
-    width: 100%;
+    width: 16px;
+    height: 120px;
     min-width: 0;
     margin: 0;
+    padding: 0;
+    writing-mode: vertical-lr;
+    direction: rtl;
     color: #fff;
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #fff var(--value, 0%), rgba(255, 255, 255, 0.3) var(--value, 0%));
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to top, #fff var(--value, 0%), #dcc9f5 var(--value, 0%));
+}
+
+.exercise-player.practice-audio-player .plyr__volume input[type='range']::-webkit-slider-thumb {
+    margin: 0;
+    background: #fff;
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-moz-range-track {
-    background: rgba(255, 255, 255, 0.3);
+    width: 4px;
+    height: 100%;
+    background: #dcc9f5;
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-moz-range-progress {
+    width: 4px;
+    background: #fff;
+}
+
+.exercise-player.practice-audio-player .plyr__volume input[type='range']::-moz-range-thumb {
     background: #fff;
 }
 
