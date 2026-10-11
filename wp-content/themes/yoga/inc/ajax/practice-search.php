@@ -371,6 +371,7 @@ if (!defined('ABSPATH')) {
 			<div class="kriya-info">
 				<h3><?php the_title(); ?></h3>
 				<p><?php echo esc_html($practice_description); ?></p>
+				<?php get_template_part('template-parts/practice-goals', null, array('practice_id' => (int) get_the_ID())); ?>
 			</div>
 			<div class="kriya-media">
 				<div class="kriya-img">
