@@ -297,13 +297,13 @@
 }
 
 .practice-audio-player__title {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 600;
 }
 
 .practice-audio-player__subtitle {
     color: rgba(255, 255, 255, 0.72);
-    font-size: 9px;
+    font-size: 11.25px;
     font-weight: 400;
 }
 
@@ -369,17 +369,23 @@
     overflow: visible;
 }
 
-.exercise-player.practice-audio-player .plyr--paused .plyr__control[data-plyr='play'] svg {
+.exercise-player.practice-audio-player .plyr__control[data-plyr='play'] svg {
     display: none;
 }
 
-.exercise-player.practice-audio-player .plyr--paused .plyr__control[data-plyr='play']::before {
+.exercise-player.practice-audio-player .plyr__control[data-plyr='play']::before {
     content: '';
     display: block;
-    width: 20px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     background: currentColor;
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    -webkit-mask: url('../svg/player-play.svg') center / contain no-repeat;
+    mask: url('../svg/player-play.svg') center / contain no-repeat;
+}
+
+.exercise-player.practice-audio-player .plyr--playing .plyr__control[data-plyr='play']::before {
+    -webkit-mask-image: url('../svg/player-pause.svg');
+    mask-image: url('../svg/player-pause.svg');
 }
 
 .exercise-player.practice-audio-player .plyr__control[data-plyr='play']:hover,
@@ -418,14 +424,11 @@
     position: relative;
     z-index: 1;
     display: block;
-    width: 26px;
-    height: 26px;
-    background: url('../svg/loop.svg') center / contain no-repeat;
-    transition: filter 0.18s ease;
-}
-
-.practice-audio-player__loop.is-active .practice-audio-player__loop-icon {
-    filter: invert(1);
+    width: 24px;
+    height: 24px;
+    background: currentColor;
+    -webkit-mask: url('../svg/player-repeat.svg') center / contain no-repeat;
+    mask: url('../svg/player-repeat.svg') center / contain no-repeat;
 }
 
 .exercise-player.practice-audio-player .plyr__progress__container {
@@ -539,7 +542,7 @@
     min-width: 34px;
     padding: 0;
     color: var(--practice-player-muted);
-    font-size: 9px;
+    font-size: 11.25px;
     font-variant-numeric: tabular-nums;
     font-weight: 400;
 }
@@ -566,6 +569,8 @@
     right: 0;
     bottom: calc(100% + 8px);
     width: 40px;
+    height: 146px;
+    box-sizing: border-box;
     padding: 12px;
     background: var(--color-violet, #9153e1);
     border: 1px solid rgba(255, 255, 255, 0.35);
@@ -579,35 +584,42 @@
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range'] {
     display: block;
-    width: 16px;
-    height: 120px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 16px;
     min-width: 0;
     margin: 0;
     padding: 0;
-    writing-mode: vertical-lr;
-    direction: rtl;
+    /* Rotate a horizontal range to keep WebKit's thumb aligned on macOS. */
+    writing-mode: horizontal-tb;
+    direction: ltr;
+    transform: translate(-50%, -50%) rotate(-90deg);
     color: #fff;
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-webkit-slider-runnable-track {
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(to top, #fff var(--value, 0%), #dcc9f5 var(--value, 0%));
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, #fff var(--value, 0%), #dcc9f5 var(--value, 0%));
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-webkit-slider-thumb {
-    margin: 0;
+    width: 13px;
+    height: 13px;
+    margin: -4.5px 0 0;
     background: #fff;
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-moz-range-track {
-    width: 4px;
-    height: 100%;
+    width: 100%;
+    height: 4px;
     background: #dcc9f5;
 }
 
 .exercise-player.practice-audio-player .plyr__volume input[type='range']::-moz-range-progress {
-    width: 4px;
+    height: 4px;
     background: #fff;
 }
 
@@ -630,8 +642,8 @@
     width: 24px;
     height: 24px;
     background: currentColor;
-    -webkit-mask: url('../svg/volume.svg') center / contain no-repeat;
-    mask: url('../svg/volume.svg') center / contain no-repeat;
+    -webkit-mask: url('../svg/player-volume.svg') center / contain no-repeat;
+    mask: url('../svg/player-volume.svg') center / contain no-repeat;
 }
 
 .exercise-player.practice-audio-player .plyr__volume.is-muted .plyr__control[data-plyr='mute']::before {
