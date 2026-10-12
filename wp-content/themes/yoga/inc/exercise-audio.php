@@ -84,7 +84,7 @@ function yoga_add_exercise_audio_title_fields(array $field): array {
 			'parent_repeater' => $parent_key,
 			'required' => 0,
 			'default_value' => '',
-			'instructions' => 'Название записи в плеере и списке аудио. Если не заполнено, используется «Основное аудио».',
+			'instructions' => 'Верхний заголовок плеера вместо «Аудиопрактика», а также название в списке аудио. Если не заполнено, используется «Основное аудио».',
 			'conditional_logic' => array(array(array('field' => $by_name['media_type']['key'], 'operator' => '==', 'value' => 'audio'))),
 		);
 		$title = yoga_validate_practice_exercise_field_tree($title);

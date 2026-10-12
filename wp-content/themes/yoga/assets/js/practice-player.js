@@ -330,8 +330,8 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     setupPracticeAudioVolume(controls, player);
 
     const exerciseItem = playerElement.closest('.exercise-item');
-    const title = exerciseItem?.querySelector('.exercise-item__info h3')?.textContent?.trim() || 'Аудиопрактика';
-    const subtitle = playerElement.dataset.audioTitle || exerciseItem?.querySelector('.exercise-item__info h4')?.textContent?.trim() || 'Кундалини Online';
+    const title = playerElement.dataset.audioTitle || exerciseItem?.querySelector('.exercise-item__info h3')?.textContent?.trim() || 'Аудиопрактика';
+    const subtitle = exerciseItem?.querySelector('.exercise-item__info h4')?.textContent?.trim() || 'Кундалини Online';
     const identity = document.createElement('div');
     identity.className = 'practice-audio-player__identity';
 
@@ -352,7 +352,7 @@ function decoratePracticeAudioPlayer(playerElement, player) {
     const trackSelector = playerElement.previousElementSibling?.querySelector('.practice-audio-tracks__select');
     if (trackSelector) {
         const updateTrackTitle = () => {
-            subtitleElement.textContent = trackSelector.selectedOptions[0]?.textContent || subtitle;
+            titleElement.textContent = trackSelector.selectedOptions[0]?.textContent || title;
         };
         trackSelector.addEventListener('change', updateTrackTitle);
         updateTrackTitle();
