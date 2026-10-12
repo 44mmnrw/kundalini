@@ -1932,6 +1932,32 @@ if (!function_exists('yoga_add_practice_precise_timer_fields')) {
 
 add_filter('acf/load_field/key=field_exercise_items', 'yoga_add_practice_precise_timer_fields', 25);
 
+/** Validate nested definitions added by the exercise schema filters before rendering. */
+function yoga_validate_practice_exercise_field_tree(array $field): array {
+	if (function_exists('acf_validate_field')) {
+		$field = acf_validate_field($field);
+	} elseif (function_exists('acf_get_valid_field')) {
+		$field = acf_get_valid_field($field);
+	}
+	foreach ((array) ($field['sub_fields'] ?? array()) as $index => $sub_field) {
+		$field['sub_fields'][$index] = yoga_validate_practice_exercise_field_tree($sub_field);
+	}
+	foreach ((array) ($field['layouts'] ?? array()) as $index => $layout) {
+		foreach ((array) ($layout['sub_fields'] ?? array()) as $sub_index => $sub_field) {
+			$field['layouts'][$index]['sub_fields'][$sub_index] = yoga_validate_practice_exercise_field_tree($sub_field);
+		}
+	}
+	return $field;
+}
+
+function yoga_validate_practice_exercise_fields(array $field): array {
+	if (yoga_is_acf_field_group_editor()) {
+		return $field;
+	}
+	return yoga_validate_practice_exercise_field_tree($field);
+}
+add_filter('acf/load_field/key=field_exercise_items', 'yoga_validate_practice_exercise_fields', 99);
+
 if (!function_exists('yoga_validate_practice_timer_seconds')) {
 	/** Rejects out-of-range or fractional seconds in precise timer presets. */
 	function yoga_validate_practice_timer_seconds($valid, $value) {
