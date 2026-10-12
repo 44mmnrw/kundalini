@@ -7,6 +7,12 @@ function add_filter($hook, $callback, $priority = 10, $accepted_args = 1) {
 function add_action() {}
 function yoga_is_acf_field_group_editor() { return !empty($GLOBALS['schema_editor']); }
 function acf_get_valid_field($field) { return $field; }
+// Match ACF's shallow validation: children need their own validation pass.
+function acf_validate_field($field) {
+	$field += array('instructions' => '', 'wrapper' => array(), '_name' => $field['name'] ?? '');
+	$field['wrapper'] += array('width' => '', 'class' => '', 'id' => '');
+	return $field;
+}
 function sanitize_key($value) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($value)); }
 function sanitize_html_class($value) { return sanitize_key($value); }
 function esc_url_raw($value) { return preg_match('~^https?://~', $value) ? $value : ''; }
@@ -56,6 +62,13 @@ foreach ($filters as $callbacks) {
 	}
 }
 $editor_names = array_column($editor_field['sub_fields'], 'name');
+function check_renderable_audio_fields($field) {
+	check_audio(isset($field['instructions'], $field['wrapper']['width'], $field['wrapper']['class'], $field['wrapper']['id']), 'Nested ACF field lacks rendering defaults: ' . ($field['key'] ?? 'unknown'));
+	foreach ($field['sub_fields'] ?? array() as $child) {
+		check_renderable_audio_fields($child);
+	}
+}
+check_renderable_audio_fields($editor_field);
 $media_index = array_search('media_file', $editor_names, true);
 check_audio($editor_names[$media_index + 1] === 'additional_audio' && $editor_names[$media_index + 2] === 'duration', 'Full ACF editor chain removed or misplaced the main audio list.');
 $modifications = $editor_field['sub_fields'][array_search('modifications', $editor_names, true)];
