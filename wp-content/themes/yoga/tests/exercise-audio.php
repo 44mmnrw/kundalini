@@ -73,6 +73,11 @@ $media_index = array_search('media_file', $editor_names, true);
 check_audio($editor_names[$media_index + 1] === 'additional_audio' && $editor_names[$media_index + 2] === 'duration', 'Full ACF editor chain removed or misplaced the main audio list.');
 $modifications = $editor_field['sub_fields'][array_search('modifications', $editor_names, true)];
 check_audio(in_array('additional_audio', array_column($modifications['sub_fields'], 'name'), true), 'Full ACF editor chain lost modification audio.');
+$main_title = $editor_field['sub_fields'][$media_index - 1];
+check_audio($main_title['name'] === 'audio_title' && $main_title['conditional_logic'][0][0]['field'] === 'field_ex_media_type', 'Primary audio title is misplaced or has the wrong condition.');
+$modification_title = array_column($modifications['sub_fields'], null, 'name')['audio_title'];
+check_audio($modification_title['key'] !== $main_title['key'] && $modification_title['conditional_logic'][0][0]['field'] === 'field_ex_modifications_media_type', 'Modification audio title is not independent.');
+check_audio(yoga_add_exercise_audio_title_fields($editor_field) === $editor_field, 'Repeated load duplicates audio titles.');
 $rows = array(array('file' => 2, 'title' => '<b>Second</b>'), array('file' => '', 'title' => 'Empty'), null, array('file' => array('url' => 'https://example.test/third.ogg')));
 $args = array('media_type' => 'audio', 'media_file' => array('url' => 'https://example.test/first.mp3'), 'additional_audio' => $rows);
 $tracks = yoga_get_exercise_audio_tracks($args);
@@ -81,6 +86,11 @@ check_audio(yoga_get_exercise_audio_tracks(array('media_type' => 'video', 'addit
 function render_audio($args) { ob_start(); yoga_render_practice_media_player($args); return ob_get_clean(); }
 $single = render_audio(array('media_type' => 'audio', 'media_file' => 1));
 check_audio(str_contains($single, '/1.mp3') && !str_contains($single, '<select'), 'Single-file practice changed.');
+check_audio(str_contains($single, 'data-audio-title="Основное аудио"'), 'Missing primary title fallback.');
+$named = render_audio(array('media_type' => 'audio', 'media_file' => 1, 'audio_title' => '<b>Мантра</b> "Ом"'));
+check_audio(str_contains($named, 'data-audio-title="Мантра &quot;Ом&quot;"'), 'Single track title is missing or not escaped.');
+$named_tracks = yoga_get_exercise_audio_tracks(array_merge($args, array('audio_title' => 'Моя запись')));
+check_audio($named_tracks[0]['title'] === 'Моя запись' && $named_tracks[1]['title'] === 'Second', 'Primary title changes additional track titles.');
 $multiple = render_audio($args);
 check_audio(substr_count($multiple, '<option ') === 3 && substr_count($multiple, '<audio ') === 1, 'Expected one player with three choices.');
 unset($args['media_file']);

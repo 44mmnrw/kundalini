@@ -140,6 +140,7 @@ if (!function_exists('yoga_render_practice_media_player')) {
 			data-media-type="<?php echo esc_attr($media['media_type']); ?>"
 			data-media-provider="<?php echo esc_attr($media['provider']); ?>"
 			data-media-src="<?php echo esc_attr($media['src']); ?>"
+			data-audio-title="<?php echo esc_attr($audio_tracks[0]['title'] ?? ''); ?>"
 			data-allow-fullscreen="<?php echo !empty($args['allow_fullscreen']) ? 'true' : 'false'; ?>"
 			data-restrict-scrub="<?php echo !empty($args['restrict_scrub']) ? 'true' : 'false'; ?>"
 			data-auto-play="<?php echo !empty($args['auto_play']) ? 'true' : 'false'; ?>">

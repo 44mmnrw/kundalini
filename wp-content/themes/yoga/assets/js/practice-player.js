@@ -331,7 +331,7 @@ function decoratePracticeAudioPlayer(playerElement, player) {
 
     const exerciseItem = playerElement.closest('.exercise-item');
     const title = exerciseItem?.querySelector('.exercise-item__info h3')?.textContent?.trim() || 'Аудиопрактика';
-    const subtitle = exerciseItem?.querySelector('.exercise-item__info h4')?.textContent?.trim() || 'Кундалини Online';
+    const subtitle = playerElement.dataset.audioTitle || exerciseItem?.querySelector('.exercise-item__info h4')?.textContent?.trim() || 'Кундалини Online';
     const identity = document.createElement('div');
     identity.className = 'practice-audio-player__identity';
 

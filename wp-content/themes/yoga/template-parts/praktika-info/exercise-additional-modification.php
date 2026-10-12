@@ -144,6 +144,7 @@ $variant_gallery_fancybox = 'practice-exercise-gallery-' . $index . '-' . $ex_id
 				'media_type'       => $variant_media_type,
 				'media_file'       => $variant_media_file,
 				'additional_audio'=> $additional_modification['additional_audio'] ?? array(),
+				'audio_title'     => $additional_modification['audio_title'] ?? '',
 				'video_source'     => $variant_video_source,
 				'kinescope_url'    => $variant_kinescope_url,
 				'youtube_url'      => $variant_youtube_url,
