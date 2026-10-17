@@ -4630,7 +4630,7 @@ jQuery(document).ready(function($) {
 			var spriteUrl = currentHref.indexOf('#') !== -1
 				? currentHref.split('#')[0]
 				: (yoga_ajax.sprite_url || '');
-			$use.attr('href', spriteUrl + (count > 0 ? '#site-heart-filled' : '#site-heart'));
+			$use.attr('href', spriteUrl + (count > 0 ? '#header-site-heart-filled' : '#header-site-heart'));
 		});
 
 		var $counter = $link.find('.header-favorites-link__count');
