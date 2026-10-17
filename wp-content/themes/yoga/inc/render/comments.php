@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = yoga_comment_is_owned_by_logged_in_user($comment);
-    $comments_restricted = (bool) yoga_get_comment_restriction_until((int) get_current_user_id());
+    $comments_restricted = (bool) yoga_is_comment_restricted((int) get_current_user_id());
     $comment_user_id = (int) $comment->user_id;
     $comment_author_name = trim((string) $comment->comment_author);
 
