@@ -140,6 +140,7 @@ if (!is_array($library_goal_terms) || is_wp_error($library_goal_terms)) {
 						</div>
 					</div>
 				</form>
+				<div class="practice-selected-filters" data-selected-filters data-remove-icon="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/practice-filter-remove.svg'); ?>" data-clear-icon="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/practice-filter-clear.svg'); ?>" role="group" aria-label="<?php esc_attr_e('Выбранные фильтры', 'yoga'); ?>" hidden></div>
 			</div>
 		</div>
 

@@ -55,16 +55,24 @@
 	}
 
 	function renderSelectedFilters() {
-		$('.section-kriyi [data-selected-filters]').each(function () {
+		$('.section-kriyi [data-selected-filters], .section-library [data-selected-filters]').each(function () {
 			var container = this;
-			var section = container.closest('.section-kriyi');
+			var section = container.closest('.section-kriyi, .section-library');
+			var form = section.querySelector('form');
+			var inputs = section.matches('.section-kriyi')
+				? section.querySelectorAll('.filter input[type="checkbox"]:checked')
+				: Array.from(document.querySelectorAll('input.library-filter-input:checked')).filter(function (input) {
+					return input.form === form;
+				});
 			var seen = Object.create(null);
 			container.replaceChildren();
-			section.querySelectorAll('.filter input[type="checkbox"]:checked').forEach(function (input) {
+			inputs.forEach(function (input) {
 				var key = inputKey(input);
 				if (seen[key]) return;
 				seen[key] = true;
 				var label = input.labels && input.labels[0];
+				var row = input.closest('.library-filters-screen__row');
+				if (!label && row) label = row.querySelector('.library-filters-screen__text');
 				var text = label ? label.textContent.replace(/\s+/g, ' ').trim() : '';
 				if (!text) return;
 				var button = document.createElement('button');
@@ -103,7 +111,10 @@
 			clearIcon.setAttribute('aria-hidden', 'true');
 			clearButton.append(clearTitle, clearIcon);
 			clearButton.addEventListener('click', function () {
-				$(section).find('.form-reset').trigger('click');
+				var reset = section.matches('.section-kriyi')
+					? $(section).find('.form-reset')
+					: $('#library-filters-screen .js-library-filters-reset');
+				reset.trigger('click');
 				var search = section.querySelector('.form-search input[type="text"]');
 				if (search) search.focus();
 			});
