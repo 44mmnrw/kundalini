@@ -13,7 +13,7 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
     <h3><?php echo esc_html($section['title']); ?></h3>
 
 
-    <?php if (yoga_get_comment_restriction_until((int) get_current_user_id())) : ?>
+    <?php if (yoga_is_comment_restricted((int) get_current_user_id())) : ?>
         <?php yoga_render_comment_restriction_notice(); ?>
     <?php else : ?>
     <div class="comment-form-main">

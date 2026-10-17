@@ -56,6 +56,7 @@ function get_the_ID() { return 42; }
 function wp_nonce_field(...$args) {}
 function esc_attr_e($s, $domain = '') { echo esc_attr($s); }
 function esc_html_e($s, $domain = '') { echo esc_html($s); }
+function checked($value) { if ($value) { echo 'checked="checked"'; } }
 function post_password_required() { return false; }
 function get_post_type($id) { return 'post'; }
 require dirname(__DIR__) . '/inc/comments.php';
@@ -70,6 +71,7 @@ function rejected($callback, $label) {
 }
 if (($argv[1] ?? '') === 'render') {
     $meta[7]['_yoga_comment_restricted_until'] = time() + 86400;
+    if (($argv[2] ?? '') === 'permanent') { $meta[7]['_yoga_comment_restricted_permanently'] = 1; }
     echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="' . get_template_directory_uri() . '/assets/css/templates/specification.css"><link rel="stylesheet" href="' . get_template_directory_uri() . '/assets/css/templates/praktika.css"><style>body{padding:0}.praktika-info{width:100%;max-width:793px}.praktika-comments{padding-top:0}</style><main class="praktika-info">';
     $section = array('title' => 'Комментарии');
     require dirname(__DIR__) . '/template-parts/praktika-info/anchor_06.php';
@@ -82,6 +84,13 @@ check(yoga_get_comment_restriction_until(7) === 0, 'Expired restriction');
 $meta[7]['_yoga_comment_restricted_until'] = time() + 3600;
 check(yoga_comment_restriction_error(7) instanceof WP_Error, 'Active restriction');
 check(yoga_get_comment_restriction_until(0) === 0 && yoga_get_comment_restriction_until(8) === 0, 'Independent users and guests');
+foreach (array(false, true) as $permanent_mode) {
+if ($permanent_mode) {
+    $meta[7]['_yoga_comment_restricted_permanently'] = 1;
+    $meta[7]['_yoga_comment_restricted_until'] = time() - 1;
+    check(yoga_is_comment_restricted(7), 'Permanent restriction survives expiry of old date');
+    check(!yoga_is_comment_restricted(0) && !yoga_is_comment_restricted(8), 'Permanent restriction isolated to its user');
+}
 $_POST = array('comment_security' => 'valid', 'security' => 'valid');
 rejected('handle_custom_comment', 'AJAX comment');
 rejected('handle_comment_reply', 'AJAX reply');
@@ -122,6 +131,12 @@ foreach (array('your-comm__btn_edit', 'your-comm__btn_del', 'class="answer-btn"'
 ob_start(); require dirname(__DIR__) . '/comments.php'; $html = ob_get_clean();
 check(str_contains($html, 'comment-restriction-notice') && !str_contains($html, 'id="custom-comment-form"'), 'Blog notice');
 check(!str_contains($html, 'your-comm__btn') && !str_contains($html, 'id="reply-form-') && !str_contains($html, 'id="edit-form-'), 'Blog actions and forms hidden');
+if ($permanent_mode) {
+    check(str_contains($html, 'Комментирование недоступно') && str_contains($html, 'Решение окончательное и не подлежит пересмотру.'), 'Permanent notice uses Figma copy');
+    check(!str_contains($html, 'Ограничения будут сняты') && !str_contains($html, 'Задать вопрос') && !str_contains($html, 'правилами платформы'), 'Permanent notice has no expiry or actions');
+}
+}
+unset($meta[7]['_yoga_comment_restricted_permanently']);
 $_POST = array('yoga_comment_restriction_nonce' => 'valid', 'yoga_comment_restricted_until' => '2030-10-15T18:30', 'yoga_comment_restriction_reason' => '<b>Reason</b>');
 yoga_save_comment_restriction_profile(7);
 check(wp_date('Y-m-d\TH:i', $meta[7]['_yoga_comment_restricted_until']) === '2030-10-15T18:30', 'Site timezone roundtrip');
@@ -153,4 +168,23 @@ check($writes === 2, 'Own edit/delete restored after restriction removal');
 $meta[7]['_yoga_comment_restricted_until'] = time() - 1;
 check(yoga_user_can_manage_own_theme_comment(1), 'Expired restriction restores management');
 check(str_contains(yoga_render_ajax_comment(1), 'your-comm__btn_edit'), 'Expired restriction restores controls');
-echo "PASS: restriction expiry, user isolation, AJAX/WP/REST create/reply/edit/delete enforcement, hidden controls, restored ownership permissions, admin authorization, nonce, validation, timezone and notice rendering.\n";
+$_POST = array('yoga_comment_restriction_nonce' => 'valid', 'yoga_comment_restricted_permanently' => '1', 'yoga_comment_restricted_until' => 'not-a-date', 'yoga_comment_restriction_reason' => '<b>Permanent</b>');
+yoga_save_comment_restriction_profile(7);
+check(yoga_is_comment_permanently_restricted(7) && !isset($meta[7]['_yoga_comment_restricted_until']), 'Permanent save clears old date and ignores date input');
+check($meta[7]['_yoga_comment_restriction_reason'] === 'Permanent', 'Permanent reason sanitized');
+ob_start(); yoga_render_comment_restriction_profile((object) array('ID' => 7)); $profile = ob_get_clean();
+check(str_contains($profile, 'name="yoga_comment_restricted_permanently" value="1" checked="checked"') && str_contains($profile, 'Комментирование заблокировано бессрочно.'), 'Profile restores permanent checkbox and status');
+$saved = $meta[7]; $admin = false; $_POST['yoga_comment_restriction_remove'] = '1';
+yoga_save_comment_restriction_profile(7); check($meta[7] === $saved, 'Unauthorized permanent change denied');
+$admin = true; $_POST['yoga_comment_restriction_nonce'] = 'invalid';
+yoga_save_comment_restriction_profile(7); check($meta[7] === $saved, 'Bad nonce preserves permanent restriction');
+$_POST['yoga_comment_restriction_nonce'] = 'valid'; unset($_POST['yoga_comment_restricted_permanently'], $_POST['yoga_comment_restriction_remove']);
+yoga_save_comment_restriction_profile(7); check($meta[7] === $saved, 'Invalid replacement date preserves permanent restriction');
+$_POST['yoga_comment_restricted_until'] = '2030-10-21T23:59';
+yoga_save_comment_restriction_profile(7);
+check(!yoga_is_comment_permanently_restricted(7) && yoga_is_comment_restricted(7), 'Permanent can be replaced by a temporary restriction');
+$_POST['yoga_comment_restricted_permanently'] = '1'; yoga_save_comment_restriction_profile(7);
+$_POST['yoga_comment_restriction_remove'] = '1'; yoga_save_comment_restriction_profile(7);
+check(!yoga_is_comment_restricted(7) && !isset($meta[7]['_yoga_comment_restricted_permanently']) && !isset($meta[7]['_yoga_comment_restriction_reason']), 'Remove wins over checked permanent mode and clears all restriction metadata');
+check(yoga_user_can_manage_own_theme_comment(1) && str_contains(yoga_render_ajax_comment(1), 'your-comm__btn_edit'), 'Cancelling permanent restriction restores actions');
+echo "PASS: temporary and permanent restrictions, expiry, cancellation, mode switching, user isolation, AJAX/WP/REST create/reply/edit/delete enforcement, hidden controls, authorization, nonce, timezone and notice rendering.\n";
