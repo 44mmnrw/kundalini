@@ -1711,6 +1711,7 @@
 
 .lk-questions-form {
   width: 100%;
+  order: 1;
   padding-top: 0;}
 .lk-questions-form form {
   display: block;
@@ -1718,8 +1719,8 @@
   width: 100%;
 }
 .lk-questions-form .input {
-  font-size: 1.125rem;  height: 5.1875rem;  line-height: 1.3em;
-  padding-left: 1.25rem;  padding-right: 11.875rem;  padding-top: 1.8125rem;  padding-bottom: 0.375rem;  border-radius: 0.4375rem;  resize: none !important;
+  font-size: 1.125rem;  height: 5.1875rem;  line-height: 1.5;
+  padding-left: 1.25rem;  padding-right: 13.25rem;  padding-top: 1.6875rem;  padding-bottom: 1.6875rem;  border-radius: 0.4375rem;  resize: none !important;
   appearance: none !important;
   outline: none !important;
   background: var(--color-grey);
@@ -1754,6 +1755,8 @@
   background: var(--color-green);
   color: var(--color-violet);
 }
+.lk-questions-form .btn:focus-visible { outline: 2px solid var(--color-violet); outline-offset: 3px; }
+.lk-questions-form .btn:disabled { opacity: 0.6; cursor: wait; }
 
 .lk-questions {
   width: 100%;

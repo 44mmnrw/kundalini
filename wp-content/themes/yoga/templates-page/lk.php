@@ -573,6 +573,7 @@
 							<h2 class="lk-page-title">Мои вопросы</h2>
 						</div>
 						<div class="lk-slide__content">
+							<?php get_template_part('template-parts/lk-question-form'); ?>
 							<div class="lk-questions">
 								<?php
 									if (is_user_logged_in() && function_exists('yoga_render_user_questions_list')) {
