@@ -3582,12 +3582,15 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		var $section = $(this).closest('.section-kriyi, .section-library');
 		var isCategory = $section.hasClass('section-kriyi');
-		var goalValue = String($(this).attr(isCategory ? 'data-goal-id' : 'data-goal-slug') || '');
+		var goalId = String($(this).attr('data-goal-id') || '');
+		var goalSlug = String($(this).attr('data-goal-slug') || '');
 		var form = $section.find('form').get(0);
 		var $inputs = isCategory
 			? $section.find('.filter input[type="checkbox"][name="practice-goal"]')
 			: $('input.library-filter-input[name="practice-goal[]"]').filter(function() { return this.form === form; });
-		var $input = $inputs.filter(function() { return this.value === goalValue; }).first();
+		var $input = $inputs.filter(function() {
+			return this.value === goalId || (!isCategory && this.value === goalSlug);
+		}).first();
 		if (!$input.length) return;
 		$input.prop('checked', true).trigger('change');
 	});

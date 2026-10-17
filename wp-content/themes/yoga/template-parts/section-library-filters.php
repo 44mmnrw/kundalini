@@ -47,7 +47,7 @@ $render_filter_rows = static function ($terms, $taxonomy, $id_prefix) use ($filt
 		$input_id = $id_prefix . '-' . ((int) $index + 1);
 		?>
 		<div class="library-filters-screen__row checkbox-item" role="checkbox" aria-checked="false" tabindex="0">
-			<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="<?php echo esc_attr($taxonomy); ?>[]" value="<?php echo esc_attr((string) $term->{$filter_value_field}); ?>" form="<?php echo esc_attr($filter_form_id); ?>" tabindex="-1">
+			<input type="checkbox" class="library-filter-input" id="<?php echo esc_attr($input_id); ?>" name="<?php echo esc_attr($taxonomy); ?>[]" value="<?php echo esc_attr((string) $term->{$filter_value_field}); ?>" data-term-slug="<?php echo esc_attr($term->slug); ?>" form="<?php echo esc_attr($filter_form_id); ?>" tabindex="-1">
 			<span class="library-filters-screen__box checkbox" aria-hidden="true"></span>
 			<span class="library-filters-screen__text"><?php echo esc_html((string) $term->name); ?></span>
 		</div>
