@@ -272,6 +272,10 @@
   display: block;
 }
 
+.praktika-details .praktika-fav__icon svg {
+  overflow: visible;
+}
+
 .praktika-sadhana-btn {
   display: inline-flex;
   align-items: center;
