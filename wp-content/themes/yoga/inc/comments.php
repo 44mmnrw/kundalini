@@ -322,6 +322,8 @@ add_action('yoga_send_new_comment_notifications', static function (int $comment_
 
 
 function yoga_insert_ajax_comment(array $comment_data, bool $validate = true) {
+    $error = yoga_comment_restriction_error((int) get_current_user_id());
+    if ($error) { return $error; }
 	remove_action('comment_post', 'wp_new_comment_notify_moderator');
 	remove_action('comment_post', 'wp_new_comment_notify_postauthor');
 

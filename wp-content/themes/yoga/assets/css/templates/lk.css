@@ -46,14 +46,48 @@
 .sidebar-exit::before { display: none; }
 
 @media (min-width: 1280px) {
+  /* Compact desktop account menu — Figma sidebar_lk (2113:20086). */
+  .sidebar .sidebar-inner {
+    padding: 0.75rem;
+  }
+
+  .sidebar .sidebar-menu__item,
+  .sidebar .sidebar-exit {
+    padding: 0.625rem 1.25rem 0.625rem 0.75rem;
+  }
+
+  .sidebar .sidebar-menu__item.active {
+    border-radius: 1.25rem;
+  }
+
+  .sidebar .sidebar-menu__item .sidebar-menu__label,
+  .sidebar .sidebar-exit .sidebar-menu__label {
+    font-size: 0.875rem;
+    align-self: center;
+  }
+
+  .sidebar .sidebar-menu__item:has(.sidebar-menu__count) {
+    padding-right: 0.75rem;
+  }
+
+  .sidebar .sidebar-menu__count {
+    margin-left: 0.75rem;
+  }
+
+  .sidebar .sidebar-menu-sep--before-logout {
+    margin-top: 0.625rem;
+  }
+
+  .sidebar .sidebar-exit {
+    margin-top: 0;
+  }
+
   .sidebar-menu__item .sidebar-menu__label,
   .sidebar-exit .sidebar-menu__label,
   .sidebar-menu-secondary__link {
     font-weight: 600;
   }
 
-  .sidebar-menu__item .sidebar-menu__label,
-  .sidebar-exit .sidebar-menu__label,
   .sidebar-menu-secondary__link span {
     align-self: flex-end;
   }

@@ -5053,7 +5053,11 @@ jQuery(document).ready(function($) {
                     alert('Ошибка при отправке комментария: ' + practiceCommentError(response));
                 }
             },
-            error: function() {
+            error: function(xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.data) {
+                    alert('Ошибка при отправке комментария: ' + practiceCommentError(xhr.responseJSON));
+                    return;
+                }
                 alert('Ошибка соединения');
             },
             complete: function() {
@@ -5213,7 +5217,11 @@ function submitReply(parentId) {
         } else {
             alert('Ошибка при отправке ответа: ' + practiceCommentError(response));
         }
-    }, 'json').fail(function() {
+    }, 'json').fail(function(xhr) {
+        if (xhr.responseJSON && xhr.responseJSON.data) {
+            alert('Ошибка при отправке ответа: ' + practiceCommentError(xhr.responseJSON));
+            return;
+        }
         alert('Ошибка соединения');
     }).always(function() {
         $button.prop('disabled', false).removeClass('is-loading');

@@ -1,0 +1,37 @@
+<?php
+/** User-specific comment restrictions. Expiry is stored as a UTC timestamp. */
+if (!defined('ABSPATH')) { exit; }
+
+function yoga_get_comment_restriction_until(int $user_id): int {
+    if ($user_id <= 0) { return 0; }
+    $until = (int) get_user_meta($user_id, '_yoga_comment_restricted_until', true);
+    return $until > time() ? $until : 0;
+}
+
+function yoga_comment_restriction_error(int $user_id): ?WP_Error {
+    $until = yoga_get_comment_restriction_until($user_id);
+    if (!$until) { return null; }
+    return new WP_Error('yoga_comment_restricted', sprintf(
+        __('Комментирование ограничено до %s.', 'yoga'),
+        wp_date('j F Y, H:i', $until)
+    ), array('status' => 403));
+}
+
+// Cover the standard WordPress submission route as well as the theme's AJAX routes.
+add_filter('preprocess_comment', static function (array $data): array {
+    $error = yoga_comment_restriction_error((int) get_current_user_id());
+    if ($error) { wp_die(esc_html($error->get_error_message()), '', array('response' => 403)); }
+    return $data;
+});
+add_filter('rest_pre_insert_comment', static function ($comment, $request) {
+    return yoga_comment_restriction_error((int) get_current_user_id()) ?: $comment;
+}, 10, 2);
+
+function yoga_render_comment_restriction_notice(): void {
+    $until = yoga_get_comment_restriction_until((int) get_current_user_id());
+    if (!$until) { return; }
+    $nav = yoga_lk_sidebar_secondary_nav_urls();
+    $contacts_url = $nav['contacts'] . '#section-form-questions';
+    $rules_url = yoga_get_legal_document_url('user_agreement', home_url('/user-agreement/'));
+    require get_template_directory() . '/template-parts/comment-restriction-notice.php';
+}
