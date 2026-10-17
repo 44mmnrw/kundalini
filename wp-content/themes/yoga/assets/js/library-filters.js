@@ -132,6 +132,14 @@
 			selected.push(key);
 		});
 		writeStorage(selected);
+		if ($('.section-library').length) {
+			var url = new URL(window.location.href);
+			var goal = url.searchParams.get('practice_goal');
+			if (goal && selected.indexOf('practice-goal:' + goal) === -1) {
+				url.searchParams.delete('practice_goal');
+				window.history.replaceState(window.history.state, '', url.href);
+			}
+		}
 	}
 
 	function registerFromDom() {
@@ -143,6 +151,17 @@
 			allInputs().each(function () {
 				this.checked = Boolean(selectedMap[inputKey(this)]);
 			});
+		}
+		if ($('.section-library').length) {
+			var goal = new URLSearchParams(window.location.search).get('practice_goal');
+			var $goalInputs = $('input.library-filter-input[name="practice-goal[]"]').filter(function () {
+				return goal && this.value === goal;
+			});
+			if ($goalInputs.length) {
+				allInputs().prop('checked', false);
+				$goalInputs.prop('checked', true);
+				persist();
+			}
 		}
 		refreshValues();
 	}

@@ -17,11 +17,18 @@ if (empty($practice_goals) || is_wp_error($practice_goals)) {
 $practice_url = get_permalink($practice_id);
 $is_practice_page = ($args['context'] ?? '') === 'practice';
 $is_library_card = ($args['context'] ?? '') === 'library';
+$goals_library_url = '';
+if ($is_practice_page) {
+	$goals_nav_urls = yoga_lk_sidebar_secondary_nav_urls();
+	$goals_library_url = (string) $goals_nav_urls['library'];
+}
 ?>
 <div class="<?php echo $is_practice_page ? 'praktika-goals' : 'kriya-goals'; ?>"<?php if ($is_practice_page) : ?> aria-label="<?php esc_attr_e('Цели практики', 'yoga'); ?>"<?php endif; ?>>
 	<?php foreach ($practice_goals as $practice_goal) : ?>
 		<?php
-		$goal_url = $is_practice_page ? get_term_link($practice_goal) : $practice_url;
+		$goal_url = $is_practice_page
+			? add_query_arg('practice_goal', $practice_goal->slug, $goals_library_url)
+			: $practice_url;
 		$goal_class = $is_practice_page ? 'praktika-goal' : 'kriya-goal';
 		?>
 		<?php if ($is_library_card) : ?>

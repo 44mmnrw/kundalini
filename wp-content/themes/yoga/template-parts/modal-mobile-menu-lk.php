@@ -76,7 +76,7 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 							<span class="sidebar-menu__label"><?php esc_html_e('Рекомендации', 'yoga'); ?></span>
 						</div>
 						-->
-						<?php yoga_render_additional_lk_menu_items($mobile_lk_target); ?>
+						<?php // yoga_render_additional_lk_menu_items($mobile_lk_target); // Временно скрыты отзывы, промокоды и предупреждения. ?>
 						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 							<div class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-question', 'sidebar-menu__item-svg'); ?>

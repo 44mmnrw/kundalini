@@ -1720,6 +1720,9 @@
   width: 100%;
   order: 1;
   padding-top: 0;}
+.lk-slide--questions .lk-slide__content:has(.lk-questions-toolbar[data-active-question-tab="practice"]) > .lk-questions-form {
+  display: none;
+}
 .lk-questions-form form {
   display: block;
   position: relative;
