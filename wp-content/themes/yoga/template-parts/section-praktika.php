@@ -25,6 +25,14 @@ $sections = array_values(array_filter($sections, static function ($section): boo
 	return function_exists('yoga_practice_video_section_has_valid_media')
 		&& yoga_practice_video_section_has_valid_media($section);
 }));
+// Comments follow the practice content, sadhana panel and goal tags.
+$comment_sections = array_filter($sections, static function ($section): bool {
+	return (string) ($section['acf_fc_layout'] ?? '') === 'anchor_06';
+});
+$sections = array_merge(array_filter($sections, static function ($section): bool {
+	return (string) ($section['acf_fc_layout'] ?? '') !== 'anchor_06';
+}), $comment_sections);
+$practice_comments_html = '';
 $practice_id = (int) get_the_ID();
 $sadhana_user_id = (int) get_current_user_id();
 $active_sadhana = $sadhana_user_id > 0 && function_exists('yoga_sadhana_get_active')
@@ -150,7 +158,9 @@ if (!empty($section_praktika_extra_class)) {
 
 											case 'anchor_06':
 
+											ob_start();
 											include(locate_template('template-parts/praktika-info/anchor_06.php'));
+											$practice_comments_html .= ob_get_clean();
 											break;
 
 											case 'anchor_07':
@@ -178,6 +188,11 @@ if (!empty($section_praktika_extra_class)) {
 				}
 				get_template_part('template-parts/practice-goals', null, array('practice_id' => $practice_id, 'context' => 'practice'));
 				?>
+				<?php if ($practice_comments_html !== '') : ?>
+					<div class="praktika-info praktika-discussion">
+						<?php echo $practice_comments_html; // Rendered by the comments template above. ?>
+					</div>
+				<?php endif; ?>
 
                     <div class="praktika-menu">
                         <div class="praktika-fixed">
