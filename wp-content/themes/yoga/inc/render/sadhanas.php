@@ -136,6 +136,7 @@ if (!function_exists('yoga_render_sadhana_card')) {
 			</div>
 			<p class="lk-sadhana-card__date"><?php echo $is_completed ? esc_html($started . ' - ' . $completed) : esc_html('Начата ' . $started); ?></p>
 			<div class="lk-sadhana-card__media"><img src="<?php echo esc_url($image); ?>" alt=""></div>
+			<?php get_template_part('template-parts/practice-goals', null, array('practice_id' => $practice_id)); ?>
 			<?php if ($is_completed) : ?>
 				<button class="lk-sadhana-card__restart" type="button" data-sadhana-id="<?php echo esc_attr((string) absint($sadhana['id'] ?? 0)); ?>">Начать снова</button>
 			<?php else : ?>

@@ -453,6 +453,7 @@
                                     <h3><?php echo get_the_title($practice_id); ?></h3>
                                     <p><?php echo get_the_excerpt($practice_id); ?></p>
                                 </div>
+                                <?php get_template_part('template-parts/practice-goals', null, array('practice_id' => (int) $practice_id)); ?>
                                 <div class="kriya-media">
                                     <div class="kriya-img">
 										<?php
@@ -523,6 +524,7 @@
 																	<h3><?php echo get_the_title($practice_id); ?></h3>
 																	<p><?php echo get_the_excerpt($practice_id); ?></p>
 																</div>
+																<?php get_template_part('template-parts/practice-goals', null, array('practice_id' => (int) $practice_id)); ?>
 																<div class="kriya-media">
 																	<div class="kriya-img">
 																		<?php
