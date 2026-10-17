@@ -898,7 +898,7 @@ header > .container > .row > .header-content {
   }
 
   .header-favorites-link--active svg {
-    color: var(--color-black);
+    color: var(--color-violet);
   }
 
   .header-favorites-link__count {
@@ -1245,7 +1245,7 @@ header > .container > .row > .header-content {
   }
 
   .header-favorites-link--active {
-    color: var(--color-black);
+    color: var(--color-violet);
   }
 
   .header-lk .notification-icon_header--has-notifications {
