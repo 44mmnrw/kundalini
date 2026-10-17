@@ -3671,7 +3671,7 @@ jQuery(document).ready(function($) {
 					updatePracticeResultsToolbar(
 						$('.section-kriyi'),
 						response.data.count,
-						YogaLibraryFiltersCore.selectedCount() > 0
+						true
 					);
 
 
