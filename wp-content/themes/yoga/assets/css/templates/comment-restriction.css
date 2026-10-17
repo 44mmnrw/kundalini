@@ -66,5 +66,14 @@
   background: var(--color-black);
 }
 @media (max-width: 767px) {
-  .comment-restriction-notice { padding: 1.25rem; }
+  .comment-restriction-notice .comment-restriction-notice__head h4 {
+    flex: 1;
+    min-width: 0;
+    font-size: 1.125rem;
+    overflow-wrap: anywhere;
+  }
+  .comment-restriction-notice .comment-restriction-notice__button {
+    width: 100%;
+    min-width: 0;
+  }
 }
