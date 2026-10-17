@@ -73,10 +73,11 @@
 				button.setAttribute('aria-label', 'Снять фильтр «' + text + '»');
 				var title = document.createElement('span');
 				title.textContent = text;
-				var close = document.createElement('span');
+				var close = document.createElement('img');
 				close.className = 'practice-search-tag__close';
+				close.src = container.dataset.removeIcon;
+				close.alt = '';
 				close.setAttribute('aria-hidden', 'true');
-				close.textContent = '×';
 				button.append(title, close);
 				button.addEventListener('click', function () {
 					var index = Array.from(container.children).indexOf(button);
@@ -88,6 +89,25 @@
 				container.appendChild(button);
 			});
 			container.hidden = !container.children.length;
+			if (!container.children.length) return;
+			var clearButton = document.createElement('button');
+			clearButton.type = 'button';
+			clearButton.className = 'practice-search-tag practice-search-tag--clear';
+			clearButton.setAttribute('aria-label', 'Очистить все фильтры');
+			var clearTitle = document.createElement('span');
+			clearTitle.textContent = 'Очистить';
+			var clearIcon = document.createElement('img');
+			clearIcon.className = 'practice-search-tag__close';
+			clearIcon.src = container.dataset.clearIcon;
+			clearIcon.alt = '';
+			clearIcon.setAttribute('aria-hidden', 'true');
+			clearButton.append(clearTitle, clearIcon);
+			clearButton.addEventListener('click', function () {
+				$(section).find('.form-reset').trigger('click');
+				var search = section.querySelector('.form-search input[type="text"]');
+				if (search) search.focus();
+			});
+			container.appendChild(clearButton);
 		});
 	}
 

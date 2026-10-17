@@ -226,7 +226,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 					</div>
 
 				</form>
-				<div class="practice-selected-filters" data-selected-filters role="group" aria-label="<?php esc_attr_e('Выбранные фильтры', 'yoga'); ?>" hidden></div>
+				<div class="practice-selected-filters" data-selected-filters data-remove-icon="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/practice-filter-remove.svg'); ?>" data-clear-icon="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/practice-filter-clear.svg'); ?>" role="group" aria-label="<?php esc_attr_e('Выбранные фильтры', 'yoga'); ?>" hidden></div>
 			</div>
 		</div>
 
