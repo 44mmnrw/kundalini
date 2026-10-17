@@ -17,11 +17,16 @@
   gap: 0.9375rem;
   width: 100%;
 }
-.comment-restriction-notice__head img {
+.comment-restriction-notice .comment-restriction-notice__head > img {
   display: block;
   flex: 0 0 22px;
   width: 22px;
+  max-width: 22px;
   height: 22px;
+  max-height: 22px;
+  align-self: center;
+  border-radius: 0;
+  background: transparent;
 }
 .comment-restriction-notice .comment-restriction-notice__head h4 {
   margin: 0;
@@ -29,7 +34,7 @@
   font: 700 1.25rem/1.1 var(--font-family-base);
   color: var(--color-black);
 }
-.comment-restriction-notice > p {
+.praktika-comments .comment-restriction-notice > p {
   margin: 0.375rem 0 0;
   padding: 0;
   font: 400 0.875rem/normal var(--font-family-base);

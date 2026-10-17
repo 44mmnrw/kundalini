@@ -299,6 +299,9 @@ function yoga_get_comment_time_label(WP_Comment $comment): string {
 
 
 function yoga_user_can_manage_own_theme_comment(int $comment_id): bool {
+	if (yoga_get_comment_restriction_until((int) get_current_user_id())) {
+		return false;
+	}
 	$c = get_comment($comment_id);
 	if (!$c instanceof WP_Comment) {
 		return false;
