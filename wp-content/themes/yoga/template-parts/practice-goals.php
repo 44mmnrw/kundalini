@@ -16,6 +16,7 @@ if (empty($practice_goals) || is_wp_error($practice_goals)) {
 
 $practice_url = get_permalink($practice_id);
 $is_practice_page = ($args['context'] ?? '') === 'practice';
+$is_library_card = ($args['context'] ?? '') === 'library';
 ?>
 <div class="<?php echo $is_practice_page ? 'praktika-goals' : 'kriya-goals'; ?>"<?php if ($is_practice_page) : ?> aria-label="<?php esc_attr_e('Цели практики', 'yoga'); ?>"<?php endif; ?>>
 	<?php foreach ($practice_goals as $practice_goal) : ?>
@@ -23,7 +24,9 @@ $is_practice_page = ($args['context'] ?? '') === 'practice';
 		$goal_url = $is_practice_page ? get_term_link($practice_goal) : $practice_url;
 		$goal_class = $is_practice_page ? 'praktika-goal' : 'kriya-goal';
 		?>
-		<?php if (is_wp_error($goal_url)) : ?>
+		<?php if ($is_library_card) : ?>
+			<button type="button" class="<?php echo esc_attr($goal_class); ?>" data-goal-id="<?php echo esc_attr((string) $practice_goal->term_id); ?>" data-goal-slug="<?php echo esc_attr($practice_goal->slug); ?>"><?php echo esc_html($practice_goal->name); ?></button>
+		<?php elseif (is_wp_error($goal_url)) : ?>
 			<span class="<?php echo esc_attr($goal_class); ?>"><?php echo esc_html($practice_goal->name); ?></span>
 		<?php else : ?>
 			<a class="<?php echo esc_attr($goal_class); ?>" href="<?php echo esc_url($goal_url); ?>"><?php echo esc_html($practice_goal->name); ?></a>

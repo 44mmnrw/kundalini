@@ -372,7 +372,7 @@ if (!defined('ABSPATH')) {
 				<h3><?php the_title(); ?></h3>
 				<p><?php echo esc_html($practice_description); ?></p>
 			</div>
-			<?php get_template_part('template-parts/practice-goals', null, array('practice_id' => (int) get_the_ID())); ?>
+			<?php get_template_part('template-parts/practice-goals', null, array('practice_id' => (int) get_the_ID(), 'context' => 'library')); ?>
 			<div class="kriya-media">
 				<div class="kriya-img">
 					<?php if ($practice_image !== '') : ?>

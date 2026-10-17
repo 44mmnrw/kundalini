@@ -3578,6 +3578,20 @@ jQuery(document).ready(function($) {
 		loadLibraryPractices();
 	});
 
+	$(document).on('click', '.section-kriyi .kriya-goal[data-goal-id], .section-library .kriya-goal[data-goal-id]', function(e) {
+		e.preventDefault();
+		var $section = $(this).closest('.section-kriyi, .section-library');
+		var isCategory = $section.hasClass('section-kriyi');
+		var goalValue = String($(this).attr(isCategory ? 'data-goal-id' : 'data-goal-slug') || '');
+		var form = $section.find('form').get(0);
+		var $inputs = isCategory
+			? $section.find('.filter input[type="checkbox"][name="practice-goal"]')
+			: $('input.library-filter-input[name="practice-goal[]"]').filter(function() { return this.form === form; });
+		var $input = $inputs.filter(function() { return this.value === goalValue; }).first();
+		if (!$input.length) return;
+		$input.prop('checked', true).trigger('change');
+	});
+
 	$(document).on('click', '.library-filters-screen__close', function() {
 		closeLibraryFiltersScreen();
 	});
