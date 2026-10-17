@@ -19,6 +19,11 @@
 		return normalizeName(input) + ':' + String(input && input.value || '');
 	}
 
+	function matchesGoal(input, goal) {
+		return Boolean(goal) && normalizeName(input) === 'practice-goal'
+			&& (input.value === goal || input.dataset.termSlug === goal);
+	}
+
 	function allInputs() {
 		return $('input.library-filter-input, .section-kriyi .filter input[type="checkbox"]');
 	}
@@ -135,7 +140,10 @@
 		if ($('.section-library').length) {
 			var url = new URL(window.location.href);
 			var goal = url.searchParams.get('practice_goal');
-			if (goal && selected.indexOf('practice-goal:' + goal) === -1) {
+			var hasGoal = allInputs().toArray().some(function (input) {
+				return input.checked && matchesGoal(input, goal);
+			});
+			if (goal && !hasGoal) {
 				url.searchParams.delete('practice_goal');
 				window.history.replaceState(window.history.state, '', url.href);
 			}
@@ -155,7 +163,7 @@
 		if ($('.section-library').length) {
 			var goal = new URLSearchParams(window.location.search).get('practice_goal');
 			var $goalInputs = $('input.library-filter-input[name="practice-goal[]"]').filter(function () {
-				return goal && this.value === goal;
+				return matchesGoal(this, goal);
 			});
 			if ($goalInputs.length) {
 				allInputs().prop('checked', false);
