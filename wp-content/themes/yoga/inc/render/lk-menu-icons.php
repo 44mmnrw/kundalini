@@ -4,6 +4,26 @@
  *
  * @package Yoga
  */
+/** New sections shown by the sidebar_lk design (2113:25393). */
+function yoga_get_additional_lk_menu_sections(): array {
+	return array(
+		'reviews' => array('target' => '10', 'label' => __('Мои отзывы', 'yoga'), 'icon' => 'lk-menu-reviews.svg'),
+		'promocodes' => array('target' => '11', 'label' => __('Мои промокоды', 'yoga'), 'icon' => 'lk-menu-promocodes.svg'),
+		'warnings' => array('target' => '12', 'label' => __('Мои предупреждения', 'yoga'), 'icon' => 'lk-menu-warnings.svg'),
+	);
+}
+
+function yoga_render_additional_lk_menu_items(string $active_target): void {
+	foreach (yoga_get_additional_lk_menu_sections() as $section => $item) {
+		?>
+		<button type="button" class="sidebar-menu__item sidebar-menu__item--additional<?php echo $active_target === $item['target'] ? ' active' : ''; ?>" data-target="<?php echo esc_attr($item['target']); ?>">
+			<span class="sidebar-menu__item-icon"><img src="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/' . $item['icon']); ?>" alt=""></span>
+			<span class="sidebar-menu__label"><?php echo esc_html($item['label']); ?></span>
+		</button>
+		<?php
+	}
+}
+
 if (!function_exists('yoga_get_lk_menu_sprite_symbols')) {
 	function yoga_get_lk_menu_sprite_symbols(): array {
 		static $symbols = null;
