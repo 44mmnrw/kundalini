@@ -56,6 +56,11 @@
                 <div class="row">
             <div class="lk">
                 <div class="lk__slides">
+					<?php foreach (array('10' => 'reviews', '11' => 'promocodes', '12' => 'warnings') as $target => $part) : ?>
+					<div class="lk-slide<?php echo $initial_lk_target === (string) $target ? ' active' : ''; ?>" data-target="<?php echo esc_attr($target); ?>">
+						<?php get_template_part('template-parts/lk-' . $part, null, array('user_id' => $user_id)); ?>
+					</div>
+					<?php endforeach; ?>
 
 					<div class="lk-slide<?php echo $initial_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
 						<div class="lk-page-header">
@@ -830,6 +835,7 @@
 				<span class="sidebar-menu__label">Рекомендации</span>
 			</div>
 			-->
+			<?php yoga_render_additional_lk_menu_items($initial_lk_target); ?>
 			<div class="sidebar-menu__item<?php echo $initial_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
 				<div class="sidebar-menu__item-icon">
 					<?php yoga_render_lk_menu_icon('lk-sidebar-question', 'sidebar-menu__item-svg'); ?>

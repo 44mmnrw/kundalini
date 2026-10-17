@@ -66,6 +66,9 @@ $reviews_items = function_exists('get_field') ? get_field('reviews_items', $home
 $review_people = function_exists('get_field') ? get_field('review_people', $homepage_id) : array();
 $videos_items = function_exists('get_field') ? get_field('videos_items', $homepage_id) : array();
 $reviews_items = is_array($reviews_items) ? $reviews_items : array();
+if (function_exists('yoga_get_published_account_review_items')) {
+	$reviews_items = array_merge($reviews_items, yoga_get_published_account_review_items());
+}
 $review_people = is_array($review_people) ? $review_people : array();
 $videos_items = is_array($videos_items) ? $videos_items : array();
 $reviews_items = array_values(array_filter($reviews_items, static function ($review): bool {

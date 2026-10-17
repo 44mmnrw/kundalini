@@ -28,6 +28,7 @@
 	require_once get_template_directory() . '/inc/admin/comment-role-badges.php';
 	require_once get_template_directory() . '/inc/render/comments.php';
 	require_once get_template_directory() . '/inc/render/lk-menu-icons.php';
+	require_once get_template_directory() . '/inc/lk-community.php';
 	require_once get_template_directory() . '/inc/ajax/comments.php';
 	require_once get_template_directory() . '/inc/admin/practice-editor.php';
 	require_once get_template_directory() . '/inc/admin/term-order.php';
@@ -902,6 +903,8 @@
 		}
 		if ($is_lk_template) {
 			wp_enqueue_style( 'lk-style', $theme_uri . '/assets/css/templates/lk.css', $common_style_deps, $lk_style_ver );
+			wp_enqueue_style('lk-community', $theme_uri . '/assets/css/templates/lk-community.css', array('lk-style'), filemtime($theme_dir . '/assets/css/templates/lk-community.css'));
+			wp_enqueue_script('lk-community', $theme_uri . '/assets/js/lk-community.js', array(), filemtime($theme_dir . '/assets/js/lk-community.js'), true);
 		}
 		if ($is_archive_page) {
 			wp_enqueue_style( 'blog-form-style', $theme_uri . '/assets/css/templates/blog-form.css', $common_style_deps, $blog_form_style_ver );
@@ -2597,6 +2600,9 @@ function yoga_subscribe_handler() {
 			'sadhanas' => '7',
 			'notifications' => '8',
 			'notification-settings' => '9',
+			'reviews' => '10',
+			'promocodes' => '11',
+			'warnings' => '12',
 		);
 	}
 

@@ -8,6 +8,10 @@
   display: none;
 }
 
+.modal-mobile-menu-lk .sidebar-menu__item--additional { border: 0; text-align: left; font: inherit; }
+.modal-mobile-menu-lk .sidebar-menu__item--additional .sidebar-menu__item-icon img { display: block; max-width: none; filter: brightness(0) invert(1); }
+.modal-mobile-menu-lk .sidebar-menu__item--additional.active .sidebar-menu__item-icon img { filter: none; }
+
 .modal-menu {
   display: flex;
   width: 100%;

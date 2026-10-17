@@ -176,6 +176,7 @@ if (!empty($section_praktika_extra_class)) {
 				if ($display_sadhana && function_exists('yoga_render_practice_sadhana_counter')) {
 					yoga_render_practice_sadhana_counter($display_sadhana, $practice_id, 'bottom');
 				}
+				get_template_part('template-parts/practice-goals', null, array('practice_id' => $practice_id, 'context' => 'practice'));
 				?>
 
                     <div class="praktika-menu">
