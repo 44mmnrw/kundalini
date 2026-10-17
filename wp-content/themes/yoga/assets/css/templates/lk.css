@@ -509,6 +509,13 @@
   border-radius: 1.25rem;
 }
 
+.lk-sadhana-card > .kriya-goals {
+  order: 0;
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 0.625rem;
+}
+
 .lk-sadhana-card__media img {
   display: block;
   width: 100%;
