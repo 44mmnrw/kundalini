@@ -16,7 +16,7 @@
   .single-practice .praktika {
     display: grid;
     grid-template-columns: minmax(0, 49.5625rem) 17.8125rem;
-    grid-template-rows: auto auto auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto auto auto;
     justify-content: space-between;
     align-items: start;
   }
@@ -41,6 +41,10 @@
     width: 100%;
   }
 
+  .single-practice .praktika-discussion {
+    grid-row: 7;
+  }
+
   .single-practice .praktika-sadhana-counter--top {
     grid-column: 1;
     grid-row: 3;
@@ -53,7 +57,7 @@
 
   .single-practice .praktika-menu {
     grid-column: 2;
-    grid-row: 1 / span 6;
+    grid-row: 1 / span 7;
     align-self: stretch;
     margin-top: 2.125rem;
     top: auto;
@@ -2450,6 +2454,11 @@ display: block !important;
     border: 0;
     border-bottom: 1px dashed var(--color-white);
     box-sizing: border-box;
+  }
+
+  .single-practice .praktika-discussion {
+    order: 8;
+    margin-top: 0;
   }
   .praktika-menu li a {
     display: flex;
