@@ -4210,7 +4210,7 @@ jQuery(document).ready(function($) {
 	function markNotificationRead(event) {
 		var $notification = $(this);
 		var notificationId = String($notification.data('notification-id') || '');
-		var href = $notification.attr('href') || '';
+		var href = $(event.target).closest('a').attr('href') || $notification.attr('href') || '';
 		var isUnread = $notification.hasClass('lk-notification--unread') || $notification.hasClass('lk-notifications-popup__item--unread');
 
 		if (!isUnread || !notificationId || typeof yoga_ajax === 'undefined' || !yoga_ajax.user_logged_in) {
@@ -4237,6 +4237,12 @@ jQuery(document).ready(function($) {
 	}
 
 	$(document).on('click', '.lk-slide--notifications .lk-notification[data-notification-id]', markNotificationRead);
+	$(document).on('keydown', '.comment-restriction-notification--feed', function(event) {
+		if (event.target === this && (event.key === 'Enter' || event.key === ' ')) {
+			event.preventDefault();
+			$(this).trigger('click');
+		}
+	});
 	$('.lk-notifications-popup').on('click', '.lk-notification[data-notification-id]', markNotificationRead);
 
 	$(document).on('click', '.notification-settings__back', function() { switchLkSlide('8'); });

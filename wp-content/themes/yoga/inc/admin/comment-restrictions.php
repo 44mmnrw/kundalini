@@ -15,6 +15,10 @@ function yoga_render_comment_restriction_profile($user): void {
     ?>
     <h2><?php esc_html_e('Ограничение комментариев', 'yoga'); ?></h2>
     <table class="form-table" role="presentation">
+        <tr><th>Счётчик блокировок</th><td>
+            <p>Количество блокировок: <strong><?php echo esc_html((string) yoga_get_comment_restriction_count((int) $user->ID)); ?></strong></p>
+            <p>Осталось предупреждений: <strong><?php echo esc_html((string) yoga_get_comment_warnings_remaining((int) $user->ID)); ?></strong> из 3.</p>
+        </td></tr>
         <tr><th>Бессрочная блокировка</th><td>
             <label><input type="checkbox" name="yoga_comment_restricted_permanently" value="1" <?php checked($permanent); ?>> Запретить комментирование навсегда</label>
             <p class="description">Дата окончания не требуется и не учитывается. Запрет действует на комментарии, ответы, редактирование и удаление в практиках и блоге. Его можно отменить ниже, отметив «Снять запрет при сохранении пользователя».</p>
@@ -67,6 +71,7 @@ add_action('user_profile_update_errors', static function ($errors, $update, $use
 function yoga_save_comment_restriction_profile(int $user_id): void {
     $until = yoga_comment_restriction_profile_input($user_id);
     if ($until === null || is_wp_error($until)) { return; }
+    $previous = yoga_is_comment_permanently_restricted($user_id) ? 'permanent' : yoga_get_comment_restriction_until($user_id);
     if (!$until) {
         delete_user_meta($user_id, '_yoga_comment_restricted_permanently');
         delete_user_meta($user_id, '_yoga_comment_restricted_until');
@@ -82,6 +87,7 @@ function yoga_save_comment_restriction_profile(int $user_id): void {
     }
     $reason = $_POST['yoga_comment_restriction_reason'] ?? '';
     update_user_meta($user_id, '_yoga_comment_restriction_reason', is_string($reason) ? sanitize_textarea_field(wp_unslash($reason)) : '');
+    yoga_maybe_notify_comment_restriction($user_id, $previous);
 }
 add_action('personal_options_update', 'yoga_save_comment_restriction_profile');
 add_action('edit_user_profile_update', 'yoga_save_comment_restriction_profile');

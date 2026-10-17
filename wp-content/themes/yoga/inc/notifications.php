@@ -8,6 +8,10 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+function yoga_render_comment_restriction_notification(array $notification, bool $popup = false): void {
+	require get_template_directory() . '/template-parts/comment-restriction-notification.php';
+}
+
 function yoga_notification_has_live_source(array $notification): bool {
 	$type = (string) ($notification['type'] ?? '');
 	if ($type === 'comment_reply') {
@@ -205,6 +209,14 @@ function yoga_add_user_notification(int $user_id, string $type, string $title, s
 	}
 	if (!empty($context['post_id'])) {
 		$notification['post_id'] = absint($context['post_id']);
+	}
+	if ($type === 'comment_restricted') {
+		if (isset($context['comment_warnings_remaining'])) {
+			$notification['comment_warnings_remaining'] = max(0, min(3, (int) $context['comment_warnings_remaining']));
+		}
+		if (!empty($context['comment_restricted_until'])) {
+			$notification['comment_restricted_until'] = (int) $context['comment_restricted_until'];
+		}
 	}
 	$notifications[] = $notification;
 	update_user_meta($user_id, 'yoga_notifications', array_slice($notifications, -100));

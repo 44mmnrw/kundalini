@@ -22,7 +22,12 @@ function wp_get_current_user() { return (object) array('user_email' => 'viewer@e
 function yoga_get_user_public_name($id) { return 'Автор ' . $id; }
 function yoga_get_user_comment_role_badge_data($id) { return array(); }
 function yoga_get_user_avatar_html(...$args) { return ''; }
-function current_time(...$args) { return time(); }
+function current_time($type = 'timestamp', ...$args) { return $type === 'mysql' ? date('Y-m-d H:i:s') : time(); }
+function sanitize_key($s) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($s)); }
+function sanitize_text_field($s) { return strip_tags($s); }
+function esc_url_raw($s) { return $s; }
+function wp_generate_uuid4() { static $id = 0; return 'notification-' . ++$id; }
+function human_time_diff($from, $to) { return '3 дня'; }
 function comment_ID() { echo $GLOBALS['comment']->comment_ID; }
 function comment_text() { echo esc_html($GLOBALS['comment']->comment_content); }
 function wp_update_comment($data) { $GLOBALS['writes']++; return 1; }
@@ -60,6 +65,7 @@ function checked($value) { if ($value) { echo 'checked="checked"'; } }
 function post_password_required() { return false; }
 function get_post_type($id) { return 'post'; }
 require dirname(__DIR__) . '/inc/comments.php';
+require dirname(__DIR__) . '/inc/notifications.php';
 require dirname(__DIR__) . '/inc/comment-restrictions.php';
 require dirname(__DIR__) . '/inc/admin/comment-restrictions.php';
 require dirname(__DIR__) . '/inc/ajax/comments.php';
@@ -68,6 +74,27 @@ function check($ok, $label) { if (!$ok) { throw new RuntimeException($label); } 
 function rejected($callback, $label) {
     try { $callback(); } catch (RuntimeException $e) { check($e->getCode() === 403, $label); return; }
     throw new RuntimeException($label . ' was accepted');
+}
+if (($argv[1] ?? '') === 'render-notifications') {
+    echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">';
+    foreach (array('specification', 'header', 'lk') as $style) {
+        echo '<link rel="stylesheet" href="' . get_template_directory_uri() . '/assets/css/templates/' . $style . '.css">';
+    }
+    echo '<style>body{margin:0;padding:0}.header-lk{display:block;margin:0}.qa-feed{width:100%;max-width:875px}.header-lk.qa-feed{max-width:590px}</style>';
+    foreach (array(false, true) as $popup) {
+        echo $popup ? '<div class="header-lk qa-feed">' : '<div class="lk-slide--notifications qa-feed">';
+        foreach (array(strtotime('2030-10-21 23:59:00'), 'permanent') as $state) {
+            $notification = array('id' => 'preview-' . $state, 'type' => $state === 'permanent' ? 'comment_banned' : 'comment_restricted', 'title' => $state === 'permanent' ? 'Комментирование отключено' : 'Комментирование ограничено', 'message' => $state === 'permanent' ? 'Вы неоднократно нарушили правила платформы. Вы больше не можете оставлять комментарии. Решение окончательное и не подлежит пересмотру.' : 'Вы временно не можете оставлять комментарии. Ограничения будут сняты 21 октября 2030 года, 23:59. Пожалуйста, ознакомьтесь с правилами платформы во избежание повторных ограничений.', 'url' => home_url('/my-account/'), 'created_at' => date('Y-m-d H:i:s', time() - 3 * DAY_IN_SECONDS), 'read_at' => $state === 'permanent' ? 'read' : '');
+            if ($state !== 'permanent') {
+                $notification['title'] = 'Комментирование временно ограничено';
+                $notification['comment_warnings_remaining'] = 3;
+                $notification['comment_restricted_until'] = (new DateTimeImmutable('2026-10-15 23:59', wp_timezone()))->getTimestamp();
+            }
+            yoga_render_comment_restriction_notification($notification, $popup);
+        }
+        echo '</div>';
+    }
+    exit;
 }
 if (($argv[1] ?? '') === 'render') {
     $meta[7]['_yoga_comment_restricted_until'] = time() + 86400;
@@ -187,4 +214,48 @@ $_POST['yoga_comment_restricted_permanently'] = '1'; yoga_save_comment_restricti
 $_POST['yoga_comment_restriction_remove'] = '1'; yoga_save_comment_restriction_profile(7);
 check(!yoga_is_comment_restricted(7) && !isset($meta[7]['_yoga_comment_restricted_permanently']) && !isset($meta[7]['_yoga_comment_restriction_reason']), 'Remove wins over checked permanent mode and clears all restriction metadata');
 check(yoga_user_can_manage_own_theme_comment(1) && str_contains(yoga_render_ajax_comment(1), 'your-comm__btn_edit'), 'Cancelling permanent restriction restores actions');
-echo "PASS: temporary and permanent restrictions, expiry, cancellation, mode switching, user isolation, AJAX/WP/REST create/reply/edit/delete enforcement, hidden controls, authorization, nonce, timezone and notice rendering.\n";
+$meta[7]['yoga_notifications'] = array();
+unset($meta[7]['_yoga_comment_warnings_remaining'], $meta[7]['_yoga_comment_restriction_count']);
+$_POST = array('yoga_comment_restriction_nonce' => 'valid', 'yoga_comment_restricted_until' => '2030-10-21T23:59', 'yoga_comment_restriction_reason' => 'Internal note');
+yoga_save_comment_restriction_profile(7);
+$events = yoga_get_user_notifications(7);
+check(count($events) === 1 && $events[0]['type'] === 'comment_restricted' && str_contains($events[0]['message'], '21.10.2030') && $events[0]['comment_warnings_remaining'] === 2, 'Temporary restriction creates dated notification with warning snapshot');
+check(yoga_get_comment_restriction_count(7) === 1, 'New restriction increments block counter');
+$temporary_event = $events[0];
+check(!str_contains($events[0]['message'], 'Internal note'), 'Private reason is not exposed in notification');
+yoga_save_comment_restriction_profile(7);
+$_POST['yoga_comment_restriction_reason'] = 'Changed internal note'; yoga_save_comment_restriction_profile(7);
+check(count(yoga_get_user_notifications(7)) === 1, 'Unchanged restriction and reason edits do not duplicate notification');
+$_POST['yoga_comment_restricted_until'] = '2030-10-22T23:59'; yoga_save_comment_restriction_profile(7);
+check(count(yoga_get_user_notifications(7)) === 2, 'Changed deadline creates a new notification');
+check(yoga_get_comment_warnings_remaining(7) === 2, 'Extending current restriction does not consume a warning');
+check(yoga_get_comment_restriction_count(7) === 1, 'Save and extension do not inflate block counter');
+$_POST['yoga_comment_restricted_permanently'] = '1'; yoga_save_comment_restriction_profile(7);
+$events = yoga_get_user_notifications(7);
+$event = array_values(array_filter($events, static fn($e) => $e['type'] === 'comment_banned'))[0];
+check(count($events) === 3 && $event['title'] === 'Комментирование отключено' && str_contains($event['message'], 'Решение окончательное'), 'Permanent notification uses Figma copy');
+check(yoga_get_comment_restriction_count(7) === 2, 'Escalating to permanent restriction increments block counter');
+ob_start(); yoga_render_comment_restriction_profile((object) array('ID' => 7)); $counter_profile = ob_get_clean();
+check(str_contains($counter_profile, 'Количество блокировок: <strong>2</strong>') && str_contains($counter_profile, 'Осталось предупреждений: <strong>2</strong>'), 'Admin profile shows block counter and remaining warnings');
+yoga_save_comment_restriction_profile(7); check(count(yoga_get_user_notifications(7)) === 3, 'Repeated permanent save does not duplicate notification');
+check(count(yoga_get_unread_user_notifications(7)) === 3 && yoga_get_user_notifications(8) === array(), 'Notifications are unread and isolated to target user');
+ob_start(); yoga_render_comment_restriction_notification($event, true); $event_html = ob_get_clean();
+check(str_contains($event_html, 'lk-notifications-popup__item') && str_contains($event_html, 'data-notification-id="' . $event['id'] . '"') && str_contains($event_html, 'comment-restriction-notification-close.svg'), 'Bell notification is connected to read tracking and Figma icon');
+yoga_mark_user_notifications_read(7, $event['id']);
+check(count(yoga_get_unread_user_notifications(7)) === 2, 'Restriction notification can be marked read');
+$_POST['yoga_comment_restriction_remove'] = '1'; yoga_save_comment_restriction_profile(7);
+check(count(yoga_get_user_notifications(7)) === 3, 'Removing restriction keeps history without inventing an event');
+unset($_POST['yoga_comment_restriction_remove']); yoga_save_comment_restriction_profile(7);
+check(count(yoga_get_user_notifications(7)) === 4, 'Reapplying restriction after cancellation creates a fresh notification');
+unset($_POST['yoga_comment_restricted_permanently']); yoga_save_comment_restriction_profile(7);
+check(yoga_get_comment_warnings_remaining(7) === 1, 'New temporary restriction consumes next warning');
+$_POST['yoga_comment_restriction_remove'] = '1'; yoga_save_comment_restriction_profile(7);
+unset($_POST['yoga_comment_restriction_remove']); yoga_save_comment_restriction_profile(7);
+check(yoga_get_comment_warnings_remaining(7) === 0 && !yoga_is_comment_permanently_restricted(7), 'Zero warnings does not automatically set permanent ban');
+$_POST['yoga_comment_restriction_remove'] = '1'; yoga_save_comment_restriction_profile(7);
+unset($_POST['yoga_comment_restriction_remove']); yoga_save_comment_restriction_profile(7);
+check(yoga_get_comment_warnings_remaining(7) === 0, 'Counter cannot go below zero');
+ob_start(); yoga_render_comment_restriction_notification($temporary_event); $feed_html = ob_get_clean();
+check(str_contains($feed_html, '<article') && str_contains($feed_html, 'comment-restriction-feed-warning.svg') && str_contains($feed_html, 'правилами платформы</a>') && str_contains($feed_html, 'Разблокировка:') && str_contains($feed_html, '2 предупреждения'), 'Feed uses warning icon, working rules link, date and original counter snapshot');
+check(!str_contains($feed_html, '0 предупреждений'), 'History does not change when counter decreases');
+echo "PASS: temporary and permanent restrictions, expiry, cancellation, mode switching, user isolation, AJAX/WP/REST enforcement, hidden controls, authorization, notification creation/deduplication/read tracking and rendering.\n";

@@ -177,6 +177,10 @@ $header_sprite_url = add_query_arg(
 											<?php foreach ($header_notifications as $notification): ?>
 												<?php
 												$notification_type = sanitize_key((string) ($notification['type'] ?? ''));
+												if (in_array($notification_type, array('comment_restricted', 'comment_banned'), true)) {
+													yoga_render_comment_restriction_notification($notification, true);
+													continue;
+												}
 												$notification_is_unread = empty($notification['read_at']);
 												$notification_title = $notification_type === 'question_answer'
 													? __('Ответ преподавателя', 'yoga')

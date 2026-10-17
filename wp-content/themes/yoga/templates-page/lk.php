@@ -282,6 +282,10 @@
 										$url = (string) ($notification['url'] ?? '');
 										$created_at = (string) ($notification['created_at'] ?? '');
 										$type = (string) ($notification['type'] ?? '');
+										if (in_array($type, array('comment_restricted', 'comment_banned'), true)) {
+											yoga_render_comment_restriction_notification($notification);
+											continue;
+										}
 										if ($type === 'question_answer' && function_exists('yoga_get_notification_read_url')) {
 											$url = yoga_get_notification_read_url($notification, 'questions');
 										}
