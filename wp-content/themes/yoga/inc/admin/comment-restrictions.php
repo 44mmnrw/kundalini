@@ -15,7 +15,8 @@ function yoga_render_comment_restriction_profile($user): void {
     <h2><?php esc_html_e('Ограничение комментариев', 'yoga'); ?></h2>
     <table class="form-table" role="presentation">
         <tr><th><label for="yoga-comment-until">Запретить до</label></th><td>
-            <input type="datetime-local" id="yoga-comment-until" name="yoga_comment_restricted_until" value="<?php echo esc_attr($until ? wp_date('Y-m-d\TH:i', $until) : ''); ?>">
+            <input type="datetime-local" id="yoga-comment-until" name="yoga_comment_restricted_until" aria-describedby="yoga-comment-until-help" value="<?php echo esc_attr($until ? wp_date('Y-m-d\TH:i', $until) : ''); ?>">
+            <p class="description" id="yoga-comment-until-help"><strong>Заполните и дату, и время (часы и минуты).</strong> Без времени ограничение не сохранится. Затем нажмите «Обновить пользователя».</p>
             <p class="description">Часовой пояс сайта: <?php echo esc_html(wp_timezone()->getName()); ?>. Запрет распространяется на новые комментарии и ответы в практиках и блоге. После указанного времени снимается автоматически. Пустое поле означает отсутствие запрета.</p>
             <p><?php echo yoga_get_comment_restriction_until((int) $user->ID) ? 'Ограничение активно.' : 'Активного ограничения нет.'; ?></p>
         </td></tr>

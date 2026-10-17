@@ -60,7 +60,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                     <?php echo esc_html(yoga_get_comment_time_label($comment)); ?>
                 </span>
                 <div class="praktika-comment-item__main-action">
-                    <?php if ($is_own_comment): ?>
+                    <?php if ($is_own_comment && !$comments_restricted): ?>
                         <div class="your-comm">
                             <button type="button" class="your-comm__btn your-comm__btn_edit" aria-label="<?php esc_attr_e('Редактировать комментарий', 'yoga'); ?>">
                                 <svg class="your-comm__btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -101,7 +101,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
             </div>
 
 
-            <?php if ($is_own_comment): ?>
+            <?php if ($is_own_comment && !$comments_restricted): ?>
             <form class="praktika-comment-item__edit hidden" id="edit-form-<?php echo $comment->comment_ID; ?>">
                 <div class="answer-main answer-main_comment-edit">
                     <textarea name="comment_content" class="input textarea-resize" rows="1"><?php echo esc_textarea($comment->comment_content); ?></textarea>

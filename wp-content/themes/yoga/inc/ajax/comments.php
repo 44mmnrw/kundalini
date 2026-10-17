@@ -300,6 +300,9 @@ function handle_comment_update() {
         wp_die('Ошибка безопасности');
     }
 
+    $restriction_error = yoga_comment_restriction_error((int) get_current_user_id());
+    if ($restriction_error) { wp_send_json_error($restriction_error->get_error_message(), 403); }
+
     $comment_id = intval($_POST['comment_id']);
     $comment = get_comment($comment_id);
 
@@ -331,6 +334,9 @@ function handle_comment_delete() {
     if (!wp_verify_nonce($_POST['security'], 'yoga_ajax_nonce')) {
         wp_die('Ошибка безопасности');
     }
+
+    $restriction_error = yoga_comment_restriction_error((int) get_current_user_id());
+    if ($restriction_error) { wp_send_json_error($restriction_error->get_error_message(), 403); }
 
     $comment_id = intval($_POST['comment_id']);
 

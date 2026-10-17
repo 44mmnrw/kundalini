@@ -27,6 +27,29 @@ add_filter('rest_pre_insert_comment', static function ($comment, $request) {
     return yoga_comment_restriction_error((int) get_current_user_id()) ?: $comment;
 }, 10, 2);
 
+// REST deletion has no rest_pre_insert_comment hook, including for moderators.
+add_filter('rest_pre_dispatch', static function ($result, $server, $request) {
+    if (in_array($request->get_method(), array('POST', 'PUT', 'PATCH', 'DELETE'), true)
+        && preg_match('#^/wp/v2/comments(?:/\d+)?/?$#', $request->get_route())) {
+        return yoga_comment_restriction_error((int) get_current_user_id()) ?: $result;
+    }
+    return $result;
+}, 10, 3);
+
+add_filter('map_meta_cap', static function (array $caps, string $cap, int $user_id): array {
+    if ($cap === 'edit_comment' && yoga_get_comment_restriction_until($user_id)) {
+        return array('do_not_allow');
+    }
+    return $caps;
+}, 10, 3);
+
+// Also hide standard WordPress comment controls outside the theme renderer.
+foreach (array('comment_reply_link', 'edit_comment_link') as $hook) {
+    add_filter($hook, static function ($link) {
+        return yoga_get_comment_restriction_until((int) get_current_user_id()) ? '' : $link;
+    });
+}
+
 function yoga_render_comment_restriction_notice(): void {
     $until = yoga_get_comment_restriction_until((int) get_current_user_id());
     if (!$until) { return; }
