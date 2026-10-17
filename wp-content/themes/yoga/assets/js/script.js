@@ -1001,20 +1001,9 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.lk-questions-form .input').keydown(function () {
-		var el = this;
-		setTimeout(function() {
-			el.style.cssText = 'height:auto; padding:0';
-			el.style.cssText = 'height:' + el.scrollHeight + 'px';
-		}, 1);
-	});
-
-	$('.lk-questions-form .input').focus(function () {
-		var el = this;
-		setTimeout(function() {
-			el.style.cssText = 'height:auto; padding:0';
-			el.style.cssText = 'height:' + el.scrollHeight + 'px';
-		}, 1);
+	$('.lk-questions-form .input').on('input focus', function () {
+		this.style.height = '';
+		this.style.height = Math.max(this.scrollHeight, this.offsetHeight) + 'px';
 	});
 
 
@@ -4828,12 +4817,16 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 
 		var $form = $(this);
+		if ($form.attr('aria-busy') === 'true') return;
+		if (!this.checkValidity()) { this.reportValidity(); return; }
+		$form.attr('aria-busy', 'true');
 		var $submitBtn = $form.find('.btn');
 		var $nativeSubmit = $form.find('[type="submit"]');
 		var originalText = $submitBtn.text();
 		var restoreSubmitState = function() {
 			$submitBtn.text(originalText).removeClass('is-loading');
 			$nativeSubmit.prop('disabled', false);
+			$form.attr('aria-busy', 'false');
 		};
 
 		$submitBtn.text('Отправка...').addClass('is-loading');
@@ -4860,7 +4853,7 @@ jQuery(document).ready(function($) {
 					$('.overlay').addClass('active');
 					$('.modal').removeClass('active').attr('aria-hidden', 'true');
 					$('.modal-default_formsucces').addClass('active').attr('aria-hidden', 'false');
-					$form.find('textarea').val('');
+					$form.find('textarea').val('').trigger('input');
 				} catch (error) {
 					if (window.console && typeof window.console.error === 'function') {
 						window.console.error('Question form success handler failed:', error);
