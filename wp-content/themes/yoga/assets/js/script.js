@@ -3307,7 +3307,7 @@ jQuery(document).ready(function($) {
 					updatePracticeResultsToolbar(
 						$('.section-library'),
 						response.data.count,
-						YogaLibraryFiltersCore.selectedCount() > 0
+						YogaLibraryFiltersCore.selectedCount() > 0 || String(data.search || '').trim() !== ''
 					);
 					var $results = $('.section-library .library').addClass('library--practice-results kriyi__items');
 					if (page === 1) {
