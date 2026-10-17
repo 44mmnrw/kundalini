@@ -226,6 +226,7 @@ $current_term_link_attr = (! is_wp_error($current_term_archive_url))
 					</div>
 
 				</form>
+				<div class="practice-selected-filters" data-selected-filters role="group" aria-label="<?php esc_attr_e('Выбранные фильтры', 'yoga'); ?>" hidden></div>
 			</div>
 		</div>
 

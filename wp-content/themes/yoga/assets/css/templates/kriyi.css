@@ -24,6 +24,40 @@
   width: 100%;
 }
 
+.practice-selected-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-black, #1f1f1f);
+}
+.practice-selected-filters[hidden] { display: none; }
+.practice-search-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  max-width: 100%;
+  padding: 0.4375rem 0.9375rem;
+  border: 1px solid var(--color-violet, #9153e1);
+  border-radius: 6.25rem;
+  background: transparent;
+  color: var(--color-violet, #9153e1);
+  font-family: var(--font-family-base);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.practice-search-tag__close { flex-shrink: 0; opacity: 0.6; }
+.practice-search-tag:focus-visible { outline: 2px solid var(--color-violet, #9153e1); outline-offset: 3px; }
+@media (max-width: 767px) {
+  .practice-selected-filters { gap: 0.3125rem; }
+}
+
 .kriyi-form-main {
   display: flex;
   width: 100%;

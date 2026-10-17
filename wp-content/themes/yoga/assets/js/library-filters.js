@@ -51,6 +51,44 @@
 		$('input.library-filter-input').each(function () {
 			values.set(this.id, Boolean(this.checked));
 		});
+		renderSelectedFilters();
+	}
+
+	function renderSelectedFilters() {
+		$('.section-kriyi [data-selected-filters]').each(function () {
+			var container = this;
+			var section = container.closest('.section-kriyi');
+			var seen = Object.create(null);
+			container.replaceChildren();
+			section.querySelectorAll('.filter input[type="checkbox"]:checked').forEach(function (input) {
+				var key = inputKey(input);
+				if (seen[key]) return;
+				seen[key] = true;
+				var label = input.labels && input.labels[0];
+				var text = label ? label.textContent.replace(/\s+/g, ' ').trim() : '';
+				if (!text) return;
+				var button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'practice-search-tag';
+				button.setAttribute('aria-label', 'Снять фильтр «' + text + '»');
+				var title = document.createElement('span');
+				title.textContent = text;
+				var close = document.createElement('span');
+				close.className = 'practice-search-tag__close';
+				close.setAttribute('aria-hidden', 'true');
+				close.textContent = '×';
+				button.append(title, close);
+				button.addEventListener('click', function () {
+					var index = Array.from(container.children).indexOf(button);
+					set(input, false);
+					$(input).trigger('change');
+					var next = container.children[Math.min(index, container.children.length - 1)] || section.querySelector('.form-search input[type="text"]');
+					if (next) next.focus();
+				});
+				container.appendChild(button);
+			});
+			container.hidden = !container.children.length;
+		});
 	}
 
 	function persist() {
