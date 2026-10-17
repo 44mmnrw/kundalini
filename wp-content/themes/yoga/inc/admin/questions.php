@@ -142,7 +142,8 @@ function yoga_question_force_single_column($columns): int {
 add_filter('get_user_option_screen_layout_question', 'yoga_question_force_single_column');
 
 
-function yoga_get_unanswered_questions_count(): int {
+/** Count unanswered requests once for the parent menu and every source submenu. */
+function yoga_get_unanswered_question_counts(): array {
 	$question_ids = get_posts(array(
 		'post_type' => 'question',
 		'post_status' => array('publish', 'pending', 'draft', 'private'),
@@ -152,37 +153,69 @@ function yoga_get_unanswered_questions_count(): int {
 		'orderby' => 'none',
 	));
 
-	$count = 0;
+	$counts = array('total' => 0) + array_fill_keys(array_keys(yoga_question_source_labels()), 0);
+	if ($question_ids) {
+		update_meta_cache('post', $question_ids);
+	}
 	foreach ($question_ids as $question_id) {
 		if (empty(yoga_get_question_answers((int) $question_id))) {
-			$count++;
+			$counts['total']++;
+			$source = sanitize_key((string) get_post_meta((int) $question_id, 'question_source', true));
+			if ($source !== 'total' && array_key_exists($source, $counts)) {
+				$counts[$source]++;
+			}
 		}
 	}
 
-	return $count;
+	return $counts;
+}
+
+function yoga_get_unanswered_questions_count(): int {
+	return yoga_get_unanswered_question_counts()['total'];
+}
+
+function yoga_question_unanswered_menu_badge(int $count): string {
+	if ($count <= 0) { return ''; }
+	return sprintf(
+		' <span class="awaiting-mod count-%1$d"><span class="pending-count" aria-hidden="true">%1$d</span><span class="screen-reader-text">%2$s</span></span>',
+		$count,
+		esc_html(sprintf(_n('%d вопрос без ответа', '%d вопросов без ответа', $count, 'yoga'), $count))
+	);
 }
 
 function yoga_add_unanswered_questions_menu_count(): void {
-	global $menu;
+	global $menu, $submenu;
 
-	$count = yoga_get_unanswered_questions_count();
-	if ($count <= 0 || !is_array($menu)) {
+	$counts = yoga_get_unanswered_question_counts();
+	if ($counts['total'] <= 0) {
 		return;
 	}
 
-	foreach ($menu as &$menu_item) {
-		if (!isset($menu_item[2]) || $menu_item[2] !== 'edit.php?post_type=question') {
-			continue;
-		}
+	if (is_array($menu)) {
+		foreach ($menu as &$menu_item) {
+			if (!isset($menu_item[2]) || $menu_item[2] !== 'edit.php?post_type=question') {
+				continue;
+			}
 
-		$menu_item[0] .= sprintf(
-			' <span class="awaiting-mod count-%1$d"><span class="pending-count" aria-hidden="true">%1$d</span><span class="screen-reader-text">%2$s</span></span>',
-			$count,
-			esc_html(sprintf(_n('%d вопрос без ответа', '%d вопросов без ответа', $count, 'yoga'), $count))
-		);
-		break;
+			$menu_item[0] .= yoga_question_unanswered_menu_badge($counts['total']);
+			break;
+		}
+		unset($menu_item);
 	}
-	unset($menu_item);
+
+	$parent = 'edit.php?post_type=question';
+	if (empty($submenu[$parent]) || !is_array($submenu[$parent])) { return; }
+	$source_urls = array();
+	foreach (yoga_question_source_labels() as $source => $label) {
+		$source_urls[$parent . '&question_source=' . $source] = $source;
+	}
+	foreach ($submenu[$parent] as &$submenu_item) {
+		$source = $source_urls[$submenu_item[2] ?? ''] ?? '';
+		if ($source !== '') {
+			$submenu_item[0] .= yoga_question_unanswered_menu_badge($counts[$source]);
+		}
+	}
+	unset($submenu_item);
 }
 add_action('admin_menu', 'yoga_add_unanswered_questions_menu_count', 999);
 
