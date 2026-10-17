@@ -6,6 +6,7 @@ function add_filter(...$args) {}
 function __($s, ...$args) { return $s; }
 function _n($one, $many, $n, ...$args) { return $n === 1 ? $one : $many; }
 function esc_html($s) { return htmlspecialchars($s, ENT_QUOTES); }
+function esc_attr($s) { return htmlspecialchars($s, ENT_QUOTES); }
 function sanitize_key($s) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($s)); }
 function wp_strip_all_tags($s) { return strip_tags($s); }
 function get_post_meta($id, $key, ...$args) { return $GLOBALS['metadata'][$id][$key] ?? ''; }

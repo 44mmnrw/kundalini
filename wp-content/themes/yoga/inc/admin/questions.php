@@ -177,9 +177,9 @@ function yoga_get_unanswered_questions_count(): int {
 function yoga_question_unanswered_menu_badge(int $count): string {
 	if ($count <= 0) { return ''; }
 	return sprintf(
-		' <span class="awaiting-mod count-%1$d"><span class="pending-count" aria-hidden="true">%1$d</span><span class="screen-reader-text">%2$s</span></span>',
+		' <span class="update-plugins count-%1$d" role="img" aria-label="%2$s"><span class="plugin-count" aria-hidden="true">%1$d</span></span>',
 		$count,
-		esc_html(sprintf(_n('%d вопрос без ответа', '%d вопросов без ответа', $count, 'yoga'), $count))
+		esc_attr(sprintf(_n('%d вопрос без ответа', '%d вопросов без ответа', $count, 'yoga'), $count))
 	);
 }
 
