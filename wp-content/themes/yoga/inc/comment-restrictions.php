@@ -16,6 +16,52 @@ function yoga_is_comment_restricted(int $user_id): bool {
     return yoga_is_comment_permanently_restricted($user_id) || yoga_get_comment_restriction_until($user_id) > 0;
 }
 
+function yoga_get_comment_warnings_remaining(int $user_id): int {
+    $value = get_user_meta($user_id, '_yoga_comment_warnings_remaining', true);
+    return $value === '' ? 3 : max(0, min(3, (int) $value));
+}
+
+function yoga_get_comment_restriction_count(int $user_id): int {
+    return max(0, (int) get_user_meta($user_id, '_yoga_comment_restriction_count', true));
+}
+
+function yoga_comment_warnings_message(int $remaining): string {
+    return sprintf(
+        $remaining === 1 ? __('У вас осталось %d предупреждение до полной блокировки комментирования.', 'yoga') : ($remaining === 0 ? __('У вас осталось %d предупреждений до полной блокировки комментирования.', 'yoga') : __('У вас осталось %d предупреждения до полной блокировки комментирования.', 'yoga')),
+        $remaining
+    );
+}
+
+/** Notify only after a new active restriction has actually been persisted. */
+function yoga_maybe_notify_comment_restriction(int $user_id, $previous): void {
+    $current = yoga_is_comment_permanently_restricted($user_id) ? 'permanent' : yoga_get_comment_restriction_until($user_id);
+    if (!$current || $current === $previous) { return; }
+    if (!$previous || $current === 'permanent' || $previous === 'permanent') {
+        update_user_meta($user_id, '_yoga_comment_restriction_count', yoga_get_comment_restriction_count($user_id) + 1);
+    }
+    $context = array();
+    if ($current === 'permanent') {
+        $type = 'comment_banned';
+        $title = __('Комментирование отключено', 'yoga');
+        $message = __('Вы неоднократно нарушили правила платформы. Вы больше не можете оставлять комментарии. Решение окончательное и не подлежит пересмотру.', 'yoga');
+    } else {
+        $remaining = yoga_get_comment_warnings_remaining($user_id);
+        // Changing an active deadline is an extension, not a new warning.
+        if (!$previous || $previous === 'permanent') {
+            $remaining = max(0, $remaining - 1);
+            update_user_meta($user_id, '_yoga_comment_warnings_remaining', $remaining);
+        }
+        $type = 'comment_restricted';
+        $title = __('Комментирование временно ограничено', 'yoga');
+        $message = yoga_comment_warnings_message($remaining) . ' ' . sprintf(
+            __('Пожалуйста, ознакомьтесь с правилами платформы во избежание повторных ограничений. Разблокировка: %s', 'yoga'), wp_date('d.m.Y', $current)
+        );
+        $context = array('comment_warnings_remaining' => $remaining, 'comment_restricted_until' => $current);
+    }
+    $url = function_exists('yoga_get_lk_section_url') ? yoga_get_lk_section_url('notifications') : home_url('/my-account/');
+    yoga_add_user_notification($user_id, $type, $title, $message, $url, $context);
+}
+
 function yoga_comment_restriction_error(int $user_id): ?WP_Error {
     if (yoga_is_comment_permanently_restricted($user_id)) {
         return new WP_Error('yoga_comment_restricted', __('Комментирование недоступно.', 'yoga'), array('status' => 403));
