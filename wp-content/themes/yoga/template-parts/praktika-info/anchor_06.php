@@ -13,6 +13,9 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
     <h3><?php echo esc_html($section['title']); ?></h3>
 
 
+    <?php if (yoga_get_comment_restriction_until((int) get_current_user_id())) : ?>
+        <?php yoga_render_comment_restriction_notice(); ?>
+    <?php else : ?>
     <div class="comment-form-main">
     <form id="custom-comment-form" class="comment-form">
         <textarea name="comment" class="input textarea-resize" placeholder="Оставьте комментарий |" rows="1" required></textarea>
@@ -28,6 +31,7 @@ $anchor_id = isset($anchor_id) && $anchor_id !== ''
         <?php wp_nonce_field('yoga_ajax_nonce', 'comment_security'); ?>
     </form>
 </div>
+    <?php endif; ?>
 
 
     <div class="comments-items">

@@ -15,6 +15,9 @@ if (get_post_type($post_id) === 'post') :
 	<div id="comments" class="praktika-comments post-comments-yoga">
 		<h3 class="post-comments-yoga__title"><?php esc_html_e('Комментарии', 'yoga'); ?></h3>
 
+		<?php if (yoga_get_comment_restriction_until((int) get_current_user_id())) : ?>
+			<?php yoga_render_comment_restriction_notice(); ?>
+		<?php else : ?>
 		<div class="comment-form-main">
 			<form id="custom-comment-form" class="comment-form">
 				<textarea name="comment" class="input textarea-resize" placeholder="<?php esc_attr_e('Оставьте комментарий |', 'yoga'); ?>" rows="1" required></textarea>
@@ -30,6 +33,7 @@ if (get_post_type($post_id) === 'post') :
 				<?php wp_nonce_field('yoga_ajax_nonce', 'comment_security'); ?>
 			</form>
 		</div>
+		<?php endif; ?>
 
 		<div class="comments-items">
 			<?php yoga_render_threaded_ajax_comments_list($post_id); ?>
@@ -62,5 +66,5 @@ endif;
 		<p class="no-comments"><?php esc_html_e('Комментарии закрыты.', 'yoga'); ?></p>
 	<?php endif; ?>
 
-	<?php comment_form(); ?>
+	<?php if (yoga_get_comment_restriction_until((int) get_current_user_id())) { yoga_render_comment_restriction_notice(); } else { comment_form(); } ?>
 </div>

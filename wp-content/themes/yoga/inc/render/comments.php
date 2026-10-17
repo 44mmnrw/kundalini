@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
     $GLOBALS['comment'] = $comment;
     $is_own_comment = yoga_comment_is_owned_by_logged_in_user($comment);
+    $comments_restricted = (bool) yoga_get_comment_restriction_until((int) get_current_user_id());
     $comment_user_id = (int) $comment->user_id;
     $comment_author_name = trim((string) $comment->comment_author);
 
@@ -72,7 +73,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                                 </svg>
                             </button>
                         </div>
-                    <?php else: ?>
+                    <?php elseif (!$comments_restricted): ?>
                         <div class="answer-btn" role="button" tabindex="0">
                             <svg class="answer-btn__icon" aria-hidden="true" focusable="false"><use href="<?php echo esc_url($yoga_sprite_href); ?>#praktika-answer-icon"></use></svg>
                             <span>Ответить</span>
@@ -123,6 +124,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
         </div>
 
 
+        <?php if (!$comments_restricted): ?>
         <div class="praktika-comment__answer hidden" id="reply-form-<?php echo $comment->comment_ID; ?>">
             <div class="answer-main">
                 <div class="answer-main__image">
@@ -134,6 +136,7 @@ function custom_comment_template(WP_Comment $comment, array $args, int $depth) {
                 </button>
             </div>
         </div>
+        <?php endif; ?>
     </div>
     <?php
 }

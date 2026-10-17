@@ -31,6 +31,8 @@ function handle_custom_comment() {
     if (!isset($_POST['comment_security']) || !wp_verify_nonce($_POST['comment_security'], 'yoga_ajax_nonce')) {
         wp_send_json_error('Ошибка безопасности');
     }
+    $restriction_error = yoga_comment_restriction_error((int) get_current_user_id());
+    if ($restriction_error) { wp_send_json_error($restriction_error->get_error_message(), 403); }
 
     $post_id = isset($_POST['post_id']) ? (int) $_POST['post_id'] : 0;
     $comment_content = isset($_POST['comment']) ? sanitize_textarea_field($_POST['comment']) : '';
@@ -207,6 +209,8 @@ function handle_comment_reply() {
     if (!is_user_logged_in()) {
         wp_send_json_error('Для ответа необходимо авторизоваться');
     }
+    $restriction_error = yoga_comment_restriction_error((int) get_current_user_id());
+    if ($restriction_error) { wp_send_json_error($restriction_error->get_error_message(), 403); }
 
 
     $current_user = wp_get_current_user();
@@ -255,6 +259,7 @@ function handle_comment_reply() {
 
     $comment_id = yoga_insert_ajax_comment($comment_data, false);
 
+    if (is_wp_error($comment_id)) { wp_send_json_error($comment_id->get_error_message(), 403); }
     if ($comment_id) {
         yoga_practice_comment_fix_author_binding((int) $comment_id, (int) $user_id);
 		$recipient_user_id = (int) $parent_comment->user_id;

@@ -1,0 +1,65 @@
+/** Restricted commenting notice, shared by practices and blog articles. */
+.comment-restriction-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 1.875rem;
+  padding: 1.875rem;
+  border-radius: 1.875rem;
+  background: var(--color-grey);
+  color: var(--color-black);
+  font-family: var(--font-family-base);
+}
+.comment-restriction-notice__head {
+  display: flex;
+  align-items: center;
+  gap: 0.9375rem;
+  width: 100%;
+}
+.comment-restriction-notice__head img {
+  display: block;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+.comment-restriction-notice .comment-restriction-notice__head h4 {
+  margin: 0;
+  padding: 0;
+  font: 700 1.25rem/1.1 var(--font-family-base);
+  color: var(--color-black);
+}
+.comment-restriction-notice > p {
+  margin: 0.375rem 0 0;
+  padding: 0;
+  font: 400 0.875rem/normal var(--font-family-base);
+  color: var(--color-black);
+}
+.comment-restriction-notice strong { font-weight: 600; }
+.comment-restriction-notice > p a {
+  color: var(--color-violet);
+  text-decoration: underline;
+  text-underline-position: under;
+}
+.comment-restriction-notice .comment-restriction-notice__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 10.875rem;
+  min-height: 2.6875rem;
+  margin-top: 1.25rem;
+  padding: 0.8125rem 0.9375rem;
+  border-radius: 6.25rem;
+  background: var(--color-violet);
+  color: var(--color-white);
+  font: 600 0.9375rem/1.1 var(--font-family-base);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.comment-restriction-notice .comment-restriction-notice__button:hover,
+.comment-restriction-notice .comment-restriction-notice__button:focus-visible {
+  background: var(--color-black);
+}
+@media (max-width: 767px) {
+  .comment-restriction-notice { padding: 1.25rem; }
+}

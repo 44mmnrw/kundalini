@@ -9,6 +9,7 @@
 @import "../../slick/slick-theme.css";
 @import "../../libs/fancybox/jquery.fancybox.min.css";
 @import "../animate.css";
+@import "comment-restriction.css";
 
 :root {
   --font-family-base: "Mulish", sans-serif;

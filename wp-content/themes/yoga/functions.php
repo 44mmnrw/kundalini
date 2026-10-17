@@ -21,6 +21,8 @@
 	require_once get_template_directory() . '/inc/practices/search.php';
 	require_once get_template_directory() . '/inc/ajax/practice-search.php';
 	require_once get_template_directory() . '/inc/comments.php';
+	require_once get_template_directory() . '/inc/comment-restrictions.php';
+	require_once get_template_directory() . '/inc/admin/comment-restrictions.php';
 	require_once get_template_directory() . '/inc/avatars.php';
 	require_once get_template_directory() . '/inc/avatar-folders.php';
 	require_once get_template_directory() . '/inc/admin/comment-role-badges.php';
