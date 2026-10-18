@@ -54,22 +54,31 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                         </div>
                     </div>
                     <?php endif; ?>
-                    <?php
-                    $main_info_decor_path = get_template_directory() . '/assets/svg/arrow_hand_drawn.svg';
-                    if (is_readable($main_info_decor_path)) {
-                        $main_info_decor_svg = file_get_contents($main_info_decor_path);
-                        if (false !== $main_info_decor_svg) {
-                            $main_info_decor_svg = preg_replace(
-                                '/<svg\s+/',
-                                '<svg class="main__info-decor main__info-decor--snake" aria-hidden="true" focusable="false" ',
-                                $main_info_decor_svg,
-                                1
-                            );
-                            echo $main_info_decor_svg;
-                        }
-                    }
-                    ?>
                 </div>
+                <?php
+                $main_info_decor_path = get_template_directory() . '/assets/svg/hero-arrow-hand-drawn.svg';
+                if (is_readable($main_info_decor_path)) {
+                    $main_info_decor_svg = file_get_contents($main_info_decor_path);
+                    if (false !== $main_info_decor_svg) {
+                        $main_info_decor_svg = preg_replace(
+                            '/<svg\s+/',
+                            '<svg class="main__info-decor main__info-decor--snake" aria-hidden="true" focusable="false" ',
+                            $main_info_decor_svg,
+                            1
+                        );
+                        // Normalize stroke lengths without changing the exported geometry.
+                        $main_info_decor_stroke = 0;
+                        $main_info_decor_svg = preg_replace_callback(
+                            '/<path\b/',
+                            static function () use (&$main_info_decor_stroke) {
+                                return '<path pathLength="100" data-arrow-stroke="' . ++$main_info_decor_stroke . '"';
+                            },
+                            $main_info_decor_svg
+                        );
+                        echo $main_info_decor_svg;
+                    }
+                }
+                ?>
 
                 <?php
                 $hero_image = get_field('hero_image');
