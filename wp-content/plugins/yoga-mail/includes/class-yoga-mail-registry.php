@@ -520,6 +520,12 @@ final class Yoga_Mail_Registry {
 			'woocommerce-no-stock' => array('label' => 'WooCommerce: товар закончился', 'group' => 'WooCommerce', 'defaults' => $existing),
 			'woocommerce-backorder' => array('label' => 'WooCommerce: предзаказ', 'group' => 'WooCommerce', 'defaults' => $existing),
 		);
+		foreach (array('admin-new-question', 'admin-contact-message') as $id) {
+			$definitions[$id]['tags']['question_reply_url'] = array(
+				'type' => 'url',
+				'example' => home_url('/wp-admin/post.php?post=42&action=edit#question_answer'),
+			);
+		}
 		foreach ($definitions as $id => &$definition) {
 			$definition['tags'] = wp_parse_args((array) ($definition['tags'] ?? array()), $common);
 			$definition = $this->normalize_definition($id, $definition);

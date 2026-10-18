@@ -135,7 +135,7 @@ final class Yoga_Mail_Admin {
 				@media(max-width:900px){.yoga-mail-settings-grid,.yoga-mail-fields,.yoga-mail-preview-grid{grid-template-columns:1fr}.yoga-mail-field--wide{grid-column:auto}.yoga-mail-switches{grid-template-columns:1fr}.yoga-mail-actions__test{width:100%;margin-left:0}.yoga-mail-actions__test input{flex:1;width:auto}}
 			</style>
 			<div class="yoga-mail-shell">
-			<h1><?php esc_html_e('Шаблоны писем Yoga Mail', 'yoga-mail'); ?></h1>
+			<h1><?php esc_html_e('Управление рассылкой Yoga Mail', 'yoga-mail'); ?></h1>
 			<?php if ($this->notice !== '') : ?><div class="notice notice-<?php echo esc_attr($this->notice_type); ?> is-dismissible"><p><?php echo esc_html($this->notice); ?></p></div><?php endif; ?>
 			<p><?php esc_html_e('Layout защищён кодом. Здесь редактируются только контент, тема, CTA и параметры включения.', 'yoga-mail'); ?></p>
 			<p><strong><?php echo esc_html(sprintf(__('Готово %1$d из %2$d шаблонов.', 'yoga-mail'), $status_counts['ready'], $status_counts['all'])); ?></strong> <?php esc_html_e('В списке: ✓ — готовый шаблон, ○ — базовый шаблон без отдельной вёрстки.', 'yoga-mail'); ?></p>

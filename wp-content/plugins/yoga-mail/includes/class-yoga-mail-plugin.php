@@ -32,6 +32,7 @@ final class Yoga_Mail_Plugin {
 		(new Yoga_Mail_WooCommerce($this->registry, $this->renderer, $this->mailer))->init();
 		if (is_admin()) {
 			(new Yoga_Mail_Admin($this->registry, $this->renderer, $this->mailer))->init();
+			(new Yoga_Mail_Events())->init();
 		}
 	}
 

@@ -1223,14 +1223,21 @@ function yoga_subscribe_handler() {
 			wp_send_json_error(array('message' => 'Не удалось сохранить сообщение. Попробуйте еще раз.'));
 		}
 
-		$sent = function_exists('yoga_mail_send')
-			? yoga_mail_send('admin-contact-message', array(
+		if (function_exists('yoga_mail_send_event')) {
+			$sent = yoga_mail_send_event($source, $request_id, array(
+				'subject' => $subject,
+				'content' => nl2br(esc_html($body)),
+			));
+		} elseif (function_exists('yoga_mail_send')) {
+			$sent = yoga_mail_send('admin-contact-message', array(
 				'to' => $to,
 				'subject' => $subject,
 				'content' => nl2br(esc_html($body)),
 				'headers' => $headers,
-			))
-			: wp_mail($to, $subject, nl2br(esc_html($body)), $headers);
+			));
+		} else {
+			$sent = wp_mail($to, $subject, nl2br(esc_html($body)), $headers);
+		}
 
 		if (!$sent) {
 			error_log('process_contact_form: wp_mail failed for email ' . $email);
