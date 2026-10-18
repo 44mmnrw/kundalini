@@ -73,6 +73,9 @@ final class Yoga_Mail_Registry {
 			$stored = get_option(self::LEGACY_TEMPLATES_OPTION, array());
 		}
 		$custom = is_array($stored) && isset($stored[$id]) && is_array($stored[$id]) ? $stored[$id] : array();
+		if (Yoga_Mail_Admin_Request::is_template($id) && (int) ($custom['request_design_version'] ?? 0) < Yoga_Mail_Admin_Request::DESIGN_VERSION) {
+			$custom = array();
+		}
 		$values = wp_parse_args($custom, $definition['defaults']);
 		// Update the old standard copy in saved templates without resetting custom content.
 		if ($id === 'payment-success-receipt') {
@@ -129,7 +132,9 @@ final class Yoga_Mail_Registry {
 		$clean = array(
 			'subject'     => sanitize_text_field((string) ($input['subject'] ?? '')),
 			'preheader'   => sanitize_text_field((string) ($input['preheader'] ?? '')),
-			'heading'     => sanitize_text_field((string) ($input['heading'] ?? '')),
+			'heading'     => Yoga_Mail_Admin_Request::is_template($id)
+				? sanitize_textarea_field((string) ($input['heading'] ?? ''))
+				: sanitize_text_field((string) ($input['heading'] ?? '')),
 			'body'        => wp_kses_post((string) ($input['body'] ?? '')),
 			'cta_label'   => sanitize_text_field((string) ($input['cta_label'] ?? '')),
 			'cta_url'     => sanitize_text_field((string) ($input['cta_url'] ?? '')),
@@ -157,6 +162,9 @@ final class Yoga_Mail_Registry {
 		}
 		$stored = get_option(self::TEMPLATES_OPTION, array());
 		$stored = is_array($stored) ? $stored : array();
+		if (Yoga_Mail_Admin_Request::is_template($id)) {
+			$clean['request_design_version'] = Yoga_Mail_Admin_Request::DESIGN_VERSION;
+		}
 		$stored[$id] = $clean;
 		update_option(self::TEMPLATES_OPTION, $stored, false);
 		return true;
@@ -532,12 +540,7 @@ final class Yoga_Mail_Registry {
 			'woocommerce-no-stock' => array('label' => 'WooCommerce: товар закончился', 'group' => 'WooCommerce', 'defaults' => $existing),
 			'woocommerce-backorder' => array('label' => 'WooCommerce: предзаказ', 'group' => 'WooCommerce', 'defaults' => $existing),
 		);
-		foreach (array('admin-new-question', 'admin-contact-message') as $id) {
-			$definitions[$id]['tags']['question_reply_url'] = array(
-				'type' => 'url',
-				'example' => home_url('/wp-admin/post.php?post=42&action=edit#question_answer'),
-			);
-		}
+		$definitions = array_merge($definitions, Yoga_Mail_Admin_Request::definitions());
 		foreach ($definitions as $id => &$definition) {
 			$definition['tags'] = wp_parse_args((array) ($definition['tags'] ?? array()), $common);
 			$definition = $this->normalize_definition($id, $definition);

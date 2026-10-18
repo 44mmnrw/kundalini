@@ -1133,6 +1133,11 @@ function yoga_subscribe_handler() {
 
 
 	function yoga_send_support_autoreply(string $recipient_email, int $request_id, string $source): bool {
+		// Logged-in senders follow their questions in the account; only guests need a receipt email.
+		if (is_user_logged_in()) {
+			return true;
+		}
+
 		$recipient_email = sanitize_email($recipient_email);
 		$source = sanitize_key($source);
 		if (!is_email($recipient_email) || $request_id <= 0 || !in_array($source, array('faq', 'lk', 'contacts', 'practice'), true)) {
@@ -1204,7 +1209,7 @@ function yoga_subscribe_handler() {
 			? yoga_get_practice_questions_notification_email()
 			: 'sshell72@yandex.ru';
 		$subject = $source === 'practice'
-			? 'Новый вопрос отпр. с практики' . ($practice_id > 0 ? ': ' . get_the_title($practice_id) : '')
+			? 'Новый вопрос по практике' . ($practice_id > 0 ? ' “' . get_the_title($practice_id) . '”' : '')
 			: 'Новое обращение отпр. с "Контакты"';
 		$body = "
         Имя: $name
@@ -1256,6 +1261,7 @@ function yoga_subscribe_handler() {
 		}
 		$practice_title = $practice_id > 0 ? trim((string) get_the_title($practice_id)) : '';
 		$meta_input = array(
+			'contact_name' => $name,
 			'contact_email' => $email,
 			'contact_phone' => $phone,
 			'contact_date' => current_time('mysql'),
