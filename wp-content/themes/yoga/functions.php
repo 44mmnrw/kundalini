@@ -1490,17 +1490,19 @@ function yoga_subscribe_handler() {
 				$item_title = 'О преподавателе';
 			}
 			$item_output = $args_before;
-			$item_output .= '<a class="ref"' . $attributes . '>';
+			$item_output .= $is_first_item
+				? '<button type="button" class="ref" aria-expanded="false" aria-controls="header-library-menu"' . (!empty($item->attr_title) ? ' title="' . esc_attr($item->attr_title) . '"' : '') . '>'
+				: '<a class="ref"' . $attributes . '>';
 			$item_output .= $args_link_before . $item_title . $args_link_after;
 
 
 			if ($is_first_item) {
-				$item_output .= '<div class="ref-icon">';
+				$item_output .= '<span class="ref-icon">';
 				$item_output .= '<svg aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#menu-dropdown') . '"></use></svg>';
-				$item_output .= '</div>';
+				$item_output .= '</span>';
 			}
 
-			$item_output .= '</a>';
+			$item_output .= $is_first_item ? '</button>' : '</a>';
 			$item_output .= $args_after;
 
 			$output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
