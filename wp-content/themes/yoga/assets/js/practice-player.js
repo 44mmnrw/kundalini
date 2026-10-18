@@ -288,7 +288,7 @@ function setupPracticeAudioTrackDropdown(container) {
     });
     const sync = () => {
         title.textContent = selector.options[selector.selectedIndex]?.textContent || '';
-        toggle.setAttribute('aria-label', `Выбрать аудиозапись: ${title.textContent}`);
+        toggle.setAttribute('aria-label', `Выбрать аудио: ${title.textContent}`);
         buttons.forEach((button, index) => { button.hidden = index === selector.selectedIndex; });
     };
     toggle.addEventListener('click', () => setOpen(menu.hidden));
@@ -316,7 +316,10 @@ function setupPracticeAudioTrackDropdown(container) {
     document.addEventListener('click', event => {
         if (!container.contains(event.target)) setOpen(false);
     });
-    container.append(toggle, menu);
+    const field = document.createElement('div');
+    field.className = 'practice-audio-tracks__field';
+    field.append(toggle, menu);
+    container.append(field);
     container.classList.add('is-enhanced');
     sync();
 }
