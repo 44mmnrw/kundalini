@@ -177,7 +177,13 @@ final class Yoga_Mail_Admin {
 					<div class="yoga-mail-editor-heading"><h2><?php echo esc_html($definition['label']); ?></h2><code><?php echo esc_html($selected); ?></code></div>
 					<div class="yoga-mail-fields">
 					<?php foreach (array('subject' => 'Тема письма', 'preheader' => 'Прехедер', 'heading' => 'Заголовок', 'footer_note' => 'Примечание под CTA', 'cta_label' => 'Текст кнопки', 'cta_url' => 'URL кнопки') as $field => $label) : ?>
-						<div class="yoga-mail-field"><label for="field-<?php echo esc_attr($field); ?>"><?php echo esc_html($label); ?></label><input type="text" id="field-<?php echo esc_attr($field); ?>" name="template[<?php echo esc_attr($field); ?>]" value="<?php echo esc_attr($values[$field]); ?>"></div>
+						<div class="yoga-mail-field"><label for="field-<?php echo esc_attr($field); ?>"><?php echo esc_html($label); ?></label>
+						<?php if ($field === 'heading' && Yoga_Mail_Admin_Request::is_template($selected)) : ?>
+							<textarea id="field-heading" name="template[heading]" rows="2" style="box-sizing:border-box;width:100%;"><?php echo esc_textarea($values[$field]); ?></textarea>
+						<?php else : ?>
+							<input type="text" id="field-<?php echo esc_attr($field); ?>" name="template[<?php echo esc_attr($field); ?>]" value="<?php echo esc_attr($values[$field]); ?>">
+						<?php endif; ?>
+						</div>
 					<?php endforeach; ?>
 						<div class="yoga-mail-field yoga-mail-field--wide"><label for="yoga_mail_body"><?php esc_html_e('Содержимое письма', 'yoga-mail'); ?></label><?php wp_editor($values['body'], 'yoga_mail_body', array('textarea_name' => 'template[body]', 'media_buttons' => false, 'textarea_rows' => 10, 'teeny' => true)); ?></div>
 					</div>

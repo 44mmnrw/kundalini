@@ -164,7 +164,7 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 
 
 		$to = get_option('admin_email');
-		$subject = 'Новый вопрос отпр. с FAQ: ' . $name;
+		$subject = 'Новое обращение отпр. с “Частые вопросы”';
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
 		$body = "
@@ -179,6 +179,7 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 			'post_type' => 'question',
 			'post_status' => 'publish',
             'meta_input' => array(
+			'contact_name' => $name,
 			'contact_email' => $email,
 			'contact_date' => current_time('mysql'),
 			'question_source' => 'faq'

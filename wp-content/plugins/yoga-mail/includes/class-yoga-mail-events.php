@@ -13,14 +13,14 @@ final class Yoga_Mail_Events {
 	public static function definitions(): array {
 		return array(
 			'lk' => array('label' => 'Новый вопрос из личного кабинета', 'template' => 'admin-new-question'),
-			'faq' => array('label' => 'Новый вопрос из FAQ', 'template' => 'admin-new-question'),
-			'practice' => array('label' => 'Новый вопрос по практике / крийе', 'template' => 'admin-contact-message'),
+			'faq' => array('label' => 'Новый вопрос из FAQ', 'template' => 'admin-faq-question'),
+			'practice' => array('label' => 'Новый вопрос по практике / крийе', 'template' => 'admin-practice-question'),
 			'contacts' => array('label' => 'Новое сообщение из формы контактов', 'template' => 'admin-contact-message'),
 		);
 	}
 
 	public static function templates(): array {
-		return array('admin-new-question', 'admin-contact-message');
+		return array_values(Yoga_Mail_Admin_Request::TEMPLATES);
 	}
 
 	/** Reject the complete input if any address is invalid, including header injection. */
@@ -48,6 +48,10 @@ final class Yoga_Mail_Events {
 			}
 			$rule = isset($stored[$event]) && is_array($stored[$event]) ? $stored[$event] : array();
 			$result[$event] = wp_parse_args($rule, array('enabled' => true, 'recipients' => $legacy, 'template' => $definition['template']));
+			$old_template = array('faq' => 'admin-new-question', 'practice' => 'admin-contact-message');
+			if (empty($rule['request_design_version']) && isset($old_template[$event]) && $result[$event]['template'] === $old_template[$event]) {
+				$result[$event]['template'] = $definition['template'];
+			}
 			if (!in_array($result[$event]['template'], self::templates(), true)) {
 				$result[$event]['template'] = $definition['template'];
 			}
@@ -67,7 +71,7 @@ final class Yoga_Mail_Events {
 			if (!in_array($template, self::templates(), true)) {
 				return new WP_Error('invalid_template', 'Выберите шаблон уведомления администратору.');
 			}
-			$clean[$event] = array('enabled' => !empty($rule['enabled']), 'recipients' => implode("\n", $recipients), 'template' => $template);
+			$clean[$event] = array('enabled' => !empty($rule['enabled']), 'recipients' => implode("\n", $recipients), 'template' => $template, 'request_design_version' => Yoga_Mail_Admin_Request::DESIGN_VERSION);
 		}
 		return $clean;
 	}
@@ -93,7 +97,7 @@ final class Yoga_Mail_Events {
 			return false;
 		}
 		$args['data'] = isset($args['data']) && is_array($args['data']) ? $args['data'] : array();
-		$args['data']['question_reply_url'] = admin_url('post.php?post=' . $question_id . '&action=edit') . '#question_answer';
+		$args['data'] = array_merge($args['data'], Yoga_Mail_Admin_Request::data($event, $question, $args['data']));
 		// Only these fields may be supplied by an integration: no Cc/Bcc or recipient overrides.
 		$mail = array_intersect_key($args, array_flip(array('subject', 'content', 'data')));
 		$success = true;
@@ -140,7 +144,7 @@ final class Yoga_Mail_Events {
 		<div class="wrap">
 			<h1>Сценарии и получатели писем</h1>
 			<?php if ($this->notice !== '') : ?><div class="notice notice-<?php echo $this->error ? 'error' : 'success'; ?>"><p><?php echo esc_html($this->notice); ?></p></div><?php endif; ?>
-			<p>Для каждого события укажите получателей и шаблон письма. Каждый получатель получит отдельное письмо с кнопкой «Открыть и ответить».</p>
+			<p>Для каждого события укажите получателей и шаблон письма. Каждый получатель получит отдельное письмо с кнопкой «Ответить из админки».</p>
 			<p>Адреса можно разделять запятыми, точками с запятой или переносами строк. Повторы удаляются. Пустой список означает отправку на основной email сайта: <strong><?php echo esc_html((string) get_option('admin_email')); ?></strong>.</p>
 			<p>Отключение сценария отключает только уведомление сотрудникам. Вопрос сохраняется в админке, автоответ пользователю продолжает работать. Для ответа по кнопке требуется вход в WordPress и доступ к вопросам.</p>
 			<form method="post">

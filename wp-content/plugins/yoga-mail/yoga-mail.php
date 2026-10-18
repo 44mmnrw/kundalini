@@ -18,6 +18,7 @@ define('YOGA_MAIL_FILE', __FILE__);
 define('YOGA_MAIL_PATH', plugin_dir_path(__FILE__));
 define('YOGA_MAIL_URL', plugin_dir_url(__FILE__));
 
+require_once YOGA_MAIL_PATH . 'includes/class-yoga-mail-admin-request.php';
 require_once YOGA_MAIL_PATH . 'includes/class-yoga-mail-registry.php';
 require_once YOGA_MAIL_PATH . 'includes/class-yoga-mail-renderer.php';
 require_once YOGA_MAIL_PATH . 'includes/class-yoga-mail-mailer.php';

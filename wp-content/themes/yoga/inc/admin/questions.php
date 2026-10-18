@@ -291,6 +291,14 @@ function yoga_question_admin_columns(array $columns): array {
 }
 add_filter('manage_question_posts_columns', 'yoga_question_admin_columns');
 
+function yoga_question_practice_link(int $question_id): string {
+	$practice_id = absint(get_post_meta($question_id, 'practice_id', true));
+	if ($practice_id <= 0 || get_post_type($practice_id) !== 'practice') {
+		return '';
+	}
+	return '<a href="' . esc_url(get_permalink($practice_id)) . '" target="_blank" rel="noopener noreferrer">' . esc_html(get_the_title($practice_id)) . '</a>';
+}
+
 function yoga_question_admin_column(string $column, int $post_id): void {
 	if ($column !== 'question_source') {
 		return;
@@ -299,6 +307,10 @@ function yoga_question_admin_column(string $column, int $post_id): void {
 	$source = sanitize_key((string) get_post_meta($post_id, 'question_source', true));
 	$labels = yoga_question_source_labels();
 	echo esc_html($labels[$source] ?? 'Не указан');
+	$practice_link = yoga_question_practice_link($post_id);
+	if ($practice_link !== '') {
+		echo '<br>' . $practice_link;
+	}
 }
 add_action('manage_question_posts_custom_column', 'yoga_question_admin_column', 10, 2);
 
@@ -367,12 +379,16 @@ function render_question_request_meta_box(WP_Post $post): void {
 	$email = sanitize_email((string) get_post_meta($post->ID, 'contact_email', true));
 	$date = get_post_meta($post->ID, 'contact_date', true) ?: $post->post_date;
 	$answers = yoga_get_question_answers($post->ID);
+	$practice_link = yoga_question_practice_link((int) $post->ID);
 	wp_nonce_field('manage_question_answers', 'question_answers_nonce');
 	?>
 	<div class="yoga-question-admin-card">
 		<div class="yoga-question-admin-card__meta">
 			<span><strong><?php esc_html_e('Получатель ответа:', 'yoga'); ?></strong> <?php echo $email ? esc_html($email) : esc_html__('эл. почта не указана', 'yoga'); ?></span>
 			<span><strong><?php esc_html_e('Получено:', 'yoga'); ?></strong> <?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($date))); ?></span>
+			<?php if ($practice_link !== '') : ?>
+				<span><strong><?php esc_html_e('Практика:', 'yoga'); ?></strong> <?php echo $practice_link; ?></span>
+			<?php endif; ?>
 		</div>
 		<div class="yoga-question-admin-card__message">
 			<?php echo wpautop(esc_html($post->post_content)); ?>

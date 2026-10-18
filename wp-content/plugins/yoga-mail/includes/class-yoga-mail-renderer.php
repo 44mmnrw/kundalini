@@ -28,9 +28,9 @@ final class Yoga_Mail_Renderer {
 		if ($preview) {
 			$data = wp_parse_args($data, $this->registry->examples($template_id));
 		}
-		$is_staff_question = in_array($template_id, array('admin-new-question', 'admin-contact-message'), true);
+		$is_staff_question = Yoga_Mail_Admin_Request::is_template($template_id);
 		if (!$is_staff_question) {
-			unset($data['question_reply_url']);
+			unset($data['question_reply_url'], $data['request_reply_link']);
 		}
 
 		$subject = $this->merge((string) $values['subject'], $definition, $data, 'text', $preview);
@@ -48,7 +48,7 @@ final class Yoga_Mail_Renderer {
 		}
 		// Staff event links always target the saved question, even with an older saved template.
 		if ($is_staff_question && !empty($data['question_reply_url'])) {
-			$cta_label = 'Открыть и ответить';
+			$cta_label = 'Ответить из админки';
 			$cta_url = esc_url_raw((string) $data['question_reply_url']);
 		}
 		if ($template_id === 'wp-email-changed') {
@@ -58,7 +58,7 @@ final class Yoga_Mail_Renderer {
 			$body .= '<p style="margin:20px 0 0;line-height:1.5;text-align:center;">' . esc_html((string) $data['fiscal_receipt_notice']) . '</p>';
 		}
 
-		$body_html = $this->inline_content_styles((string) $body);
+		$body_html = $this->inline_content_styles((string) $body, $is_staff_question ? 14 : 16);
 		$settings = $this->registry->settings();
 		$is_admin_notification = $definition['group'] === 'Административные';
 		if ($is_admin_notification) {
@@ -67,7 +67,11 @@ final class Yoga_Mail_Renderer {
 		$template_path = YOGA_MAIL_PATH . 'templates/layout/html.php';
 		ob_start();
 		include $template_path;
-		$html = $this->responsive_html((string) ob_get_clean());
+		$html = (string) ob_get_clean();
+		if ($is_staff_question) {
+			$html = str_replace('font-size:16px', 'font-size:14px', $html);
+		}
+		$html = $this->responsive_html($html, $is_staff_question);
 
 		$plain_body = $this->plain_from_html((string) $body);
 		if ($template_id === 'wp-email-changed') {
@@ -197,21 +201,23 @@ final class Yoga_Mail_Renderer {
 		return $this->merge((string) $values[$field], $definition, $data, $context, $preview);
 	}
 
-	public function inline_content_styles(string $html): string {
+	public function inline_content_styles(string $html, int $font_size = 16): string {
 		$html = wp_kses_post($html);
 		if (trim(wp_strip_all_tags($html)) !== '' && strpos($html, '<') === false) {
 			$html = wpautop(esc_html($html));
 		}
 		$html = preg_replace_callback(
 			'/\sstyle=(["\'])(.*?)\1/is',
-			static function (array $matches): string {
+			static function (array $matches) use ($font_size): string {
 				$style = preg_replace(
 					'/(^|;)\s*font-family\s*:[^;]*/i',
 					'$1font-family:Mulish,Helvetica,Arial,sans-serif',
 					$matches[2]
 				);
 				// Apply the current body size to previously saved template styles too.
-				$style = preg_replace('/(^|;)\s*font-size\s*:\s*14px(?=\s*(?:!important\s*)?(?:;|$))/i', '${1}font-size:16px', $style);
+				if ($font_size === 16) {
+					$style = preg_replace('/(^|;)\s*font-size\s*:\s*14px(?=\s*(?:!important\s*)?(?:;|$))/i', '${1}font-size:16px', $style);
+				}
 				return ' style=' . $matches[1] . $style . $matches[1];
 			},
 			$html
@@ -223,6 +229,9 @@ final class Yoga_Mail_Renderer {
 			'li' => 'margin:0 0 8px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#1f1f1f;',
 			'a'  => 'color:#9153e1;text-decoration:underline;',
 		);
+		if ($font_size === 14) {
+			$styles = array_map(static function (string $style): string { return str_replace('font-size:16px', 'font-size:14px', $style); }, $styles);
+		}
 		foreach ($styles as $tag => $style) {
 			$html = preg_replace_callback(
 				'/<' . $tag . '(\s[^>]*)?>/i',
@@ -260,7 +269,7 @@ final class Yoga_Mail_Renderer {
 	}
 
 	/** Keep desktop inline sizes as a fallback; reduce 16px text on small screens. */
-	public function responsive_html(string $html): string {
+	public function responsive_html(string $html, bool $is_staff_request = false): string {
 		if (stripos($html, '</head>') === false || strpos($html, 'id="yoga-mail-responsive"') !== false) {
 			return $html;
 		}
@@ -285,8 +294,11 @@ final class Yoga_Mail_Renderer {
 			},
 			$html
 		);
+		$rules = $is_staff_request
+			? '@media screen and (max-width:520px){.yoga-mail-shell{padding-left:10px!important;padding-right:10px!important;}.yoga-mail-content{padding-left:20px!important;padding-right:20px!important;}}'
+			: '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}.yoga-mail-shell{padding-left:0!important;padding-right:0!important;}.yoga-mail-card{max-width:600px!important;}.yoga-mail-content{padding-left:30px!important;padding-right:30px!important;}.yoga-mail-comment-gap{width:20px!important;min-width:20px!important;}}';
 		$css = '<style id="yoga-mail-responsive" type="text/css">'
-			. '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}.yoga-mail-shell{padding-left:0!important;padding-right:0!important;}.yoga-mail-card{max-width:600px!important;}.yoga-mail-content{padding-left:30px!important;padding-right:30px!important;}.yoga-mail-comment-gap{width:20px!important;min-width:20px!important;}}'
+			. $rules
 			. '</style>';
 		return preg_replace('/<\/head>/i', $css . "\n</head>", $html, 1);
 	}
