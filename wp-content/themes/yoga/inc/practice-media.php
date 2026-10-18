@@ -127,8 +127,8 @@ if (!function_exists('yoga_render_practice_media_player')) {
 		?>
 		<?php if (count($audio_tracks) > 1): ?>
 		<div class="practice-audio-tracks" data-arrow-down="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/practice-variant-arrow-down.svg'); ?>" data-arrow-up="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/practice-variant-arrow-up.svg'); ?>">
-			<span>Аудиозапись</span>
-			<select class="practice-audio-tracks__select" aria-label="Выбор аудиозаписи">
+			<span>Аудио</span>
+			<select class="practice-audio-tracks__select" aria-label="Выбор аудио">
 				<?php foreach ($audio_tracks as $track): ?>
 				<option value="<?php echo esc_attr($track['src']); ?>"><?php echo esc_html($track['title']); ?></option>
 				<?php endforeach; ?>
