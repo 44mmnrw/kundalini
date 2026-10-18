@@ -168,10 +168,9 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
 		$body = "
-        <p><strong>Имя:</strong> {$name}</p>
-        <p><strong>Email:</strong> {$email}</p>
-        <p><strong>Вопрос:</strong></p>
-        <p>" . nl2br($message) . "</p>
+        <p style=\"margin:0;\"><strong>Имя:</strong> {$name}<br>
+        <strong>Email:</strong> {$email}</p>
+        <p style=\"margin:24px 0 0;\"><strong>Вопрос:</strong><br>" . nl2br($message) . "</p>
 		";
 
 		$post_id = wp_insert_post(array(
