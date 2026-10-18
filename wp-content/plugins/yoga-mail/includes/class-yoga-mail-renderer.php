@@ -28,6 +28,10 @@ final class Yoga_Mail_Renderer {
 		if ($preview) {
 			$data = wp_parse_args($data, $this->registry->examples($template_id));
 		}
+		$is_staff_question = in_array($template_id, array('admin-new-question', 'admin-contact-message'), true);
+		if (!$is_staff_question) {
+			unset($data['question_reply_url']);
+		}
 
 		$subject = $this->merge((string) $values['subject'], $definition, $data, 'text', $preview);
 		$preheader = $this->merge((string) $values['preheader'], $definition, $data, 'text', $preview);
@@ -43,7 +47,7 @@ final class Yoga_Mail_Renderer {
 			}
 		}
 		// Staff event links always target the saved question, even with an older saved template.
-		if (in_array($template_id, array('admin-new-question', 'admin-contact-message'), true) && !empty($data['question_reply_url'])) {
+		if ($is_staff_question && !empty($data['question_reply_url'])) {
 			$cta_label = 'Открыть вопрос и ответить';
 			$cta_url = esc_url_raw((string) $data['question_reply_url']);
 		}
