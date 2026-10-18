@@ -59,18 +59,24 @@ jQuery(document).ready(function($) {
 		$('.main-menu-active-item').addClass('active');
 		$('.modal-menu').addClass('active');
 	}
+	function yogaCloseLibraryMenu() {
+		clearTimeout(yogaLibraryMenuCloseTimer);
+		yogaLibraryMenuCloseTimer = null;
+		$('.main-menu-active-item').removeClass('active');
+		$('.modal-menu').removeClass('active');
+	}
 	function yogaScheduleCloseLibraryMenu() {
 		if (yogaLibraryMenuCloseTimer) {
 			clearTimeout(yogaLibraryMenuCloseTimer);
 		}
-		yogaLibraryMenuCloseTimer = setTimeout(function () {
-			$('.main-menu-active-item').removeClass('active');
-			$('.modal-menu').removeClass('active');
-			yogaLibraryMenuCloseTimer = null;
-		}, 320);
+		yogaLibraryMenuCloseTimer = setTimeout(yogaCloseLibraryMenu, 320);
 	}
 	$('.main-menu-active-item').on('mouseenter', yogaOpenLibraryMenu);
 	$('.main-menu-active-item').on('mouseleave', yogaScheduleCloseLibraryMenu);
+	$('.main-menu-active-item > .ref').on('click', function (e) {
+		e.preventDefault();
+		yogaCloseLibraryMenu();
+	});
 	$('.modal-menu').on('mouseenter', yogaOpenLibraryMenu);
 	$('.modal-menu').on('mouseleave', yogaScheduleCloseLibraryMenu);
 

@@ -179,13 +179,8 @@ header > .container > .row > .header-content {
   color: inherit;
 }
 
-.main-menu-active-item:hover::before,
 .main-menu-active-item.active::before {
   pointer-events: auto;
-}
-
-.main-menu-active-item .ref:hover .ref-icon {
-  transform: rotate(0deg);
 }
 
 .main-menu-active-item.active .ref {

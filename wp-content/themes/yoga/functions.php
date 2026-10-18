@@ -1450,7 +1450,7 @@ function yoga_subscribe_handler() {
 			$attributes = !empty($item->attr_title) ? ' title="' . esc_attr($item->attr_title) . '"' : '';
 			$attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
 			$attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
-			$attributes .= !empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '';
+			$attributes .= $is_first_item ? ' href="#"' : (!empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '');
 
 
 			$args_before = is_object($args) ? ($args->before ?? '') : (is_array($args) ? ($args['before'] ?? '') : '');
