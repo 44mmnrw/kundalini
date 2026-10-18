@@ -50,6 +50,9 @@ final class Yoga_Mail_Renderer {
 		if ($template_id === 'wp-email-changed') {
 			$body = $this->format_email_change_addresses((string) $body, $data);
 		}
+		if (in_array($template_id, array('payment-success-receipt', 'renewal-success'), true) && !empty($data['fiscal_receipt_notice'])) {
+			$body .= '<p style="margin:20px 0 0;line-height:1.5;text-align:center;">' . esc_html((string) $data['fiscal_receipt_notice']) . '</p>';
+		}
 
 		$body_html = $this->inline_content_styles((string) $body);
 		$settings = $this->registry->settings();

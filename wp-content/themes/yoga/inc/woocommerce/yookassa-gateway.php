@@ -315,7 +315,9 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 				$paymentRequest = $builder->build();
 				$paymentRequest = apply_filters('woocommerce_yookassa_create_payment_request', $paymentRequest);
 
-				if (class_exists('YooKassaHandler') && YooKassaHandler::isReceiptEnabled()) {
+				if (class_exists('YTR_YooKassa')) {
+					YTR_YooKassa::prepare_fiscal_receipt($paymentRequest, $order);
+				} elseif (class_exists('YooKassaHandler') && YooKassaHandler::isReceiptEnabled()) {
 					$receipt = $paymentRequest->getReceipt();
 					if ($receipt instanceof \YooKassa\Model\Receipt) {
 						$receipt->normalize($paymentRequest->getAmount());

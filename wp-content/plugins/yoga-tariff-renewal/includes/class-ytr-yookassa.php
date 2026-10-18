@@ -5,6 +5,29 @@ if (!defined('ABSPATH')) {
 }
 
 final class YTR_YooKassa {
+	/** Prepare delivery through «Чеки от ЮKassa» without creating a duplicate receipt. */
+	public static function prepare_fiscal_receipt($request, WC_Order $order): void {
+		if (!class_exists('YooKassaHandler') || !YooKassaHandler::isReceiptEnabled()) {
+			return;
+		}
+		$email = trim((string) $order->get_billing_email());
+		if (!is_email($email)) {
+			throw new InvalidArgumentException('Для отправки фискального чека укажите корректный email покупателя.');
+		}
+		$receipt = $request->getReceipt();
+		if (!$receipt instanceof \YooKassa\Model\Receipt || !$receipt->getItems() || $receipt->getAmountValue() <= 0) {
+			throw new InvalidArgumentException('Не удалось подготовить фискальный чек. Проверьте настройки чеков ЮKassa и состав заказа.');
+		}
+		if (!$receipt->getCustomer()) {
+			$receipt->setCustomer(new \YooKassa\Model\ReceiptCustomer());
+		}
+		$receipt->getCustomer()->setEmail($email);
+		$receipt->normalize($request->getAmount());
+		if ($receipt->getAmountValue() !== $request->getAmount()->getIntegerValue()) {
+			throw new InvalidArgumentException('Сумма фискального чека не совпадает с суммой платежа.');
+		}
+	}
+
 	public static function humanize_api_error(string $message): string {
 		$lower = strtolower($message);
 
@@ -135,6 +158,7 @@ final class YTR_YooKassa {
 			}
 
 			$payment_request = $builder->build();
+			self::prepare_fiscal_receipt($payment_request, $order);
 			if (class_exists('YTR_Checkout')) {
 				YTR_Checkout::apply_merchant_customer_id_to_builder($payment_request, $order);
 			}
@@ -228,6 +252,7 @@ final class YTR_YooKassa {
 			}
 
 			$payment_request = $builder->build();
+			self::prepare_fiscal_receipt($payment_request, $order);
 			$idempotence_key = class_exists('YTR_Orders') ? YTR_Orders::get_renewal_idempotence_key($order) : 'ytr-renewal-order-' . $order->get_id();
 			$response        = YooKassaClientFactory::getYooKassaClient()->createPayment($payment_request, $idempotence_key);
 		} catch (Exception $e) {
