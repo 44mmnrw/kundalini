@@ -45,7 +45,7 @@ function yoga_send_new_question_admin_email(int $question_id): void {
 
 	$user = get_userdata((int) $question->post_author);
 	$display_name = $user instanceof WP_User ? $user->display_name : __('Пользователь', 'yoga');
-	$subject = __('Новый вопрос в личном кабинете', 'yoga');
+	$subject = __('Новый вопрос отпр. с ЛК', 'yoga');
 	$message = sprintf(__('%s задал новый вопрос:', 'yoga'), $display_name) . "\n\n";
 	$message .= $question->post_content . "\n\n";
 	$message .= __('Ссылка для ответа:', 'yoga') . ' ' . admin_url("post.php?post={$question_id}&action=edit");

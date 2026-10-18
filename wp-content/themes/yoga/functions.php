@@ -1205,11 +1205,10 @@ function yoga_subscribe_handler() {
 			: 'sshell72@yandex.ru';
 		$subject = $source === 'practice'
 			? 'Новый вопрос по крийе' . ($practice_id > 0 ? ': ' . get_the_title($practice_id) : '')
-			: 'Новое сообщение с формы контактов';
+			: 'Новое обращение отпр. с "Контакты"';
 		$body = "
         Имя: $name
         Email: $email
-        Телефон: $phone
         Сообщение: $message
 		";
 		if ($source === 'practice' && $practice_id > 0) {
