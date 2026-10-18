@@ -2592,6 +2592,13 @@ display: block !important;
     font-size: 1.625rem;  }
   .praktika-info h3 {
     font-size: 1.625rem;  }
+  .praktika-info p.praktika-image-spacer {
+    display: none;
+  }
+  .praktika-info p.praktika-content-image > .praktika-lightbox-link {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
   .praktika-info .praktika-lightbox-link img,
   .praktika-intro-content img,
   .praktika-text img,

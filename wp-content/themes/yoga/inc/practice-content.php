@@ -26,8 +26,30 @@ if (!function_exists('yoga_practice_content_images_lightbox')) {
 			$html = strtr($html, $protected_anchors);
 		}
 
-		return $html;
+		return yoga_practice_mark_image_spacing($html);
 	}
+}
+
+/** Mark image-only paragraphs and adjacent blank paragraphs for mobile layout. */
+function yoga_practice_mark_image_spacing(string $html): string {
+	$empty = '<p\b[^>]*>(?:[\s\x{00a0}]|&nbsp;|&#0*160;|&#x0*a0;|<br\b[^>]*>)*</p>';
+	$image = '<p\b[^>]*>\s*<a\b[^>]*>\s*<img\b[^>]*>\s*</a>\s*</p>';
+	$mark = static function (string $fragment, string $class): string {
+		return preg_replace_callback('/<p\b[^>]*>/i', static function (array $match) use ($class): string {
+			$classes = preg_split('/\s+/', trim(yoga_practice_get_html_attribute($match[0], 'class')));
+			$classes[] = $class;
+			return yoga_practice_set_html_attribute($match[0], 'class', implode(' ', array_unique(array_filter($classes))));
+		}, $fragment);
+	};
+	return preg_replace_callback(
+		'~(?<before>(?:' . $empty . '\s*)*)(?<image>' . $image . ')(?<after>(?:\s*' . $empty . ')*)~iu',
+		static function (array $match) use ($mark): string {
+			return $mark($match['before'], 'praktika-image-spacer')
+				. $mark($match['image'], 'praktika-content-image')
+				. $mark($match['after'], 'praktika-image-spacer');
+		},
+		$html
+	);
 }
 
 if (!function_exists('yoga_practice_format_rich_text')) {
