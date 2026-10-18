@@ -75,7 +75,11 @@ jQuery(document).ready(function($) {
 	$('.main-menu-active-item').on('mouseleave', yogaScheduleCloseLibraryMenu);
 	$('.main-menu-active-item > .ref').on('click', function (e) {
 		e.preventDefault();
-		yogaCloseLibraryMenu();
+		if ($(this).parent().hasClass('active')) {
+			yogaCloseLibraryMenu();
+		} else {
+			yogaOpenLibraryMenu();
+		}
 	});
 	$('.modal-menu').on('mouseenter', yogaOpenLibraryMenu);
 	$('.modal-menu').on('mouseleave', yogaScheduleCloseLibraryMenu);
