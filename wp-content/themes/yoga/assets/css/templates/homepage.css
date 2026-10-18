@@ -125,7 +125,7 @@
 }
 .main__info-decor {
   position: absolute;
-  bottom: 0.8125rem;  right: 8rem;  width: 4.7188rem;
+  bottom: 0.8125rem;  right: 13rem;  width: 4.7188rem;
   display: block;
   height: auto;}
 
@@ -314,7 +314,7 @@
     right: 15.25rem;
   }
   .main__info-decor {
-    right: 8.5rem;  }
+    right: 13.5rem;  }
 }
 @media (max-width: 1279px) {
   .main {
