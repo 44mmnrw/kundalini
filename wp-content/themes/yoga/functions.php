@@ -1204,15 +1204,16 @@ function yoga_subscribe_handler() {
 			? yoga_get_practice_questions_notification_email()
 			: 'sshell72@yandex.ru';
 		$subject = $source === 'practice'
-			? 'Новый вопрос по крийе' . ($practice_id > 0 ? ': ' . get_the_title($practice_id) : '')
+			? 'Новый вопрос отпр. с практики' . ($practice_id > 0 ? ': ' . get_the_title($practice_id) : '')
 			: 'Новое обращение отпр. с "Контакты"';
 		$body = "
         Имя: $name
         Email: $email
+
         Сообщение: $message
 		";
 		if ($source === 'practice' && $practice_id > 0) {
-			$body .= "\nПрактика: " . get_the_title($practice_id) . "\nСсылка: " . get_permalink($practice_id);
+			$body .= "\nСсылка: " . get_permalink($practice_id);
 		}
 
 		$headers = array('Content-Type: text/html; charset=UTF-8');
