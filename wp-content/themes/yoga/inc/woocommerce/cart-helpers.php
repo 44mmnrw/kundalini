@@ -257,12 +257,10 @@ if (!function_exists('yoga_get_tariffs_periods')) {
 
 
 
-	function yoga_get_tariffs_periods($post_id = null): array {
-		if (!$post_id) {
-			$post_id = get_the_ID();
-		}
-
-		$periods = get_field('tariffs_periods', $post_id);
+	function yoga_get_tariffs_periods(): array {
+		// Both tariff blocks use the homepage settings as their single source.
+		$homepage_id = (int) get_option('page_on_front');
+		$periods = $homepage_id > 0 ? get_field('tariffs_periods', $homepage_id) : array();
 		if (!$periods) {
 			$periods = get_field('tariffs_periods', 'options');
 		}

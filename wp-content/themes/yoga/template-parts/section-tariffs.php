@@ -12,9 +12,7 @@
         <?php
 
           $tariffs_title = get_field('tariffs_title', get_the_ID()) ?: 'тарифы';
-          $tariffs_periods = function_exists('yoga_get_tariffs_periods')
-            ? yoga_get_tariffs_periods(get_the_ID())
-            : (get_field('tariffs_periods', get_the_ID()) ?: get_field('tariffs_periods', 'options'));
+          $tariffs_periods = yoga_get_tariffs_periods();
 		  $tariffs_animation_class = (is_front_page() || is_page_template('templates-page/homepage.php'))
 			? ' wow fadeIn delay-300ms'
 			: '';
