@@ -81,11 +81,12 @@ final class Yoga_Mail_WooCommerce {
 					'total_amount' => $this->format_money((float) $order->get_total(), (string) $order->get_currency()),
 					'payment_method' => $this->payment_method_label($order),
 					'action_url' => (string) $order->get_view_order_url(),
+					'fiscal_receipt_notice' => function_exists('yoga_mail_fiscal_receipt_notice') ? yoga_mail_fiscal_receipt_notice($order) : '',
 				),
 			));
 			if ($sent) {
 				$order->update_meta_data(self::PAYMENT_RECEIPT_SENT_META, (string) time());
-				$order->add_order_note(__('Yoga Mail: покупателю отправлено письмо об успешной оплате с чеком.', 'yoga-mail'));
+				$order->add_order_note(__('Yoga Mail: покупателю отправлено подтверждение оплаты с составом заказа.', 'yoga-mail'));
 				$order->save();
 				$this->payment_receipt_sent_order_ids[(int) $order->get_id()] = true;
 			}

@@ -74,6 +74,15 @@ final class Yoga_Mail_Registry {
 		}
 		$custom = is_array($stored) && isset($stored[$id]) && is_array($stored[$id]) ? $stored[$id] : array();
 		$values = wp_parse_args($custom, $definition['defaults']);
+		// Update the old standard copy in saved templates without resetting custom content.
+		if ($id === 'payment-success-receipt') {
+			$values['subject'] = str_replace('Оплата прошла успешно — чек №{{receipt_number}}', 'Оплата прошла успешно – заказ №{{receipt_number}}', (string) $values['subject']);
+			$values['preheader'] = str_replace('Спасибо за покупку! Чек по заказу №{{receipt_number}} внутри письма', 'Спасибо за покупку! Подтверждение оплаты заказа №{{receipt_number}}', (string) $values['preheader']);
+			$values['body'] = str_replace(array('Ваш чек о приобретении подписки ниже.', 'Чек №{{receipt_number}}'), array('Подтверждение приобретения подписки ниже.', 'Заказ №{{receipt_number}}'), (string) $values['body']);
+		}
+		if (in_array($id, array('payment-success-receipt', 'renewal-success'), true) && $values['cta_label'] === 'Посмотреть чек') {
+			$values['cta_label'] = 'Посмотреть заказ';
+		}
 		if ($id === 'support-autoreply') {
 			$values['body'] = str_replace(
 				'padding:15px 10px;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Получено',
@@ -105,6 +114,9 @@ final class Yoga_Mail_Registry {
 		}
 		foreach ($definition['tags'] as $tag => $details) {
 			$examples[$tag] = isset($details['example']) ? $details['example'] : '';
+		}
+		if (in_array($id, array('payment-success-receipt', 'renewal-success'), true)) {
+			$examples['fiscal_receipt_notice'] = 'После регистрации ЮKassa отправит фискальный чек отдельным письмом на buyer@example.com. Чек может прийти позже подтверждения оплаты.';
 		}
 		return $examples;
 	}
@@ -275,14 +287,14 @@ final class Yoga_Mail_Registry {
 				),
 			),
 			'payment-success-receipt' => array(
-				'label' => 'WooCommerce: успешная оплата и чек',
+				'label' => 'WooCommerce: подтверждение оплаты',
 				'group' => 'WooCommerce',
 				'defaults' => array(
-					'subject' => 'Оплата прошла успешно — чек №{{receipt_number}}',
-					'preheader' => 'Спасибо за покупку! Чек по заказу №{{receipt_number}} внутри письма',
+					'subject' => 'Оплата прошла успешно – заказ №{{receipt_number}}',
+					'preheader' => 'Спасибо за покупку! Подтверждение оплаты заказа №{{receipt_number}}',
 					'heading' => 'Спасибо за то что выбрали практиковать с нами!',
 					'body' => '<p style="margin:0;line-height:1.5;font-weight:400;text-align:center;">Ваш чек о приобретении подписки ниже.</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:30px 0 0;border-collapse:separate;background-color:#ffffff;border:1px solid #dedee1;border-radius:15px;"><tr><td style="padding:20px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;"><tr><td valign="middle" style="padding:0 10px 15px 0;font-size:16px;line-height:1.5;font-weight:700;color:#1f1f1f;text-align:left;">Чек №{{receipt_number}}</td><td valign="middle" align="right" style="padding:0 0 15px 10px;font-size:16px;line-height:1.5;font-weight:700;color:#1f1f1f;text-align:right;white-space:nowrap;">{{payment_date}}</td></tr><tr><td colspan="2" height="1" bgcolor="#dedee1" style="height:1px;font-size:1px;line-height:1px;background-color:#dedee1;">&nbsp;</td></tr>{{receipt_items}}<tr><td colspan="2" height="1" bgcolor="#dedee1" style="height:1px;font-size:1px;line-height:1px;background-color:#dedee1;">&nbsp;</td></tr><tr><td valign="middle" style="padding:15px 10px 0 0;font-size:16px;line-height:1.5;font-weight:700;color:#1f1f1f;text-align:left;">Итого оплачено</td><td valign="middle" align="right" style="padding:15px 0 0 10px;font-size:16px;line-height:1.5;font-weight:700;color:#1f1f1f;text-align:right;white-space:nowrap;">{{total_amount}}</td></tr><tr><td valign="middle" style="padding:15px 10px 0 0;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:left;">Способ оплаты</td><td valign="middle" align="right" style="padding:15px 0 0 10px;font-size:16px;line-height:1.5;font-weight:400;color:#606060;text-align:right;white-space:nowrap;">{{payment_method}}</td></tr></table></td></tr></table>',
-					'cta_label' => 'Посмотреть чек',
+					'cta_label' => 'Посмотреть заказ',
 					'cta_url' => '{{action_url}}',
 					'footer_note' => '',
 				),
@@ -481,7 +493,7 @@ final class Yoga_Mail_Registry {
 					'preheader' => 'Оплата прошла — доступ ко всем практикам сохраняется',
 					'heading' => '',
 					'body' => '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;border-collapse:separate;"><tr><td align="center" bgcolor="#e8ff57" style="padding:8px 14px;background-color:#e8ff57;border-radius:500px;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:16px;line-height:1;font-weight:700;color:#1f1f1f;text-align:center;text-transform:uppercase;white-space:nowrap;">Оплата прошла</td></tr></table><h1 style="margin:15px 0 0;font-family:Mulish,Helvetica,Arial,sans-serif;font-size:22px;line-height:1;font-weight:700;color:#1f1f1f;text-align:center;">Подписка автоматически продлена</h1><p style="margin:15px 0 0;line-height:1;font-weight:700;text-align:center;">Сат Нам, {{user_name}}!</p><p style="margin:15px 0 0;line-height:1.5;font-weight:400;text-align:center;">Мы автоматически продлили вашу подписку <strong style="font-weight:700;color:#9153e1;">«{{subscription_name}}».</strong> Доступ ко всем практикам сохраняется.</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:30px 0 0;border-collapse:separate;background-color:#f6f6f9;border-radius:15px;"><tr><td bgcolor="#f6f6f9" style="padding:20px;background-color:#f6f6f9;border-radius:15px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;"><tr><td valign="middle" style="padding:0 10px 15px 0;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Списано</td><td valign="middle" align="right" style="padding:0 0 15px 10px;font-size:16px;line-height:1;font-weight:700;color:#1f1f1f;text-align:right;white-space:nowrap;">{{total_amount}}</td></tr><tr><td colspan="2" height="1" bgcolor="#ffffff" style="height:1px;font-size:1px;line-height:1px;background-color:#ffffff;">&nbsp;</td></tr><tr><td valign="middle" style="padding:15px 10px;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Карта</td><td valign="middle" align="right" style="padding:15px 0 15px 10px;font-size:16px;line-height:1;font-weight:700;color:#1f1f1f;text-align:right;white-space:nowrap;">{{payment_card}}</td></tr><tr><td colspan="2" height="1" bgcolor="#ffffff" style="height:1px;font-size:1px;line-height:1px;background-color:#ffffff;">&nbsp;</td></tr><tr><td valign="middle" style="padding:15px 10px 0 0;font-size:16px;line-height:1;font-weight:400;color:#606060;text-align:left;">Следующее списание</td><td valign="middle" align="right" style="padding:15px 0 0 10px;font-size:16px;line-height:1;font-weight:700;color:#1f1f1f;text-align:right;white-space:nowrap;">{{next_charge_date}}</td></tr></table></td></tr></table>',
-					'cta_label' => 'Посмотреть чек',
+					'cta_label' => 'Посмотреть заказ',
 					'cta_url' => '{{action_url}}',
 					'footer_note' => '',
 				),

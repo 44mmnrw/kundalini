@@ -378,6 +378,7 @@ final class YTR_Notifications {
 					'payment_card' => self::get_payment_card_label($user_id),
 					'next_charge_date' => self::get_next_charge_date($order, $user_id),
 					'action_url' => $receipt_url,
+					'fiscal_receipt_notice' => function_exists('yoga_mail_fiscal_receipt_notice') ? yoga_mail_fiscal_receipt_notice($order) : '',
 				),
 			))
 			: wp_mail($email, $subject, $message . "\n\n" . $receipt_url);
