@@ -54,6 +54,7 @@
 	require_once get_template_directory() . '/inc/admin/practice-duplicate.php';
 	require_once get_template_directory() . '/inc/woocommerce/cart-helpers.php';
 	require_once get_template_directory() . '/inc/woocommerce/tariff-cart.php';
+	require_once get_template_directory() . '/inc/woocommerce/tariff-purchase-limit.php';
 	require_once get_template_directory() . '/inc/woocommerce/checkout-template.php';
 	require_once get_template_directory() . '/inc/woocommerce/checkout-payment.php';
 	require_once get_template_directory() . '/inc/woocommerce/checkout-yookassa.php';

@@ -203,6 +203,12 @@ final class YTR_YooKassa {
 	 * @return array{success:bool, payment_id:string, status:string, message:string}
 	 */
 	public static function charge_renewal(WC_Order $order, string $payment_method_id): array {
+		if (function_exists('yoga_tariff_order_purchase_limit_error')) {
+			$limit_error = yoga_tariff_order_purchase_limit_error($order);
+			if ($limit_error) {
+				return array('success' => false, 'payment_id' => '', 'status' => 'error', 'message' => $limit_error->get_error_message());
+			}
+		}
 		if (
 			class_exists('YTR_Stub')
 			&& YTR_Stub::is_enabled()
