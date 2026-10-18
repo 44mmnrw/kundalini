@@ -371,6 +371,13 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 
 		public function process_payment($order_id) {
 			$order = wc_get_order($order_id);
+			if (function_exists('yoga_tariff_order_purchase_limit_error')) {
+				$limit_error = yoga_tariff_order_purchase_limit_error($order);
+				if ($limit_error) {
+					wc_add_notice($limit_error->get_error_message(), 'error');
+					return array('result' => 'failure');
+				}
+			}
 			if ($order instanceof WC_Order) {
 				if (class_exists('YTR_Checkout')) {
 					YTR_Checkout::ensure_order_billing_phone($order);
@@ -473,6 +480,13 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 			$order = wc_get_order($order_id);
 			if ($order instanceof WC_Order) {
 				$GLOBALS['yoga_yookassa_checkout_order'] = $order;
+				if (function_exists('yoga_tariff_order_purchase_limit_error')) {
+					$limit_error = yoga_tariff_order_purchase_limit_error($order);
+					if ($limit_error) {
+						wc_add_notice($limit_error->get_error_message(), 'error');
+						return array('result' => 'failure');
+					}
+				}
 				if (class_exists('YTR_Checkout')) {
 					YTR_Checkout::ensure_order_billing_phone($order);
 				}

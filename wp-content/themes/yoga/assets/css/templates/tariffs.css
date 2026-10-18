@@ -130,6 +130,14 @@
 .tariff form.cart {
   margin-top: auto;
 }
+.tariff p.tariff-purchase-limit {
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+.tariff .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 .tariff-price {
   margin-top: 0px;

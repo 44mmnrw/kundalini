@@ -121,6 +121,9 @@ final class YTR_Renewal {
 		if (YTR_User::get_payment_method_id($user_id) === '') {
 			return false;
 		}
+		if (function_exists('yoga_tariff_purchase_limit_error') && yoga_tariff_purchase_limit_error(YTR_User::get_tariff_product_id($user_id), $user_id)) {
+			return false;
+		}
 
 		$access_end = YTR_Tariff::get_access_end_timestamp($user_id);
 		$now        = current_time('timestamp');
