@@ -5,7 +5,7 @@
  * @package Yoga
  */
 	$theme_uri = get_template_directory_uri();
-?><div class="modal-menu">
+?><div class="modal-menu" id="header-library-menu">
     <div class="container">
         <div class="modal-menu-inner">
 			<div class="modal-menu-inner">

@@ -57,12 +57,14 @@ jQuery(document).ready(function($) {
 			yogaLibraryMenuCloseTimer = null;
 		}
 		$('.main-menu-active-item').addClass('active');
+		$('.main-menu-active-item > .ref').attr('aria-expanded', 'true');
 		$('.modal-menu').addClass('active');
 	}
 	function yogaCloseLibraryMenu() {
 		clearTimeout(yogaLibraryMenuCloseTimer);
 		yogaLibraryMenuCloseTimer = null;
 		$('.main-menu-active-item').removeClass('active');
+		$('.main-menu-active-item > .ref').attr('aria-expanded', 'false');
 		$('.modal-menu').removeClass('active');
 	}
 	function yogaScheduleCloseLibraryMenu() {
@@ -83,6 +85,12 @@ jQuery(document).ready(function($) {
 	});
 	$('.modal-menu').on('mouseenter', yogaOpenLibraryMenu);
 	$('.modal-menu').on('mouseleave', yogaScheduleCloseLibraryMenu);
+	$(document).on('keydown', function (e) {
+		if (e.key === 'Escape' && $('.main-menu-active-item').hasClass('active')) {
+			yogaCloseLibraryMenu();
+			$('.main-menu-active-item > .ref').trigger('focus');
+		}
+	});
 
 
 	$(document).on('click', '.checkbox:not(.library-filters-screen__box):not(.library-filter-faux-checkbox)', function () {

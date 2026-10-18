@@ -146,6 +146,13 @@ header > .container > .row > .header-content {
   padding-right: 0;
 }
 
+.main-menu-active-item button.ref {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  line-height: inherit;
+  text-align: inherit;
+}
 
 .main-menu-active-item::before {
   content: "";

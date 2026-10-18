@@ -1490,17 +1490,19 @@ function yoga_subscribe_handler() {
 				$item_title = 'О преподавателе';
 			}
 			$item_output = $args_before;
-			$item_output .= '<a class="ref"' . $attributes . '>';
+			$item_output .= $is_first_item
+				? '<button type="button" class="ref" aria-expanded="false" aria-controls="header-library-menu"' . (!empty($item->attr_title) ? ' title="' . esc_attr($item->attr_title) . '"' : '') . '>'
+				: '<a class="ref"' . $attributes . '>';
 			$item_output .= $args_link_before . $item_title . $args_link_after;
 
 
 			if ($is_first_item) {
-				$item_output .= '<div class="ref-icon">';
+				$item_output .= '<span class="ref-icon">';
 				$item_output .= '<svg aria-hidden="true" focusable="false"><use href="' . esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#menu-dropdown') . '"></use></svg>';
-				$item_output .= '</div>';
+				$item_output .= '</span>';
 			}
 
-			$item_output .= '</a>';
+			$item_output .= $is_first_item ? '</button>' : '</a>';
 			$item_output .= $args_after;
 
 			$output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
@@ -1723,25 +1725,45 @@ function yoga_subscribe_handler() {
 
 
 	function yoga_get_russian_timezone_options() {
+		// Store each city's IANA zone so seasonal changes follow its own rules.
+		// Keep existing keys valid for profiles saved before the cities were split.
 		return array(
-			'America/Los_Angeles'          => 'UTC−8 — Лос-Анджелес',
-			'America/Denver'               => 'UTC−7 — Денвер',
-			'America/Chicago'              => 'UTC−6 — Чикаго · Мехико',
-			'America/New_York'             => 'UTC−5 — Нью-Йорк · Торонто',
-			'America/Argentina/Buenos_Aires' => 'UTC−3 — Буэнос-Айрес · Сан-Паулу',
-			'Europe/London'                => 'UTC+0 — Лондон · Лиссабон',
-			'Europe/Berlin'                => 'UTC+1 — Берлин · Париж',
-			'Europe/Kaliningrad'           => 'UTC+2 — Калининград · Тель-Авив',
-			'Europe/Moscow'                => 'UTC+3 — Москва · Санкт-Петербург · Минск',
-			'Europe/Samara'                => 'UTC+4 — Самара · Дубай · Тбилиси',
-			'Asia/Yekaterinburg'           => 'UTC+5 — Екатеринбург · Ташкент · Алматы',
-			'Asia/Omsk'                    => 'UTC+6 — Омск · Бишкек',
-			'Asia/Novosibirsk'             => 'UTC+7 — Новосибирск · Красноярск · Бангкок',
-			'Asia/Irkutsk'                 => 'UTC+8 — Иркутск · Бали · Сингапур',
-			'Asia/Yakutsk'                 => 'UTC+9 — Якутск · Токио',
-			'Asia/Vladivostok'             => 'UTC+10 — Владивосток · Хабаровск',
-			'Asia/Magadan'                 => 'UTC+11 — Магадан · Южно-Сахалинск',
-			'Asia/Kamchatka'               => 'UTC+12 — Петропавловск-Камчатский',
+			'America/Los_Angeles'          => 'Лос-Анджелес',
+			'America/Denver'               => 'Денвер',
+			'America/Chicago'              => 'Чикаго',
+			'America/Mexico_City'          => 'Мехико',
+			'America/New_York'             => 'Нью-Йорк',
+			'America/Toronto'              => 'Торонто',
+			'America/Argentina/Buenos_Aires' => 'Буэнос-Айрес',
+			'America/Sao_Paulo'            => 'Сан-Паулу',
+			'Europe/London'                => 'Лондон',
+			'Europe/Lisbon'                => 'Лиссабон',
+			'Europe/Berlin'                => 'Берлин',
+			'Europe/Paris'                 => 'Париж',
+			'Europe/Kaliningrad'           => 'Калининград',
+			'Asia/Jerusalem'               => 'Тель-Авив',
+			'Europe/Moscow'                => 'Москва · Санкт-Петербург',
+			'Europe/Minsk'                 => 'Минск',
+			'Europe/Samara'                => 'Самара',
+			'Asia/Dubai'                   => 'Дубай',
+			'Asia/Tbilisi'                 => 'Тбилиси',
+			'Asia/Yekaterinburg'           => 'Екатеринбург',
+			'Asia/Tashkent'                => 'Ташкент',
+			'Asia/Almaty'                  => 'Алматы',
+			'Asia/Omsk'                    => 'Омск',
+			'Asia/Bishkek'                 => 'Бишкек',
+			'Asia/Novosibirsk'             => 'Новосибирск',
+			'Asia/Krasnoyarsk'             => 'Красноярск',
+			'Asia/Bangkok'                 => 'Бангкок',
+			'Asia/Irkutsk'                 => 'Иркутск',
+			'Asia/Makassar'                => 'Бали',
+			'Asia/Singapore'               => 'Сингапур',
+			'Asia/Yakutsk'                 => 'Якутск',
+			'Asia/Tokyo'                   => 'Токио',
+			'Asia/Vladivostok'             => 'Владивосток · Хабаровск',
+			'Asia/Magadan'                 => 'Магадан',
+			'Asia/Sakhalin'                => 'Южно-Сахалинск',
+			'Asia/Kamchatka'               => 'Петропавловск-Камчатский',
 		);
 	}
 
