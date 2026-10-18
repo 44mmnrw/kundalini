@@ -164,17 +164,14 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 
 
 		$to = get_option('admin_email');
-		$subject = 'Новый вопрос из раздела FAQ: ' . $name;
+		$subject = 'Новый вопрос отпр. с FAQ: ' . $name;
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
 		$body = "
-        <h3>Новый вопрос из раздела FAQ</h3>
         <p><strong>Имя:</strong> {$name}</p>
         <p><strong>Email:</strong> {$email}</p>
         <p><strong>Вопрос:</strong></p>
         <p>" . nl2br($message) . "</p>
-        <hr>
-        <p><small>Сообщение отправлено с сайта " . get_bloginfo('name') . "</small></p>
 		";
 
 		$post_id = wp_insert_post(array(
