@@ -195,14 +195,21 @@ add_action('wp_ajax_submit_question', 'handle_question_submission');
 		}
 
 
-		$email_sent = function_exists('yoga_mail_send')
-			? yoga_mail_send('admin-new-question', array(
+		if (function_exists('yoga_mail_send_event')) {
+			$email_sent = yoga_mail_send_event('faq', (int) $post_id, array(
+				'subject' => $subject,
+				'content' => $body,
+			));
+		} elseif (function_exists('yoga_mail_send')) {
+			$email_sent = yoga_mail_send('admin-new-question', array(
 				'to' => $to,
 				'subject' => $subject,
 				'content' => $body,
 				'headers' => $headers,
-			))
-			: wp_mail($to, $subject, $body, $headers);
+			));
+		} else {
+			$email_sent = wp_mail($to, $subject, $body, $headers);
+		}
 		if (function_exists('yoga_send_support_autoreply')) {
 			yoga_send_support_autoreply($email, (int) $post_id, 'faq');
 		}

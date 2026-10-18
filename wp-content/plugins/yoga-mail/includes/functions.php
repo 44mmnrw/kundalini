@@ -14,6 +14,11 @@ function yoga_mail_send(string $template_id, array $args): bool {
 	return Yoga_Mail_Plugin::instance()->mailer()->send($template_id, $args);
 }
 
+/** Send a staff notification only after the question has been saved. */
+function yoga_mail_send_event(string $event, int $question_id, array $args): bool {
+	return Yoga_Mail_Events::send($event, $question_id, $args);
+}
+
 /**
  * Return the current template registry for integrations and diagnostics.
  */

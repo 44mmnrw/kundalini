@@ -335,6 +335,14 @@ function yoga_render_question_notifications_settings(): void {
 	if (!current_user_can('manage_options')) {
 		return;
 	}
+	if (function_exists('yoga_mail_send_event')) {
+		?>
+		<div class="wrap"><h1><?php esc_html_e('Настройки уведомлений', 'yoga'); ?></h1>
+		<p><?php esc_html_e('Получатели уведомлений по практикам и другим обращениям настраиваются в Yoga Mail.', 'yoga'); ?></p>
+		<p><a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=yoga-mail-events')); ?>"><?php esc_html_e('Открыть сценарии и получателей', 'yoga'); ?></a></p></div>
+		<?php
+		return;
+	}
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e('Уведомления по крийям', 'yoga'); ?></h1>
