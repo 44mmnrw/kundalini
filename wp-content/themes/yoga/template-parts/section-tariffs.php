@@ -26,6 +26,9 @@
             'orderby' => 'menu_order',
             'order' => 'ASC'
           ));
+          $tariff_products = array_values(array_filter($tariff_products, static function ($product): bool {
+            return !yoga_tariff_purchase_limit_error((int) $product->get_id(), get_current_user_id());
+          }));
         ?>
 
 		<?php if ($show_tariffs_title) : ?>
@@ -130,11 +133,10 @@
 
               <?php
                 $purchase_limit_months = yoga_tariff_purchase_limit_months($product_id);
-                $purchase_limit_error = yoga_tariff_purchase_limit_error($product_id, get_current_user_id());
               ?>
               <form class="cart" action="<?php echo esc_url(function_exists('yoga_get_tariff_form_action_url') ? yoga_get_tariff_form_action_url() : home_url('/checkout/')); ?>" method="post" enctype="multipart/form-data">
                 <?php if ($purchase_limit_months > 0) : ?>
-                  <p class="tariff-purchase-limit"<?php echo $purchase_limit_error ? ' role="status"' : ''; ?>><?php echo esc_html($purchase_limit_error ? $purchase_limit_error->get_error_message() : sprintf(__('Повторная покупка доступна через %d мес. после оплаты.', 'yoga'), $purchase_limit_months)); ?></p>
+                  <p class="tariff-purchase-limit"><?php echo esc_html(sprintf(__('Повторная покупка доступна через %d мес. после оплаты.', 'yoga'), $purchase_limit_months)); ?></p>
                 <?php endif; ?>
                 <input type="hidden" name="yoga_add_tariff" value="1">
                 <?php
@@ -156,8 +158,8 @@
                   wp_nonce_field('woocommerce-add-to-cart', 'woocommerce-add-to-cart-nonce');
                 ?>
 
-                <button type="submit" class="btn btn_icon single_add_to_cart_button" <?php disabled((bool) $purchase_limit_error); ?>>
-                  <span><?php echo esc_html($purchase_limit_error ? __('Пока недоступно', 'yoga') : yoga_get_purchase_cta_text()); ?></span>
+                <button type="submit" class="btn btn_icon single_add_to_cart_button">
+                  <span><?php echo esc_html(yoga_get_purchase_cta_text()); ?></span>
                   <div class="btn-icon">
                     <svg class="btn-icon-arrow" aria-hidden="true" focusable="false">
                       <use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#site-arrow'); ?>"></use>
