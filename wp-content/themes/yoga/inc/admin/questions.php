@@ -376,6 +376,15 @@ function yoga_render_question_notifications_settings(): void {
 }
 
 function render_question_request_meta_box(WP_Post $post): void {
+	$name = trim((string) get_post_meta($post->ID, 'contact_name', true));
+	if ($name === '' && (int) $post->post_author > 0) {
+		$author = get_userdata((int) $post->post_author);
+		$name = $author instanceof WP_User ? trim((string) $author->display_name) : '';
+	}
+	// Older guest questions stored the sender's name only in the generated title.
+	if ($name === '' && preg_match('/^Вопрос(?: по практике «.*»)? от (.+)$/u', (string) $post->post_title, $matches)) {
+		$name = trim($matches[1]);
+	}
 	$email = sanitize_email((string) get_post_meta($post->ID, 'contact_email', true));
 	$date = get_post_meta($post->ID, 'contact_date', true) ?: $post->post_date;
 	$answers = yoga_get_question_answers($post->ID);
@@ -384,6 +393,7 @@ function render_question_request_meta_box(WP_Post $post): void {
 	?>
 	<div class="yoga-question-admin-card">
 		<div class="yoga-question-admin-card__meta">
+			<span><strong><?php esc_html_e('Имя пользователя:', 'yoga'); ?></strong> <?php echo $name !== '' ? esc_html($name) : esc_html__('не указано', 'yoga'); ?></span>
 			<span><strong><?php esc_html_e('Получатель ответа:', 'yoga'); ?></strong> <?php echo $email ? esc_html($email) : esc_html__('эл. почта не указана', 'yoga'); ?></span>
 			<span><strong><?php esc_html_e('Получено:', 'yoga'); ?></strong> <?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($date))); ?></span>
 			<?php if ($practice_link !== '') : ?>

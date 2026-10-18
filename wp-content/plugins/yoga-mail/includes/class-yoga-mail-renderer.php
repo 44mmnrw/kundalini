@@ -70,6 +70,7 @@ final class Yoga_Mail_Renderer {
 		$html = (string) ob_get_clean();
 		if ($is_staff_question) {
 			$html = str_replace('font-size:16px', 'font-size:14px', $html);
+			$html = self::non_clickable_staff_emails($html);
 		}
 		$html = $this->responsive_html($html, $is_staff_question);
 
@@ -107,6 +108,14 @@ final class Yoga_Mail_Renderer {
 			'html'        => $html,
 			'text'        => trim(implode("\n\n", $text_parts)),
 		);
+	}
+
+	/** Use the same invisible separator as account emails to discourage automatic email links. */
+	private static function non_clickable_staff_emails(string $html): string {
+		$html = preg_replace('/<a\b(?=[^>]*\bhref\s*=\s*(["\'])mailto:)[^>]*>(.*?)<\/a>/is', '$2', $html);
+		return preg_replace_callback('/(?<=>)[^<]+(?=<)/u', static function (array $matches): string {
+			return str_replace('@', '&#8203;@', $matches[0]);
+		}, $html);
 	}
 
 	/** Split addresses across table cells so mail clients cannot turn them into links. */
