@@ -114,7 +114,10 @@ final class Yoga_Mail_Renderer {
 	private static function non_clickable_staff_emails(string $html): string {
 		$html = preg_replace('/<a\b(?=[^>]*\bhref\s*=\s*(["\'])mailto:)[^>]*>(.*?)<\/a>/is', '$2', $html);
 		return preg_replace_callback('/(?<=>)[^<]+(?=<)/u', static function (array $matches): string {
-			return str_replace('@', '&#8203;@', $matches[0]);
+			// Some clients also link a bare domain, so separate its dots as well as @.
+			return preg_replace_callback('/@([a-z0-9-]+(?:\.[a-z0-9-]+)+)/i', static function (array $address): string {
+				return '&#8203;@&#8203;' . str_replace('.', '&#8203;.&#8203;', $address[1]);
+			}, $matches[0]);
 		}, $html);
 	}
 
