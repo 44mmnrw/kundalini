@@ -60,6 +60,10 @@ final class Yoga_Mail_Renderer {
 
 		$body_html = $this->inline_content_styles((string) $body);
 		$settings = $this->registry->settings();
+		$is_admin_notification = $definition['group'] === 'Административные';
+		if ($is_admin_notification) {
+			$settings['footer_text'] = 'Это оповестительное письмо для администратора онлайн-платформы Кундалини Класс.';
+		}
 		$template_path = YOGA_MAIL_PATH . 'templates/layout/html.php';
 		ob_start();
 		include $template_path;
@@ -86,6 +90,9 @@ final class Yoga_Mail_Renderer {
 			$privacy_url = home_url('/privacy-policy/');
 		}
 		$copyright_year = function_exists('wp_date') ? wp_date('Y') : date('Y');
+		if ($is_admin_notification) {
+			$text_parts[] = $settings['footer_text'];
+		}
 		$text_parts[] = 'Поддержка — support@platform.kundalini-class.ru';
 		$text_parts[] = 'Политика конфиденциальности: ' . $privacy_url;
 		$text_parts[] = $copyright_year . ' © Кундалини Класс. Все права защищены.';
