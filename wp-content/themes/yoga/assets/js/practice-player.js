@@ -236,6 +236,91 @@ function initializeStandalonePracticeVideoPlayers() {
     });
 }
 
+let practiceAudioTrackDropdownId = 0;
+
+function setupPracticeAudioTrackDropdown(container) {
+    const selector = container.querySelector('.practice-audio-tracks__select');
+    if (!selector || selector.options.length < 2 || container.dataset.dropdownInitialized === 'true') return;
+    container.dataset.dropdownInitialized = 'true';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'practice-audio-tracks__toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    const title = document.createElement('span');
+    toggle.append(title);
+    ['down', 'up'].forEach(direction => {
+        const arrow = document.createElement('img');
+        arrow.className = `practice-audio-tracks__arrow practice-audio-tracks__arrow--${direction}`;
+        arrow.src = container.dataset[direction === 'down' ? 'arrowDown' : 'arrowUp'];
+        arrow.alt = '';
+        toggle.append(arrow);
+    });
+
+    const menu = document.createElement('div');
+    menu.id = `practice-audio-options-${++practiceAudioTrackDropdownId}`;
+    menu.className = 'practice-audio-tracks__options';
+    menu.setAttribute('role', 'group');
+    menu.setAttribute('aria-label', 'Аудиозаписи');
+    menu.hidden = true;
+    toggle.setAttribute('aria-controls', menu.id);
+
+    const setOpen = open => {
+        container.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        menu.hidden = !open;
+    };
+    const buttons = Array.from(selector.options).map((option, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'practice-audio-tracks__option';
+        button.textContent = option.textContent;
+        button.addEventListener('click', () => {
+            if (selector.selectedIndex !== index) {
+                selector.selectedIndex = index;
+                selector.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            setOpen(false);
+            toggle.focus();
+        });
+        menu.append(button);
+        return button;
+    });
+    const sync = () => {
+        title.textContent = selector.options[selector.selectedIndex]?.textContent || '';
+        toggle.setAttribute('aria-label', `Выбрать аудиозапись: ${title.textContent}`);
+        buttons.forEach((button, index) => { button.hidden = index === selector.selectedIndex; });
+    };
+    toggle.addEventListener('click', () => setOpen(menu.hidden));
+    selector.addEventListener('change', sync);
+    container.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !menu.hidden) {
+            event.preventDefault();
+            setOpen(false);
+            toggle.focus();
+        } else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+            event.preventDefault();
+            setOpen(true);
+            const available = buttons.filter(button => !button.hidden);
+            const current = available.indexOf(document.activeElement);
+            let next = event.key === 'ArrowUp' ? (current <= 0 ? available.length - 1 : current - 1)
+                : (current + 1) % available.length;
+            if (event.key === 'Home') next = 0;
+            if (event.key === 'End') next = available.length - 1;
+            available[next]?.focus();
+        }
+    });
+    container.addEventListener('focusout', event => {
+        if (!container.contains(event.relatedTarget)) setOpen(false);
+    });
+    document.addEventListener('click', event => {
+        if (!container.contains(event.target)) setOpen(false);
+    });
+    container.append(toggle, menu);
+    container.classList.add('is-enhanced');
+    sync();
+}
+
 function setupPracticeAudioTrackSelector(playerElement, player, beforeChange) {
     const selector = playerElement?.previousElementSibling?.querySelector('.practice-audio-tracks__select');
     const media = playerElement?.querySelector('audio');
@@ -1583,6 +1668,7 @@ document.head.appendChild(disabledStyleSheet);
 
 document.addEventListener('DOMContentLoaded', function() {
 	initializePracticeImageFraming();
+    document.querySelectorAll('.practice-audio-tracks').forEach(setupPracticeAudioTrackDropdown);
 
     if (typeof Plyr !== 'undefined') {
         initializePracticeSystem();

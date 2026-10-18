@@ -21,6 +21,7 @@ function esc_attr($value) { return htmlspecialchars($value, ENT_QUOTES); }
 function esc_html($value) { return htmlspecialchars($value, ENT_QUOTES); }
 function wp_strip_all_tags($value) { return strip_tags($value); }
 function wp_get_attachment_url($id) { return 'https://example.test/' . $id . '.mp3'; }
+function get_template_directory_uri() { return 'https://example.test/theme'; }
 require dirname(__DIR__) . '/inc/integrations/acf.php';
 require dirname(__DIR__) . '/inc/practice-media.php';
 require dirname(__DIR__) . '/inc/exercise-sources.php';
