@@ -14,7 +14,7 @@ if (!function_exists('yoga_yookassa_format_api_error')) {
 			return yoga_yookassa_translate_api_error_message(trim((string) $error->get_error_message()));
 		}
 
-		if ($error instanceof Exception) {
+		if ($error instanceof Throwable) {
 			$message = trim($error->getMessage());
 			if (method_exists($error, 'getResponseBody')) {
 				$body = $error->getResponseBody();
@@ -84,7 +84,7 @@ if (!function_exists('yoga_yookassa_create_payment_with_body')) {
 			array(
 				'timeout' => 45,
 				'headers' => array(
-					'Authorization'   => 'Basic ' . base64_encode($shop_id . ':' . $secret, true),
+					'Authorization'   => 'Basic ' . base64_encode($shop_id . ':' . $secret),
 					'Idempotence-Key' => $idempotence_key,
 					'Content-Type'    => 'application/json',
 				),
@@ -342,6 +342,10 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 
 					$response = $this->getApiClient()->createPayment($paymentRequest);
 				}
+				if (is_wp_error($response)) {
+					yoga_yookassa_store_api_error($response);
+					return $response;
+				}
 				if (class_exists('YooKassaLogger')) {
 					YooKassaLogger::info('Create payment response: ' . json_encode($response->toArray()));
 					YooKassaLogger::sendHeka(array('payment.request.success'));
@@ -355,13 +359,13 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 				}
 
 				return new WP_Error($e->getCode(), yoga_yookassa_format_api_error($e));
-			} catch (Exception $e) {
+			} catch (Throwable $e) {
 				yoga_yookassa_store_api_error($e);
 				if (class_exists('YooKassaLogger')) {
-					YooKassaLogger::error('Create payment response error: ' . json_encode($e));
+					YooKassaLogger::error('Create payment response error: ' . $e->getMessage());
 				}
 
-				return new WP_Error($e->getCode(), $e->getMessage());
+				return new WP_Error($e->getCode() ?: 'yoga_payment_error', $e->getMessage());
 			}
 		}
 

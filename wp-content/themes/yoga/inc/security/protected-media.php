@@ -147,7 +147,7 @@ if (!function_exists('yoga_protected_media_find_candidate_practices')) {
 				$ids,
 				$wpdb->get_col(
 					$wpdb->prepare(
-						"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key LIKE %s AND meta_value LIKE %s",
+						"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE (meta_key LIKE %s OR meta_key = 'practice_download') AND meta_value LIKE %s",
 						'practice_sections_%',
 						'%' . $wpdb->esc_like((string) $needle) . '%'
 					)
@@ -292,7 +292,7 @@ if (!function_exists('yoga_protected_media_user_can_access')) {
 }
 
 if (!function_exists('yoga_protected_media_send_file')) {
-	function yoga_protected_media_send_file(string $path, bool $protected): void {
+	function yoga_protected_media_send_file(string $path, bool $protected, int $practice_id = 0): void {
 		$size = filesize($path);
 		if ($size === false) {
 			status_header(404);
@@ -305,12 +305,14 @@ if (!function_exists('yoga_protected_media_send_file')) {
 		$end = (int) $size - 1;
 		$status = 200;
 
-		if (!empty($_SERVER['HTTP_RANGE']) && preg_match('/bytes=(\d*)-(\d*)/', (string) $_SERVER['HTTP_RANGE'], $matches)) {
+		if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'HEAD' && !empty($_SERVER['HTTP_RANGE']) && preg_match('/^bytes=(\d*)-(\d*)$/', trim((string) $_SERVER['HTTP_RANGE']), $matches) && ($matches[1] !== '' || $matches[2] !== '')) {
 			$status = 206;
 			if ($matches[1] !== '') {
 				$start = max(0, (int) $matches[1]);
 			}
-			if ($matches[2] !== '') {
+			if ($matches[1] === '') {
+				$start = max(0, (int) $size - (int) $matches[2]);
+			} elseif ($matches[2] !== '') {
 				$end = min($end, (int) $matches[2]);
 			}
 			if ($start > $end || $start >= $size) {
@@ -320,6 +322,17 @@ if (!function_exists('yoga_protected_media_send_file')) {
 			}
 		}
 
+		$handle = fopen($path, 'rb');
+		if ($handle === false) {
+			status_header(404);
+			exit;
+		}
+		if ($practice_id > 0 && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'HEAD'
+			&& !yoga_claim_practice_download(get_current_user_id(), $practice_id)) {
+			fclose($handle);
+			status_header(403);
+			exit;
+		}
 		status_header($status);
 		header('Content-Type: ' . $type);
 		header('Accept-Ranges: bytes');
@@ -339,9 +352,8 @@ if (!function_exists('yoga_protected_media_send_file')) {
 		$length = $end - $start + 1;
 		header('Content-Length: ' . (string) $length);
 
-		$handle = fopen($path, 'rb');
-		if ($handle === false) {
-			status_header(404);
+		if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'HEAD') {
+			fclose($handle);
 			exit;
 		}
 
@@ -363,6 +375,18 @@ if (!function_exists('yoga_protected_media_send_file')) {
 	}
 }
 
+/** Identify protocol files before section access can allow the same attachment. */
+function yoga_protected_media_download_practice_id(int $attachment_id, string $relative): int {
+	$request_path = yoga_protected_media_real_path($relative);
+	foreach (yoga_protected_media_find_candidate_practices($attachment_id, $relative) as $practice_id) {
+		$source = yoga_get_practice_download_source($practice_id);
+		if (is_array($source) && !empty($source['path']) && realpath($source['path']) === $request_path) {
+			return $practice_id;
+		}
+	}
+	return 0;
+}
+
 if (!function_exists('yoga_handle_protected_media_request')) {
 	function yoga_handle_protected_media_request(): void {
 		$relative = yoga_protected_media_request_path();
@@ -377,7 +401,10 @@ if (!function_exists('yoga_handle_protected_media_request')) {
 		}
 
 		$attachment_id = yoga_protected_media_attachment_id_from_relative($relative);
-		$access = yoga_protected_media_user_can_access($attachment_id, $relative);
+		$practice_id = yoga_protected_media_download_practice_id($attachment_id, $relative);
+		$access = $practice_id > 0
+			? yoga_user_can_download_practice(get_current_user_id(), $practice_id)
+			: yoga_protected_media_user_can_access($attachment_id, $relative);
 
 		if ($access === false) {
 			status_header(is_user_logged_in() ? 403 : 401);
@@ -385,7 +412,7 @@ if (!function_exists('yoga_handle_protected_media_request')) {
 			exit;
 		}
 
-		yoga_protected_media_send_file($path, $access === true);
+		yoga_protected_media_send_file($path, $access === true, $practice_id);
 	}
 }
 

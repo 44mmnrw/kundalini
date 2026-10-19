@@ -5,7 +5,7 @@
  * @package Yoga
  */
 $new_title = get_field('blog_new_title', 'option');
-$posts_count = get_field('blog_posts_count', 'option') ?: 9;
+$posts_count = max(1, (int) (get_field('blog_posts_count', 'option') ?: 9));
 $blog_category = get_category_by_slug('blog');
 
 
@@ -101,7 +101,7 @@ $secondary_post = null;
 
 if ($is_blog_search_ui) {
     $current_posts = new WP_Query(array_merge($query_common, array(
-        'posts_per_page' => $posts_count,
+        'posts_per_page' => -1,
     )));
     $blog_posts_total = (int) $current_posts->found_posts;
 } else {
@@ -282,10 +282,10 @@ if ($is_blog_search_ui) {
 
                 <?php if ($current_posts->found_posts > $posts_count) : ?>
                     <div class="blog-articles__more">
-                        <div class="btn">
+                        <button type="button" class="btn" aria-expanded="false">
                             <span class="active">Показать еще</span>
                             <span>Свернуть</span>
-                        </div>
+                        </button>
                     </div>
                 <?php endif; ?>
             </div>

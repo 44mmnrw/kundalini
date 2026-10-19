@@ -9,7 +9,7 @@
 	$mobile_header_tariff = is_user_logged_in() && function_exists('get_current_user_tariff') ? get_current_user_tariff() : false;
 	$mobile_header_tariff_label = is_array($mobile_header_tariff) && !empty($mobile_header_tariff['product_name']) ? (string) $mobile_header_tariff['product_name'] : __('Подписка не активна', 'yoga');
 	$mobile_header_urls = function_exists('yoga_lk_sidebar_secondary_nav_urls') ? yoga_lk_sidebar_secondary_nav_urls() : array_fill_keys(array('tariffs'), home_url('/'));
-?><div class="modal-mobile-menu">
+?><div class="modal-mobile-menu" id="yoga-mobile-menu" tabindex="-1" role="dialog" aria-label="Меню" aria-modal="true">
     <div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 17 17" width="17" height="17" aria-hidden="true" focusable="false">
 			<use href="<?php echo $sprite_href; ?>#lk-modal-close" width="100%" height="100%"></use>

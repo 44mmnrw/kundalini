@@ -683,6 +683,11 @@ header > .container > .row > .header-content {
 }
 
 .burger {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   display: none;
   box-sizing: border-box;
 }

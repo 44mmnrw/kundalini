@@ -88,7 +88,7 @@ if (!function_exists('yoga_handle_practice_download')) {
 		$uploads   = wp_upload_dir();
 		$base_dir  = !empty($uploads['basedir']) ? realpath($uploads['basedir']) : false;
 
-		if ($real_path === false || $base_dir === false || strpos($real_path, $base_dir) !== 0) {
+		if ($real_path === false || !is_file($real_path) || !is_readable($real_path) || $base_dir === false || strpos($real_path, rtrim($base_dir, '/\\') . DIRECTORY_SEPARATOR) !== 0) {
 			yoga_download_abort(
 				__('Файл недоступен для скачивания.', 'yoga'),
 				403,
@@ -96,7 +96,9 @@ if (!function_exists('yoga_handle_practice_download')) {
 			);
 		}
 
-		yoga_record_practice_download($user_id, $practice_id);
+		if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'HEAD' && !yoga_claim_practice_download($user_id, $practice_id)) {
+			yoga_download_abort(yoga_get_download_limit_exceeded_message(), 403, 'download_denied');
+		}
 
 		$filename = sanitize_file_name($source['filename']);
 		if ($filename === '') {
@@ -113,7 +115,9 @@ if (!function_exists('yoga_handle_practice_download')) {
 		header('X-Robots-Tag: noindex, nofollow', true);
 
 
-		readfile($real_path);
+		if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'HEAD') {
+			readfile($real_path);
+		}
 		exit;
 	}
 }
