@@ -182,7 +182,7 @@ if (!function_exists('yoga_get_user_downloads_remaining')) {
 }
 
 if (!function_exists('yoga_url_to_upload_path')) {
-	function yoga_url_to_upload_path(string $url): string {
+	function yoga_url_to_upload_path(string $url, bool $match_legacy_host = false): string {
 		$uploads = wp_upload_dir();
 		if (empty($uploads['baseurl']) || empty($uploads['basedir'])) {
 			return '';
@@ -190,8 +190,13 @@ if (!function_exists('yoga_url_to_upload_path')) {
 
 		$host = wp_parse_url($url, PHP_URL_HOST);
 		$base_host = wp_parse_url($uploads['baseurl'], PHP_URL_HOST);
-		if (!$host || !$base_host || strcasecmp($host, $base_host) !== 0
-			|| wp_parse_url($url, PHP_URL_PORT) !== wp_parse_url($uploads['baseurl'], PHP_URL_PORT)) {
+		if (!$host || !$base_host || !in_array(strtolower((string) wp_parse_url($url, PHP_URL_SCHEME)), array('http', 'https'), true)) {
+			return '';
+		}
+		// Legacy hosts may be matched for protection or an authorized local delivery.
+		// General URL resolution continues to require the current origin.
+		if (!$match_legacy_host && (strcasecmp($host, $base_host) !== 0
+			|| wp_parse_url($url, PHP_URL_PORT) !== wp_parse_url($uploads['baseurl'], PHP_URL_PORT))) {
 			return '';
 		}
 

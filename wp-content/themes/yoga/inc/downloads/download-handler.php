@@ -76,6 +76,11 @@ if (!function_exists('yoga_handle_practice_download')) {
 		}
 
 		$source = yoga_get_practice_download_source($practice_id);
+		// Authentication, nonce and tariff access were checked above. A migrated
+		// URL may identify an existing local uploads file without fetching it remotely.
+		if (is_array($source) && $source['path'] === '' && !empty($source['url'])) {
+			$source['path'] = yoga_url_to_upload_path((string) $source['url'], true);
+		}
 		if ($source === null || $source['path'] === '') {
 			yoga_download_abort(
 				__('Файл протокола недоступен.', 'yoga'),
