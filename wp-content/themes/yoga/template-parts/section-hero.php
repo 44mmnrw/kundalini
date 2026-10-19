@@ -62,7 +62,7 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                     if (false !== $main_info_decor_svg) {
                         $main_info_decor_svg = preg_replace(
                             '/<svg\s+/',
-                            '<svg class="main__info-decor main__info-decor--snake" aria-hidden="true" focusable="false" ',
+                            '<svg class="main__info-decor--snake" aria-hidden="true" focusable="false" ',
                             $main_info_decor_svg,
                             1
                         );
@@ -75,7 +75,8 @@ if ($tariffs_term && !is_wp_error($tariffs_term)) {
                             },
                             $main_info_decor_svg
                         );
-                        echo $main_info_decor_svg;
+                        // The wrapper lets responsive CSS hide SVGs with inline display styles.
+                        echo '<span class="main__info-decor" aria-hidden="true">' . $main_info_decor_svg . '</span>';
                     }
                 }
                 ?>
