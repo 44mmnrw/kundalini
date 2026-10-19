@@ -142,7 +142,7 @@ if (!function_exists('yoga_protected_media_find_candidate_practices')) {
 			}
 		}
 
-		foreach (array_filter(array($basename, $url)) as $needle) {
+		foreach (array_unique(array_filter(array($basename, rawurlencode($basename), $url))) as $needle) {
 			$ids = array_merge(
 				$ids,
 				$wpdb->get_col(
@@ -379,6 +379,12 @@ if (!function_exists('yoga_protected_media_send_file')) {
 function yoga_protected_media_download_practice_id(int $attachment_id, string $relative): int {
 	$request_path = yoga_protected_media_real_path($relative);
 	foreach (yoga_protected_media_find_candidate_practices($attachment_id, $relative) as $practice_id) {
+		// A known protocol must remain protected even if its URL cannot be resolved.
+		$raw = function_exists('get_field') ? get_field('practice_download', $practice_id) : null;
+		$source_id = is_array($raw) ? (int) ($raw['ID'] ?? $raw['id'] ?? 0) : (is_numeric($raw) ? (int) $raw : 0);
+		if ($attachment_id > 0 && $source_id === $attachment_id) {
+			return $practice_id;
+		}
 		$source = yoga_get_practice_download_source($practice_id);
 		if (is_array($source) && !empty($source['path']) && realpath($source['path']) === $request_path) {
 			return $practice_id;

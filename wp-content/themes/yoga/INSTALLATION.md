@@ -18,6 +18,8 @@ WordPress загружает его автоматически: активаци
 php wp-content/themes/yoga/tests/frontend-session.php
 php wp-content/themes/yoga/tests/report-payments.php
 php wp-content/themes/yoga/tests/report-downloads.php
+php wp-content/themes/yoga/tests/report-protected-media.php
+php wp-content/themes/yoga/tests/report-mobile-menu.php
 php wp-content/themes/yoga/tests/report-tariff-timezone.php
 php wp-content/themes/yoga/tests/report-mail.php
 node wp-content/themes/yoga/tests/report-interface.js
