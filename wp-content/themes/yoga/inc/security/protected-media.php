@@ -389,6 +389,12 @@ function yoga_protected_media_download_practice_id(int $attachment_id, string $r
 		if (is_array($source) && !empty($source['path']) && realpath($source['path']) === $request_path) {
 			return $practice_id;
 		}
+		// Old URL strings have no attachment ID. Match their exact uploads path
+		// locally so a migration cannot silently make the protocol public.
+		if (is_array($source) && !empty($source['url']) && $request_path !== ''
+			&& yoga_url_to_upload_path((string) $source['url'], true) === $request_path) {
+			return $practice_id;
+		}
 	}
 	return 0;
 }

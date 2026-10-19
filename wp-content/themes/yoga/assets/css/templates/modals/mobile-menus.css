@@ -4,6 +4,25 @@
  * @package Yoga
  */
 
+.mobile-menu-library-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3125rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.mobile-menu-library-toggle > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 0;
+}
+
 .modal-mobile-menu-lk button.sidebar-menu__item,
 .modal-mobile-menu-lk button.sidebar-exit {
   border: 0;

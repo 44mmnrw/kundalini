@@ -1548,6 +1548,9 @@ function yoga_subscribe_handler() {
 			}
 
 			$output .= '<li class="' . $class_names . '">';
+			if ($this->item_count === 1) {
+				$output .= '<button type="button" class="mobile-menu-library-toggle" aria-expanded="false" aria-controls="yoga-mobile-library">';
+			}
 
 
 			if ($this->item_count !== 1) {
@@ -1555,7 +1558,7 @@ function yoga_subscribe_handler() {
 				$attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
 				$attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
 
-				$output .= '<a' . $attributes . '></a>';
+				$output .= '<a aria-label="' . esc_attr(wp_strip_all_tags($item->title)) . '"' . $attributes . '></a>';
 			}
 
 
@@ -1568,7 +1571,7 @@ function yoga_subscribe_handler() {
 				$output .= '<span class="mobile-menu-main-item__chevron" aria-hidden="true">';
 				$output .= '<svg class="mobile-menu-main-item__chevron-svg" viewBox="0 0 9 16" width="9" height="16" focusable="false">';
 				$output .= '<use href="' . $sprite_href . '#chevron-right" width="100%" height="100%"></use>';
-				$output .= '</svg></span>';
+				$output .= '</svg></span></button>';
 			}
 		}
 
