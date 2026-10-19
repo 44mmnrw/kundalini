@@ -931,9 +931,14 @@ jQuery(document).ready(function($) {
 			else if (!e.shiftKey && (document.activeElement === last || document.activeElement === $panel[0])) { e.preventDefault(); first.focus(); }
 		}
 	});
-	$(document).on('click', '.overlay, .modal-close', function () {
+	$(document).on('click', '.overlay, .modal-close, #yoga-mobile-menu-lk .sidebar-menu__item', function () {
 		var $trigger = $('.burger[aria-expanded="true"]');
 		$trigger.attr('aria-expanded', 'false');
+		if ($(this).is('.sidebar-menu__item')) {
+			$('.modal-mobile-menu-lk, .overlay').removeClass('active');
+			$('.body').removeClass('body-fixed');
+			$('.body_lk .burger, .body_lk .header').removeClass('active');
+		}
 		if ($trigger.length) $trigger.first().trigger('focus');
 	});
 

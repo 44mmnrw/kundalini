@@ -188,14 +188,28 @@ if (!function_exists('yoga_url_to_upload_path')) {
 			return '';
 		}
 
-		if (strpos($url, $uploads['baseurl']) !== 0) {
+		$host = wp_parse_url($url, PHP_URL_HOST);
+		$base_host = wp_parse_url($uploads['baseurl'], PHP_URL_HOST);
+		if (!$host || !$base_host || strcasecmp($host, $base_host) !== 0
+			|| wp_parse_url($url, PHP_URL_PORT) !== wp_parse_url($uploads['baseurl'], PHP_URL_PORT)) {
 			return '';
 		}
 
-		$relative = substr($url, strlen($uploads['baseurl']));
-		$path     = $uploads['basedir'] . $relative;
+		// Decode only the path, once; query strings are not part of filenames.
+		$url_path = rawurldecode((string) wp_parse_url($url, PHP_URL_PATH));
+		$base_path = rtrim(rawurldecode((string) wp_parse_url($uploads['baseurl'], PHP_URL_PATH)), '/') . '/';
+		if (!str_starts_with($url_path, $base_path) || str_contains($url_path, "\0")) {
+			return '';
+		}
+		$base_dir = realpath($uploads['basedir']);
+		if ($base_dir === false) {
+			return '';
+		}
+		$path = realpath($base_dir . DIRECTORY_SEPARATOR . substr($url_path, strlen($base_path)));
+		$base = rtrim(str_replace('\\', '/', $base_dir), '/') . '/';
+		$real = $path !== false ? str_replace('\\', '/', $path) : '';
 
-		return is_file($path) ? $path : '';
+		return $path !== false && str_starts_with($real, $base) && is_file($path) ? $path : '';
 	}
 }
 

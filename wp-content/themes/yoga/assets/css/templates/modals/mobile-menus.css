@@ -4,6 +4,23 @@
  * @package Yoga
  */
 
+.modal-mobile-menu-lk button.sidebar-menu__item,
+.modal-mobile-menu-lk button.sidebar-exit {
+  border: 0;
+  font: inherit;
+  text-align: left;
+}
+.modal-mobile-menu button.modal-close,
+.modal-mobile-menu-lk button.modal-close {
+  padding: 0;
+  border: 0;
+}
+.modal-mobile-menu button:focus-visible,
+.modal-mobile-menu-lk button:focus-visible {
+  outline: 2px solid #9153e1;
+  outline-offset: 2px;
+}
+
 .modal-mobile-menu, .modal-mobile-menu-lk {
   display: none;
 }

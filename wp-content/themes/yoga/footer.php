@@ -34,7 +34,7 @@ if (is_array($footer_menu_items) && $footer_menu_items) {
 		}
 		$label = trim(wp_strip_all_tags((string) $menu_item->title));
 		$url = trim((string) $menu_item->url);
-		if (mb_strtolower($label) === 'блог' && (untrailingslashit($url) === untrailingslashit(home_url('/')) || $url === '/')) {
+		if (preg_match('/^блог$/iu', $label) === 1 && (untrailingslashit($url) === untrailingslashit(home_url('/')) || $url === '/')) {
 			$url = $footer_site_navigation['blog']['url'] ?? home_url('/blog/');
 		}
 		if ($label !== '' && $url !== '') {

@@ -28,59 +28,59 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 	? yoga_sadhana_active_count((int) get_current_user_id())
 	: 0;
 ?><div class="modal-mobile-menu-lk" id="yoga-mobile-menu-lk" tabindex="-1" role="dialog" aria-label="Меню личного кабинета" aria-modal="true">
-	<div class="modal-close">
+	<button type="button" aria-label="Закрыть меню" class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
 			<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>" width="100%" height="100%"></use>
 		</svg>
-	</div>
+	</button>
 	<div class="mobile-menu-inner">
 		<div class="lk-mobile-menu-head"><a class="lk-mobile-menu-rate" href="<?php echo esc_url($mobile_lk_tariffs_link['url']); ?>"><svg aria-hidden="true"><use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#personal-status-crown'); ?>"></use></svg><span><?php echo esc_html($mobile_lk_tariff_label); ?></span></a></div>
 		<div class="mobile-menu">
 			<div class="mobile-menu__slide mobile-menu__slide_main active">
 				<div class="sidebar-menu-lk-group sidebar-menu-lk-group--primary">
 					<nav class="sidebar-menu" aria-label="<?php esc_attr_e('Разделы личного кабинета', 'yoga'); ?>">
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
-							<div class="sidebar-menu__item-icon">
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '1' ? ' active' : ''; ?>" data-target="1">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-user', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои данные', 'yoga'); ?></span>
-						</div>
+						</button>
 						<!-- TODO: История практик — временно скрыто до реализации.
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
-							<div class="sidebar-menu__item-icon">
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '2' ? ' active' : ''; ?>" data-target="2">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-history', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('История практик', 'yoga'); ?></span>
-						</div>
+						</button>
 						-->
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
-							<div class="sidebar-menu__item-icon">
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '7' ? ' active' : ''; ?>" data-target="7">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-lotus', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои садханы', 'yoga'); ?></span>
 							<?php if ($mobile_active_sadhanas_count > 0) : ?>
 								<span class="sidebar-menu__count" data-sadhana-active-count aria-label="<?php echo esc_attr(sprintf(_n('%d активная садхана', '%d активных садхан', $mobile_active_sadhanas_count, 'yoga'), $mobile_active_sadhanas_count)); ?>"><?php echo esc_html((string) $mobile_active_sadhanas_count); ?></span>
 							<?php endif; ?>
-						</div>
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
-						<div class="sidebar-menu__item-icon">
+						</button>
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '3' ? ' active' : ''; ?>" data-target="3">
+						<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-heart', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Избранное', 'yoga'); ?></span>
-						</div>
+						</button>
 						<!-- TODO: Рекомендации — временно скрыто до реализации.
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
-							<div class="sidebar-menu__item-icon">
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '4' ? ' active' : ''; ?>" data-target="4">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-smile', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Рекомендации', 'yoga'); ?></span>
-						</div>
+						</button>
 						-->
 						<?php // yoga_render_additional_lk_menu_items($mobile_lk_target); // Временно скрыты отзывы, промокоды и предупреждения. ?>
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
-							<div class="sidebar-menu__item-icon">
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '5' ? ' active' : ''; ?>" data-target="5">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-question', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Мои вопросы', 'yoga'); ?></span>
 							<?php
 							$mobile_unread_question_answers_count = function_exists('yoga_get_unread_question_answer_notifications')
@@ -90,11 +90,11 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 							?>
 								<span class="sidebar-menu__count" aria-label="<?php echo esc_attr(sprintf(_n('%d непрочитанный ответ', '%d непрочитанных ответов', $mobile_unread_question_answers_count, 'yoga'), $mobile_unread_question_answers_count)); ?>"><?php echo esc_html((string) $mobile_unread_question_answers_count); ?></span>
 							<?php endif; ?>
-						</div>
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
-							<div class="sidebar-menu__item-icon">
+						</button>
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '8' ? ' active' : ''; ?>" data-target="8">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk_bell', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Уведомления', 'yoga'); ?></span>
 							<?php
 							$mobile_unread_notifications_count = function_exists('yoga_get_unread_user_notifications')
@@ -104,13 +104,13 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 							?>
 								<span class="sidebar-menu__count" aria-label="<?php echo esc_attr(sprintf(_n('%d непрочитанное уведомление', '%d непрочитанных уведомлений', $mobile_unread_notifications_count, 'yoga'), $mobile_unread_notifications_count)); ?>"><?php echo esc_html((string) $mobile_unread_notifications_count); ?></span>
 							<?php endif; ?>
-						</div>
-						<div class="sidebar-menu__item<?php echo $mobile_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
-							<div class="sidebar-menu__item-icon">
+						</button>
+						<button type="button" class="sidebar-menu__item<?php echo $mobile_lk_target === '6' ? ' active' : ''; ?>" data-target="6">
+							<span class="sidebar-menu__item-icon">
 								<?php yoga_render_lk_menu_icon('lk-sidebar-settings', 'sidebar-menu__item-svg'); ?>
-							</div>
+							</span>
 							<span class="sidebar-menu__label"><?php esc_html_e('Настройки подписки', 'yoga'); ?></span>
-						</div>
+						</button>
 					</nav>
 				</div>
 
@@ -125,12 +125,12 @@ $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 				</nav>
 				<hr class="sidebar-menu-sep sidebar-menu-sep--before-logout" aria-hidden="true">
 
-				<div class="mobile-menu-exit sidebar-exit modal-call modal-call_logout">
-					<div class="sidebar-exit__icon">
+				<button type="button" class="mobile-menu-exit sidebar-exit modal-call modal-call_logout">
+					<span class="sidebar-exit__icon">
 						<?php yoga_render_lk_menu_icon('lk-sidebar-logout', 'sidebar-exit__svg'); ?>
-					</div>
+					</span>
 					<span class="sidebar-menu__label"><?php esc_html_e('Выйти', 'yoga'); ?></span>
-				</div>
+				</button>
 			</div>
 		</div>
 	</div>
