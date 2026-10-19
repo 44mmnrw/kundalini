@@ -243,11 +243,11 @@ $header_sprite_url = add_query_arg(
 										<span class="login-icon__initial"><?php echo esc_html($user_initial); ?></span>
 									<?php endif; ?>
 								</a>
-								<div class="burger">
+								<button type="button" class="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="<?php echo $is_lk_shell ? 'yoga-mobile-menu-lk' : 'yoga-mobile-menu'; ?>">
 									<svg aria-hidden="true" focusable="false">
 										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines'); ?>"></use>
 									</svg>
-								</div>
+								</button>
 							</div>
 							<?php else : ?>
 							<div class="header-lk__trailing">
@@ -256,11 +256,11 @@ $header_sprite_url = add_query_arg(
 										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#login-user-icon'); ?>"></use>
 									</svg>
 								</div>
-								<div class="burger">
+								<button type="button" class="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="<?php echo $is_lk_shell ? 'yoga-mobile-menu-lk' : 'yoga-mobile-menu'; ?>">
 									<svg aria-hidden="true" focusable="false">
 										<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#burger-menu-lines'); ?>"></use>
 									</svg>
-								</div>
+								</button>
 							</div>
 							<?php endif; ?>
 						</div>

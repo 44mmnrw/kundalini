@@ -1129,7 +1129,8 @@ function initializePracticeSystem() {
 
                 window.activeTimers[exerciseId] = {
                     interval: timerInterval,
-                    version: versionType
+                    version: versionType,
+                    pause: pauseTimer
                 };
             }
 
@@ -1355,8 +1356,8 @@ function stopAllTimersAndPlayers(currentExerciseId = null, currentVersion = null
     }
 
     for (const exerciseId in window.activeTimers) {
-        if (currentExerciseId !== exerciseId) {
-            clearInterval(window.activeTimers[exerciseId].interval);
+        if (currentExerciseId !== exerciseId || currentVersion !== window.activeTimers[exerciseId].version) {
+            window.activeTimers[exerciseId].pause();
             delete window.activeTimers[exerciseId];
         }
     }

@@ -27,7 +27,7 @@ $mobile_lk_faq_link = $mobile_lk_link('faq', 'FAQ');
 $mobile_active_sadhanas_count = function_exists('yoga_sadhana_active_count')
 	? yoga_sadhana_active_count((int) get_current_user_id())
 	: 0;
-?><div class="modal-mobile-menu-lk">
+?><div class="modal-mobile-menu-lk" id="yoga-mobile-menu-lk" tabindex="-1" role="dialog" aria-label="Меню личного кабинета" aria-modal="true">
 	<div class="modal-close">
 		<svg class="modal-close__icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
 			<use href="<?php echo esc_url(get_template_directory_uri() . '/assets/svg/sprite.svg#lk-modal-close'); ?>" width="100%" height="100%"></use>

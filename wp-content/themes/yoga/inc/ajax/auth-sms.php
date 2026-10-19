@@ -13,6 +13,12 @@ if (!defined('ABSPATH')) {
 
 
 
+function yoga_require_frontend_session(): void {
+    if (!function_exists('yoga_frontend_signon') || !function_exists('yoga_set_frontend_auth_cookie')) {
+        yoga_ajax_error('Вход временно недоступен. Обратитесь в поддержку.', 'session_unavailable', 503);
+    }
+}
+
 add_action('wp_ajax_send_sms_code', 'handle_send_sms_code');
 add_action('wp_ajax_nopriv_send_sms_code', 'handle_send_sms_code');
 add_action('wp_ajax_verify_sms_code', 'handle_verify_sms_code');
@@ -45,6 +51,7 @@ if (!function_exists('yoga_sanitize_ajax_notice_html')) {
 if (!function_exists('handle_yoga_email_login')) {
     function handle_yoga_email_login() {
         check_ajax_referer('yoga_login_nonce', 'yoga_login_nonce');
+        yoga_require_frontend_session();
         yoga_smartcaptcha_require_valid();
         $log = sanitize_text_field($_POST['log']);
         $pwd = $_POST['pwd'];
@@ -80,6 +87,7 @@ if (!function_exists('handle_yoga_email_login')) {
 if (!function_exists('handle_yoga_email_register')) {
     function handle_yoga_email_register() {
         check_ajax_referer('yoga_register_nonce', 'yoga_register_nonce');
+        yoga_require_frontend_session();
 
         yoga_smartcaptcha_require_valid();
         $email = sanitize_email($_POST['user_email']);
@@ -190,6 +198,7 @@ if (!function_exists('handle_resend_sms_code')) {
 if (!function_exists('handle_verify_sms_code')) {
     function handle_verify_sms_code() {
         check_ajax_referer('login_modal_nonce', 'security');
+        yoga_require_frontend_session();
 
         $phone = sanitize_text_field($_POST['phone']);
         $sms_code = sanitize_text_field($_POST['sms_code']);

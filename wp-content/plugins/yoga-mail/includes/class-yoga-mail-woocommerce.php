@@ -96,7 +96,7 @@ final class Yoga_Mail_WooCommerce {
 	}
 
 	public function disable_standard_processing_email($enabled, $order = null, $email = null) {
-		return $this->registry->flag('woocommerce_enabled') ? false : $enabled;
+		return $this->maybe_disable_standard_completed_email($enabled, $order, $email);
 	}
 
 	public function maybe_disable_standard_completed_email($enabled, $order, $email = null) {
@@ -254,6 +254,9 @@ final class Yoga_Mail_WooCommerce {
 			return $this->field_or_original($template_id, 'preheader', $preheader, $email, array('subject' => method_exists($email, 'get_subject') ? $email->get_subject() : $preheader));
 		}, 999, 3);
 		add_filter('woocommerce_email_additional_content_' . $id, function ($content, $object, $email) use ($template_id) {
+			if (!$this->registry->flag('woocommerce_enabled')) {
+				return $content;
+			}
 			$result = $this->renderer->render_field($template_id, 'body', $this->email_data($email, array('subject' => method_exists($email, 'get_subject') ? $email->get_subject() : '', 'content' => $content)), 'html');
 			return is_wp_error($result) ? $content : $this->renderer->inline_content_styles((string) $result);
 		}, 999, 3);
@@ -366,16 +369,7 @@ final class Yoga_Mail_WooCommerce {
 
 	private function payment_method_label($order): string {
 		$label = trim(wp_strip_all_tags((string) $order->get_payment_method_title()));
-		$user_id = (int) $order->get_customer_id();
-		if ($user_id > 0 && class_exists('YTR_Saved_Cards')) {
-			$cards = YTR_Saved_Cards::get_cards($user_id);
-			$card = is_array($cards) && isset($cards[0]) && is_array($cards[0]) ? $cards[0] : array();
-			$last4 = preg_replace('/\D+/', '', (string) ($card['last4'] ?? ''));
-			if (strlen($last4) >= 4) {
-				return 'Карта •• ' . substr($last4, -4);
-			}
-		}
-		return $label !== '' ? $label : __('Карта', 'yoga-mail');
+		return $label !== '' ? $label : __('Способ оплаты не указан', 'yoga-mail');
 	}
 
 	private function format_money(float $amount, string $currency): string {

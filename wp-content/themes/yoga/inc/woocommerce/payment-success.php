@@ -313,8 +313,10 @@ if (!function_exists('yoga_get_payment_success_context')) {
 		$order = yoga_get_payment_success_order();
 		$tariff_name = '';
 		$subscription_end = '';
+		$is_paid = $order instanceof WC_Order && $order->is_paid();
+		$state = !($order instanceof WC_Order) ? 'missing' : ($is_paid ? 'paid' : ($order->has_status(array('failed', 'cancelled', 'refunded')) ? 'failed' : 'pending'));
 
-		if ($order instanceof WC_Order) {
+		if ($is_paid) {
 			$tariff_name = yoga_get_order_tariff_name($order);
 			$subscription_end = yoga_format_subscription_end_label(
 				yoga_get_order_subscription_end_timestamp($order)
@@ -327,6 +329,8 @@ if (!function_exists('yoga_get_payment_success_context')) {
 			'home_url'          => home_url('/'),
 			'support_email'     => yoga_get_payment_success_support_email(),
 			'has_order'         => $order instanceof WC_Order,
+			'is_paid'           => $is_paid,
+			'payment_state'     => $state,
 		);
 	}
 }

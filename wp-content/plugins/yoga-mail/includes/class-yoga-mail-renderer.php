@@ -14,9 +14,9 @@ final class Yoga_Mail_Renderer {
 	/**
 	 * @return array|WP_Error subject, html, text, template_id.
 	 */
-	public function render(string $template_id, array $data = array(), bool $preview = false) {
+	public function render(string $template_id, array $data = array(), bool $preview = false, ?array $candidate_values = null) {
 		$definition = $this->registry->get($template_id);
-		$values = $this->registry->values($template_id);
+		$values = $candidate_values ?? $this->registry->values($template_id);
 		if (!$definition || !$values) {
 			return new WP_Error('yoga_mail_unknown_template', 'Неизвестный шаблон письма: ' . $template_id);
 		}
@@ -311,6 +311,8 @@ final class Yoga_Mail_Renderer {
 			: '@media screen and (max-width:600px){.yoga-mail-text{font-size:14px!important;}.yoga-mail-shell{padding-left:0!important;padding-right:0!important;}.yoga-mail-card{max-width:600px!important;}.yoga-mail-content{padding-left:30px!important;padding-right:30px!important;}.yoga-mail-comment-gap{width:20px!important;min-width:20px!important;}}';
 		$css = '<style id="yoga-mail-responsive" type="text/css">'
 			. $rules
+			. '@media screen and (max-width:600px){.yoga-mail-card td,.yoga-mail-card th,.yoga-mail-card .yoga-mail-text{white-space:normal!important;overflow-wrap:anywhere;word-wrap:break-word;}}'
+			. '@media screen and (max-width:360px){.yoga-mail-content{padding-left:20px!important;padding-right:20px!important;}}'
 			. '</style>';
 		return preg_replace('/<\/head>/i', $css . "\n</head>", $html, 1);
 	}

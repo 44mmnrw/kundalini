@@ -308,19 +308,20 @@ if (!function_exists('yoga_user_can_download_practice')) {
 			return true;
 		}
 
-		return yoga_get_user_downloads_used($user_id) < $limit;
+		return yoga_user_has_downloaded_practice($user_id, $practice_id)
+			|| yoga_get_user_downloads_used($user_id) < $limit;
 	}
 }
 
 if (!function_exists('yoga_record_practice_download')) {
-	function yoga_record_practice_download(int $user_id, int $practice_id): void {
+	function yoga_record_practice_download(int $user_id, int $practice_id): bool {
 		if ($user_id <= 0 || $practice_id <= 0) {
-			return;
+			return false;
 		}
 
 
 		if (yoga_user_has_downloaded_practice($user_id, $practice_id)) {
-			return;
+			return true;
 		}
 
 		$log   = yoga_get_user_download_log($user_id);
@@ -342,7 +343,29 @@ if (!function_exists('yoga_record_practice_download')) {
 			);
 		}
 
-		update_user_meta($user_id, 'yoga_download_log', $log);
+		return update_user_meta($user_id, 'yoga_download_log', $log) !== false;
+	}
+}
+
+/** Serialize quota checks and recording across both file delivery routes. */
+function yoga_claim_practice_download(int $user_id, int $practice_id): bool {
+	global $wpdb;
+	if ($user_id <= 0 || $practice_id <= 0) {
+		return false;
+	}
+	$lock = 'yoga_dl_' . md5($wpdb->usermeta . ':' . $user_id);
+	if ((int) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 5)', $lock)) !== 1) {
+		return false;
+	}
+	try {
+		// A concurrent request may have updated the quota while we waited.
+		wp_cache_delete($user_id, 'user_meta');
+		if (!yoga_user_can_download_practice($user_id, $practice_id)) {
+			return false;
+		}
+		return yoga_record_practice_download($user_id, $practice_id);
+	} finally {
+		$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
 	}
 }
 

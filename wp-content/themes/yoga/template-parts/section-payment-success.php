@@ -14,6 +14,12 @@ $ctx = function_exists('yoga_get_payment_success_context')
 		'has_order'        => false,
 	);
 
+$state = $ctx['payment_state'] ?? 'missing';
+$messages = array(
+	'pending' => array('Ожидаем подтверждение оплаты', 'Платёж ещё не подтверждён. Обновите страницу через некоторое время.'),
+	'failed' => array('Оплата не подтверждена', 'Заказ отменён, возвращён или платёж не прошёл. Обратитесь в поддержку.'),
+	'missing' => array('Заказ не найден', 'Откройте ссылку из заказа или обратитесь в поддержку.'),
+);
 $theme_uri   = get_template_directory_uri();
 $icon_circle = $theme_uri . '/assets/images/payment-success/icon-circle.svg';
 $icon_check  = $theme_uri . '/assets/images/payment-success/icon-check.svg';
@@ -24,6 +30,7 @@ $tariff_name = $ctx['tariff_name'] !== '' ? $ctx['tariff_name'] : __('тариф
 	<div class="container">
 		<div class="row">
 			<div class="yoga-payment-success">
+				<?php if ($state === 'paid') : ?>
 				<div class="yoga-payment-success__icon" aria-hidden="true">
 					<img src="<?php echo esc_url($icon_circle); ?>" alt="" class="yoga-payment-success__icon-circle" width="67" height="67">
 					<img src="<?php echo esc_url($icon_check); ?>" alt="" class="yoga-payment-success__icon-check" width="30" height="30">
@@ -37,7 +44,12 @@ $tariff_name = $ctx['tariff_name'] !== '' ? $ctx['tariff_name'] : __('тариф
 					<?php esc_html_e(' успешно подключен. Теперь вам доступны все практики и материалы.', 'yoga'); ?>
 				</p>
 
-				<?php if ($ctx['subscription_end'] !== '') : ?>
+				<?php else : ?>
+				<h1 class="yoga-payment-success__title"><?php echo esc_html($messages[$state][0]); ?></h1>
+				<p class="yoga-payment-success__lead" role="status"><?php echo esc_html($messages[$state][1]); ?></p>
+				<?php endif; ?>
+
+				<?php if ($state === 'paid' && $ctx['subscription_end'] !== '') : ?>
 					<div class="yoga-payment-success__panel">
 						<p class="yoga-payment-success__panel-label"><?php esc_html_e('Срок действия подписки', 'yoga'); ?></p>
 						<p class="yoga-payment-success__panel-value"><?php echo esc_html($ctx['subscription_end']); ?></p>

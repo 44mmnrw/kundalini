@@ -160,6 +160,10 @@ final class Yoga_Mail_Registry {
 				}
 			}
 		}
+		$renderer = new Yoga_Mail_Renderer($this);
+		if (is_wp_error($renderer->render($id, $this->examples($id), true, $clean))) {
+			return false;
+		}
 		$stored = get_option(self::TEMPLATES_OPTION, array());
 		$stored = is_array($stored) ? $stored : array();
 		if (Yoga_Mail_Admin_Request::is_template($id)) {

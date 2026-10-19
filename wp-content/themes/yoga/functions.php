@@ -568,6 +568,11 @@
 			if ($blog_page_id > 0) {
 				$blog = get_permalink($blog_page_id);
 			}
+			if ($blog === '' || untrailingslashit($blog) === untrailingslashit(home_url('/'))) {
+				$blog_category = get_category_by_slug('blog');
+				$category_url = $blog_category ? get_category_link($blog_category->term_id) : '';
+				$blog = $category_url && !is_wp_error($category_url) ? $category_url : home_url('/blog/');
+			}
 
 			$contacts = '';
 			$contact_pages = get_pages(array(
@@ -2540,7 +2545,7 @@ function yoga_subscribe_handler() {
         'order' => 'DESC'
 		));
 
-		$current_time = current_time('timestamp');
+		$current_time = time();
 		$latest_tariff = null;
 		$latest_end = 0;
 
@@ -2591,7 +2596,7 @@ function yoga_subscribe_handler() {
                         'order_id' => $order->get_id(),
                         'order_date' => $order_date_obj->format('d.m.Y'),
                         'access_end' => $access_end,
-                        'access_end_date' => date('d.m.Y H:i', $access_end),
+                        'access_end_date' => wp_date('d.m.Y H:i', $access_end),
                         'remaining_time' => $access_end - $current_time
 						);
 					}
