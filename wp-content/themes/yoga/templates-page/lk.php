@@ -33,6 +33,12 @@
 	$timezone_options = function_exists('yoga_get_russian_timezone_options')
 		? yoga_get_russian_timezone_options()
 		: array();
+	$timezone_reference_date = new DateTimeImmutable('now');
+	foreach ($timezone_options as $timezone_value => $timezone_label) {
+		$timezone_offset = $timezone_reference_date->setTimezone(new DateTimeZone($timezone_value))->format('P');
+		$timezone_offset = preg_replace('/^([+-])0/', '$1', preg_replace('/:00$/', '', $timezone_offset));
+		$timezone_options[$timezone_value] = $timezone_label . ' (UTC' . $timezone_offset . ')';
+	}
 	$requested_lk_section = function_exists('yoga_get_requested_lk_section') ? yoga_get_requested_lk_section() : '';
 	$initial_lk_target = function_exists('yoga_get_initial_lk_target') ? yoga_get_initial_lk_target() : '1';
 	$user_avatar_id = function_exists('yoga_get_user_avatar_id') ? yoga_get_user_avatar_id($user_id) : 0;
