@@ -647,6 +647,13 @@
 									</div>
 									<?php endif; ?>
 
+									<?php if (!$current_subscription && $ytr_auto_renew_active) : ?>
+									<div class="lk-settings-part lk-settings-part_cancel">
+										<p>Оплаченный период завершён. Автопродление включено, возможны повторные попытки оплаты.</p>
+										<button type="button" class="lk-cancel-subscription-btn" id="ytr-cancel-subscription-btn" data-access-end="">Отменить автопродление</button>
+									</div>
+									<?php endif; ?>
+
 									<?php if ($current_subscription && !$ytr_auto_renew_active) :
 										$ytr_status_text      = class_exists('YTR_LK')
 											? YTR_LK::get_auto_renew_status_text($user_id, $subscription_end_label)

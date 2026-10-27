@@ -222,6 +222,13 @@ final class YTR_Renewal {
 			);
 		}
 
+		// Creating an order runs hooks: the user may remove the card or cancel meanwhile.
+		if (!self::user_needs_renewal($user_id) || YTR_User::get_payment_method_id($user_id) !== $payment_method_id) {
+			$message = __('Автопродление остановлено: настройки оплаты изменились.', 'yoga-tariff-renewal');
+			$order->update_status('cancelled', $message);
+			return array('success' => false, 'message' => $message, 'order_id' => $order->get_id());
+		}
+
 		$charge = YTR_YooKassa::charge_renewal($order, $payment_method_id);
 
 		if ($charge['success']) {

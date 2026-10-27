@@ -241,17 +241,17 @@
 			return;
 		}
 
-		$('.lk-settings-part_cancel')
-			.first()
-			.replaceWith(
-				$('<div class="lk-settings-part lk-settings-part_cancel" id="ytr-auto-renew-status"></div>').html(
-					html
-				)
-			);
+		var $status = $('<div class="lk-settings-part lk-settings-part_cancel" id="ytr-auto-renew-status"></div>').html(html);
+		var $cancel = $('.lk-settings-part_cancel').first();
+		if ($cancel.length) {
+			$cancel.replaceWith($status);
+		} else {
+			$('.lk-settings-part_status').after($status);
+		}
 	}
 
 	function hideCancelAutoRenewButton() {
-		$('#ytr-cancel-subscription-btn').closest('.lk-settings-part_cancel').remove();
+		$('#ytr-cancel-subscription-btn').remove();
 	}
 
 	window.ytrCloseLkModals = closeModals;
@@ -312,8 +312,12 @@
 		$('#ytr-cancel-subscription-btn').on('click', function (e) {
 			e.preventDefault();
 			e.stopPropagation();
-			var endDate = String($(this).data('accessEnd') || $(this).attr('data-access-end') || '—');
-			$('#ytr-unsubscribe-end-date').text(endDate);
+			var endDate = String($(this).attr('data-access-end') || '');
+			$('#ytr-unsubscribe-access-message').text(
+				endDate && endDate !== '—'
+					? 'Автопродление будет отключено. Доступ к платным материалам сохранится до ' + endDate + '.'
+					: 'Оплаченный период завершён. Автопродление будет отключено.'
+			);
 			openModal($('#ytr-modal-unsubscribe'));
 		});
 
@@ -352,6 +356,7 @@
 					var accessEnd = response.data && response.data.access_end ? response.data.access_end : '';
 
 					$('#ytr-unsubscribe-success-text').text('Автопродление отключено');
+					$('#ytr-unsubscribe-success-hint').text(message);
 					if (accessEnd !== '') {
 						$('#ytr-unsubscribe-success-hint').text(
 							'Доступ сохранится до ' +

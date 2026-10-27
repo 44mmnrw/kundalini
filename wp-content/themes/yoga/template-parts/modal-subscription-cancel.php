@@ -106,11 +106,11 @@ $brand_icons = array(
 	<div class="delcomm">
 		<div class="delcomm__main">
 			<h3><?php esc_html_e('Отмена подписки', 'yoga'); ?></h3>
-			<p>
+			<p id="ytr-unsubscribe-access-message">
 				<?php esc_html_e('Автопродление будет отключено. Доступ к платным материалам сохранится до', 'yoga'); ?>
 				<strong id="ytr-unsubscribe-end-date">—</strong>.
 			</p>
-			<p><?php esc_html_e('После этой даты тариф не продлится автоматически.', 'yoga'); ?></p>
+			<p><?php esc_html_e('После отмены новые попытки автосписания выполняться не будут.', 'yoga'); ?></p>
 			<div class="delcomm-buttons">
 				<button type="button" class="btn btn_white" id="ytr-unsubscribe-keep">
 					<span><?php esc_html_e('Оставить подписку', 'yoga'); ?></span>
