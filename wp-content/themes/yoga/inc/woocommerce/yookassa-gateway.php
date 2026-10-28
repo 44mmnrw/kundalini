@@ -160,6 +160,11 @@ if (!class_exists('Yoga_YooKassa_Gateway_EPL') && class_exists('YooKassaGatewayE
 		}
 
 		protected function prepareSubscription() {
+			// The custom selector chooses a fresh method; hidden saved-card inputs must not override it.
+			if (function_exists('yoga_get_selected_yookassa_payment_type_for_api') && yoga_get_selected_yookassa_payment_type_for_api() !== '') {
+				$_POST['wc-' . $this->id . '-payment-token'] = 'new';
+				$this->recurrentPaymentMethodId = null;
+			}
 			parent::prepareSubscription();
 			$this->yoga_sync_save_from_checkout($this->yoga_resolve_save_order(null));
 		}
@@ -438,6 +443,11 @@ if (!class_exists('Yoga_YooKassa_Gateway_Widget') && class_exists('YooKassaWidge
 		}
 
 		protected function prepareSubscription() {
+			// Keep the embedded gateway consistent with the custom payment selector too.
+			if (function_exists('yoga_get_selected_yookassa_payment_type_for_api') && yoga_get_selected_yookassa_payment_type_for_api() !== '') {
+				$_POST['wc-' . $this->id . '-payment-token'] = 'new';
+				$this->recurrentPaymentMethodId = null;
+			}
 			parent::prepareSubscription();
 			$this->yoga_sync_save_from_checkout($this->yoga_resolve_save_order(null));
 		}

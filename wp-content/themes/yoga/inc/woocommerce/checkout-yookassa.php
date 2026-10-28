@@ -561,6 +561,10 @@ if (!function_exists('yoga_yookassa_apply_payment_type_to_request')) {
 			return $paymentRequest;
 		}
 
+		// A request must use only one source: fresh method data, a saved method, or a token.
+		$paymentRequest->setPaymentMethodId(null);
+		$paymentRequest->setPaymentToken(null);
+
 		if (in_array($type, yoga_yookassa_redirect_confirmation_types(), true)) {
 			$order = yoga_yookassa_get_checkout_order();
 			if ($order instanceof WC_Order && method_exists($paymentRequest, 'setConfirmation')) {
