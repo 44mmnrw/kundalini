@@ -106,6 +106,29 @@ function yoga_tariffs_are_sold_individually($sold_individually, $product): bool 
 }
 add_filter('woocommerce_is_sold_individually', 'yoga_tariffs_are_sold_individually', 10, 2);
 
+/** Replace the selected tariff before WooCommerce checks for duplicate items. */
+function yoga_replace_cart_tariff(int $product_id, int $variation_id = 0, array $variations = array()) {
+	$cart = WC()->cart;
+	$previous_items = $cart->get_cart_contents();
+	$remaining_items = array_filter($previous_items, static function (array $item): bool {
+		$id = (int) ($item['variation_id'] ?? 0) ?: (int) ($item['product_id'] ?? 0);
+		return !yoga_product_is_tariff($id);
+	});
+	$cart->set_cart_contents($remaining_items);
+
+	$added = false;
+	try {
+		$added = $cart->add_to_cart($product_id, 1, $variation_id, $variations);
+		return $added;
+	} finally {
+		// An unavailable replacement must not discard the customer's existing cart.
+		if (!$added) {
+			$cart->set_cart_contents($previous_items);
+			yoga_persist_cart();
+		}
+	}
+}
+
 if (!function_exists('yoga_is_theme_checkout_context')) {
 	function yoga_is_theme_checkout_context(): bool {
 		if (function_exists('yoga_is_order_received_request') && yoga_is_order_received_request()) {
@@ -198,11 +221,7 @@ if (!function_exists('yoga_handle_cart_mutation_request')) {
 			}
 		}
 
-		if ($variation_id > 0) {
-			$added = WC()->cart->add_to_cart($product_id, 1, $variation_id, $variations);
-		} else {
-			$added = WC()->cart->add_to_cart($product_id, 1);
-		}
+		$added = yoga_replace_cart_tariff($product_id, $variation_id, $variations);
 
 		if ($added) {
 			yoga_persist_cart();

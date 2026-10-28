@@ -50,4 +50,48 @@ check(yoga_tariffs_are_sold_individually(false, $product), 'Tariff variation is 
 $product = new class { function get_id() { return 30; } };
 check(!yoga_tariffs_are_sold_individually(false, $product), 'Other products retain quantity support');
 check(yoga_tariffs_are_sold_individually(true, $product), 'Existing individual-sale setting is preserved');
+
+// Model WooCommerce's duplicate rejection, which runs before cart normalization.
+class ReplacementCart extends TestCart {
+    public $reject = false;
+    public $throw = false;
+    function add_to_cart($product_id, $quantity, $variation_id = 0, $variations = array()) {
+        if ($this->throw) {
+            throw new RuntimeException('Unavailable replacement');
+        }
+        if ($this->reject) {
+            return false;
+        }
+        foreach ($this->items as $existing) {
+            if ($existing['product_id'] === $product_id && $existing['variation_id'] === $variation_id) {
+                return false;
+            }
+        }
+        $key = 'selected';
+        $this->items[$key] = item($product_id, $quantity, $variation_id);
+        $this->items[$key]['variation'] = $variations;
+        return $key;
+    }
+}
+function WC() { return $GLOBALS['test_wc']; }
+foreach (array(array(), array('same' => item(10)), array('different' => item(20))) as $initial) {
+    $cart = new ReplacementCart($initial + array('other' => $other));
+    $GLOBALS['test_wc'] = (object) array('cart' => $cart, 'session' => null);
+    check(yoga_replace_cart_tariff(10) === 'selected', 'Empty, same and different tariff selections all succeed');
+    check(count($cart->items) === 2 && $cart->items['selected']['product_id'] === 10 && $cart->items['selected']['quantity'] === 1, 'Selected tariff replaces the previous selection');
+    check($cart->items['other'] === $other, 'Replacement preserves unrelated items');
+}
+check(yoga_replace_cart_tariff(20, 21, array('attribute_pa_period' => 'month')) === 'selected', 'Variation replaces the existing tariff');
+check($cart->items['selected']['variation_id'] === 21 && $cart->items['selected']['variation'] === array('attribute_pa_period' => 'month'), 'Selected variation and attributes are preserved');
+$previous = $cart->items;
+$cart->reject = true;
+check(yoga_replace_cart_tariff(10) === false && $cart->items === $previous, 'Rejected replacement restores the previous cart');
+check($cart->saved_items === $previous, 'Restored cart totals are recalculated');
+$cart->throw = true;
+try {
+    yoga_replace_cart_tariff(10);
+    check(false, 'Expected add-to-cart exception');
+} catch (RuntimeException $e) {
+    check($e->getMessage() === 'Unavailable replacement' && $cart->items === $previous, 'Exception restores the previous cart');
+}
 fwrite(STDOUT, "Tariff cart limit tests passed.\n");
