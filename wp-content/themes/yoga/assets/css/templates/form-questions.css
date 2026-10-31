@@ -263,6 +263,10 @@
 
 
 @media (min-width: 1025px) {
+  .section-form-questions_practice .row {
+    container-type: inline-size;
+  }
+
   .section-form-questions_practice .form-questions.practice-form-layout {
     position: relative;
     max-width: 75.0625rem;
@@ -322,7 +326,8 @@
     position: absolute;
     left: auto;
     right: 0;
-    top: calc(0.75rem + 35px);
+    /* Follow the visible top of subscribe.svg (1201 × 511) when it is letterboxed. */
+    top: max(0px, calc((100% - 100cqw * 511 / 1201) / 2));
     transform: none;
     width: 3.875rem;
     height: 3.875rem;
