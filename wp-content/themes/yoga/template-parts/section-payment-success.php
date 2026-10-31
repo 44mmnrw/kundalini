@@ -10,7 +10,7 @@ $ctx = function_exists('yoga_get_payment_success_context')
 		'tariff_name'      => '',
 		'subscription_end' => '',
 		'home_url'         => home_url('/'),
-		'support_email'    => 'yuoga@mail.ru',
+		'support_email'    => 'support@platform.kundalini-class.ru',
 		'has_order'        => false,
 	);
 

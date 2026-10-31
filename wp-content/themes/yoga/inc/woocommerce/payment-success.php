@@ -294,14 +294,7 @@ if (!function_exists('yoga_format_subscription_end_label')) {
 
 if (!function_exists('yoga_get_payment_success_support_email')) {
 	function yoga_get_payment_success_support_email(): string {
-		$email = '';
-		if (function_exists('get_field')) {
-			$email = trim((string) get_field('contacts_email', 'option'));
-		}
-		if ($email === '' || !is_email($email)) {
-			$email = 'yuoga@mail.ru';
-		}
-		return $email;
+		return 'support@platform.kundalini-class.ru';
 	}
 }
 
