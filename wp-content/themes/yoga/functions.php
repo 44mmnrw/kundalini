@@ -18,6 +18,9 @@
 	require_once get_template_directory() . '/inc/ajax/questions.php';
 	require_once get_template_directory() . '/inc/admin/questions.php';
 	require_once get_template_directory() . '/inc/admin/menu.php';
+	require_once get_template_directory() . '/inc/statistics/activity.php';
+	require_once get_template_directory() . '/inc/statistics/finances.php';
+	require_once get_template_directory() . '/inc/admin/user-statistics.php';
 	require_once get_template_directory() . '/inc/practices/search.php';
 	require_once get_template_directory() . '/inc/ajax/practice-search.php';
 	require_once get_template_directory() . '/inc/comments.php';

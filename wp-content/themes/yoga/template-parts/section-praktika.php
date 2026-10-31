@@ -180,6 +180,7 @@ if (!empty($section_praktika_extra_class)) {
 										}
 									}
 								}
+							get_template_part('template-parts/practice-activity');
 							?>
 						</div>
 				<?php

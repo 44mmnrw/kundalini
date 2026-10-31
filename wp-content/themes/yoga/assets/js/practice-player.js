@@ -212,7 +212,10 @@ function initializeStandalonePracticeVideoPlayers() {
         try {
             let player = null;
             if (playerElement.dataset.mediaProvider === 'kinescope') {
-                player = createKinescopePlayerAdapter(playerElement);
+                player = createKinescopePlayerAdapter(playerElement, {
+                    onPlay: () => window.yogaPracticeActivity?.start(),
+                    onEnded: () => window.yogaPracticeActivity?.complete()
+                });
             } else {
                 const mediaElement = playerElement.querySelector('video, [data-plyr-provider="youtube"]');
                 if (mediaElement) {
@@ -226,6 +229,10 @@ function initializeStandalonePracticeVideoPlayers() {
             }
 
             if (player) {
+                if (!player.isKinescope) {
+                    player.on('play', () => window.yogaPracticeActivity?.start());
+                    player.on('ended', () => window.yogaPracticeActivity?.complete());
+                }
                 window.standalonePracticePlayers[index] = player;
             }
         } catch (error) {
@@ -930,6 +937,7 @@ function initializePracticeSystem() {
                                 player.pause();
                                 return;
                             }
+                            window.yogaPracticeActivity?.start();
                             if (!isPlaying) {
                                 primeEndSignal();
                                 startTimer();
@@ -992,6 +1000,8 @@ function initializePracticeSystem() {
                             player.pause();
                             return;
                         }
+
+                        window.yogaPracticeActivity?.start();
 
 
                         if (!isPlaying) {
@@ -1072,6 +1082,7 @@ function initializePracticeSystem() {
                 if (timerElement && selectedDuration <= 0) {
                     return;
                 }
+                window.yogaPracticeActivity?.start();
                 stopEndSignal();
                 if (timerInterval) {
                     clearInterval(timerInterval);
@@ -1182,6 +1193,7 @@ function initializePracticeSystem() {
             }
 
             function finishTimer() {
+                window.yogaPracticeActivity?.exerciseComplete(exercise.dataset.exerciseId);
                 stopTimer();
                 remainingTime = selectedDuration > 0 ? selectedDuration : initialDuration;
                 updateTimerDisplay();
