@@ -539,7 +539,7 @@
   .kriyi__items {
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 1.25rem;
+    gap: 1.5625rem;
     margin-top: 1.25rem;
   }
   .practice-results-toolbar {
